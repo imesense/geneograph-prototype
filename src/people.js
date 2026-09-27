@@ -1,460 +1,492 @@
-    function bindSharedFilterFields(
-      root,
-      {
+function bindSharedFilterFields(
+    root,
+    {
         schema,
         values,
         prefix,
         onChange =
-          () => {}
-      }
-    ) {
-      const container =
+            () =>
+            {}
+    }
+)
+{
+    const container =
         [
-          ...root.querySelectorAll(
-            '[data-shared-filter-root]'
-          )
+            ...root.querySelectorAll(
+                '[data-shared-filter-root]'
+            )
         ].find(element =>
-          element.dataset
-            .sharedFilterRoot
+            element.dataset
+                .sharedFilterRoot
             === prefix
         );
 
-      if (!container) {
+    if (!container)
+    {
         return null;
-      }
+    }
 
-      const currentValues =
+    const currentValues =
         cloneSharedFilterValues(
-          schema,
-          values
+            schema,
+            values
         );
 
-      const comboboxBindings = [];
-      const yearRangeBindings = [];
-      
-      const getValues =
-        () =>
-          cloneSharedFilterValues(
-            schema,
-            currentValues
-          );
+    const comboboxBindings = [];
+    const yearRangeBindings = [];
 
-      const notifyChange = () => {
+    const getValues =
+        () =>
+            cloneSharedFilterValues(
+                schema,
+                currentValues
+            );
+
+    const notifyChange = () =>
+    {
         const nextValues =
-          getValues();
+            getValues();
 
         onChange(nextValues);
 
         container.dispatchEvent(
-          new CustomEvent(
-            'shared-filter-change',
-            {
-              bubbles:
+            new CustomEvent(
+                'shared-filter-change',
+                {
+                    bubbles:
                 true,
 
-              detail:
+                    detail:
                 nextValues
-            }
-          )
-        );
-      };
-
-      const closeOtherComboboxes =
-        activeBinding => {
-          comboboxBindings
-            .filter(binding =>
-              binding !== activeBinding
+                }
             )
-            .forEach(binding =>
-              binding.close()
-            );
+        );
+    };
+
+    const closeOtherComboboxes =
+        activeBinding =>
+        {
+            comboboxBindings
+                .filter(binding =>
+                    binding !== activeBinding
+                )
+                .forEach(binding =>
+                    binding.close()
+                );
         };
 
-      schema.forEach(definition => {
-      const yearRangeRoot =
-        container.querySelector(
-          `[data-shared-filter-year-range="${
-            definition.key
-          }"]`
-        );
+    schema.forEach(definition =>
+    {
+        const yearRangeRoot =
+            container.querySelector(
+                `[data-shared-filter-year-range="${
+                    definition.key
+                }"]`
+            );
 
-      if (yearRangeRoot) {
-        const controls =
-          yearRangeRoot.querySelector(
-            '[data-shared-filter-year-controls]'
-          );
+        if (yearRangeRoot)
+        {
+            const controls =
+                yearRangeRoot.querySelector(
+                    '[data-shared-filter-year-controls]'
+                );
 
-        const modeSelect =
-          yearRangeRoot.querySelector(
-            '[data-shared-filter-year-mode]'
-          );
+            const modeSelect =
+                yearRangeRoot.querySelector(
+                    '[data-shared-filter-year-mode]'
+                );
 
-        const fromShell =
-          yearRangeRoot.querySelector(
-            '[data-shared-filter-year-from-shell]'
-          );
+            const fromShell =
+                yearRangeRoot.querySelector(
+                    '[data-shared-filter-year-from-shell]'
+                );
 
-        const fromLabel =
-          yearRangeRoot.querySelector(
-            '[data-shared-filter-year-from-label]'
-          );
+            const fromLabel =
+                yearRangeRoot.querySelector(
+                    '[data-shared-filter-year-from-label]'
+                );
 
-        const fromInput =
-          yearRangeRoot.querySelector(
-            '[data-shared-filter-year-from]'
-          );
+            const fromInput =
+                yearRangeRoot.querySelector(
+                    '[data-shared-filter-year-from]'
+                );
 
-        const toShell =
-          yearRangeRoot.querySelector(
-            '[data-shared-filter-year-to-shell]'
-          );
+            const toShell =
+                yearRangeRoot.querySelector(
+                    '[data-shared-filter-year-to-shell]'
+                );
 
-        const toInput =
-          yearRangeRoot.querySelector(
-            '[data-shared-filter-year-to]'
-          );
+            const toInput =
+                yearRangeRoot.querySelector(
+                    '[data-shared-filter-year-to]'
+                );
 
-        const errorRoot =
-          yearRangeRoot.querySelector(
-            '[data-shared-filter-year-error]'
-          );
+            const errorRoot =
+                yearRangeRoot.querySelector(
+                    '[data-shared-filter-year-error]'
+                );
 
-        if (
-          !controls
+            if (
+                !controls
           || !modeSelect
           || !fromShell
           || !fromInput
           || !toShell
           || !toInput
           || !errorRoot
-        ) {
-          return;
-        }
+            )
+            {
+                return;
+            }
 
-        const updatePresentation =
-          () => {
-            const range =
-              normalizeSharedFilterYearRange(
-                currentValues[
-                  definition.key
-                ]
-              );
+            const updatePresentation =
+                () =>
+                {
+                    const range =
+                        normalizeSharedFilterYearRange(
+                            currentValues[
+                                definition.key
+                            ]
+                        );
 
-            const isBetween =
-              range.mode === 'between';
+                    const isBetween =
+                        range.mode === 'between';
 
-            controls.classList.toggle(
-              'is-empty',
-              !range.mode
-            );
+                    controls.classList.toggle(
+                        'is-empty',
+                        !range.mode
+                    );
 
-            controls.classList.toggle(
-              'is-between',
-              isBetween
-            );
+                    controls.classList.toggle(
+                        'is-between',
+                        isBetween
+                    );
 
-            fromShell.hidden =
-              !range.mode;
+                    fromShell.hidden =
+                        !range.mode;
 
-            toShell.hidden =
-              !isBetween;
+                    toShell.hidden =
+                        !isBetween;
 
-          if (fromLabel) {
-            fromLabel.textContent =
-              translateText(
-                isBetween
-                  ? 'Year from'
-                  : 'Year'
-              );
-          }
+                    if (fromLabel)
+                    {
+                        fromLabel.textContent =
+                            translateText(
+                                isBetween
+                                    ? 'Year from'
+                                    : 'Year'
+                            );
+                    }
 
-          fromInput.placeholder =
-            translateText(
-              isBetween
-                ? 'From'
-                : 'Year'
-            );
+                    fromInput.placeholder =
+                        translateText(
+                            isBetween
+                                ? 'From'
+                                : 'Year'
+                        );
 
-          toInput.placeholder =
-            translateText(
-              'To'
-            );
+                    toInput.placeholder =
+                        translateText(
+                            'To'
+                        );
 
-            const fromYear =
-              sharedFilterYearNumber(
-                range.from
-              );
+                    const fromYear =
+                        sharedFilterYearNumber(
+                            range.from
+                        );
 
-            const toYear =
-              sharedFilterYearNumber(
-                range.to
-              );
+                    const toYear =
+                        sharedFilterYearNumber(
+                            range.to
+                        );
 
-            const orderInvalid =
-              isBetween
+                    const orderInvalid =
+                        isBetween
               && fromYear != null
               && toYear != null
               && fromYear > toYear;
 
-            const error =
-              sharedFilterYearRangeError(
-                range
-              );
+                    const error =
+                        sharedFilterYearRangeError(
+                            range
+                        );
 
-            errorRoot.hidden =
-              !error;
+                    errorRoot.hidden =
+                        !error;
 
-            errorRoot.textContent =
-              error;
+                    errorRoot.textContent =
+                        error;
 
-            if (
-              range.mode
+                    if (
+                        range.mode
               && fromYear == null
-            ) {
-              fromInput.setAttribute(
-                'aria-invalid',
-                'true'
-              );
-            } else {
-              fromInput.removeAttribute(
-                'aria-invalid'
-              );
-            }
+                    )
+                    {
+                        fromInput.setAttribute(
+                            'aria-invalid',
+                            'true'
+                        );
+                    }
+                    else
+                    {
+                        fromInput.removeAttribute(
+                            'aria-invalid'
+                        );
+                    }
 
-            if (
-              isBetween
+                    if (
+                        isBetween
               && (
-                toYear == null
+                  toYear == null
                 || orderInvalid
               )
-            ) {
-              toInput.setAttribute(
-                'aria-invalid',
-                'true'
-              );
-            } else {
-              toInput.removeAttribute(
-                'aria-invalid'
-              );
-            }
-          };
+                    )
+                    {
+                        toInput.setAttribute(
+                            'aria-invalid',
+                            'true'
+                        );
+                    }
+                    else
+                    {
+                        toInput.removeAttribute(
+                            'aria-invalid'
+                        );
+                    }
+                };
 
-        const sync =
-          () => {
-            const range =
-              normalizeSharedFilterYearRange(
-                currentValues[
-                  definition.key
-                ]
-              );
+            const sync =
+                () =>
+                {
+                    const range =
+                        normalizeSharedFilterYearRange(
+                            currentValues[
+                                definition.key
+                            ]
+                        );
 
-            currentValues[
-              definition.key
-            ] = range;
+                    currentValues[
+                        definition.key
+                    ] = range;
 
-            modeSelect.value =
-              range.mode;
+                    modeSelect.value =
+                        range.mode;
 
-            fromInput.value =
-              range.from;
+                    fromInput.value =
+                        range.from;
 
-            toInput.value =
-              range.to;
+                    toInput.value =
+                        range.to;
 
-            updatePresentation();
-          };
+                    updatePresentation();
+                };
 
-        modeSelect.addEventListener(
-          'change',
-          () => {
-            const range =
-              normalizeSharedFilterYearRange(
-                currentValues[
-                  definition.key
-                ]
-              );
+            modeSelect.addEventListener(
+                'change',
+                () =>
+                {
+                    const range =
+                        normalizeSharedFilterYearRange(
+                            currentValues[
+                                definition.key
+                            ]
+                        );
 
-            range.mode =
-              modeSelect.value;
+                    range.mode =
+                        modeSelect.value;
 
-            if (!range.mode) {
-              range.from = '';
-              range.to = '';
-            } else if (
-              range.mode !== 'between'
-            ) {
-              range.to = '';
-            }
+                    if (!range.mode)
+                    {
+                        range.from = '';
+                        range.to = '';
+                    }
+                    else if (
+                        range.mode !== 'between'
+                    )
+                    {
+                        range.to = '';
+                    }
 
-            currentValues[
-              definition.key
-            ] = range;
+                    currentValues[
+                        definition.key
+                    ] = range;
+
+                    sync();
+                    notifyChange();
+
+                    if (range.mode)
+                    {
+                        requestAnimationFrame(
+                            () =>
+                            {
+                                fromInput.focus({
+                                    preventScroll:
+                      true
+                                });
+                            }
+                        );
+                    }
+                }
+            );
+
+            const bindYearInput =
+                (
+                    input,
+                    property
+                ) =>
+                {
+                    input.addEventListener(
+                        'input',
+                        () =>
+                        {
+                            const sanitized =
+                                input.value
+                                    .replace(/\D/g, '')
+                                    .slice(0, 4);
+
+                            if (
+                                input.value !== sanitized
+                            )
+                            {
+                                input.value =
+                                    sanitized;
+                            }
+
+                            const range =
+                                normalizeSharedFilterYearRange(
+                                    currentValues[
+                                        definition.key
+                                    ]
+                                );
+
+                            range[property] =
+                                sanitized;
+
+                            currentValues[
+                                definition.key
+                            ] = range;
+
+                            updatePresentation();
+                            notifyChange();
+                        }
+                    );
+                };
+
+            bindYearInput(
+                fromInput,
+                'from'
+            );
+
+            bindYearInput(
+                toInput,
+                'to'
+            );
+
+            yearRangeBindings.push({
+                definition,
+                sync
+            });
 
             sync();
-            notifyChange();
-
-            if (range.mode) {
-              requestAnimationFrame(
-                () => {
-                  fromInput.focus({
-                    preventScroll:
-                      true
-                  });
-                }
-              );
-            }
-          }
-        );
-
-        const bindYearInput =
-          (
-            input,
-            property
-          ) => {
-            input.addEventListener(
-              'input',
-              () => {
-                const sanitized =
-                  input.value
-                    .replace(/\D/g, '')
-                    .slice(0, 4);
-
-                if (
-                  input.value !== sanitized
-                ) {
-                  input.value =
-                    sanitized;
-                }
-
-                const range =
-                  normalizeSharedFilterYearRange(
-                    currentValues[
-                      definition.key
-                    ]
-                  );
-
-                range[property] =
-                  sanitized;
-
-                currentValues[
-                  definition.key
-                ] = range;
-
-                updatePresentation();
-                notifyChange();
-              }
-            );
-          };
-
-        bindYearInput(
-          fromInput,
-          'from'
-        );
-
-        bindYearInput(
-          toInput,
-          'to'
-        );
-
-        yearRangeBindings.push({
-          definition,
-          sync
-        });
-
-        sync();
-        return;
-      }
+            return;
+        }
         const select =
-          container.querySelector(
-            `[data-shared-filter-select="${
-              definition.key
-            }"]`
-          );
+            container.querySelector(
+                `[data-shared-filter-select="${
+                    definition.key
+                }"]`
+            );
 
-        if (select) {
-          select.addEventListener(
-            'change',
-            () => {
-              currentValues[
-                definition.key
-              ] =
-                select.value;
+        if (select)
+        {
+            select.addEventListener(
+                'change',
+                () =>
+                {
+                    currentValues[
+                        definition.key
+                    ] =
+                        select.value;
 
-              notifyChange();
-            }
-          );
+                    notifyChange();
+                }
+            );
 
-          return;
+            return;
         }
 
         const booleanInput =
-          container.querySelector(
-            `[data-shared-filter-boolean="${
-              definition.key
-            }"]`
-          );
+            container.querySelector(
+                `[data-shared-filter-boolean="${
+                    definition.key
+                }"]`
+            );
 
-        if (booleanInput) {
-          booleanInput.addEventListener(
-            'change',
-            () => {
-              currentValues[
-                definition.key
-              ] =
-                Boolean(
-                  booleanInput.checked
-                );
+        if (booleanInput)
+        {
+            booleanInput.addEventListener(
+                'change',
+                () =>
+                {
+                    currentValues[
+                        definition.key
+                    ] =
+                        Boolean(
+                            booleanInput.checked
+                        );
 
-              notifyChange();
-            }
-          );
+                    notifyChange();
+                }
+            );
 
-          return;
+            return;
         }
 
         const combobox =
-          container.querySelector(
-            `[data-shared-filter-combobox="${
-              definition.key
-            }"]`
-          );
+            container.querySelector(
+                `[data-shared-filter-combobox="${
+                    definition.key
+                }"]`
+            );
 
-        if (!combobox) {
-          return;
+        if (!combobox)
+        {
+            return;
         }
 
         const input =
-          combobox.querySelector(
-            '[data-shared-filter-input]'
-          );
+            combobox.querySelector(
+                '[data-shared-filter-input]'
+            );
 
         const toggle =
-          combobox.querySelector(
-            '[data-shared-filter-toggle]'
-          );
+            combobox.querySelector(
+                '[data-shared-filter-toggle]'
+            );
 
         const listbox =
-          combobox.querySelector(
-            '[data-shared-filter-listbox]'
-          );
+            combobox.querySelector(
+                '[data-shared-filter-listbox]'
+            );
 
         const selectedRoot =
-          combobox.querySelector(
-            '[data-shared-filter-selected]'
-          );
+            combobox.querySelector(
+                '[data-shared-filter-selected]'
+            );
 
         const status =
-          combobox.querySelector(
-            '[data-shared-filter-status]'
-          );
+            combobox.querySelector(
+                '[data-shared-filter-status]'
+            );
 
         if (
-          !input
+            !input
           || !toggle
           || !listbox
           || !selectedRoot
-        ) {
-          return;
+        )
+        {
+            return;
         }
 
         let query = '';
@@ -462,49 +494,53 @@
         let visibleOptions = [];
 
         const optionId =
-          index =>
-            `${
-              listbox.id
-            }-option-${
-              index
-            }`;
+            index =>
+                `${
+                    listbox.id
+                }-option-${
+                    index
+                }`;
 
-        const selectedValues = () => {
-          const value =
-            currentValues[
-              definition.key
-            ];
+        const selectedValues = () =>
+        {
+            const value =
+                currentValues[
+                    definition.key
+                ];
 
-          if (definition.multiple) {
-            return Array.isArray(value)
-              ? value
-              : [];
-          }
+            if (definition.multiple)
+            {
+                return Array.isArray(value)
+                    ? value
+                    : [];
+            }
 
-          return value == null
+            return value == null
             || value === ''
-              ? []
-              : [
-                  String(value)
+                ? []
+                : [
+                    String(value)
                 ];
         };
 
-        const renderSelected = () => {
-          const valuesToRender =
-            selectedValues();
+        const renderSelected = () =>
+        {
+            const valuesToRender =
+                selectedValues();
 
-          selectedRoot.hidden =
-            valuesToRender.length === 0;
+            selectedRoot.hidden =
+                valuesToRender.length === 0;
 
-          selectedRoot.innerHTML =
-            valuesToRender.map(value => {
-              const label =
-                sharedFilterOptionLabel(
-                  definition,
-                  value
-                );
+            selectedRoot.innerHTML =
+                valuesToRender.map(value =>
+                {
+                    const label =
+                        sharedFilterOptionLabel(
+                            definition,
+                            value
+                        );
 
-              return `
+                    return `
                 <span
                   class="shared-filter-token">
 
@@ -521,199 +557,208 @@
                     "
                     type="button"
                     data-shared-filter-remove="${
-                      escapeHtml(value)
+                        escapeHtml(value)
                     }"
                     aria-label="${
-                      escapeHtml(
-                        sharedFilterRemoveValueLabel(
-                          label
+                        escapeHtml(
+                            sharedFilterRemoveValueLabel(
+                                label
+                            )
                         )
-                      )
                     }">
 
                     ${icon.close}
                   </button>
                 </span>
               `;
-            }).join('');
+                }).join('');
         };
 
-        const positionListbox = () => {
-          const inputShell =
-            combobox.querySelector(
-              '.shared-filter-combobox-input'
-            )
+        const positionListbox = () =>
+        {
+            const inputShell =
+                combobox.querySelector(
+                    '.shared-filter-combobox-input'
+                )
             || input;
 
-          const rect =
-            inputShell
-              .getBoundingClientRect();
+            const rect =
+                inputShell
+                    .getBoundingClientRect();
 
-          const margin = 12;
-          const gap = 5;
-          const preferredHeight = 320;
+            const margin = 12;
+            const gap = 5;
+            const preferredHeight = 320;
 
-          const spaceBelow =
-            window.innerHeight
+            const spaceBelow =
+                window.innerHeight
             - rect.bottom
             - margin
             - gap;
 
-          const spaceAbove =
-            rect.top
+            const spaceAbove =
+                rect.top
             - margin
             - gap;
 
-          const openAbove =
-            spaceBelow < preferredHeight
+            const openAbove =
+                spaceBelow < preferredHeight
             && spaceAbove > spaceBelow;
 
-          const availableHeight =
-            Math.max(
-              80,
-              Math.min(
-                preferredHeight,
-                openAbove
-                  ? spaceAbove
-                  : spaceBelow
-              )
-            );
+            const availableHeight =
+                Math.max(
+                    80,
+                    Math.min(
+                        preferredHeight,
+                        openAbove
+                            ? spaceAbove
+                            : spaceBelow
+                    )
+                );
 
-          const width =
-            Math.min(
-              rect.width,
-              window.innerWidth
+            const width =
+                Math.min(
+                    rect.width,
+                    window.innerWidth
                 - margin * 2
-            );
+                );
 
-          const left =
-            Math.min(
-              Math.max(
-                margin,
-                rect.left
-              ),
-              window.innerWidth
+            const left =
+                Math.min(
+                    Math.max(
+                        margin,
+                        rect.left
+                    ),
+                    window.innerWidth
                 - width
                 - margin
+                );
+
+            listbox.classList.toggle(
+                'is-above',
+                openAbove
             );
 
-          listbox.classList.toggle(
-            'is-above',
-            openAbove
-          );
+            listbox.style.left =
+                `${left}px`;
 
-          listbox.style.left =
-            `${left}px`;
+            listbox.style.width =
+                `${width}px`;
 
-          listbox.style.width =
-            `${width}px`;
+            listbox.style.maxHeight =
+                `${availableHeight}px`;
 
-          listbox.style.maxHeight =
-            `${availableHeight}px`;
+            if (openAbove)
+            {
+                listbox.style.top =
+                    'auto';
 
-          if (openAbove) {
-            listbox.style.top =
-              'auto';
-
-            listbox.style.bottom =
-              `${
-                window.innerHeight
+                listbox.style.bottom =
+                    `${
+                        window.innerHeight
                 - rect.top
                 + gap
-              }px`;
-          } else {
-            listbox.style.top =
-              `${rect.bottom + gap}px`;
+                    }px`;
+            }
+            else
+            {
+                listbox.style.top =
+                    `${rect.bottom + gap}px`;
 
-            listbox.style.bottom =
-              'auto';
-          }
+                listbox.style.bottom =
+                    'auto';
+            }
         };
 
-        const renderOptions = () => {
-          const normalizedQuery =
-            normalizeSharedFilterSearch(
-              query
-            );
+        const renderOptions = () =>
+        {
+            const normalizedQuery =
+                normalizeSharedFilterSearch(
+                    query
+                );
 
-          visibleOptions =
-            sharedFilterOptions(
-              definition
-            ).filter(option => {
-              if (!normalizedQuery) {
-                return true;
-              }
+            visibleOptions =
+                sharedFilterOptions(
+                    definition
+                ).filter(option =>
+                {
+                    if (!normalizedQuery)
+                    {
+                        return true;
+                    }
 
-              const searchText =
-                [
-                  option.label,
-                  translateText(
-                    option.label
-                  ),
-                  ...(option.keywords || [])
-                ]
-                  .map(
-                    normalizeSharedFilterSearch
-                  )
-                  .join(' ');
+                    const searchText =
+                        [
+                            option.label,
+                            translateText(
+                                option.label
+                            ),
+                            ...(option.keywords || [])
+                        ]
+                            .map(
+                                normalizeSharedFilterSearch
+                            )
+                            .join(' ');
 
-              return searchText.includes(
-                normalizedQuery
-              );
-            });
+                    return searchText.includes(
+                        normalizedQuery
+                    );
+                });
 
-          if (
-            activeIndex
+            if (
+                activeIndex
             >= visibleOptions.length
-          ) {
-            activeIndex =
-              visibleOptions.length - 1;
-          }
+            )
+            {
+                activeIndex =
+                    visibleOptions.length - 1;
+            }
 
-          if (
-            activeIndex < 0
+            if (
+                activeIndex < 0
             && visibleOptions.length
-          ) {
-            activeIndex = 0;
-          }
+            )
+            {
+                activeIndex = 0;
+            }
 
-          const chosen =
-            new Set(
-              selectedValues()
-            );
+            const chosen =
+                new Set(
+                    selectedValues()
+                );
 
-          listbox.innerHTML =
-            visibleOptions.length
-              ? visibleOptions
-                  .map(
-                    (option, index) => `
+            listbox.innerHTML =
+                visibleOptions.length
+                    ? visibleOptions
+                        .map(
+                            (option, index) => `
                       <button
                         class="
                           shared-filter-option
                           ${
-                            index === activeIndex
-                              ? 'is-active'
-                              : ''
-                          }
+                                index === activeIndex
+                                    ? 'is-active'
+                                    : ''
+                            }
                         "
                         id="${
-                          escapeHtml(
-                            optionId(index)
-                          )
+                            escapeHtml(
+                                optionId(index)
+                            )
                         }"
                         type="button"
                         role="option"
                         aria-selected="${
-                          chosen.has(
-                            option.value
-                          )
-                            ? 'true'
-                            : 'false'
+                            chosen.has(
+                                option.value
+                            )
+                                ? 'true'
+                                : 'false'
                         }"
                         data-shared-filter-option="${
-                          escapeHtml(
-                            option.value
-                          )
+                            escapeHtml(
+                                option.value
+                            )
                         }">
 
                         <span
@@ -729,16 +774,16 @@
                             shared-filter-option-label
                           ">
                           ${escapeHtml(
-                            translateText(
-                              option.label
-                            )
-                          )}
+                                translateText(
+                                    option.label
+                                )
+                            )}
                         </span>
 
                         ${
-                          option.count == null
-                            ? ''
-                            : `
+                            option.count == null
+                                ? ''
+                                : `
                               <span
                                 class="
                                   shared-filter-option-count
@@ -749,569 +794,617 @@
                         }
                       </button>
                     `
-                  )
-                  .join('')
-              : `
+                        )
+                        .join('')
+                    : `
                   <div
                     class="shared-filter-empty">
                     ${escapeHtml(
-                      translateText(
-                        'No matching options.'
-                      )
+                        translateText(
+                            'No matching options.'
+                        )
                     )}
                   </div>
                 `;
 
-          if (
-            activeIndex >= 0
+            if (
+                activeIndex >= 0
             && visibleOptions.length
-          ) {
+            )
+            {
+                input.setAttribute(
+                    'aria-activedescendant',
+                    optionId(activeIndex)
+                );
+            }
+            else
+            {
+                input.removeAttribute(
+                    'aria-activedescendant'
+                );
+            }
+
+            if (status)
+            {
+                status.textContent =
+                    sharedFilterOptionStatus(
+                        visibleOptions.length
+                    );
+            }
+        };
+
+        const open = () =>
+        {
+            closeOtherComboboxes(
+                binding
+            );
+
+            renderOptions();
+
+            listbox.hidden = false;
+
+            combobox.classList.add(
+                'is-open'
+            );
+
             input.setAttribute(
-              'aria-activedescendant',
-              optionId(activeIndex)
+                'aria-expanded',
+                'true'
             );
-          } else {
+
+            toggle.setAttribute(
+                'aria-label',
+                translateText(
+                    'Close options'
+                )
+            );
+
+            positionListbox();
+        };
+
+        const close = () =>
+        {
+            listbox.hidden = true;
+
+            combobox.classList.remove(
+                'is-open'
+            );
+
+            input.setAttribute(
+                'aria-expanded',
+                'false'
+            );
+
             input.removeAttribute(
-              'aria-activedescendant'
+                'aria-activedescendant'
             );
-          }
 
-          if (status) {
-            status.textContent =
-              sharedFilterOptionStatus(
-                visibleOptions.length
-              );
-          }
-        };
-
-        const open = () => {
-          closeOtherComboboxes(
-            binding
-          );
-
-          renderOptions();
-
-          listbox.hidden = false;
-
-          combobox.classList.add(
-            'is-open'
-          );
-
-          input.setAttribute(
-            'aria-expanded',
-            'true'
-          );
-
-          toggle.setAttribute(
-            'aria-label',
-            translateText(
-              'Close options'
-            )
-          );
-
-          positionListbox();
-        };
-
-        const close = () => {
-          listbox.hidden = true;
-
-          combobox.classList.remove(
-            'is-open'
-          );
-
-          input.setAttribute(
-            'aria-expanded',
-            'false'
-          );
-
-          input.removeAttribute(
-            'aria-activedescendant'
-          );
-
-          toggle.setAttribute(
-            'aria-label',
-            translateText(
-              'Open options'
-            )
-          );
+            toggle.setAttribute(
+                'aria-label',
+                translateText(
+                    'Open options'
+                )
+            );
         };
 
         const setSelectedValue =
-          value => {
-            const oldValues =
-              selectedValues();
+            value =>
+            {
+                const oldValues =
+                    selectedValues();
 
-            if (definition.multiple) {
-              currentValues[
-                definition.key
-              ] =
-                oldValues.includes(value)
-                  ? oldValues.filter(
-                      item =>
-                        item !== value
-                    )
-                  : [
-                      ...oldValues,
-                      value
-                    ];
-            } else {
-              currentValues[
-                definition.key
-              ] =
-                value;
+                if (definition.multiple)
+                {
+                    currentValues[
+                        definition.key
+                    ] =
+                        oldValues.includes(value)
+                            ? oldValues.filter(
+                                item =>
+                                    item !== value
+                            )
+                            : [
+                                ...oldValues,
+                                value
+                            ];
+                }
+                else
+                {
+                    currentValues[
+                        definition.key
+                    ] =
+                        value;
 
-              close();
-            }
+                    close();
+                }
 
-            query = '';
-            input.value = '';
+                query = '';
+                input.value = '';
 
-            renderSelected();
-            renderOptions();
-            notifyChange();
+                renderSelected();
+                renderOptions();
+                notifyChange();
 
-            input.focus();
-          };
+                input.focus();
+            };
 
         const binding = {
-          definition,
-          input,
-          open,
-          close,
+            definition,
+            input,
+            open,
+            close,
 
-          sync() {
-            renderSelected();
-            renderOptions();
-          }
+            sync()
+            {
+                renderSelected();
+                renderOptions();
+            }
         };
 
         comboboxBindings.push(
-          binding
+            binding
         );
 
         renderSelected();
 
         input.addEventListener(
-          'focus',
-          open
+            'focus',
+            open
         );
 
         input.addEventListener(
-          'input',
-          () => {
-            query =
-              input.value;
+            'input',
+            () =>
+            {
+                query =
+                    input.value;
 
-            activeIndex = 0;
-            open();
-          }
+                activeIndex = 0;
+                open();
+            }
         );
 
         input.addEventListener(
-          'keydown',
-          event => {
-            if (
-              event.key === 'ArrowDown'
-            ) {
-              event.preventDefault();
-
-              if (listbox.hidden) {
-                open();
-              } else if (
-                visibleOptions.length
-              ) {
-                activeIndex =
-                  Math.min(
-                    activeIndex + 1,
-                    visibleOptions.length - 1
-                  );
-
-                renderOptions();
-              }
-
-              listbox
-                .querySelector(
-                  '.shared-filter-option.is-active'
+            'keydown',
+            event =>
+            {
+                if (
+                    event.key === 'ArrowDown'
                 )
-                ?.scrollIntoView({
-                  block:
+                {
+                    event.preventDefault();
+
+                    if (listbox.hidden)
+                    {
+                        open();
+                    }
+                    else if (
+                        visibleOptions.length
+                    )
+                    {
+                        activeIndex =
+                            Math.min(
+                                activeIndex + 1,
+                                visibleOptions.length - 1
+                            );
+
+                        renderOptions();
+                    }
+
+                    listbox
+                        .querySelector(
+                            '.shared-filter-option.is-active'
+                        )
+                        ?.scrollIntoView({
+                            block:
                     'nearest'
-                });
+                        });
 
-              return;
-            }
+                    return;
+                }
 
-            if (
-              event.key === 'ArrowUp'
-            ) {
-              event.preventDefault();
-
-              if (listbox.hidden) {
-                open();
-              } else if (
-                visibleOptions.length
-              ) {
-                activeIndex =
-                  Math.max(
-                    activeIndex - 1,
-                    0
-                  );
-
-                renderOptions();
-              }
-
-              listbox
-                .querySelector(
-                  '.shared-filter-option.is-active'
+                if (
+                    event.key === 'ArrowUp'
                 )
-                ?.scrollIntoView({
-                  block:
+                {
+                    event.preventDefault();
+
+                    if (listbox.hidden)
+                    {
+                        open();
+                    }
+                    else if (
+                        visibleOptions.length
+                    )
+                    {
+                        activeIndex =
+                            Math.max(
+                                activeIndex - 1,
+                                0
+                            );
+
+                        renderOptions();
+                    }
+
+                    listbox
+                        .querySelector(
+                            '.shared-filter-option.is-active'
+                        )
+                        ?.scrollIntoView({
+                            block:
                     'nearest'
-                });
+                        });
 
-              return;
-            }
+                    return;
+                }
 
-            if (
-              event.key === 'Enter'
+                if (
+                    event.key === 'Enter'
               && !listbox.hidden
               && activeIndex >= 0
               && visibleOptions[
-                activeIndex
-              ]
-            ) {
-              event.preventDefault();
-
-              setSelectedValue(
-                visibleOptions[
                   activeIndex
-                ].value
-              );
+              ]
+                )
+                {
+                    event.preventDefault();
 
-              return;
-            }
+                    setSelectedValue(
+                        visibleOptions[
+                            activeIndex
+                        ].value
+                    );
 
-            if (
-              event.key === 'Escape'
+                    return;
+                }
+
+                if (
+                    event.key === 'Escape'
               && !listbox.hidden
-            ) {
-              event.preventDefault();
-              event.stopPropagation();
+                )
+                {
+                    event.preventDefault();
+                    event.stopPropagation();
 
-              close();
+                    close();
+                }
             }
-          }
         );
 
         toggle.addEventListener(
-          'click',
-          () => {
-            if (listbox.hidden) {
-              input.focus();
-              open();
-            } else {
-              close();
-              input.focus();
+            'click',
+            () =>
+            {
+                if (listbox.hidden)
+                {
+                    input.focus();
+                    open();
+                }
+                else
+                {
+                    close();
+                    input.focus();
+                }
             }
-          }
         );
 
         listbox.addEventListener(
-          'pointerdown',
-          event => {
-            if (
-              event.target.closest(
-                '[data-shared-filter-option]'
-              )
-            ) {
-              event.preventDefault();
+            'pointerdown',
+            event =>
+            {
+                if (
+                    event.target.closest(
+                        '[data-shared-filter-option]'
+                    )
+                )
+                {
+                    event.preventDefault();
+                }
             }
-          }
         );
 
         listbox.addEventListener(
-          'click',
-          event => {
-            const option =
-              event.target.closest(
-                '[data-shared-filter-option]'
-              );
+            'click',
+            event =>
+            {
+                const option =
+                    event.target.closest(
+                        '[data-shared-filter-option]'
+                    );
 
-            if (!option) {
-              return;
-            }
+                if (!option)
+                {
+                    return;
+                }
 
-            /*
+                /*
             * setSelectedValue() rebuilds the listbox.
             * Stop this click before its original target
             * is removed and document treats it as an
             * outside click.
             */
-            event.preventDefault();
-            event.stopPropagation();
+                event.preventDefault();
+                event.stopPropagation();
 
-            setSelectedValue(
-              option.dataset
-                .sharedFilterOption
-            );
-          }
+                setSelectedValue(
+                    option.dataset
+                        .sharedFilterOption
+                );
+            }
         );
 
         selectedRoot.addEventListener(
-          'click',
-          event => {
-            const removeButton =
-              event.target.closest(
-                '[data-shared-filter-remove]'
-              );
+            'click',
+            event =>
+            {
+                const removeButton =
+                    event.target.closest(
+                        '[data-shared-filter-remove]'
+                    );
 
-            if (!removeButton) {
-              return;
-            }
+                if (!removeButton)
+                {
+                    return;
+                }
 
-            event.preventDefault();
-            event.stopPropagation();
+                event.preventDefault();
+                event.stopPropagation();
 
-            const value =
-              removeButton.dataset
-                .sharedFilterRemove;
+                const value =
+                    removeButton.dataset
+                        .sharedFilterRemove;
 
-            currentValues[
-              definition.key
-            ] =
-              definition.multiple
-                ? selectedValues()
-                    .filter(item =>
-                      item !== value
-                    )
-                : definition.defaultValue
+                currentValues[
+                    definition.key
+                ] =
+                    definition.multiple
+                        ? selectedValues()
+                            .filter(item =>
+                                item !== value
+                            )
+                        : definition.defaultValue
                   ?? '';
 
-            renderSelected();
-            renderOptions();
-            notifyChange();
+                renderSelected();
+                renderOptions();
+                notifyChange();
 
-            input.focus();
-          }
+                input.focus();
+            }
         );
 
         combobox.addEventListener(
-          'focusout',
-          () => {
-            setTimeout(
-              () => {
-                if (
-                  !combobox.contains(
-                    document.activeElement
-                  )
-                ) {
-                  close();
-                }
-              },
-              0
-            );
-          }
+            'focusout',
+            () =>
+            {
+                setTimeout(
+                    () =>
+                    {
+                        if (
+                            !combobox.contains(
+                                document.activeElement
+                            )
+                        )
+                        {
+                            close();
+                        }
+                    },
+                    0
+                );
+            }
         );
-      });
+    });
 
-      const panelBody =
+    const panelBody =
         container.closest(
-          '.shared-filter-panel-body'
+            '.shared-filter-panel-body'
         );
 
-      panelBody?.addEventListener(
+    panelBody?.addEventListener(
         'scroll',
-        () => {
-          comboboxBindings.forEach(
-            binding =>
-              binding.close()
-          );
+        () =>
+        {
+            comboboxBindings.forEach(
+                binding =>
+                    binding.close()
+            );
         },
         {
-          passive:
+            passive:
             true
         }
-      );
+    );
 
-      const reset = () => {
+    const reset = () =>
+    {
         const defaults =
-          cloneSharedFilterValues(
-            schema,
-            {}
-          );
+            cloneSharedFilterValues(
+                schema,
+                {}
+            );
 
         Object.assign(
-          currentValues,
-          defaults
+            currentValues,
+            defaults
         );
 
-        schema.forEach(definition => {
-          const select =
-            container.querySelector(
-              `[data-shared-filter-select="${
-                definition.key
-              }"]`
-            );
+        schema.forEach(definition =>
+        {
+            const select =
+                container.querySelector(
+                    `[data-shared-filter-select="${
+                        definition.key
+                    }"]`
+                );
 
-          if (select) {
-            select.value =
-              currentValues[
-                definition.key
-              ];
-          }
+            if (select)
+            {
+                select.value =
+                    currentValues[
+                        definition.key
+                    ];
+            }
 
-          const booleanInput =
-            container.querySelector(
-              `[data-shared-filter-boolean="${
-                definition.key
-              }"]`
-            );
+            const booleanInput =
+                container.querySelector(
+                    `[data-shared-filter-boolean="${
+                        definition.key
+                    }"]`
+                );
 
-          if (booleanInput) {
-            booleanInput.checked =
-              Boolean(
-                currentValues[
-                  definition.key
-                ]
-              );
-          }
+            if (booleanInput)
+            {
+                booleanInput.checked =
+                    Boolean(
+                        currentValues[
+                            definition.key
+                        ]
+                    );
+            }
         });
         yearRangeBindings.forEach(
-          binding =>
-            binding.sync()
+            binding =>
+                binding.sync()
         );
         comboboxBindings.forEach(
-          binding =>
-            binding.sync()
+            binding =>
+                binding.sync()
         );
 
         notifyChange();
-      };
+    };
 
-      return {
+    return {
         getValues,
         reset,
 
-        getErrors() {
-          return schema
-            .filter(definition =>
-              definition.control
+        getErrors()
+        {
+            return schema
+                .filter(definition =>
+                    definition.control
                 === 'year-range'
-            )
-            .map(definition =>
-              sharedFilterYearRangeError(
-                currentValues[
-                  definition.key
-                ]
-              )
-            )
-            .filter(Boolean);
+                )
+                .map(definition =>
+                    sharedFilterYearRangeError(
+                        currentValues[
+                            definition.key
+                        ]
+                    )
+                )
+                .filter(Boolean);
         },
 
-        focusFirstInvalid() {
-          container
-            .querySelector(
-              '[aria-invalid="true"]'
-            )
-            ?.focus({
-              preventScroll:
+        focusFirstInvalid()
+        {
+            container
+                .querySelector(
+                    '[aria-invalid="true"]'
+                )
+                ?.focus({
+                    preventScroll:
                 true
-            });
+                });
         },
 
-        openCombobox(key) {
-          const binding =
-            comboboxBindings.find(
-              item =>
-                item.definition.key
+        openCombobox(key)
+        {
+            const binding =
+                comboboxBindings.find(
+                    item =>
+                        item.definition.key
                   === key
-            );
+                );
 
-          if (!binding) {
-            return;
-          }
+            if (!binding)
+            {
+                return;
+            }
 
-          binding.input.focus({
-            preventScroll:
+            binding.input.focus({
+                preventScroll:
               true
-          });
+            });
 
-          binding.open();
+            binding.open();
         },
 
-        focusFirst() {
-          container
-            .querySelector(
-              [
-                '[data-shared-filter-input]',
-                '[data-shared-filter-year-mode]',
-                '[data-shared-filter-select]'
-              ].join(', ')
-            )
-            ?.focus();
+        focusFirst()
+        {
+            container
+                .querySelector(
+                    [
+                        '[data-shared-filter-input]',
+                        '[data-shared-filter-year-mode]',
+                        '[data-shared-filter-select]'
+                    ].join(', ')
+                )
+                ?.focus();
         }
-      };
-    }
+    };
+}
 
-    function positionSharedFilterPanel(
-      panel,
-      anchor
-    ) {
-      if (
+function positionSharedFilterPanel(
+    panel,
+    anchor
+)
+{
+    if (
         window.innerWidth <= 640
-      ) {
+    )
+    {
         panel.classList.add(
-          'is-mobile'
+            'is-mobile'
         );
 
         return;
-      }
+    }
 
-      const margin = 12;
-      const gap = 8;
+    const margin = 12;
+    const gap = 8;
 
-      const anchorRect =
+    const anchorRect =
         anchor.getBoundingClientRect();
 
-      const left =
+    const left =
         Math.min(
-          Math.max(
-            margin,
-            anchorRect.right
+            Math.max(
+                margin,
+                anchorRect.right
               - panel.offsetWidth
-          ),
-          window.innerWidth
+            ),
+            window.innerWidth
             - panel.offsetWidth
             - margin
         );
 
-      const below =
+    const below =
         anchorRect.bottom
         + gap;
 
-      const top =
+    const top =
         below + panel.offsetHeight
           <= window.innerHeight
             - margin
-          ? below
-          : Math.max(
-              margin,
-              anchorRect.top
+            ? below
+            : Math.max(
+                margin,
+                anchorRect.top
                 - panel.offsetHeight
                 - gap
             );
 
-      panel.style.left =
+    panel.style.left =
         `${left}px`;
 
-      panel.style.top =
+    panel.style.top =
         `${top}px`;
-    }
+}
 
-    /* ---------- People filter configuration ---------- */
+/* ---------- People filter configuration ---------- */
 
-    const defaultPeopleFilters =
-      Object.freeze({
+const defaultPeopleFilters =
+    Object.freeze({
         surnames:
           Object.freeze([]),
 
@@ -1319,13 +1412,13 @@
           Object.freeze([]),
         birthYear:
           Object.freeze({
-            mode:
+              mode:
               '',
 
-            from:
+              from:
               '',
 
-            to:
+              to:
               ''
           }),
 
@@ -1337,497 +1430,514 @@
 
         reviewStatus:
           ''
-      });
+    });
 
-    function peopleSurnameFilterOptions() {
-      const values =
+function peopleSurnameFilterOptions()
+{
+    const values =
         new Map();
 
-      getPeople(
+    getPeople(
         currentProjectId()
-      )
+    )
         .filter(person =>
-          person
+            person
           && !person.deleted
         )
-        .forEach(person => {
-          const surname =
-            String(
-              person.names?.last
+        .forEach(person =>
+        {
+            const surname =
+                String(
+                    person.names?.last
               || ''
-            ).trim();
+                ).trim();
 
-          if (!surname) {
-            return;
-          }
+            if (!surname)
+            {
+                return;
+            }
 
-          const key =
-            normalizeSharedFilterSearch(
-              surname
-            );
-
-          const existing =
-            values.get(key);
-
-          if (existing) {
-            existing.count += 1;
-          } else {
-            values.set(
-              key,
-              {
-                value:
-                  surname,
-
-                label:
-                  surname,
-
-                count:
-                  1
-              }
-            );
-          }
-        });
-
-      const collator =
-        new Intl.Collator(
-          state.language === 'ru'
-            ? 'ru'
-            : 'en',
-          {
-            sensitivity:
-              'base'
-          }
-        );
-
-      return [
-        ...values.values()
-      ].sort(
-        (left, right) =>
-          collator.compare(
-            left.label,
-            right.label
-          )
-      );
-    }
-
-    function peopleBirthPlaceFilterOptions() {
-      const counts =
-        new Map();
-
-      let unknownCount = 0;
-
-      getPeople(
-        currentProjectId()
-      )
-        .filter(person =>
-          person
-          && !person.deleted
-        )
-        .forEach(person => {
-          const placeId =
-            String(
-              person.birth?.placeId
-              || ''
-            ).trim();
-
-          if (!placeId) {
-            unknownCount += 1;
-            return;
-          }
-
-          counts.set(
-            placeId,
-            (
-              counts.get(placeId)
-              || 0
-            ) + 1
-          );
-        });
-
-      const options =
-        [
-          ...counts.entries()
-        ].map(
-          ([
-            placeId,
-            count
-          ]) => {
-            const place =
-              sampleData.places
-                .find(item =>
-                  item.id === placeId
+            const key =
+                normalizeSharedFilterSearch(
+                    surname
                 );
 
-            return {
-              value:
+            const existing =
+                values.get(key);
+
+            if (existing)
+            {
+                existing.count += 1;
+            }
+            else
+            {
+                values.set(
+                    key,
+                    {
+                        value:
+                  surname,
+
+                        label:
+                  surname,
+
+                        count:
+                  1
+                    }
+                );
+            }
+        });
+
+    const collator =
+        new Intl.Collator(
+            state.language === 'ru'
+                ? 'ru'
+                : 'en',
+            {
+                sensitivity:
+              'base'
+            }
+        );
+
+    return [
+        ...values.values()
+    ].sort(
+        (left, right) =>
+            collator.compare(
+                left.label,
+                right.label
+            )
+    );
+}
+
+function peopleBirthPlaceFilterOptions()
+{
+    const counts =
+        new Map();
+
+    let unknownCount = 0;
+
+    getPeople(
+        currentProjectId()
+    )
+        .filter(person =>
+            person
+          && !person.deleted
+        )
+        .forEach(person =>
+        {
+            const placeId =
+                String(
+                    person.birth?.placeId
+              || ''
+                ).trim();
+
+            if (!placeId)
+            {
+                unknownCount += 1;
+                return;
+            }
+
+            counts.set(
+                placeId,
+                (
+                    counts.get(placeId)
+              || 0
+                ) + 1
+            );
+        });
+
+    const options =
+        [
+            ...counts.entries()
+        ].map(
+            ([
+                placeId,
+                count
+            ]) =>
+            {
+                const place =
+                    sampleData.places
+                        .find(item =>
+                            item.id === placeId
+                        );
+
+                return {
+                    value:
                 placeId,
 
-              label:
+                    label:
                 getPlaceDisplay(
-                  placeId
+                    placeId
                 ),
 
-              keywords:
+                    keywords:
                 [
-                  ...(place
-                    ?.alternativeNames
+                    ...(place
+                        ?.alternativeNames
                     || [])
                 ],
 
-              count
-            };
-          }
+                    count
+                };
+            }
         );
 
-      if (unknownCount) {
+    if (unknownCount)
+    {
         options.push({
-          value:
+            value:
             SHARED_FILTER_UNKNOWN_VALUE,
 
-          label:
+            label:
             'Unknown birth place',
 
-          count:
+            count:
             unknownCount
         });
-      }
-
-      const collator =
-        new Intl.Collator(
-          state.language === 'ru'
-            ? 'ru'
-            : 'en',
-          {
-            sensitivity:
-              'base'
-          }
-        );
-
-      return options.sort(
-        (left, right) =>
-          collator.compare(
-            translateText(
-              left.label
-            ),
-            translateText(
-              right.label
-            )
-          )
-      );
     }
 
-    const peopleFilterSchema =
-      Object.freeze([
+    const collator =
+        new Intl.Collator(
+            state.language === 'ru'
+                ? 'ru'
+                : 'en',
+            {
+                sensitivity:
+              'base'
+            }
+        );
+
+    return options.sort(
+        (left, right) =>
+            collator.compare(
+                translateText(
+                    left.label
+                ),
+                translateText(
+                    right.label
+                )
+            )
+    );
+}
+
+const peopleFilterSchema =
+    Object.freeze([
         Object.freeze({
-          key:
+            key:
             'surnames',
 
-          label:
+            label:
             'Surname',
 
-          control:
+            control:
             'combobox',
 
-          multiple:
+            multiple:
             true,
 
-          layout:
+            layout:
             'full',
 
-          placeholder:
+            placeholder:
             'Search surnames',
 
-          getOptions:
+            getOptions:
             peopleSurnameFilterOptions
         }),
 
         Object.freeze({
-          key:
+            key:
             'birthPlaceIds',
 
-          label:
+            label:
             'Birth place',
 
-          control:
+            control:
             'combobox',
 
-          multiple:
+            multiple:
             true,
 
-          layout:
+            layout:
             'full',
 
-          placeholder:
+            placeholder:
             'Search birth places',
 
-          getOptions:
+            getOptions:
             peopleBirthPlaceFilterOptions
         }),
 
         Object.freeze({
-          key:
+            key:
             'birthYear',
 
-          label:
+            label:
             'Birth year',
 
-          control:
+            control:
             'year-range',
 
-          layout:
+            layout:
             'full',
 
-          defaultValue:
+            defaultValue:
             Object.freeze({
-              mode:
+                mode:
                 '',
 
-              from:
+                from:
                 '',
 
-              to:
+                to:
                 ''
             })
         }),
         Object.freeze({
-          key:
+            key:
             'living',
 
-          label:
+            label:
             'Living status',
 
-          control:
+            control:
             'select',
 
-          defaultValue:
+            defaultValue:
             'Any',
 
-          options:
+            options:
             Object.freeze([
-              Object.freeze({
-                value:
+                Object.freeze({
+                    value:
                   'Any',
 
-                label:
+                    label:
                   'Any'
-              }),
+                }),
 
-              Object.freeze({
-                value:
+                Object.freeze({
+                    value:
                   'Living',
 
-                label:
+                    label:
                   'Living'
-              }),
+                }),
 
-              Object.freeze({
-                value:
+                Object.freeze({
+                    value:
                   'Deceased',
 
-                label:
+                    label:
                   'Deceased'
-              }),
+                }),
 
-              Object.freeze({
-                value:
+                Object.freeze({
+                    value:
                   'Unknown',
 
-                label:
+                    label:
                   'Unknown'
-              })
+                })
             ])
         }),
         Object.freeze({
-          key:
+            key:
             'sourceLinks',
 
-          label:
+            label:
             'Sources',
 
-          control:
+            control:
             'select',
 
-          defaultValue:
+            defaultValue:
             'all',
 
-          options:
+            options:
             Object.freeze([
-              Object.freeze({
-                value:
+                Object.freeze({
+                    value:
                   'all',
 
-                label:
+                    label:
                   'Any source status'
-              }),
+                }),
 
-              Object.freeze({
-                value:
+                Object.freeze({
+                    value:
                   'linked',
 
-                label:
+                    label:
                   'With sources'
-              }),
+                }),
 
-              Object.freeze({
-                value:
+                Object.freeze({
+                    value:
                   'unlinked',
 
-                label:
+                    label:
                   'Without sources'
-              })
+                })
             ])
         }),
         Object.freeze({
-          key:
+            key:
             'reviewStatus',
 
-          label:
+            label:
             'Review status',
 
-          control:
+            control:
             'select',
 
-          defaultValue:
+            defaultValue:
             '',
 
-          options:
+            options:
             Object.freeze([
-              Object.freeze({
-                value:
+                Object.freeze({
+                    value:
                   '',
 
-                label:
+                    label:
                   'Any'
-              }),
+                }),
 
-              Object.freeze({
-                value:
+                Object.freeze({
+                    value:
                   'No issues',
 
-                label:
+                    label:
                   'No issues'
-              }),
+                }),
 
-              Object.freeze({
-                value:
+                Object.freeze({
+                    value:
                   'Possible duplicate',
 
-                label:
+                    label:
                   'Possible duplicate'
-              }),
+                }),
 
-              Object.freeze({
-                value:
+                Object.freeze({
+                    value:
                   'Missing facts',
 
-                label:
+                    label:
                   'Missing facts'
-              }),
+                }),
 
-              Object.freeze({
-                value:
+                Object.freeze({
+                    value:
                   'Missing source',
 
-                label:
+                    label:
                   'Missing source'
-              }),
+                }),
 
-              Object.freeze({
-                value:
+                Object.freeze({
+                    value:
                   'Historic records',
 
-                label:
+                    label:
                   'Historic records'
-              })
+                })
             ])
         })
-      ]);
+    ]);
 
-    function peopleFiltersWithDefaults(
-      filters = state.peopleFilters
-    ) {
-      return cloneSharedFilterValues(
+function peopleFiltersWithDefaults(
+    filters = state.peopleFilters
+)
+{
+    return cloneSharedFilterValues(
         peopleFilterSchema,
         {
-          ...defaultPeopleFilters,
-          ...(filters || {})
+            ...defaultPeopleFilters,
+            ...(filters || {})
         }
-      );
-    }
+    );
+}
 
-    function renderPeopleFilterFields(
-      filters = defaultPeopleFilters,
-      prefix = 'people-filter'
-    ) {
-      return renderSharedFilterFields({
+function renderPeopleFilterFields(
+    filters = defaultPeopleFilters,
+    prefix = 'people-filter'
+)
+{
+    return renderSharedFilterFields({
         schema:
           peopleFilterSchema,
 
         values:
           peopleFiltersWithDefaults(
-            filters
+              filters
           ),
 
         prefix
-      });
-    }
+    });
+}
 
-    function bindPeopleFilterFields(
-      root,
-      filters,
-      prefix,
-      onChange =
-        () => {}
-    ) {
-      const controller =
+function bindPeopleFilterFields(
+    root,
+    filters,
+    prefix,
+    onChange =
+        () =>
+        {}
+)
+{
+    const controller =
         bindSharedFilterFields(
-          root,
-          {
-            schema:
+            root,
+            {
+                schema:
               peopleFilterSchema,
 
-            values:
+                values:
               peopleFiltersWithDefaults(
-                filters
+                  filters
               ),
 
-            prefix,
-            onChange
-          }
+                prefix,
+                onChange
+            }
         );
 
-      root.peopleFilterController =
+    root.peopleFilterController =
         controller;
 
-      return controller;
-    }
+    return controller;
+}
 
-    function readPeopleFilterFields(
-      root
-    ) {
-      return (
+function readPeopleFilterFields(
+    root
+)
+{
+    return (
         root
-          ?.peopleFilterController
-          ?.getValues()
+            ?.peopleFilterController
+            ?.getValues()
         || peopleFiltersWithDefaults(
-          defaultPeopleFilters
+            defaultPeopleFilters
         )
-      );
-    }
+    );
+}
 
-    function resetPeopleFilterFields(
-      root
-    ) {
-      root
+function resetPeopleFilterFields(
+    root
+)
+{
+    root
         ?.peopleFilterController
         ?.reset();
-    }
-    
-    const defaultPeopleColumns = Object.freeze({ living: true, birth: true, birthPlace: true, death: true, deathPlace: true, updated: true });
-    const peopleColumnLabels = { living: 'Living', birth: 'Birth date', birthPlace: 'Birth place', death: 'Death date', deathPlace: 'Death place', updated: 'Updated' };
+}
 
-    let peopleSavedViews = [
-      {
+const defaultPeopleColumns = Object.freeze({ living: true, birth: true, birthPlace: true, death: true, deathPlace: true, updated: true });
+const peopleColumnLabels = { living: 'Living', birth: 'Birth date', birthPlace: 'Birth place', death: 'Death date', deathPlace: 'Death place', updated: 'Updated' };
+
+let peopleSavedViews = [
+    {
         id:
           'whiskerfield-line',
 
@@ -1838,12 +1948,12 @@
           'All Whiskerfield surname records.',
 
         filters: {
-          surnames:
+            surnames:
             ['Whiskerfield']
         }
-      },
+    },
 
-      {
+    {
         id:
           'meowbridge-places',
 
@@ -1854,12 +1964,12 @@
           'People and records connected to Meowbridge.',
 
         filters: {
-          birthPlaceIds:
+            birthPlaceIds:
             ['place-meowbridge']
         }
-      },
+    },
 
-      {
+    {
         id:
           'historic-records',
 
@@ -1870,122 +1980,132 @@
           'Great-grandparents and early evidence.',
 
         filters: {
-          reviewStatus:
+            reviewStatus:
             'Historic records'
         }
-      }
-    ];
-
-    function selectedPeopleRecord() {
-      const records = currentPeopleRecords();
-      if (!records.some(person => person.id === state.selectedPeopleId)) {
-        state.selectedPeopleId = records.find(person => person.id === 'silver')?.id || records[0]?.id || '';
-      }
-      return records.find(person => person.id === state.selectedPeopleId) || records[0] || null;
     }
+];
 
-    const peopleDateMonths = Object.freeze({
-      jan: 0,
-      january: 0,
-      feb: 1,
-      february: 1,
-      mar: 2,
-      march: 2,
-      apr: 3,
-      april: 3,
-      may: 4,
-      jun: 5,
-      june: 5,
-      jul: 6,
-      july: 6,
-      aug: 7,
-      august: 7,
-      sep: 8,
-      sept: 8,
-      september: 8,
-      oct: 9,
-      october: 9,
-      nov: 10,
-      november: 10,
-      dec: 11,
-      december: 11
-    });
+function selectedPeopleRecord()
+{
+    const records = currentPeopleRecords();
+    if (!records.some(person => person.id === state.selectedPeopleId))
+    {
+        state.selectedPeopleId = records.find(person => person.id === 'silver')?.id || records[0]?.id || '';
+    }
+    return records.find(person => person.id === state.selectedPeopleId) || records[0] || null;
+}
 
-    function peopleDateMonthIndex(value) {
-      const key = String(value || '').trim().toLowerCase();
-      return Object.prototype.hasOwnProperty.call(peopleDateMonths, key)
+const peopleDateMonths = Object.freeze({
+    jan: 0,
+    january: 0,
+    feb: 1,
+    february: 1,
+    mar: 2,
+    march: 2,
+    apr: 3,
+    april: 3,
+    may: 4,
+    jun: 5,
+    june: 5,
+    jul: 6,
+    july: 6,
+    aug: 7,
+    august: 7,
+    sep: 8,
+    sept: 8,
+    september: 8,
+    oct: 9,
+    october: 9,
+    nov: 10,
+    november: 10,
+    dec: 11,
+    december: 11
+});
+
+function peopleDateMonthIndex(value)
+{
+    const key = String(value || '').trim().toLowerCase();
+    return Object.prototype.hasOwnProperty.call(peopleDateMonths, key)
         ? peopleDateMonths[key]
         : null;
-    }
+}
 
-    function validPeopleDate(year, month, day) {
-      const date = new Date(year, month, day);
+function validPeopleDate(year, month, day)
+{
+    const date = new Date(year, month, day);
 
-      return date.getFullYear() === year
+    return date.getFullYear() === year
         && date.getMonth() === month
         && date.getDate() === day
         ? date
         : null;
+}
+
+function parsePeoplePrototypeDate(value)
+{
+    if (!value || value === '-') return null;
+
+    const text = String(value).trim();
+
+    let match = text.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+    if (match)
+    {
+        return validPeopleDate(
+            Number(match[3]),
+            Number(match[2]) - 1,
+            Number(match[1])
+        );
     }
 
-    function parsePeoplePrototypeDate(value) {
-      if (!value || value === '-') return null;
-
-      const text = String(value).trim();
-
-      let match = text.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
-      if (match) {
-        return validPeopleDate(
-          Number(match[3]),
-          Number(match[2]) - 1,
-          Number(match[1])
-        );
-      }
-
-      match = text.match(/^(\d{1,2})\s+([A-Za-z]{3,})\s+(\d{4})$/);
-      if (match) {
+    match = text.match(/^(\d{1,2})\s+([A-Za-z]{3,})\s+(\d{4})$/);
+    if (match)
+    {
         const month = peopleDateMonthIndex(match[2]);
         if (month === null) return null;
 
         return validPeopleDate(
-          Number(match[3]),
-          month,
-          Number(match[1])
+            Number(match[3]),
+            month,
+            Number(match[1])
         );
-      }
+    }
 
-      match = text.match(/^([A-Za-z]{3,})\s+(\d{1,2}),?\s+(\d{4})$/);
-      if (match) {
+    match = text.match(/^([A-Za-z]{3,})\s+(\d{1,2}),?\s+(\d{4})$/);
+    if (match)
+    {
         const month = peopleDateMonthIndex(match[1]);
         if (month === null) return null;
 
         return validPeopleDate(
-          Number(match[3]),
-          month,
-          Number(match[2])
+            Number(match[3]),
+            month,
+            Number(match[2])
         );
-      }
-
-      return null;
     }
 
-    function peopleSortDateValue(value) {
-      const text = String(value || '').trim().toLowerCase();
+    return null;
+}
 
-      if (!text || text === '-') return Number.NaN;
-      if (text === 'just now' || text === 'today') return Number.MAX_SAFE_INTEGER;
-      if (text === 'yesterday') return Number.MAX_SAFE_INTEGER - 1;
+function peopleSortDateValue(value)
+{
+    const text = String(value || '').trim().toLowerCase();
 
-      const date = parsePeoplePrototypeDate(value);
+    if (!text || text === '-') return Number.NaN;
+    if (text === 'just now' || text === 'today') return Number.MAX_SAFE_INTEGER;
+    if (text === 'yesterday') return Number.MAX_SAFE_INTEGER - 1;
 
-      return date ? date.getTime() : Number.NaN;
-    }
+    const date = parsePeoplePrototypeDate(value);
 
-    function sortPeopleRecords(
-      records,
-      sort = state.peopleSort
-    ) {
-      return appSortRecords(records, {
+    return date ? date.getTime() : Number.NaN;
+}
+
+function sortPeopleRecords(
+    records,
+    sort = state.peopleSort
+)
+{
+    return appSortRecords(records, {
         field:
           sort,
 
@@ -1993,165 +2113,169 @@
           state.peopleSortDirection,
 
         extractors: {
-          first: {
-            type: 'text',
-            get: record =>
-              record.first
-          },
+            first: {
+                type: 'text',
+                get: record =>
+                    record.first
+            },
 
-          last: {
-            type: 'text',
-            get: record =>
-              record.surname
-          },
+            last: {
+                type: 'text',
+                get: record =>
+                    record.surname
+            },
 
-          birth: {
-            type: 'number',
-            get: record =>
-              peopleSortDateValue(
-                record.birth
-              )
-          },
+            birth: {
+                type: 'number',
+                get: record =>
+                    peopleSortDateValue(
+                        record.birth
+                    )
+            },
 
-          updated: {
-            type: 'number',
-            get: record =>
-              appSortTimestamp(
-                record.updatedAt
-              )
-          },
+            updated: {
+                type: 'number',
+                get: record =>
+                    appSortTimestamp(
+                        record.updatedAt
+                    )
+            },
 
-          created: {
-            type: 'number',
-            get: record =>
-              appSortTimestamp(
-                record.createdAt
-              )
-          }
+            created: {
+                type: 'number',
+                get: record =>
+                    appSortTimestamp(
+                        record.createdAt
+                    )
+            }
         },
 
         getFallback:
           record => record.name
-      });
-    }
+    });
+}
 
-    function calculatePeopleAge(fromDate, toDate = new Date()) {
-      if (!fromDate || !toDate || toDate < fromDate) return null;
-      let age = toDate.getFullYear() - fromDate.getFullYear();
-      const beforeBirthday = toDate.getMonth() < fromDate.getMonth() || (toDate.getMonth() === fromDate.getMonth() && toDate.getDate() < fromDate.getDate());
-      if (beforeBirthday) age -= 1;
-      return age >= 0 ? age : null;
-    }
+function calculatePeopleAge(fromDate, toDate = new Date())
+{
+    if (!fromDate || !toDate || toDate < fromDate) return null;
+    let age = toDate.getFullYear() - fromDate.getFullYear();
+    const beforeBirthday = toDate.getMonth() < fromDate.getMonth() || (toDate.getMonth() === fromDate.getMonth() && toDate.getDate() < fromDate.getDate());
+    if (beforeBirthday) age -= 1;
+    return age >= 0 ? age : null;
+}
 
-    function peopleHeroLifeSummaryItems(
-      person,
-      options = {}
-    ) {
-      const birth =
+function peopleHeroLifeSummaryItems(
+    person,
+    options = {}
+)
+{
+    const birth =
         cleanGenealogyDateText(
-          person?.birth
+            person?.birth
         );
 
-      const death =
+    const death =
         cleanGenealogyDateText(
-          person?.death
+            person?.death
         );
 
-      const birthDate =
+    const birthDate =
         parsePeoplePrototypeDate(
-          person?.birth
+            person?.birth
         );
 
-      const deathDate =
+    const deathDate =
         parsePeoplePrototypeDate(
-          person?.death
+            person?.death
         );
 
-      const livingStatus =
+    const livingStatus =
         normalizeLivingStatus(
-          person?.living
+            person?.living
           ?? person?.livingStatus
         );
 
-      const isLiving =
+    const isLiving =
         livingStatus === 'Living';
 
-      const showsDeath =
+    const showsDeath =
         livingStatus !== 'Living';
 
-      const birthPlace =
+    const birthPlace =
         options.includeBirthPlace
-          ? person?.birthPlace || ''
-          : '';
+            ? person?.birthPlace || ''
+            : '';
 
-      const deathPlace =
+    const deathPlace =
         options.includeDeathPlace
-          ? person?.deathPlace || ''
-          : '';
+            ? person?.deathPlace || ''
+            : '';
 
-      const currentAge =
+    const currentAge =
         isLiving && birthDate
-          ? calculatePeopleAge(
-              birthDate
-            )
-          : null;
-
-      const items = [
-        {
-          label: 'Birth',
-          value:
-            birth || 'Unknown',
-          detail:
-            currentAge !== null
-              ? `Age: ${currentAge}`
-              : '',
-          place:
-            birthPlace
-        }
-      ];
-
-      if (showsDeath) {
-        const ageAtDeath =
-          birthDate && deathDate
             ? calculatePeopleAge(
-                birthDate,
-                deathDate
-              )
+                birthDate
+            )
             : null;
 
+    const items = [
+        {
+            label: 'Birth',
+            value:
+            birth || 'Unknown',
+            detail:
+            currentAge !== null
+                ? `Age: ${currentAge}`
+                : '',
+            place:
+            birthPlace
+        }
+    ];
+
+    if (showsDeath)
+    {
+        const ageAtDeath =
+            birthDate && deathDate
+                ? calculatePeopleAge(
+                    birthDate,
+                    deathDate
+                )
+                : null;
+
         items.push({
-          label: 'Death',
-          value:
+            label: 'Death',
+            value:
             death || 'Unknown',
-          detail:
+            detail:
             ageAtDeath !== null
-              ? `Age: ${ageAtDeath}`
-              : '',
-          place:
+                ? `Age: ${ageAtDeath}`
+                : '',
+            place:
             deathPlace
         });
-      }
-
-      return items;
     }
 
-    function renderPeopleHeroLifeSummary(
-      person,
-      options = {}
-    ) {
-      const items =
+    return items;
+}
+
+function renderPeopleHeroLifeSummary(
+    person,
+    options = {}
+)
+{
+    const items =
         peopleHeroLifeSummaryItems(
-          person,
-          options
+            person,
+            options
         );
 
-      return `
+    return `
         <div
           class="profile-hero-life"
           role="list">
 
           ${items
-            .map(item => `
+                .map(item => `
               <div
                 class="profile-hero-life-item"
                 role="listitem">
@@ -2166,511 +2290,546 @@
                   </strong>
 
                   ${
-                    item.detail
-                      ? `
+                        item.detail
+                            ? `
                         <span>
                           ${escapeHtml(item.detail)}
                         </span>
                       `
-                      : ''
-                  }
+                            : ''
+                    }
                 </div>
 
                 ${
-                  item.place
-                    ? `
+                    item.place
+                        ? `
                       <span class="profile-hero-life-place">
                         ${escapeHtml(item.place)}
                       </span>
                     `
-                    : ''
+                        : ''
                 }
               </div>
             `)
-            .join('')}
+                .join('')}
         </div>
       `;
-    }
+}
 
-    function peopleColumnsWithDefaults(columns = state.peopleVisibleColumns) {
-      return { ...defaultPeopleColumns, ...(columns || {}) };
-    }
+function peopleColumnsWithDefaults(columns = state.peopleVisibleColumns)
+{
+    return { ...defaultPeopleColumns, ...(columns || {}) };
+}
 
-    function peopleColumnsCustomized() {
-      const columns = peopleColumnsWithDefaults();
-      return Object.keys(defaultPeopleColumns).some(key => columns[key] !== defaultPeopleColumns[key]);
-    }
+function peopleColumnsCustomized()
+{
+    const columns = peopleColumnsWithDefaults();
+    return Object.keys(defaultPeopleColumns).some(key => columns[key] !== defaultPeopleColumns[key]);
+}
 
-    function getPeopleSourceCount(
-      person
-    ) {
-      if (!person?.id) {
+function getPeopleSourceCount(
+    person
+)
+{
+    if (!person?.id)
+    {
         return 0;
-      }
+    }
 
-      if (
+    if (
         Number.isInteger(
-          person.sourceCount
+            person.sourceCount
         )
-      ) {
+    )
+    {
         return person.sourceCount;
-      }
+    }
 
-      const centralPerson =
+    const centralPerson =
         getPerson(
-          person.id
+            person.id
         );
 
-      if (!centralPerson) {
+    if (!centralPerson)
+    {
         return 0;
-      }
+    }
 
-      return sourceIdsForTarget(
+    return sourceIdsForTarget(
         'person',
         centralPerson.id,
         centralPerson.projectId
-      ).length;
-    }
+    ).length;
+}
 
-    function getPeopleSourceStatus(
-      person
-    ) {
-      const count =
+function getPeopleSourceStatus(
+    person
+)
+{
+    const count =
         getPeopleSourceCount(
-          person
+            person
         );
 
-      return `${count} ${
+    return `${count} ${
         count === 1
-          ? 'source'
-          : 'sources'
-      } linked`;
-    }
+            ? 'source'
+            : 'sources'
+    } linked`;
+}
 
-    function getPeopleReviewStatus(
-      person
-    ) {
-      const centralPerson =
+function getPeopleReviewStatus(
+    person
+)
+{
+    const centralPerson =
         getPerson(
-          person?.id
+            person?.id
         );
 
-      const explicitStatus =
+    const explicitStatus =
         person?.reviewStatus
         || centralPerson?.meta
-          ?.reviewStatus
+            ?.reviewStatus
         || '';
 
-      /*
+    /*
         Preserve specific review findings.
         Source availability must not hide a
         duplicate or missing-facts warning.
       */
-      if (
+    if (
         explicitStatus
         && explicitStatus !== 'No issues'
         && explicitStatus !== 'Missing source'
-      ) {
+    )
+    {
         return explicitStatus;
-      }
+    }
 
-      const sourceCount =
+    const sourceCount =
         getPeopleSourceCount(
-          person
+            person
         );
 
-      if (!sourceCount) {
+    if (!sourceCount)
+    {
         return 'Missing source';
-      }
+    }
 
-      /*
+    /*
         A stale stored “Missing source” status
         must disappear after a Source is linked.
       */
-      if (
+    if (
         explicitStatus === 'Missing source'
-      ) {
+    )
+    {
         return 'No issues';
-      }
+    }
 
-      return explicitStatus
+    return explicitStatus
         || 'No issues';
-    }
+}
 
-    function hasActivePeopleFilters(
-      filters = state.peopleFilters
-    ) {
-      const normalized =
+function hasActivePeopleFilters(
+    filters = state.peopleFilters
+)
+{
+    const normalized =
         peopleFiltersWithDefaults(
-          filters
+            filters
         );
 
-      return peopleFilterSchema
+    return peopleFilterSchema
         .some(definition =>
-          sharedFilterValueIsActive(
-            definition,
-            normalized[
-              definition.key
-            ]
-          )
+            sharedFilterValueIsActive(
+                definition,
+                normalized[
+                    definition.key
+                ]
+            )
         );
-    }
+}
 
-    function activePeopleFilterEntries(
-      filters = state.peopleFilters
-    ) {
-      const normalized =
+function activePeopleFilterEntries(
+    filters = state.peopleFilters
+)
+{
+    const normalized =
         peopleFiltersWithDefaults(
-          filters
+            filters
         );
 
-      return peopleFilterSchema
+    return peopleFilterSchema
         .filter(definition =>
-          sharedFilterValueIsActive(
-            definition,
-            normalized[
-              definition.key
-            ]
-          )
+            sharedFilterValueIsActive(
+                definition,
+                normalized[
+                    definition.key
+                ]
+            )
         )
         .map(definition => [
-          definition.key,
-          definition.label,
-          sharedFilterDisplayValue(
-            definition,
-            normalized[
-              definition.key
-            ]
-          )
-        ]);
-    }
-
-    function activePeopleFilterCount(
-      filters = state.peopleFilters
-    ) {
-      return activePeopleFilterEntries(
-        filters
-      ).length;
-    }
-
-    function peopleRecordsMatchingFilters(
-      records,
-      filters,
-      searchQuery =
-        state.peopleSearch
-    ) {
-      const normalized =
-        peopleFiltersWithDefaults(
-          filters
-        );
-
-      const selectedSurnames =
-        new Set(
-          normalized.surnames.map(
-            normalizeSharedFilterSearch
-          )
-        );
-
-      const selectedBirthPlaceIds =
-        new Set(
-          normalized.birthPlaceIds
-        );
-
-      const normalizedQuery =
-        normalizeSharedFilterSearch(
-          searchQuery
-        );
-
-      return records.filter(person => {
-        if (
-          selectedSurnames.size
-          && !selectedSurnames.has(
-            normalizeSharedFilterSearch(
-              person.surname
+            definition.key,
+            definition.label,
+            sharedFilterDisplayValue(
+                definition,
+                normalized[
+                    definition.key
+                ]
             )
-          )
-        ) {
-          return false;
-        }
+        ]);
+}
 
+function activePeopleFilterCount(
+    filters = state.peopleFilters
+)
+{
+    return activePeopleFilterEntries(
+        filters
+    ).length;
+}
+
+function peopleRecordsMatchingFilters(
+    records,
+    filters,
+    searchQuery =
+        state.peopleSearch
+)
+{
+    const normalized =
+        peopleFiltersWithDefaults(
+            filters
+        );
+
+    const selectedSurnames =
+        new Set(
+            normalized.surnames.map(
+                normalizeSharedFilterSearch
+            )
+        );
+
+    const selectedBirthPlaceIds =
+        new Set(
+            normalized.birthPlaceIds
+        );
+
+    const normalizedQuery =
+        normalizeSharedFilterSearch(
+            searchQuery
+        );
+
+    return records.filter(person =>
+    {
         if (
-          selectedBirthPlaceIds.size
-        ) {
-          const hasKnownPlace =
-            Boolean(
-              person.birthPlaceId
-            );
-
-          const matchesKnownPlace =
-            hasKnownPlace
-            && selectedBirthPlaceIds.has(
-              person.birthPlaceId
-            );
-
-          const matchesUnknownPlace =
-            !hasKnownPlace
-            && selectedBirthPlaceIds.has(
-              SHARED_FILTER_UNKNOWN_VALUE
-            );
-
-          if (
-            !matchesKnownPlace
-            && !matchesUnknownPlace
-          ) {
+            selectedSurnames.size
+          && !selectedSurnames.has(
+              normalizeSharedFilterSearch(
+                  person.surname
+              )
+          )
+        )
+        {
             return false;
-          }
         }
 
         if (
-          !sharedFilterYearMatches(
-            person.birthYear,
-            normalized.birthYear
-          )
-        ) {
-          return false;
+            selectedBirthPlaceIds.size
+        )
+        {
+            const hasKnownPlace =
+                Boolean(
+                    person.birthPlaceId
+                );
+
+            const matchesKnownPlace =
+                hasKnownPlace
+            && selectedBirthPlaceIds.has(
+                person.birthPlaceId
+            );
+
+            const matchesUnknownPlace =
+                !hasKnownPlace
+            && selectedBirthPlaceIds.has(
+                SHARED_FILTER_UNKNOWN_VALUE
+            );
+
+            if (
+                !matchesKnownPlace
+            && !matchesUnknownPlace
+            )
+            {
+                return false;
+            }
         }
 
         if (
-          normalized.living !== 'Any'
+            !sharedFilterYearMatches(
+                person.birthYear,
+                normalized.birthYear
+            )
+        )
+        {
+            return false;
+        }
+
+        if (
+            normalized.living !== 'Any'
           && person.living
             !== normalized.living
-        ) {
-          return false;
+        )
+        {
+            return false;
         }
 
         const sourceCount =
-          getPeopleSourceCount(
-            person
-          );
-
-        if (
-          normalized.sourceLinks
-            === 'linked'
-          && sourceCount === 0
-        ) {
-          return false;
-        }
-
-        if (
-          normalized.sourceLinks
-            === 'unlinked'
-          && sourceCount > 0
-        ) {
-          return false;
-        }
-
-        if (
-          normalized.reviewStatus
-          && getPeopleReviewStatus(person)
-            !== normalized.reviewStatus
-        ) {
-          return false;
-        }
-
-        if (normalizedQuery) {
-          const searchText =
-            normalizeSharedFilterSearch(
-              [
-                person.name,
-                person.birthPlace,
-                person.relation,
-                person.living,
-                getPeopleSourceStatus(
-                  person
-                ),
-                getPeopleReviewStatus(
-                  person
-                )
-              ]
-                .filter(Boolean)
-                .join(' ')
+            getPeopleSourceCount(
+                person
             );
 
-          if (
-            !searchText.includes(
-              normalizedQuery
-            )
-          ) {
+        if (
+            normalized.sourceLinks
+            === 'linked'
+          && sourceCount === 0
+        )
+        {
             return false;
-          }
+        }
+
+        if (
+            normalized.sourceLinks
+            === 'unlinked'
+          && sourceCount > 0
+        )
+        {
+            return false;
+        }
+
+        if (
+            normalized.reviewStatus
+          && getPeopleReviewStatus(person)
+            !== normalized.reviewStatus
+        )
+        {
+            return false;
+        }
+
+        if (normalizedQuery)
+        {
+            const searchText =
+                normalizeSharedFilterSearch(
+                    [
+                        person.name,
+                        person.birthPlace,
+                        person.relation,
+                        person.living,
+                        getPeopleSourceStatus(
+                            person
+                        ),
+                        getPeopleReviewStatus(
+                            person
+                        )
+                    ]
+                        .filter(Boolean)
+                        .join(' ')
+                );
+
+            if (
+                !searchText.includes(
+                    normalizedQuery
+                )
+            )
+            {
+                return false;
+            }
         }
 
         return true;
-      });
-    }
+    });
+}
 
-    function peopleFilterResultCount(
-      filters
-    ) {
-      return peopleRecordsMatchingFilters(
+function peopleFilterResultCount(
+    filters
+)
+{
+    return peopleRecordsMatchingFilters(
         currentPeopleRecords(),
         filters
-      ).length;
-    }
+    ).length;
+}
 
-    function peopleFilterApplyLabel(
-      filters
-    ) {
-      const count =
+function peopleFilterApplyLabel(
+    filters
+)
+{
+    const count =
         peopleFilterResultCount(
-          filters
+            filters
         );
 
-      if (
+    if (
         state.language === 'ru'
-      ) {
+    )
+    {
         return `Показать ${
-          translateCountPhrase(
-            `${count} people`
-          )
+            translateCountPhrase(
+                `${count} people`
+            )
         }`;
-      }
+    }
 
-      return `Show ${count} ${
+    return `Show ${count} ${
         count === 1
-          ? 'person'
-          : 'people'
-      }`;
-    }
+            ? 'person'
+            : 'people'
+    }`;
+}
 
-    function filteredPeople() {
-      return sortPeopleRecords(
+function filteredPeople()
+{
+    return sortPeopleRecords(
         peopleRecordsMatchingFilters(
-          currentPeopleRecords(),
-          peopleFiltersWithDefaults()
+            currentPeopleRecords(),
+            peopleFiltersWithDefaults()
         )
-      );
-    }
+    );
+}
 
-    const PEOPLE_ROWS_PER_PAGE_OPTIONS =
-      Object.freeze([
+const PEOPLE_ROWS_PER_PAGE_OPTIONS =
+    Object.freeze([
         10,
         25,
         50,
         100
-      ]);
+    ]);
 
-    function normalizePeopleRowsPerPage(
-      value = state.peopleRowsPerPage
-    ) {
-      const parsedValue =
+function normalizePeopleRowsPerPage(
+    value = state.peopleRowsPerPage
+)
+{
+    const parsedValue =
         Number(value);
 
-      return PEOPLE_ROWS_PER_PAGE_OPTIONS
+    return PEOPLE_ROWS_PER_PAGE_OPTIONS
         .includes(parsedValue)
-          ? parsedValue
-          : 25;
-    }
+        ? parsedValue
+        : 25;
+}
 
-    /*
+/*
     * Search, sorting, filters, saved views, and project changes
     * should return the user to the first page.
     *
     * Keeping the reset here avoids duplicating page-reset logic
     * across every filter and search handler.
     */
-    function peoplePaginationQueryKey() {
-      return JSON.stringify({
+function peoplePaginationQueryKey()
+{
+    return JSON.stringify({
         projectId:
           currentProjectId(),
 
         search:
           String(
-            state.peopleSearch || ''
+              state.peopleSearch || ''
           )
-            .trim()
-            .toLowerCase(),
+              .trim()
+              .toLowerCase(),
 
         sort: {
-          field:
+            field:
             state.peopleSort
             || 'updated',
 
-          direction:
+            direction:
             normalizeAppSortDirection(
-              state.peopleSortDirection
+                state.peopleSortDirection
             )
         },
 
         filters:
           peopleFiltersWithDefaults()
-      });
-    }
+    });
+}
 
-    function syncPeoplePaginationQuery() {
-      const nextKey =
+function syncPeoplePaginationQuery()
+{
+    const nextKey =
         peoplePaginationQueryKey();
 
-      if (
+    if (
         state.peoplePaginationQueryKey
         === nextKey
-      ) {
+    )
+    {
         return;
-      }
-
-      state.peoplePaginationQueryKey =
-        nextKey;
-
-      state.peoplePage = 1;
     }
 
-    function getPeoplePagination(
-      totalCount
-    ) {
-      const normalizedTotal =
+    state.peoplePaginationQueryKey =
+        nextKey;
+
+    state.peoplePage = 1;
+}
+
+function getPeoplePagination(
+    totalCount
+)
+{
+    const normalizedTotal =
         Math.max(
-          0,
-          Number(totalCount) || 0
+            0,
+            Number(totalCount) || 0
         );
 
-      const rowsPerPage =
+    const rowsPerPage =
         normalizePeopleRowsPerPage();
 
-      state.peopleRowsPerPage =
+    state.peopleRowsPerPage =
         rowsPerPage;
 
-      const totalPages =
+    const totalPages =
         Math.max(
-          1,
-          Math.ceil(
-            normalizedTotal
+            1,
+            Math.ceil(
+                normalizedTotal
             / rowsPerPage
-          )
+            )
         );
 
-      const requestedPage =
+    const requestedPage =
         Number(state.peoplePage)
         || 1;
 
-      const currentPage =
+    const currentPage =
         Math.min(
-          totalPages,
-          Math.max(
-            1,
-            Math.trunc(
-              requestedPage
+            totalPages,
+            Math.max(
+                1,
+                Math.trunc(
+                    requestedPage
+                )
             )
-          )
         );
 
-      state.peoplePage =
+    state.peoplePage =
         currentPage;
 
-      const startIndex =
+    const startIndex =
         normalizedTotal
-          ? (
-              currentPage - 1
+            ? (
+                currentPage - 1
             ) * rowsPerPage
-          : 0;
+            : 0;
 
-      const endIndex =
+    const endIndex =
         Math.min(
-          startIndex
+            startIndex
           + rowsPerPage,
-          normalizedTotal
+            normalizedTotal
         );
 
-      return {
+    return {
         totalCount:
           normalizedTotal,
 
@@ -2686,105 +2845,113 @@
 
         firstVisible:
           normalizedTotal
-            ? startIndex + 1
-            : 0,
+              ? startIndex + 1
+              : 0,
 
         lastVisible:
           normalizedTotal
-            ? endIndex
-            : 0
-      };
+              ? endIndex
+              : 0
+    };
+}
+
+function peoplePaginationTokens(
+    currentPage,
+    totalPages
+)
+{
+    if (
+        totalPages <= 7
+    )
+    {
+        return Array.from(
+            {
+                length:
+              totalPages
+            },
+            (_, index) =>
+                index + 1
+        );
     }
 
-    function peoplePaginationTokens(
-      currentPage,
-      totalPages
-    ) {
-      if (
-        totalPages <= 7
-      ) {
-        return Array.from(
-          {
-            length:
-              totalPages
-          },
-          (_, index) =>
-            index + 1
-        );
-      }
-
-      const importantPages =
+    const importantPages =
         [
-          1,
-          currentPage - 1,
-          currentPage,
-          currentPage + 1,
-          totalPages
+            1,
+            currentPage - 1,
+            currentPage,
+            currentPage + 1,
+            totalPages
         ]
-          .filter(
-            page =>
-              page >= 1
+            .filter(
+                page =>
+                    page >= 1
               && page <= totalPages
-          );
+            );
 
-      const pages =
+    const pages =
         [
-          ...new Set(
-            importantPages
-          )
+            ...new Set(
+                importantPages
+            )
         ].sort(
-          (a, b) =>
-            a - b
+            (a, b) =>
+                a - b
         );
 
-      const tokens = [];
-      let previousPage = 0;
+    const tokens = [];
+    let previousPage = 0;
 
-      pages.forEach(page => {
+    pages.forEach(page =>
+    {
         const gap =
-          page - previousPage;
+            page - previousPage;
 
         if (
-          previousPage
+            previousPage
           && gap === 2
-        ) {
-          tokens.push(
-            previousPage + 1
-          );
-        } else if (
-          previousPage
+        )
+        {
+            tokens.push(
+                previousPage + 1
+            );
+        }
+        else if (
+            previousPage
           && gap > 2
-        ) {
-          tokens.push(
-            'ellipsis'
-          );
+        )
+        {
+            tokens.push(
+                'ellipsis'
+            );
         }
 
         tokens.push(page);
 
         previousPage =
-          page;
-      });
+            page;
+    });
 
-      return tokens;
+    return tokens;
+}
+
+function renderPeoplePagination(
+    pagination
+)
+{
+    if (
+        pagination.totalPages <= 1
+    )
+    {
+        return '';
     }
 
-    function renderPeoplePagination(
-      pagination
-    ) {
-      if (
-        pagination.totalPages <= 1
-      ) {
-        return '';
-      }
-
-      const tokens =
+    const tokens =
         peoplePaginationTokens(
-          pagination.currentPage,
-          pagination.totalPages
+            pagination.currentPage,
+            pagination.totalPages
         );
 
-      return `
+    return `
         <nav
           class="pagination"
           aria-label="People pages">
@@ -2796,105 +2963,108 @@
             "
             type="button"
             data-people-page="${
-              pagination.currentPage - 1
+                pagination.currentPage - 1
             }"
             aria-label="Previous page"
             ${
-              pagination.currentPage === 1
-                ? 'disabled'
-                : ''
+                pagination.currentPage === 1
+                    ? 'disabled'
+                    : ''
             }>
             ${icon.chevron}
           </button>
 
           ${tokens.map(
-            (token, index) => {
-              if (
-                token === 'ellipsis'
-              ) {
-                return `
+                (token, index) =>
+                {
+                    if (
+                        token === 'ellipsis'
+                    )
+                    {
+                        return `
                   <span
                     class="
                       pagination-ellipsis
                     "
                     aria-hidden="true"
                     data-pagination-gap="${
-                      index
+                        index
                     }">
                     …
                   </span>
                 `;
-              }
+                    }
 
-              const active =
-                token
+                    const active =
+                        token
                 === pagination.currentPage;
 
-              return `
+                    return `
                 <button
                   class="
                     page-button
                     ${
-                      active
-                        ? 'active'
-                        : ''
+                        active
+                            ? 'active'
+                            : ''
                     }
                   "
                   type="button"
                   data-people-page="${
-                    token
-                  }"
+                        token
+                    }"
                   aria-label="
                     Go to page ${token}
                   "
                   ${
-                    active
-                      ? 'aria-current="page"'
-                      : ''
-                  }>
+                        active
+                            ? 'aria-current="page"'
+                            : ''
+                    }>
                   ${token}
                 </button>
               `;
-            }
-          ).join('')}
+                }
+            ).join('')}
 
           <button
             class="page-button"
             type="button"
             data-people-page="${
-              pagination.currentPage + 1
+                pagination.currentPage + 1
             }"
             aria-label="Next page"
             ${
-              pagination.currentPage
+                pagination.currentPage
                 === pagination.totalPages
-                  ? 'disabled'
-                  : ''
+                    ? 'disabled'
+                    : ''
             }>
             ${icon.chevron}
           </button>
         </nav>
       `;
-    }
+}
 
-    function renderPeopleTableFooter(
-      pagination
-    ) {
-      const rangeLabel =
+function renderPeopleTableFooter(
+    pagination
+)
+{
+    const rangeLabel =
         pagination.totalCount
-          ? `${
-              pagination.firstVisible
+            ? `${
+                pagination.firstVisible
             }–${
-              pagination.lastVisible
+                pagination.lastVisible
             }`
-          : '0';
+            : '0';
 
-      const peopleNoun =
+    const peopleNoun =
         pagination.totalCount === 1
-          ? 'person'
-          : 'people';
+            ? 'person'
+            : 'people';
 
-      return `
+    return `
         <div
           class="
             table-footer
@@ -2912,8 +3082,8 @@
           </span>
 
           ${renderPeoplePagination(
-            pagination
-          )}
+                pagination
+            )}
           <label
             class="people-rows-per-page"
             for="peopleRowsPerPage">
@@ -2937,19 +3107,19 @@
                 aria-label="Rows per page">
 
                 ${PEOPLE_ROWS_PER_PAGE_OPTIONS
-                  .map(option => `
+                    .map(option => `
                     <option
                       value="${option}"
                       ${
-                        pagination.rowsPerPage
+                            pagination.rowsPerPage
                           === option
-                            ? 'selected'
-                            : ''
-                      }>
+                                ? 'selected'
+                                : ''
+                        }>
                       ${option}
                     </option>
                   `)
-                  .join('')}
+                    .join('')}
               </select>
 
               <span
@@ -2964,75 +3134,88 @@
           </label>
         </div>
       `;
-    }
+}
 
-    function peopleSelectedIdSet() {
-      return new Set(Array.isArray(state.peopleSelectedIds) ? state.peopleSelectedIds : []);
-    }
+function peopleSelectedIdSet()
+{
+    return new Set(Array.isArray(state.peopleSelectedIds) ? state.peopleSelectedIds : []);
+}
 
-    function peopleSelectedRecords() {
-      const selectedIds = peopleSelectedIdSet();
-      return getPeople(currentProjectId()).filter(person => selectedIds.has(person.id));
-    }
+function peopleSelectedRecords()
+{
+    const selectedIds = peopleSelectedIdSet();
+    return getPeople(currentProjectId()).filter(person => selectedIds.has(person.id));
+}
 
-    function prunePeopleSelection() {
-      setPeopleSelection(state.peopleSelectedIds);
-    }
+function prunePeopleSelection()
+{
+    setPeopleSelection(state.peopleSelectedIds);
+}
 
-    function clearPeopleSelection() {
-      state.peopleSelectedIds = [];
-      state.peopleSelectionAnchorId = '';
-    }
+function clearPeopleSelection()
+{
+    state.peopleSelectedIds = [];
+    state.peopleSelectionAnchorId = '';
+}
 
-    function setPeopleSelection(personIds) {
-      const validIds = new Set(getPeople(currentProjectId()).map(person => person.id));
-      state.peopleSelectedIds = [...new Set(Array.isArray(personIds) ? personIds : [])]
+function setPeopleSelection(personIds)
+{
+    const validIds = new Set(getPeople(currentProjectId()).map(person => person.id));
+    state.peopleSelectedIds = [...new Set(Array.isArray(personIds) ? personIds : [])]
         .filter(personId => validIds.has(personId));
 
-      if (!state.peopleSelectedIds.length || !validIds.has(state.peopleSelectionAnchorId)) {
+    if (!state.peopleSelectedIds.length || !validIds.has(state.peopleSelectionAnchorId))
+    {
         state.peopleSelectionAnchorId = '';
-      }
     }
+}
 
-    function togglePeopleSelection(personId, options = {}) {
-      const rows = Array.isArray(options.rows) ? options.rows : [];
-      const visibleIds = rows.map(person => person.id);
-      const selectedIds = peopleSelectedIdSet();
-      const anchorIndex = visibleIds.indexOf(state.peopleSelectionAnchorId);
-      const personIndex = visibleIds.indexOf(personId);
+function togglePeopleSelection(personId, options = {})
+{
+    const rows = Array.isArray(options.rows) ? options.rows : [];
+    const visibleIds = rows.map(person => person.id);
+    const selectedIds = peopleSelectedIdSet();
+    const anchorIndex = visibleIds.indexOf(state.peopleSelectionAnchorId);
+    const personIndex = visibleIds.indexOf(personId);
 
-      if (options.shiftKey && anchorIndex >= 0 && personIndex >= 0) {
+    if (options.shiftKey && anchorIndex >= 0 && personIndex >= 0)
+    {
         const start = Math.min(anchorIndex, personIndex);
         const end = Math.max(anchorIndex, personIndex);
         visibleIds.slice(start, end + 1).forEach(id => selectedIds.add(id));
-      } else {
+    }
+    else
+    {
         if (selectedIds.has(personId)) selectedIds.delete(personId);
         else selectedIds.add(personId);
         state.peopleSelectionAnchorId = personId;
-      }
-
-      setPeopleSelection([...selectedIds]);
     }
 
-    function peopleVisibleSelectionState(rows) {
-      const visibleIds = (Array.isArray(rows) ? rows : []).map(person => person.id);
-      const selectedIds = peopleSelectedIdSet();
-      const selectedVisibleIds = visibleIds.filter(personId => selectedIds.has(personId));
+    setPeopleSelection([...selectedIds]);
+}
 
-      return {
+function peopleVisibleSelectionState(rows)
+{
+    const visibleIds = (Array.isArray(rows) ? rows : []).map(person => person.id);
+    const selectedIds = peopleSelectedIdSet();
+    const selectedVisibleIds = visibleIds.filter(personId => selectedIds.has(personId));
+
+    return {
         visibleIds,
         selectedVisibleIds,
         allVisibleSelected: visibleIds.length > 0 && selectedVisibleIds.length === visibleIds.length,
         someVisibleSelected: selectedVisibleIds.length > 0
-      };
+    };
+}
+
+function renderPeopleActiveFilters()
+{
+    if (!hasActivePeopleFilters())
+    {
+        return '';
     }
 
-    function renderPeopleActiveFilters() {
-      if (!hasActivePeopleFilters()) {
-        return '';
-      }
-
-      const chips = activePeopleFilterEntries()
+    const chips = activePeopleFilterEntries()
         .map(([key, label, value]) => `
           <span class="filter-chip active-filter-chip">
             <span class="active-filter-chip-copy">
@@ -3052,7 +3235,7 @@
         `)
         .join('');
 
-      return `
+    return `
         <div
           class="people-filterbar"
           aria-label="Active People filters">
@@ -3075,16 +3258,17 @@
           </span>
         </div>
       `;
-    }
+}
 
-    function renderPeopleNormalToolbar() {
-      const activeFilterCount =
+function renderPeopleNormalToolbar()
+{
+    const activeFilterCount =
         activePeopleFilterCount();
 
-      const hasActiveFilters =
+    const hasActiveFilters =
         activeFilterCount > 0;
 
-      return `
+    return `
         <div class="people-toolbar people-normal-toolbar">
           <label class="app-search-field people-search-field">
             ${icon.search}
@@ -3098,9 +3282,9 @@
 
           <button
             class="button secondary people-columns-button ${
-              peopleColumnsCustomized()
-                ? 'active'
-                : ''
+                peopleColumnsCustomized()
+                    ? 'active'
+                    : ''
             }"
             type="button"
             id="peopleColumnsButton"
@@ -3111,47 +3295,47 @@
 
           <button
             class="people-filter-button ${
-              hasActiveFilters
-                ? 'active'
-                : ''
+                hasActiveFilters
+                    ? 'active'
+                    : ''
             }"
             type="button"
             id="peopleFilterButton"
             aria-haspopup="dialog"
             aria-label="${
-              hasActiveFilters
-                ? `Filters, ${activeFilterCount} active`
-                : 'Open people filters'
+                hasActiveFilters
+                    ? `Filters, ${activeFilterCount} active`
+                    : 'Open people filters'
             }">
             <span
               class="people-filter-icon"
               aria-hidden="true">
               ${
-                hasActiveFilters
-                  ? icon.filterclear
-                  : icon.filter
-              }
+                    hasActiveFilters
+                        ? icon.filterclear
+                        : icon.filter
+                }
             </span>
 
             <span>Filters</span>
 
             ${
-              hasActiveFilters
-                ? `
+                hasActiveFilters
+                    ? `
                   <span class="people-filter-count">
                     ${activeFilterCount}
                   </span>
                 `
-                : ''
+                    : ''
             }
           </button>
           ${renderAppSortControl({
-            id: 'peopleSort',
-            field: state.peopleSort,
-            direction: state.peopleSortDirection,
-            ariaLabel: 'Sort people',
-            options: APP_SORT_OPTIONS.people
-          })}
+                id: 'peopleSort',
+                field: state.peopleSort,
+                direction: state.peopleSortDirection,
+                ariaLabel: 'Sort people',
+                options: APP_SORT_OPTIONS.people
+            })}
           <button
             class="button primary"
             type="button"
@@ -3161,11 +3345,12 @@
           </button>
         </div>
       `;
-    }
+}
 
-    function renderPeopleBulkToolbar(rows) {
-      const count = peopleSelectedRecords().length;
-      return `<div class="people-bulk-toolbar" aria-label="Bulk actions for selected people">
+function renderPeopleBulkToolbar(rows)
+{
+    const count = peopleSelectedRecords().length;
+    return `<div class="people-bulk-toolbar" aria-label="Bulk actions for selected people">
         <strong class="people-bulk-summary">${count} selected</strong>
         <div class="people-bulk-actions">
           <button class="button secondary" type="button" data-people-bulk-export>${icon.export} Export selected people</button>
@@ -3174,79 +3359,82 @@
           <button class="button secondary" type="button" data-people-bulk-clear>Clear</button>
         </div>
       </div>`;
-    }
+}
 
-    function renderPeopleDirectoryControls(rows) {
-      const toolbar = state.peopleSelectedIds.length
+function renderPeopleDirectoryControls(rows)
+{
+    const toolbar = state.peopleSelectedIds.length
         ? renderPeopleBulkToolbar(rows)
         : renderPeopleNormalToolbar();
 
-      return `<div class="people-directory-controls">
+    return `<div class="people-directory-controls">
         <div class="people-toolbar-slot">${toolbar}</div>
         ${renderPeopleActiveFilters()}
       </div>`;
-    }
+}
 
-    function renderPeople() {
-      workspace.classList.remove(
+function renderPeople()
+{
+    workspace.classList.remove(
         'no-sidebar'
-      );
+    );
 
-      sidebar.innerHTML = '';
+    sidebar.innerHTML = '';
 
-      prunePeopleSelection();
+    prunePeopleSelection();
 
-      const selected =
+    const selected =
         selectedPeopleRecord();
 
-      if (
+    if (
         state.peopleView === 'profile'
-      ) {
+    )
+    {
         clearPeopleSelection();
 
         renderPeopleSidebar();
 
         renderPeopleProfile(
-          selected
+            selected
         );
 
         return;
-      }
+    }
 
-      main.classList.remove(
+    main.classList.remove(
         'people-profile-main'
-      );
+    );
 
-      renderPeopleSidebar();
+    renderPeopleSidebar();
 
-      /*
+    /*
       * filteredPeople() returns the complete filtered and sorted
       * result. Pagination is deliberately applied afterward.
       */
-      const filteredRows =
+    const filteredRows =
         filteredPeople();
 
-      syncPeoplePaginationQuery();
+    syncPeoplePaginationQuery();
 
-      const pagination =
+    const pagination =
         getPeoplePagination(
-          filteredRows.length
+            filteredRows.length
         );
 
-      const visibleRows =
+    const visibleRows =
         filteredRows.slice(
-          pagination.startIndex,
-          pagination.endIndex
+            pagination.startIndex,
+            pagination.endIndex
         );
 
-      main.innerHTML = `
+    main.innerHTML = `
         <div
           class="
             people-layout
             ${
-              state.peoplePreviewCollapsed
-                ? 'preview-collapsed'
-                : ''
+                state.peoplePreviewCollapsed
+                    ? 'preview-collapsed'
+                    : ''
             }
           ">
 
@@ -3255,40 +3443,43 @@
             aria-label="People directory">
 
             ${renderPeopleDirectoryControls(
-              visibleRows
+                visibleRows
             )}
 
             <div
               class="people-table-wrap">
               ${renderPeopleTable(
-                visibleRows
-              )}
+                    visibleRows
+                )}
             </div>
 
             ${renderPeopleTableFooter(
-              pagination
+                pagination
             )}
           </section>
 
           ${renderPersonSidebar(
-            selected?.id,
-            'people'
-          )}
+                selected?.id,
+                'people'
+            )}
         </div>
       `;
 
-      bindPeopleControls(
+    bindPeopleControls(
         visibleRows
-      );
-    }
+    );
+}
 
-    function renderPeopleSidebar() {
-      sidebar.innerHTML = renderPeopleSidebarInner();
-      bindPeopleSidebar(sidebar);
-    }
+function renderPeopleSidebar()
+{
+    sidebar.innerHTML = renderPeopleSidebarInner();
+    bindPeopleSidebar(sidebar);
+}
 
-    function renderPeopleSidebarInner() {
-      const savedViewsMarkup = peopleSavedViews.map(view => {
+function renderPeopleSidebarInner()
+{
+    const savedViewsMarkup = peopleSavedViews.map(view =>
+    {
         const isActive = state.peopleSavedViewId === view.id;
 
         return `<div class="people-saved-filter-row ${isActive ? 'active' : ''}">
@@ -3310,9 +3501,9 @@
             ${icon.more}
           </button>
         </div>`;
-      }).join('');
+    }).join('');
 
-      return `<div>
+    return `<div>
           <div class="side-section-title">Navigation</div>
 
           <div class="side-nav">
@@ -3368,12 +3559,13 @@
             ${savedViewsMarkup}
           </div>
         </div>`;
-    }
+}
 
-    function renderPeopleTable(rows) {
-      const columns = peopleColumnsWithDefaults();
-      const selectedIds = peopleSelectedIdSet();
-      const headers = [
+function renderPeopleTable(rows)
+{
+    const columns = peopleColumnsWithDefaults();
+    const selectedIds = peopleSelectedIdSet();
+    const headers = [
         '<th class="people-select-column"><input class="people-select-checkbox" type="checkbox" data-people-select-visible aria-label="Select all visible people"></th>',
         '<th>Name</th>',
         columns.living ? '<th>Living</th>' : '',
@@ -3383,33 +3575,34 @@
         columns.deathPlace ? '<th>Death place</th>' : '',
         columns.updated ? '<th>Updated</th>' : '',
         '<th class="people-actions-column">Actions</th>'
-      ].join('');
-      return `<table class="people-table"><thead><tr>${headers}</tr></thead><tbody>
-        ${rows.map(person => {
-          const isPreviewed = person.id === state.selectedPeopleId;
-          const isSelected = selectedIds.has(person.id);
-          const rowClasses = [isPreviewed ? 'is-previewed' : '', isSelected ? 'is-selected' : ''].filter(Boolean).join(' ');
-          return `
+    ].join('');
+    return `<table class="people-table"><thead><tr>${headers}</tr></thead><tbody>
+        ${rows.map(person =>
+        {
+            const isPreviewed = person.id === state.selectedPeopleId;
+            const isSelected = selectedIds.has(person.id);
+            const rowClasses = [isPreviewed ? 'is-previewed' : '', isSelected ? 'is-selected' : ''].filter(Boolean).join(' ');
+            return `
             <tr
               class="${escapeHtml(
-                rowClasses
-              )}"
+                    rowClasses
+                )}"
               data-people-row="${escapeHtml(
-                person.id
-              )}"
+                    person.id
+                )}"
               ${
-                isPreviewed
-                  ? 'aria-current="true"'
-                  : ''
-              }
+                    isPreviewed
+                        ? 'aria-current="true"'
+                        : ''
+                }
               tabindex="0">
             <td class="people-select-column">
             <input class="people-select-checkbox" type="checkbox" data-people-select-id="${escapeHtml(person.id)}" aria-label="Select ${escapeHtml(person.name)}" ${isSelected ? 'checked' : ''}></td>
             <td>
               <div class="person-cell">
                 ${renderPersonAvatar(
-                  person,
-                  'small-avatar'
+                    person,
+                    'small-avatar'
                 )}
 
                 <div class="person-cell-copy">
@@ -3426,51 +3619,54 @@
                 ${columns.living ? `<td>${escapeHtml(person.living)}</td>` : ''}${columns.birth ? `<td>${escapeHtml(person.birth)}</td>` : ''}${columns.birthPlace ? `<td>${escapeHtml(person.birthPlace)}</td>` : ''}${columns.death ? `<td>${escapeHtml(person.death)}</td>` : ''}${columns.deathPlace ? `<td>${escapeHtml(person.deathPlace)}</td>` : ''}${columns.updated ? `<td>${escapeHtml(person.updated)}</td>` : ''}<td class="people-actions-column"><button class="more-button people-row-action" type="button" aria-label="Actions for ${escapeHtml(person.name)}" aria-haspopup="menu" aria-expanded="false" data-people-row-menu="${person.id}">${icon.more}</button></td></tr>`;
         }).join('')}
       </tbody></table>`;
-    }
+}
 
-    const PROFILE_CARD_SECTIONS = Object.freeze([
-      Object.freeze({
+const PROFILE_CARD_SECTIONS = Object.freeze([
+    Object.freeze({
         id: 'main',
         label: 'Main information'
-      }),
-      Object.freeze({
+    }),
+    Object.freeze({
         id: 'education',
         label: 'Education'
-      }),
-      Object.freeze({
+    }),
+    Object.freeze({
         id: 'work',
         label: 'Work'
-      }),
-      Object.freeze({
+    }),
+    Object.freeze({
         id: 'other',
         label: 'Other'
-      })
-    ]);
+    })
+]);
 
-    function normalizeProfileCardSection(value) {
-      return PROFILE_CARD_SECTIONS.some(
+function normalizeProfileCardSection(value)
+{
+    return PROFILE_CARD_SECTIONS.some(
         section => section.id === value
-      )
+    )
         ? value
         : 'main';
-    }
+}
 
-    function renderPeopleProfile(person) {
-      main.classList.add('people-profile-main');
+function renderPeopleProfile(person)
+{
+    main.classList.add('people-profile-main');
 
-      state.peopleProfileEditTab =
+    state.peopleProfileEditTab =
         normalizeProfileCardSection(
-          state.peopleProfileEditTab
+            state.peopleProfileEditTab
         );
 
-      if (
+    if (
         typeof state.peopleProfileEditing
         !== 'boolean'
-      ) {
+    )
+    {
         state.peopleProfileEditing = false;
-      }
+    }
 
-      main.innerHTML = `
+    main.innerHTML = `
         <div class="person-profile">
           <header class="profile-hero profile-command-hero">
             <button
@@ -3489,9 +3685,9 @@
 
             <div class="profile-hero-content">
               ${renderEditablePersonAvatar(
-                person,
-                'profile-hero-photo'
-              )}
+                    person,
+                    'profile-hero-photo'
+                )}
 
               <div class="profile-hero-copy">
                 <h1>
@@ -3500,18 +3696,18 @@
               </div>
 
               ${renderPeopleHeroLifeSummary(
-                person,
-                {
-                  includeBirthPlace: true,
-                  includeDeathPlace: true
-                }
-              )}
+                    person,
+                    {
+                        includeBirthPlace: true,
+                        includeDeathPlace: true
+                    }
+                )}
 
               <p class="profile-hero-relation">
                 ${escapeHtml(
-                  person.parents
-                    ? `Child of ${person.parents}`
-                    : person.relation
+                    person.parents
+                        ? `Child of ${person.parents}`
+                        : person.relation
                 )}
               </p>
 
@@ -3524,7 +3720,7 @@
                 ">
 
                 ${renderLivingStatusChip(
-                  person.living
+                    person.living
                 )}
 
                 <span
@@ -3535,10 +3731,10 @@
 
                   ${person.photos}
                   ${
-                    person.photos === 1
-                      ? 'photo'
-                      : 'photos'
-                  }
+                        person.photos === 1
+                            ? 'photo'
+                            : 'photos'
+                    }
                 </span>
 
                 <span
@@ -3549,10 +3745,10 @@
 
                   ${person.files}
                   ${
-                    person.files === 1
-                      ? 'file'
-                      : 'files'
-                  }
+                        person.files === 1
+                            ? 'file'
+                            : 'files'
+                    }
                 </span>
 
                 <span
@@ -3563,10 +3759,10 @@
 
                   ${person.notes}
                   ${
-                    person.notes === 1
-                      ? 'note'
-                      : 'notes'
-                  }
+                        person.notes === 1
+                            ? 'note'
+                            : 'notes'
+                    }
                 </span>
               </div>
             </div>
@@ -3574,23 +3770,23 @@
             <div class="profile-hero-actions">
               <button
                 class="button ${
-                  state.peopleProfileEditing
-                    ? 'secondary'
-                    : 'primary'
+                    state.peopleProfileEditing
+                        ? 'secondary'
+                        : 'primary'
                 }"
                 type="button"
                 id="profileEditButton">
 
                 ${
-                  state.peopleProfileEditing
-                    ? icon.close
-                    : icon.edit
+                    state.peopleProfileEditing
+                        ? icon.close
+                        : icon.edit
                 }
 
                 ${
-                  state.peopleProfileEditing
-                    ? 'Cancel editing'
-                    : 'Edit profile'
+                    state.peopleProfileEditing
+                        ? 'Cancel editing'
+                        : 'Edit profile'
                 }
               </button>
 
@@ -3611,8 +3807,8 @@
                 aria-expanded="false">
 
                 ${renderPanelButtonLabel(
-                  icon.more,
-                  'More actions'
+                    icon.more,
+                    'More actions'
                 )}
               </button>
             </div>
@@ -3633,92 +3829,97 @@
         </div>
       `;
 
-      bindPeopleProfileControls(person);
-    }
+    bindPeopleProfileControls(person);
+}
 
-    function peopleProfileAssets(person) {
-      const archiveMap = {
+function peopleProfileAssets(person)
+{
+    const archiveMap = {
         silver: [
-          { type: 'PDF', name: 'Pawford household register', meta: 'Added Mar 03 2016 - Source assigned', fileId: 'af1' },
-          { type: 'JPG', name: 'Silver kitten portrait', meta: 'Added Feb 20 2021 - Personal album', fileId: null },
-          { type: 'PDF', name: 'Meowbridge marriage record', meta: 'Added May 7 2026 - Linked to relationship', fileId: 'af5' },
-          { type: 'JPG', name: 'Fishmarket Row census extract', meta: 'Added Today - Needs review', fileId: 'af2' }
+            { type: 'PDF', name: 'Pawford household register', meta: 'Added Mar 03 2016 - Source assigned', fileId: 'af1' },
+            { type: 'JPG', name: 'Silver kitten portrait', meta: 'Added Feb 20 2021 - Personal album', fileId: null },
+            { type: 'PDF', name: 'Meowbridge marriage record', meta: 'Added May 7 2026 - Linked to relationship', fileId: 'af5' },
+            { type: 'JPG', name: 'Fishmarket Row census extract', meta: 'Added Today - Needs review', fileId: 'af2' }
         ],
         luna: [
-          { type: 'JPG', name: 'Luna Purrington portrait', meta: 'Added Apr 30 2026 - Personal album', fileId: null },
-          { type: 'PDF', name: 'Meowbridge marriage record', meta: 'Added May 7 2026 - Linked to relationship', fileId: 'af5' }
+            { type: 'JPG', name: 'Luna Purrington portrait', meta: 'Added Apr 30 2026 - Personal album', fileId: null },
+            { type: 'PDF', name: 'Meowbridge marriage record', meta: 'Added May 7 2026 - Linked to relationship', fileId: 'af5' }
         ],
         barnaby: [
-          { type: 'PDF', name: 'Pawford household register', meta: 'Added May 19 2026 - Source assigned', fileId: 'af5' },
-          { type: 'JPG', name: 'Old Cattery burial index', meta: 'Added Apr 3 2026 - Needs review', fileId: 'af6' }
+            { type: 'PDF', name: 'Pawford household register', meta: 'Added May 19 2026 - Source assigned', fileId: 'af5' },
+            { type: 'JPG', name: 'Old Cattery burial index', meta: 'Added Apr 3 2026 - Needs review', fileId: 'af6' }
         ],
         daisy: [
-          { type: 'PDF', name: 'Meowbridge marriage record', meta: 'Added Today - Source assigned', fileId: 'af1' },
-          { type: 'JPG', name: 'Daisy Milkpaw scan', meta: 'Added May 2 2026 - Family album', fileId: null }
+            { type: 'PDF', name: 'Meowbridge marriage record', meta: 'Added Today - Source assigned', fileId: 'af1' },
+            { type: 'JPG', name: 'Daisy Milkpaw scan', meta: 'Added May 2 2026 - Family album', fileId: null }
         ]
-      };
-      return {
+    };
+    return {
         archive:
           archiveMap[person.id]
           || [
-            {
-              type:
+              {
+                  type:
                 'PDF',
 
-              name:
+                  name:
                 'Linked archive file.pdf',
 
-              meta:
+                  meta:
                 'Added recently - Source assigned',
 
-              fileId:
+                  fileId:
                 null
-            }
+              }
           ]
-      };
-    }
+    };
+}
 
-    function splitProfileName(person) {
-      const centralPerson = getPerson(person?.id);
-      const names = centralPerson?.names || {};
+function splitProfileName(person)
+{
+    const centralPerson = getPerson(person?.id);
+    const names = centralPerson?.names || {};
 
-      return {
+    return {
         first: normalizeNameSegment(
-          names.first ?? person?.first ?? ''
+            names.first ?? person?.first ?? ''
         ),
 
         patronym: normalizeNameSegment(
-          names.middle ?? ''
+            names.middle ?? ''
         ),
 
         surname: normalizeNameSegment(
-          names.last ?? person?.surname ?? ''
+            names.last ?? person?.surname ?? ''
         )
-      };
-    }
+    };
+}
 
-    function renderProfileInfoRow(label, value) {
-      return `
+function renderProfileInfoRow(label, value)
+{
+    return `
         <div class="profile-info-row">
           <span>${escapeHtml(label)}</span>
           <strong>${escapeHtml(value)}</strong>
         </div>
       `;
-    }
+}
 
-    function renderProfileInfoRowRaw(label, html) {
-      return `
+function renderProfileInfoRowRaw(label, html)
+{
+    return `
         <div class="profile-info-row">
           <span>${escapeHtml(label)}</span>
           <strong>${html}</strong>
         </div>
       `;
-    }
+}
 
-    function renderProfileStatusValue(status) {
-      const safeStatus = status || 'Unknown';
+function renderProfileStatusValue(status)
+{
+    const safeStatus = status || 'Unknown';
 
-      return `
+    return `
         <span class="profile-status-inline">
           <span
             class="
@@ -3731,102 +3932,106 @@
           ${escapeHtml(safeStatus)}
         </span>
       `;
-    }
+}
 
-    function renderProfilePartnersInfo(person) {
-      const centralPerson = getPerson(person?.id);
+function renderProfilePartnersInfo(person)
+{
+    const centralPerson = getPerson(person?.id);
 
-      if (!centralPerson) {
+    if (!centralPerson)
+    {
         return `
           <div class="panel-muted">
             No partners recorded
           </div>
         `;
-      }
+    }
 
-      const rows = getPartnerRelationships(
+    const rows = getPartnerRelationships(
         centralPerson.id
-      )
+    )
         .filter(family =>
-          !family.projectId
+            !family.projectId
           || !centralPerson.projectId
           || family.projectId
             === centralPerson.projectId
         )
-        .map(family => {
-          const partnerId = familyPartnerId(
-            family,
-            centralPerson.id
-          );
+        .map(family =>
+        {
+            const partnerId = familyPartnerId(
+                family,
+                centralPerson.id
+            );
 
-          const partner = getPerson(partnerId);
+            const partner = getPerson(partnerId);
 
-          if (!partner) return '';
+            if (!partner) return '';
 
-          const relationshipType =
-            relationshipTypeFromLegacy(family);
+            const relationshipType =
+                relationshipTypeFromLegacy(family);
 
-          const relationshipLabel =
-            relationshipType
+            const relationshipLabel =
+                relationshipType
             === 'Unknown relationship'
-              ? 'Relationship'
-              : relationshipType;
+                    ? 'Relationship'
+                    : relationshipType;
 
-          const dateLabel =
-            partnerRelationshipDateSummary(
-              family
-            ).rangeLabel;
+            const dateLabel =
+                partnerRelationshipDateSummary(
+                    family
+                ).rangeLabel;
 
-          const partnerName =
-            partner.names?.display
+            const partnerName =
+                partner.names?.display
             || 'Unnamed person';
 
-          return renderProfileInfoRowRaw(
-            relationshipLabel,
-            `
+            return renderProfileInfoRowRaw(
+                relationshipLabel,
+                `
               <span class="profile-partner-value">
                 <button
                   class="profile-partner-link"
                   type="button"
                   data-profile-partner-id="${
-                    escapeHtml(partner.id)
-                  }">
+                        escapeHtml(partner.id)
+                    }">
                   ${escapeHtml(partnerName)}
                 </button>
 
                 ${dateLabel
-                  ? `
+                    ? `
                     <small class="profile-partner-meta">
                       ${escapeHtml(dateLabel)}
                     </small>
                   `
-                  : ''}
+                    : ''}
               </span>
             `
-          );
+            );
         })
         .filter(Boolean);
 
-      return rows.length
+    return rows.length
         ? rows.join('')
         : `
           <div class="panel-muted">
             No partners recorded
           </div>
         `;
-    }
+}
 
-    function renderEditableProfileCard(person) {
-      const editing = Boolean(
+function renderEditableProfileCard(person)
+{
+    const editing = Boolean(
         state.peopleProfileEditing
-      );
+    );
 
-      const activeSection =
+    const activeSection =
         normalizeProfileCardSection(
-          state.peopleProfileEditTab
+            state.peopleProfileEditTab
         );
 
-      return `
+    return `
         <article
           class="
             profile-card
@@ -3854,13 +4059,13 @@
             ${renderProfileCardTabs(activeSection)}
 
             ${renderProfileCardPanels(
-              person,
-              editing,
-              activeSection
+                person,
+                editing,
+                activeSection
             )}
 
             ${editing
-              ? `
+                ? `
                 <div class="profile-edit-inline-actions">
                   <button
                     class="button secondary"
@@ -3877,44 +4082,46 @@
                   </button>
                 </div>
               `
-              : ''}
+                : ''}
           </div>
         </article>
       `;
-    }
+}
 
-    function renderProfileLockedPanelContent(
-      person,
-      sectionId
-    ) {
-      const activeSection =
+function renderProfileLockedPanelContent(
+    person,
+    sectionId
+)
+{
+    const activeSection =
         normalizeProfileCardSection(sectionId);
 
-      const name = splitProfileName(person);
-      const details = peopleProfileDetailsFor(person);
+    const name = splitProfileName(person);
+    const details = peopleProfileDetailsFor(person);
 
-      const isDeceased =
+    const isDeceased =
         person.living === 'Deceased';
 
-      const isFemale =
+    const isFemale =
         person.gender === 'female';
 
-      const centralPerson = getPerson(person.id);
+    const centralPerson = getPerson(person.id);
 
-      const birthLabel =
+    const birthLabel =
         formatGenealogyDateLabel(
-          centralPerson?.birth || person.birth
+            centralPerson?.birth || person.birth
         );
 
-      const deathLabel =
+    const deathLabel =
         formatGenealogyDateLabel(
-          centralPerson?.death || person.death
+            centralPerson?.death || person.death
         );
 
-      const deathPlaceLabel =
+    const deathPlaceLabel =
         cleanEditFieldValue(person.deathPlace);
 
-      if (activeSection === 'education') {
+    if (activeSection === 'education')
+    {
         return `
           <div
             class="
@@ -3926,49 +4133,50 @@
               <h4>Education</h4>
 
               ${renderProfileInfoRow(
-                'Institution name',
-                details.educationInstitutionName || '-'
-              )}
+                    'Institution name',
+                    details.educationInstitutionName || '-'
+                )}
 
               ${renderProfileInfoRow(
-                'Institution type',
-                details.educationInstitutionType || '-'
-              )}
+                    'Institution type',
+                    details.educationInstitutionType || '-'
+                )}
 
               ${renderProfileInfoRow(
-                'Education or credential',
-                details.educationValue || '-'
-              )}
+                    'Education or credential',
+                    details.educationValue || '-'
+                )}
 
               ${renderProfileInfoRow(
-                'Place',
-                details.educationPlace || '-'
-              )}
+                    'Place',
+                    details.educationPlace || '-'
+                )}
 
               ${renderProfileInfoRow(
-                'From',
-                profileDetailDateLabel(
-                  details.educationFromDate
-                )
-              )}
+                    'From',
+                    profileDetailDateLabel(
+                        details.educationFromDate
+                    )
+                )}
 
               ${renderProfileInfoRow(
-                'To',
-                profileDetailDateLabel(
-                  details.educationToDate
-                )
-              )}
+                    'To',
+                    profileDetailDateLabel(
+                        details.educationToDate
+                    )
+                )}
 
               ${renderProfileInfoRow(
-                'Notes',
-                details.educationNotes || '-'
-              )}
+                    'Notes',
+                    details.educationNotes || '-'
+                )}
             </section>
           </div>
         `;
-      }
+    }
 
-      if (activeSection === 'work') {
+    if (activeSection === 'work')
+    {
         return `
           <div
             class="
@@ -3980,39 +4188,40 @@
               <h4>Work</h4>
 
               ${renderProfileInfoRow(
-                'Company name',
-                details.workCompany || '-'
-              )}
+                    'Company name',
+                    details.workCompany || '-'
+                )}
 
               ${renderProfileInfoRow(
-                'Occupation',
-                details.workOccupation || '-'
-              )}
+                    'Occupation',
+                    details.workOccupation || '-'
+                )}
 
               ${renderProfileInfoRow(
-                'From',
-                profileDetailDateLabel(
-                  details.workFromDate
-                )
-              )}
+                    'From',
+                    profileDetailDateLabel(
+                        details.workFromDate
+                    )
+                )}
 
               ${renderProfileInfoRow(
-                'To',
-                profileDetailDateLabel(
-                  details.workToDate
-                )
-              )}
+                    'To',
+                    profileDetailDateLabel(
+                        details.workToDate
+                    )
+                )}
 
               ${renderProfileInfoRow(
-                'Notes',
-                details.workNotes || '-'
-              )}
+                    'Notes',
+                    details.workNotes || '-'
+                )}
             </section>
           </div>
         `;
-      }
+    }
 
-      if (activeSection === 'other') {
+    if (activeSection === 'other')
+    {
         return `
           <div
             class="
@@ -4024,36 +4233,36 @@
               <h4>Other</h4>
 
               ${renderProfileInfoRow(
-                'Religion',
-                normalizeReligionValue(
-                  details.religion
-                )
-              )}
+                    'Religion',
+                    normalizeReligionValue(
+                        details.religion
+                    )
+                )}
 
               ${renderProfileInfoRow(
-                'Baptism date',
-                profileDetailDateLabel(
-                  details.baptismDate
-                )
-              )}
+                    'Baptism date',
+                    profileDetailDateLabel(
+                        details.baptismDate
+                    )
+                )}
 
               ${renderProfileInfoRow(
-                'Baptism place',
-                details.baptismPlace || '-'
-              )}
+                    'Baptism place',
+                    details.baptismPlace || '-'
+                )}
 
               ${renderProfileInfoRow(
-                'Privacy',
-                person.living === 'Living'
-                  ? 'Living person protected'
-                  : 'Standard record'
-              )}
+                    'Privacy',
+                    person.living === 'Living'
+                        ? 'Living person protected'
+                        : 'Standard record'
+                )}
             </section>
           </div>
         `;
-      }
+    }
 
-      return `
+    return `
         <div
           class="
             profile-readonly-grid
@@ -4065,51 +4274,51 @@
             <h4>Main information</h4>
 
             ${renderProfileInfoRow(
-              'First name',
-              name.first || '-'
+                'First name',
+                name.first || '-'
             )}
 
             ${renderProfileInfoRow(
-              'Last name',
-              name.surname || '-'
+                'Last name',
+                name.surname || '-'
             )}
 
             ${renderProfileInfoRow(
-              'Patronym',
-              name.patronym || '-'
+                'Patronym',
+                name.patronym || '-'
             )}
 
             ${isFemale
-              ? renderProfileInfoRow(
-                  'Maiden name',
-                  details.maidenName || '-'
+                ? renderProfileInfoRow(
+                    'Maiden name',
+                    details.maidenName || '-'
                 )
-              : ''}
+                : ''}
 
             ${renderProfileInfoRow(
-              'Gender',
-              isFemale
-                ? 'Female'
-                : person.gender === 'male'
-                  ? 'Male'
-                  : 'Unknown'
+                'Gender',
+                isFemale
+                    ? 'Female'
+                    : person.gender === 'male'
+                        ? 'Male'
+                        : 'Unknown'
             )}
 
             ${renderProfileInfoRowRaw(
-              'Living status',
-              renderProfileStatusValue(
-                person.living || 'Unknown'
-              )
+                'Living status',
+                renderProfileStatusValue(
+                    person.living || 'Unknown'
+                )
             )}
 
             ${renderProfileInfoRow(
-              'Prefix',
-              details.prefix || '-'
+                'Prefix',
+                details.prefix || '-'
             )}
 
             ${renderProfileInfoRow(
-              'Suffix',
-              details.suffix || '-'
+                'Suffix',
+                details.suffix || '-'
             )}
           </section>
 
@@ -4117,38 +4326,38 @@
             <h4>Birth and life</h4>
 
             ${renderProfileInfoRow(
-              'Birth date',
-              birthLabel || '-'
+                'Birth date',
+                birthLabel || '-'
             )}
 
             ${renderProfileInfoRow(
-              'Birth place',
-              person.birthPlace || '-'
+                'Birth place',
+                person.birthPlace || '-'
             )}
 
             ${isDeceased
-              ? `
+                ? `
                 ${renderProfileInfoRow(
-                  'Death date',
-                  deathLabel || '-'
+                    'Death date',
+                    deathLabel || '-'
                 )}
 
                 ${renderProfileInfoRow(
-                  'Death place',
-                  deathPlaceLabel || '-'
+                    'Death place',
+                    deathPlaceLabel || '-'
                 )}
 
                 ${renderProfileInfoRow(
-                  'Death reason',
-                  details.deathReason || '-'
+                    'Death reason',
+                    details.deathReason || '-'
                 )}
 
                 ${renderProfileInfoRow(
-                  'Burial place',
-                  details.burialPlace || '-'
+                    'Burial place',
+                    details.burialPlace || '-'
                 )}
               `
-              : ''}
+                : ''}
           </section>
 
           <section class="profile-info-block">
@@ -4157,29 +4366,31 @@
           </section>
         </div>
       `;
-    }
+}
 
-    function renderProfileCardTabs(activeSection) {
-      const active =
+function renderProfileCardTabs(activeSection)
+{
+    const active =
         normalizeProfileCardSection(activeSection);
 
-      return `
+    return `
         <div
           class="profile-card-tabs"
           role="tablist"
           aria-label="Profile card sections">
 
-          ${PROFILE_CARD_SECTIONS.map(section => {
-            const isActive =
-              section.id === active;
+          ${PROFILE_CARD_SECTIONS.map(section =>
+            {
+                const isActive =
+                    section.id === active;
 
-            const tabId =
-              `profile-card-tab-${section.id}`;
+                const tabId =
+                    `profile-card-tab-${section.id}`;
 
-            const panelId =
-              `profile-card-panel-${section.id}`;
+                const panelId =
+                    `profile-card-panel-${section.id}`;
 
-            return `
+                return `
               <button
                 class="
                   profile-card-tab
@@ -4189,81 +4400,85 @@
                 type="button"
                 role="tab"
                 aria-selected="${
-                  isActive ? 'true' : 'false'
+                    isActive ? 'true' : 'false'
                 }"
                 aria-controls="${escapeHtml(panelId)}"
                 tabindex="${isActive ? '0' : '-1'}"
                 data-profile-card-tab="${
-                  escapeHtml(section.id)
+                    escapeHtml(section.id)
                 }">
                 ${escapeHtml(section.label)}
               </button>
             `;
-          }).join('')}
+            }).join('')}
         </div>
       `;
-    }
+}
 
-    function renderProfileEditPanelContent(
-      person,
-      sectionId
-    ) {
-      switch (
+function renderProfileEditPanelContent(
+    person,
+    sectionId
+)
+{
+    switch (
         normalizeProfileCardSection(sectionId)
-      ) {
+    )
+    {
         case 'education':
-          return renderProfileEducationEditFields(
-            person
-          );
+            return renderProfileEducationEditFields(
+                person
+            );
 
         case 'work':
-          return renderProfileWorkEditFields(
-            person
-          );
+            return renderProfileWorkEditFields(
+                person
+            );
 
         case 'other':
-          return renderProfileOtherEditFields(
-            person
-          );
+            return renderProfileOtherEditFields(
+                person
+            );
 
         default:
-          return renderProfileMainEditFields(
-            person
-          );
-      }
+            return renderProfileMainEditFields(
+                person
+            );
     }
+}
 
-    function renderProfileCardPanels(
-      person,
-      editing,
-      activeSection
-    ) {
-      const active =
+function renderProfileCardPanels(
+    person,
+    editing,
+    activeSection
+)
+{
+    const active =
         normalizeProfileCardSection(activeSection);
 
-      return `
+    return `
         <div class="profile-card-panel-stack">
-          ${PROFILE_CARD_SECTIONS.map(section => {
-            const isActive =
-              section.id === active;
+          ${PROFILE_CARD_SECTIONS.map(section =>
+            {
+                const isActive =
+                    section.id === active;
 
-            const tabId =
-              `profile-card-tab-${section.id}`;
+                const tabId =
+                    `profile-card-tab-${section.id}`;
 
-            const panelId =
-              `profile-card-panel-${section.id}`;
+                const panelId =
+                    `profile-card-panel-${section.id}`;
 
-            const content = editing
-              ? renderProfileEditPanelContent(
-                  person,
-                  section.id
-                )
-              : renderProfileLockedPanelContent(
-                  person,
-                  section.id
-                );
+                const content = editing
+                    ? renderProfileEditPanelContent(
+                        person,
+                        section.id
+                    )
+                    : renderProfileLockedPanelContent(
+                        person,
+                        section.id
+                    );
 
-            return `
+                return `
               <section
                 class="
                   profile-card-panel
@@ -4273,35 +4488,36 @@
                 role="tabpanel"
                 aria-labelledby="${escapeHtml(tabId)}"
                 aria-hidden="${
-                  isActive ? 'false' : 'true'
+                    isActive ? 'false' : 'true'
                 }"
                 data-profile-card-panel="${
-                  escapeHtml(section.id)
+                    escapeHtml(section.id)
                 }"
                 ${isActive ? '' : 'inert'}>
                 ${content}
               </section>
             `;
-          }).join('')}
+            }).join('')}
         </div>
       `;
-    }
+}
 
-    function renderProfileMainEditFields(person) {
-      const name = splitProfileName(person);
-      const details = peopleProfileDetailsFor(person);
-      const isFemale = person.gender === 'female';
-      const currentStatus = person.living === 'Deceased' ? 'Deceased' : person.living === 'Unknown' ? 'Unknown' : 'Living';
-      const isDeceased = currentStatus === 'Deceased';
-      const genderValue = person.gender === 'female' ? 'Female' : person.gender === 'male' ? 'Male' : 'Unknown';
-      const centralPerson = getPerson(person.id);
-      const birthPlaceValue = editPlaceValue(centralPerson?.birth?.placeId, centralPerson?.birth?.placeText || person.birthPlace);
-      const rawDeathPlace = person.deathPlace === '-' ? '' : (person.deathPlace || '');
-      const deathPlaceValue = editPlaceValue(centralPerson?.death?.placeId, centralPerson?.death?.placeText || rawDeathPlace);
-      const burialPlaceValue = editPlaceValue(centralPerson?.death?.burialPlaceId, centralPerson?.death?.burialPlaceText || details.burialPlace);
-      const birthDateModel = centralPerson?.birth || { date: person.birth, dateLabel: person.birth, dateType: details.birthDateType || 'Unknown' };
-      const deathDateModel = centralPerson?.death || { date: person.death, dateLabel: person.death, dateType: details.deathDateType || 'Exact date' };
-      return `<div class="profile-main-edit-grid ${isFemale ? 'has-maiden' : 'no-maiden'} ${isDeceased ? 'is-deceased' : ''}">
+function renderProfileMainEditFields(person)
+{
+    const name = splitProfileName(person);
+    const details = peopleProfileDetailsFor(person);
+    const isFemale = person.gender === 'female';
+    const currentStatus = person.living === 'Deceased' ? 'Deceased' : person.living === 'Unknown' ? 'Unknown' : 'Living';
+    const isDeceased = currentStatus === 'Deceased';
+    const genderValue = person.gender === 'female' ? 'Female' : person.gender === 'male' ? 'Male' : 'Unknown';
+    const centralPerson = getPerson(person.id);
+    const birthPlaceValue = editPlaceValue(centralPerson?.birth?.placeId, centralPerson?.birth?.placeText || person.birthPlace);
+    const rawDeathPlace = person.deathPlace === '-' ? '' : (person.deathPlace || '');
+    const deathPlaceValue = editPlaceValue(centralPerson?.death?.placeId, centralPerson?.death?.placeText || rawDeathPlace);
+    const burialPlaceValue = editPlaceValue(centralPerson?.death?.burialPlaceId, centralPerson?.death?.burialPlaceText || details.burialPlace);
+    const birthDateModel = centralPerson?.birth || { date: person.birth, dateLabel: person.birth, dateType: details.birthDateType || 'Unknown' };
+    const deathDateModel = centralPerson?.death || { date: person.death, dateLabel: person.death, dateType: details.deathDateType || 'Exact date' };
+    return `<div class="profile-main-edit-grid ${isFemale ? 'has-maiden' : 'no-maiden'} ${isDeceased ? 'is-deceased' : ''}">
         <div class="field profile-field-gender add-person-select-field">
           <label>Gender</label>
           <select class="compact-select add-person-select" id="profileInlineGender">
@@ -4322,63 +4538,64 @@
         ${renderNameAffixCombobox({ id: 'profileInlineSuffix', label: 'Suffix', value: details.suffix || '', kind: 'suffix', className: 'profile-field-suffix' })}
 
         ${renderGenealogyDateField('profileInlineBirthField', 'Birth Date', birthDateModel, {
-          inputId: 'profileInlineBirth',
-          typeId: 'profileInlineBirthType',
-          className: 'profile-field-birth-date genealogy-date-inline-range',
-          placeholder: 'e.g. 14 Feb 1915'
+            inputId: 'profileInlineBirth',
+            typeId: 'profileInlineBirthType',
+            className: 'profile-field-birth-date genealogy-date-inline-range',
+            placeholder: 'e.g. 14 Feb 1915'
         })}
         ${renderPlaceCombobox({
-          id: 'profileInlineBirthPlace',
-          label: 'Birth Place',
-          value: birthPlaceValue,
-          selectedPlaceId: centralPerson?.birth?.placeId || '',
-          addressValue: centralPerson?.birth?.address || '',
-          placeholder: 'e.g. Pawford, England',
-          className: 'profile-field-birth-place'
+            id: 'profileInlineBirthPlace',
+            label: 'Birth Place',
+            value: birthPlaceValue,
+            selectedPlaceId: centralPerson?.birth?.placeId || '',
+            addressValue: centralPerson?.birth?.address || '',
+            placeholder: 'e.g. Pawford, England',
+            className: 'profile-field-birth-place'
         })}
 
         <div class="profile-death-fields-group" id="profileInlineDeathFields" ${isDeceased ? '' : 'hidden'}>
           ${renderGenealogyDateField('profileInlineDeathField', 'Death Date', deathDateModel, {
-            inputId: 'profileInlineDeath',
-            typeId: 'profileInlineDeathType',
-            className: 'profile-field-death-date genealogy-date-inline-range',
-            placeholder: 'e.g. 20 Oct 1926',
-            defaultDateType: 'Exact date'
-          })}
+                inputId: 'profileInlineDeath',
+                typeId: 'profileInlineDeathType',
+                className: 'profile-field-death-date genealogy-date-inline-range',
+                placeholder: 'e.g. 20 Oct 1926',
+                defaultDateType: 'Exact date'
+            })}
           ${renderPlaceCombobox({
-            id: 'profileInlineDeathPlace',
-            label: 'Death Place',
-            value: deathPlaceValue,
-            selectedPlaceId: centralPerson?.death?.placeId || '',
-            addressValue: centralPerson?.death?.address || '',
-            placeholder: 'e.g. Meowbridge, England',
-            className: 'profile-field-death-place'
-          })}
+                id: 'profileInlineDeathPlace',
+                label: 'Death Place',
+                value: deathPlaceValue,
+                selectedPlaceId: centralPerson?.death?.placeId || '',
+                addressValue: centralPerson?.death?.address || '',
+                placeholder: 'e.g. Meowbridge, England',
+                className: 'profile-field-death-place'
+            })}
         </div>
         <div class="profile-death-fields-group" id="profileInlineDeathExtraFields" ${isDeceased ? '' : 'hidden'}>
           <div class="field profile-field-death-reason"><label>Cause of Death</label><input id="profileInlineDeathReason" value="${escapeHtml(details.deathReason || '')}" placeholder="Cause or reason"></div>
           ${renderPlaceCombobox({
-            id: 'profileInlineBurialPlace',
-            label: 'Burial Place',
-            value: burialPlaceValue,
-            selectedPlaceId: centralPerson?.death?.burialPlaceId || '',
-            addressValue: centralPerson?.death?.burialAddress || '',
-            placeholder: 'Burial place',
-            className: 'profile-field-burial-place'
-          })}
+                id: 'profileInlineBurialPlace',
+                label: 'Burial Place',
+                value: burialPlaceValue,
+                selectedPlaceId: centralPerson?.death?.burialPlaceId || '',
+                addressValue: centralPerson?.death?.burialAddress || '',
+                placeholder: 'Burial place',
+                className: 'profile-field-burial-place'
+            })}
         </div>
       </div>`;
-    }
+}
 
-    function renderProfileEducationEditFields(person) {
-      const centralPerson = ensurePersonCentralStructures(
+function renderProfileEducationEditFields(person)
+{
+    const centralPerson = ensurePersonCentralStructures(
         getPerson(person.id) || person
-      );
+    );
 
-      const details = peopleProfileDetailsFor(person);
-      const education = personAttributeByTag(centralPerson, 'EDUC');
+    const details = peopleProfileDetailsFor(person);
+    const education = personAttributeByTag(centralPerson, 'EDUC');
 
-      return `
+    return `
         <div class="add-person-fact-grid">
           <div class="field full">
             <label for="profileEducationInstitutionName">
@@ -4390,8 +4607,8 @@
               placeholder="e.g. Pawford Grammar School"
               data-source-value="${escapeHtml(details.educationInstitutionName || '')}"
               value="${escapeHtml(localizedDataFieldValue(
-                details.educationInstitutionName || ''
-              ))}">
+                    details.educationInstitutionName || ''
+                ))}">
           </div>
 
           <div class="field add-person-select-field">
@@ -4403,8 +4620,8 @@
               class="compact-select add-person-select"
               id="profileEducationInstitutionType">
               ${educationInstitutionTypeOptions(
-                details.educationInstitutionType
-              )}
+                    details.educationInstitutionType
+                )}
             </select>
 
             <span
@@ -4427,47 +4644,47 @@
           </div>
 
           ${renderPlaceCombobox({
-            id: 'profileEducationPlace',
-            label: 'Place',
-            value: editPlaceValue(
-              education?.placeId,
-              education?.placeText || details.educationPlace
-            ),
-            selectedPlaceId: education?.placeId || '',
-            addressValue: education?.address || '',
-            placeholder: 'e.g. Pawford, England',
-            className: 'full'
-          })}
+                id: 'profileEducationPlace',
+                label: 'Place',
+                value: editPlaceValue(
+                    education?.placeId,
+                    education?.placeText || details.educationPlace
+                ),
+                selectedPlaceId: education?.placeId || '',
+                addressValue: education?.address || '',
+                placeholder: 'e.g. Pawford, England',
+                className: 'full'
+            })}
 
           <div class="add-person-fact-date-row">
             <div class="profile-edit-date-cell">
               ${renderGenealogyDateField(
-                'profileEducationFromDate',
-                'Start date',
-                details.educationFromDate,
-                {
-                  inputId: 'profileEducationFromDate',
-                  typeId: 'profileEducationFromDateType',
-                  defaultDateType: 'Year only',
-                  placeholder: 'e.g. 1915',
-                  className: 'genealogy-date-inline-range'
-                }
-              )}
+                    'profileEducationFromDate',
+                    'Start date',
+                    details.educationFromDate,
+                    {
+                        inputId: 'profileEducationFromDate',
+                        typeId: 'profileEducationFromDateType',
+                        defaultDateType: 'Year only',
+                        placeholder: 'e.g. 1915',
+                        className: 'genealogy-date-inline-range'
+                    }
+                )}
             </div>
 
             <div class="profile-edit-date-cell">
               ${renderGenealogyDateField(
-                'profileEducationToDate',
-                'End date',
-                details.educationToDate,
-                {
-                  inputId: 'profileEducationToDate',
-                  typeId: 'profileEducationToDateType',
-                  defaultDateType: 'Year only',
-                  placeholder: 'e.g. 1920',
-                  className: 'genealogy-date-inline-range'
-                }
-              )}
+                    'profileEducationToDate',
+                    'End date',
+                    details.educationToDate,
+                    {
+                        inputId: 'profileEducationToDate',
+                        typeId: 'profileEducationToDateType',
+                        defaultDateType: 'Year only',
+                        placeholder: 'e.g. 1920',
+                        className: 'genealogy-date-inline-range'
+                    }
+                )}
             </div>
           </div>
 
@@ -4478,17 +4695,18 @@
               id="profileEducationNotes"
               data-source-value="${escapeHtml(details.educationNotes || '')}"
               placeholder="Education notes">${escapeHtml(localizedDataFieldValue(
-                details.educationNotes || ''
-              ))}</textarea>
+                    details.educationNotes || ''
+                ))}</textarea>
           </div>
         </div>
       `;
-    }
+}
 
-    function renderProfileWorkEditFields(person) {
-      const details = peopleProfileDetailsFor(person);
+function renderProfileWorkEditFields(person)
+{
+    const details = peopleProfileDetailsFor(person);
 
-      return `
+    return `
         <div class="add-person-fact-grid">
           <div class="field">
             <label for="profileWorkCompany">Company name</label>
@@ -4511,32 +4729,32 @@
           <div class="add-person-fact-date-row">
             <div class="profile-edit-date-cell">
               ${renderGenealogyDateField(
-                'profileWorkFromDate',
-                'Start date',
-                details.workFromDate,
-                {
-                  inputId: 'profileWorkFromDate',
-                  typeId: 'profileWorkFromDateType',
-                  defaultDateType: 'Exact date',
-                  placeholder: 'e.g. 14 Feb 1915',
-                  className: 'genealogy-date-inline-range'
-                }
-              )}
+                    'profileWorkFromDate',
+                    'Start date',
+                    details.workFromDate,
+                    {
+                        inputId: 'profileWorkFromDate',
+                        typeId: 'profileWorkFromDateType',
+                        defaultDateType: 'Exact date',
+                        placeholder: 'e.g. 14 Feb 1915',
+                        className: 'genealogy-date-inline-range'
+                    }
+                )}
             </div>
 
             <div class="profile-edit-date-cell">
               ${renderGenealogyDateField(
-                'profileWorkToDate',
-                'End date',
-                details.workToDate,
-                {
-                  inputId: 'profileWorkToDate',
-                  typeId: 'profileWorkToDateType',
-                  defaultDateType: 'Exact date',
-                  placeholder: 'e.g. 14 Feb 1925',
-                  className: 'genealogy-date-inline-range'
-                }
-              )}
+                    'profileWorkToDate',
+                    'End date',
+                    details.workToDate,
+                    {
+                        inputId: 'profileWorkToDate',
+                        typeId: 'profileWorkToDateType',
+                        defaultDateType: 'Exact date',
+                        placeholder: 'e.g. 14 Feb 1925',
+                        className: 'genealogy-date-inline-range'
+                    }
+                )}
             </div>
           </div>
 
@@ -4546,90 +4764,94 @@
             <textarea
               id="profileWorkNotes"
               placeholder="Work notes">${escapeHtml(
-                details.workNotes || ''
-              )}</textarea>
+                    details.workNotes || ''
+                )}</textarea>
           </div>
         </div>
       `;
-    }
+}
 
-    function renderProfileOtherEditFields(person) {
-      const centralPerson = ensurePersonCentralStructures(
+function renderProfileOtherEditFields(person)
+{
+    const centralPerson = ensurePersonCentralStructures(
         getPerson(person.id) || person
-      );
+    );
 
-      const details = peopleProfileDetailsFor(person);
-      const baptism = personEventByTag(centralPerson, 'BAPM');
+    const details = peopleProfileDetailsFor(person);
+    const baptism = personEventByTag(centralPerson, 'BAPM');
 
-      return `
+    return `
         <div class="profile-card-edit-grid two profile-other-edit-grid">
           ${renderReligionField({
-            id: 'profileReligion',
-            value: details.religion,
-            className: 'profile-other-religion'
-          })}
+                id: 'profileReligion',
+                value: details.religion,
+                className: 'profile-other-religion'
+            })}
 
           ${renderGenealogyDateField(
-            'profileBaptismDate',
-            'Baptism date',
-            details.baptismDate,
-            {
-              inputId: 'profileBaptismDate',
-              typeId: 'profileBaptismDateType',
-              className: 'profile-other-baptism-date genealogy-date-inline-range',
-              defaultDateType: 'Exact date',
-              placeholder: 'e.g. 14 Feb 1915'
-            }
-          )}
+                'profileBaptismDate',
+                'Baptism date',
+                details.baptismDate,
+                {
+                    inputId: 'profileBaptismDate',
+                    typeId: 'profileBaptismDateType',
+                    className: 'profile-other-baptism-date genealogy-date-inline-range',
+                    defaultDateType: 'Exact date',
+                    placeholder: 'e.g. 14 Feb 1915'
+                }
+            )}
 
           ${renderPlaceCombobox({
-            id: 'profileBaptismPlace',
-            label: 'Baptism place',
-            value: editPlaceValue(
-              baptism?.placeId,
-              baptism?.placeText || details.baptismPlace
-            ),
-            selectedPlaceId: baptism?.placeId || '',
-            addressValue: baptism?.address || '',
-            placeholder: 'e.g. Pawford, England',
-            className: 'full profile-other-baptism-place'
-          })}
+                id: 'profileBaptismPlace',
+                label: 'Baptism place',
+                value: editPlaceValue(
+                    baptism?.placeId,
+                    baptism?.placeText || details.baptismPlace
+                ),
+                selectedPlaceId: baptism?.placeId || '',
+                addressValue: baptism?.address || '',
+                placeholder: 'e.g. Pawford, England',
+                className: 'full profile-other-baptism-place'
+            })}
         </div>
       `;
-    }
+}
 
-    function profileResourceNoun(count, singular, plural) {
-      return count === 1 ? singular : plural;
-    }
+function profileResourceNoun(count, singular, plural)
+{
+    return count === 1 ? singular : plural;
+}
 
-    function renderProfileResourceEmpty(message) {
-      return `
+function renderProfileResourceEmpty(message)
+{
+    return `
         <div class="profile-resource-empty">
           ${escapeHtml(message)}
         </div>
       `;
-    }
+}
 
-    function renderProfileResourceCard({
-      type,
-      iconSvg,
-      title,
-      count,
-      singular,
-      plural,
-      addLabel,
-      addToast,
-      addAction = '',
-      showFooter = true,
-      body
-    }) {
-      const noun = profileResourceNoun(
+function renderProfileResourceCard({
+    type,
+    iconSvg,
+    title,
+    count,
+    singular,
+    plural,
+    addLabel,
+    addToast,
+    addAction = '',
+    showFooter = true,
+    body
+})
+{
+    const noun = profileResourceNoun(
         count,
         singular,
         plural
-      );
+    );
 
-      return `
+    return `
         <article
           class="
             profile-resource-card
@@ -4653,15 +4875,15 @@
             </span>
 
             ${addLabel
-              ? `
+                    ? `
                 <span class="profile-connected-actions">
                   <button
                     class="profile-connected-action"
                     type="button"
                     ${
-                      addAction
-                        ? `data-profile-resource-action="${escapeHtml(addAction)}"`
-                        : `data-toast="${escapeHtml(addToast || '')}"`
+                        addAction
+                            ? `data-profile-resource-action="${escapeHtml(addAction)}"`
+                            : `data-toast="${escapeHtml(addToast || '')}"`
                     }>
 
                     ${icon.plus}
@@ -4672,7 +4894,7 @@
                   </button>
                 </span>
               `
-              : ''
+                    : ''
             }
           </h3>
 
@@ -4681,7 +4903,7 @@
           </div>
 
           ${showFooter && count > 0
-            ? `
+                ? `
               <button
                 class="profile-resource-card__footer"
                 type="button"
@@ -4693,211 +4915,221 @@
                 ${icon.chevron}
               </button>
             `
-            : ''}
+                : ''}
         </article>
       `;
-    }
+}
 
-    function profileArchiveAddedLabel(item) {
-      const meta = String(item?.meta || '').trim();
+function profileArchiveAddedLabel(item)
+{
+    const meta = String(item?.meta || '').trim();
 
-      if (!meta) return 'Added recently';
+    if (!meta) return 'Added recently';
 
-      return meta.split(/\s+-\s+/)[0]
+    return meta.split(/\s+-\s+/)[0]
         || 'Added recently';
-    }
+}
 
-    function profileConnectedPlaceEventLabel(
-      event
-    ) {
-      return (
+function profileConnectedPlaceEventLabel(
+    event
+)
+{
+    return (
         cleanEditFieldValue(
-          event?.title
+            event?.title
         )
         || cleanEditFieldValue(
-          event?.type
+            event?.type
         )
         || t('Event')
-      );
-    }
+    );
+}
 
-    function profileConnectedPlaceMeta(
-      events
-    ) {
-      const labels = [
+function profileConnectedPlaceMeta(
+    events
+)
+{
+    const labels = [
         ...new Set(
-          events
-            .map(
-              profileConnectedPlaceEventLabel
-            )
-            .filter(Boolean)
+            events
+                .map(
+                    profileConnectedPlaceEventLabel
+                )
+                .filter(Boolean)
         )
-      ];
+    ];
 
-      const visibleLabels =
+    const visibleLabels =
         labels.slice(0, 2);
 
-      const remainingCount =
+    const remainingCount =
         labels.length
         - visibleLabels.length;
 
-      return [
+    return [
         visibleLabels.join(' · '),
 
         remainingCount > 0
-          ? `+${remainingCount} ${t('more')}`
-          : ''
-      ]
+            ? `+${remainingCount} ${t('more')}`
+            : ''
+    ]
         .filter(Boolean)
         .join(' · ')
         || t('Linked event');
-    }
+}
 
-    function getProfileConnectedPlaces(
-      personId
-    ) {
-      const person =
+function getProfileConnectedPlaces(
+    personId
+)
+{
+    const person =
         getPerson(personId);
 
-      if (!person) {
+    if (!person)
+    {
         return [];
-      }
+    }
 
-      const groupedPlaces =
+    const groupedPlaces =
         new Map();
 
-      (sampleData.events || [])
-        .forEach(event => {
-          if (
-            event?.projectId
+    (sampleData.events || [])
+        .forEach(event =>
+        {
+            if (
+                event?.projectId
               !== person.projectId
-          ) {
-            return;
-          }
-
-          if (
-            !Array.isArray(
-              event.personIds
             )
+            {
+                return;
+            }
+
+            if (
+                !Array.isArray(
+                    event.personIds
+                )
             || !event.personIds.includes(
-              person.id
+                person.id
             )
-          ) {
-            return;
-          }
+            )
+            {
+                return;
+            }
 
-          const place =
-            getPlace(event.placeId);
+            const place =
+                getPlace(event.placeId);
 
-          if (
-            !place
+            if (
+                !place
             || place.deleted
             || place.projectId
               !== person.projectId
-          ) {
-            return;
-          }
+            )
+            {
+                return;
+            }
 
-          const existing =
-            groupedPlaces.get(place.id)
+            const existing =
+                groupedPlaces.get(place.id)
             || {
-              id: place.id,
-              place,
-              events: [],
-              sortValue:
+                id: place.id,
+                place,
+                events: [],
+                sortValue:
                 Number.POSITIVE_INFINITY
             };
 
-          existing.events.push(event);
+            existing.events.push(event);
 
-          existing.sortValue =
-            Math.min(
-              existing.sortValue,
-              parseTimelineSortValue(
-                event
-              )
+            existing.sortValue =
+                Math.min(
+                    existing.sortValue,
+                    parseTimelineSortValue(
+                        event
+                    )
+                );
+
+            groupedPlaces.set(
+                place.id,
+                existing
             );
-
-          groupedPlaces.set(
-            place.id,
-            existing
-          );
         });
 
-      return [
+    return [
         ...groupedPlaces.values()
-      ]
+    ]
         .map(group => ({
-          id: group.place.id,
+            id: group.place.id,
 
-          title:
+            title:
             placeDisplayText(
-              group.place
+                group.place
             )
             || t('Unnamed place'),
 
-          meta:
+            meta:
             profileConnectedPlaceMeta(
-              group.events
+                group.events
             ),
 
-          hasCoordinates:
+            hasCoordinates:
             placeHasCoordinates(
-              group.place
+                group.place
             ),
 
-          sortValue:
+            sortValue:
             group.sortValue
         }))
         .sort(
-          (first, second) =>
-            first.sortValue
+            (first, second) =>
+                first.sortValue
               - second.sortValue
             || first.title.localeCompare(
-              second.title
+                second.title
             )
         );
-    }
+}
 
-    function renderProfileConnectedSources(
-      person
-    ) {
-      const centralPerson =
+function renderProfileConnectedSources(
+    person
+)
+{
+    const centralPerson =
         getPerson(
-          person.id
+            person.id
         );
 
-      const sources =
+    const sources =
         centralPerson
-          ? sourcesForTarget(
-              'person',
-              centralPerson.id,
-              centralPerson.projectId
+            ? sourcesForTarget(
+                'person',
+                centralPerson.id,
+                centralPerson.projectId
             )
-          : [];
+            : [];
 
-      const body =
+    const body =
         centralPerson
-          ? renderConnectedSourceList({
-              targetType:
+            ? renderConnectedSourceList({
+                targetType:
                 'person',
 
-              targetId:
+                targetId:
                 centralPerson.id,
 
-              projectId:
+                projectId:
                 centralPerson.projectId,
 
-              sources,
+                sources,
 
-              emptyText:
+                emptyText:
                 'No sources linked to this person.'
             })
-          : renderProfileResourceEmpty(
-              'No sources linked to this person.'
+            : renderProfileResourceEmpty(
+                'No sources linked to this person.'
             );
 
-      return renderProfileResourceCard({
+    return renderProfileResourceCard({
         type:
           'sources',
 
@@ -4926,38 +5158,40 @@
           false,
 
         body
-      });
-    }
+    });
+}
 
-    function renderProfileConnectedCube(
-      person
-    ) {
-      return `
+function renderProfileConnectedCube(
+    person
+)
+{
+    return `
         <section
           class="profile-connected-cube"
           aria-label="Connected profile items">
 
           ${renderProfileConnectedPhotos(
-            person
-          )}
+                person
+            )}
           ${renderProfileConnectedFiles(
-            person
-          )}
+                person
+            )}
           ${renderProfileConnectedNotes(
-            person
-          )}
+                person
+            )}
           ${renderProfileConnectedPlaces(
-            person
-          )}
+                person
+            )}
         </section>
       `;
-    }
+}
 
-    function renderProfileCompactTimeline(person) {
-      const timelineContent =
+function renderProfileCompactTimeline(person)
+{
+    const timelineContent =
         renderFamilyTreeTimeline(person.id);
 
-      return `
+    return `
         <section
           class="profile-compact-timeline profile-connected-card"
           aria-label="Timeline">
@@ -4987,14 +5221,15 @@
           </div>
         </section>
       `;
-    }
+}
 
-    function renderProfileConnectedPhotos(person) {
-      const photos = getPhotosForPerson(person.id);
-      const hasOverflow = photos.length > 3;
-      const trackId = `profilePhotoTrack-${person.id}`;
+function renderProfileConnectedPhotos(person)
+{
+    const photos = getPhotosForPerson(person.id);
+    const hasOverflow = photos.length > 3;
+    const trackId = `profilePhotoTrack-${person.id}`;
 
-      const body = photos.length
+    const body = photos.length
         ? `
           <div
             class="
@@ -5004,7 +5239,7 @@
             data-profile-photo-carousel>
 
             ${hasOverflow
-              ? `
+                ? `
                 <button
                   class="
                     profile-photo-carousel-button
@@ -5018,7 +5253,7 @@
                   ${icon.arrow}
                 </button>
               `
-              : ''}
+                : ''}
 
             <div
               class="profile-photo-track"
@@ -5027,13 +5262,14 @@
               aria-label="Photos for ${escapeHtml(person.name)}">
 
               ${photos
-                .map(photo => {
-                  const label =
-                    photo.title
+                    .map(photo =>
+                    {
+                        const label =
+                            photo.title
                     || photo.filename
                     || 'Photo';
 
-                  return `
+                        return `
                     <div
                       class="
                         person-connected-photo-item
@@ -5044,33 +5280,33 @@
                         class="profile-photo-thumb"
                         type="button"
                         data-profile-photo="${escapeHtml(
-                          photo.id
+                            photo.id
                         )}"
                         title="${escapeHtml(
-                          label
+                            label
                         )}"
                         aria-label="Open ${escapeHtml(
-                          label
+                            label
                         )}">
 
                         ${renderPhotoThumbnail(
-                          photo,
-                          { label }
+                            photo,
+                            { label }
                         )}
                       </button>
 
                       ${renderPersonPhotoUnlinkButton(
-                        photo,
-                        person.id
-                      )}
+                            photo,
+                            person.id
+                        )}
                     </div>
                   `;
-                })
-                .join('')}
+                    })
+                    .join('')}
             </div>
 
             ${hasOverflow
-              ? `
+                ? `
                 <button
                   class="
                     profile-photo-carousel-button
@@ -5083,12 +5319,12 @@
                   ${icon.chevron}
                 </button>
               `
-              : ''}
+                : ''}
           </div>
         `
         : renderProfileResourceEmpty('No photos yet');
 
-      return renderProfileResourceCard({
+    return renderProfileResourceCard({
         type: 'photos',
         iconSvg: icon.image,
         title: 'Photos',
@@ -5098,43 +5334,44 @@
         addLabel: 'Add photos',
         addAction: 'add-photos',
         body
-      });
-    }
+    });
+}
 
-    function renderProfileConnectedFiles(
-      person
-    ) {
-      const files =
+function renderProfileConnectedFiles(
+    person
+)
+{
+    const files =
         getArchiveFilesForPerson(
-          person.id
+            person.id
         );
 
-      const preview =
+    const preview =
         files.slice(
-          0,
-          3
+            0,
+            3
         );
 
-      const body =
+    const body =
         preview.length
-          ? renderConnectedFileList({
-            files:
+            ? renderConnectedFileList({
+                files:
               preview,
 
-            contextType:
+                contextType:
               'person',
 
-            contextId:
+                contextId:
               person.id,
 
-            emptyText:
+                emptyText:
               'No archive files linked'
-          })
-          : renderProfileResourceEmpty(
-              'No archive files linked'
+            })
+            : renderProfileResourceEmpty(
+                'No archive files linked'
             );
 
-      return renderProfileResourceCard({
+    return renderProfileResourceCard({
         type:
           'archive',
 
@@ -5160,69 +5397,72 @@
           'add-files',
 
         body
-      });
+    });
+}
+
+function renderProfileNoteTiles(
+    person,
+    notes =
+        getNotesForPerson(
+            person.id
+        )
+)
+{
+    const preview =
+        notes.slice(
+            0,
+            3
+        );
+
+    if (!preview.length)
+    {
+        return renderProfileResourceEmpty(
+            'No notes yet'
+        );
     }
 
-    function renderProfileNoteTiles(
-      person,
-      notes =
-        getNotesForPerson(
-          person.id
-        )
-    ) {
-      const preview =
-        notes.slice(
-          0,
-          3
-        );
-
-      if (!preview.length) {
-        return renderProfileResourceEmpty(
-          'No notes yet'
-        );
-      }
-
-      const personLabel =
+    const personLabel =
         person?.names?.display
         || person?.name
         || 'this person';
 
-      return `
+    return `
         <div
           class="
             profile-note-tile-grid
           "
           role="list"
           aria-label="Notes linked to ${escapeHtml(
-            personLabel
-          )}">
+                personLabel
+            )}">
 
           ${preview
-            .map(note => {
-              const noteTitle =
-                note.title
+                .map(note =>
+                {
+                    const noteTitle =
+                        note.title
                 || 'Untitled note';
 
-              const previewText =
-                noteExcerpt(
-                  note,
-                  120
-                )
+                    const previewText =
+                        noteExcerpt(
+                            note,
+                            120
+                        )
                 || 'No note content';
 
-              const collectionLabel =
-                formatNoteCollectionSummary(
-                  note
-                )
+                    const collectionLabel =
+                        formatNoteCollectionSummary(
+                            note
+                        )
                 || 'Research note';
 
-              const updatedLabel =
-                formatNoteRelativeUpdatedAt(
-                  note
-                )
+                    const updatedLabel =
+                        formatNoteRelativeUpdatedAt(
+                            note
+                        )
                 || 'Updated date unknown';
 
-              return `
+                    return `
                 <div
                   class="
                     profile-note-tile
@@ -5235,14 +5475,14 @@
                     "
                     type="button"
                     data-connected-note-id="${escapeHtml(
-                      note.id
+                        note.id
                     )}"
                     data-connected-note-context-type="person"
                     data-connected-note-context-id="${escapeHtml(
-                      person.id
+                        person.id
                     )}"
                     aria-label="Open note: ${escapeHtml(
-                      noteTitle
+                        noteTitle
                     )}">
 
                     <strong
@@ -5250,12 +5490,12 @@
                         profile-note-tile__title
                       "
                       title="${escapeHtml(
-                        noteTitle
-                      )}">
+                            noteTitle
+                        )}">
 
                       ${escapeHtml(
-                        noteTitle
-                      )}
+                            noteTitle
+                        )}
                     </strong>
 
                     <span
@@ -5263,12 +5503,12 @@
                         profile-note-tile__preview
                       "
                       title="${escapeHtml(
-                        previewText
-                      )}">
+                            previewText
+                        )}">
 
                       ${escapeHtml(
-                        previewText
-                      )}
+                            previewText
+                        )}
                     </span>
 
                     <span
@@ -5276,12 +5516,12 @@
                         profile-note-tile__collection
                       "
                       title="${escapeHtml(
-                        collectionLabel
-                      )}">
+                            collectionLabel
+                        )}">
 
                       ${escapeHtml(
-                        collectionLabel
-                      )}
+                            collectionLabel
+                        )}
                     </span>
 
                     <span
@@ -5289,12 +5529,12 @@
                         profile-note-tile__updated
                       "
                       title="${escapeHtml(
-                        updatedLabel
-                      )}">
+                            updatedLabel
+                        )}">
 
                       ${escapeHtml(
-                        updatedLabel
-                      )}
+                            updatedLabel
+                        )}
                     </span>
                   </button>
 
@@ -5305,16 +5545,16 @@
                     "
                     type="button"
                     data-connected-note-unlink="${escapeHtml(
-                      note.id
+                        note.id
                     )}"
                     data-connected-note-context-type="person"
                     data-connected-note-context-id="${escapeHtml(
-                      person.id
+                        person.id
                     )}"
                     aria-label="Unlink ${escapeHtml(
-                      noteTitle
+                        noteTitle
                     )} from ${escapeHtml(
-                      personLabel
+                        personLabel
                     )}"
                     title="Unlink note">
 
@@ -5322,21 +5562,22 @@
                   </button>
                 </div>
               `;
-            })
-            .join('')}
+                })
+                .join('')}
         </div>
       `;
-    }
+}
 
-    function renderProfileConnectedNotes(
-      person
-    ) {
-      const notes =
+function renderProfileConnectedNotes(
+    person
+)
+{
+    const notes =
         getNotesForPerson(
-          person.id
+            person.id
         );
 
-      return renderProfileResourceCard({
+    return renderProfileResourceCard({
         type:
           'notes',
 
@@ -5363,29 +5604,30 @@
 
         body:
           renderProfileNoteTiles(
-            person,
-            notes
+              person,
+              notes
           )
-      });
-    }
+    });
+}
 
-    function renderProfileConnectedPlaces(
-      person
-    ) {
-      const places =
+function renderProfileConnectedPlaces(
+    person
+)
+{
+    const places =
         getProfileConnectedPlaces(
-          person.id
+            person.id
         );
 
-      const preview =
+    const preview =
         places.slice(0, 3);
 
-      const coordinateWarning =
+    const coordinateWarning =
         t(
-          'Location has no coordinates'
+            'Location has no coordinates'
         );
 
-      const body = preview.length
+    const body = preview.length
         ? `
           <div
             class="
@@ -5393,18 +5635,19 @@
             ">
 
             ${preview
-              .map(place => {
-                const accessibleLabel = [
-                  `Open ${place.title}`,
+                .map(place =>
+                {
+                    const accessibleLabel = [
+                        `Open ${place.title}`,
 
-                  !place.hasCoordinates
-                    ? coordinateWarning
-                    : ''
-                ]
-                  .filter(Boolean)
-                  .join('. ');
+                        !place.hasCoordinates
+                            ? coordinateWarning
+                            : ''
+                    ]
+                        .filter(Boolean)
+                        .join('. ');
 
-                return `
+                    return `
                   <button
                     class="
                       profile-resource-row
@@ -5412,10 +5655,10 @@
                     "
                     type="button"
                     data-profile-place="${escapeHtml(
-                      place.id
+                        place.id
                     )}"
                     aria-label="${escapeHtml(
-                      accessibleLabel
+                        accessibleLabel
                     )}">
 
                     <span
@@ -5425,29 +5668,29 @@
 
                       <strong>
                         ${escapeHtml(
-                          place.title
+                            place.title
                         )}
                       </strong>
 
                       ${
-                        !place.hasCoordinates
-                          ? `
+                            !place.hasCoordinates
+                                ? `
                             <span
                               class="
                                 profile-place-coordinate-warning
                               "
                               role="img"
                               aria-label="${escapeHtml(
-                                coordinateWarning
-                              )}"
+                                    coordinateWarning
+                                )}"
                               title="${escapeHtml(
-                                coordinateWarning
-                              )}">
+                                    coordinateWarning
+                                )}">
                               ${icon.warning}
                             </span>
                           `
-                          : ''
-                      }
+                                : ''
+                        }
                     </span>
 
                     <small
@@ -5455,20 +5698,20 @@
                         profile-place-preview-meta
                       ">
                       ${escapeHtml(
-                        place.meta
-                      )}
+                            place.meta
+                        )}
                     </small>
                   </button>
                 `;
-              })
-              .join('')}
+                })
+                .join('')}
           </div>
         `
         : renderProfileResourceEmpty(
             'No places linked'
-          );
+        );
 
-      return renderProfileResourceCard({
+    return renderProfileResourceCard({
         type: 'places',
         iconSvg: icon.mapPin,
         title: 'Places',
@@ -5476,13 +5719,14 @@
         singular: 'place',
         plural: 'places',
         body
-      });
-    }
+    });
+}
 
-    function renderProfileFamilyHub(person) {
-      const count = relationshipCount(person.id);
+function renderProfileFamilyHub(person)
+{
+    const count = relationshipCount(person.id);
 
-      return `
+    return `
         <section
           class="profile-side-card profile-family-hub"
           aria-label="Family relationships">
@@ -5501,10 +5745,10 @@
             <span
               class="profile-family-count"
               aria-label="${count} ${
-                count === 1
-                  ? 'relationship'
-                  : 'relationships'
-              }">
+                    count === 1
+                        ? 'relationship'
+                        : 'relationships'
+                }">
               ${count}
             </span>
           </h3>
@@ -5514,1025 +5758,1095 @@
           </div>
         </section>
       `;
-    }
+}
 
-    function updateProfilePhotoCarousel(carousel) {
-      const track = carousel?.querySelector(
+function updateProfilePhotoCarousel(carousel)
+{
+    const track = carousel?.querySelector(
         '[data-profile-photo-track]'
-      );
+    );
 
-      const previous = carousel?.querySelector(
+    const previous = carousel?.querySelector(
         '[data-profile-photo-prev]'
-      );
+    );
 
-      const next = carousel?.querySelector(
+    const next = carousel?.querySelector(
         '[data-profile-photo-next]'
-      );
+    );
 
-      if (!track || !previous || !next) return;
+    if (!track || !previous || !next) return;
 
-      previous.disabled = track.scrollLeft <= 2;
+    previous.disabled = track.scrollLeft <= 2;
 
-      next.disabled =
+    next.disabled =
         track.scrollLeft + track.clientWidth
         >= track.scrollWidth - 2;
-    }
+}
 
-    function bindProfilePhotoCarousels(root = main) {
-      root
+function bindProfilePhotoCarousels(root = main)
+{
+    root
         .querySelectorAll('[data-profile-photo-carousel]')
-        .forEach(carousel => {
-          const track = carousel.querySelector(
-            '[data-profile-photo-track]'
-          );
+        .forEach(carousel =>
+        {
+            const track = carousel.querySelector(
+                '[data-profile-photo-track]'
+            );
 
-          const previous = carousel.querySelector(
-            '[data-profile-photo-prev]'
-          );
+            const previous = carousel.querySelector(
+                '[data-profile-photo-prev]'
+            );
 
-          const next = carousel.querySelector(
-            '[data-profile-photo-next]'
-          );
+            const next = carousel.querySelector(
+                '[data-profile-photo-next]'
+            );
 
-          /*
+            /*
           * Carousels with three or fewer photos do not render
           * navigation buttons.
           */
-          if (!track || !previous || !next) return;
+            if (!track || !previous || !next) return;
 
-          const scrollTrack = direction => {
-            track.scrollBy({
-              left:
+            const scrollTrack = direction =>
+            {
+                track.scrollBy({
+                    left:
                 Math.max(track.clientWidth * .82, 160)
                 * direction,
-              behavior: 'smooth'
+                    behavior: 'smooth'
+                });
+            };
+
+            previous.addEventListener('click', () =>
+            {
+                scrollTrack(-1);
             });
-          };
 
-          previous.addEventListener('click', () => {
-            scrollTrack(-1);
-          });
+            next.addEventListener('click', () =>
+            {
+                scrollTrack(1);
+            });
 
-          next.addEventListener('click', () => {
-            scrollTrack(1);
-          });
+            track.addEventListener(
+                'scroll',
+                () => updateProfilePhotoCarousel(carousel),
+                { passive: true }
+            );
 
-          track.addEventListener(
-            'scroll',
-            () => updateProfilePhotoCarousel(carousel),
-            { passive: true }
-          );
-
-          requestAnimationFrame(() => {
-            updateProfilePhotoCarousel(carousel);
-          });
+            requestAnimationFrame(() =>
+            {
+                updateProfilePhotoCarousel(carousel);
+            });
         });
-    }
+}
 
-    function activateProfileCardSection(
-      card,
-      sectionId,
-      {
+function activateProfileCardSection(
+    card,
+    sectionId,
+    {
         focusTab = false
-      } = {}
-    ) {
-      if (!card) return;
+    } = {}
+)
+{
+    if (!card) return;
 
-      const activeSection =
+    const activeSection =
         normalizeProfileCardSection(sectionId);
 
-      state.peopleProfileEditTab =
+    state.peopleProfileEditTab =
         activeSection;
 
-      const tabs = [
+    const tabs = [
         ...card.querySelectorAll(
-          '[data-profile-card-tab]'
+            '[data-profile-card-tab]'
         )
-      ];
+    ];
 
-      const panels = [
+    const panels = [
         ...card.querySelectorAll(
-          '[data-profile-card-panel]'
+            '[data-profile-card-panel]'
         )
-      ];
+    ];
 
-      tabs.forEach(tab => {
+    tabs.forEach(tab =>
+    {
         const isActive =
-          tab.dataset.profileCardTab
+            tab.dataset.profileCardTab
           === activeSection;
 
         tab.classList.toggle(
-          'active',
-          isActive
+            'active',
+            isActive
         );
 
         tab.setAttribute(
-          'aria-selected',
-          isActive ? 'true' : 'false'
+            'aria-selected',
+            isActive ? 'true' : 'false'
         );
 
         tab.tabIndex = isActive ? 0 : -1;
-      });
+    });
 
-      panels.forEach(panel => {
+    panels.forEach(panel =>
+    {
         const isActive =
-          panel.dataset.profileCardPanel
+            panel.dataset.profileCardPanel
           === activeSection;
 
         panel.classList.toggle(
-          'active',
-          isActive
+            'active',
+            isActive
         );
 
         panel.setAttribute(
-          'aria-hidden',
-          isActive ? 'false' : 'true'
+            'aria-hidden',
+            isActive ? 'false' : 'true'
         );
 
-        if (isActive) {
-          panel.removeAttribute('inert');
-        } else {
-          panel.setAttribute('inert', '');
+        if (isActive)
+        {
+            panel.removeAttribute('inert');
         }
-      });
+        else
+        {
+            panel.setAttribute('inert', '');
+        }
+    });
 
-      if (focusTab) {
+    if (focusTab)
+    {
         card.querySelector(
-          `[data-profile-card-tab="${
-            CSS.escape(activeSection)
-          }"]`
+            `[data-profile-card-tab="${
+                CSS.escape(activeSection)
+            }"]`
         )?.focus();
-      }
     }
+}
 
-    function bindProfileCardTabs(card) {
-      if (!card) return;
+function bindProfileCardTabs(card)
+{
+    if (!card) return;
 
-      const tabs = [
+    const tabs = [
         ...card.querySelectorAll(
-          '[data-profile-card-tab]'
+            '[data-profile-card-tab]'
         )
-      ];
+    ];
 
-      tabs.forEach((tab, index) => {
-        tab.addEventListener('click', () => {
-          activateProfileCardSection(
-            card,
-            tab.dataset.profileCardTab
-          );
+    tabs.forEach((tab, index) =>
+    {
+        tab.addEventListener('click', () =>
+        {
+            activateProfileCardSection(
+                card,
+                tab.dataset.profileCardTab
+            );
         });
 
         tab.addEventListener(
-          'keydown',
-          event => {
-            const handledKeys = [
-              'ArrowLeft',
-              'ArrowRight',
-              'Home',
-              'End'
-            ];
+            'keydown',
+            event =>
+            {
+                const handledKeys = [
+                    'ArrowLeft',
+                    'ArrowRight',
+                    'Home',
+                    'End'
+                ];
 
-            if (
-              !handledKeys.includes(event.key)
-            ) {
-              return;
-            }
+                if (
+                    !handledKeys.includes(event.key)
+                )
+                {
+                    return;
+                }
 
-            event.preventDefault();
+                event.preventDefault();
 
-            let nextIndex = index;
+                let nextIndex = index;
 
-            if (event.key === 'ArrowLeft') {
-              nextIndex =
-                (index - 1 + tabs.length)
+                if (event.key === 'ArrowLeft')
+                {
+                    nextIndex =
+                        (index - 1 + tabs.length)
                 % tabs.length;
-            }
+                }
 
-            if (event.key === 'ArrowRight') {
-              nextIndex =
-                (index + 1)
+                if (event.key === 'ArrowRight')
+                {
+                    nextIndex =
+                        (index + 1)
                 % tabs.length;
-            }
+                }
 
-            if (event.key === 'Home') {
-              nextIndex = 0;
-            }
+                if (event.key === 'Home')
+                {
+                    nextIndex = 0;
+                }
 
-            if (event.key === 'End') {
-              nextIndex = tabs.length - 1;
-            }
+                if (event.key === 'End')
+                {
+                    nextIndex = tabs.length - 1;
+                }
 
-            activateProfileCardSection(
-              card,
-              tabs[nextIndex]
-                .dataset.profileCardTab,
-              {
-                focusTab: true
-              }
-            );
-          }
+                activateProfileCardSection(
+                    card,
+                    tabs[nextIndex]
+                        .dataset.profileCardTab,
+                    {
+                        focusTab: true
+                    }
+                );
+            }
         );
-      });
-    }
+    });
+}
 
-    function profileEditValidationFailure(
-      section,
-      message,
-      focusSelector
-    ) {
-      return {
+function profileEditValidationFailure(
+    section,
+    message,
+    focusSelector
+)
+{
+    return {
         ok: false,
         section,
         message,
         focusSelector
-      };
-    }
+    };
+}
 
-    function collectProfileMainEdit() {
-      const living =
+function collectProfileMainEdit()
+{
+    const living =
         main.querySelector(
-          '#profileInlineLiving'
+            '#profileInlineLiving'
         )?.value || 'Unknown';
 
-      const birthDate =
+    const birthDate =
         collectGenealogyDateField(
-          'profileInlineBirthField'
+            'profileInlineBirthField'
         );
 
-      if (!birthDate) {
+    if (!birthDate)
+    {
         return profileEditValidationFailure(
-          'main',
-          'Check the birth date before saving.',
-          `
+            'main',
+            'Check the birth date before saving.',
+            `
             [data-genealogy-date-field=
               "profileInlineBirthField"]
             [data-genealogy-date-input]
           `.replace(/\s+/g, ' ')
         );
-      }
+    }
 
-      const deathDate =
+    const deathDate =
         living === 'Deceased'
-          ? collectGenealogyDateField(
-              'profileInlineDeathField'
+            ? collectGenealogyDateField(
+                'profileInlineDeathField'
             )
-          : emptyGenealogyDate(
-              'Exact date'
+            : emptyGenealogyDate(
+                'Exact date'
             );
 
-      if (!deathDate) {
+    if (!deathDate)
+    {
         return profileEditValidationFailure(
-          'main',
-          'Check the death date before saving.',
-          `
+            'main',
+            'Check the death date before saving.',
+            `
             [data-genealogy-date-field=
               "profileInlineDeathField"]
             [data-genealogy-date-input]
           `.replace(/\s+/g, ' ')
         );
-      }
+    }
 
-      return {
+    return {
         ok: true,
         section: 'main',
         payload: {
-          first:
-            (() => {
-              const input = main.querySelector('#profileInlineFirst');
-              return collectLocalizedDataFieldValue(input, input?.dataset.sourceValue || '').trim();
+            first:
+            (() =>
+            {
+                const input = main.querySelector('#profileInlineFirst');
+                return collectLocalizedDataFieldValue(input, input?.dataset.sourceValue || '').trim();
             })(),
 
-          last:
-            (() => {
-              const input = main.querySelector('#profileInlineLast');
-              return collectLocalizedDataFieldValue(input, input?.dataset.sourceValue || '').trim();
+            last:
+            (() =>
+            {
+                const input = main.querySelector('#profileInlineLast');
+                return collectLocalizedDataFieldValue(input, input?.dataset.sourceValue || '').trim();
             })(),
 
-          patronym:
-            (() => {
-              const input = main.querySelector('#profileInlinePatronym');
-              return collectLocalizedDataFieldValue(input, input?.dataset.sourceValue || '').trim();
+            patronym:
+            (() =>
+            {
+                const input = main.querySelector('#profileInlinePatronym');
+                return collectLocalizedDataFieldValue(input, input?.dataset.sourceValue || '').trim();
             })(),
 
-          prefix:
+            prefix:
             main.querySelector(
-              '#profileInlinePrefix'
+                '#profileInlinePrefix'
             )?.value.trim() || '',
 
-          suffix:
+            suffix:
             main.querySelector(
-              '#profileInlineSuffix'
+                '#profileInlineSuffix'
             )?.value.trim() || '',
 
-          maidenName:
-            (() => {
-              const input = main.querySelector('#profileInlineMaidenInput');
-              return collectLocalizedDataFieldValue(input, input?.dataset.sourceValue || '').trim();
+            maidenName:
+            (() =>
+            {
+                const input = main.querySelector('#profileInlineMaidenInput');
+                return collectLocalizedDataFieldValue(input, input?.dataset.sourceValue || '').trim();
             })(),
 
-          gender:
+            gender:
             main.querySelector(
-              '#profileInlineGender'
+                '#profileInlineGender'
             )?.value || 'Unknown',
 
-          living,
+            living,
 
-          birthDate,
-          birthPlace:
+            birthDate,
+            birthPlace:
             readPlaceInputValue(
-              '#profileInlineBirthPlace',
-              main
+                '#profileInlineBirthPlace',
+                main
             ),
 
-          deathDate,
-          deathPlace:
+            deathDate,
+            deathPlace:
             readPlaceInputValue(
-              '#profileInlineDeathPlace',
-              main
+                '#profileInlineDeathPlace',
+                main
             ),
 
-          deathReason:
+            deathReason:
             main.querySelector(
-              '#profileInlineDeathReason'
+                '#profileInlineDeathReason'
             )?.value.trim() || '',
 
-          burialPlace:
+            burialPlace:
             readPlaceInputValue(
-              '#profileInlineBurialPlace',
-              main
+                '#profileInlineBurialPlace',
+                main
             )
         }
-      };
-    }
+    };
+}
 
-    function collectProfileEducationEdit() {
-      const fromDate =
+function collectProfileEducationEdit()
+{
+    const fromDate =
         collectGenealogyDateField(
-          'profileEducationFromDate'
+            'profileEducationFromDate'
         );
 
-      if (!fromDate) {
+    if (!fromDate)
+    {
         return profileEditValidationFailure(
-          'education',
-          'Check the education start date before saving.',
-          `
+            'education',
+            'Check the education start date before saving.',
+            `
             [data-genealogy-date-field=
               "profileEducationFromDate"]
             [data-genealogy-date-input]
           `.replace(/\s+/g, ' ')
         );
-      }
+    }
 
-      const toDate =
+    const toDate =
         collectGenealogyDateField(
-          'profileEducationToDate'
+            'profileEducationToDate'
         );
 
-      if (!toDate) {
+    if (!toDate)
+    {
         return profileEditValidationFailure(
-          'education',
-          'Check the education end date before saving.',
-          `
+            'education',
+            'Check the education end date before saving.',
+            `
             [data-genealogy-date-field=
               "profileEducationToDate"]
             [data-genealogy-date-input]
           `.replace(/\s+/g, ' ')
         );
-      }
+    }
 
-      return {
+    return {
         ok: true,
         section: 'education',
         payload: {
-          institutionName:
+            institutionName:
             collectLocalizedDataFieldValue(
-              main.querySelector(
-                '#profileEducationInstitutionName'
-              ),
-              main.querySelector(
-                '#profileEducationInstitutionName'
-              )?.dataset.sourceValue || ''
+                main.querySelector(
+                    '#profileEducationInstitutionName'
+                ),
+                main.querySelector(
+                    '#profileEducationInstitutionName'
+                )?.dataset.sourceValue || ''
             ).trim(),
 
-          institutionType:
+            institutionType:
             main.querySelector(
-              '#profileEducationInstitutionType'
+                '#profileEducationInstitutionType'
             )?.value || 'Unknown',
 
-          value:
+            value:
             collectLocalizedDataFieldValue(
-              main.querySelector(
-                '#profileEducationValue'
-              ),
-              main.querySelector(
-                '#profileEducationValue'
-              )?.dataset.sourceValue || ''
+                main.querySelector(
+                    '#profileEducationValue'
+                ),
+                main.querySelector(
+                    '#profileEducationValue'
+                )?.dataset.sourceValue || ''
             ).trim(),
 
-          place:
+            place:
             readPlaceInputValue(
-              '#profileEducationPlace',
-              main
+                '#profileEducationPlace',
+                main
             ),
 
-          notes:
+            notes:
             collectLocalizedDataFieldValue(
-              main.querySelector(
-                '#profileEducationNotes'
-              ),
-              main.querySelector(
-                '#profileEducationNotes'
-              )?.dataset.sourceValue || ''
+                main.querySelector(
+                    '#profileEducationNotes'
+                ),
+                main.querySelector(
+                    '#profileEducationNotes'
+                )?.dataset.sourceValue || ''
             ).trim(),
 
-          fromDate,
-          toDate
+            fromDate,
+            toDate
         }
-      };
-    }
+    };
+}
 
-    function collectProfileWorkEdit() {
-      const fromDate =
+function collectProfileWorkEdit()
+{
+    const fromDate =
         collectGenealogyDateField(
-          'profileWorkFromDate'
+            'profileWorkFromDate'
         );
 
-      if (!fromDate) {
+    if (!fromDate)
+    {
         return profileEditValidationFailure(
-          'work',
-          'Check the work start date before saving.',
-          `
+            'work',
+            'Check the work start date before saving.',
+            `
             [data-genealogy-date-field=
               "profileWorkFromDate"]
             [data-genealogy-date-input]
           `.replace(/\s+/g, ' ')
         );
-      }
+    }
 
-      const toDate =
+    const toDate =
         collectGenealogyDateField(
-          'profileWorkToDate'
+            'profileWorkToDate'
         );
 
-      if (!toDate) {
+    if (!toDate)
+    {
         return profileEditValidationFailure(
-          'work',
-          'Check the work end date before saving.',
-          `
+            'work',
+            'Check the work end date before saving.',
+            `
             [data-genealogy-date-field=
               "profileWorkToDate"]
             [data-genealogy-date-input]
           `.replace(/\s+/g, ' ')
         );
-      }
+    }
 
-      return {
+    return {
         ok: true,
         section: 'work',
         payload: {
-          company:
+            company:
             main.querySelector(
-              '#profileWorkCompany'
+                '#profileWorkCompany'
             )?.value.trim() || '',
 
-          occupation:
+            occupation:
             main.querySelector(
-              '#profileWorkOccupation'
+                '#profileWorkOccupation'
             )?.value.trim() || '',
 
-          notes:
+            notes:
             main.querySelector(
-              '#profileWorkNotes'
+                '#profileWorkNotes'
             )?.value.trim() || '',
 
-          fromDate,
-          toDate
+            fromDate,
+            toDate
         }
-      };
-    }
+    };
+}
 
-    function collectProfileOtherEdit() {
-      const baptismDate =
+function collectProfileOtherEdit()
+{
+    const baptismDate =
         collectGenealogyDateField(
-          'profileBaptismDate'
+            'profileBaptismDate'
         );
 
-      if (!baptismDate) {
+    if (!baptismDate)
+    {
         return profileEditValidationFailure(
-          'other',
-          'Check the baptism date before saving.',
-          `
+            'other',
+            'Check the baptism date before saving.',
+            `
             [data-genealogy-date-field=
               "profileBaptismDate"]
             [data-genealogy-date-input]
           `.replace(/\s+/g, ' ')
         );
-      }
+    }
 
-      return {
+    return {
         ok: true,
         section: 'other',
         payload: {
-          religion:
+            religion:
             readReligionField(
-              main,
-              'profileReligion'
+                main,
+                'profileReligion'
             ),
 
-          baptismDate,
+            baptismDate,
 
-          baptismPlace:
+            baptismPlace:
             readPlaceInputValue(
-              '#profileBaptismPlace',
-              main
+                '#profileBaptismPlace',
+                main
             )
         }
-      };
-    }
+    };
+}
 
-    function collectProfileEditSections() {
-      const results = [
+function collectProfileEditSections()
+{
+    const results = [
         collectProfileMainEdit(),
         collectProfileEducationEdit(),
         collectProfileWorkEdit(),
         collectProfileOtherEdit()
-      ];
+    ];
 
-      const invalid = results.find(
+    const invalid = results.find(
         result => !result.ok
-      );
+    );
 
-      if (invalid) return invalid;
+    if (invalid) return invalid;
 
-      return {
+    return {
         ok: true,
         payloads: Object.fromEntries(
-          results.map(result => [
-            result.section,
-            result.payload
-          ])
+            results.map(result => [
+                result.section,
+                result.payload
+            ])
         )
-      };
-    }
+    };
+}
 
-    function applyProfileMainEdit(
-      person,
-      payload
-    ) {
-      const centralPerson =
+function applyProfileMainEdit(
+    person,
+    payload
+)
+{
+    const centralPerson =
         getPerson(person.id);
 
-      if (!centralPerson) return;
+    if (!centralPerson) return;
 
-      ensurePersonCentralStructures(
+    ensurePersonCentralStructures(
         centralPerson
-      );
+    );
 
-      const first =
+    const first =
         payload.first
         || centralPerson.names.first
         || person.first
         || '';
 
-      const last =
+    const last =
         payload.last
         || centralPerson.names.last
         || person.surname
         || '';
 
-      // display name is derived below via rebuildPersonDisplayName
+    // display name is derived below via rebuildPersonDisplayName
 
 
-      const gender =
+    const gender =
         String(payload.gender || '')
-          .toLowerCase();
+            .toLowerCase();
 
-      const normalizedGender =
+    const normalizedGender =
         gender === 'male'
         || gender === 'female'
-          ? gender
-          : 'unknown';
+            ? gender
+            : 'unknown';
 
-      const livingStatus =
+    const livingStatus =
         normalizeLivingStatus(
-          payload.living
+            payload.living
         );
 
-      const birthPlace =
+    const birthPlace =
         resolvePlaceAssignment(
-          payload.birthPlace,
-          centralPerson.birth?.placeId
+            payload.birthPlace,
+            centralPerson.birth?.placeId
         );
 
-      const deathPlace =
+    const deathPlace =
         resolvePlaceAssignment(
-          payload.deathPlace,
-          centralPerson.death?.placeId
+            payload.deathPlace,
+            centralPerson.death?.placeId
         );
 
-      const burialPlace =
+    const burialPlace =
         resolvePlaceAssignment(
-          payload.burialPlace,
-          centralPerson.death
-            ?.burialPlaceId
+            payload.burialPlace,
+            centralPerson.death
+                ?.burialPlaceId
         );
 
-      centralPerson.names.first = first;
-      centralPerson.names.middle = payload.patronym || '';
-      centralPerson.names.last = last;
-      centralPerson.names.prefix = normalizeNameSegment(payload.prefix);
-      centralPerson.names.suffix = normalizeNameSegment(payload.suffix);
-      centralPerson.names.maiden = payload.maidenName || '';
-      rebuildPersonDisplayName(centralPerson);
+    centralPerson.names.first = first;
+    centralPerson.names.middle = payload.patronym || '';
+    centralPerson.names.last = last;
+    centralPerson.names.prefix = normalizeNameSegment(payload.prefix);
+    centralPerson.names.suffix = normalizeNameSegment(payload.suffix);
+    centralPerson.names.maiden = payload.maidenName || '';
+    rebuildPersonDisplayName(centralPerson);
 
 
-      centralPerson.gender =
+    centralPerson.gender =
         normalizedGender;
 
-      centralPerson.livingStatus =
+    centralPerson.livingStatus =
         livingStatus;
 
-      centralPerson.birth = {
+    centralPerson.birth = {
         ...payload.birthDate,
         placeId: birthPlace.placeId,
         placeText: birthPlace.placeText,
         address: birthPlace.address
-      };
+    };
 
-      if (livingStatus === 'Deceased') {
+    if (livingStatus === 'Deceased')
+    {
         centralPerson.death = {
-          ...payload.deathDate,
-          placeId: deathPlace.placeId,
-          placeText: deathPlace.placeText,
-          address: deathPlace.address,
-          reason: payload.deathReason,
-          cause: payload.deathReason,
-          burialPlaceId:
+            ...payload.deathDate,
+            placeId: deathPlace.placeId,
+            placeText: deathPlace.placeText,
+            address: deathPlace.address,
+            reason: payload.deathReason,
+            cause: payload.deathReason,
+            burialPlaceId:
             burialPlace.placeId,
-          burialPlaceText:
+            burialPlaceText:
             burialPlace.placeText,
-          burialAddress:
+            burialAddress:
             burialPlace.address
         };
-      } else {
+    }
+    else
+    {
         centralPerson.death = {
-          ...emptyGenealogyDate(
-            'Exact date'
-          ),
-          placeId: null,
-          placeText: '',
-          address: '',
-          reason: '',
-          cause: '',
-          burialPlaceId: null,
-          burialPlaceText: '',
-          burialAddress: ''
+            ...emptyGenealogyDate(
+                'Exact date'
+            ),
+            placeId: null,
+            placeText: '',
+            address: '',
+            reason: '',
+            cause: '',
+            burialPlaceId: null,
+            burialPlaceText: '',
+            burialAddress: ''
         };
-      }
+    }
 
-      person.first = first;
-      person.surname = last;
-      person.name = centralPerson.names.display;
-      person.gender = normalizedGender;
-      person.living = livingStatus;
-      person.birth =
+    person.first = first;
+    person.surname = last;
+    person.name = centralPerson.names.display;
+    person.gender = normalizedGender;
+    person.living = livingStatus;
+    person.birth =
         formatGenealogyDateLabel(
-          payload.birthDate
+            payload.birthDate
         );
-      person.birthPlace =
+    person.birthPlace =
         birthPlace.placeText;
 
-      if (livingStatus === 'Deceased') {
+    if (livingStatus === 'Deceased')
+    {
         person.death =
-          formatGenealogyDateLabel(
-            payload.deathDate
-          );
+            formatGenealogyDateLabel(
+                payload.deathDate
+            );
 
         person.deathPlace =
-          deathPlace.placeText;
-      } else {
+            deathPlace.placeText;
+    }
+    else
+    {
         person.death = '';
         person.deathPlace = '';
-      }
     }
+}
 
-    function applyProfileEducationEdit(
-      person,
-      payload
-    ) {
-      const centralPerson =
+function applyProfileEducationEdit(
+    person,
+    payload
+)
+{
+    const centralPerson =
         getPerson(person.id);
 
-      if (!centralPerson) return;
+    if (!centralPerson) return;
 
-      const education =
+    const education =
         upsertPersonAttribute(
-          centralPerson,
-          'EDUC',
-          {
-            institutionName:
+            centralPerson,
+            'EDUC',
+            {
+                institutionName:
               payload.institutionName,
 
-            institutionType:
+                institutionType:
               payload.institutionType,
 
-            type:
+                type:
               payload.institutionType
               === 'Unknown'
-                ? ''
-                : payload.institutionType,
+                  ? ''
+                  : payload.institutionType,
 
-            value:
+                value:
               payload.value || 'Education',
 
-            notes: payload.notes,
+                notes: payload.notes,
 
-            fromDate:
+                fromDate:
               genealogyDateOrNull(
-                payload.fromDate,
-                'Year only'
+                  payload.fromDate,
+                  'Year only'
               ),
 
-            toDate:
+                toDate:
               genealogyDateOrNull(
-                payload.toDate,
-                'Year only'
+                  payload.toDate,
+                  'Year only'
               )
-          }
+            }
         );
 
-      const resolvedPlace =
+    const resolvedPlace =
         resolvePlaceAssignment(
-          payload.place,
-          education.placeId
+            payload.place,
+            education.placeId
         );
 
-      education.placeId =
+    education.placeId =
         resolvedPlace.placeId;
 
-      education.placeText =
+    education.placeText =
         resolvedPlace.placeText;
 
-      education.address =
+    education.address =
         resolvedPlace.address;
-    }
+}
 
-    function applyProfileWorkEdit(
-      person,
-      payload
-    ) {
-      const centralPerson =
+function applyProfileWorkEdit(
+    person,
+    payload
+)
+{
+    const centralPerson =
         getPerson(person.id);
 
-      if (!centralPerson) return;
+    if (!centralPerson) return;
 
-      upsertPersonAttribute(
+    upsertPersonAttribute(
         centralPerson,
         'OCCU',
         {
-          company: payload.company,
-          value: payload.occupation,
-          notes: payload.notes,
+            company: payload.company,
+            value: payload.occupation,
+            notes: payload.notes,
 
-          fromDate:
+            fromDate:
             genealogyDateOrNull(
-              payload.fromDate,
-              'Exact date'
+                payload.fromDate,
+                'Exact date'
             ),
 
-          toDate:
+            toDate:
             genealogyDateOrNull(
-              payload.toDate,
-              'Exact date'
+                payload.toDate,
+                'Exact date'
             )
         }
-      );
-    }
+    );
+}
 
-    function applyProfileOtherEdit(
-      person,
-      payload
-    ) {
-      const centralPerson =
+function applyProfileOtherEdit(
+    person,
+    payload
+)
+{
+    const centralPerson =
         getPerson(person.id);
 
-      if (!centralPerson) return;
+    if (!centralPerson) return;
 
-      upsertPersonAttribute(
+    upsertPersonAttribute(
         centralPerson,
         'RELI',
         {
-          value:
+            value:
             normalizeReligionValue(
-              payload.religion
+                payload.religion
             )
         }
-      );
+    );
 
-      const baptism =
+    const baptism =
         upsertPersonEvent(
-          centralPerson,
-          'BAPM',
-          {
-            date:
+            centralPerson,
+            'BAPM',
+            {
+                date:
               genealogyDateOrNull(
-                payload.baptismDate,
-                'Exact date'
+                  payload.baptismDate,
+                  'Exact date'
               )
-          }
+            }
         );
 
-      const resolvedPlace =
+    const resolvedPlace =
         resolvePlaceAssignment(
-          payload.baptismPlace,
-          baptism.placeId
+            payload.baptismPlace,
+            baptism.placeId
         );
 
-      baptism.placeId =
+    baptism.placeId =
         resolvedPlace.placeId;
 
-      baptism.placeText =
+    baptism.placeText =
         resolvedPlace.placeText;
 
-      baptism.address =
+    baptism.address =
         resolvedPlace.address;
-    }
+}
 
-    function applyProfileEditSections(
-      person,
-      payloads
-    ) {
-      applyProfileMainEdit(
+function applyProfileEditSections(
+    person,
+    payloads
+)
+{
+    applyProfileMainEdit(
         person,
         payloads.main
-      );
+    );
 
-      applyProfileEducationEdit(
+    applyProfileEducationEdit(
         person,
         payloads.education
-      );
+    );
 
-      applyProfileWorkEdit(
+    applyProfileWorkEdit(
         person,
         payloads.work
-      );
+    );
 
-      applyProfileOtherEdit(
+    applyProfileOtherEdit(
         person,
         payloads.other
-      );
+    );
 
-      person.updated =
+    person.updated =
         'Just now';
 
-      const centralPerson =
+    const centralPerson =
         getPerson(person.id);
 
-      markPersonUpdated(
+    markPersonUpdated(
         centralPerson
-      );
+    );
 
-      sampleData.events =
+    sampleData.events =
         rebuildSampleEventsAndPruneSourceLinks();
-    }
+}
 
-    function showProfileEditValidationError(
-      card,
-      result
-    ) {
-      activateProfileCardSection(
+function showProfileEditValidationError(
+    card,
+    result
+)
+{
+    activateProfileCardSection(
         card,
         result.section
-      );
+    );
 
-      showToast(result.message);
+    showToast(result.message);
 
-      requestAnimationFrame(() => {
+    requestAnimationFrame(() =>
+    {
         card?.querySelector(
-          result.focusSelector
+            result.focusSelector
         )?.focus();
-      });
-    }
+    });
+}
 
-    function cancelPeopleProfileEditing() {
-      state.peopleProfileEditing = false;
-      renderPeople();
-      showToast('Profile editing cancelled.');
-    }
+function cancelPeopleProfileEditing()
+{
+    state.peopleProfileEditing = false;
+    renderPeople();
+    showToast('Profile editing cancelled.');
+}
 
-    function bindPeopleProfileControls(person) {
-      bindToasts(main);
-      bindGenealogyDateFields(main);
-      bindPlaceComboboxes(main);
-      bindNameAffixComboboxes(main);
+function bindPeopleProfileControls(person)
+{
+    bindToasts(main);
+    bindGenealogyDateFields(main);
+    bindPlaceComboboxes(main);
+    bindNameAffixComboboxes(main);
 
-      bindRelationshipList(main, 'profile');
-      bindProfilePhotoCarousels(main);
-      bindPersonPhotoUnlinkButtons(main);
-      bindConnectedNoteLinks(
+    bindRelationshipList(main, 'profile');
+    bindProfilePhotoCarousels(main);
+    bindPersonPhotoUnlinkButtons(main);
+    bindConnectedNoteLinks(
         main
-      );
-      bindConnectedFileLinks(
+    );
+    bindConnectedFileLinks(
         main,
         {
-          onUnlinked:
+            onUnlinked:
             ({
-              contextType
-            }) => {
-              if (
                 contextType
+            }) =>
+            {
+                if (
+                    contextType
                 !== 'person'
-              ) {
-                return;
-              }
+                )
+                {
+                    return;
+                }
 
-              renderAfterPersonConnectedResourcesChanged();
+                renderAfterPersonConnectedResourcesChanged();
             }
         }
-      );
-      bindTimelineSourceControls(
+    );
+    bindTimelineSourceControls(
         main,
         {
-          afterSave:
+            afterSave:
             renderAfterPersonConnectedResourcesChanged
         }
-      );
-      bindConnectedSourceLinks(
+    );
+    bindConnectedSourceLinks(
         main,
         {
-          onUnlinked:
+            onUnlinked:
             ({
-              targetType
-            }) => {
-              if (
                 targetType
+            }) =>
+            {
+                if (
+                    targetType
                   === 'person'
-              ) {
-                renderAfterPersonConnectedResourcesChanged();
-              }
+                )
+                {
+                    renderAfterPersonConnectedResourcesChanged();
+                }
             }
         }
-      );
-      const profileCard = main.querySelector(
+    );
+    const profileCard = main.querySelector(
         '[data-profile-card-root]'
-      );
-      bindProfileCardTabs(profileCard);
-      main.querySelector('#backPeopleList')?.addEventListener('click', () => { state.peopleView = 'directory'; state.peopleSide = 'people'; state.peopleProfileEditing = false; renderPeople(); });
-      main
+    );
+    bindProfileCardTabs(profileCard);
+    main.querySelector('#backPeopleList')?.addEventListener('click', () =>
+    {
+        state.peopleView = 'directory'; state.peopleSide = 'people'; state.peopleProfileEditing = false; renderPeople();
+    });
+    main
         .querySelector('#profileEditButton')
-        ?.addEventListener('click', () => {
-          if (state.peopleProfileEditing) {
-            cancelPeopleProfileEditing();
-            return;
-          }
+        ?.addEventListener('click', () =>
+        {
+            if (state.peopleProfileEditing)
+            {
+                cancelPeopleProfileEditing();
+                return;
+            }
 
-          state.peopleProfileEditing = true;
-          renderPeople();
+            state.peopleProfileEditing = true;
+            renderPeople();
         });
-      main
+    main
         .querySelector('#profileAddRelative')
         ?.addEventListener(
-          'click',
-          event => {
-            openRelativePopover(
-              event.currentTarget,
-              person.id
-            );
-          }
+            'click',
+            event =>
+            {
+                openRelativePopover(
+                    event.currentTarget,
+                    person.id
+                );
+            }
         );
-      main
+    main
         .querySelector('#profileMoreActions')
         ?.addEventListener(
-          'click',
-          event => {
-            openPeopleActionsMenu(
-              person.id,
-              event.currentTarget,
-              {
-                includeProfile: false
-              }
-            );
-          }
+            'click',
+            event =>
+            {
+                openPeopleActionsMenu(
+                    person.id,
+                    event.currentTarget,
+                    {
+                        includeProfile: false
+                    }
+                );
+            }
         );
-      main.querySelector('#profileInlineGender')?.addEventListener('change', event => {
+    main.querySelector('#profileInlineGender')?.addEventListener('change', event =>
+    {
         const isFemale = event.target.value === 'Female';
         const row = main.querySelector('#profileInlineMaiden');
         const editGrid = main.querySelector('.profile-main-edit-grid');
         if (row) row.hidden = !isFemale;
-        if (editGrid) {
-          editGrid.classList.toggle('has-maiden', isFemale);
-          editGrid.classList.toggle('no-maiden', !isFemale);
+        if (editGrid)
+        {
+            editGrid.classList.toggle('has-maiden', isFemale);
+            editGrid.classList.toggle('no-maiden', !isFemale);
         }
-      });
-      const profileStatusButton = main.querySelector('#profileStatusButton');
-      const profileStatusMenu = main.querySelector('#profileStatusMenu');
-      profileStatusButton?.addEventListener('click', event => {
+    });
+    const profileStatusButton = main.querySelector('#profileStatusButton');
+    const profileStatusMenu = main.querySelector('#profileStatusMenu');
+    profileStatusButton?.addEventListener('click', event =>
+    {
         event.stopPropagation();
         const expanded = profileStatusButton.getAttribute('aria-expanded') === 'true';
         profileStatusButton.setAttribute('aria-expanded', expanded ? 'false' : 'true');
         if (profileStatusMenu) profileStatusMenu.hidden = expanded;
-      });
-      main.querySelectorAll('[data-profile-status-value]').forEach(option => option.addEventListener('click', event => {
+    });
+    main.querySelectorAll('[data-profile-status-value]').forEach(option => option.addEventListener('click', event =>
+    {
         event.stopPropagation();
         const status = option.dataset.profileStatusValue;
         const input = main.querySelector('#profileInlineLiving');
@@ -6541,313 +6855,350 @@
         if (input) input.value = status;
         if (label) label.textContent = status;
         if (dot) dot.className = `add-person-status-dot ${statusDotClass(status)}`;
-        main.querySelectorAll('[data-profile-status-value]').forEach(item => {
-          const active = item.dataset.profileStatusValue === status;
-          item.classList.toggle('active', active);
-          item.setAttribute('aria-selected', active ? 'true' : 'false');
-          const check = item.querySelector('[data-profile-status-check]');
-          if (check) check.innerHTML = active ? icon.check : '';
+        main.querySelectorAll('[data-profile-status-value]').forEach(item =>
+        {
+            const active = item.dataset.profileStatusValue === status;
+            item.classList.toggle('active', active);
+            item.setAttribute('aria-selected', active ? 'true' : 'false');
+            const check = item.querySelector('[data-profile-status-check]');
+            if (check) check.innerHTML = active ? icon.check : '';
         });
         const isDeceased = status === 'Deceased';
         const deathModel = main.querySelector('[data-genealogy-date-field="profileInlineDeathField"] [data-genealogy-date-model]');
-        if (deathModel) {
-          const currentDeath = normalizeGenealogyDateInput(JSON.parse(deathModel.value || '{}'));
-          if (isDeceased && !currentDeath.date && !currentDeath.dateLabel) {
-            applyGenealogyDateToField('profileInlineDeathField', emptyGenealogyDate('Exact date'));
-          }
-          if (!isDeceased) {
-            applyGenealogyDateToField('profileInlineDeathField', emptyGenealogyDate('Exact date'));
-          }
+        if (deathModel)
+        {
+            const currentDeath = normalizeGenealogyDateInput(JSON.parse(deathModel.value || '{}'));
+            if (isDeceased && !currentDeath.date && !currentDeath.dateLabel)
+            {
+                applyGenealogyDateToField('profileInlineDeathField', emptyGenealogyDate('Exact date'));
+            }
+            if (!isDeceased)
+            {
+                applyGenealogyDateToField('profileInlineDeathField', emptyGenealogyDate('Exact date'));
+            }
         }
         const group = main.querySelector('#profileInlineDeathFields');
         const extraGroup = main.querySelector('#profileInlineDeathExtraFields');
         if (group) group.hidden = !isDeceased;
         if (extraGroup) extraGroup.hidden = !isDeceased;
-        main.querySelectorAll('.profile-field-death-date, .profile-field-death-place, .profile-field-death-reason, .profile-field-burial-place').forEach(field => { field.hidden = !isDeceased; });
+        main.querySelectorAll('.profile-field-death-date, .profile-field-death-place, .profile-field-death-reason, .profile-field-burial-place').forEach(field =>
+        {
+            field.hidden = !isDeceased;
+        });
         const editGrid = main.querySelector('.profile-main-edit-grid');
         if (editGrid) editGrid.classList.toggle('is-deceased', isDeceased);
         if (profileStatusMenu) profileStatusMenu.hidden = true;
         profileStatusButton?.setAttribute('aria-expanded', 'false');
-      }));
-      main
+    }));
+    main
         .querySelector('#profileCancelEdit')
         ?.addEventListener(
-          'click',
-          cancelPeopleProfileEditing
+            'click',
+            cancelPeopleProfileEditing
         );
 
-      main
+    main
         .querySelector('#profileSaveInlineEdit')
-        ?.addEventListener('click', () => {
-          const result =
-            collectProfileEditSections();
+        ?.addEventListener('click', () =>
+        {
+            const result =
+                collectProfileEditSections();
 
-          if (!result.ok) {
-            showProfileEditValidationError(
-              profileCard,
-              result
-            );
+            if (!result.ok)
+            {
+                showProfileEditValidationError(
+                    profileCard,
+                    result
+                );
 
-            return;
-          }
-
-          applyProfileEditSections(
-            person,
-            result.payloads
-          );
-
-          state.peopleProfileEditing = false;
-
-          renderPeople();
-
-          showToast(
-            'Profile changes saved.'
-          );
-        });
-      main.querySelector('[data-profile-add-fact]')?.addEventListener('click', () => openAddFactOverlay(person));
-      main.querySelectorAll('[data-profile-partner-id]').forEach(button => {
-        button.addEventListener('click', () => openProfileFamilyMember(button.dataset.profilePartnerId));
-        button.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openProfileFamilyMember(button.dataset.profilePartnerId); } });
-      });
-      main.querySelectorAll('[data-profile-photo]').forEach(button => button.addEventListener('click', () => openProfilePhoto(button.dataset.profilePhoto)));
-      main.querySelector('[data-profile-resource-action="add-photos"]') ?.addEventListener('click', () => openAddPhotosToPersonModal(person.id));
-      main
-        .querySelector(
-          '[data-profile-resource-action="add-files"]'
-        )
-        ?.addEventListener(
-          'click',
-          () => {
-            openPersonFilesModal(
-              person.id
-            );
-          }
-        );
-      main
-        .querySelector(
-          '[data-profile-resource-action="add-note"]'
-        )
-        ?.addEventListener(
-          'click',
-          () =>
-            openPersonNotesModal(
-              person.id,
-              'profile'
-            )
-        );
-      main
-        .querySelector(
-          '[data-profile-resource-action="add-sources"]'
-        )
-        ?.addEventListener(
-          'click',
-          () => {
-            const centralPerson =
-              getPerson(
-                person.id
-              );
-
-            if (!centralPerson) {
-              return;
+                return;
             }
 
-            openSourcesForTargetModal({
-              targetType:
+            applyProfileEditSections(
+                person,
+                result.payloads
+            );
+
+            state.peopleProfileEditing = false;
+
+            renderPeople();
+
+            showToast(
+                'Profile changes saved.'
+            );
+        });
+    main.querySelector('[data-profile-add-fact]')?.addEventListener('click', () => openAddFactOverlay(person));
+    main.querySelectorAll('[data-profile-partner-id]').forEach(button =>
+    {
+        button.addEventListener('click', () => openProfileFamilyMember(button.dataset.profilePartnerId));
+        button.addEventListener('keydown', event =>
+        {
+            if (event.key === 'Enter' || event.key === ' ')
+            {
+                event.preventDefault(); openProfileFamilyMember(button.dataset.profilePartnerId);
+            }
+        });
+    });
+    main.querySelectorAll('[data-profile-photo]').forEach(button => button.addEventListener('click', () => openProfilePhoto(button.dataset.profilePhoto)));
+    main.querySelector('[data-profile-resource-action="add-photos"]') ?.addEventListener('click', () => openAddPhotosToPersonModal(person.id));
+    main
+        .querySelector(
+            '[data-profile-resource-action="add-files"]'
+        )
+        ?.addEventListener(
+            'click',
+            () =>
+            {
+                openPersonFilesModal(
+                    person.id
+                );
+            }
+        );
+    main
+        .querySelector(
+            '[data-profile-resource-action="add-note"]'
+        )
+        ?.addEventListener(
+            'click',
+            () =>
+                openPersonNotesModal(
+                    person.id,
+                    'profile'
+                )
+        );
+    main
+        .querySelector(
+            '[data-profile-resource-action="add-sources"]'
+        )
+        ?.addEventListener(
+            'click',
+            () =>
+            {
+                const centralPerson =
+                    getPerson(
+                        person.id
+                    );
+
+                if (!centralPerson)
+                {
+                    return;
+                }
+
+                openSourcesForTargetModal({
+                    targetType:
                 'person',
 
-              targetId:
+                    targetId:
                 centralPerson.id,
 
-              projectId:
+                    projectId:
                 centralPerson.projectId,
 
-              title:
+                    title:
                 'Add sources',
 
-              subtitle:
+                    subtitle:
                 `Connect existing sources to ${
-                  centralPerson.names?.display
+                    centralPerson.names?.display
                   || 'this person'
                 }.`,
 
-              afterSave:
+                    afterSave:
                 renderAfterPersonConnectedResourcesChanged
-            });
-          }
+                });
+            }
         );
-      main.querySelectorAll('[data-profile-place]').forEach(button => button.addEventListener('click', () => openProfilePlace(button.dataset.profilePlace)));
-      const profileViewAllActions = {
+    main.querySelectorAll('[data-profile-place]').forEach(button => button.addEventListener('click', () => openProfilePlace(button.dataset.profilePlace)));
+    const profileViewAllActions = {
         archive:
           () =>
-            openProfileAllArchive(
-              person.id
-            ),
+              openProfileAllArchive(
+                  person.id
+              ),
 
         notes:
           () =>
-            openProfileAllNotes(
-              person.id
-            ),
+              openProfileAllNotes(
+                  person.id
+              ),
 
         photos:
           () =>
-            openProfileAllPhotos(
-              person.id
-            ),
+              openProfileAllPhotos(
+                  person.id
+              ),
 
         places:
           () =>
-            openProfileAllPlaces(
-              person.id
-            )
-      };
+              openProfileAllPlaces(
+                  person.id
+              )
+    };
 
-      main
+    main
         .querySelectorAll('[data-profile-view-all]')
-        .forEach(button => {
-          button.addEventListener('click', () => {
-            profileViewAllActions[
-              button.dataset.profileViewAll
-            ]?.();
-          });
+        .forEach(button =>
+        {
+            button.addEventListener('click', () =>
+            {
+                profileViewAllActions[
+                    button.dataset.profileViewAll
+                ]?.();
+            });
         });
-    }
+}
 
-    function openProfileArchiveFile(fileId) {
-      if (!fileId) { showToast('Archive item preview is simulated.'); return; }
-      openFamilyArchiveItem(fileId);
+function openProfileArchiveFile(fileId)
+{
+    if (!fileId)
+    {
+        showToast('Archive item preview is simulated.'); return;
     }
+    openFamilyArchiveItem(fileId);
+}
 
-     function openProfilePhoto(photoId) {
-      openAlbumsForPhoto(photoId);
-    }
+function openProfilePhoto(photoId)
+{
+    openAlbumsForPhoto(photoId);
+}
 
-    function openProfilePlace(placeId) {
-      if (!placeId) {
+function openProfilePlace(placeId)
+{
+    if (!placeId)
+    {
         showToast('Place record not found.');
         return;
-      }
-
-      state.activeModule = 'Places';
-      state.placesView = 'all';
-      state.selectedPlaceId = placeId;
-      render();
     }
 
-    function openProfileAllArchive(
-      personId =
+    state.activeModule = 'Places';
+    state.placesView = 'all';
+    state.selectedPlaceId = placeId;
+    render();
+}
+
+function openProfileAllArchive(
+    personId =
         state.selectedPeopleId
-    ) {
-      openArchiveForPerson(
+)
+{
+    openArchiveForPerson(
         personId
-      );
-    }
+    );
+}
 
-    function openProfileAllNotes(
-      personId =
+function openProfileAllNotes(
+    personId =
         state.selectedPeopleId
-    ) {
-      openNotesForContext(
+)
+{
+    openNotesForContext(
         'person',
         personId
-      );
-    }
+    );
+}
 
-    function openProfileAllPhotos(personId = state.selectedPeopleId) {
-      openAlbumsForPerson(personId);
-    }
+function openProfileAllPhotos(personId = state.selectedPeopleId)
+{
+    openAlbumsForPerson(personId);
+}
 
-    function openProfileAllPlaces(
-      personId =
+function openProfileAllPlaces(
+    personId =
         state.selectedPeopleId
-    ) {
-      const person =
+)
+{
+    const person =
         getPerson(personId);
 
-      state.activeModule = 'Places';
-      state.placesView = 'all';
+    state.activeModule = 'Places';
+    state.placesView = 'all';
 
-      state.placesSavedFilterId =
+    state.placesSavedFilterId =
         '';
 
-      state.placesFilters = {
+    state.placesFilters = {
         ...defaultPlaceFilters,
 
         personId:
           person?.id || ''
-      };
+    };
 
-      state.selectedPlaceId = null;
-      state.placesSearch = '';
+    state.selectedPlaceId = null;
+    state.placesSearch = '';
 
-      render();
-    }
+    render();
+}
 
-    function openProfileFamilyMember(
-      personId
-    ) {
-      if (!personId) {
+function openProfileFamilyMember(
+    personId
+)
+{
+    if (!personId)
+    {
         showToast(
-          'Placeholder family member; add a linked person later.'
+            'Placeholder family member; add a linked person later.'
         );
 
         return;
-      }
+    }
 
-      if (!getPerson(personId)) {
+    if (!getPerson(personId))
+    {
         showToast(
-          'This family member is not linked to a People profile yet.'
+            'This family member is not linked to a People profile yet.'
         );
 
         return;
-      }
-
-      state.selectedPeopleId =
-        personId;
-
-      state.selectedPersonId =
-        personId;
-
-      state.peopleView =
-        'profile';
-
-      state.peopleSide =
-        'profile';
-
-      renderPeople();
     }
 
-    function openAddFactOverlay(person) {
-      const personId = person?.id;
+    state.selectedPeopleId =
+        personId;
 
-      const centralPerson =
+    state.selectedPersonId =
+        personId;
+
+    state.peopleView =
+        'profile';
+
+    state.peopleSide =
+        'profile';
+
+    renderPeople();
+}
+
+function openAddFactOverlay(person)
+{
+    const personId = person?.id;
+
+    const centralPerson =
         ensurePersonCentralStructures(
-          getPerson(personId)
+            getPerson(personId)
         );
 
-      if (!centralPerson) {
+    if (!centralPerson)
+    {
         showToast(
-          'Person record was not found.'
+            'Person record was not found.'
         );
 
         return;
-      }
+    }
 
-      const existingFact =
+    const existingFact =
         personAttributeByTag(
-          centralPerson,
-          'FACT'
+            centralPerson,
+            'FACT'
         );
 
-      const isEditing =
+    const isEditing =
         Boolean(existingFact);
 
-      const personName =
+    const personName =
         getPersonDisplayName(personId)
           || centralPerson.names?.display
           || 'this person';
 
-      openModal(`
+    openModal(`
         <form
           class="modal"
           id="timelineCustomFactForm"
@@ -6860,9 +7211,9 @@
             <div>
               <h2 id="addFactTitle">
                 ${
-                  isEditing
-                    ? 'Edit custom fact'
-                    : 'Add custom fact'
+                    isEditing
+                        ? 'Edit custom fact'
+                        : 'Add custom fact'
                 }
               </h2>
 
@@ -6884,9 +7235,9 @@
           <div class="modal-body">
             <div class="add-person-fact-grid">
               ${renderCustomFactFields(
-                'timelineCustomFact',
-                existingFact
-              )}
+                    'timelineCustomFact',
+                    existingFact
+                )}
             </div>
           </div>
 
@@ -6902,300 +7253,328 @@
               class="button primary"
               type="submit">
               ${
-                isEditing
-                  ? 'Save changes'
-                  : 'Add fact'
-              }
+                    isEditing
+                        ? 'Save changes'
+                        : 'Add fact'
+                }
             </button>
           </div>
         </form>`);
 
-      bindGenealogyDateFields(
+    bindGenealogyDateFields(
         modalBackdrop
-      );
+    );
 
-      bindPlaceComboboxes(
+    bindPlaceComboboxes(
         modalBackdrop
-      );
+    );
 
-      modalBackdrop
+    modalBackdrop
         .querySelector(
-          '#timelineCustomFactForm'
+            '#timelineCustomFactForm'
         )
         ?.addEventListener(
-          'submit',
-          event => {
-            event.preventDefault();
+            'submit',
+            event =>
+            {
+                event.preventDefault();
 
-            const result =
-              collectCustomFactFields(
-                'timelineCustomFact',
-                modalBackdrop
-              );
+                const result =
+                    collectCustomFactFields(
+                        'timelineCustomFact',
+                        modalBackdrop
+                    );
 
-            if (result.invalid) {
-              showToast(
-                result.message
+                if (result.invalid)
+                {
+                    showToast(
+                        result.message
                   || 'Check the custom fact before saving.'
-              );
+                    );
 
-              return;
-            }
+                    return;
+                }
 
-            applyPersonCustomFact(
-              centralPerson,
-              result.value
-            );
+                applyPersonCustomFact(
+                    centralPerson,
+                    result.value
+                );
 
-            markPersonUpdated(
-              centralPerson
-            );
+                markPersonUpdated(
+                    centralPerson
+                );
 
-            sampleData.events =
-              rebuildSampleEventsAndPruneSourceLinks();
+                sampleData.events =
+                    rebuildSampleEventsAndPruneSourceLinks();
 
-            closeModal();
+                closeModal();
 
-            if (
-              state.activeModule
+                if (
+                    state.activeModule
               === 'Family Tree'
-            ) {
-              renderFamilyTreePreserveScroll?.()
+                )
+                {
+                    renderFamilyTreePreserveScroll?.()
                 || renderFamilyTree();
-            } else if (
-              state.activeModule
+                }
+                else if (
+                    state.activeModule
               === 'People'
-            ) {
-              renderPeople();
-            } else {
-              render();
-            }
+                )
+                {
+                    renderPeople();
+                }
+                else
+                {
+                    render();
+                }
 
-            showToast(
-              isEditing
-                ? 'Custom fact updated.'
-                : 'Custom fact added.'
-            );
-          }
+                showToast(
+                    isEditing
+                        ? 'Custom fact updated.'
+                        : 'Custom fact added.'
+                );
+            }
         );
 
-      modalBackdrop
+    modalBackdrop
         .querySelector(
-          '#timelineCustomFactType'
+            '#timelineCustomFactType'
         )
         ?.focus({
-          preventScroll: true
+            preventScroll: true
         });
-    }
+}
 
-    function closePeopleColumnsPopover() {
-      document.getElementById('peopleColumnsPopover')?.remove();
-      document.removeEventListener('click', closePeopleColumnsOnOutside);
-      document.removeEventListener('keydown', closePeopleColumnsOnEscape);
-    }
+function closePeopleColumnsPopover()
+{
+    document.getElementById('peopleColumnsPopover')?.remove();
+    document.removeEventListener('click', closePeopleColumnsOnOutside);
+    document.removeEventListener('keydown', closePeopleColumnsOnEscape);
+}
 
-    function closePeopleColumnsOnOutside(event) {
-      if (!event.target.closest('#peopleColumnsPopover') && !event.target.closest('#peopleColumnsButton')) closePeopleColumnsPopover();
-    }
+function closePeopleColumnsOnOutside(event)
+{
+    if (!event.target.closest('#peopleColumnsPopover') && !event.target.closest('#peopleColumnsButton')) closePeopleColumnsPopover();
+}
 
-    function closePeopleColumnsOnEscape(event) {
-      if (event.key === 'Escape') closePeopleColumnsPopover();
-    }
+function closePeopleColumnsOnEscape(event)
+{
+    if (event.key === 'Escape') closePeopleColumnsPopover();
+}
 
-    function openPeopleColumnsPopover(anchor) {
-      closePeopleColumnsPopover();
-      closePeopleFilterPopover();
-      closeMenu();
-      const rect = anchor.getBoundingClientRect();
-      const columns = peopleColumnsWithDefaults();
-      const optionalColumns = Object.entries(peopleColumnLabels).map(([key, label]) => `<label class="people-columns-option"><input type="checkbox" data-people-column="${key}" ${columns[key] ? 'checked' : ''}> <span>${escapeHtml(label)}</span></label>`).join('');
-      const popover = document.createElement('div');
-      popover.className = 'people-columns-popover';
-      popover.id = 'peopleColumnsPopover';
-      popover.style.top = `${rect.bottom + 8}px`;
-      popover.style.left = `${Math.min(window.innerWidth - 308, Math.max(12, rect.left - 24))}px`;
-      popover.setAttribute('role', 'dialog');
-      popover.setAttribute('aria-label', 'Choose People table columns');
-      popover.innerHTML = `<div class="people-columns-header"><h3>Columns</h3><p>Choose which fields are visible in the people table.</p></div><div class="people-columns-list"><label class="people-columns-option"><input type="checkbox" checked disabled> <span>Name</span></label>${optionalColumns}<label class="people-columns-option"><input type="checkbox" checked disabled> <span>Actions</span></label></div><div class="people-columns-footer"><button class="button secondary" type="button" data-people-columns-reset>Reset columns</button><button class="button primary" type="button" data-people-columns-close>Done</button></div>`;
-      document.body.appendChild(popover);
-      popover.querySelectorAll('[data-people-column]').forEach(input => input.addEventListener('change', () => {
+function openPeopleColumnsPopover(anchor)
+{
+    closePeopleColumnsPopover();
+    closePeopleFilterPopover();
+    closeMenu();
+    const rect = anchor.getBoundingClientRect();
+    const columns = peopleColumnsWithDefaults();
+    const optionalColumns = Object.entries(peopleColumnLabels).map(([key, label]) => `<label class="people-columns-option"><input type="checkbox" data-people-column="${key}" ${columns[key] ? 'checked' : ''}> <span>${escapeHtml(label)}</span></label>`).join('');
+    const popover = document.createElement('div');
+    popover.className = 'people-columns-popover';
+    popover.id = 'peopleColumnsPopover';
+    popover.style.top = `${rect.bottom + 8}px`;
+    popover.style.left = `${Math.min(window.innerWidth - 308, Math.max(12, rect.left - 24))}px`;
+    popover.setAttribute('role', 'dialog');
+    popover.setAttribute('aria-label', 'Choose People table columns');
+    popover.innerHTML = `<div class="people-columns-header"><h3>Columns</h3><p>Choose which fields are visible in the people table.</p></div><div class="people-columns-list"><label class="people-columns-option"><input type="checkbox" checked disabled> <span>Name</span></label>${optionalColumns}<label class="people-columns-option"><input type="checkbox" checked disabled> <span>Actions</span></label></div><div class="people-columns-footer"><button class="button secondary" type="button" data-people-columns-reset>Reset columns</button><button class="button primary" type="button" data-people-columns-close>Done</button></div>`;
+    document.body.appendChild(popover);
+    popover.querySelectorAll('[data-people-column]').forEach(input => input.addEventListener('change', () =>
+    {
         state.peopleVisibleColumns = peopleColumnsWithDefaults();
         state.peopleVisibleColumns[input.dataset.peopleColumn] = input.checked;
         renderPeople();
-        setTimeout(() => { const newAnchor = document.getElementById('peopleColumnsButton'); if (newAnchor) openPeopleColumnsPopover(newAnchor); }, 0);
-      }));
-      popover.querySelector('[data-people-columns-reset]')?.addEventListener('click', () => {
+        setTimeout(() =>
+        {
+            const newAnchor = document.getElementById('peopleColumnsButton'); if (newAnchor) openPeopleColumnsPopover(newAnchor);
+        }, 0);
+    }));
+    popover.querySelector('[data-people-columns-reset]')?.addEventListener('click', () =>
+    {
         state.peopleVisibleColumns = { ...defaultPeopleColumns };
         renderPeople();
-        setTimeout(() => { const newAnchor = document.getElementById('peopleColumnsButton'); if (newAnchor) openPeopleColumnsPopover(newAnchor); }, 0);
-      });
-      popover.querySelector('[data-people-columns-close]')?.addEventListener('click', closePeopleColumnsPopover);
-      setTimeout(() => {
+        setTimeout(() =>
+        {
+            const newAnchor = document.getElementById('peopleColumnsButton'); if (newAnchor) openPeopleColumnsPopover(newAnchor);
+        }, 0);
+    });
+    popover.querySelector('[data-people-columns-close]')?.addEventListener('click', closePeopleColumnsPopover);
+    setTimeout(() =>
+    {
         document.addEventListener('click', closePeopleColumnsOnOutside);
         document.addEventListener('keydown', closePeopleColumnsOnEscape);
-      }, 0);
-    }
+    }, 0);
+}
 
-    let peopleFilterReturnFocus =
-      null;
+let peopleFilterReturnFocus =
+    null;
 
-    function closePeopleFilterPopover({
-      restoreFocus = false
-    } = {}) {
-      document
+function closePeopleFilterPopover({
+    restoreFocus = false
+} = {})
+{
+    document
         .getElementById(
-          'peopleFilterPopover'
+            'peopleFilterPopover'
         )
         ?.remove();
 
-      document.removeEventListener(
+    document.removeEventListener(
         'click',
         closePeopleFilterOnOutside
-      );
+    );
 
-      document.removeEventListener(
+    document.removeEventListener(
         'keydown',
         closePeopleFilterOnEscape
-      );
+    );
 
-      if (
+    if (
         restoreFocus
         && peopleFilterReturnFocus
-          ?.isConnected
-      ) {
+            ?.isConnected
+    )
+    {
         peopleFilterReturnFocus.focus({
-          preventScroll:
+            preventScroll:
             true
         });
-      }
-
-      peopleFilterReturnFocus =
-        null;
     }
 
-    function closePeopleFilterOnOutside(
-      event
-    ) {
-      const popover =
+    peopleFilterReturnFocus =
+        null;
+}
+
+function closePeopleFilterOnOutside(
+    event
+)
+{
+    const popover =
         document.getElementById(
-          'peopleFilterPopover'
+            'peopleFilterPopover'
         );
 
-      const trigger =
+    const trigger =
         document.getElementById(
-          'peopleFilterButton'
+            'peopleFilterButton'
         );
 
-      const eventPath =
+    const eventPath =
         typeof event.composedPath
           === 'function'
             ? event.composedPath()
             : [];
 
-      const insidePopover =
+    const insidePopover =
         eventPath.length
-          ? eventPath.includes(
-              popover
+            ? eventPath.includes(
+                popover
             )
-          : popover?.contains(
-              event.target
+            : popover?.contains(
+                event.target
             );
 
-      const insideTrigger =
+    const insideTrigger =
         eventPath.length
-          ? eventPath.includes(
-              trigger
+            ? eventPath.includes(
+                trigger
             )
-          : trigger?.contains(
-              event.target
+            : trigger?.contains(
+                event.target
             );
 
-      if (
+    if (
         insidePopover
         || insideTrigger
-      ) {
+    )
+    {
         return;
-      }
-
-      closePeopleFilterPopover();
     }
 
-    function closePeopleFilterOnEscape(
-      event
-    ) {
-      if (
+    closePeopleFilterPopover();
+}
+
+function closePeopleFilterOnEscape(
+    event
+)
+{
+    if (
         event.key !== 'Escape'
-      ) {
+    )
+    {
         return;
-      }
+    }
 
-      event.preventDefault();
+    event.preventDefault();
 
-      closePeopleFilterPopover({
+    closePeopleFilterPopover({
         restoreFocus:
           true
-      });
-    }
+    });
+}
 
-    function peopleFilterOptions(
-      values,
-      selected
-    ) {
-      /*
+function peopleFilterOptions(
+    values,
+    selected
+)
+{
+    /*
       * Retained temporarily because other modules
       * may still use the old native-select helper.
       */
-      return values.map(value => `
+    return values.map(value => `
         <option
           value="${escapeHtml(value)}"
           ${
-            value === selected
-              ? 'selected'
-              : ''
-          }>
+                value === selected
+                    ? 'selected'
+                    : ''
+            }>
           ${escapeHtml(value || 'Any')}
         </option>
       `).join('');
-    }
+}
 
-    function openPeopleFilterPopover(
-      anchor
-    ) {
-      closePeopleFilterPopover();
-      closeAlbumsFilterPopover();
-      closePeopleColumnsPopover();
-      closeMenu();
+function openPeopleFilterPopover(
+    anchor
+)
+{
+    closePeopleFilterPopover();
+    closeAlbumsFilterPopover();
+    closePeopleColumnsPopover();
+    closeMenu();
 
-      peopleFilterReturnFocus =
+    peopleFilterReturnFocus =
         anchor;
 
-      const filters =
+    const filters =
         peopleFiltersWithDefaults();
 
-      const popover =
+    const popover =
         document.createElement(
-          'div'
+            'div'
         );
 
-      popover.className =
+    popover.className =
         'shared-filter-panel people-filter-popover';
 
-      popover.id =
+    popover.id =
         'peopleFilterPopover';
 
-      popover.setAttribute(
+    popover.setAttribute(
         'role',
         'dialog'
-      );
+    );
 
-      popover.setAttribute(
+    popover.setAttribute(
         'aria-label',
         translateText(
-          'Filter people'
+            'Filter people'
         )
-      );
+    );
 
-      popover.innerHTML = `
+    popover.innerHTML = `
         <div
           class="
             shared-filter-panel-header
@@ -7226,9 +7605,9 @@
           ">
 
           ${renderPeopleFilterFields(
-            filters,
-            'people-popover-filter'
-          )}
+                filters,
+                'people-popover-filter'
+            )}
         </div>
 
         <div
@@ -7264,9 +7643,9 @@
                 aria-live="polite"
                 data-people-filter-result>
                 ${escapeHtml(
-                  peopleFilterApplyLabel(
-                    filters
-                  )
+                    peopleFilterApplyLabel(
+                        filters
+                    )
                 )}
               </span>
             </button>
@@ -7274,286 +7653,306 @@
         </div>
       `;
 
-      document.body.appendChild(
+    document.body.appendChild(
         popover
-      );
+    );
 
-      localizeUI(popover);
-      const resultLabel =
+    localizeUI(popover);
+    const resultLabel =
         popover.querySelector(
-          '[data-people-filter-result]'
+            '[data-people-filter-result]'
         );
 
-      const applyButton =
+    const applyButton =
         popover.querySelector(
-          '[data-people-filter-apply]'
+            '[data-people-filter-apply]'
         );
 
-      let controller = null;
+    let controller = null;
 
-      const updatePeopleFilterPreview =
-        nextFilters => {
-          if (resultLabel) {
-            resultLabel.textContent =
-              peopleFilterApplyLabel(
-                nextFilters
-              );
-          }
-
-          if (applyButton) {
-            applyButton.disabled =
-              Boolean(
-                (
-                  controller
-                    ?.getErrors()
-                  || []
-                ).length
-              );
-          }
-        };
-
-      controller =
-        bindPeopleFilterFields(
-          popover,
-          filters,
-          'people-popover-filter',
-          updatePeopleFilterPreview
-        );
-
-      updatePeopleFilterPreview(
-        controller?.getValues()
-        || filters
-      );
-
-      popover
-        .querySelector(
-          '[data-people-filter-reset]'
-        )
-        ?.addEventListener(
-          'click',
-          () => {
-            controller?.reset();
-          }
-        );
-
-      popover
-        .querySelector(
-          '[data-people-filter-close]'
-        )
-        ?.addEventListener(
-          'click',
-          () => {
-            closePeopleFilterPopover({
-              restoreFocus:
-                true
-            });
-          }
-        );
-
-      popover
-        .querySelector(
-          '[data-people-filter-cancel]'
-        )
-        ?.addEventListener(
-          'click',
-          () => {
-            closePeopleFilterPopover({
-              restoreFocus:
-                true
-            });
-          }
-        );
-      popover
-        .querySelector(
-          '[data-people-filter-apply]'
-        )
-        ?.addEventListener(
-          'click',
-          () => {
-            const errors =
-              controller?.getErrors()
-              || [];
-
-            if (errors.length) {
-              controller
-                ?.focusFirstInvalid();
-
-              return;
+    const updatePeopleFilterPreview =
+        nextFilters =>
+        {
+            if (resultLabel)
+            {
+                resultLabel.textContent =
+                    peopleFilterApplyLabel(
+                        nextFilters
+                    );
             }
 
-            clearPeopleSelection();
+            if (applyButton)
+            {
+                applyButton.disabled =
+                    Boolean(
+                        (
+                            controller
+                                ?.getErrors()
+                  || []
+                        ).length
+                    );
+            }
+        };
 
-            state.peopleFilters =
-              controller?.getValues()
+    controller =
+        bindPeopleFilterFields(
+            popover,
+            filters,
+            'people-popover-filter',
+            updatePeopleFilterPreview
+        );
+
+    updatePeopleFilterPreview(
+        controller?.getValues()
+        || filters
+    );
+
+    popover
+        .querySelector(
+            '[data-people-filter-reset]'
+        )
+        ?.addEventListener(
+            'click',
+            () =>
+            {
+                controller?.reset();
+            }
+        );
+
+    popover
+        .querySelector(
+            '[data-people-filter-close]'
+        )
+        ?.addEventListener(
+            'click',
+            () =>
+            {
+                closePeopleFilterPopover({
+                    restoreFocus:
+                true
+                });
+            }
+        );
+
+    popover
+        .querySelector(
+            '[data-people-filter-cancel]'
+        )
+        ?.addEventListener(
+            'click',
+            () =>
+            {
+                closePeopleFilterPopover({
+                    restoreFocus:
+                true
+                });
+            }
+        );
+    popover
+        .querySelector(
+            '[data-people-filter-apply]'
+        )
+        ?.addEventListener(
+            'click',
+            () =>
+            {
+                const errors =
+                    controller?.getErrors()
+              || [];
+
+                if (errors.length)
+                {
+                    controller
+                        ?.focusFirstInvalid();
+
+                    return;
+                }
+
+                clearPeopleSelection();
+
+                state.peopleFilters =
+                    controller?.getValues()
               || peopleFiltersWithDefaults();
 
-            state.peopleSavedViewId =
-              '';
+                state.peopleSavedViewId =
+                    '';
 
-            state.peopleSavedView =
-              hasActivePeopleFilters()
-                ? 'Custom filters'
-                : 'All people';
+                state.peopleSavedView =
+                    hasActivePeopleFilters()
+                        ? 'Custom filters'
+                        : 'All people';
 
-            closePeopleFilterPopover();
+                closePeopleFilterPopover();
 
-            renderPeople();
-          }
+                renderPeople();
+            }
         );
 
-      positionSharedFilterPanel(
+    positionSharedFilterPanel(
         popover,
         anchor
-      );
+    );
 
-      requestAnimationFrame(
-        () => {
-          popover
-            .querySelector(
-              '[data-people-filter-close]'
-            )
-            ?.focus({
-              preventScroll:
+    requestAnimationFrame(
+        () =>
+        {
+            popover
+                .querySelector(
+                    '[data-people-filter-close]'
+                )
+                ?.focus({
+                    preventScroll:
                 true
-            });
+                });
         }
-      );
+    );
 
-      setTimeout(
-        () => {
-          document.addEventListener(
-            'click',
-            closePeopleFilterOnOutside
-          );
+    setTimeout(
+        () =>
+        {
+            document.addEventListener(
+                'click',
+                closePeopleFilterOnOutside
+            );
 
-          document.addEventListener(
-            'keydown',
-            closePeopleFilterOnEscape
-          );
+            document.addEventListener(
+                'keydown',
+                closePeopleFilterOnEscape
+            );
         },
         0
-      );
-    }
+    );
+}
 
-    function clearPeopleFilters() {
-      clearPeopleSelection();
+function clearPeopleFilters()
+{
+    clearPeopleSelection();
 
-      state.peopleFilters =
+    state.peopleFilters =
         peopleFiltersWithDefaults(
-          defaultPeopleFilters
+            defaultPeopleFilters
         );
 
-      state.peopleSavedViewId =
+    state.peopleSavedViewId =
         '';
 
-      state.peopleSavedView =
+    state.peopleSavedView =
         'All people';
 
-      renderPeople();
+    renderPeople();
 
-      showToast(
+    showToast(
         'People filters cleared.'
-      );
-    }
+    );
+}
 
-    function removePeopleFilter(
-      key
-    ) {
-      const definition =
+function removePeopleFilter(
+    key
+)
+{
+    const definition =
         sharedFilterDefinitionByKey(
-          peopleFilterSchema,
-          key
+            peopleFilterSchema,
+            key
         );
 
-      if (!definition) {
+    if (!definition)
+    {
         return;
-      }
-
-      clearPeopleSelection();
-
-      state.peopleFilters =
-        peopleFiltersWithDefaults();
-
-      state.peopleFilters[key] =
-        cloneSharedFilterValues(
-          [definition],
-          {}
-        )[key];
-
-      state.peopleSavedViewId =
-        '';
-
-      state.peopleSavedView =
-        hasActivePeopleFilters()
-          ? 'Custom filters'
-          : 'All people';
-
-      renderPeople();
     }
 
-    function generatePeopleSavedViewName(
-      filters = state.peopleFilters
-    ) {
-      const entries = activePeopleFilterEntries(filters);
+    clearPeopleSelection();
 
-      if (!entries.length) {
+    state.peopleFilters =
+        peopleFiltersWithDefaults();
+
+    state.peopleFilters[key] =
+        cloneSharedFilterValues(
+            [definition],
+            {}
+        )[key];
+
+    state.peopleSavedViewId =
+        '';
+
+    state.peopleSavedView =
+        hasActivePeopleFilters()
+            ? 'Custom filters'
+            : 'All people';
+
+    renderPeople();
+}
+
+function generatePeopleSavedViewName(
+    filters = state.peopleFilters
+)
+{
+    const entries = activePeopleFilterEntries(filters);
+
+    if (!entries.length)
+    {
         return 'Custom people filter';
-      }
+    }
 
-      return entries
+    return entries
         .slice(0, 2)
         .map(([, , value]) => value)
         .join(' - ');
-    }
+}
 
-    function setPeopleSavedViewModalError(message = '', focusSelector = '') {
-      const error = modalBackdrop.querySelector(
+function setPeopleSavedViewModalError(message = '', focusSelector = '')
+{
+    const error = modalBackdrop.querySelector(
         '[data-people-saved-view-error]'
-      );
+    );
 
-      if (error) {
+    if (error)
+    {
         error.textContent = message;
         error.hidden = !message;
-      }
-
-      if (message && focusSelector) {
-        modalBackdrop.querySelector(focusSelector)?.focus();
-      }
     }
 
-    function openPeopleSavedViewModal({
-      mode = 'create',
-      viewId = '',
-      initialName = '',
-      initialDescription = '',
-      initialFilters = defaultPeopleFilters
-    } = {}) {
-      const isEdit = mode === 'edit';
+    if (message && focusSelector)
+    {
+        modalBackdrop.querySelector(focusSelector)?.focus();
+    }
+}
 
-      const existingView = isEdit
+function openPeopleSavedViewModal({
+    mode = 'create',
+    viewId = '',
+    initialName = '',
+    initialDescription = '',
+    initialFilters = defaultPeopleFilters
+} = {})
+{
+    const isEdit = mode === 'edit';
+
+    const existingView = isEdit
         ? peopleSavedViews.find(view => view.id === viewId)
         : null;
 
-      if (isEdit && !existingView) {
+    if (isEdit && !existingView)
+    {
         showToast('Saved filter not found.');
         return;
-      }
+    }
 
-      const name = existingView?.name || initialName;
-      const description = existingView?.description || initialDescription;
+    const name = existingView?.name || initialName;
+    const description = existingView?.description || initialDescription;
 
-      const filters = peopleFiltersWithDefaults(
+    const filters = peopleFiltersWithDefaults(
         existingView?.filters || initialFilters
-      );
+    );
 
-      const title = isEdit ? 'Edit filter' : 'Create filter';
-      const subtitle = isEdit
+    const title = isEdit ? 'Edit filter' : 'Create filter';
+    const subtitle = isEdit
         ? 'Update the name, description, or filter conditions.'
         : 'Create a reusable filter for the People directory.';
 
-      const submitLabel = isEdit ? 'Save changes' : 'Create filter';
+    const submitLabel = isEdit ? 'Save changes' : 'Create filter';
 
-      openModal(`
+    openModal(`
         <div
           class="modal people-saved-view-modal"
           role="dialog"
@@ -7614,8 +8013,8 @@
                 </div>
 
                 ${renderPeopleFilterFields(
-                  filters,
-                  'people-saved-view-filter'
+                    filters,
+                    'people-saved-view-filter'
                 )}
 
                 <p
@@ -7645,209 +8044,221 @@
         </div>
       `);
 
-      const form = modalBackdrop.querySelector('#peopleSavedViewForm');
-      const nameInput = modalBackdrop.querySelector('#peopleSavedViewName');
+    const form = modalBackdrop.querySelector('#peopleSavedViewForm');
+    const nameInput = modalBackdrop.querySelector('#peopleSavedViewName');
 
-      const savedViewFilterController =
+    const savedViewFilterController =
         bindPeopleFilterFields(
-          form,
-          filters,
-          'people-saved-view-filter',
-          () => {
-            setPeopleSavedViewModalError();
-          }
+            form,
+            filters,
+            'people-saved-view-filter',
+            () =>
+            {
+                setPeopleSavedViewModalError();
+            }
         );
 
-      nameInput?.focus();
+    nameInput?.focus();
 
-      modalBackdrop
+    modalBackdrop
         .querySelector('[data-people-saved-view-clear]')
-        ?.addEventListener('click', () => {
-          resetPeopleFilterFields(form);
-          setPeopleSavedViewModalError();
+        ?.addEventListener('click', () =>
+        {
+            resetPeopleFilterFields(form);
+            setPeopleSavedViewModalError();
         });
 
-      form?.addEventListener('input', () => {
+    form?.addEventListener('input', () =>
+    {
         setPeopleSavedViewModalError();
-      });
+    });
 
-      form?.addEventListener('change', () => {
+    form?.addEventListener('change', () =>
+    {
         setPeopleSavedViewModalError();
-      });
-      form?.addEventListener(
+    });
+    form?.addEventListener(
         'submit',
-        event => {
-          event.preventDefault();
+        event =>
+        {
+            event.preventDefault();
 
-          const submittedName =
-            nameInput?.value.trim()
+            const submittedName =
+                nameInput?.value.trim()
             || '';
 
-          const submittedDescription =
-            modalBackdrop
-              .querySelector(
-                '#peopleSavedViewDescription'
-              )
-              ?.value
-              .trim()
+            const submittedDescription =
+                modalBackdrop
+                    .querySelector(
+                        '#peopleSavedViewDescription'
+                    )
+                    ?.value
+                    .trim()
             || '';
 
-          const submittedFilters =
-            readPeopleFilterFields(
-              form
-            );
+            const submittedFilters =
+                readPeopleFilterFields(
+                    form
+                );
 
-          if (!submittedName) {
-            setPeopleSavedViewModalError(
-              'Enter a filter name.',
-              '#peopleSavedViewName'
-            );
+            if (!submittedName)
+            {
+                setPeopleSavedViewModalError(
+                    'Enter a filter name.',
+                    '#peopleSavedViewName'
+                );
 
-            return;
-          }
+                return;
+            }
 
-          const filterErrors =
-            savedViewFilterController
-              ?.getErrors()
+            const filterErrors =
+                savedViewFilterController
+                    ?.getErrors()
             || [];
 
-          if (filterErrors.length) {
-            setPeopleSavedViewModalError(
-              filterErrors[0],
-              '[aria-invalid="true"]'
-            );
+            if (filterErrors.length)
+            {
+                setPeopleSavedViewModalError(
+                    filterErrors[0],
+                    '[aria-invalid="true"]'
+                );
 
-            savedViewFilterController
-              ?.focusFirstInvalid();
+                savedViewFilterController
+                    ?.focusFirstInvalid();
 
-            return;
-          }
+                return;
+            }
 
-          const normalizedFilters =
-            peopleFiltersWithDefaults(
-              submittedFilters
-            );
+            const normalizedFilters =
+                peopleFiltersWithDefaults(
+                    submittedFilters
+                );
 
-          if (
-            !hasActivePeopleFilters(
-              normalizedFilters
+            if (
+                !hasActivePeopleFilters(
+                    normalizedFilters
+                )
             )
-          ) {
-            setPeopleSavedViewModalError(
-              'Choose at least one filter option.',
-              [
-                '[data-shared-filter-input]',
-                '[data-shared-filter-year-mode]',
-                '[data-shared-filter-select]'
-              ].join(', ')
-            );
+            {
+                setPeopleSavedViewModalError(
+                    'Choose at least one filter option.',
+                    [
+                        '[data-shared-filter-input]',
+                        '[data-shared-filter-year-mode]',
+                        '[data-shared-filter-select]'
+                    ].join(', ')
+                );
 
-            return;
-          }
+                return;
+            }
 
-          const duplicate =
-            peopleSavedViews.find(view =>
-              view.id !== viewId
+            const duplicate =
+                peopleSavedViews.find(view =>
+                    view.id !== viewId
               && view.name
-                .trim()
-                .toLowerCase()
-                === submittedName
+                  .trim()
                   .toLowerCase()
-            );
+                === submittedName
+                    .toLowerCase()
+                );
 
-          if (duplicate) {
-            setPeopleSavedViewModalError(
-              'A saved filter with this name already exists.',
-              '#peopleSavedViewName'
-            );
+            if (duplicate)
+            {
+                setPeopleSavedViewModalError(
+                    'A saved filter with this name already exists.',
+                    '#peopleSavedViewName'
+                );
 
-            return;
-          }
+                return;
+            }
 
-          if (isEdit) {
-            const wasActive =
-              state.peopleSavedViewId
+            if (isEdit)
+            {
+                const wasActive =
+                    state.peopleSavedViewId
               === existingView.id;
 
-            existingView.name =
-              submittedName;
+                existingView.name =
+                    submittedName;
 
-            existingView.description =
-              submittedDescription;
+                existingView.description =
+                    submittedDescription;
 
-            existingView.filters =
-              peopleFiltersWithDefaults(
-                normalizedFilters
-              );
+                existingView.filters =
+                    peopleFiltersWithDefaults(
+                        normalizedFilters
+                    );
 
-            if (wasActive) {
-              clearPeopleSelection();
+                if (wasActive)
+                {
+                    clearPeopleSelection();
 
-              state.peopleSavedView =
+                    state.peopleSavedView =
+                        submittedName;
+
+                    state.peopleFilters =
+                        peopleFiltersWithDefaults(
+                            normalizedFilters
+                        );
+                }
+
+                closeModal();
+                renderPeople();
+                showToast(
+                    'Filter updated.'
+                );
+
+                return;
+            }
+
+            const id =
+                `people-view-${Date.now()}`;
+
+            const savedFilters =
+                peopleFiltersWithDefaults(
+                    normalizedFilters
+                );
+
+            peopleSavedViews.push({
+                id,
+                name:
+              submittedName,
+
+                description:
+              submittedDescription,
+
+                filters:
+              savedFilters
+            });
+
+            clearPeopleSelection();
+
+            state.peopleSavedViewId =
+                id;
+
+            state.peopleSavedView =
                 submittedName;
 
-              state.peopleFilters =
+            state.peopleFilters =
                 peopleFiltersWithDefaults(
-                  normalizedFilters
+                    savedFilters
                 );
-            }
+
+            state.peopleView =
+                'directory';
 
             closeModal();
             renderPeople();
             showToast(
-              'Filter updated.'
+                'Filter created.'
             );
-
-            return;
-          }
-
-          const id =
-            `people-view-${Date.now()}`;
-
-          const savedFilters =
-            peopleFiltersWithDefaults(
-              normalizedFilters
-            );
-
-          peopleSavedViews.push({
-            id,
-            name:
-              submittedName,
-
-            description:
-              submittedDescription,
-
-            filters:
-              savedFilters
-          });
-
-          clearPeopleSelection();
-
-          state.peopleSavedViewId =
-            id;
-
-          state.peopleSavedView =
-            submittedName;
-
-          state.peopleFilters =
-            peopleFiltersWithDefaults(
-              savedFilters
-            );
-
-          state.peopleView =
-            'directory';
-
-          closeModal();
-          renderPeople();
-          showToast(
-            'Filter created.'
-          );
         }
-      );
-    }
+    );
+}
 
-    function openCreatePeopleFilterModal() {
-      openPeopleSavedViewModal({
+function openCreatePeopleFilterModal()
+{
+    openPeopleSavedViewModal({
         mode:
           'create',
 
@@ -7859,52 +8270,56 @@
 
         initialFilters:
           peopleFiltersWithDefaults(
-            defaultPeopleFilters
+              defaultPeopleFilters
           )
-      });
-    }
+    });
+}
 
-    function openSavePeopleViewModal() {
-      if (!hasActivePeopleFilters()) {
+function openSavePeopleViewModal()
+{
+    if (!hasActivePeopleFilters())
+    {
         showToast('Add filters before saving a filter.');
         return;
-      }
+    }
 
-      openPeopleSavedViewModal({
+    openPeopleSavedViewModal({
         mode: 'create',
         initialName: generatePeopleSavedViewName(),
         initialDescription: '',
         initialFilters: peopleFiltersWithDefaults()
-      });
-    }
+    });
+}
 
-    function openEditPeopleFilterModal(viewId) {
-      openPeopleSavedViewModal({
+function openEditPeopleFilterModal(viewId)
+{
+    openPeopleSavedViewModal({
         mode: 'edit',
         viewId
-      });
-    }
+    });
+}
 
-    function openPeopleSavedViewMenu(viewId, anchor) {
-      closeMenu();
-      closePeopleFilterPopover();
-      closePeopleColumnsPopover();
+function openPeopleSavedViewMenu(viewId, anchor)
+{
+    closeMenu();
+    closePeopleFilterPopover();
+    closePeopleColumnsPopover();
 
-      const view = peopleSavedViews.find(item => item.id === viewId);
-      if (!view || !anchor) return;
+    const view = peopleSavedViews.find(item => item.id === viewId);
+    if (!view || !anchor) return;
 
-      const rect = anchor.getBoundingClientRect();
-      const menu = document.createElement('div');
+    const rect = anchor.getBoundingClientRect();
+    const menu = document.createElement('div');
 
-      menu.className = 'menu-popover';
-      menu.id = 'projectMenu';
-      menu.setAttribute('role', 'menu');
-      menu.setAttribute('aria-label', `Actions for ${view.name}`);
+    menu.className = 'menu-popover';
+    menu.id = 'projectMenu';
+    menu.setAttribute('role', 'menu');
+    menu.setAttribute('aria-label', `Actions for ${view.name}`);
 
-      menu.style.top = `${rect.bottom + 6}px`;
-      menu.style.left = `${Math.max(12, rect.right - 190)}px`;
+    menu.style.top = `${rect.bottom + 6}px`;
+    menu.style.left = `${Math.max(12, rect.right - 190)}px`;
 
-      menu.innerHTML = `
+    menu.innerHTML = `
         <button
           type="button"
           role="menuitem"
@@ -7921,11 +8336,12 @@
         </button>
       `;
 
-      document.body.appendChild(menu);
+    document.body.appendChild(menu);
 
-      menu.addEventListener('click', event => {
+    menu.addEventListener('click', event =>
+    {
         const actionButton = event.target.closest(
-          '[data-people-saved-view-action]'
+            '[data-people-saved-view-action]'
         );
 
         if (!actionButton) return;
@@ -7934,36 +8350,42 @@
 
         closeMenu();
 
-        if (action === 'edit') {
-          openEditPeopleFilterModal(viewId);
+        if (action === 'edit')
+        {
+            openEditPeopleFilterModal(viewId);
         }
 
-        if (action === 'delete') {
-          openDeletePeopleFilterConfirm(viewId);
+        if (action === 'delete')
+        {
+            openDeletePeopleFilterConfirm(viewId);
         }
-      });
+    });
 
-      menu.addEventListener('keydown', event => {
+    menu.addEventListener('keydown', event =>
+    {
         if (event.key !== 'Escape') return;
 
         event.preventDefault();
         closeMenu();
         anchor.focus();
-      });
+    });
 
-      setTimeout(() => {
+    setTimeout(() =>
+    {
         document.addEventListener('click', closeMenu);
-      }, 0);
-    }
+    }, 0);
+}
 
-    function openDeletePeopleFilterConfirm(viewId) {
-      const view = peopleSavedViews.find(item => item.id === viewId);
-      if (!view) {
+function openDeletePeopleFilterConfirm(viewId)
+{
+    const view = peopleSavedViews.find(item => item.id === viewId);
+    if (!view)
+    {
         showToast('Saved filter not found.');
         return;
-      }
+    }
 
-      openModal(`
+    openModal(`
         <div
           class="modal"
           role="dialog"
@@ -8009,119 +8431,126 @@
         </div>
       `);
 
-      modalBackdrop
+    modalBackdrop
         .querySelector('#confirmDeletePeopleFilter')
-        ?.addEventListener('click', () => {
-          deletePeopleSavedView(viewId);
+        ?.addEventListener('click', () =>
+        {
+            deletePeopleSavedView(viewId);
         });
-    }
+}
 
-    function deletePeopleSavedView(viewId) {
-      const index = peopleSavedViews.findIndex(view => view.id === viewId);
-      if (index < 0) {
+function deletePeopleSavedView(viewId)
+{
+    const index = peopleSavedViews.findIndex(view => view.id === viewId);
+    if (index < 0)
+    {
         closeModal();
         showToast('Saved filter not found.');
         return;
-      }
+    }
 
-      const wasActive = state.peopleSavedViewId === viewId;
+    const wasActive = state.peopleSavedViewId === viewId;
 
-      peopleSavedViews.splice(index, 1);
+    peopleSavedViews.splice(index, 1);
 
-      if (wasActive) {
+    if (wasActive)
+    {
         clearPeopleSelection();
         state.peopleSavedViewId = '';
         state.peopleSavedView = 'All people';
         state.peopleFilters =
-          peopleFiltersWithDefaults(
-            defaultPeopleFilters
-          );
+            peopleFiltersWithDefaults(
+                defaultPeopleFilters
+            );
         state.peopleView = 'directory';
-      }
-
-      closeModal();
-      renderPeople();
-      showToast('Filter deleted.');
     }
 
-    function applyPeopleSavedView(
-      viewId
-    ) {
-      const view =
+    closeModal();
+    renderPeople();
+    showToast('Filter deleted.');
+}
+
+function applyPeopleSavedView(
+    viewId
+)
+{
+    const view =
         peopleSavedViews.find(
-          item =>
-            item.id === viewId
+            item =>
+                item.id === viewId
         );
 
-      if (!view) {
+    if (!view)
+    {
         return;
-      }
+    }
 
-      clearPeopleSelection();
+    clearPeopleSelection();
 
-      state.peopleSavedViewId =
+    state.peopleSavedViewId =
         view.id;
 
-      state.peopleSavedView =
+    state.peopleSavedView =
         view.name;
 
-      state.peopleFilters =
+    state.peopleFilters =
         peopleFiltersWithDefaults(
-          view.filters
+            view.filters
         );
 
-      state.peopleView =
+    state.peopleView =
         'directory';
 
-      renderPeople();
-    }
+    renderPeople();
+}
 
-    function openPeopleActionsMenu(
-      personId,
-      anchor,
-      {
+function openPeopleActionsMenu(
+    personId,
+    anchor,
+    {
         includeProfile = true
-      } = {}
-    ) {
-      closeMenu();
-      closePeopleFilterPopover();
-      closePeopleColumnsPopover();
+    } = {}
+)
+{
+    closeMenu();
+    closePeopleFilterPopover();
+    closePeopleColumnsPopover();
 
-      const person = getPerson(personId);
+    const person = getPerson(personId);
 
-      if (!person || !anchor) return;
+    if (!person || !anchor) return;
 
-      const rect =
+    const rect =
         anchor.getBoundingClientRect();
 
-      const menu =
+    const menu =
         document.createElement('div');
 
-      menu.className =
+    menu.className =
         'menu-popover people-row-menu';
 
-      menu.id = 'projectMenu';
+    menu.id = 'projectMenu';
 
-      menu.setAttribute(
+    menu.setAttribute(
         'role',
         'menu'
-      );
+    );
 
-      menu.setAttribute(
+    menu.setAttribute(
         'aria-label',
         `Actions for ${
-          person.names?.display || 'person'
+            person.names?.display || 'person'
         }`
-      );
+    );
 
-      menu.style.visibility = 'hidden';
-      menu.style.top =
+    menu.style.visibility = 'hidden';
+    menu.style.top =
         `${rect.bottom + 6}px`;
-      menu.style.left = '0px';
+    menu.style.left = '0px';
 
-      menu.innerHTML = `
+    menu.innerHTML = `
         ${includeProfile
-          ? `
+            ? `
             <button
               type="button"
               role="menuitem"
@@ -8129,7 +8558,7 @@
               Open profile
             </button>
           `
-          : ''}
+            : ''}
 
         <button
           type="button"
@@ -8147,357 +8576,394 @@
         </button>
       `;
 
-      document.body.appendChild(menu);
+    document.body.appendChild(menu);
 
-      const viewportPadding = 12;
+    const viewportPadding = 12;
 
-      const menuWidth =
+    const menuWidth =
         menu.getBoundingClientRect().width;
 
-      menu.style.left = `${
+    menu.style.left = `${
         Math.max(
-          viewportPadding,
-          Math.min(
-            rect.right - menuWidth,
-            window.innerWidth
+            viewportPadding,
+            Math.min(
+                rect.right - menuWidth,
+                window.innerWidth
               - menuWidth
               - viewportPadding
-          )
+            )
         )
-      }px`;
+    }px`;
 
-      menu.style.visibility = 'visible';
+    menu.style.visibility = 'visible';
 
-      menu.addEventListener(
+    menu.addEventListener(
         'click',
-        event => {
-          const action =
-            event.target
-              .closest('[data-people-action]')
-              ?.dataset.peopleAction;
+        event =>
+        {
+            const action =
+                event.target
+                    .closest('[data-people-action]')
+                    ?.dataset.peopleAction;
 
-          if (!action) return;
+            if (!action) return;
 
-          closeMenu();
+            closeMenu();
 
-          if (action === 'profile') {
-            openPeopleProfileFromRow(
-              person.id
-            );
-          }
+            if (action === 'profile')
+            {
+                openPeopleProfileFromRow(
+                    person.id
+                );
+            }
 
-          if (action === 'edit') {
-            openEditPersonModal(
-              person.id
-            );
-          }
+            if (action === 'edit')
+            {
+                openEditPersonModal(
+                    person.id
+                );
+            }
 
-          if (action === 'tree') {
-            showPersonInFamilyTree(
-              person.id
-            );
-          }
+            if (action === 'tree')
+            {
+                showPersonInFamilyTree(
+                    person.id
+                );
+            }
 
-          if (action === 'delete') {
-            openDeletePeopleConfirm([
-              person.id
-            ]);
-          }
+            if (action === 'delete')
+            {
+                openDeletePeopleConfirm([
+                    person.id
+                ]);
+            }
         }
-      );
+    );
 
-      setTimeout(() => {
+    setTimeout(() =>
+    {
         document.addEventListener(
-          'click',
-          closeMenu
+            'click',
+            closeMenu
         );
 
         document.addEventListener(
-          'scroll',
-          closeMenu,
-          true
+            'scroll',
+            closeMenu,
+            true
         );
-      }, 0);
-    }
+    }, 0);
+}
 
-    function openPeopleProfileFromRow(personId) {
-      const person = currentPeopleRecords().find(item => item.id === personId);
-      if (!person) {
+function openPeopleProfileFromRow(personId)
+{
+    const person = currentPeopleRecords().find(item => item.id === personId);
+    if (!person)
+    {
         showToast('Person record not found.');
         return;
-      }
-      state.selectedPeopleId = personId;
-      state.selectedPersonId = personId;
-      state.peopleView = 'profile';
-      state.peopleSide = 'profile';
-      state.peoplePreviewCollapsed = false;
-      state.activeModule = 'People';
-      render();
     }
+    state.selectedPeopleId = personId;
+    state.selectedPersonId = personId;
+    state.peopleView = 'profile';
+    state.peopleSide = 'profile';
+    state.peoplePreviewCollapsed = false;
+    state.activeModule = 'People';
+    render();
+}
 
-    function showPersonInFamilyTree(personId) {
-      if (!getPerson(personId)) { showToast('This person is not currently shown in the sample Family Tree.'); return; }
-      state.activeModule = 'Family Tree';
-      state.selectedPersonId = personId;
-      rememberTreeSelectedPerson(personId);
-      state.treeCenterTargetId = personId;
-      state.treeInspectorCollapsed = false;
-      render();
+function showPersonInFamilyTree(personId)
+{
+    if (!getPerson(personId))
+    {
+        showToast('This person is not currently shown in the sample Family Tree.'); return;
     }
+    state.activeModule = 'Family Tree';
+    state.selectedPersonId = personId;
+    rememberTreeSelectedPerson(personId);
+    state.treeCenterTargetId = personId;
+    state.treeInspectorCollapsed = false;
+    render();
+}
 
-    function resetPersonSidebarSections() {
-      ['insights', 'timeline', 'relationships', 'photos', 'archive', 'notes', 'record'].forEach(key => { state.inspectorSections[key] = false; });
-    }
+function resetPersonSidebarSections()
+{
+    ['insights', 'timeline', 'relationships', 'photos', 'archive', 'notes', 'record'].forEach(key =>
+    {
+        state.inspectorSections[key] = false;
+    });
+}
 
-    function personSidebarSelectedId(context) {
-      return context === 'people' ? state.selectedPeopleId : state.selectedPersonId;
-    }
+function personSidebarSelectedId(context)
+{
+    return context === 'people' ? state.selectedPeopleId : state.selectedPersonId;
+}
 
-    function syncPersonSidebarSelection(personId, context) {
-      if (!personId) return;
-      state.selectedPersonId = personId;
-      if (context === 'tree') rememberTreeSelectedPerson(personId);
-      if (context === 'people') state.selectedPeopleId = personId;
-    }
+function syncPersonSidebarSelection(personId, context)
+{
+    if (!personId) return;
+    state.selectedPersonId = personId;
+    if (context === 'tree') rememberTreeSelectedPerson(personId);
+    if (context === 'people') state.selectedPeopleId = personId;
+}
 
-    const personSidebarScrollByContext = {
-      tree: 0,
-      people: 0
-    };
+const personSidebarScrollByContext = {
+    tree: 0,
+    people: 0
+};
 
-    function getPersonSidebarElement(
-      context
-    ) {
-      return main.querySelector(
+function getPersonSidebarElement(
+    context
+)
+{
+    return main.querySelector(
         `[data-person-sidebar-context="${
-          CSS.escape(context)
+            CSS.escape(context)
         }"]`
-      );
-    }
+    );
+}
 
-    function syncPersonSidebarLayoutState(
-      context
-    ) {
-      if (context === 'people') {
+function syncPersonSidebarLayoutState(
+    context
+)
+{
+    if (context === 'people')
+    {
         main
-          .querySelector('.people-layout')
-          ?.classList.toggle(
-            'preview-collapsed',
-            Boolean(
-              state.peoplePreviewCollapsed
-            )
-          );
+            .querySelector('.people-layout')
+            ?.classList.toggle(
+                'preview-collapsed',
+                Boolean(
+                    state.peoplePreviewCollapsed
+                )
+            );
 
         return;
-      }
+    }
 
-      main
+    main
         .querySelector('.tree-workspace')
         ?.classList.toggle(
-          'inspector-collapsed',
-          Boolean(
-            state.treeInspectorCollapsed
-          )
+            'inspector-collapsed',
+            Boolean(
+                state.treeInspectorCollapsed
+            )
         );
-    }
+}
 
-    function personSidebarCanProvideScroll(
-      panel
-    ) {
-      return Boolean(
+function personSidebarCanProvideScroll(
+    panel
+)
+{
+    return Boolean(
         panel
         && !panel.classList.contains(
-          'collapsed'
+            'collapsed'
         )
         && panel.getClientRects().length
-      );
-    }
+    );
+}
 
-    function createPersonSidebarElement(
-      context
-    ) {
-      const template =
+function createPersonSidebarElement(
+    context
+)
+{
+    const template =
         document.createElement(
-          'template'
+            'template'
         );
 
-      template.innerHTML =
+    template.innerHTML =
         renderPersonSidebar(
-          personSidebarSelectedId(
+            personSidebarSelectedId(
+                context
+            ),
             context
-          ),
-          context
         ).trim();
 
-      return (
+    return (
         template.content.firstElementChild
         || null
-      );
-    }
+    );
+}
 
-    function rerenderPersonSidebarContext(
-      context,
-      {
+function rerenderPersonSidebarContext(
+    context,
+    {
         focusSectionId = '',
         scrollSectionId = '',
         preserveScroll = true
-      } = {}
-    ) {
-      const currentPanel =
+    } = {}
+)
+{
+    const currentPanel =
         getPersonSidebarElement(
-          context
+            context
         );
 
-      /*
+    /*
       * Safe fallback for an incomplete or
       * unexpected module render.
       */
-      if (!currentPanel) {
-        if (context === 'people') {
-          renderPeople();
-        } else {
-          renderFamilyTreePreserveScroll();
+    if (!currentPanel)
+    {
+        if (context === 'people')
+        {
+            renderPeople();
+        }
+        else
+        {
+            renderFamilyTreePreserveScroll();
         }
 
         return;
-      }
+    }
 
-      /*
+    /*
       * Accordion changes preserve the current
       * inspector position. Selecting another
       * person intentionally starts the new
       * inspector at the top.
       */
-      if (
+    if (
         preserveScroll
         && personSidebarCanProvideScroll(
-          currentPanel
+            currentPanel
         )
-      ) {
+    )
+    {
         personSidebarScrollByContext[
-          context
+            context
         ] = currentPanel.scrollTop;
-      } else if (!preserveScroll) {
+    }
+    else if (!preserveScroll)
+    {
         personSidebarScrollByContext[
-          context
+            context
         ] = 0;
-      }
+    }
 
-      const nextPanel =
+    const nextPanel =
         createPersonSidebarElement(
-          context
+            context
         );
 
-      if (!nextPanel) return;
+    if (!nextPanel) return;
 
-      syncPersonSidebarLayoutState(
+    syncPersonSidebarLayoutState(
         context
-      );
+    );
 
-      currentPanel.replaceWith(
+    currentPanel.replaceWith(
         nextPanel
-      );
+    );
 
-      bindPersonSidebar(
+    bindPersonSidebar(
         nextPanel,
         context
-      );
+    );
 
-      requestAnimationFrame(() => {
+    requestAnimationFrame(() =>
+    {
         if (
-          !nextPanel.classList.contains(
-            'collapsed'
-          )
+            !nextPanel.classList.contains(
+                'collapsed'
+            )
           && nextPanel.getClientRects()
-            .length
-        ) {
-          const maximumScroll =
-            Math.max(
-              0,
-              nextPanel.scrollHeight
+              .length
+        )
+        {
+            const maximumScroll =
+                Math.max(
+                    0,
+                    nextPanel.scrollHeight
               - nextPanel.clientHeight
-            );
+                );
 
-          const requestedScroll =
-            preserveScroll
-              ? (
-                  personSidebarScrollByContext[
-                    context
-                  ] || 0
-                )
-              : 0;
+            const requestedScroll =
+                preserveScroll
+                    ? (
+                        personSidebarScrollByContext[
+                            context
+                        ] || 0
+                    )
+                    : 0;
 
-          nextPanel.scrollTop =
-            Math.min(
-              requestedScroll,
-              maximumScroll
-            );
+            nextPanel.scrollTop =
+                Math.min(
+                    requestedScroll,
+                    maximumScroll
+                );
         }
 
-        if (scrollSectionId) {
-          const sectionBody =
-            nextPanel.querySelector(
-              `#section-${
-                CSS.escape(
-                  scrollSectionId
-                )
-              }`
-            );
+        if (scrollSectionId)
+        {
+            const sectionBody =
+                nextPanel.querySelector(
+                    `#section-${
+                        CSS.escape(
+                            scrollSectionId
+                        )
+                    }`
+                );
 
-          const section =
-            sectionBody?.closest(
-              '.panel-section'
-            );
+            const section =
+                sectionBody?.closest(
+                    '.panel-section'
+                );
 
-          if (section) {
-            const panelRect =
-              nextPanel
-                .getBoundingClientRect();
+            if (section)
+            {
+                const panelRect =
+                    nextPanel
+                        .getBoundingClientRect();
 
-            const sectionRect =
-              section
-                .getBoundingClientRect();
+                const sectionRect =
+                    section
+                        .getBoundingClientRect();
 
-            const targetTop =
-              nextPanel.scrollTop
+                const targetTop =
+                    nextPanel.scrollTop
               + sectionRect.top
               - panelRect.top
               - 12;
 
-            nextPanel.scrollTo({
-              top:
+                nextPanel.scrollTo({
+                    top:
                 Math.max(
-                  0,
-                  targetTop
+                    0,
+                    targetTop
                 ),
 
-              behavior:
+                    behavior:
                 'smooth'
-            });
-          }
+                });
+            }
         }
 
-        if (focusSectionId) {
-          nextPanel
-            .querySelector(
-              `[data-toggle-section="${
-                CSS.escape(
-                  focusSectionId
+        if (focusSectionId)
+        {
+            nextPanel
+                .querySelector(
+                    `[data-toggle-section="${
+                        CSS.escape(
+                            focusSectionId
+                        )
+                    }"]`
                 )
-              }"]`
-            )
-            ?.focus({
-              preventScroll: true
-            });
+                ?.focus({
+                    preventScroll: true
+                });
         }
-      });
-    }
+    });
+}
 
-    function relationshipContextFromRow(
-      row,
-      sidebarContext
-    ) {
-      return {
+function relationshipContextFromRow(
+    row,
+    sidebarContext
+)
+{
+    return {
         sidebarContext,
         kind:
           row?.dataset.relationshipKind || '',
@@ -8508,1073 +8974,1188 @@
           || '',
         familyId:
           row?.dataset.relationshipFamilyId || ''
-      };
-    }
+    };
+}
 
-    function selectRelationshipPerson(
-      personId,
-      context = 'tree'
-    ) {
-      if (!personId || !getPerson(personId)) {
+function selectRelationshipPerson(
+    personId,
+    context = 'tree'
+)
+{
+    if (!personId || !getPerson(personId))
+    {
         showToast('Person record not found.');
         return;
-      }
+    }
 
-      if (context === 'profile') {
+    if (context === 'profile')
+    {
         openProfileFamilyMember(personId);
         return;
-      }
+    }
 
-      if (context === 'tree') {
+    if (context === 'tree')
+    {
         navigateFamilyTreeToPerson(
-          personId,
-          {
-            focusBranch: false,
-            center: true
-          }
+            personId,
+            {
+                focusBranch: false,
+                center: true
+            }
         );
         return;
-      }
+    }
 
-      syncPersonSidebarSelection(
+    syncPersonSidebarSelection(
         personId,
         context
-      );
+    );
 
-      if (context === 'people') {
+    if (context === 'people')
+    {
         state.peoplePreviewCollapsed = false;
         renderPeople();
-      }
     }
+}
 
-    function bindRelationshipList(
-      root,
-      context = 'tree'
-    ) {
-      root
+function bindRelationshipList(
+    root,
+    context = 'tree'
+)
+{
+    root
         .querySelectorAll(
-          '[data-select-relationship-person]'
+            '[data-select-relationship-person]'
         )
-        .forEach(button => {
-          button.addEventListener('click', () => {
-            selectRelationshipPerson(
-              button.dataset.selectRelationshipPerson,
-              context
-            );
-          });
+        .forEach(button =>
+        {
+            button.addEventListener('click', () =>
+            {
+                selectRelationshipPerson(
+                    button.dataset.selectRelationshipPerson,
+                    context
+                );
+            });
         });
 
-      root
+    root
         .querySelectorAll('[data-edit-relationship]')
-        .forEach(button => {
-          button.addEventListener('click', event => {
-            event.stopPropagation();
+        .forEach(button =>
+        {
+            button.addEventListener('click', event =>
+            {
+                event.stopPropagation();
 
-            const row = button.closest(
-              '[data-relationship-row]'
-            );
+                const row = button.closest(
+                    '[data-relationship-row]'
+                );
 
-            openRelationshipEditModal(
-              relationshipContextFromRow(
-                row,
-                context
-              )
-            );
-          });
+                openRelationshipEditModal(
+                    relationshipContextFromRow(
+                        row,
+                        context
+                    )
+                );
+            });
         });
 
-      root
+    root
         .querySelectorAll('[data-unlink-relationship]')
-        .forEach(button => {
-          button.addEventListener('click', event => {
-            event.stopPropagation();
+        .forEach(button =>
+        {
+            button.addEventListener('click', event =>
+            {
+                event.stopPropagation();
 
-            const row = button.closest(
-              '[data-relationship-row]'
-            );
+                const row = button.closest(
+                    '[data-relationship-row]'
+                );
 
-            const relationshipContext =
-              relationshipContextFromRow(
-                row,
-                context
-              );
+                const relationshipContext =
+                    relationshipContextFromRow(
+                        row,
+                        context
+                    );
 
-            if (relationshipContext.personId) {
-              syncPersonSidebarSelection(
-                relationshipContext.personId,
-                context
-              );
-            }
-
-            openUnlinkRelationshipModal(
-              relationshipContext
-            );
-          });
-        });
-    }
-
-    function bindPersonSidebar(root, context = 'tree') {
-      const selectedId = personSidebarSelectedId(context);
-      const selected = personSidebarTreePerson(selectedId);
-      root
-        .querySelectorAll(
-          '[data-person-chip-section]'
-        )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              const sectionId =
-                button.dataset
-                  .personChipSection;
-
-              if (!sectionId) {
-                return;
-              }
-
-              state.inspectorSections[
-                sectionId
-              ] = true;
-
-              rerenderPersonSidebarContext(
-                context,
+                if (relationshipContext.personId)
                 {
-                  focusSectionId:
+                    syncPersonSidebarSelection(
+                        relationshipContext.personId,
+                        context
+                    );
+                }
+
+                openUnlinkRelationshipModal(
+                    relationshipContext
+                );
+            });
+        });
+}
+
+function bindPersonSidebar(root, context = 'tree')
+{
+    const selectedId = personSidebarSelectedId(context);
+    const selected = personSidebarTreePerson(selectedId);
+    root
+        .querySelectorAll(
+            '[data-person-chip-section]'
+        )
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
+                {
+                    const sectionId =
+                        button.dataset
+                            .personChipSection;
+
+                    if (!sectionId)
+                    {
+                        return;
+                    }
+
+                    state.inspectorSections[
+                        sectionId
+                    ] = true;
+
+                    rerenderPersonSidebarContext(
+                        context,
+                        {
+                            focusSectionId:
                     sectionId,
 
-                  scrollSectionId:
+                            scrollSectionId:
                     sectionId
+                        }
+                    );
                 }
-              );
-            }
-          );
+            );
         });
-      root.querySelector('#quickEdit')?.addEventListener('click', () => {
+    root.querySelector('#quickEdit')?.addEventListener('click', () =>
+    {
         if (!selected?.id) return;
         syncPersonSidebarSelection(selected.id, context);
         openEditPersonModal(selected.id);
-      });
-      root.querySelector('#familyMoreActions')?.addEventListener('click', event => {
+    });
+    root.querySelector('#familyMoreActions')?.addEventListener('click', event =>
+    {
         if (!selected) return;
         event.stopPropagation();
         syncPersonSidebarSelection(selected.id, context);
         openPeopleActionsMenu(selected.id, event.currentTarget, { includeProfile: true });
-      });
-      root
+    });
+    root
         .querySelector('#addRelative')
         ?.addEventListener(
-          'click',
-          event => {
-            if (!selected?.id) return;
+            'click',
+            event =>
+            {
+                if (!selected?.id) return;
 
-            syncPersonSidebarSelection(
-              selected.id,
-              context
-            );
+                syncPersonSidebarSelection(
+                    selected.id,
+                    context
+                );
 
-            openRelativePopover(
-              event.currentTarget,
-              selected.id
-            );
-          }
+                openRelativePopover(
+                    event.currentTarget,
+                    selected.id
+                );
+            }
         );
-      root.querySelector('#connectRelative')?.addEventListener('click', () => {
+    root.querySelector('#connectRelative')?.addEventListener('click', () =>
+    {
         if (!selected?.id) return;
         syncPersonSidebarSelection(selected.id, context);
         openConnectRelativeModal(selected.id, { relationshipType: 'parent' });
-      });
-      root
+    });
+    root
         .querySelector(
-          '[data-person-add-fact]'
+            '[data-person-add-fact]'
         )
         ?.addEventListener(
-          'click',
-          () => {
-            if (!selected?.id) return;
-
-            syncPersonSidebarSelection(
-              selected.id,
-              context
-            );
-
-            openAddFactOverlay(
-              getPerson(selected.id)
-            );
-          }
-        );
-      root
-        .querySelectorAll(
-          '[data-family-photo]'
-        )
-        .forEach(button => {
-          button.addEventListener(
             'click',
             () =>
-              openFamilyPhoto(
-                button.dataset.familyPhoto
-              )
-          );
+            {
+                if (!selected?.id) return;
+
+                syncPersonSidebarSelection(
+                    selected.id,
+                    context
+                );
+
+                openAddFactOverlay(
+                    getPerson(selected.id)
+                );
+            }
+        );
+    root
+        .querySelectorAll(
+            '[data-family-photo]'
+        )
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
+                    openFamilyPhoto(
+                        button.dataset.familyPhoto
+                    )
+            );
         });
-      bindTimelineSourceControls(
+    bindTimelineSourceControls(
         root,
         {
-          afterSave:
+            afterSave:
             () =>
-              rerenderPersonSidebarContext(
-                context,
-                {
-                  preserveScroll:
+                rerenderPersonSidebarContext(
+                    context,
+                    {
+                        preserveScroll:
                     true,
 
-                  focusSectionId:
+                        focusSectionId:
                     'timeline'
-                }
-              )
+                    }
+                )
         }
-      );
-      bindPersonPhotoUnlinkButtons(
+    );
+    bindPersonPhotoUnlinkButtons(
         root
-      );
-      root
+    );
+    root
         .querySelectorAll(
-          '[data-person-add-photos]'
+            '[data-person-add-photos]'
         )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              const personId =
-                button.dataset
-                  .personAddPhotos;
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
+                {
+                    const personId =
+                        button.dataset
+                            .personAddPhotos;
 
-              if (!personId) {
-                return;
-              }
+                    if (!personId)
+                    {
+                        return;
+                    }
 
-              openAddPhotosToPersonModal(
-                personId
-              );
-            }
-          );
-        });
-      root
-        .querySelectorAll(
-          '[data-person-add-files]'
-        )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              const personId =
-                button.dataset
-                  .personAddFiles;
-
-              if (!personId) {
-                return;
-              }
-
-              openPersonFilesModal(
-                personId
-              );
-            }
-          );
-        });
-      const addNoteButton =
-        root.querySelector(
-          '[data-person-add-note]'
-        );
-
-      addNoteButton
-        ?.addEventListener(
-          'click',
-          () => {
-            openPersonNotesModal(
-              addNoteButton.dataset
-                .personAddNote,
-
-              context
+                    openAddPhotosToPersonModal(
+                        personId
+                    );
+                }
             );
-          }
+        });
+    root
+        .querySelectorAll(
+            '[data-person-add-files]'
+        )
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
+                {
+                    const personId =
+                        button.dataset
+                            .personAddFiles;
+
+                    if (!personId)
+                    {
+                        return;
+                    }
+
+                    openPersonFilesModal(
+                        personId
+                    );
+                }
+            );
+        });
+    const addNoteButton =
+        root.querySelector(
+            '[data-person-add-note]'
         );
-      bindConnectedFileLinks(
+
+    addNoteButton
+        ?.addEventListener(
+            'click',
+            () =>
+            {
+                openPersonNotesModal(
+                    addNoteButton.dataset
+                        .personAddNote,
+
+                    context
+                );
+            }
+        );
+    bindConnectedFileLinks(
         root,
         {
-          onUnlinked:
+            onUnlinked:
             ({
-              contextType
-            }) => {
-              if (
                 contextType
+            }) =>
+            {
+                if (
+                    contextType
                 !== 'person'
-              ) {
-                return;
-              }
-
-              state.inspectorSections
-                .archive = true;
-
-              rerenderPersonSidebarContext(
-                context,
+                )
                 {
-                  preserveScroll:
+                    return;
+                }
+
+                state.inspectorSections
+                    .archive = true;
+
+                rerenderPersonSidebarContext(
+                    context,
+                    {
+                        preserveScroll:
                     true,
 
-                  focusSectionId:
+                        focusSectionId:
                     'archive'
-                }
-              );
+                    }
+                );
             }
         }
-      );
-      bindConnectedNoteLinks(
+    );
+    bindConnectedNoteLinks(
         root,
         {
-          onUnlinked:
+            onUnlinked:
             ({
-              contextType
-            }) => {
-              if (
                 contextType
+            }) =>
+            {
+                if (
+                    contextType
                 !== 'person'
-              ) {
-                return;
-              }
+                )
+                {
+                    return;
+                }
 
-              state.inspectorSections
-                .notes = true;
+                state.inspectorSections
+                    .notes = true;
 
-              /*
+                /*
                 Use the actual sidebar context:
                 - "tree" for Family Tree
                 - "people" for People
               */
-              rerenderPersonSidebarContext(
-                context,
-                {
-                  preserveScroll:
+                rerenderPersonSidebarContext(
+                    context,
+                    {
+                        preserveScroll:
                     true,
 
-                  focusSectionId:
+                        focusSectionId:
                     'notes'
-                }
-              );
+                    }
+                );
             }
         }
-      );
-      bindConnectedSourceLinks(
+    );
+    bindConnectedSourceLinks(
         root,
         {
-          onUnlinked:
+            onUnlinked:
             ({
-              targetType
-            }) => {
-              if (
                 targetType
+            }) =>
+            {
+                if (
+                    targetType
                   !== 'person'
-              ) {
-                return;
-              }
-
-              state.inspectorSections
-                .sources = true;
-
-              rerenderPersonSidebarContext(
-                context,
+                )
                 {
-                  preserveScroll:
+                    return;
+                }
+
+                state.inspectorSections
+                    .sources = true;
+
+                rerenderPersonSidebarContext(
+                    context,
+                    {
+                        preserveScroll:
                     true,
 
-                  focusSectionId:
+                        focusSectionId:
                     'sources'
-                }
-              );
+                    }
+                );
             }
         }
-      );
+    );
 
-      root
+    root
         .querySelector(
-          '[data-person-manage-sources]'
+            '[data-person-manage-sources]'
         )
         ?.addEventListener(
-          'click',
-          event => {
-            const personId =
-              event.currentTarget
-                .dataset
-                .personManageSources;
+            'click',
+            event =>
+            {
+                const personId =
+                    event.currentTarget
+                        .dataset
+                        .personManageSources;
 
-            const centralPerson =
-              getPerson(
-                personId
-              );
+                const centralPerson =
+                    getPerson(
+                        personId
+                    );
 
-            if (!centralPerson) {
-              return;
-            }
+                if (!centralPerson)
+                {
+                    return;
+                }
 
-            openSourcesForTargetModal({
-              targetType:
+                openSourcesForTargetModal({
+                    targetType:
                 'person',
 
-              targetId:
+                    targetId:
                 centralPerson.id,
 
-              projectId:
+                    projectId:
                 centralPerson.projectId,
 
-              title:
+                    title:
                 'Add sources',
 
-              subtitle:
+                    subtitle:
                 `Connect existing sources to ${
-                  centralPerson.names?.display
+                    centralPerson.names?.display
                   || 'this person'
                 }.`,
 
-              afterSave:
-                () => {
-                  state.inspectorSections
-                    .sources = true;
+                    afterSave:
+                () =>
+                {
+                    state.inspectorSections
+                        .sources = true;
 
-                  rerenderPersonSidebarContext(
-                    context,
-                    {
-                      preserveScroll:
+                    rerenderPersonSidebarContext(
+                        context,
+                        {
+                            preserveScroll:
                         true,
 
-                      focusSectionId:
+                            focusSectionId:
                         'sources'
-                    }
-                  );
+                        }
+                    );
                 }
-            });
-          }
-        );
-      root
-        .querySelectorAll(
-          '[data-person-resource-view]'
-        )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              const resource =
-                button.dataset
-                  .personResourceView;
-
-              const personId =
-                button.dataset
-                  .personResourcePerson;
-
-              if (!personId) return;
-
-              if (
-                resource === 'photos'
-              ) {
-                openAlbumsForPerson(
-                  personId
-                );
-
-                return;
-              }
-
-              if (
-                resource === 'archive'
-              ) {
-                openArchiveForPerson(
-                  personId
-                );
-
-                return;
-              }
-
-              if (
-                resource === 'notes'
-              ) {
-                openNotesForPerson(
-                  personId
-                );
-              }
+                });
             }
-          );
+        );
+    root
+        .querySelectorAll(
+            '[data-person-resource-view]'
+        )
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
+                {
+                    const resource =
+                        button.dataset
+                            .personResourceView;
+
+                    const personId =
+                        button.dataset
+                            .personResourcePerson;
+
+                    if (!personId) return;
+
+                    if (
+                        resource === 'photos'
+                    )
+                    {
+                        openAlbumsForPerson(
+                            personId
+                        );
+
+                        return;
+                    }
+
+                    if (
+                        resource === 'archive'
+                    )
+                    {
+                        openArchiveForPerson(
+                            personId
+                        );
+
+                        return;
+                    }
+
+                    if (
+                        resource === 'notes'
+                    )
+                    {
+                        openNotesForPerson(
+                            personId
+                        );
+                    }
+                }
+            );
         });
-      root.querySelector('#collapseInspector')?.addEventListener('click', () => {
+    root.querySelector('#collapseInspector')?.addEventListener('click', () =>
+    {
         if (context === 'people') state.peoplePreviewCollapsed = true;
         else state.treeInspectorCollapsed = true;
         rerenderPersonSidebarContext(context);
-      });
-      root.querySelector('#restoreInspector')?.addEventListener('click', () => {
+    });
+    root.querySelector('#restoreInspector')?.addEventListener('click', () =>
+    {
         if (context === 'people') state.peoplePreviewCollapsed = false;
         else state.treeInspectorCollapsed = false;
         rerenderPersonSidebarContext(context);
-      });
-      root.querySelector('[data-tree-view-profile]')?.addEventListener('click', event => {
+    });
+    root.querySelector('[data-tree-view-profile]')?.addEventListener('click', event =>
+    {
         const personId = event.currentTarget.dataset.treeViewProfile;
         if (personId) openPeopleProfileFromRow(personId);
-      });
-      root
+    });
+    root
         .querySelectorAll(
-          '[data-toggle-section]'
+            '[data-toggle-section]'
         )
         .forEach(button =>
-          button.addEventListener(
-            'click',
-            event => {
-              if (
-                event.target.closest(
-                  '.link'
-                )
-              ) {
-                return;
-              }
-
-              const id =
-                button.dataset
-                  .toggleSection;
-
-              if (!id) return;
-
-              state.inspectorSections[
-                id
-              ] = !sectionIsOpen(id);
-
-              rerenderPersonSidebarContext(
-                context,
+            button.addEventListener(
+                'click',
+                event =>
                 {
-                  focusSectionId: id
-                }
-              );
-            }
-          )
-        );
-      bindRelationshipList(root, context);
-      bindToasts(root);
-    }
+                    if (
+                        event.target.closest(
+                            '.link'
+                        )
+                    )
+                    {
+                        return;
+                    }
 
-    function openDeletePeopleConfirm(personIds) {
-      const requestedIds = [...new Set(Array.isArray(personIds) ? personIds.filter(Boolean) : [])];
-      const validPeople = requestedIds
+                    const id =
+                        button.dataset
+                            .toggleSection;
+
+                    if (!id) return;
+
+                    state.inspectorSections[
+                        id
+                    ] = !sectionIsOpen(id);
+
+                    rerenderPersonSidebarContext(
+                        context,
+                        {
+                            focusSectionId: id
+                        }
+                    );
+                }
+            )
+        );
+    bindRelationshipList(root, context);
+    bindToasts(root);
+}
+
+function openDeletePeopleConfirm(personIds)
+{
+    const requestedIds = [...new Set(Array.isArray(personIds) ? personIds.filter(Boolean) : [])];
+    const validPeople = requestedIds
         .map(personId => getPerson(personId))
         .filter(Boolean);
 
-      if (!validPeople.length) return;
+    if (!validPeople.length) return;
 
-      const validIds = validPeople.map(person => person.id);
-      const count = validPeople.length;
-      const visibleNames = validPeople.slice(0, 5)
+    const validIds = validPeople.map(person => person.id);
+    const count = validPeople.length;
+    const visibleNames = validPeople.slice(0, 5)
         .map(person => `<li>${escapeHtml(person.names?.display || 'Unnamed person')}</li>`)
         .join('');
-      const remaining = count - 5;
-      const noun = count === 1 ? 'person' : 'people';
+    const remaining = count - 5;
+    const noun = count === 1 ? 'person' : 'people';
 
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="deletePeopleTitle"><div class="modal-header"><div><h2 id="deletePeopleTitle">Delete ${count === 1 ? 'person' : `${count} people`}?</h2><p>${count} ${noun} selected</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body"><div class="people-delete-confirm-copy"><p>Deleting ${count === 1 ? 'this person' : 'these people'} will also remove their relationship references.</p><ul>${visibleNames}</ul>${remaining > 0 ? `<p class="people-delete-remaining">And ${remaining} more ${remaining === 1 ? 'person' : 'people'}.</p>` : ''}<p>Linked photos, archive files, notes, and other research material will remain in the project.</p></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" data-confirm-delete-people>Delete ${noun}</button></div></div>`);
+    openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="deletePeopleTitle"><div class="modal-header"><div><h2 id="deletePeopleTitle">Delete ${count === 1 ? 'person' : `${count} people`}?</h2><p>${count} ${noun} selected</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body"><div class="people-delete-confirm-copy"><p>Deleting ${count === 1 ? 'this person' : 'these people'} will also remove their relationship references.</p><ul>${visibleNames}</ul>${remaining > 0 ? `<p class="people-delete-remaining">And ${remaining} more ${remaining === 1 ? 'person' : 'people'}.</p>` : ''}<p>Linked photos, archive files, notes, and other research material will remain in the project.</p></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" data-confirm-delete-people>Delete ${noun}</button></div></div>`);
 
-      modalBackdrop.querySelector('[data-confirm-delete-people]')
+    modalBackdrop.querySelector('[data-confirm-delete-people]')
         ?.addEventListener('click', () => deletePeopleRecords(validIds));
-    }
+}
 
-    function deletePeopleRecords(personIds) {
-      const requestedIds = [...new Set(Array.isArray(personIds) ? personIds.filter(Boolean) : [])];
-      const validIds = requestedIds.filter(personId => Boolean(getPerson(personId)));
-      if (!validIds.length) return;
+function deletePeopleRecords(personIds)
+{
+    const requestedIds = [...new Set(Array.isArray(personIds) ? personIds.filter(Boolean) : [])];
+    const validIds = requestedIds.filter(personId => Boolean(getPerson(personId)));
+    if (!validIds.length) return;
 
-      const deletedIds = new Set(validIds);
-      removeSourceLinksForTargets(
+    const deletedIds = new Set(validIds);
+    removeSourceLinksForTargets(
         'person',
         [...deletedIds]
-      );
-      const partnerAFields = ['fatherId', 'husbandId', 'partnerAId', 'partner1Id', 'personAId'];
-      const partnerBFields = ['motherId', 'wifeId', 'partnerBId', 'partner2Id', 'personBId'];
-      const partnerAHints = ['partnerARoleHint', 'partner1RoleHint', 'personARoleHint', 'husbandRoleHint'];
-      const partnerBHints = ['partnerBRoleHint', 'partner2RoleHint', 'personBRoleHint', 'wifeRoleHint'];
+    );
+    const partnerAFields = ['fatherId', 'husbandId', 'partnerAId', 'partner1Id', 'personAId'];
+    const partnerBFields = ['motherId', 'wifeId', 'partnerBId', 'partner2Id', 'personBId'];
+    const partnerAHints = ['partnerARoleHint', 'partner1RoleHint', 'personARoleHint', 'husbandRoleHint'];
+    const partnerBHints = ['partnerBRoleHint', 'partner2RoleHint', 'personBRoleHint', 'wifeRoleHint'];
 
-      const now = new Date().toISOString();
-      sampleData.media.forEach(photo => {
+    const now = new Date().toISOString();
+    sampleData.media.forEach(photo =>
+    {
         const nextPersonIds = (photo.personIds || []).filter(personId => !deletedIds.has(personId));
-        if (nextPersonIds.length !== (photo.personIds || []).length) {
-          photo.personIds = nextPersonIds;
-          photo.updatedAt = now;
+        if (nextPersonIds.length !== (photo.personIds || []).length)
+        {
+            photo.personIds = nextPersonIds;
+            photo.updatedAt = now;
         }
-      });
+    });
 
-      sampleData.people = sampleData.people.filter(person => !deletedIds.has(person.id));
+    sampleData.people = sampleData.people.filter(person => !deletedIds.has(person.id));
 
-      sampleData.projects.forEach(project => {
+    sampleData.projects.forEach(project =>
+    {
         if (!deletedIds.has(project.defaultPersonId)) return;
         project.defaultPersonId = getPeople(project.id)[0]?.id || '';
-      });
+    });
 
-      Object.entries(state.treeProjectViews || {}).forEach(
-        ([projectId, view]) => {
-          if (deletedIds.has(view.focusPersonId)) {
-            view.focusPersonId = treeDefaultPersonId(projectId);
-          }
+    Object.entries(state.treeProjectViews || {}).forEach(
+        ([projectId, view]) =>
+        {
+            if (deletedIds.has(view.focusPersonId))
+            {
+                view.focusPersonId = treeDefaultPersonId(projectId);
+            }
 
-          view.navigationBackStack = Array.isArray(
-            view.navigationBackStack
-          )
-            ? view.navigationBackStack.filter(entry =>
-                !deletedIds.has(entry?.focusPersonId)
+            view.navigationBackStack = Array.isArray(
+                view.navigationBackStack
+            )
+                ? view.navigationBackStack.filter(entry =>
+                    !deletedIds.has(entry?.focusPersonId)
                 && !deletedIds.has(entry?.selectedPersonId)
-              )
-            : [];
+                )
+                : [];
 
-          view.navigationForwardStack = Array.isArray(
-            view.navigationForwardStack
-          )
-            ? view.navigationForwardStack.filter(entry =>
-                !deletedIds.has(entry?.focusPersonId)
+            view.navigationForwardStack = Array.isArray(
+                view.navigationForwardStack
+            )
+                ? view.navigationForwardStack.filter(entry =>
+                    !deletedIds.has(entry?.focusPersonId)
                 && !deletedIds.has(entry?.selectedPersonId)
-              )
-            : [];
+                )
+                : [];
         }
-      );
+    );
 
-      sampleData.families = centralFamilyRecords().map(family => {
+    sampleData.families = centralFamilyRecords().map(family =>
+    {
         const removedPartnerA = partnerAFields.some(field => deletedIds.has(family[field]));
         const removedPartnerB = partnerBFields.some(field => deletedIds.has(family[field]));
 
-        partnerAFields.forEach(field => {
-          if (deletedIds.has(family[field])) family[field] = '';
+        partnerAFields.forEach(field =>
+        {
+            if (deletedIds.has(family[field])) family[field] = '';
         });
-        partnerBFields.forEach(field => {
-          if (deletedIds.has(family[field])) family[field] = '';
+        partnerBFields.forEach(field =>
+        {
+            if (deletedIds.has(family[field])) family[field] = '';
         });
-        if (removedPartnerA) partnerAHints.forEach(field => { family[field] = ''; });
-        if (removedPartnerB) partnerBHints.forEach(field => { family[field] = ''; });
+        if (removedPartnerA) partnerAHints.forEach(field =>
+        {
+            family[field] = '';
+        });
+        if (removedPartnerB) partnerBHints.forEach(field =>
+        {
+            family[field] = '';
+        });
 
         unlinkSetFamilyChildren(
-          family,
-          unlinkFamilyChildrenIds(family).filter(personId => !deletedIds.has(personId))
+            family,
+            unlinkFamilyChildrenIds(family).filter(personId => !deletedIds.has(personId))
         );
 
         family.parentChildTypes = Object.fromEntries(
-          Object.entries(sanitizeParentChildTypes(family.parentChildTypes))
-            .filter(([key]) => !key.split('|').some(personId => deletedIds.has(personId)))
+            Object.entries(sanitizeParentChildTypes(family.parentChildTypes))
+                .filter(([key]) => !key.split('|').some(personId => deletedIds.has(personId)))
         );
 
         return syncFamilyPartnerAliases(family);
-      }).filter(family => {
+    }).filter(family =>
+    {
         const memberIds = new Set([
-          familyPartnerAId(family),
-          familyPartnerBId(family),
-          ...unlinkFamilyChildrenIds(family)
+            familyPartnerAId(family),
+            familyPartnerBId(family),
+            ...unlinkFamilyChildrenIds(family)
         ].filter(Boolean));
         return memberIds.size >= 2;
-      });
+    });
 
-      const survivingFamilyIds = new Set(sampleData.families.map(family => family.id));
-      sampleData.events = (sampleData.events || []).map(event => ({
+    const survivingFamilyIds = new Set(sampleData.families.map(family => family.id));
+    sampleData.events = (sampleData.events || []).map(event => ({
         ...event,
         personIds: Array.isArray(event.personIds)
-          ? event.personIds.filter(personId => !deletedIds.has(personId))
-          : event.personIds,
+            ? event.personIds.filter(personId => !deletedIds.has(personId))
+            : event.personIds,
         relatedPersonIds: Array.isArray(event.relatedPersonIds)
-          ? event.relatedPersonIds.filter(personId => !deletedIds.has(personId))
-          : event.relatedPersonIds
-      })).filter(event => {
+            ? event.relatedPersonIds.filter(personId => !deletedIds.has(personId))
+            : event.relatedPersonIds
+    })).filter(event =>
+    {
         if (event.familyId && !survivingFamilyIds.has(event.familyId)) return false;
         return !Array.isArray(event.personIds) || event.personIds.length > 0;
-      });
+    });
 
-      sampleData.links = (sampleData.links || []).filter(link =>
+    sampleData.links = (sampleData.links || []).filter(link =>
         !(link.fromType === 'person' && deletedIds.has(link.fromId))
         && !(link.toType === 'person' && deletedIds.has(link.toId))
-      );
+    );
 
-      clearPeopleSelection();
-      const fallbackId = treeDefaultPersonId(currentProjectId());
-      if (!getPerson(state.selectedPeopleId)) state.selectedPeopleId = fallbackId;
-      if (!getPerson(state.selectedPersonId)) state.selectedPersonId = fallbackId;
-      if (deletedIds.has(state.treeCenterTargetId)) state.treeCenterTargetId = fallbackId;
+    clearPeopleSelection();
+    const fallbackId = treeDefaultPersonId(currentProjectId());
+    if (!getPerson(state.selectedPeopleId)) state.selectedPeopleId = fallbackId;
+    if (!getPerson(state.selectedPersonId)) state.selectedPersonId = fallbackId;
+    if (deletedIds.has(state.treeCenterTargetId)) state.treeCenterTargetId = fallbackId;
 
-      syncFamilyReciprocalLinks();
-      rebuildSampleEventsAndPruneSourceLinks();
-      closeModal();
-      render();
-      showToast(validIds.length === 1 ? 'Person deleted.' : `${validIds.length} people deleted.`);
-    }
-    function bindPeopleToolbarControls(rows) {
-      bindSearchInput(main, '#peopleSearch', 'peopleSearch', () => {
+    syncFamilyReciprocalLinks();
+    rebuildSampleEventsAndPruneSourceLinks();
+    closeModal();
+    render();
+    showToast(validIds.length === 1 ? 'Person deleted.' : `${validIds.length} people deleted.`);
+}
+function bindPeopleToolbarControls(rows)
+{
+    bindSearchInput(main, '#peopleSearch', 'peopleSearch', () =>
+    {
         clearPeopleSelection();
         renderPeople();
-      });
-      bindAppSortControl(main, {
+    });
+    bindAppSortControl(main, {
         id: 'peopleSort',
         options: APP_SORT_OPTIONS.people,
         getField: () => state.peopleSort,
         getDirection: () =>
-          state.peopleSortDirection,
+            state.peopleSortDirection,
 
         onChange: ({
-          field,
-          direction
-        }) => {
-          state.peopleSort = field;
-          state.peopleSortDirection =
-            direction;
+            field,
+            direction
+        }) =>
+        {
+            state.peopleSort = field;
+            state.peopleSortDirection =
+                direction;
 
-          renderPeople();
+            renderPeople();
         }
-      });
-      main.querySelector('#peopleColumnsButton')?.addEventListener('click', event => openPeopleColumnsPopover(event.currentTarget));
-      main.querySelector('#peopleFilterButton')?.addEventListener('click', event => openPeopleFilterPopover(event.currentTarget));
-      main.querySelector('#peopleClearFilters')?.addEventListener('click', clearPeopleFilters);
-      main.querySelector('#peopleSaveView')?.addEventListener('click', openSavePeopleViewModal);
-      main.querySelectorAll('[data-people-remove-filter]').forEach(button => {
+    });
+    main.querySelector('#peopleColumnsButton')?.addEventListener('click', event => openPeopleColumnsPopover(event.currentTarget));
+    main.querySelector('#peopleFilterButton')?.addEventListener('click', event => openPeopleFilterPopover(event.currentTarget));
+    main.querySelector('#peopleClearFilters')?.addEventListener('click', clearPeopleFilters);
+    main.querySelector('#peopleSaveView')?.addEventListener('click', openSavePeopleViewModal);
+    main.querySelectorAll('[data-people-remove-filter]').forEach(button =>
+    {
         button.addEventListener('click', () => removePeopleFilter(button.dataset.peopleRemoveFilter));
-      });
-      main.querySelector('#addPeoplePerson')?.addEventListener('click', () => openAddPersonModal('Add person', 'Create a new person in this project'));
-      main.querySelector('[data-people-bulk-export]')?.addEventListener('click', () => showToast('Export selected people'));
-      main.querySelector('[data-people-bulk-add-board]')?.addEventListener('click', () => showToast('Add selected people to a Geneograph board'));
-      main.querySelector('[data-people-bulk-delete]')?.addEventListener('click', () => openDeletePeopleConfirm(state.peopleSelectedIds));
-      main.querySelector('[data-people-bulk-clear]')?.addEventListener('click', () => {
+    });
+    main.querySelector('#addPeoplePerson')?.addEventListener('click', () => openAddPersonModal('Add person', 'Create a new person in this project'));
+    main.querySelector('[data-people-bulk-export]')?.addEventListener('click', () => showToast('Export selected people'));
+    main.querySelector('[data-people-bulk-add-board]')?.addEventListener('click', () => showToast('Add selected people to a Geneograph board'));
+    main.querySelector('[data-people-bulk-delete]')?.addEventListener('click', () => openDeletePeopleConfirm(state.peopleSelectedIds));
+    main.querySelector('[data-people-bulk-clear]')?.addEventListener('click', () =>
+    {
         clearPeopleSelection();
         renderPeople();
-      });
-    }
+    });
+}
 
-    function bindPeopleSelectionControls(rows) {
-      const selectionState = peopleVisibleSelectionState(rows);
-      const headerCheckbox = main.querySelector('[data-people-select-visible]');
+function bindPeopleSelectionControls(rows)
+{
+    const selectionState = peopleVisibleSelectionState(rows);
+    const headerCheckbox = main.querySelector('[data-people-select-visible]');
 
-      if (headerCheckbox) {
+    if (headerCheckbox)
+    {
         headerCheckbox.checked = selectionState.allVisibleSelected;
         headerCheckbox.indeterminate = selectionState.someVisibleSelected && !selectionState.allVisibleSelected;
         headerCheckbox.disabled = selectionState.visibleIds.length === 0;
-        headerCheckbox.addEventListener('click', event => {
-          event.stopPropagation();
-          const selectedIds = peopleSelectedIdSet();
-          if (selectionState.allVisibleSelected) {
-            selectionState.visibleIds.forEach(personId => selectedIds.delete(personId));
-          } else {
-            selectionState.visibleIds.forEach(personId => selectedIds.add(personId));
-          }
-          setPeopleSelection([...selectedIds]);
-          renderPeople();
+        headerCheckbox.addEventListener('click', event =>
+        {
+            event.stopPropagation();
+            const selectedIds = peopleSelectedIdSet();
+            if (selectionState.allVisibleSelected)
+            {
+                selectionState.visibleIds.forEach(personId => selectedIds.delete(personId));
+            }
+            else
+            {
+                selectionState.visibleIds.forEach(personId => selectedIds.add(personId));
+            }
+            setPeopleSelection([...selectedIds]);
+            renderPeople();
         });
-      }
-
-      main.querySelectorAll('[data-people-select-id]').forEach(checkbox => {
-        checkbox.addEventListener('click', event => {
-          event.stopPropagation();
-          togglePeopleSelection(checkbox.dataset.peopleSelectId, {
-            shiftKey: event.shiftKey,
-            rows
-          });
-          renderPeople();
-        });
-      });
     }
 
-    function updatePeoplePreviewRows(
-      personId
-    ) {
-      main
+    main.querySelectorAll('[data-people-select-id]').forEach(checkbox =>
+    {
+        checkbox.addEventListener('click', event =>
+        {
+            event.stopPropagation();
+            togglePeopleSelection(checkbox.dataset.peopleSelectId, {
+                shiftKey: event.shiftKey,
+                rows
+            });
+            renderPeople();
+        });
+    });
+}
+
+function updatePeoplePreviewRows(
+    personId
+)
+{
+    main
         .querySelectorAll(
-          '[data-people-row]'
+            '[data-people-row]'
         )
-        .forEach(row => {
-          const isPreviewed =
-            row.dataset.peopleRow
+        .forEach(row =>
+        {
+            const isPreviewed =
+                row.dataset.peopleRow
             === personId;
 
-          row.classList.toggle(
-            'is-previewed',
-            isPreviewed
-          );
+            row.classList.toggle(
+                'is-previewed',
+                isPreviewed
+            );
 
-          if (isPreviewed) {
-            row.setAttribute(
-              'aria-current',
-              'true'
-            );
-          } else {
-            row.removeAttribute(
-              'aria-current'
-            );
-          }
+            if (isPreviewed)
+            {
+                row.setAttribute(
+                    'aria-current',
+                    'true'
+                );
+            }
+            else
+            {
+                row.removeAttribute(
+                    'aria-current'
+                );
+            }
         });
-    }
+}
 
-    function previewPeoplePerson(
-      personId
-    ) {
-      const person =
+function previewPeoplePerson(
+    personId
+)
+{
+    const person =
         getPerson(personId);
 
-      if (
+    if (
         !person
         || person.projectId
           !== currentProjectId()
-      ) {
+    )
+    {
         return;
-      }
+    }
 
-      if (
+    if (
         state.selectedPeopleId
         === personId
-      ) {
+    )
+    {
         return;
-      }
+    }
 
-      state.selectedPeopleId =
+    state.selectedPeopleId =
         personId;
 
-      state.selectedPersonId =
+    state.selectedPersonId =
         personId;
 
-      resetPersonSidebarSections();
+    resetPersonSidebarSections();
 
-      /*
+    /*
       * Update only the row preview styling.
       * The table DOM and its scroll position
       * remain untouched.
       */
-      updatePeoplePreviewRows(
+    updatePeoplePreviewRows(
         personId
-      );
+    );
 
-      /*
+    /*
       * Replace only the right-side panel.
       * A different person's panel begins
       * at the top.
       */
-      rerenderPersonSidebarContext(
+    rerenderPersonSidebarContext(
         'people',
         {
-          preserveScroll: false
+            preserveScroll: false
         }
-      );
-    }
+    );
+}
 
-    function bindPeopleTableNavigation(
-      rows
-    ) {
-      main
+function bindPeopleTableNavigation(
+    rows
+)
+{
+    main
         .querySelectorAll(
-          '[data-people-row]'
+            '[data-people-row]'
         )
-        .forEach(row => {
-          const previewPerson = () => {
-            previewPeoplePerson(
-              row.dataset.peopleRow
-            );
-          };
-
-          row.addEventListener(
-            'click',
-            event => {
-              if (
-                event.target.closest(
-                  [
-                    'button',
-                    'input',
-                    'select',
-                    'a',
-                    '[data-people-select-id]'
-                  ].join(',')
-                )
-              ) {
-                return;
-              }
-
-              previewPerson();
-            }
-          );
-
-          row.addEventListener(
-            'keydown',
-            event => {
-              if (
-                event.target !== row
-                || event.key !== 'Enter'
-              ) {
-                return;
-              }
-
-              event.preventDefault();
-
-              previewPerson();
-            }
-          );
-        });
-    }
-
-    function bindPeopleRowActions(rows) {
-      main.querySelectorAll('[data-people-row-menu]').forEach(button => {
-        button.addEventListener('click', event => {
-          event.stopPropagation();
-          openPeopleActionsMenu(button.dataset.peopleRowMenu, button, { includeProfile: true });
-        });
-      });
-    }
-
-    function bindPeoplePaginationControls() {
-      main
-        .querySelectorAll(
-          '[data-people-page]'
-        )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              if (
-                button.disabled
-              ) {
-                return;
-              }
-
-              const nextPage =
-                Number(
-                  button.dataset
-                    .peoplePage
+        .forEach(row =>
+        {
+            const previewPerson = () =>
+            {
+                previewPeoplePerson(
+                    row.dataset.peopleRow
                 );
+            };
 
-              if (
-                !Number.isInteger(
-                  nextPage
-                )
+            row.addEventListener(
+                'click',
+                event =>
+                {
+                    if (
+                        event.target.closest(
+                            [
+                                'button',
+                                'input',
+                                'select',
+                                'a',
+                                '[data-people-select-id]'
+                            ].join(',')
+                        )
+                    )
+                    {
+                        return;
+                    }
+
+                    previewPerson();
+                }
+            );
+
+            row.addEventListener(
+                'keydown',
+                event =>
+                {
+                    if (
+                        event.target !== row
+                || event.key !== 'Enter'
+                    )
+                    {
+                        return;
+                    }
+
+                    event.preventDefault();
+
+                    previewPerson();
+                }
+            );
+        });
+}
+
+function bindPeopleRowActions(rows)
+{
+    main.querySelectorAll('[data-people-row-menu]').forEach(button =>
+    {
+        button.addEventListener('click', event =>
+        {
+            event.stopPropagation();
+            openPeopleActionsMenu(button.dataset.peopleRowMenu, button, { includeProfile: true });
+        });
+    });
+}
+
+function bindPeoplePaginationControls()
+{
+    main
+        .querySelectorAll(
+            '[data-people-page]'
+        )
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
+                {
+                    if (
+                        button.disabled
+                    )
+                    {
+                        return;
+                    }
+
+                    const nextPage =
+                        Number(
+                            button.dataset
+                                .peoplePage
+                        );
+
+                    if (
+                        !Number.isInteger(
+                            nextPage
+                        )
                 || nextPage < 1
-              ) {
-                return;
-              }
+                    )
+                    {
+                        return;
+                    }
 
-              state.peoplePage =
-                nextPage;
+                    state.peoplePage =
+                        nextPage;
 
-              renderPeople();
-            }
-          );
+                    renderPeople();
+                }
+            );
         });
 
-      main
+    main
         .querySelector(
-          '#peopleRowsPerPage'
+            '#peopleRowsPerPage'
         )
         ?.addEventListener(
-          'change',
-          event => {
-            const rowsPerPage =
-              normalizePeopleRowsPerPage(
-                event.currentTarget.value
-              );
+            'change',
+            event =>
+            {
+                const rowsPerPage =
+                    normalizePeopleRowsPerPage(
+                        event.currentTarget.value
+                    );
 
-            state.peopleRowsPerPage =
-              rowsPerPage;
+                state.peopleRowsPerPage =
+                    rowsPerPage;
 
-            /*
+                /*
             * Reset to page 1 because the previous page number
             * may represent a completely different item range.
             */
-            state.peoplePage = 1;
+                state.peoplePage = 1;
 
-            renderPeople();
-          }
+                renderPeople();
+            }
         );
-    }
+}
 
-    function bindPeopleControls(
-      rows
-    ) {
-      bindPeopleSidebar(main);
+function bindPeopleControls(
+    rows
+)
+{
+    bindPeopleSidebar(main);
 
-      bindPeopleToolbarControls(
+    bindPeopleToolbarControls(
         rows
-      );
+    );
 
-      bindPeoplePaginationControls();
+    bindPeoplePaginationControls();
 
-      bindPeopleSelectionControls(
+    bindPeopleSelectionControls(
         rows
-      );
+    );
 
-      bindPeopleTableNavigation(
+    bindPeopleTableNavigation(
         rows
-      );
+    );
 
-      bindPeopleRowActions(
+    bindPeopleRowActions(
         rows
-      );
+    );
 
-      bindPersonSidebar(
+    bindPersonSidebar(
         main,
         'people'
-      );
+    );
 
-      bindToasts(main);
-    }
+    bindToasts(main);
+}
 
-    function bindPeopleSidebar(root) {
-      root.querySelectorAll('[data-saved-view]').forEach(button => {
-        button.addEventListener('click', () => {
-          applyPeopleSavedView(button.dataset.savedView);
+function bindPeopleSidebar(root)
+{
+    root.querySelectorAll('[data-saved-view]').forEach(button =>
+    {
+        button.addEventListener('click', () =>
+        {
+            applyPeopleSavedView(button.dataset.savedView);
         });
-      });
+    });
 
-      root.querySelectorAll('[data-saved-view-menu]').forEach(button => {
-        button.addEventListener('click', event => {
-          event.preventDefault();
-          event.stopPropagation();
+    root.querySelectorAll('[data-saved-view-menu]').forEach(button =>
+    {
+        button.addEventListener('click', event =>
+        {
+            event.preventDefault();
+            event.stopPropagation();
 
-          openPeopleSavedViewMenu(
-            button.dataset.savedViewMenu,
-            button
-          );
+            openPeopleSavedViewMenu(
+                button.dataset.savedViewMenu,
+                button
+            );
         });
-      });
+    });
 
-      root
+    root
         .querySelector('#peopleSidebarSaveView')
         ?.addEventListener('click', openCreatePeopleFilterModal);
 
-      root
+    root
         .querySelector('[data-people-side]')
-        ?.addEventListener('click', () => {
-          clearPeopleSelection();
-          state.peopleView = 'directory';
-          state.peopleSide = 'people';
-          state.peopleSavedViewId = '';
-          state.peopleSavedView = 'All people';
-          state.peopleFilters =
-            peopleFiltersWithDefaults(
-              defaultPeopleFilters
-            );
+        ?.addEventListener('click', () =>
+        {
+            clearPeopleSelection();
+            state.peopleView = 'directory';
+            state.peopleSide = 'people';
+            state.peopleSavedViewId = '';
+            state.peopleSavedView = 'All people';
+            state.peopleFilters =
+                peopleFiltersWithDefaults(
+                    defaultPeopleFilters
+                );
 
-          renderPeople();
+            renderPeople();
         });
 
-      root
+    root
         .querySelector('[data-open-profile]')
-        ?.addEventListener('click', () => {
-          clearPeopleSelection();
-          state.peopleView = 'profile';
-          renderPeople();
+        ?.addEventListener('click', () =>
+        {
+            clearPeopleSelection();
+            state.peopleView = 'profile';
+            renderPeople();
         });
 
-      root.querySelectorAll('[data-placeholder-view]').forEach(button => {
-        button.addEventListener('click', () => {
-          showToast(
-            `${button.dataset.placeholderView} will be built in a later People iteration.`
-          );
+    root.querySelectorAll('[data-placeholder-view]').forEach(button =>
+    {
+        button.addEventListener('click', () =>
+        {
+            showToast(
+                `${button.dataset.placeholderView} will be built in a later People iteration.`
+            );
         });
-      });
+    });
 
-      bindToasts(root);
-    }
+    bindToasts(root);
+}
 
-    function connectedSourceFilterOptions() {
-      return archiveProjectSources()
+function connectedSourceFilterOptions()
+{
+    return archiveProjectSources()
         .map(source => ({
-          value: source.id,
-          label: source.title || source.id
+            value: source.id,
+            label: source.title || source.id
         }))
         .sort((a, b) =>
-          a.label.localeCompare(
-            b.label,
-            state.language === 'ru' ? 'ru' : 'en'
-          )
+            a.label.localeCompare(
+                b.label,
+                state.language === 'ru' ? 'ru' : 'en'
+            )
         );
-    }
+}
 

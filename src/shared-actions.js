@@ -1,184 +1,202 @@
-    function renderModulePlaceholder() {
-      sidebar.innerHTML = `<div class="side-section-title">Current project</div><button class="side-link" type="button" data-back-project>${icon.home}<span>Project overview</span></button>`;
-      sidebar.querySelector('[data-back-project]').addEventListener('click', () => navigateToProjectModule(currentProjectId(), 'Projects'));
-      main.innerHTML = `<div class="placeholder"><div class="placeholder-card"><h1>${escapeHtml(state.activeModule)}</h1><p>This module will be built in a later iteration. The Projects tab already exposes it once a project is open.</p></div></div>`;
-    }
+function renderModulePlaceholder()
+{
+    sidebar.innerHTML = `<div class="side-section-title">Current project</div><button class="side-link" type="button" data-back-project>${icon.home}<span>Project overview</span></button>`;
+    sidebar.querySelector('[data-back-project]').addEventListener('click', () => navigateToProjectModule(currentProjectId(), 'Projects'));
+    main.innerHTML = `<div class="placeholder"><div class="placeholder-card"><h1>${escapeHtml(state.activeModule)}</h1><p>This module will be built in a later iteration. The Projects tab already exposes it once a project is open.</p></div></div>`;
+}
 
-    function projectDateTimestamp(value) {
-      if (value instanceof Date) {
+function projectDateTimestamp(value)
+{
+    if (value instanceof Date)
+    {
         const timestamp = value.getTime();
 
         return Number.isFinite(timestamp)
-          ? timestamp
-          : null;
-      }
+            ? timestamp
+            : null;
+    }
 
-      if (
+    if (
         typeof value === 'number'
         && Number.isFinite(value)
-      ) {
+    )
+    {
         return value;
-      }
+    }
 
-      const source =
+    const source =
         String(value || '').trim();
 
-      if (!source) {
+    if (!source)
+    {
         return null;
-      }
+    }
 
-      const timestamp =
+    const timestamp =
         Date.parse(source);
 
-      return Number.isFinite(timestamp)
+    return Number.isFinite(timestamp)
         ? timestamp
         : null;
-    }
+}
 
-    function formatProjectDate(
-      value,
-      fallback = t('Unknown')
-    ) {
-      const timestamp =
+function formatProjectDate(
+    value,
+    fallback = t('Unknown')
+)
+{
+    const timestamp =
         projectDateTimestamp(value);
 
-      if (timestamp === null) {
+    if (timestamp === null)
+    {
         return fallback;
-      }
+    }
 
-      const date =
+    const date =
         new Date(timestamp);
 
-      const locale =
+    const locale =
         state.language === 'ru'
-          ? 'ru-RU'
-          : 'en-GB';
+            ? 'ru-RU'
+            : 'en-GB';
 
-      return new Intl.DateTimeFormat(
+    return new Intl.DateTimeFormat(
         locale,
         {
-          day: '2-digit',
-          month: 'short',
-          year: 'numeric'
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric'
         }
-      )
+    )
         .format(date)
         .replace(
-          /\s?г\.$/u,
-          ''
+            /\s?г\.$/u,
+            ''
         );
-    }
+}
 
-    function projectModifiedTimestamp(project) {
-      const preferred = Date.parse(project?.modifiedAt || '');
-      if (Number.isFinite(preferred)) return preferred;
-      const legacy = Date.parse(project?.modified || '');
-      return Number.isFinite(legacy) ? legacy : Number.NEGATIVE_INFINITY;
-    }
+function projectModifiedTimestamp(project)
+{
+    const preferred = Date.parse(project?.modifiedAt || '');
+    if (Number.isFinite(preferred)) return preferred;
+    const legacy = Date.parse(project?.modified || '');
+    return Number.isFinite(legacy) ? legacy : Number.NEGATIVE_INFINITY;
+}
 
-    function projectCreatedTimestamp(project) {
-      const preferred =
+function projectCreatedTimestamp(project)
+{
+    const preferred =
         Date.parse(
-          project?.createdAt || ''
+            project?.createdAt || ''
         );
 
-      if (
+    if (
         Number.isFinite(preferred)
-      ) {
+    )
+    {
         return preferred;
-      }
+    }
 
-      const legacy =
+    const legacy =
         Date.parse(
-          project?.created || ''
+            project?.created || ''
         );
 
-      return Number.isFinite(legacy)
+    return Number.isFinite(legacy)
         ? legacy
         : Number.NEGATIVE_INFINITY;
-    }
+}
 
-    function formatProjectCreated(
-      project,
-      prefix = 'Created'
-    ) {
-      const timestamp =
+function formatProjectCreated(
+    project,
+    prefix = 'Created'
+)
+{
+    const timestamp =
         projectCreatedTimestamp(
-          project
+            project
         );
 
-      return `${t(prefix)} ${
+    return `${t(prefix)} ${
         formatProjectDate(
-          timestamp,
-          t('Unknown')
+            timestamp,
+            t('Unknown')
         )
-      }`;
-    }
+    }`;
+}
 
-    function formatProjectModified(
-      project,
-      prefix = 'Modified'
-    ) {
-      const timestamp =
+function formatProjectModified(
+    project,
+    prefix = 'Modified'
+)
+{
+    const timestamp =
         projectModifiedTimestamp(
-          project
+            project
         );
 
-      return `${t(prefix)} ${
+    return `${t(prefix)} ${
         formatProjectDate(
-          timestamp,
-          t('Unknown')
+            timestamp,
+            t('Unknown')
         )
-      }`;
-    }
+    }`;
+}
 
-    function touchProjectModified(project) {
-      if (project) project.modifiedAt = new Date().toISOString();
-    }
+function touchProjectModified(project)
+{
+    if (project) project.modifiedAt = new Date().toISOString();
+}
 
-    function updateProjectName(projectId, value) {
-      const project = sampleData.projects.find(item => item.id === projectId);
-      const name = cleanEditFieldValue(value);
-      if (!project || !name) return false;
-      project.name = name;
-      touchProjectModified(project);
-      return true;
-    }
+function updateProjectName(projectId, value)
+{
+    const project = sampleData.projects.find(item => item.id === projectId);
+    const name = cleanEditFieldValue(value);
+    if (!project || !name) return false;
+    project.name = name;
+    touchProjectModified(project);
+    return true;
+}
 
-    const PROJECT_COVER_STYLES = [
-      'paper',
-      'tree',
-      'photo'
-    ];
+const PROJECT_COVER_STYLES = [
+    'paper',
+    'tree',
+    'photo'
+];
 
-    function isProjectCoverStyle(
-      coverStyle
-    ) {
-      return PROJECT_COVER_STYLES
+function isProjectCoverStyle(
+    coverStyle
+)
+{
+    return PROJECT_COVER_STYLES
         .includes(coverStyle);
-    }
+}
 
-    function normalizeProjectCoverStyle(
-      coverStyle
-    ) {
-      return isProjectCoverStyle(
+function normalizeProjectCoverStyle(
+    coverStyle
+)
+{
+    return isProjectCoverStyle(
         coverStyle
-      )
+    )
         ? coverStyle
         : 'paper';
-    }
+}
 
-    function projectCoverStyleAttribute(
-      coverStyle
-    ) {
-      const normalizedCover =
+function projectCoverStyleAttribute(
+    coverStyle
+)
+{
+    const normalizedCover =
         normalizeProjectCoverStyle(
-          coverStyle
+            coverStyle
         );
 
-      if (
+    if (
         normalizedCover === 'paper'
-      ) {
+    )
+    {
         return `
           --cover:
             linear-gradient(
@@ -188,11 +206,12 @@
               #d7bf9b
             );
         `;
-      }
+    }
 
-      if (
+    if (
         normalizedCover === 'photo'
-      ) {
+    )
+    {
         return `
           --cover:
             linear-gradient(
@@ -207,9 +226,9 @@
           background-size:
             cover;
         `;
-      }
+    }
 
-      return `
+    return `
         --cover:
           linear-gradient(
             180deg,
@@ -220,382 +239,430 @@
             --geneograph-cover-tree-image
           );
       `;
+}
+
+function updateProjectCoverPreview(
+    preview,
+    coverStyle
+)
+{
+    if (!preview)
+    {
+        return;
     }
 
-    function updateProjectCoverPreview(
-      preview,
-      coverStyle
-    ) {
-      if (!preview) {
-        return;
-      }
-
-      const normalizedCover =
+    const normalizedCover =
         normalizeProjectCoverStyle(
-          coverStyle
+            coverStyle
         );
 
-      preview.classList.toggle(
+    preview.classList.toggle(
         'tree',
         normalizedCover === 'tree'
-      );
+    );
 
-      preview.style.cssText =
+    preview.style.cssText =
         projectCoverStyleAttribute(
-          normalizedCover
+            normalizedCover
         );
 
-      preview.dataset.coverStyle =
+    preview.dataset.coverStyle =
         normalizedCover;
-    }
+}
 
-    function setProjectCover(
-      projectId,
-      coverStyle
-    ) {
-      const project =
+function setProjectCover(
+    projectId,
+    coverStyle
+)
+{
+    const project =
         sampleData.projects.find(
-          item =>
-            item.id === projectId
+            item =>
+                item.id === projectId
         );
 
-      if (
+    if (
         !project
         || !isProjectCoverStyle(
-          coverStyle
+            coverStyle
         )
-      ) {
+    )
+    {
         return false;
-      }
+    }
 
-      project.cover =
+    project.cover =
         coverStyle;
 
-      touchProjectModified(
+    touchProjectModified(
         project
-      );
+    );
 
-      return true;
+    return true;
+}
+
+function formatProjectCount(count)
+{
+    const value = Number.isFinite(Number(count)) ? Number(count) : 0;
+    return `${value} ${value === 1 ? 'project' : 'projects'}`;
+}
+
+function projectModuleIcon(moduleName)
+{
+    if (moduleName === 'Projects') return icon.home;
+    if (moduleName === 'Family Tree') return icon.tree;
+    if (moduleName === 'People') return icon.people;
+    if (moduleName === 'Geneograph') return icon.whiteboard;
+    if (moduleName === 'Albums') return icon.image;
+    if (moduleName === 'Archive') return icon.file;
+    if (moduleName === 'Notes') return icon.note;
+    if (moduleName === 'Places') return icon.mapPin;
+    if (moduleName === 'Publish') return icon.export;
+    return icon.home;
+}
+
+function normalizeProjectContinuation(value)
+{
+    if (!value || typeof value !== 'object') return null;
+    const project = sampleData.projects.find(item => item.id === value.projectId && !item.deleted && item.available !== false);
+    const moduleName = value.module === 'Projects' || modules.includes(value.module) ? value.module : '';
+    const openedAt = Date.parse(value.openedAt || '');
+    if (!project || !moduleName || !Number.isFinite(openedAt)) return null;
+    return { projectId: project.id, module: moduleName, openedAt: new Date(openedAt).toISOString() };
+}
+
+function clearProjectContinuation()
+{
+    state.projectContinuation = null;
+    try
+    {
+        localStorage.removeItem(PROJECT_CONTINUATION_STORAGE_KEY);
     }
+    catch (error)
+    {}
+}
 
-    function formatProjectCount(count) {
-      const value = Number.isFinite(Number(count)) ? Number(count) : 0;
-      return `${value} ${value === 1 ? 'project' : 'projects'}`;
+function readProjectContinuation()
+{
+    let storedValue = null;
+    try
+    {
+        storedValue = localStorage.getItem(PROJECT_CONTINUATION_STORAGE_KEY);
     }
-
-    function projectModuleIcon(moduleName) {
-      if (moduleName === 'Projects') return icon.home;
-      if (moduleName === 'Family Tree') return icon.tree;
-      if (moduleName === 'People') return icon.people;
-      if (moduleName === 'Geneograph') return icon.whiteboard;
-      if (moduleName === 'Albums') return icon.image;
-      if (moduleName === 'Archive') return icon.file;
-      if (moduleName === 'Notes') return icon.note;
-      if (moduleName === 'Places') return icon.mapPin;
-      if (moduleName === 'Publish') return icon.export;
-      return icon.home;
-    }
-
-    function normalizeProjectContinuation(value) {
-      if (!value || typeof value !== 'object') return null;
-      const project = sampleData.projects.find(item => item.id === value.projectId && !item.deleted && item.available !== false);
-      const moduleName = value.module === 'Projects' || modules.includes(value.module) ? value.module : '';
-      const openedAt = Date.parse(value.openedAt || '');
-      if (!project || !moduleName || !Number.isFinite(openedAt)) return null;
-      return { projectId: project.id, module: moduleName, openedAt: new Date(openedAt).toISOString() };
-    }
-
-    function clearProjectContinuation() {
-      state.projectContinuation = null;
-      try { localStorage.removeItem(PROJECT_CONTINUATION_STORAGE_KEY); } catch (error) {}
-    }
-
-    function readProjectContinuation() {
-      let storedValue = null;
-      try { storedValue = localStorage.getItem(PROJECT_CONTINUATION_STORAGE_KEY); } catch (error) {}
-      if (storedValue == null) {
+    catch (error)
+    {}
+    if (storedValue == null)
+    {
         const fallback = normalizeProjectContinuation(sampleData.projectContinuation);
-        if (fallback) {
-          try { localStorage.setItem(PROJECT_CONTINUATION_STORAGE_KEY, JSON.stringify(fallback)); } catch (error) {}
+        if (fallback)
+        {
+            try
+            {
+                localStorage.setItem(PROJECT_CONTINUATION_STORAGE_KEY, JSON.stringify(fallback));
+            }
+            catch (error)
+            {}
         }
         return fallback;
-      }
-      try {
+    }
+    try
+    {
         const normalized = normalizeProjectContinuation(JSON.parse(storedValue));
         if (!normalized) clearProjectContinuation();
         return normalized;
-      } catch (error) {
+    }
+    catch (error)
+    {
         clearProjectContinuation();
         return null;
-      }
     }
+}
 
-    function persistProjectContinuation(value) {
-      const normalized = normalizeProjectContinuation(value);
-      if (!normalized) {
+function persistProjectContinuation(value)
+{
+    const normalized = normalizeProjectContinuation(value);
+    if (!normalized)
+    {
         clearProjectContinuation();
         return null;
-      }
-      state.projectContinuation = normalized;
-      try { localStorage.setItem(PROJECT_CONTINUATION_STORAGE_KEY, JSON.stringify(normalized)); } catch (error) {}
-      return normalized;
     }
+    state.projectContinuation = normalized;
+    try
+    {
+        localStorage.setItem(PROJECT_CONTINUATION_STORAGE_KEY, JSON.stringify(normalized));
+    }
+    catch (error)
+    {}
+    return normalized;
+}
 
-    function resolveProjectContinuation() {
-      const normalized = normalizeProjectContinuation(state.projectContinuation);
-      if (!normalized) {
+function resolveProjectContinuation()
+{
+    const normalized = normalizeProjectContinuation(state.projectContinuation);
+    if (!normalized)
+    {
         if (state.projectContinuation) clearProjectContinuation();
         return null;
-      }
-      const project = sampleData.projects.find(item => item.id === normalized.projectId);
-      return { ...normalized, project, icon: projectModuleIcon(normalized.module) };
     }
+    const project = sampleData.projects.find(item => item.id === normalized.projectId);
+    return { ...normalized, project, icon: projectModuleIcon(normalized.module) };
+}
 
-    function formatContinuationOpenedAt(
-      value
-    ) {
-      return `${
+function formatContinuationOpenedAt(
+    value
+)
+{
+    return `${
         t('Last opened')
-      } ${
+    } ${
         formatProjectDate(
-          value,
-          t('Unknown')
+            value,
+            t('Unknown')
         )
-      }`;
-    }
+    }`;
+}
 
-    function resetProjectModuleState(projectId) {
-      const people = getPeople(projectId);
-      const firstPersonId = people[0]?.id || '';
-      const firstPhotoId = getProjectPhotos(projectId)[0]?.id || '';
-      const firstPlaceId = projectPlaces(projectId)[0]?.id || null;
+function resetProjectModuleState(projectId)
+{
+    const people = getPeople(projectId);
+    const firstPersonId = people[0]?.id || '';
+    const firstPhotoId = getProjectPhotos(projectId)[0]?.id || '';
+    const firstPlaceId = projectPlaces(projectId)[0]?.id || null;
 
-      clearPeopleSelection();
-      state.selectedPersonId = firstPersonId;
-      state.treeCenterTargetId = firstPersonId;
-      state.selectedPeopleId = firstPersonId;
-      state.peopleView = 'directory';
-      state.peopleSide = 'people';
-      state.peopleSelectedIds = [];
-      state.peopleSelectionAnchorId = '';
-      state.peopleSearch = '';
-      state.peoplePage = 1;
-      state.peoplePaginationQueryKey = '';
-      state.peopleSavedView = 'All people';
-      state.peopleSavedViewId = '';
-      state.peopleFilters = {
+    clearPeopleSelection();
+    state.selectedPersonId = firstPersonId;
+    state.treeCenterTargetId = firstPersonId;
+    state.selectedPeopleId = firstPersonId;
+    state.peopleView = 'directory';
+    state.peopleSide = 'people';
+    state.peopleSelectedIds = [];
+    state.peopleSelectionAnchorId = '';
+    state.peopleSearch = '';
+    state.peoplePage = 1;
+    state.peoplePaginationQueryKey = '';
+    state.peopleSavedView = 'All people';
+    state.peopleSavedViewId = '';
+    state.peopleFilters = {
         surnames: [],
         birthPlaceIds: [],
         birthYear: { mode: '', from: '', to: '' },
         living: 'Any',
         reviewStatus: ''
-      };
-      state.peopleProfileEditing = false;
+    };
+    state.peopleProfileEditing = false;
 
-      const treeView = treeProjectViewState(projectId);
-      const validTreeFocus = people.some(person => person.id === treeView.focusPersonId)
+    const treeView = treeProjectViewState(projectId);
+    const validTreeFocus = people.some(person => person.id === treeView.focusPersonId)
         ? treeView.focusPersonId
         : treeDefaultPersonId(projectId);
-      treeView.focusPersonId = validTreeFocus;
-      treeView.recentPersonIds = validTreeFocus ? [validTreeFocus] : [];
-      treeView.navigationBackStack = [];
-      treeView.navigationForwardStack = [];
+    treeView.focusPersonId = validTreeFocus;
+    treeView.recentPersonIds = validTreeFocus ? [validTreeFocus] : [];
+    treeView.navigationBackStack = [];
+    treeView.navigationForwardStack = [];
 
-      cancelGeneographPencilStroke?.();
-      clearGeneographConnectionClick?.();
-      state.geneoView = 'home';
-      state.geneoLibraryView = 'all';
-      state.geneoActiveCollectionId = null;
-      state.geneoBoardSearch = '';
-      state.selectedGeneoBoardId = null;
-      state.selectedGeneoNodeId = null;
-      state.selectedGeneoNodeIds = [];
-      state.selectedGeneoConnectionId = null;
-      state.selectedGeneoConnectionIds = [];
-      state.selectedGeneoWaypointIndex = null;
-      state.geneoConnectionDraft = null;
-      state.geneoInlineEditNodeId = null;
-      state.geneoLayerSearch = '';
-      state.geneoTool = 'pan';
+    cancelGeneographPencilStroke?.();
+    clearGeneographConnectionClick?.();
+    state.geneoView = 'home';
+    state.geneoLibraryView = 'all';
+    state.geneoActiveCollectionId = null;
+    state.geneoBoardSearch = '';
+    state.selectedGeneoBoardId = null;
+    state.selectedGeneoNodeId = null;
+    state.selectedGeneoNodeIds = [];
+    state.selectedGeneoConnectionId = null;
+    state.selectedGeneoConnectionIds = [];
+    state.selectedGeneoWaypointIndex = null;
+    state.geneoConnectionDraft = null;
+    state.geneoInlineEditNodeId = null;
+    state.geneoLayerSearch = '';
+    state.geneoTool = 'pan';
 
-      state.albumsView = 'all';
-      state.activeAlbumId = null;
-      state.albumsSearch = '';
-      state.albumsFilters = {
+    state.albumsView = 'all';
+    state.activeAlbumId = null;
+    state.albumsSearch = '';
+    state.albumsFilters = {
         personId: '',
         placeId: '',
         dateRange: '',
         favouriteOnly: false
-      };
-      state.albumsPage = 1;
-      state.selectedPhotoId = firstPhotoId;
-      state.selectedPhotoIds = [];
-      state.albumsDetailEditing = false;
-      state.albumsDetailEditOriginal = null;
-      state.albumsDetailDraft = null;
+    };
+    state.albumsPage = 1;
+    state.selectedPhotoId = firstPhotoId;
+    state.selectedPhotoIds = [];
+    state.albumsDetailEditing = false;
+    state.albumsDetailEditOriginal = null;
+    state.albumsDetailDraft = null;
 
-      state.archiveView = 'files';
-      state.archiveSelectedFolderId = null;
-      state.archiveSelectedFolderItemId = null;
-      state.archiveSelectedFileId = null;
-      state.archiveSelectedSourceId = null;
-      state.archiveSelectedFileIds = [];
-      state.archiveSearch = '';
-      state.archiveFileFilters = {
+    state.archiveView = 'files';
+    state.archiveSelectedFolderId = null;
+    state.archiveSelectedFolderItemId = null;
+    state.archiveSelectedFileId = null;
+    state.archiveSelectedSourceId = null;
+    state.archiveSelectedFileIds = [];
+    state.archiveSearch = '';
+    state.archiveFileFilters = {
         scope: 'all',
         fileType: 'all',
         connections: 'all',
         personIds: [],
         placeIds: [],
         documentYears: {
-          mode: '',
-          from: '',
-          to: ''
+            mode: '',
+            from: '',
+            to: ''
         },
         favouriteOnly: false
-      };
+    };
 
-      state.archiveFilterPresentation = 'flat';
-      state.archiveFilterScopeFolderId = null;
-      state.archiveSourceCategoryFilter = 'all';
-      state.archiveSourceConnectionFilter = 'all';
-      state.archiveSourceFavouriteOnly = false;
-      state.archiveSourceTargetFilter = null;
-      state.archiveFileEditing = false;
-      state.archiveFileEditOriginal = null;
-      state.archiveFileEditDraft = null;
-      state.archiveExpandedFolders = {};
-      state.archiveNavigationBackStack = [];
-      state.archiveNavigationForwardStack = [];
-      state.archivePendingTreeRevealId = null;
+    state.archiveFilterPresentation = 'flat';
+    state.archiveFilterScopeFolderId = null;
+    state.archiveSourceCategoryFilter = 'all';
+    state.archiveSourceConnectionFilter = 'all';
+    state.archiveSourceFavouriteOnly = false;
+    state.archiveSourceTargetFilter = null;
+    state.archiveFileEditing = false;
+    state.archiveFileEditOriginal = null;
+    state.archiveFileEditDraft = null;
+    state.archiveExpandedFolders = {};
+    state.archiveNavigationBackStack = [];
+    state.archiveNavigationForwardStack = [];
+    state.archivePendingTreeRevealId = null;
 
-      clearNotesContext();
-      state.notesView = 'all';
-      state.notesActiveCollectionId = null;
-      state.selectedNoteId = null;
-      state.notesSearch = '';
-      state.notesRightCollapsed = true;
-      state.notesMobilePane = 'browser';
-      state.notesSaveStatus = 'Saved';
-      state.notesFilters = {
+    clearNotesContext();
+    state.notesView = 'all';
+    state.notesActiveCollectionId = null;
+    state.selectedNoteId = null;
+    state.notesSearch = '';
+    state.notesRightCollapsed = true;
+    state.notesMobilePane = 'browser';
+    state.notesSaveStatus = 'Saved';
+    state.notesFilters = {
         linkedRecords: 'any',
         relatedNotes: 'any',
         collections: 'any'
-      };
+    };
 
-      state.placesView = 'all';
-      state.placesSavedFilterId = '';
-      state.placesFilters = { ...defaultPlaceFilters };
-      state.placesSearch = '';
-      state.placesReviewFocusId = '';
-      state.selectedPlaceId = firstPlaceId;
-      clearPlacesRoute();
-      state.placesMapView = {
+    state.placesView = 'all';
+    state.placesSavedFilterId = '';
+    state.placesFilters = { ...defaultPlaceFilters };
+    state.placesSearch = '';
+    state.placesReviewFocusId = '';
+    state.selectedPlaceId = firstPlaceId;
+    clearPlacesRoute();
+    state.placesMapView = {
         center: null,
         zoom: PLACES_MAP_CONFIG.defaultZoom,
         userMoved: false,
         lastFitKey: ''
-      };
+    };
 
-      state.publishView = 'home';
-      state.publishSide = 'drafts';
-      state.publishSearch = '';
-      state.publishSelectedDraftId = null;
-      state.publishWizardStep = 'type';
-      state.publishOutputType = 'report';
-      state.publishScopeMode = 'person';
-      state.publishFocusPersonId = firstPersonId;
-      state.publishGenerations = 4;
-      state.publishFormat = 'PDF';
-      state.unreadNotifications = projectNotifications(projectId).length;
-    }
+    state.publishView = 'home';
+    state.publishSide = 'drafts';
+    state.publishSearch = '';
+    state.publishSelectedDraftId = null;
+    state.publishWizardStep = 'type';
+    state.publishOutputType = 'report';
+    state.publishScopeMode = 'person';
+    state.publishFocusPersonId = firstPersonId;
+    state.publishGenerations = 4;
+    state.publishFormat = 'PDF';
+    state.unreadNotifications = projectNotifications(projectId).length;
+}
 
-    function activateProject(projectId, {
-      moduleName = 'Projects',
-      renderNow = true,
-      reset = true
-    } = {}) {
-      const project = validProjectById(projectId);
-      const nextModule = moduleName === 'Projects' || modules.includes(moduleName)
+function activateProject(projectId, {
+    moduleName = 'Projects',
+    renderNow = true,
+    reset = true
+} = {})
+{
+    const project = validProjectById(projectId);
+    const nextModule = moduleName === 'Projects' || modules.includes(moduleName)
         ? moduleName
         : 'Projects';
 
-      if (!project) return false;
+    if (!project) return false;
 
-      const projectChanged = state.currentProjectId !== project.id;
-      if (
+    const projectChanged = state.currentProjectId !== project.id;
+    if (
         state.activeModule === 'Geneograph'
         && state.geneoView === 'board'
         && (nextModule !== 'Geneograph' || projectChanged)
-      ) {
+    )
+    {
         captureGeneographViewport();
-      }
+    }
 
-      const leavingFamilyTree =
+    const leavingFamilyTree =
         state.activeModule
           === 'Family Tree'
         && (
-          nextModule
+            nextModule
             !== 'Family Tree'
           || projectChanged
         );
 
-      if (leavingFamilyTree) {
+    if (leavingFamilyTree)
+    {
         captureTreeCanvasScroll(
-          state.currentProjectId
+            state.currentProjectId
         );
-      }
+    }
 
-      closeMenu();
-      state.projectOpen = true;
-      state.currentProjectId = project.id;
-      state.selectedProjectId = project.id;
+    closeMenu();
+    state.projectOpen = true;
+    state.currentProjectId = project.id;
+    state.selectedProjectId = project.id;
 
-      if (reset && projectChanged) {
+    if (reset && projectChanged)
+    {
         resetProjectModuleState(project.id);
-      }
+    }
 
-      state.activeModule = nextModule;
-      if (nextModule === 'Projects') state.openSide = 'overview';
-      persistProjectContinuation({
+    state.activeModule = nextModule;
+    if (nextModule === 'Projects') state.openSide = 'overview';
+    persistProjectContinuation({
         projectId: project.id,
         module: nextModule,
         openedAt: new Date().toISOString()
-      });
+    });
 
-      if (renderNow) render();
-      return true;
-    }
+    if (renderNow) render();
+    return true;
+}
 
-    function navigateToProjectModuleCommit(projectId, moduleName = 'Projects') {
-      return activateProject(projectId, { moduleName });
-    }
+function navigateToProjectModuleCommit(projectId, moduleName = 'Projects')
+{
+    return activateProject(projectId, { moduleName });
+}
 
-    function navigateToProjectModule(
-      projectId,
-      moduleName = 'Projects'
-    ) {
-      const leavingCurrentArchive =
+function navigateToProjectModule(
+    projectId,
+    moduleName = 'Projects'
+)
+{
+    const leavingCurrentArchive =
         state.activeModule
           === 'Archive'
         && state.archiveFileEditing
         && (
-          projectId
+            projectId
             !== currentProjectId()
           || moduleName
             !== 'Archive'
         );
 
-      if (
+    if (
         leavingCurrentArchive
-      ) {
+    )
+    {
         runAfterArchiveFileEditGuard(
-          () => {
-            navigateToProjectModuleCommit(
-              projectId,
-              moduleName
-            );
-          }
+            () =>
+            {
+                navigateToProjectModuleCommit(
+                    projectId,
+                    moduleName
+                );
+            }
         );
 
         /*
@@ -603,52 +670,54 @@
           confirms the discard dialog.
         */
         return true;
-      }
-
-      return navigateToProjectModuleCommit(
-        projectId,
-        moduleName
-      );
     }
 
-    function filteredProjects() {
-      const peopleCounts =
+    return navigateToProjectModuleCommit(
+        projectId,
+        moduleName
+    );
+}
+
+function filteredProjects()
+{
+    const peopleCounts =
         new Map(
-          sampleData.projects.map(
-            project => [
-              project.id,
-              getProjectPeopleCount(
-                project.id
-              )
-            ]
-          )
+            sampleData.projects.map(
+                project => [
+                    project.id,
+                    getProjectPeopleCount(
+                        project.id
+                    )
+                ]
+            )
         );
 
-      let list = [
+    let list = [
         ...sampleData.projects
-      ];
+    ];
 
-      const query =
+    const query =
         state.search
-          .trim()
-          .toLowerCase();
+            .trim()
+            .toLowerCase();
 
-      if (query) {
+    if (query)
+    {
         list =
-          list.filter(project =>
-            `${
-              project.name
-            } ${
-              project.status
-            } ${
-              project.desc
-            }`
-              .toLowerCase()
-              .includes(query)
-          );
-      }
+            list.filter(project =>
+                `${
+                    project.name
+                } ${
+                    project.status
+                } ${
+                    project.desc
+                }`
+                    .toLowerCase()
+                    .includes(query)
+            );
+    }
 
-      return appSortRecords(list, {
+    return appSortRecords(list, {
         field:
           state.sort,
 
@@ -656,274 +725,314 @@
           state.sortDirection,
 
         extractors: {
-          name: {
-            type: 'text',
-            get: project =>
-              project.name
-          },
+            name: {
+                type: 'text',
+                get: project =>
+                    project.name
+            },
 
-          updated: {
-            type: 'number',
-            get:
+            updated: {
+                type: 'number',
+                get:
               projectModifiedTimestamp
-          },
+            },
 
-          created: {
-            type: 'number',
-            get:
+            created: {
+                type: 'number',
+                get:
               projectCreatedTimestamp
-          },
+            },
 
-          people: {
-            type: 'number',
-            get: project =>
-              peopleCounts.get(
-                project.id
-              ) ?? 0
-          }
+            people: {
+                type: 'number',
+                get: project =>
+                    peopleCounts.get(
+                        project.id
+                    ) ?? 0
+            }
         },
 
         getFallback:
           project => project.name
-      });
+    });
+}
+
+function bindStartupImportTile()
+{
+    const tile =
+        main.querySelector(
+            '[data-startup-import-tile]'
+        );
+
+    if (!tile)
+    {
+        return;
     }
 
-    function bindStartupImportTile() {
-      const tile =
-        main.querySelector(
-          '[data-startup-import-tile]'
-        );
-
-      if (!tile) {
-        return;
-      }
-
-      const clearDragState =
-        () => {
-          tile.classList.remove(
-            'is-dragging'
-          );
+    const clearDragState =
+        () =>
+        {
+            tile.classList.remove(
+                'is-dragging'
+            );
         };
 
-      tile.addEventListener(
+    tile.addEventListener(
         'click',
         openImportModal
-      );
+    );
 
-      [
+    [
         'dragenter',
         'dragover'
-      ].forEach(type => {
+    ].forEach(type =>
+    {
         tile.addEventListener(
-          type,
-          event => {
-            event.preventDefault();
-            event.stopPropagation();
+            type,
+            event =>
+            {
+                event.preventDefault();
+                event.stopPropagation();
 
-            if (
-              event.dataTransfer
-            ) {
-              event.dataTransfer
-                .dropEffect = 'copy';
+                if (
+                    event.dataTransfer
+                )
+                {
+                    event.dataTransfer
+                        .dropEffect = 'copy';
+                }
+
+                tile.classList.add(
+                    'is-dragging'
+                );
             }
-
-            tile.classList.add(
-              'is-dragging'
-            );
-          }
         );
-      });
+    });
 
-      tile.addEventListener(
+    tile.addEventListener(
         'dragleave',
-        event => {
-          /*
+        event =>
+        {
+            /*
           * Do not remove the state when moving
           * between descendants inside the tile.
           */
-          if (
-            event.relatedTarget
+            if (
+                event.relatedTarget
             && tile.contains(
-              event.relatedTarget
+                event.relatedTarget
             )
-          ) {
-            return;
-          }
+            )
+            {
+                return;
+            }
 
-          clearDragState();
+            clearDragState();
         }
-      );
+    );
 
-      tile.addEventListener(
+    tile.addEventListener(
         'drop',
-        event => {
-          event.preventDefault();
-          event.stopPropagation();
+        event =>
+        {
+            event.preventDefault();
+            event.stopPropagation();
 
-          clearDragState();
+            clearDragState();
 
-          const file =
-            event.dataTransfer
-              ?.files
-              ?.[0];
+            const file =
+                event.dataTransfer
+                    ?.files
+                    ?.[0];
 
-          if (!file) {
-            return;
-          }
+            if (!file)
+            {
+                return;
+            }
 
-          const supported =
-            /\.(ggproj|ged)$/i
-              .test(file.name);
+            const supported =
+                /\.(ggproj|ged)$/i
+                    .test(file.name);
 
-          if (!supported) {
-            showToast(
-              'Choose a .ggproj or .ged file.'
-            );
+            if (!supported)
+            {
+                showToast(
+                    'Choose a .ggproj or .ged file.'
+                );
 
-            return;
-          }
+                return;
+            }
 
-          /*
+            /*
           * File handling remains simulated,
           * so use the existing import flow.
           */
-          openImportModal();
+            openImportModal();
         }
-      );
-    }
+    );
+}
 
-    function bindProjectControls() {
-      bindSearchInput(main, '#projectSearch', 'search', renderStartup);
-      bindAppSortControl(main, {
+function bindProjectControls()
+{
+    bindSearchInput(main, '#projectSearch', 'search', renderStartup);
+    bindAppSortControl(main, {
         id: 'sortProjects',
         options: APP_SORT_OPTIONS.projects,
         getField: () => state.sort,
         getDirection: () =>
-          state.sortDirection,
+            state.sortDirection,
 
         onChange: ({
-          field,
-          direction
-        }) => {
-          state.sort = field;
-          state.sortDirection = direction;
-          renderStartup();
+            field,
+            direction
+        }) =>
+        {
+            state.sort = field;
+            state.sortDirection = direction;
+            renderStartup();
         }
-      });
-      main.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', () => { state.viewMode = button.dataset.view; renderStartup(); }));
-      main.querySelectorAll('[data-project-id]').forEach(card => {
-        card.addEventListener('click', event => {
-          if (!event.target.closest('button, input, select, a')) openProject(card.dataset.projectId);
+    });
+    main.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', () =>
+    {
+        state.viewMode = button.dataset.view; renderStartup();
+    }));
+    main.querySelectorAll('[data-project-id]').forEach(card =>
+    {
+        card.addEventListener('click', event =>
+        {
+            if (!event.target.closest('button, input, select, a')) openProject(card.dataset.projectId);
         });
-        card.addEventListener('keydown', event => {
-          if ((event.key === 'Enter' || event.key === ' ') && !event.target.closest('button, input, select, a')) {
-            event.preventDefault();
-            openProject(card.dataset.projectId);
-          }
+        card.addEventListener('keydown', event =>
+        {
+            if ((event.key === 'Enter' || event.key === ' ') && !event.target.closest('button, input, select, a'))
+            {
+                event.preventDefault();
+                openProject(card.dataset.projectId);
+            }
         });
-      });
-      main.querySelectorAll('[data-open]').forEach(button => button.addEventListener('click', e => { e.stopPropagation(); openProject(button.dataset.open); }));
-      main.querySelectorAll('[data-menu]').forEach(button => button.addEventListener('click', e => { e.stopPropagation(); openProjectMenu(button.dataset.menu, button); }));
-      main.querySelector('[data-continue-project]')?.addEventListener('click', event => {
+    });
+    main.querySelectorAll('[data-open]').forEach(button => button.addEventListener('click', e =>
+    {
+        e.stopPropagation(); openProject(button.dataset.open);
+    }));
+    main.querySelectorAll('[data-menu]').forEach(button => button.addEventListener('click', e =>
+    {
+        e.stopPropagation(); openProjectMenu(button.dataset.menu, button);
+    }));
+    main.querySelector('[data-continue-project]')?.addEventListener('click', event =>
+    {
         const button = event.currentTarget;
         navigateToProjectModule(button.dataset.continueProject, button.dataset.continueModule);
-      });
-      main.querySelector('[data-clear-project-search]')?.addEventListener('click', () => {
+    });
+    main.querySelector('[data-clear-project-search]')?.addEventListener('click', () =>
+    {
         state.search = '';
         renderStartup();
         restoreSearchInputFocus('#projectSearch');
-      });
-      main.querySelector('[data-startup-empty-create]')?.addEventListener('click', openCreateModal);
-      main.querySelector('[data-startup-empty-import]')?.addEventListener('click', openImportModal);
-      bindStartupImportTile();
-      bindToasts(main);
-    }
+    });
+    main.querySelector('[data-startup-empty-create]')?.addEventListener('click', openCreateModal);
+    main.querySelector('[data-startup-empty-import]')?.addEventListener('click', openImportModal);
+    bindStartupImportTile();
+    bindToasts(main);
+}
 
-    function openProject(id) {
-      navigateToProjectModule(id, 'Projects');
-    }
+function openProject(id)
+{
+    navigateToProjectModule(id, 'Projects');
+}
 
-    function currentProject() {
-      return validProjectById(state.currentProjectId);
-    }
+function currentProject()
+{
+    return validProjectById(state.currentProjectId);
+}
 
-    function uniqueProjectId() {
-      const base = `project-${Date.now().toString(36)}`;
-      let candidate = base;
-      let suffix = 2;
-      while (sampleData.projects.some(project => project.id === candidate)) {
+function uniqueProjectId()
+{
+    const base = `project-${Date.now().toString(36)}`;
+    let candidate = base;
+    let suffix = 2;
+    while (sampleData.projects.some(project => project.id === candidate))
+    {
         candidate = `${base}-${suffix}`;
         suffix += 1;
-      }
-      return candidate;
     }
+    return candidate;
+}
 
-    function uniqueProjectCopyName(projectName) {
-      const base = `${cleanEditFieldValue(projectName) || 'Untitled project'} copy`;
-      const names = new Set(sampleData.projects.map(project => project.name.toLocaleLowerCase()));
-      if (!names.has(base.toLocaleLowerCase())) return base;
-      let suffix = 2;
-      while (names.has(`${base} ${suffix}`.toLocaleLowerCase())) suffix += 1;
-      return `${base} ${suffix}`;
-    }
+function uniqueProjectCopyName(projectName)
+{
+    const base = `${cleanEditFieldValue(projectName) || 'Untitled project'} copy`;
+    const names = new Set(sampleData.projects.map(project => project.name.toLocaleLowerCase()));
+    if (!names.has(base.toLocaleLowerCase())) return base;
+    let suffix = 2;
+    while (names.has(`${base} ${suffix}`.toLocaleLowerCase())) suffix += 1;
+    return `${base} ${suffix}`;
+}
 
-    function bindProjectActionModalReturnFocus(anchor) {
-      if (!anchor?.isConnected) return;
-      modalBackdrop.querySelectorAll('[data-close]').forEach(button => {
-        button.addEventListener('click', () => {
-          if (anchor.isConnected) anchor.focus();
+function bindProjectActionModalReturnFocus(anchor)
+{
+    if (!anchor?.isConnected) return;
+    modalBackdrop.querySelectorAll('[data-close]').forEach(button =>
+    {
+        button.addEventListener('click', () =>
+        {
+            if (anchor.isConnected) anchor.focus();
         }, { once: true });
-      });
-    }
+    });
+}
 
-    function openRenameProjectModal(projectId, anchor = null) {
-      const project = sampleData.projects.find(item => item.id === projectId);
-      if (!project) return;
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="renameProjectTitle">
+function openRenameProjectModal(projectId, anchor = null)
+{
+    const project = sampleData.projects.find(item => item.id === projectId);
+    if (!project) return;
+    openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="renameProjectTitle">
         <div class="modal-header"><div><h2 id="renameProjectTitle">Rename project</h2><p>Update the project name shown throughout GeneoGraph.</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div>
         <form id="renameProjectForm">
           <div class="modal-body form-grid"><div class="field"><label for="renameProjectName">Project name</label><input id="renameProjectName" 
             value="${escapeHtml(
-              localizedDataFieldValue(
-                project.name
-              )
+                localizedDataFieldValue(
+                    project.name
+                )
             )}"
              autocomplete="off" required></div></div>
           <div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">Save changes</button></div>
         </form>
       </div>`);
-      bindProjectActionModalReturnFocus(anchor);
-      const input = modalBackdrop.querySelector('#renameProjectName');
-      input?.focus();
-      input?.select();
-      modalBackdrop.querySelector('#renameProjectForm')?.addEventListener('submit', event => {
+    bindProjectActionModalReturnFocus(anchor);
+    const input = modalBackdrop.querySelector('#renameProjectName');
+    input?.focus();
+    input?.select();
+    modalBackdrop.querySelector('#renameProjectForm')?.addEventListener('submit', event =>
+    {
         event.preventDefault();
         const name =
-          cleanEditFieldValue(
-            collectLocalizedDataFieldValue(
-              input,
-              project.name
-            )
-          );
-        if (!name) {
-          input?.setCustomValidity('Project name cannot be empty.');
-          input?.reportValidity();
-          return;
+            cleanEditFieldValue(
+                collectLocalizedDataFieldValue(
+                    input,
+                    project.name
+                )
+            );
+        if (!name)
+        {
+            input?.setCustomValidity('Project name cannot be empty.');
+            input?.reportValidity();
+            return;
         }
         input.setCustomValidity('');
         updateProjectName(project.id, name);
         closeModal();
         renderStartup();
         showToast('Project renamed.');
-      });
-    }
+    });
+}
 
-    function duplicateProject(projectId) {
-      const project = sampleData.projects.find(item => item.id === projectId);
-      if (!project) return null;
-      const now = new Date();
-      const timestamp = now.toISOString();
-      const copy = {
+function duplicateProject(projectId)
+{
+    const project = sampleData.projects.find(item => item.id === projectId);
+    if (!project) return null;
+    const now = new Date();
+    const timestamp = now.toISOString();
+    const copy = {
         id: uniqueProjectId(),
         name: uniqueProjectCopyName(project.name),
         createdAt: timestamp,
@@ -933,39 +1042,41 @@
         files: 0,
         notes: 0,
         desc: project.desc || ''
-      };
-      sampleData.projects.unshift(copy);
-      state.selectedProjectId = copy.id;
-      renderStartup();
-      showToast('Project duplicated.');
-      return copy;
+    };
+    sampleData.projects.unshift(copy);
+    state.selectedProjectId = copy.id;
+    renderStartup();
+    showToast('Project duplicated.');
+    return copy;
+}
+
+function openProjectCoverModal(
+    projectId,
+    anchor = null
+)
+{
+    const project =
+        sampleData.projects.find(
+            item =>
+                item.id === projectId
+        );
+
+    if (!project)
+    {
+        return;
     }
 
-    function openProjectCoverModal(
-      projectId,
-      anchor = null
-    ) {
-      const project =
-        sampleData.projects.find(
-          item =>
-            item.id === projectId
-        );
-
-      if (!project) {
-        return;
-      }
-
-      let selectedCover =
+    let selectedCover =
         normalizeProjectCoverStyle(
-          project.cover
+            project.cover
         );
 
-      const initialPreviewStyle =
+    const initialPreviewStyle =
         projectCoverStyleAttribute(
-          selectedCover
+            selectedCover
         );
 
-      openModal(`
+    openModal(`
         <div
           class="modal"
           role="dialog"
@@ -998,24 +1109,24 @@
 
             <div class="project-cover-preview project-cover-modal-preview
                 ${selectedCover === 'tree'
-                    ? 'tree'
-                    : ''
+                        ? 'tree'
+                        : ''
                 }"
               data-project-cover-preview
               data-cover-style="${
-                escapeHtml(
-                  selectedCover
-                )
-              }"
+                    escapeHtml(
+                        selectedCover
+                    )
+                }"
               style="${
-                initialPreviewStyle
-              }"
+                    initialPreviewStyle
+                }"
               role="img"
               aria-label="${
-                escapeHtml(
-                  `Preview of ${project.name} cover`
-                )
-              }">
+                    escapeHtml(
+                        `Preview of ${project.name} cover`
+                    )
+                }">
             </div>
 
             <div
@@ -1024,48 +1135,48 @@
               aria-label="Cover style">
               <button
                 class="project-cover-option ${
-                  selectedCover === 'paper'
-                    ? 'active'
-                    : ''
+                    selectedCover === 'paper'
+                        ? 'active'
+                        : ''
                 }"
                 type="button"
                 data-project-cover-choice="paper"
                 aria-pressed="${
-                  selectedCover === 'paper'
-                    ? 'true'
-                    : 'false'
+                    selectedCover === 'paper'
+                        ? 'true'
+                        : 'false'
                 }">
                 Archival paper
               </button>
 
               <button
                 class="project-cover-option ${
-                  selectedCover === 'tree'
-                    ? 'active'
-                    : ''
+                    selectedCover === 'tree'
+                        ? 'active'
+                        : ''
                 }"
                 type="button"
                 data-project-cover-choice="tree"
                 aria-pressed="${
-                  selectedCover === 'tree'
-                    ? 'true'
-                    : 'false'
+                    selectedCover === 'tree'
+                        ? 'true'
+                        : 'false'
                 }">
                 Family tree
               </button>
 
               <button
                 class="project-cover-option ${
-                  selectedCover === 'photo'
-                    ? 'active'
-                    : ''
+                    selectedCover === 'photo'
+                        ? 'active'
+                        : ''
                 }"
                 type="button"
                 data-project-cover-choice="photo"
                 aria-pressed="${
-                  selectedCover === 'photo'
-                    ? 'true'
-                    : 'false'
+                    selectedCover === 'photo'
+                        ? 'true'
+                        : 'false'
                 }">
                 Family photo
               </button>
@@ -1090,121 +1201,129 @@
         </div>
       `);
 
-      bindProjectActionModalReturnFocus(
+    bindProjectActionModalReturnFocus(
         anchor
-      );
+    );
 
-      const preview =
+    const preview =
         modalBackdrop.querySelector(
-          '[data-project-cover-preview]'
+            '[data-project-cover-preview]'
         );
 
-      modalBackdrop
+    modalBackdrop
         .querySelectorAll(
-          '[data-project-cover-choice]'
+            '[data-project-cover-choice]'
         )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              const nextCover =
-                String(
-                  button.dataset
-                    .projectCoverChoice
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
+                {
+                    const nextCover =
+                        String(
+                            button.dataset
+                                .projectCoverChoice
                   || ''
-                ).trim();
+                        ).trim();
 
-              if (
-                !isProjectCoverStyle(
-                  nextCover
-                )
-              ) {
-                return;
-              }
+                    if (
+                        !isProjectCoverStyle(
+                            nextCover
+                        )
+                    )
+                    {
+                        return;
+                    }
 
-              selectedCover =
-                nextCover;
+                    selectedCover =
+                        nextCover;
 
-              modalBackdrop
-                .querySelectorAll(
-                  '[data-project-cover-choice]'
-                )
-                .forEach(option => {
-                  const active =
-                    option.dataset
-                      .projectCoverChoice
+                    modalBackdrop
+                        .querySelectorAll(
+                            '[data-project-cover-choice]'
+                        )
+                        .forEach(option =>
+                        {
+                            const active =
+                                option.dataset
+                                    .projectCoverChoice
                     === selectedCover;
 
-                  option.classList.toggle(
-                    'active',
-                    active
-                  );
+                            option.classList.toggle(
+                                'active',
+                                active
+                            );
 
-                  option.setAttribute(
-                    'aria-pressed',
-                    String(active)
-                  );
-                });
+                            option.setAttribute(
+                                'aria-pressed',
+                                String(active)
+                            );
+                        });
 
-              updateProjectCoverPreview(
-                preview,
-                selectedCover
-              );
-            }
-          );
+                    updateProjectCoverPreview(
+                        preview,
+                        selectedCover
+                    );
+                }
+            );
         });
 
-      modalBackdrop
+    modalBackdrop
         .querySelector(
-          '[data-save-project-cover]'
+            '[data-save-project-cover]'
         )
         ?.addEventListener(
-          'click',
-          () => {
-            const saved =
-              setProjectCover(
-                project.id,
-                selectedCover
-              );
+            'click',
+            () =>
+            {
+                const saved =
+                    setProjectCover(
+                        project.id,
+                        selectedCover
+                    );
 
-            if (!saved) {
-              return;
+                if (!saved)
+                {
+                    return;
+                }
+
+                closeModal();
+                renderStartup();
+
+                showToast(
+                    'Project cover updated.'
+                );
             }
-
-            closeModal();
-            renderStartup();
-
-            showToast(
-              'Project cover updated.'
-            );
-          }
         );
-    }
+}
 
-    function openDeleteProjectConfirm(projectId, anchor = null) {
-      const project = sampleData.projects.find(item => item.id === projectId);
-      if (!project) return;
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="deleteProjectTitle">
+function openDeleteProjectConfirm(projectId, anchor = null)
+{
+    const project = sampleData.projects.find(item => item.id === projectId);
+    if (!project) return;
+    openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="deleteProjectTitle">
         <div class="modal-header"><div><h2 id="deleteProjectTitle">Delete project?</h2><p>Delete ${escapeHtml(project.name)} and all people, relationships, media, and research records owned by this project.</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div>
         <div class="modal-body">
           <p class="project-delete-warning">This action cannot be undone.</p>
         </div>
         <div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" data-confirm-project-delete>Delete project</button></div>
       </div>`);
-      bindProjectActionModalReturnFocus(anchor);
-      modalBackdrop.querySelector('[data-confirm-project-delete]')?.addEventListener('click', () => deleteProject(project.id));
-    }
+    bindProjectActionModalReturnFocus(anchor);
+    modalBackdrop.querySelector('[data-confirm-project-delete]')?.addEventListener('click', () => deleteProject(project.id));
+}
 
-    function deleteProject(projectId) {
-      const project = sampleData.projects.find(item => item.id === projectId);
-      if (!project) return false;
+function deleteProject(projectId)
+{
+    const project = sampleData.projects.find(item => item.id === projectId);
+    if (!project) return false;
 
-      const deletedBoardIds = new Set(
+    const deletedBoardIds = new Set(
         (sampleData.boards || [])
-          .filter(board => board.projectId === project.id)
-          .map(board => board.id)
-      );
-      const projectCollections = [
+            .filter(board => board.projectId === project.id)
+            .map(board => board.id)
+    );
+    const projectCollections = [
         'people',
         'families',
         'relationships',
@@ -1230,54 +1349,61 @@
         'publishDrafts',
         'activity',
         'notifications'
-      ];
-      projectCollections.forEach(collectionName => {
+    ];
+    projectCollections.forEach(collectionName =>
+    {
         if (!Array.isArray(sampleData[collectionName])) return;
         sampleData[collectionName] = sampleData[collectionName].filter(record => record?.projectId !== project.id);
-      });
-      sampleData.projects = sampleData.projects.filter(item => item.id !== project.id);
+    });
+    sampleData.projects = sampleData.projects.filter(item => item.id !== project.id);
 
-      if (sampleData.projectContinuation?.projectId === project.id) sampleData.projectContinuation = null;
-      if (state.projectContinuation?.projectId === project.id) clearProjectContinuation();
+    if (sampleData.projectContinuation?.projectId === project.id) sampleData.projectContinuation = null;
+    if (state.projectContinuation?.projectId === project.id) clearProjectContinuation();
 
-      const nextProject = sampleData.projects[0] || null;
-      delete state.treeProjectViews[project.id];
-      deletedBoardIds.forEach(boardId => {
+    const nextProject = sampleData.projects[0] || null;
+    delete state.treeProjectViews[project.id];
+    deletedBoardIds.forEach(boardId =>
+    {
         delete state.geneoBoardViewports[boardId];
-      });
-      rebuildSampleEventsAndPruneSourceLinks();
-      closeModal({ force: true });
+    });
+    rebuildSampleEventsAndPruneSourceLinks();
+    closeModal({ force: true });
 
-      state.currentProjectId = null;
-      state.projectOpen = false;
-      state.activeModule = 'Projects';
-      state.openSide = 'overview';
+    state.currentProjectId = null;
+    state.projectOpen = false;
+    state.activeModule = 'Projects';
+    state.openSide = 'overview';
 
-      if (nextProject) {
+    if (nextProject)
+    {
         state.selectedProjectId = nextProject.id;
         activateProject(nextProject.id, {
-          moduleName: 'Projects',
-          reset: true
+            moduleName: 'Projects',
+            reset: true
         });
-      } else {
+    }
+    else
+    {
         state.selectedProjectId = '';
         render();
-      }
-      showToast('Project deleted.');
-      return true;
     }
+    showToast('Project deleted.');
+    return true;
+}
 
-    function openProjectMenu(id, anchor) {
-      closeMenu();
-      const rect = anchor.getBoundingClientRect();
-      const menu = document.createElement('div');
-      menu.className = 'menu-popover';
-      menu.id = 'projectMenu';
-      menu.style.top = `${rect.bottom + 6}px`;
-      menu.style.left = `${Math.max(12, rect.right - 190)}px`;
-      menu.innerHTML = `<button type="button" data-action="rename">${escapeHtml(t('Rename'))}</button><button type="button" data-action="duplicate">${escapeHtml(t('Duplicate'))}</button><button type="button" data-action="cover">${escapeHtml(t('Update cover'))}</button><button type="button" class="danger" data-action="delete">${escapeHtml(t('Delete'))}</button>`;
-      document.body.appendChild(menu);
-      menu.addEventListener('click', e => {
+function openProjectMenu(id, anchor)
+{
+    closeMenu();
+    const rect = anchor.getBoundingClientRect();
+    const menu = document.createElement('div');
+    menu.className = 'menu-popover';
+    menu.id = 'projectMenu';
+    menu.style.top = `${rect.bottom + 6}px`;
+    menu.style.left = `${Math.max(12, rect.right - 190)}px`;
+    menu.innerHTML = `<button type="button" data-action="rename">${escapeHtml(t('Rename'))}</button><button type="button" data-action="duplicate">${escapeHtml(t('Duplicate'))}</button><button type="button" data-action="cover">${escapeHtml(t('Update cover'))}</button><button type="button" class="danger" data-action="delete">${escapeHtml(t('Delete'))}</button>`;
+    document.body.appendChild(menu);
+    menu.addEventListener('click', e =>
+    {
         const action = e.target.closest('[data-action]')?.dataset.action;
         if (!action) return;
         closeMenu();
@@ -1285,178 +1411,192 @@
         if (action === 'duplicate') duplicateProject(id);
         if (action === 'cover') openProjectCoverModal(id, anchor);
         if (action === 'delete') openDeleteProjectConfirm(id, anchor);
-      });
-      bindMenuLifecycle(anchor);
-    }
-    let menuLifecycleController = null;
-    let menuLifecycleAnchor = null;
+    });
+    bindMenuLifecycle(anchor);
+}
+let menuLifecycleController = null;
+let menuLifecycleAnchor = null;
 
-    function bindMenuLifecycle(anchor = null) {
-      menuLifecycleController?.abort();
+function bindMenuLifecycle(anchor = null)
+{
+    menuLifecycleController?.abort();
 
-      const controller =
+    const controller =
         new AbortController();
 
-      menuLifecycleController =
+    menuLifecycleController =
         controller;
 
-      menuLifecycleAnchor =
+    menuLifecycleAnchor =
         anchor instanceof HTMLElement
-          ? anchor
-          : null;
+            ? anchor
+            : null;
 
-      const activeMenu =
+    const activeMenu =
         document.getElementById(
-          'projectMenu'
+            'projectMenu'
         );
 
-      const eventIsInsideMenu =
-        event => {
-          const target =
-            event.target;
+    const eventIsInsideMenu =
+        event =>
+        {
+            const target =
+                event.target;
 
-          return Boolean(
-            activeMenu
+            return Boolean(
+                activeMenu
             && target instanceof Node
             && activeMenu.contains(
-              target
+                target
             )
-          );
+            );
         };
 
-      const closeOutside = event => {
+    const closeOutside = event =>
+    {
         if (
-          eventIsInsideMenu(event)
+            eventIsInsideMenu(event)
           || anchor?.contains?.(
-            event.target
+              event.target
           )
-        ) {
-          return;
+        )
+        {
+            return;
         }
 
         closeMenu();
-      };
+    };
 
-      const closeOnDocumentScroll =
-        event => {
-          if (
-            eventIsInsideMenu(event)
-          ) {
-            return;
-          }
+    const closeOnDocumentScroll =
+        event =>
+        {
+            if (
+                eventIsInsideMenu(event)
+            )
+            {
+                return;
+            }
 
-          closeMenu();
+            closeMenu();
         };
 
-      setTimeout(() => {
+    setTimeout(() =>
+    {
         if (
-          controller.signal.aborted
-        ) {
-          return;
+            controller.signal.aborted
+        )
+        {
+            return;
         }
 
         document.addEventListener(
-          'click',
-          closeOutside,
-          {
-            signal:
+            'click',
+            closeOutside,
+            {
+                signal:
               controller.signal
-          }
+            }
         );
-      }, 0);
+    }, 0);
 
-      document.addEventListener(
+    document.addEventListener(
         'scroll',
         closeOnDocumentScroll,
         {
-          capture: true,
-          signal:
+            capture: true,
+            signal:
             controller.signal
         }
-      );
+    );
 
-      document.addEventListener(
+    document.addEventListener(
         'keydown',
-        event => {
-          if (
-            event.key === 'Escape'
-          ) {
-            closeMenu();
-          }
+        event =>
+        {
+            if (
+                event.key === 'Escape'
+            )
+            {
+                closeMenu();
+            }
         },
         {
-          signal:
+            signal:
             controller.signal
         }
-      );
+    );
 
-      window.addEventListener(
+    window.addEventListener(
         'scroll',
         closeMenu,
         {
-          signal:
+            signal:
             controller.signal
         }
-      );
+    );
 
-      window.addEventListener(
+    window.addEventListener(
         'resize',
         closeMenu,
         {
-          signal:
+            signal:
             controller.signal
         }
-      );
-    }
+    );
+}
 
-    function closeMenu() {
-      menuLifecycleController?.abort();
+function closeMenu()
+{
+    menuLifecycleController?.abort();
 
-      menuLifecycleController =
+    menuLifecycleController =
         null;
 
-      menuLifecycleAnchor
+    menuLifecycleAnchor
         ?.setAttribute(
-          'aria-expanded',
-          'false'
+            'aria-expanded',
+            'false'
         );
 
-      menuLifecycleAnchor =
+    menuLifecycleAnchor =
         null;
-      document.getElementById('placesRouteMenu')?.setAttribute('aria-expanded', 'false');
-      document.getElementById('projectMenu')?.remove();
-      document.getElementById('relativePopover')?.remove();
-      document.getElementById('topbarPopover')?.remove();
-      document.getElementById('peopleColumnsPopover')?.remove();
-      document
+    document.getElementById('placesRouteMenu')?.setAttribute('aria-expanded', 'false');
+    document.getElementById('projectMenu')?.remove();
+    document.getElementById('relativePopover')?.remove();
+    document.getElementById('topbarPopover')?.remove();
+    document.getElementById('peopleColumnsPopover')?.remove();
+    document
         .getElementById(
-          'peopleFilterPopover'
+            'peopleFilterPopover'
         )
         ?.remove();
 
-      if (
+    if (
         typeof closePlacesFilterPopover
           === 'function'
-      ) {
+    )
+    {
         closePlacesFilterPopover();
-      }
-      state.topbarPopover = null;
+    }
+    state.topbarPopover = null;
 
-      if (typeof closeProjectNameOverlay === 'function') {
+    if (typeof closeProjectNameOverlay === 'function')
+    {
         closeProjectNameOverlay();
-      }
-
-      document.removeEventListener('click', closeMenu);
-      document.removeEventListener('scroll', closeMenu, true);
-      document.removeEventListener('click', closeTopbarPopoverOnOutside);
     }
 
-    function createBlankProject({ name, description = '' }) {
-      const normalizedName = String(name || '').trim();
-      if (!normalizedName) return null;
+    document.removeEventListener('click', closeMenu);
+    document.removeEventListener('scroll', closeMenu, true);
+    document.removeEventListener('click', closeTopbarPopoverOnOutside);
+}
 
-      const now = new Date().toISOString();
-      const project = {
+function createBlankProject({ name, description = '' })
+{
+    const normalizedName = String(name || '').trim();
+    if (!normalizedName) return null;
+
+    const now = new Date().toISOString();
+    const project = {
         id: uniqueProjectId(),
         name: normalizedName,
         desc: String(description || '').trim(),
@@ -1467,14 +1607,15 @@
         defaultPersonId: null,
         files: 0,
         notes: 0
-      };
+    };
 
-      sampleData.projects.push(project);
-      return project;
-    }
+    sampleData.projects.push(project);
+    return project;
+}
 
-    function openCreateModal() {
-      openModal(`
+function openCreateModal()
+{
+    openModal(`
         <div class="modal" role="dialog" aria-modal="true" aria-labelledby="createTitle">
           <div class="modal-header"><div><h2 id="createTitle">Create family tree</h2><p>Start a new GeneoGraph project for a family line or research case.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div>
             <form id="createForm"><div class="modal-body form-grid">
@@ -1515,172 +1656,189 @@
             </div><div class="modal-footer">
                 <button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">Create project</button></div></form>
         </div>`);
-      document.getElementById('projectName')?.focus({ preventScroll: true });
-      const createForm = document.getElementById('createForm');
-      const nameInput = document.getElementById('projectName');
-      const descriptionInput = document.getElementById('projectDesc');
+    document.getElementById('projectName')?.focus({ preventScroll: true });
+    const createForm = document.getElementById('createForm');
+    const nameInput = document.getElementById('projectName');
+    const descriptionInput = document.getElementById('projectDesc');
 
-      createForm.addEventListener('submit', event => {
+    createForm.addEventListener('submit', event =>
+    {
         event.preventDefault();
         const name = String(nameInput?.value || '').trim();
 
         nameInput?.setCustomValidity('');
-        if (!name) {
-          nameInput?.setCustomValidity(t('Project name is required.'));
-          nameInput?.reportValidity();
-          nameInput?.focus({ preventScroll: true });
-          return;
+        if (!name)
+        {
+            nameInput?.setCustomValidity(t('Project name is required.'));
+            nameInput?.reportValidity();
+            nameInput?.focus({ preventScroll: true });
+            return;
         }
 
         const project = createBlankProject({
-          name,
-          description: descriptionInput?.value || ''
+            name,
+            description: descriptionInput?.value || ''
         });
         if (!project) return;
 
         closeModal({ force: true });
         activateProject(project.id, { moduleName: 'Projects' });
         showToast('Project created.');
-      });
+    });
 
-      nameInput?.addEventListener('input', () => {
+    nameInput?.addEventListener('input', () =>
+    {
         nameInput.setCustomValidity('');
-      });
-    }
+    });
+}
 
-    function openImportModal() {
-      openModal(`
+function openImportModal()
+{
+    openModal(`
         <div class="modal" role="dialog" aria-modal="true" aria-labelledby="importTitle">
           <div class="modal-header"><div><h2 id="importTitle">Import GEDCOM</h2><p>Import an existing family tree file into a new or open project.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div>
           <div class="modal-body"><div class="dropzone" style="margin:0;min-height:180px">${icon.import}<div><strong>Drop a GEDCOM file here</strong><span>File handling is simulated in this prototype.</span></div></div></div>
           <div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="button" data-simulate-import>Choose file</button></div>
         </div>`);
-      modalBackdrop.querySelector('[data-simulate-import]').addEventListener('click', () => showToast('File picker would open here.'));
-    }
+    modalBackdrop.querySelector('[data-simulate-import]').addEventListener('click', () => showToast('File picker would open here.'));
+}
 
 
-    let modalReturnFocus = null;
+let modalReturnFocus = null;
 
-    const MODAL_FOCUSABLE_SELECTOR = [
-      'a[href]',
-      'button:not([disabled])',
-      'input:not([disabled]):not([type="hidden"])',
-      'select:not([disabled])',
-      'textarea:not([disabled])',
-      '[tabindex]:not([tabindex="-1"])'
-    ].join(',');
+const MODAL_FOCUSABLE_SELECTOR = [
+    'a[href]',
+    'button:not([disabled])',
+    'input:not([disabled]):not([type="hidden"])',
+    'select:not([disabled])',
+    'textarea:not([disabled])',
+    '[tabindex]:not([tabindex="-1"])'
+].join(',');
 
-    function modalFocusableElements() {
-      return [
+function modalFocusableElements()
+{
+    return [
         ...modalBackdrop.querySelectorAll(
-          MODAL_FOCUSABLE_SELECTOR
+            MODAL_FOCUSABLE_SELECTOR
         )
-      ].filter(element =>
+    ].filter(element =>
         !element.hidden
         && element.offsetParent !== null
-      );
-    }
+    );
+}
 
-    function setApplicationInert(
-      inert
-    ) {
-      const app =
+function setApplicationInert(
+    inert
+)
+{
+    const app =
         document.querySelector(
-          '.app'
+            '.app'
         );
 
-      if (!app) {
+    if (!app)
+    {
         return;
-      }
-
-      app.inert =
-        inert;
     }
 
-    function handleModalKeydown(
-      event
-    ) {
-      if (
-        !modalBackdrop.classList
-          .contains('open')
-      ) {
-        return;
-      }
+    app.inert =
+        inert;
+}
 
-      if (event.key === 'Escape') {
+function handleModalKeydown(
+    event
+)
+{
+    if (
+        !modalBackdrop.classList
+            .contains('open')
+    )
+    {
+        return;
+    }
+
+    if (event.key === 'Escape')
+    {
         event.preventDefault();
 
-        if (modalBackdrop.querySelector('[data-place-duplicate-menu]')) {
-          const anchor = menuLifecycleAnchor;
+        if (modalBackdrop.querySelector('[data-place-duplicate-menu]'))
+        {
+            const anchor = menuLifecycleAnchor;
 
-          event.stopPropagation();
-          closeMenu();
-          anchor?.focus({ preventScroll: true });
-          return;
+            event.stopPropagation();
+            closeMenu();
+            anchor?.focus({ preventScroll: true });
+            return;
         }
 
         closeModal();
         return;
-      }
+    }
 
-      if (event.key !== 'Tab') {
+    if (event.key !== 'Tab')
+    {
         return;
-      }
+    }
 
-      const focusable =
+    const focusable =
         modalFocusableElements();
 
-      if (!focusable.length) {
+    if (!focusable.length)
+    {
         event.preventDefault();
         modalBackdrop.focus();
         return;
-      }
+    }
 
-      const first =
+    const first =
         focusable[0];
 
-      const last =
+    const last =
         focusable[
-          focusable.length - 1
+            focusable.length - 1
         ];
 
-      if (
+    if (
         event.shiftKey
         && document.activeElement
           === first
-      ) {
+    )
+    {
         event.preventDefault();
         last.focus();
-      } else if (
+    }
+    else if (
         !event.shiftKey
         && document.activeElement
           === last
-      ) {
+    )
+    {
         event.preventDefault();
         first.focus();
-      }
     }
+}
 
-    const SEMANTIC_SINGLE_ID_ATTRIBUTES =
-      [
+const SEMANTIC_SINGLE_ID_ATTRIBUTES =
+    [
         'id',
         'for'
-      ];
+    ];
 
-    const SEMANTIC_ID_REFERENCE_ATTRIBUTES =
-      [
+const SEMANTIC_ID_REFERENCE_ATTRIBUTES =
+    [
         'aria-labelledby',
         'aria-describedby',
         'aria-controls',
         'aria-owns'
-      ];
+    ];
 
-    function normalizeRenderedSemanticAttributes(
-      root
-    ) {
-      root
+function normalizeRenderedSemanticAttributes(
+    root
+)
+{
+    root
         .querySelectorAll(
-          `
+            `
             [id],
             [for],
             [aria-labelledby],
@@ -1689,307 +1847,331 @@
             [aria-owns]
           `
         )
-        .forEach(element => {
-          SEMANTIC_SINGLE_ID_ATTRIBUTES
-            .forEach(attribute => {
-              const value =
-                element.getAttribute(
-                  attribute
-                );
+        .forEach(element =>
+        {
+            SEMANTIC_SINGLE_ID_ATTRIBUTES
+                .forEach(attribute =>
+                {
+                    const value =
+                        element.getAttribute(
+                            attribute
+                        );
 
-              if (value === null) {
-                return;
-              }
+                    if (value === null)
+                    {
+                        return;
+                    }
 
-              const normalized =
-                value.replace(
-                  /\s+/g,
-                  ''
-                );
+                    const normalized =
+                        value.replace(
+                            /\s+/g,
+                            ''
+                        );
 
-              element.setAttribute(
-                attribute,
-                normalized
-              );
-            });
+                    element.setAttribute(
+                        attribute,
+                        normalized
+                    );
+                });
 
-          SEMANTIC_ID_REFERENCE_ATTRIBUTES
-            .forEach(attribute => {
-              const value =
-                element.getAttribute(
-                  attribute
-                );
+            SEMANTIC_ID_REFERENCE_ATTRIBUTES
+                .forEach(attribute =>
+                {
+                    const value =
+                        element.getAttribute(
+                            attribute
+                        );
 
-              if (value === null) {
-                return;
-              }
+                    if (value === null)
+                    {
+                        return;
+                    }
 
-              const normalized =
-                value
-                  .trim()
-                  .split(/\s+/)
-                  .filter(Boolean)
-                  .join(' ');
+                    const normalized =
+                        value
+                            .trim()
+                            .split(/\s+/)
+                            .filter(Boolean)
+                            .join(' ');
 
-              element.setAttribute(
-                attribute,
-                normalized
-              );
-            });
+                    element.setAttribute(
+                        attribute,
+                        normalized
+                    );
+                });
         });
-    }
+}
 
-    function validateRenderedSemanticReferences(
-      root
-    ) {
-      SEMANTIC_ID_REFERENCE_ATTRIBUTES
-        .forEach(attribute => {
-          root
-            .querySelectorAll(
-              `[${attribute}]`
-            )
-            .forEach(element => {
-              const references =
-                (
-                  element.getAttribute(
-                    attribute
-                  ) || ''
+function validateRenderedSemanticReferences(
+    root
+)
+{
+    SEMANTIC_ID_REFERENCE_ATTRIBUTES
+        .forEach(attribute =>
+        {
+            root
+                .querySelectorAll(
+                    `[${attribute}]`
                 )
-                  .split(/\s+/)
-                  .filter(Boolean);
+                .forEach(element =>
+                {
+                    const references =
+                        (
+                            element.getAttribute(
+                                attribute
+                            ) || ''
+                        )
+                            .split(/\s+/)
+                            .filter(Boolean);
 
-              references.forEach(id => {
-                if (
-                  !document
-                    .getElementById(id)
-                ) {
-                  console.warn(
-                    `Missing ${attribute} target: ${id}`,
-                    element
-                  );
-                }
-              });
-            });
+                    references.forEach(id =>
+                    {
+                        if (
+                            !document
+                                .getElementById(id)
+                        )
+                        {
+                            console.warn(
+                                `Missing ${attribute} target: ${id}`,
+                                element
+                            );
+                        }
+                    });
+                });
         });
 
-      root
+    root
         .querySelectorAll(
-          '[for]'
+            '[for]'
         )
-        .forEach(label => {
-          const id =
-            label.getAttribute(
-              'for'
-            );
+        .forEach(label =>
+        {
+            const id =
+                label.getAttribute(
+                    'for'
+                );
 
-          if (
-            id
+            if (
+                id
             && !document
-              .getElementById(id)
-          ) {
-            console.warn(
-              `Missing label target: ${id}`,
-              label
-            );
-          }
+                .getElementById(id)
+            )
+            {
+                console.warn(
+                    `Missing label target: ${id}`,
+                    label
+                );
+            }
         });
-    }
+}
 
-    const nestedModalFrames = [];
+const nestedModalFrames = [];
 
-    function openNestedModal(html) {
-      if (!modalBackdrop.classList.contains('open')) {
+function openNestedModal(html)
+{
+    if (!modalBackdrop.classList.contains('open'))
+    {
         openModal(html);
         return;
-      }
+    }
 
-      const content =
+    const content =
         document.createDocumentFragment();
 
-      while (modalBackdrop.firstChild) {
+    while (modalBackdrop.firstChild)
+    {
         content.appendChild(
-          modalBackdrop.firstChild
+            modalBackdrop.firstChild
         );
-      }
+    }
 
-      nestedModalFrames.push({
+    nestedModalFrames.push({
         content,
         activeElement:
           document.activeElement instanceof HTMLElement
-            ? document.activeElement
-            : null
-      });
+              ? document.activeElement
+              : null
+    });
 
-      openModal(html);
-    }
+    openModal(html);
+}
 
-    function restoreNestedModalFrame() {
-      const frame =
+function restoreNestedModalFrame()
+{
+    const frame =
         nestedModalFrames.pop();
 
-      if (!frame) return false;
+    if (!frame) return false;
 
-      modalBackdropDismissBinding?.destroy();
-      modalBackdropDismissBinding = null;
+    modalBackdropDismissBinding?.destroy();
+    modalBackdropDismissBinding = null;
 
-      modalBackdrop.innerHTML = '';
-      modalBackdrop.appendChild(frame.content);
+    modalBackdrop.innerHTML = '';
+    modalBackdrop.appendChild(frame.content);
 
-      modalBackdropDismissBinding =
+    modalBackdropDismissBinding =
         bindIntentionalBackdropDismiss(
-          modalBackdrop,
-          () => closeModal()
+            modalBackdrop,
+            () => closeModal()
         );
 
-      requestAnimationFrame(() => {
-        if (frame.activeElement?.isConnected) {
-          frame.activeElement.focus({
-            preventScroll: true
-          });
-          return;
+    requestAnimationFrame(() =>
+    {
+        if (frame.activeElement?.isConnected)
+        {
+            frame.activeElement.focus({
+                preventScroll: true
+            });
+            return;
         }
 
         modalFocusableElements()[0]?.focus({
-          preventScroll: true
+            preventScroll: true
         });
-      });
+    });
 
-      return true;
-    }
+    return true;
+}
 
-    function openModal(
-      html
-    ) {
-      const activeBeforeMenuClose =
+function openModal(
+    html
+)
+{
+    const activeBeforeMenuClose =
         document.activeElement;
 
-      const preferredReturnFocus =
+    const preferredReturnFocus =
         activeBeforeMenuClose
           instanceof Element
         && activeBeforeMenuClose.closest(
-          '.menu-popover'
+            '.menu-popover'
         )
         && menuLifecycleAnchor
-          ? menuLifecycleAnchor
-          : (
-              activeBeforeMenuClose
+            ? menuLifecycleAnchor
+            : (
+                activeBeforeMenuClose
               instanceof HTMLElement
-                ? activeBeforeMenuClose
-                : null
+                    ? activeBeforeMenuClose
+                    : null
             );
 
-      closeMenu();
+    closeMenu();
 
-      if (
+    if (
         !modalBackdrop.classList
-          .contains('open')
-      ) {
+            .contains('open')
+    )
+    {
         modalReturnFocus =
-          preferredReturnFocus;
-      }
+            preferredReturnFocus;
+    }
 
-      /*
+    /*
       * Reopening or replacing modal content starts with completely
       * fresh backdrop-gesture state.
       */
-      modalBackdropDismissBinding?.destroy();
-      modalBackdropDismissBinding = null;
+    modalBackdropDismissBinding?.destroy();
+    modalBackdropDismissBinding = null;
 
-      document.removeEventListener(
+    document.removeEventListener(
         'keydown',
         handleModalKeydown,
         true
-      );
+    );
 
-      modalBackdrop.innerHTML =
+    modalBackdrop.innerHTML =
         html;
 
-      normalizeRenderedSemanticAttributes(
+    normalizeRenderedSemanticAttributes(
         modalBackdrop
-      );
+    );
 
-      modalBackdrop.classList.add(
+    modalBackdrop.classList.add(
         'open'
-      );
+    );
 
-      modalBackdrop.removeAttribute(
+    modalBackdrop.removeAttribute(
         'aria-hidden'
-      );
+    );
 
-      modalBackdrop.setAttribute(
+    modalBackdrop.setAttribute(
         'tabindex',
         '-1'
-      );
+    );
 
-      setApplicationInert(
+    setApplicationInert(
         true
-      );
+    );
 
-      modalBackdrop
+    modalBackdrop
         .querySelectorAll(
-          '[data-close]'
+            '[data-close]'
         )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            closeModal
-          );
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                closeModal
+            );
         });
 
-      modalBackdropDismissBinding =
+    modalBackdropDismissBinding =
         bindIntentionalBackdropDismiss(
-          modalBackdrop,
-          () => closeModal()
+            modalBackdrop,
+            () => closeModal()
         );
 
-      document.addEventListener(
+    document.addEventListener(
         'keydown',
         handleModalKeydown,
         true
-      );
+    );
 
-      localizeUI(
+    localizeUI(
         modalBackdrop,
         {
-          suppressObserverReplay: true
+            suppressObserverReplay: true
         }
-      );
+    );
 
-      validateRenderedSemanticReferences(
+    validateRenderedSemanticReferences(
         modalBackdrop
-      );
+    );
 
-      requestAnimationFrame(() => {
+    requestAnimationFrame(() =>
+    {
         const initial =
-          modalBackdrop.querySelector(
-            '[data-modal-initial-focus], [autofocus]'
-          )
+            modalBackdrop.querySelector(
+                '[data-modal-initial-focus], [autofocus]'
+            )
           || modalFocusableElements()[0]
           || modalBackdrop;
 
         initial.focus();
-      });
+    });
+}
+
+function openPersonPhotoDiscardConfirm()
+{
+    if (
+        document.getElementById(
+            'personPhotoDiscardOverlay'
+        )
+    )
+    {
+        return;
     }
 
-    function openPersonPhotoDiscardConfirm() {
-      if (
-        document.getElementById(
-          'personPhotoDiscardOverlay'
-        )
-      ) {
-        return;
-      }
-
-      const overlay =
+    const overlay =
         document.createElement('div');
 
-      overlay.className =
+    overlay.className =
         'add-person-mini-backdrop';
 
-      overlay.id =
+    overlay.id =
         'personPhotoDiscardOverlay';
 
-      overlay.innerHTML = `
+    overlay.innerHTML = `
         <div class="add-person-mini-card" role="alertdialog" aria-modal="true" aria-labelledby="personPhotoDiscardTitle">
           <div class="add-person-mini-head">
             <div>
@@ -2005,220 +2187,237 @@
         </div>
       `;
 
-      let backdropDismissBinding = null;
+    let backdropDismissBinding = null;
 
-      const removeOverlay = () => {
+    const removeOverlay = () =>
+    {
         backdropDismissBinding?.destroy();
         backdropDismissBinding = null;
         overlay.remove();
-      };
+    };
 
-      document.body.appendChild(overlay);
+    document.body.appendChild(overlay);
 
-      backdropDismissBinding =
+    backdropDismissBinding =
         bindIntentionalBackdropDismiss(
-          overlay,
-          removeOverlay
+            overlay,
+            removeOverlay
         );
 
-      overlay
+    overlay
         .querySelector(
-          '[data-person-photo-continue-editing]'
+            '[data-person-photo-continue-editing]'
         )
         ?.addEventListener(
-          'click',
-          removeOverlay
+            'click',
+            removeOverlay
         );
 
-      overlay
+    overlay
         .querySelector(
-          '[data-person-photo-discard]'
+            '[data-person-photo-discard]'
         )
         ?.addEventListener(
-          'click',
-          () => {
-            removeOverlay();
-            resetPersonPhotoPickerState();
-            closeModal({
-              force: true
-            });
-          }
+            'click',
+            () =>
+            {
+                removeOverlay();
+                resetPersonPhotoPickerState();
+                closeModal({
+                    force: true
+                });
+            }
         );
 
-      overlay
+    overlay
         .querySelector(
-          '[data-person-photo-continue-editing]'
+            '[data-person-photo-continue-editing]'
         )
         ?.focus();
-    }
+}
 
-    function closeModal(options = {}) {
-      if (document.querySelector('[data-place-duplicate-menu]')) {
+function closeModal(options = {})
+{
+    if (document.querySelector('[data-place-duplicate-menu]'))
+    {
         closeMenu();
-      }
-      const {
+    }
+    const {
         force = false,
         preservePlaceEditor = false
-      } = options || {};
+    } = options || {};
 
-      const returnToPlaceEditor = Boolean(
+    const returnToPlaceEditor = Boolean(
         !force
         && placeEditorDraft
         && modalBackdrop.querySelector('[data-place-delete-confirm][data-return-to-place-editor]')
-      );
-      if (returnToPlaceEditor) {
+    );
+    if (returnToPlaceEditor)
+    {
         openPlaceModal(placeEditorDraft.placeId, { draft: placeEditorDraft });
         return;
-      }
-      const closingPlaceEditor = Boolean(
+    }
+    const closingPlaceEditor = Boolean(
         placeEditorDraft
         && modalBackdrop.querySelector('[data-place-editor]')
-      );
-      const cancelledPlaceEditorCompletion =
+    );
+    const cancelledPlaceEditorCompletion =
         closingPlaceEditor
         && !force
         && !preservePlaceEditor
-          ? placeEditorCompletion
-          : null;
-      const closingPersonPhotoPicker = Boolean(
+            ? placeEditorCompletion
+            : null;
+    const closingPersonPhotoPicker = Boolean(
         state.personPhotoPicker?.open
         && modalBackdrop.querySelector('[data-person-photo-picker]')
-      );
-      const closingPersonPhotosAdder =
+    );
+    const closingPersonPhotosAdder =
         Boolean(
-          state.personPhotosAdder?.open
+            state.personPhotosAdder?.open
           && modalBackdrop.querySelector(
-            '[data-person-photos-adder]'
+              '[data-person-photos-adder]'
           )
         );
-      const closingGeneographImagePicker = Boolean(
+    const closingGeneographImagePicker = Boolean(
         state.geneoImagePicker?.open
         && modalBackdrop.querySelector('[data-geneo-image-picker]')
-      );
-      if (closingPersonPhotoPicker && state.personPhotoPicker.dirty && !force) {
+    );
+    if (closingPersonPhotoPicker && state.personPhotoPicker.dirty && !force)
+    {
         openPersonPhotoDiscardConfirm();
         return;
-      }
-      if (closingPersonPhotoPicker) resetPersonPhotoPickerState();
-      if (closingPersonPhotosAdder) {
+    }
+    if (closingPersonPhotoPicker) resetPersonPhotoPickerState();
+    if (closingPersonPhotosAdder)
+    {
         resetPersonPhotosAdderState();
-      }
-      if (closingGeneographImagePicker) {
+    }
+    if (closingGeneographImagePicker)
+    {
         resetGeneographImagePickerState();
-      }
-      if (
+    }
+    if (
         closingPlaceEditor
         && !preservePlaceEditor
-      ) {
+    )
+    {
         resetPlaceEditorDraft();
-      }
-      if (nestedModalFrames.length) {
+    }
+    if (nestedModalFrames.length)
+    {
         restoreNestedModalFrame();
         return;
-      }
+    }
 
-      nestedModalFrames.length = 0;
-      document.getElementById('personPhotoDiscardOverlay')?.remove();
-      document.getElementById('addPersonMiniOverlay')?.remove();
+    nestedModalFrames.length = 0;
+    document.getElementById('personPhotoDiscardOverlay')?.remove();
+    document.getElementById('addPersonMiniOverlay')?.remove();
 
-      modalBackdropDismissBinding?.destroy();
-      modalBackdropDismissBinding = null;
+    modalBackdropDismissBinding?.destroy();
+    modalBackdropDismissBinding = null;
 
-      modalBackdrop.classList.remove('open');
-      modalBackdrop.setAttribute('aria-hidden', 'true');
-      modalBackdrop.removeAttribute('tabindex');
-      modalBackdrop.innerHTML = '';
+    modalBackdrop.classList.remove('open');
+    modalBackdrop.setAttribute('aria-hidden', 'true');
+    modalBackdrop.removeAttribute('tabindex');
+    modalBackdrop.innerHTML = '';
 
-      document.removeEventListener(
+    document.removeEventListener(
         'keydown',
         handleModalKeydown,
         true
-      );
+    );
 
-      setApplicationInert(false);
+    setApplicationInert(false);
 
-      const returnTarget = modalReturnFocus;
-      modalReturnFocus = null;
+    const returnTarget = modalReturnFocus;
+    modalReturnFocus = null;
 
-      requestAnimationFrame(
-        () => {
-          if (
-            returnTarget
-              ?.isConnected
-          ) {
-            returnTarget.focus({
-              preventScroll: true
-            });
-          }
-
-          cancelledPlaceEditorCompletion
-            ?.onCancel
-            ?.();
-        }
-      );
-    }
-
-    function bindToasts(
-      root
-    ) {
-      root
-        .querySelectorAll(
-          '[data-toast]'
-        )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              showToast(
-                button.dataset
-                  .toast
-              );
+    requestAnimationFrame(
+        () =>
+        {
+            if (
+                returnTarget
+                    ?.isConnected
+            )
+            {
+                returnTarget.focus({
+                    preventScroll: true
+                });
             }
-          );
+
+            cancelledPlaceEditorCompletion
+                ?.onCancel
+                ?.();
+        }
+    );
+}
+
+function bindToasts(
+    root
+)
+{
+    root
+        .querySelectorAll(
+            '[data-toast]'
+        )
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
+                {
+                    showToast(
+                        button.dataset
+                            .toast
+                    );
+                }
+            );
         });
-    }
+}
 
-    function hideToast() {
-      clearTimeout(
+function hideToast()
+{
+    clearTimeout(
         showToast.timer
-      );
+    );
 
-      toast.classList.remove(
+    toast.classList.remove(
         'show'
-      );
+    );
 
-      toast.innerHTML =
+    toast.innerHTML =
         '';
-    }
+}
 
-    function showActionToast({
-      message,
-      actions = [],
-      duration = 6200
-    } = {}) {
-      clearTimeout(
+function showActionToast({
+    message,
+    actions = [],
+    duration = 6200
+} = {})
+{
+    clearTimeout(
         showToast.timer
-      );
+    );
 
-      const translatedMessage =
+    const translatedMessage =
         translateAttributeValue(
-          message
+            message
         );
 
-      toast.innerHTML = `
+    toast.innerHTML = `
         <span
           class="
             toast-message
           ">
 
           ${escapeHtml(
-            translatedMessage
-          )}
+                translatedMessage
+            )}
         </span>
 
         ${
-          actions.length
-            ? `
+            actions.length
+                ? `
               <span
                 class="
                   toast-actions
@@ -2226,166 +2425,180 @@
                 aria-label="Notification actions">
               </span>
             `
-            : ''
+                : ''
         }
       `;
 
-      const actionsRoot =
+    const actionsRoot =
         toast.querySelector(
-          '.toast-actions'
+            '.toast-actions'
         );
 
-      actions.forEach(action => {
+    actions.forEach(action =>
+    {
         const button =
-          document.createElement(
-            'button'
-          );
+            document.createElement(
+                'button'
+            );
 
         button.className =
-          'toast-action';
+            'toast-action';
 
         button.type =
-          'button';
+            'button';
 
         button.textContent =
-          translateAttributeValue(
-            action.label
-          );
+            translateAttributeValue(
+                action.label
+            );
 
         button.addEventListener(
-          'click',
-          () => {
-            hideToast();
+            'click',
+            () =>
+            {
+                hideToast();
 
-            action.onClick?.();
-          }
+                action.onClick?.();
+            }
         );
 
         actionsRoot?.appendChild(
-          button
+            button
         );
-      });
+    });
 
-      toast.classList.add(
+    toast.classList.add(
         'show'
-      );
+    );
 
-      showToast.timer =
+    showToast.timer =
         setTimeout(
-          hideToast,
-          duration
+            hideToast,
+            duration
         );
-    }
+}
 
-    function showToast(
-      message
-    ) {
-      showActionToast({
+function showToast(
+    message
+)
+{
+    showActionToast({
         message,
         duration:
           2600
-      });
-    }
-    function escapeHtml(value) { return String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); }
-    function capitalize(value) { return value.charAt(0).toUpperCase() + value.slice(1); }
+    });
+}
+function escapeHtml(value)
+{
+    return String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll('\'','&#039;');
+}
+function capitalize(value)
+{
+    return value.charAt(0).toUpperCase() + value.slice(1);
+}
 
-    function normalizePlaceSavedFilters() {
-      const source =
+function normalizePlaceSavedFilters()
+{
+    const source =
         Array.isArray(
-          sampleData.placeSavedFilters
+            sampleData.placeSavedFilters
         )
-          ? sampleData.placeSavedFilters
-          : [];
+            ? sampleData.placeSavedFilters
+            : [];
 
-      const usedIds =
+    const usedIds =
         new Set();
 
-      let nextId =
+    let nextId =
         Date.now();
 
-      const now =
+    const now =
         new Date().toISOString();
 
-      sampleData.placeSavedFilters =
+    sampleData.placeSavedFilters =
         source
-          .filter(savedFilter =>
-            savedFilter
+            .filter(savedFilter =>
+                savedFilter
             && typeof savedFilter === 'object'
             && !Array.isArray(savedFilter)
-          )
-          .map(savedFilter => {
-            let id =
-              String(
-                savedFilter.id || ''
-              ).trim();
+            )
+            .map(savedFilter =>
+            {
+                let id =
+                    String(
+                        savedFilter.id || ''
+                    ).trim();
 
-            while (
-              !id
+                while (
+                    !id
               || usedIds.has(id)
-            ) {
-              id =
-                `place-saved-filter-${nextId}`;
-
-              nextId += 1;
-            }
-
-            usedIds.add(id);
-
-            const createdAt =
-              Number.isFinite(
-                Date.parse(
-                  savedFilter.createdAt || ''
                 )
-              )
-                ? savedFilter.createdAt
-                : now;
+                {
+                    id =
+                        `place-saved-filter-${nextId}`;
 
-            const updatedAt =
-              Number.isFinite(
-                Date.parse(
-                  savedFilter.updatedAt || ''
-                )
-              )
-                ? savedFilter.updatedAt
-                : createdAt;
+                    nextId += 1;
+                }
 
-            return {
-              ...savedFilter,
+                usedIds.add(id);
 
-              id,
+                const createdAt =
+                    Number.isFinite(
+                        Date.parse(
+                            savedFilter.createdAt || ''
+                        )
+                    )
+                        ? savedFilter.createdAt
+                        : now;
 
-              projectId:
+                const updatedAt =
+                    Number.isFinite(
+                        Date.parse(
+                            savedFilter.updatedAt || ''
+                        )
+                    )
+                        ? savedFilter.updatedAt
+                        : createdAt;
+
+                return {
+                    ...savedFilter,
+
+                    id,
+
+                    projectId:
                 String(
-                  savedFilter.projectId
+                    savedFilter.projectId
                   || ''
                 ),
 
-              name:
+                    name:
                 String(
-                  savedFilter.name || ''
+                    savedFilter.name || ''
                 ).trim()
                 || 'Unnamed filter',
 
-              description:
+                    description:
                 String(
-                  savedFilter.description
+                    savedFilter.description
                   || ''
                 ),
 
-              filters:
+                    filters:
                 placeFiltersWithDefaults(
-                  savedFilter.filters
+                    savedFilter.filters
                 ),
 
-              createdAt,
-              updatedAt
-            };
-          });
-    }
+                    createdAt,
+                    updatedAt
+                };
+            });
+}
 
-    function normalizePlaceIssueDismissals() {
-      const seen = new Set();
-      sampleData.placeIssues = (sampleData.placeIssues || []).filter(issue => {
+function normalizePlaceIssueDismissals()
+{
+    const seen = new Set();
+    sampleData.placeIssues = (sampleData.placeIssues || []).filter(issue =>
+    {
         if (!issue || issue.status !== 'dismissed') return false;
         if (!PLACE_REVIEW_COORDINATE_ISSUE_TYPES.includes(issue.type)) return false;
         const place = getPlace(issue.placeId);
@@ -2395,41 +2608,48 @@
         seen.add(key);
         issue.id = String(issue.id || `place-issue-dismissal-${Date.now()}-${seen.size}`);
         issue.dismissedAt = Number.isFinite(Date.parse(issue.dismissedAt || ''))
-          ? issue.dismissedAt
-          : new Date().toISOString();
+            ? issue.dismissedAt
+            : new Date().toISOString();
         return true;
-      });
-    }
+    });
+}
 
-    function normalizeCentralPlaceRecords() {
-      sampleData.places.forEach(place => {
+function normalizeCentralPlaceRecords()
+{
+    sampleData.places.forEach(place =>
+    {
         place.projectId = String(place.projectId || '');
         const legacyName = String(place.name || '').trim();
         const legacyDisplay = String(place.display || '').trim();
         const legacyHierarchy = place.hierarchy && typeof place.hierarchy === 'object' && !Array.isArray(place.hierarchy)
-          ? [place.hierarchy.locality, place.hierarchy.county || place.hierarchy.region, place.hierarchy.nation || place.hierarchy.country].filter(Boolean).join(', ')
-          : String(place.hierarchy || '').trim();
+            ? [place.hierarchy.locality, place.hierarchy.county || place.hierarchy.region, place.hierarchy.nation || place.hierarchy.country].filter(Boolean).join(', ')
+            : String(place.hierarchy || '').trim();
         const fullName = legacyDisplay.includes(',')
-          ? legacyDisplay
-          : (legacyName.includes(',') ? legacyName : (legacyHierarchy || legacyName));
+            ? legacyDisplay
+            : (legacyName.includes(',') ? legacyName : (legacyHierarchy || legacyName));
         place.name = fullName || legacyName || 'Unnamed place';
         const candidates = [
-          ...(Array.isArray(place.alternativeNames) ? place.alternativeNames : []),
-          ...(Array.isArray(place.aliases) ? place.aliases : []),
-          ...(legacyName && legacyName !== place.name ? [legacyName] : [])
+            ...(Array.isArray(place.alternativeNames) ? place.alternativeNames : []),
+            ...(Array.isArray(place.aliases) ? place.aliases : []),
+            ...(legacyName && legacyName !== place.name ? [legacyName] : [])
         ];
         place.alternativeNames = normalizePlaceAlternativeNames(candidates, place.name);
         place.deleted = Boolean(place.deleted);
         const normalizedCoordinates = normalizePlaceCoordinates(place);
-        if (normalizedCoordinates) {
-          place.coordinates = normalizedCoordinates;
-        } else if (place.coordinates && typeof place.coordinates === 'object') {
-          place.coordinates = {
-            lat: place.coordinates.lat ?? '',
-            lng: place.coordinates.lng ?? ''
-          };
-        } else {
-          place.coordinates = null;
+        if (normalizedCoordinates)
+        {
+            place.coordinates = normalizedCoordinates;
+        }
+        else if (place.coordinates && typeof place.coordinates === 'object')
+        {
+            place.coordinates = {
+                lat: place.coordinates.lat ?? '',
+                lng: place.coordinates.lng ?? ''
+            };
+        }
+        else
+        {
+            place.coordinates = null;
         }
         place.updatedAt = Number.isFinite(Date.parse(place.updatedAt || '')) ? place.updatedAt : new Date().toISOString();
         delete place.display;
@@ -2457,73 +2677,81 @@
         delete place.files;
         delete place.photos;
         delete place.notes;
-      });
-    }
+    });
+}
 
-    function normalizeEventPlaceAddresses() {
-      const normalizeRecord = record => {
-        if (record && typeof record === 'object' && ('placeId' in record || 'placeText' in record)) {
-          record.address = typeof record.address === 'string' ? record.address : '';
+function normalizeEventPlaceAddresses()
+{
+    const normalizeRecord = record =>
+    {
+        if (record && typeof record === 'object' && ('placeId' in record || 'placeText' in record))
+        {
+            record.address = typeof record.address === 'string' ? record.address : '';
         }
-      };
-      sampleData.people.forEach(person => {
+    };
+    sampleData.people.forEach(person =>
+    {
         normalizeRecord(person.birth);
         normalizeRecord(person.death);
-        if (person.death && ('burialPlaceId' in person.death || 'burialPlaceText' in person.death)) {
-          person.death.burialAddress = typeof person.death.burialAddress === 'string' ? person.death.burialAddress : '';
+        if (person.death && ('burialPlaceId' in person.death || 'burialPlaceText' in person.death))
+        {
+            person.death.burialAddress = typeof person.death.burialAddress === 'string' ? person.death.burialAddress : '';
         }
         (person.attributes || []).forEach(normalizeRecord);
         (person.events || []).forEach(normalizeRecord);
-      });
-      sampleData.families.forEach(family => (family.events || []).forEach(normalizeRecord));
-      (sampleData.educationSeed || []).forEach(normalizeRecord);
-    }
+    });
+    sampleData.families.forEach(family => (family.events || []).forEach(normalizeRecord));
+    (sampleData.educationSeed || []).forEach(normalizeRecord);
+}
 
-    function normalizeCentralNoteIdArray(
-      value
-    ) {
-      if (!Array.isArray(value)) {
+function normalizeCentralNoteIdArray(
+    value
+)
+{
+    if (!Array.isArray(value))
+    {
         return [];
-      }
-
-      return [
-        ...new Set(
-          value
-            .map(item =>
-              String(
-                item || ''
-              ).trim()
-            )
-            .filter(Boolean)
-        )
-      ];
     }
 
-    function renderRichTextToolbar({
-      id,
-      className = '',
-      ariaLabel = 'Text formatting'
-    } = {}) {
-      const resolvedId =
+    return [
+        ...new Set(
+            value
+                .map(item =>
+                    String(
+                        item || ''
+                    ).trim()
+                )
+                .filter(Boolean)
+        )
+    ];
+}
+
+function renderRichTextToolbar({
+    id,
+    className = '',
+    ariaLabel = 'Text formatting'
+} = {})
+{
+    const resolvedId =
         String(
-          id || 'richTextToolbar'
+            id || 'richTextToolbar'
         );
 
-      const classes = [
+    const classes = [
         'rich-text-toolbar',
         className
-      ]
+    ]
         .filter(Boolean)
         .join(' ');
 
-      return `
+    return `
         <div
           class="${escapeHtml(classes)}"
           id="${escapeHtml(resolvedId)}"
           role="toolbar"
           aria-label="${escapeHtml(
-            ariaLabel
-          )}">
+                ariaLabel
+            )}">
 
           <span class="ql-formats">
             <select
@@ -2675,141 +2903,157 @@
           </span>
         </div>
       `;
-    }
+}
 
-    function richTextSafeLinkUrl(
-      value
-    ) {
-      const raw =
+function richTextSafeLinkUrl(
+    value
+)
+{
+    const raw =
         String(value || '').trim();
 
-      if (!raw) {
+    if (!raw)
+    {
         return '';
-      }
+    }
 
-      try {
+    try
+    {
         const url =
-          new URL(
-            raw,
-            window.location.href
-          );
+            new URL(
+                raw,
+                window.location.href
+            );
 
         if (
-          ![
-            'http:',
-            'https:',
-            'mailto:'
-          ].includes(url.protocol)
-        ) {
-          return '';
+            ![
+                'http:',
+                'https:',
+                'mailto:'
+            ].includes(url.protocol)
+        )
+        {
+            return '';
         }
 
         return url.href;
-      } catch {
+    }
+    catch
+    {
         return '';
-      }
+    }
+}
+
+function renderRichTextInline(
+    value,
+    attributes = {}
+)
+{
+    let html =
+        escapeHtml(
+            String(value || '')
+        );
+
+    if (attributes.bold === true)
+    {
+        html =
+            `<strong>${html}</strong>`;
     }
 
-    function renderRichTextInline(
-      value,
-      attributes = {}
-    ) {
-      let html =
-        escapeHtml(
-          String(value || '')
-        );
-
-      if (attributes.bold === true) {
+    if (attributes.italic === true)
+    {
         html =
-          `<strong>${html}</strong>`;
-      }
+            `<em>${html}</em>`;
+    }
 
-      if (attributes.italic === true) {
-        html =
-          `<em>${html}</em>`;
-      }
-
-      if (
+    if (
         attributes.underline
           === true
-      ) {
+    )
+    {
         html =
-          `<u>${html}</u>`;
-      }
+            `<u>${html}</u>`;
+    }
 
-      if (
+    if (
         attributes.strike
           === true
-      ) {
+    )
+    {
         html =
-          `<s>${html}</s>`;
-      }
+            `<s>${html}</s>`;
+    }
 
-      const classes = [];
+    const classes = [];
 
-      const size =
+    const size =
         normalizeRichTextSize(
-          attributes.size
+            attributes.size
         );
 
-      if (size) {
+    if (size)
+    {
         classes.push(
-          `rich-text-size-${size}`
+            `rich-text-size-${size}`
         );
-      }
+    }
 
-      const styles = [];
+    const styles = [];
 
-      const color =
+    const color =
         normalizeRichTextColor(
-          attributes.color
+            attributes.color
         );
 
-      if (color) {
+    if (color)
+    {
         styles.push(
-          `color:${color}`
+            `color:${color}`
         );
-      }
+    }
 
-      const background =
+    const background =
         normalizeRichTextColor(
-          attributes.background
+            attributes.background
         );
 
-      if (background) {
+    if (background)
+    {
         styles.push(
-          `background-color:${background}`
+            `background-color:${background}`
         );
-      }
+    }
 
-      if (
+    if (
         classes.length
         || styles.length
-      ) {
+    )
+    {
         const classAttribute =
-          classes.length
-            ? ` class="${escapeHtml(
-                classes.join(' ')
-              )}"`
-            : '';
+            classes.length
+                ? ` class="${escapeHtml(
+                    classes.join(' ')
+                )}"`
+                : '';
 
         const styleAttribute =
-          styles.length
-            ? ` style="${escapeHtml(
-                styles.join(';')
-              )}"`
-            : '';
+            styles.length
+                ? ` style="${escapeHtml(
+                    styles.join(';')
+                )}"`
+                : '';
 
         html =
-          `<span${classAttribute}${styleAttribute}>${html}</span>`;
-      }
+            `<span${classAttribute}${styleAttribute}>${html}</span>`;
+    }
 
-      const href =
+    const href =
         richTextSafeLinkUrl(
-          attributes.link
+            attributes.link
         );
 
-      if (href) {
+    if (href)
+    {
         html = `
           <a
             href="${escapeHtml(href)}"
@@ -2818,173 +3062,188 @@
             ${html}
           </a>
         `;
-      }
-
-      return html;
     }
 
-    function renderPlainRichTextHtml(
-      value
-    ) {
-      return String(value || '')
+    return html;
+}
+
+function renderPlainRichTextHtml(
+    value
+)
+{
+    return String(value || '')
         .split(/\r?\n/)
         .map(line => `
           <p>
             ${
-              line
-                ? escapeHtml(line)
-                : '<br>'
+                line
+                    ? escapeHtml(line)
+                    : '<br>'
             }
           </p>
         `)
         .join('');
-    }
+}
 
-    function richTextBlockClassNames(
-      attributes = {}
-    ) {
-      const classes = [];
+function richTextBlockClassNames(
+    attributes = {}
+)
+{
+    const classes = [];
 
-      const alignment =
+    const alignment =
         normalizeRichTextAlignment(
-          attributes.align
+            attributes.align
         );
 
-      if (alignment) {
+    if (alignment)
+    {
         classes.push(
-          `rich-text-align-${alignment}`
+            `rich-text-align-${alignment}`
         );
-      }
-
-      const indent =
-        normalizeRichTextIndent(
-          attributes.indent
-        );
-
-      if (indent) {
-        classes.push(
-          `rich-text-indent-${indent}`
-        );
-      }
-
-      return classes;
     }
 
-    function richTextBlockClassAttribute(
-      attributes = {}
-    ) {
-      const classes =
-        richTextBlockClassNames(
-          attributes
+    const indent =
+        normalizeRichTextIndent(
+            attributes.indent
         );
 
-      return classes.length
+    if (indent)
+    {
+        classes.push(
+            `rich-text-indent-${indent}`
+        );
+    }
+
+    return classes;
+}
+
+function richTextBlockClassAttribute(
+    attributes = {}
+)
+{
+    const classes =
+        richTextBlockClassNames(
+            attributes
+        );
+
+    return classes.length
         ? ` class="${escapeHtml(
             classes.join(' ')
-          )}"`
+        )}"`
         : '';
+}
+
+function renderRichTextDeltaHtml(
+    value,
+    fallbackText = ''
+)
+{
+    const delta =
+        normalizeRichTextDelta(
+            value
+        );
+
+    if (!delta)
+    {
+        return (
+            renderPlainRichTextHtml(
+                fallbackText
+            )
+        );
     }
 
-    function renderRichTextDeltaHtml(
-      value,
-      fallbackText = ''
-    ) {
-      const delta =
-        normalizeRichTextDelta(
-          value
-        );
+    const lines = [];
+    let fragments = [];
 
-      if (!delta) {
-        return (
-          renderPlainRichTextHtml(
-            fallbackText
-          )
-        );
-      }
-
-      const lines = [];
-      let fragments = [];
-
-      delta.ops.forEach(operation => {
+    delta.ops.forEach(operation =>
+    {
         const attributes =
-          operation.attributes || {};
+            operation.attributes || {};
 
         const parts =
-          operation.insert.split('\n');
+            operation.insert.split('\n');
 
         parts.forEach(
-          (part, index) => {
-            if (part) {
-              fragments.push(
-                renderRichTextInline(
-                  part,
-                  attributes
-                )
-              );
-            }
+            (part, index) =>
+            {
+                if (part)
+                {
+                    fragments.push(
+                        renderRichTextInline(
+                            part,
+                            attributes
+                        )
+                    );
+                }
 
-            if (
-              index
+                if (
+                    index
               < parts.length - 1
-            ) {
-              lines.push({
-                html:
+                )
+                {
+                    lines.push({
+                        html:
                   fragments.join(''),
 
-                attributes: {
-                  header:
+                        attributes: {
+                            header:
                     attributes.header,
 
-                  list:
+                            list:
                     attributes.list,
 
-                  blockquote:
+                            blockquote:
                     attributes.blockquote,
 
-                  align:
+                            align:
                     attributes.align,
 
-                  indent:
+                            indent:
                     attributes.indent
+                        }
+                    });
+
+                    fragments = [];
                 }
-              });
-
-              fragments = [];
             }
-          }
         );
-      });
+    });
 
-      if (fragments.length) {
+    if (fragments.length)
+    {
         lines.push({
-          html:
+            html:
             fragments.join(''),
 
-          attributes: {}
+            attributes: {}
         });
-      }
+    }
 
-      if (!lines.length) {
+    if (!lines.length)
+    {
         return (
-          renderPlainRichTextHtml(
-            fallbackText
-          )
+            renderPlainRichTextHtml(
+                fallbackText
+            )
         );
-      }
+    }
 
-      let html = '';
-      let activeList = null;
-      let listItems = [];
+    let html = '';
+    let activeList = null;
+    let listItems = [];
 
-      const flushList = () => {
-        if (!activeList) {
-          return;
+    const flushList = () =>
+    {
+        if (!activeList)
+        {
+            return;
         }
 
         const tag =
-          activeList === 'ordered'
-            ? 'ol'
-            : 'ul';
+            activeList === 'ordered'
+                ? 'ol'
+                : 'ul';
 
         html += `
           <${tag}>
@@ -2994,587 +3253,627 @@
 
         activeList = null;
         listItems = [];
-      };
+    };
 
-      lines.forEach(line => {
+    lines.forEach(line =>
+    {
         const content =
-          line.html || '<br>';
+            line.html || '<br>';
 
         const attributes =
-          line.attributes || {};
+            line.attributes || {};
 
         const classAttribute =
-          richTextBlockClassAttribute(
-            attributes
-          );
+            richTextBlockClassAttribute(
+                attributes
+            );
 
-        if (attributes.list) {
-          if (
-            activeList
+        if (attributes.list)
+        {
+            if (
+                activeList
             && activeList
               !== attributes.list
-          ) {
-            flushList();
-          }
+            )
+            {
+                flushList();
+            }
 
-          activeList =
-            attributes.list;
+            activeList =
+                attributes.list;
 
-          listItems.push(
-            `<li${classAttribute}>${content}</li>`
-          );
+            listItems.push(
+                `<li${classAttribute}>${content}</li>`
+            );
 
-          return;
+            return;
         }
 
         flushList();
 
-        if (attributes.header === 2) {
-          html +=
-            `<h2${classAttribute}>${content}</h2>`;
+        if (attributes.header === 2)
+        {
+            html +=
+                `<h2${classAttribute}>${content}</h2>`;
 
-          return;
+            return;
         }
 
-        if (attributes.header === 3) {
-          html +=
-            `<h3${classAttribute}>${content}</h3>`;
+        if (attributes.header === 3)
+        {
+            html +=
+                `<h3${classAttribute}>${content}</h3>`;
 
-          return;
+            return;
         }
 
         if (
-          attributes.blockquote
+            attributes.blockquote
             === true
-        ) {
-          html +=
-            `<blockquote${classAttribute}>${content}</blockquote>`;
+        )
+        {
+            html +=
+                `<blockquote${classAttribute}>${content}</blockquote>`;
 
-          return;
+            return;
         }
 
         html +=
-          `<p${classAttribute}>${content}</p>`;
-      });
+            `<p${classAttribute}>${content}</p>`;
+    });
 
-      flushList();
+    flushList();
 
-      return html;
-    }
+    return html;
+}
 
-    function richTextDeltasEqual(
-      first,
-      second
-    ) {
-      return (
+function richTextDeltasEqual(
+    first,
+    second
+)
+{
+    return (
         JSON.stringify(
-          normalizeRichTextDelta(
-            first
-          )
+            normalizeRichTextDelta(
+                first
+            )
         )
         ===
         JSON.stringify(
-          normalizeRichTextDelta(
-            second
-          )
+            normalizeRichTextDelta(
+                second
+            )
         )
-      );
-    }
+    );
+}
 
-    function normalizeRichTextColor(
-      value
-    ) {
-      const color =
+function normalizeRichTextColor(
+    value
+)
+{
+    const color =
         String(value || '')
-          .trim()
-          .toLowerCase();
+            .trim()
+            .toLowerCase();
 
-      /*
+    /*
        * Quill Snow's built-in color palettes
        * use hexadecimal CSS colors.
        */
-      return (
+    return (
         /^#[0-9a-f]{3}$/.test(color)
         || /^#[0-9a-f]{6}$/.test(color)
-      )
+    )
         ? color
         : '';
-    }
+}
 
-    function normalizeRichTextSize(
-      value
-    ) {
-      return [
+function normalizeRichTextSize(
+    value
+)
+{
+    return [
         'small',
         'large',
         'huge'
-      ].includes(value)
+    ].includes(value)
         ? value
         : '';
-    }
+}
 
-    function normalizeRichTextAlignment(
-      value
-    ) {
-      return [
+function normalizeRichTextAlignment(
+    value
+)
+{
+    return [
         'center',
         'right',
         'justify'
-      ].includes(value)
+    ].includes(value)
         ? value
         : '';
-    }
+}
 
-    function normalizeRichTextIndent(
-      value
-    ) {
-      const indent =
+function normalizeRichTextIndent(
+    value
+)
+{
+    const indent =
         Number(value);
 
-      return (
+    return (
         Number.isInteger(indent)
         && indent >= 1
         && indent <= 8
-      )
+    )
         ? indent
         : 0;
-    }
+}
 
-    function normalizeRichTextDelta(
-      value
-    ) {
-      if (
+function normalizeRichTextDelta(
+    value
+)
+{
+    if (
         !value
         || typeof value
           !== 'object'
         || !Array.isArray(
-          value.ops
+            value.ops
         )
-      ) {
+    )
+    {
         return null;
-      }
+    }
 
-      const normalizedOps =
+    const normalizedOps =
         value.ops
-          .map(operation => {
-            if (
-              !operation
+            .map(operation =>
+            {
+                if (
+                    !operation
               || typeof operation
                 !== 'object'
               || typeof operation.insert
                 !== 'string'
               || operation.insert
                 === ''
-            ) {
-              return null;
-            }
+                )
+                {
+                    return null;
+                }
 
-            const normalized = {
-              insert:
+                const normalized = {
+                    insert:
                 operation.insert
-            };
+                };
 
-            const sourceAttributes =
-              operation.attributes
+                const sourceAttributes =
+                    operation.attributes
               && typeof operation.attributes
                 === 'object'
-                ? operation.attributes
-                : null;
+                        ? operation.attributes
+                        : null;
 
-            if (!sourceAttributes) {
-              return normalized;
-            }
+                if (!sourceAttributes)
+                {
+                    return normalized;
+                }
 
-            const attributes = {};
+                const attributes = {};
 
-            if (
-              sourceAttributes.bold
+                if (
+                    sourceAttributes.bold
                 === true
-            ) {
-              attributes.bold =
-                true;
-            }
+                )
+                {
+                    attributes.bold =
+                        true;
+                }
 
-            if (
-              sourceAttributes.italic
+                if (
+                    sourceAttributes.italic
                 === true
-            ) {
-              attributes.italic =
-                true;
-            }
+                )
+                {
+                    attributes.italic =
+                        true;
+                }
 
-            if (
-              sourceAttributes.underline
+                if (
+                    sourceAttributes.underline
                 === true
-            ) {
-              attributes.underline =
-                true;
-            }
+                )
+                {
+                    attributes.underline =
+                        true;
+                }
 
-            if (
-              sourceAttributes.strike
+                if (
+                    sourceAttributes.strike
                 === true
-            ) {
-              attributes.strike =
-                true;
-            }
+                )
+                {
+                    attributes.strike =
+                        true;
+                }
 
-            const textColor =
-              normalizeRichTextColor(
-                sourceAttributes.color
-              );
+                const textColor =
+                    normalizeRichTextColor(
+                        sourceAttributes.color
+                    );
 
-            if (textColor) {
-              attributes.color =
-                textColor;
-            }
+                if (textColor)
+                {
+                    attributes.color =
+                        textColor;
+                }
 
-            const backgroundColor =
-              normalizeRichTextColor(
-                sourceAttributes
-                  .background
-              );
+                const backgroundColor =
+                    normalizeRichTextColor(
+                        sourceAttributes
+                            .background
+                    );
 
-            if (backgroundColor) {
-              attributes.background =
-                backgroundColor;
-            }
+                if (backgroundColor)
+                {
+                    attributes.background =
+                        backgroundColor;
+                }
 
-            const size =
-              normalizeRichTextSize(
-                sourceAttributes.size
-              );
+                const size =
+                    normalizeRichTextSize(
+                        sourceAttributes.size
+                    );
 
-            if (size) {
-              attributes.size =
-                size;
-            }
+                if (size)
+                {
+                    attributes.size =
+                        size;
+                }
 
-            if (
-              sourceAttributes.blockquote
+                if (
+                    sourceAttributes.blockquote
                 === true
-            ) {
-              attributes.blockquote =
-                true;
-            }
+                )
+                {
+                    attributes.blockquote =
+                        true;
+                }
 
-            if (
-              sourceAttributes.header
+                if (
+                    sourceAttributes.header
                 === 2
               || sourceAttributes.header
                 === 3
-            ) {
-              attributes.header =
-                sourceAttributes.header;
-            }
+                )
+                {
+                    attributes.header =
+                        sourceAttributes.header;
+                }
 
-            if (
-              sourceAttributes.list
+                if (
+                    sourceAttributes.list
                 === 'bullet'
               || sourceAttributes.list
                 === 'ordered'
-            ) {
-              attributes.list =
-                sourceAttributes.list;
-            }
+                )
+                {
+                    attributes.list =
+                        sourceAttributes.list;
+                }
 
-            const alignment =
-              normalizeRichTextAlignment(
-                sourceAttributes.align
-              );
+                const alignment =
+                    normalizeRichTextAlignment(
+                        sourceAttributes.align
+                    );
 
-            if (alignment) {
-              attributes.align =
-                alignment;
-            }
+                if (alignment)
+                {
+                    attributes.align =
+                        alignment;
+                }
 
-            const indent =
-              normalizeRichTextIndent(
-                sourceAttributes.indent
-              );
+                const indent =
+                    normalizeRichTextIndent(
+                        sourceAttributes.indent
+                    );
 
-            if (indent) {
-              attributes.indent =
-                indent;
-            }
+                if (indent)
+                {
+                    attributes.indent =
+                        indent;
+                }
 
-            if (
-              typeof sourceAttributes.link
+                if (
+                    typeof sourceAttributes.link
                 === 'string'
               && sourceAttributes.link.trim()
-            ) {
-              attributes.link =
-                sourceAttributes.link
-                  .trim();
-            }
+                )
+                {
+                    attributes.link =
+                        sourceAttributes.link
+                            .trim();
+                }
 
-            if (
-              Object.keys(
-                attributes
-              ).length
-            ) {
-              normalized.attributes =
-                attributes;
-            }
+                if (
+                    Object.keys(
+                        attributes
+                    ).length
+                )
+                {
+                    normalized.attributes =
+                        attributes;
+                }
 
-            return normalized;
-          })
-          .filter(Boolean);
+                return normalized;
+            })
+            .filter(Boolean);
 
-      return {
+    return {
         ops:
           normalizedOps
-      };
-    }
+    };
+}
 
-    function cloneRichTextDelta(
-      value
-    ) {
-      return normalizeRichTextDelta(
+function cloneRichTextDelta(
+    value
+)
+{
+    return normalizeRichTextDelta(
         value
-      );
-    }
+    );
+}
 
-    function plainTextFromRichTextDelta(
-      value
-    ) {
-      const delta =
+function plainTextFromRichTextDelta(
+    value
+)
+{
+    const delta =
         normalizeRichTextDelta(
-          value
+            value
         );
 
-      if (!delta) {
+    if (!delta)
+    {
         return '';
-      }
+    }
 
-      const text =
+    const text =
         delta.ops
-          .map(operation =>
-            operation.insert
-          )
-          .join('');
+            .map(operation =>
+                operation.insert
+            )
+            .join('');
 
-      return text.endsWith('\n')
+    return text.endsWith('\n')
         ? text.slice(0, -1)
         : text;
-    }
+}
 
-    function normalizeCentralNoteTimestamp(
-      value,
-      fallback
-    ) {
-      if (
+function normalizeCentralNoteTimestamp(
+    value,
+    fallback
+)
+{
+    if (
         Number.isFinite(
-          Date.parse(value || '')
+            Date.parse(value || '')
         )
-      ) {
+    )
+    {
         return new Date(
-          value
+            value
         ).toISOString();
-      }
-
-      return fallback;
     }
 
-    function normalizeCentralNoteChecklist(
-      note
-    ) {
-      const source =
+    return fallback;
+}
+
+function normalizeCentralNoteChecklist(
+    note
+)
+{
+    const source =
         Array.isArray(
-          note.checklist
+            note.checklist
         )
-          ? note.checklist
-          : (
-              Array.isArray(
-                note.tasks
-              )
-                ? note.tasks
-                : []
+            ? note.checklist
+            : (
+                Array.isArray(
+                    note.tasks
+                )
+                    ? note.tasks
+                    : []
             );
 
-      return source
+    return source
         .map((item, index) => ({
-          id:
+            id:
             String(
-              item?.id
+                item?.id
               || `${note.id}-check-${index + 1}`
             ).trim(),
 
-          text:
+            text:
             String(
-              item?.text || ''
+                item?.text || ''
             ).trim(),
 
-          done:
+            done:
             Boolean(
-              item?.done
+                item?.done
             )
         }))
         .filter(item =>
-          item.id
+            item.id
           && item.text
         );
-    }
+}
 
-    function normalizeCentralNoteRecord(
-      note
-    ) {
-      const fallbackTimestamp =
+function normalizeCentralNoteRecord(
+    note
+)
+{
+    const fallbackTimestamp =
         new Date().toISOString();
 
-      note.id =
+    note.id =
         String(
-          note.id || ''
+            note.id || ''
         ).trim();
 
-      note.projectId =
+    note.projectId =
         String(
-          note.projectId || ''
+            note.projectId || ''
         ).trim();
 
-      note.title =
+    note.title =
         String(
-          note.title
+            note.title
           || 'Untitled note'
         ).trim()
         || 'Untitled note';
 
-      note.body =
+    note.body =
         typeof note.body === 'string'
-          ? note.body
-          : '';
+            ? note.body
+            : '';
 
-      note.bodyDelta =
+    note.bodyDelta =
         normalizeRichTextDelta(
-          note.bodyDelta
+            note.bodyDelta
         );
 
-      if (note.bodyDelta) {
+    if (note.bodyDelta)
+    {
         note.bodyFormat =
-          'quill-delta-v1';
+            'quill-delta-v1';
 
         note.body =
-          plainTextFromRichTextDelta(
-            note.bodyDelta
-          );
-      } else {
+            plainTextFromRichTextDelta(
+                note.bodyDelta
+            );
+    }
+    else
+    {
         note.bodyDelta =
-          null;
+            null;
 
         note.bodyFormat =
-          '';
-      }
+            '';
+    }
 
-      note.collectionIds =
+    note.collectionIds =
         normalizeCentralNoteIdArray([
-          ...(
-            Array.isArray(
-              note.collectionIds
-            )
-              ? note.collectionIds
-              : []
-          ),
+            ...(
+                Array.isArray(
+                    note.collectionIds
+                )
+                    ? note.collectionIds
+                    : []
+            ),
 
-          note.collectionId
+            note.collectionId
         ]);
 
-      note.favorite =
+    note.favorite =
         Boolean(
-          note.favorite
+            note.favorite
           ?? note.pinned
         );
 
-      note.archived =
+    note.archived =
         Boolean(
-          note.archived
+            note.archived
         );
 
-      note.checklist =
+    note.checklist =
         normalizeCentralNoteChecklist(
-          note
+            note
         );
 
-      note.linkedPersonIds =
+    note.linkedPersonIds =
         normalizeCentralNoteIdArray([
-          ...(
-            Array.isArray(
-              note.linkedPersonIds
-            )
-              ? note.linkedPersonIds
-              : []
-          ),
+            ...(
+                Array.isArray(
+                    note.linkedPersonIds
+                )
+                    ? note.linkedPersonIds
+                    : []
+            ),
 
-          ...(
-            Array.isArray(
-              note.personIds
+            ...(
+                Array.isArray(
+                    note.personIds
+                )
+                    ? note.personIds
+                    : []
             )
-              ? note.personIds
-              : []
-          )
         ]);
 
-      note.linkedPlaceIds =
+    note.linkedPlaceIds =
         normalizeCentralNoteIdArray(
-          note.linkedPlaceIds
+            note.linkedPlaceIds
         );
 
-      note.linkedEventIds =
+    note.linkedEventIds =
         normalizeCentralNoteIdArray(
-          note.linkedEventIds
+            note.linkedEventIds
         );
 
-      note.linkedPhotoIds =
+    note.linkedPhotoIds =
         normalizeCentralNoteIdArray(
-          note.linkedPhotoIds
+            note.linkedPhotoIds
         ).filter(photoId =>
-          Boolean(
-            getPhoto(
-              photoId,
-              {
-                projectId:
+            Boolean(
+                getPhoto(
+                    photoId,
+                    {
+                        projectId:
                   note.projectId
-              }
+                    }
+                )
             )
-          )
         );
 
-      note.linkedArchiveFileIds =
+    note.linkedArchiveFileIds =
         normalizeCentralNoteIdArray(
-          note.linkedArchiveFileIds
+            note.linkedArchiveFileIds
         );
 
-      note.relatedNoteIds =
+    note.relatedNoteIds =
         normalizeCentralNoteIdArray([
-          ...(
-            Array.isArray(
-              note.relatedNoteIds
-            )
-              ? note.relatedNoteIds
-              : []
-          ),
+            ...(
+                Array.isArray(
+                    note.relatedNoteIds
+                )
+                    ? note.relatedNoteIds
+                    : []
+            ),
 
-          ...(
-            Array.isArray(
-              note.relatedNotes
+            ...(
+                Array.isArray(
+                    note.relatedNotes
+                )
+                    ? note.relatedNotes
+                    : []
             )
-              ? note.relatedNotes
-              : []
-          )
         ]);
 
-      note.createdAt =
+    note.createdAt =
         normalizeCentralNoteTimestamp(
-          note.createdAt,
-          fallbackTimestamp
+            note.createdAt,
+            fallbackTimestamp
         );
 
-      note.updatedAt =
+    note.updatedAt =
         normalizeCentralNoteTimestamp(
-          note.updatedAt,
-          note.createdAt
+            note.updatedAt,
+            note.createdAt
         );
 
-      [
+    [
         'type',
         'status',
         'collectionId',
@@ -3597,172 +3896,183 @@
         'personIds',
         'relatedNotes',
         'tags'
-      ].forEach(field => {
+    ].forEach(field =>
+    {
         delete note[field];
-      });
+    });
 
-      return note;
-    }
+    return note;
+}
 
 
-    function normalizeCentralNoteRelationships() {
-      const notesById =
+function normalizeCentralNoteRelationships()
+{
+    const notesById =
         new Map(
-          sampleData.notes.map(
-            note => [note.id, note]
-          )
+            sampleData.notes.map(
+                note => [note.id, note]
+            )
         );
 
-      sampleData.notes.forEach(note => {
+    sampleData.notes.forEach(note =>
+    {
         note.relatedNoteIds =
-          normalizeCentralNoteIdArray(
-            note.relatedNoteIds
-          ).filter(relatedId => {
-            const related =
-              notesById.get(relatedId);
+            normalizeCentralNoteIdArray(
+                note.relatedNoteIds
+            ).filter(relatedId =>
+            {
+                const related =
+                    notesById.get(relatedId);
 
-            return Boolean(
-              related
+                return Boolean(
+                    related
               && related.id !== note.id
               && related.projectId
                 === note.projectId
-            );
-          });
-      });
+                );
+            });
+    });
 
-      sampleData.notes.forEach(note => {
+    sampleData.notes.forEach(note =>
+    {
         note.relatedNoteIds.forEach(
-          relatedId => {
-            const related =
-              notesById.get(relatedId);
+            relatedId =>
+            {
+                const related =
+                    notesById.get(relatedId);
 
-            if (
-              related
+                if (
+                    related
               && !related.relatedNoteIds
-                .includes(note.id)
-            ) {
-              related.relatedNoteIds.push(
-                note.id
-              );
+                  .includes(note.id)
+                )
+                {
+                    related.relatedNoteIds.push(
+                        note.id
+                    );
+                }
             }
-          }
         );
-      });
+    });
 
-      sampleData.notes.forEach(note => {
+    sampleData.notes.forEach(note =>
+    {
         note.relatedNoteIds =
-          normalizeCentralNoteIdArray(
-            note.relatedNoteIds
-          );
-      });
-    }
+            normalizeCentralNoteIdArray(
+                note.relatedNoteIds
+            );
+    });
+}
 
-    function normalizeCentralNotes() {
-      sampleData.noteCollections =
+function normalizeCentralNotes()
+{
+    sampleData.noteCollections =
         sampleData.noteCollections
-          .filter(collection =>
-            collection
+            .filter(collection =>
+                collection
             && typeof collection
               === 'object'
-          )
-          .map(collection => {
-            collection.id =
-              String(
-                collection.id || ''
-              ).trim();
+            )
+            .map(collection =>
+            {
+                collection.id =
+                    String(
+                        collection.id || ''
+                    ).trim();
 
-            collection.projectId =
-              String(
-                collection.projectId || ''
-              ).trim();
+                collection.projectId =
+                    String(
+                        collection.projectId || ''
+                    ).trim();
 
-            collection.name =
-              String(
-                collection.name || ''
-              ).trim();
+                collection.name =
+                    String(
+                        collection.name || ''
+                    ).trim();
 
-            collection.description =
-              typeof collection.description
+                collection.description =
+                    typeof collection.description
                 === 'string'
-                  ? collection.description
-                      .trim()
-                  : '';
+                        ? collection.description
+                            .trim()
+                        : '';
 
-            return collection;
-          });
+                return collection;
+            });
 
-      sampleData.notes =
+    sampleData.notes =
         sampleData.notes
-          .filter(note =>
-            note
+            .filter(note =>
+                note
             && typeof note
               === 'object'
-          )
-          .map(
-            normalizeCentralNoteRecord
-          );
-    }
+            )
+            .map(
+                normalizeCentralNoteRecord
+            );
+}
 
-    function normalizeCentralRuntimeData() {
-      sampleData.projects = Array.isArray(sampleData.projects) ? sampleData.projects : [];
-      sampleData.people = Array.isArray(sampleData.people) ? sampleData.people : [];
-      sampleData.places = Array.isArray(sampleData.places) ? sampleData.places : [];
-      sampleData.placeSavedFilters =
+function normalizeCentralRuntimeData()
+{
+    sampleData.projects = Array.isArray(sampleData.projects) ? sampleData.projects : [];
+    sampleData.people = Array.isArray(sampleData.people) ? sampleData.people : [];
+    sampleData.places = Array.isArray(sampleData.places) ? sampleData.places : [];
+    sampleData.placeSavedFilters =
         Array.isArray(
-          sampleData.placeSavedFilters
+            sampleData.placeSavedFilters
         )
-          ? sampleData.placeSavedFilters
-          : [];
-      sampleData.placeIssues = Array.isArray(sampleData.placeIssues) ? sampleData.placeIssues : [];
-      sampleData.sources = Array.isArray(sampleData.sources) ? sampleData.sources : [];
-      sampleData.sourceLinks =
+            ? sampleData.placeSavedFilters
+            : [];
+    sampleData.placeIssues = Array.isArray(sampleData.placeIssues) ? sampleData.placeIssues : [];
+    sampleData.sources = Array.isArray(sampleData.sources) ? sampleData.sources : [];
+    sampleData.sourceLinks =
         Array.isArray(
-          sampleData.sourceLinks
+            sampleData.sourceLinks
         )
-          ? sampleData.sourceLinks
-          : [];
-      sampleData.archiveFiles = Array.isArray(sampleData.archiveFiles) ? sampleData.archiveFiles : [];
-      sampleData.notes =
+            ? sampleData.sourceLinks
+            : [];
+    sampleData.archiveFiles = Array.isArray(sampleData.archiveFiles) ? sampleData.archiveFiles : [];
+    sampleData.notes =
         Array.isArray(
-          sampleData.notes
+            sampleData.notes
         )
-          ? sampleData.notes
-          : [];
+            ? sampleData.notes
+            : [];
 
-      sampleData.noteCollections =
+    sampleData.noteCollections =
         Array.isArray(
-          sampleData.noteCollections
+            sampleData.noteCollections
         )
-          ? sampleData.noteCollections
-          : [];
+            ? sampleData.noteCollections
+            : [];
 
-      normalizeCentralNotes();
-      sampleData.boardCollections =
+    normalizeCentralNotes();
+    sampleData.boardCollections =
         Array.isArray(
-          sampleData.boardCollections
+            sampleData.boardCollections
         )
-          ? sampleData.boardCollections
-          : [];
+            ? sampleData.boardCollections
+            : [];
 
-      sampleData.boards =
+    sampleData.boards =
         Array.isArray(
-          sampleData.boards
+            sampleData.boards
         )
-          ? sampleData.boards
-          : [];
+            ? sampleData.boards
+            : [];
 
-      normalizeGeneographRuntimeData();
-      sampleData.publishDrafts = Array.isArray(sampleData.publishDrafts) ? sampleData.publishDrafts : [];
-      sampleData.notifications = Array.isArray(sampleData.notifications) ? sampleData.notifications : [];
-      sampleData.activity = Array.isArray(sampleData.activity) ? sampleData.activity : [];
-      normalizePlaceSavedFilters();
-      normalizeCentralPlaceRecords();
-      normalizePlaceIssueDismissals();
-      normalizeEventPlaceAddresses();
-      normalizeSampleGenealogyDates();
-      rebuildSampleEventsAndPruneSourceLinks();
-      validateSampleData();
-    }
+    normalizeGeneographRuntimeData();
+    sampleData.publishDrafts = Array.isArray(sampleData.publishDrafts) ? sampleData.publishDrafts : [];
+    sampleData.notifications = Array.isArray(sampleData.notifications) ? sampleData.notifications : [];
+    sampleData.activity = Array.isArray(sampleData.activity) ? sampleData.activity : [];
+    normalizePlaceSavedFilters();
+    normalizeCentralPlaceRecords();
+    normalizePlaceIssueDismissals();
+    normalizeEventPlaceAddresses();
+    normalizeSampleGenealogyDates();
+    rebuildSampleEventsAndPruneSourceLinks();
+    validateSampleData();
+}
 
-    normalizeCentralRuntimeData();
-    state.projectContinuation = readProjectContinuation();
+normalizeCentralRuntimeData();
+state.projectContinuation = readProjectContinuation();

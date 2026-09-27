@@ -1,127 +1,129 @@
-    // ---------- Archive: genealogy file manager MVP ----------
+// ---------- Archive: genealogy file manager MVP ----------
 
-    sampleData.archiveFolders = [
-      { id: 'pawford', projectId: 'p1', parentId: 'null', name: 'Archives', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-06-02T10:00:00Z' },
-      { id: 'fond12', projectId: 'p1', parentId: 'pawford', name: 'United Kingdom', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-06-02T10:00:00Z' },
-      { id: 'opis3', projectId: 'p1', parentId: 'fond12', name: 'North Yorkshire', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-06-02T10:00:00Z' },
-      { id: 'delo44', projectId: 'p1', parentId: 'opis3', name: 'Pawford registers', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-06-02T10:00:00Z' },
-      { id: 'delo45', projectId: 'p1', parentId: 'opis3', name: 'Household books', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-05-28T10:00:00Z' },
-      { id: 'documents', projectId: 'p1', parentId: 'null', name: 'Family documents', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-05-19T10:00:00Z' },
-      { id: 'certificates', projectId: 'p1', parentId: 'documents', name: 'Certificates', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-05-19T10:00:00Z' },
-      { id: 'interviews', projectId: 'p1', parentId: 'null', name: 'Interviews and correspondence', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-04-05T10:00:00Z' },
-      { id: 'albums-origin', projectId: 'p1', parentId: 'null', name: 'Books and reference', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-03-29T10:00:00Z' },
-      { id: 'unsorted', projectId: 'p1', parentId: 'null', name: 'Scanned material', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-06-02T10:00:00Z' },
-      { id: 'inbox', projectId: 'p1', parentId: 'null', name: 'Unfiled', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-06-01T10:00:00Z' }
-    ];
+sampleData.archiveFolders = [
+    { id: 'pawford', projectId: 'p1', parentId: 'null', name: 'Archives', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-06-02T10:00:00Z' },
+    { id: 'fond12', projectId: 'p1', parentId: 'pawford', name: 'United Kingdom', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-06-02T10:00:00Z' },
+    { id: 'opis3', projectId: 'p1', parentId: 'fond12', name: 'North Yorkshire', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-06-02T10:00:00Z' },
+    { id: 'delo44', projectId: 'p1', parentId: 'opis3', name: 'Pawford registers', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-06-02T10:00:00Z' },
+    { id: 'delo45', projectId: 'p1', parentId: 'opis3', name: 'Household books', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-05-28T10:00:00Z' },
+    { id: 'documents', projectId: 'p1', parentId: 'null', name: 'Family documents', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-05-19T10:00:00Z' },
+    { id: 'certificates', projectId: 'p1', parentId: 'documents', name: 'Certificates', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-05-19T10:00:00Z' },
+    { id: 'interviews', projectId: 'p1', parentId: 'null', name: 'Interviews and correspondence', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-04-05T10:00:00Z' },
+    { id: 'albums-origin', projectId: 'p1', parentId: 'null', name: 'Books and reference', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-03-29T10:00:00Z' },
+    { id: 'unsorted', projectId: 'p1', parentId: 'null', name: 'Scanned material', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-06-02T10:00:00Z' },
+    { id: 'inbox', projectId: 'p1', parentId: 'null', name: 'Unfiled', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-06-01T10:00:00Z' }
+];
 
-    const SOURCE_CATEGORIES =
-      Object.freeze([
+const SOURCE_CATEGORIES =
+    Object.freeze([
         Object.freeze({
-          value:
+            value:
             'institution',
 
-          label:
+            label:
             'Archive, library, or institution',
 
-          shortLabel:
+            shortLabel:
             'Institutions'
         }),
 
         Object.freeze({
-          value:
+            value:
             'online',
 
-          label:
+            label:
             'Website or online database',
 
-          shortLabel:
+            shortLabel:
             'Online sources'
         }),
 
         Object.freeze({
-          value:
+            value:
             'publication',
 
-          label:
+            label:
             'Book, newspaper, or publication',
 
-          shortLabel:
+            shortLabel:
             'Publications'
         }),
 
         Object.freeze({
-          value:
+            value:
             'person',
 
-          label:
+            label:
             'Person, interview, or correspondence',
 
-          shortLabel:
+            shortLabel:
             'People & correspondence'
         }),
 
         Object.freeze({
-          value:
+            value:
             'private-collection',
 
-          label:
+            label:
             'Family or personal collection',
 
-          shortLabel:
+            shortLabel:
             'Family & personal'
         }),
 
         Object.freeze({
-          value:
+            value:
             'other',
 
-          label:
+            label:
             'Other source',
 
-          shortLabel:
+            shortLabel:
             'Other'
         })
-      ]);
+    ]);
 
-    const SOURCE_CATEGORY_BY_VALUE =
-      new Map(
+const SOURCE_CATEGORY_BY_VALUE =
+    new Map(
         SOURCE_CATEGORIES.map(
-          category => [
-            category.value,
-            category
-          ]
+            category => [
+                category.value,
+                category
+            ]
         )
-      );
+    );
 
-    function sourceCategoryLabel(
-      value,
-      fallback =
+function sourceCategoryLabel(
+    value,
+    fallback =
         'Not categorized'
-    ) {
-      return SOURCE_CATEGORY_BY_VALUE
+)
+{
+    return SOURCE_CATEGORY_BY_VALUE
         .get(value)
         ?.label
         || fallback;
-    }
+}
 
-    function localizedSourceCategoryLabel(
-      value,
-      fallback =
+function localizedSourceCategoryLabel(
+    value,
+    fallback =
         'Not categorized'
-    ) {
-      const label =
+)
+{
+    const label =
         sourceCategoryLabel(
-          value,
-          fallback
+            value,
+            fallback
         );
 
-      return label
+    return label
         ? translateText(label)
         : '';
-    }
+}
 
-    sampleData.sources = [
-      {
+sampleData.sources = [
+    {
         id:
           'as1',
 
@@ -160,9 +162,9 @@
 
         updatedAt:
           '2026-06-02T10:00:00Z'
-      },
+    },
 
-      {
+    {
         id:
           'as2',
 
@@ -201,9 +203,9 @@
 
         updatedAt:
           '2026-05-28T10:00:00Z'
-      },
+    },
 
-      {
+    {
         id:
           'as3',
 
@@ -242,9 +244,9 @@
 
         updatedAt:
           '2026-05-19T10:00:00Z'
-      },
+    },
 
-      {
+    {
         id:
           'as4',
 
@@ -283,9 +285,9 @@
 
         updatedAt:
           '2026-04-05T10:00:00Z'
-      },
+    },
 
-      {
+    {
         id:
           'as5',
 
@@ -324,9 +326,9 @@
 
         updatedAt:
           '2026-03-29T10:00:00Z'
-      },
+    },
 
-      {
+    {
         id:
           'as6',
 
@@ -365,783 +367,837 @@
 
         updatedAt:
           '2026-06-01T10:00:00Z'
-      }
-    ];
+    }
+];
 
-    function sourceCategoryShortLabel(
-      value,
-      fallback =
+function sourceCategoryShortLabel(
+    value,
+    fallback =
         'Not categorized'
-    ) {
-      return SOURCE_CATEGORY_BY_VALUE
+)
+{
+    return SOURCE_CATEGORY_BY_VALUE
         .get(value)
         ?.shortLabel
         || fallback;
-    }
+}
 
-    function localizedSourceCategoryShortLabel(
-      value,
-      fallback =
+function localizedSourceCategoryShortLabel(
+    value,
+    fallback =
         'Not categorized'
-    ) {
-      const label =
+)
+{
+    const label =
         sourceCategoryShortLabel(
-          value,
-          fallback
+            value,
+            fallback
         );
 
-      return label
+    return label
         ? translateText(label)
         : '';
-    }
+}
 
-    const archiveMarriageEventId =
-      (sampleData.events || []).find(event =>
+const archiveMarriageEventId =
+    (sampleData.events || []).find(event =>
         event.type === 'marriage'
         && (event.personIds || []).includes('barnaby')
         && (event.personIds || []).includes('luna')
-      )?.id || '';
+    )?.id || '';
 
-    sampleData.archiveFiles = [
-      {
+sampleData.archiveFiles = [
+    {
         id: 'af1', projectId: 'p1', folderId: 'delo44', name: 'pawford_household_register_1946.pdf', kind: 'pdf', type: 'PDF document', mimeType: 'application/pdf', size: '3.2 MB', sizeBytes: 3355443,
         favorite: true, description: 'Household register extract supporting Daisy Milkpaw’s birth and household context.',
         documentDate: { type: 'Exact date', value: '1946' }, linkedPersonIds: ['daisy'], linkedEventIds: ['event-daisy-birth'], linkedNoteIds: [], linkedPlaceIds: ['place-old-cattery'], placeIds: ['place-old-cattery'],
         addedAt: '2026-06-02T09:20:00Z', updatedAt: '2026-06-02T09:20:00Z', added: 'Jun 2, 2026', updated: 'Jun 2, 2026'
-      },
-      {
+    },
+    {
         id: 'af2', projectId: 'p1', folderId: 'delo44', name: 'pawford_household_1940_scan.jpg', kind: 'img', type: 'Image', mimeType: 'image/jpeg', size: '4.8 MB', sizeBytes: 5033165,
         favorite: false, description: 'Household scan that may connect members of the Whiskerfield family in Pawford.',
-        documentDate: { type: 'Exact date', value: '1940' }, linkedPersonIds: ['barnaby'], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: ['place-pawford'], placeIds: ['place-pawford'], 
+        documentDate: { type: 'Exact date', value: '1940' }, linkedPersonIds: ['barnaby'], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: ['place-pawford'], placeIds: ['place-pawford'],
         addedAt: '2026-06-02T08:40:00Z', updatedAt: '2026-06-02T08:40:00Z', added: 'Jun 2, 2026', updated: 'Jun 2, 2026'
-      },
-      {
+    },
+    {
         id: 'af3', projectId: 'p1', folderId: 'delo44', name: 'index_page_044_12.jpg', kind: 'img', type: 'Image', mimeType: 'image/jpeg', size: '1.7 MB', sizeBytes: 1782579,
         favorite: false, description: 'Index page from the Pawford register collection.',
-        documentDate: { type: 'Unknown', value: '' }, linkedPersonIds: [], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: [], placeIds: [], 
+        documentDate: { type: 'Unknown', value: '' }, linkedPersonIds: [], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: [], placeIds: [],
         addedAt: '2026-06-01T14:10:00Z', updatedAt: '2026-06-01T14:10:00Z', added: 'Jun 1, 2026', updated: 'Jun 1, 2026'
-      },
-      {
+    },
+    {
         id: 'af4', projectId: 'p1', folderId: 'delo45', name: 'family_register_1951.pdf', kind: 'pdf', type: 'PDF document', mimeType: 'application/pdf', size: '5.1 MB', sizeBytes: 5347738,
         favorite: false, description: 'Continuation register containing entries connected to Luna Purrington’s family.',
-        documentDate: { type: 'Exact date', value: '1951' }, linkedPersonIds: ['luna'], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: ['place-pawford'], placeIds: ['place-pawford'], 
+        documentDate: { type: 'Exact date', value: '1951' }, linkedPersonIds: ['luna'], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: ['place-pawford'], placeIds: ['place-pawford'],
         addedAt: '2026-05-28T12:00:00Z', updatedAt: '2026-05-28T12:00:00Z', added: 'May 28, 2026', updated: 'May 28, 2026'
-      },
-      {
+    },
+    {
         id: 'af5', projectId: 'p1', folderId: 'certificates', name: 'meowbridge_marriage_record.pdf', kind: 'pdf', type: 'PDF document', mimeType: 'application/pdf', size: '2.1 MB', sizeBytes: 2202009,
         favorite: true, description: 'Marriage certificate linked to the family relationship and Meowbridge.',
-        documentDate: { type: 'Exact date', value: '1989' }, linkedPersonIds: ['barnaby', 'luna'], linkedEventIds: archiveMarriageEventId ? [archiveMarriageEventId] : [], linkedNoteIds: [], linkedPlaceIds: ['place-meowbridge'], placeIds: ['place-meowbridge'], 
+        documentDate: { type: 'Exact date', value: '1989' }, linkedPersonIds: ['barnaby', 'luna'], linkedEventIds: archiveMarriageEventId ? [archiveMarriageEventId] : [], linkedNoteIds: [], linkedPlaceIds: ['place-meowbridge'], placeIds: ['place-meowbridge'],
         addedAt: '2026-05-19T10:00:00Z', updatedAt: '2026-05-19T10:00:00Z', added: 'May 19, 2026', updated: 'May 19, 2026'
-      },
-      {
+    },
+    {
         id: 'af6', projectId: 'p1', folderId: 'interviews', name: 'luna_family_memories_2026_04_02.mp3', kind: 'audio', type: 'Audio', mimeType: 'audio/mpeg', size: '28 MB', sizeBytes: 29360128,
         favorite: true, description: 'Recorded oral-history interview with Luna Purrington.',
-        documentDate: { type: 'Exact date', value: '2 Apr 2026' }, linkedPersonIds: ['luna'], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: [], placeIds: [], 
+        documentDate: { type: 'Exact date', value: '2 Apr 2026' }, linkedPersonIds: ['luna'], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: [], placeIds: [],
         addedAt: '2026-04-03T10:00:00Z', updatedAt: '2026-04-05T10:00:00Z', added: 'Apr 3, 2026', updated: 'Apr 5, 2026'
-      },
-      {
+    },
+    {
         id: 'af7', projectId: 'p1', folderId: 'albums-origin', name: 'whiskerfield_family_reference_cover.jpg', kind: 'img', type: 'Image', mimeType: 'image/jpeg', size: '2.6 MB', sizeBytes: 2726298,
         favorite: false, description: 'Reference image stored in Archive; it is not duplicated into Albums.',
-        documentDate: { type: 'Unknown', value: '' }, linkedPersonIds: ['silver'], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: [], placeIds: [], 
+        documentDate: { type: 'Unknown', value: '' }, linkedPersonIds: ['silver'], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: [], placeIds: [],
         addedAt: '2026-03-29T10:00:00Z', updatedAt: '2026-03-29T10:00:00Z', added: 'Mar 29, 2026', updated: 'Mar 29, 2026'
-      },
-      {
+    },
+    {
         id: 'af8', projectId: 'p1', folderId: 'unsorted', name: 'scan_0007_unknown_record.jpg', kind: 'img', type: 'Image', mimeType: 'image/jpeg', size: '1.9 MB', sizeBytes: 1992294,
         favorite: false, description: 'Unidentified scan retained for later organization.',
         documentDate: { type: 'Unknown', value: '' }, linkedPersonIds: [], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: [], placeIds: [],
         addedAt: '2026-06-02T11:00:00Z', updatedAt: '2026-06-02T11:00:00Z', added: 'Jun 2, 2026', updated: 'Jun 2, 2026'
-      },
-      {
+    },
+    {
         id: 'af9', projectId: 'p1', folderId: 'inbox', name: 'online_extract_pawford_records.pdf', kind: 'pdf', type: 'PDF document', mimeType: 'application/pdf', size: '900 KB', sizeBytes: 921600,
         favorite: false, description: 'Downloaded extract from the regional Pawford records database.',
-        documentDate: { type: 'Between', value: '1900–1950' }, linkedPersonIds: [], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: ['place-pawford'], placeIds: ['place-pawford'], 
+        documentDate: { type: 'Between', value: '1900–1950' }, linkedPersonIds: [], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: ['place-pawford'], placeIds: ['place-pawford'],
         addedAt: '2026-06-01T10:00:00Z', updatedAt: '2026-06-01T10:00:00Z', added: 'Jun 1, 2026', updated: 'Jun 1, 2026'
-      }
-    ];
+    }
+];
 
-    sampleData.archiveFiles.forEach(file => {
-      const place =
+sampleData.archiveFiles.forEach(file =>
+{
+    const place =
         archiveDocumentPlace(
-          file
+            file
         );
 
-      archiveApplyDocumentPlace(
+    archiveApplyDocumentPlace(
         file,
         place.placeId,
         place.placeText
-      );
-    });
+    );
+});
 
-    sampleData.archiveImports = [];
-    sampleData.archiveIssues = [];
+sampleData.archiveImports = [];
+sampleData.archiveIssues = [];
 
-    function archiveFolderById(id, projectId = currentProjectId()) {
-      if (!id || !projectId) return null;
-      return (sampleData.archiveFolders || []).find(folder =>
+function archiveFolderById(id, projectId = currentProjectId())
+{
+    if (!id || !projectId) return null;
+    return (sampleData.archiveFolders || []).find(folder =>
         folder.id === id
         && folder.projectId === projectId
-      ) || null;
-    }
+    ) || null;
+}
 
-    function archiveFileById(id, projectId = currentProjectId()) {
-      if (!id || !projectId) return null;
-      return (sampleData.archiveFiles || []).find(file =>
+function archiveFileById(id, projectId = currentProjectId())
+{
+    if (!id || !projectId) return null;
+    return (sampleData.archiveFiles || []).find(file =>
         file.id === id
         && file.projectId === projectId
-      ) || null;
-    }
+    ) || null;
+}
 
-    function archiveSourceById(id, projectId = currentProjectId()) {
-      if (!id || !projectId) return null;
-      return (sampleData.sources || []).find(source =>
+function archiveSourceById(id, projectId = currentProjectId())
+{
+    if (!id || !projectId) return null;
+    return (sampleData.sources || []).find(source =>
         source.id === id
         && source.projectId === projectId
-      ) || null;
-    }
+    ) || null;
+}
 
-    const SOURCE_LINK_TARGET_TYPES =
-      Object.freeze([
+const SOURCE_LINK_TARGET_TYPES =
+    Object.freeze([
         'file',
         'photo',
         'person',
         'event',
         'note',
         'place'
-      ]);
+    ]);
 
-    function sourceTargetRecord(
-      targetType,
-      targetId,
-      projectId =
+function sourceTargetRecord(
+    targetType,
+    targetId,
+    projectId =
         currentProjectId()
-    ) {
-      if (
+)
+{
+    if (
         !SOURCE_LINK_TARGET_TYPES.includes(
-          targetType
+            targetType
         )
         || !targetId
-      ) {
+    )
+    {
         return null;
-      }
+    }
 
-      let record =
+    let record =
         null;
 
-      if (targetType === 'file') {
+    if (targetType === 'file')
+    {
         record =
-          archiveFileById(
-            targetId,
-            projectId
-          );
-      } else if (
+            archiveFileById(
+                targetId,
+                projectId
+            );
+    }
+    else if (
         targetType === 'photo'
-      ) {
+    )
+    {
         record =
-          getPhoto(
-            targetId,
-            {
-              projectId
-            }
-          );
-      } else if (
+            getPhoto(
+                targetId,
+                {
+                    projectId
+                }
+            );
+    }
+    else if (
         targetType === 'person'
-      ) {
+    )
+    {
         record =
-          getPerson(
-            targetId
-          );
-      } else if (
+            getPerson(
+                targetId
+            );
+    }
+    else if (
         targetType === 'event'
-      ) {
+    )
+    {
         record =
-          (
-            sampleData.events || []
-          ).find(event =>
-            event.id === targetId
-          )
+            (
+                sampleData.events || []
+            ).find(event =>
+                event.id === targetId
+            )
           || null;
-      } else if (
+    }
+    else if (
         targetType === 'note'
-      ) {
+    )
+    {
         record =
-          getNote(
-            targetId,
-            {
-              projectId,
-              includeArchived:
+            getNote(
+                targetId,
+                {
+                    projectId,
+                    includeArchived:
                 true
-            }
-          );
-      } else if (
+                }
+            );
+    }
+    else if (
         targetType === 'place'
-      ) {
+    )
+    {
         record =
-          getPlace(
-            targetId
-          );
-      }
+            getPlace(
+                targetId
+            );
+    }
 
-      if (
+    if (
         !record
         || (
-          projectId
+            projectId
           && record.projectId
           && record.projectId
             !== projectId
         )
-      ) {
+    )
+    {
         return null;
-      }
-
-      return record;
     }
 
-    function sourceLinksForProject(
-      projectId =
+    return record;
+}
+
+function sourceLinksForProject(
+    projectId =
         currentProjectId()
-    ) {
-      return (
+)
+{
+    return (
         sampleData.sourceLinks || []
-      ).filter(link =>
+    ).filter(link =>
         !projectId
         || link.projectId
           === projectId
-      );
-    }
+    );
+}
 
-    function sourceLinksForSource(
-      sourceId,
-      targetType = '',
-      projectId =
+function sourceLinksForSource(
+    sourceId,
+    targetType = '',
+    projectId =
         currentProjectId()
-    ) {
-      return sourceLinksForProject(
+)
+{
+    return sourceLinksForProject(
         projectId
-      ).filter(link =>
+    ).filter(link =>
         link.sourceId === sourceId
         && (
-          !targetType
+            !targetType
           || link.targetType
             === targetType
         )
-      );
-    }
+    );
+}
 
-    function sourceLinksForTarget(
-      targetType,
-      targetId,
-      projectId =
+function sourceLinksForTarget(
+    targetType,
+    targetId,
+    projectId =
         currentProjectId()
-    ) {
-      return sourceLinksForProject(
+)
+{
+    return sourceLinksForProject(
         projectId
-      ).filter(link =>
+    ).filter(link =>
         link.targetType === targetType
         && link.targetId === targetId
-      );
-    }
+    );
+}
 
-    function sourceTargetIds(
-      sourceId,
-      targetType,
-      projectId =
+function sourceTargetIds(
+    sourceId,
+    targetType,
+    projectId =
         currentProjectId()
-    ) {
-      return archiveUniqueIds(
+)
+{
+    return archiveUniqueIds(
         sourceLinksForSource(
-          sourceId,
-          targetType,
-          projectId
+            sourceId,
+            targetType,
+            projectId
         ).map(link =>
-          link.targetId
+            link.targetId
         )
-      );
-    }
+    );
+}
 
-    function sourceIdsForTarget(
-      targetType,
-      targetId,
-      projectId =
+function sourceIdsForTarget(
+    targetType,
+    targetId,
+    projectId =
         currentProjectId()
-    ) {
-      return archiveUniqueIds(
+)
+{
+    return archiveUniqueIds(
         sourceLinksForTarget(
-          targetType,
-          targetId,
-          projectId
+            targetType,
+            targetId,
+            projectId
         ).map(link =>
-          link.sourceId
+            link.sourceId
         )
-      );
+    );
+}
+
+function connectedSourceTargetLabel(
+    targetType,
+    target
+)
+{
+    if (!target)
+    {
+        return 'record';
     }
 
-    function connectedSourceTargetLabel(
-      targetType,
-      target
-    ) {
-      if (!target) {
-        return 'record';
-      }
-
-      if (targetType === 'person') {
+    if (targetType === 'person')
+    {
         return (
-          personResourceDisplayName(target)
+            personResourceDisplayName(target)
           || target.name
           || 'person'
         );
-      }
+    }
 
-      if (targetType === 'photo') {
+    if (targetType === 'photo')
+    {
         return (
-          target.title
+            target.title
           || target.filename
           || 'photo'
         );
-      }
+    }
 
-      if (targetType === 'file') {
+    if (targetType === 'file')
+    {
         return (
-          target.name
+            target.name
           || target.title
           || 'file'
         );
-      }
+    }
 
-      if (targetType === 'event') {
+    if (targetType === 'event')
+    {
         return (
-          target.title
+            target.title
           || target.typeLabel
           || target.type
           || 'event'
         );
-      }
+    }
 
-      if (targetType === 'note') {
+    if (targetType === 'note')
+    {
         return (
-          target.title
+            target.title
           || 'note'
         );
-      }
+    }
 
-      if (targetType === 'place') {
+    if (targetType === 'place')
+    {
         return (
-          placeDisplayText(target)
+            placeDisplayText(target)
           || target.name
           || 'place'
         );
-      }
+    }
 
-      return (
+    return (
         target.title
         || target.name
         || 'record'
-      );
-    }
+    );
+}
 
-    function currentArchiveSourceTargetFilter() {
-      const filter =
+function currentArchiveSourceTargetFilter()
+{
+    const filter =
         state.archiveSourceTargetFilter;
 
-      if (
+    if (
         !filter
         || !SOURCE_LINK_TARGET_TYPES.includes(
-          filter.targetType
+            filter.targetType
         )
         || !filter.targetId
         || filter.projectId
           !== currentProjectId()
-      ) {
+    )
+    {
         return null;
-      }
+    }
 
-      const target =
+    const target =
         sourceTargetRecord(
-          filter.targetType,
-          filter.targetId,
-          filter.projectId
+            filter.targetType,
+            filter.targetId,
+            filter.projectId
         );
 
-      return target
+    return target
         ? {
             ...filter,
             target
-          }
+        }
         : null;
+}
+
+function openArchiveSourcesForTarget({
+    targetType,
+    targetId,
+    projectId =
+        currentProjectId()
+})
+{
+    const target =
+        sourceTargetRecord(
+            targetType,
+            targetId,
+            projectId
+        );
+
+    if (!target)
+    {
+        showToast(
+            'The connected record is no longer available.'
+        );
+
+        return;
     }
 
-    function openArchiveSourcesForTarget({
-      targetType,
-      targetId,
-      projectId =
-        currentProjectId()
-    }) {
-      const target =
-        sourceTargetRecord(
-          targetType,
-          targetId,
-          projectId
-        );
-
-      if (!target) {
-        showToast(
-          'The connected record is no longer available.'
-        );
-
-        return;
-      }
-
-      const sourceIds =
+    const sourceIds =
         sourceIdsForTarget(
-          targetType,
-          targetId,
-          projectId
+            targetType,
+            targetId,
+            projectId
         );
 
-      const activated =
+    const activated =
         activateProject(
-          projectId,
-          {
-            moduleName:
+            projectId,
+            {
+                moduleName:
               'Archive',
 
-            renderNow:
+                renderNow:
               false,
 
-            reset:
+                reset:
               false
-          }
+            }
         );
 
-      if (!activated) {
+    if (!activated)
+    {
         return;
-      }
+    }
 
-      state.archiveView =
+    state.archiveView =
         'sources';
 
-      state.archiveSearch =
+    state.archiveSearch =
         '';
 
-      state.archiveSourceCategoryFilter =
+    state.archiveSourceCategoryFilter =
         'all';
 
-      state.archiveSourceConnectionFilter =
+    state.archiveSourceConnectionFilter =
         'all';
 
-      state.archiveSourceFavouriteOnly =
+    state.archiveSourceFavouriteOnly =
         false;
 
-      state.archiveSourceTargetFilter = {
+    state.archiveSourceTargetFilter = {
         targetType,
         targetId,
         projectId
-      };
+    };
 
-      state.archiveSelectedSourceId =
+    state.archiveSelectedSourceId =
         sourceIds[0]
         || null;
 
-      state.archiveSelectedFileId =
+    state.archiveSelectedFileId =
         null;
 
-      state.archiveSelectedFileIds =
+    state.archiveSelectedFileIds =
         [];
 
-      state.archiveInspectorCollapsed =
+    state.archiveInspectorCollapsed =
         false;
 
-      render();
-    }
+    render();
+}
 
-    function setSourceIdsForTarget(
-      targetType,
-      targetId,
-      nextSourceIds,
-      {
+function setSourceIdsForTarget(
+    targetType,
+    targetId,
+    nextSourceIds,
+    {
         projectId =
-          currentProjectId()
-      } = {}
-    ) {
-      const target =
+            currentProjectId()
+    } = {}
+)
+{
+    const target =
         sourceTargetRecord(
-          targetType,
-          targetId,
-          projectId
+            targetType,
+            targetId,
+            projectId
         );
 
-      if (!target) {
+    if (!target)
+    {
         return null;
-      }
+    }
 
-      const targetProjectId =
+    const targetProjectId =
         target.projectId
         || projectId;
 
-      const normalizedSourceIds =
+    const normalizedSourceIds =
         archiveUniqueIds(
-          nextSourceIds
+            nextSourceIds
         );
 
-      const sources =
+    const sources =
         normalizedSourceIds.map(
-          sourceId =>
-            archiveSourceById(
-              sourceId,
-              targetProjectId
-            )
+            sourceId =>
+                archiveSourceById(
+                    sourceId,
+                    targetProjectId
+                )
         );
 
-      if (
+    if (
         sources.some(source =>
-          !source
+            !source
         )
-      ) {
+    )
+    {
         return null;
-      }
+    }
 
-      const desiredIds =
+    const desiredIds =
         new Set(
-          normalizedSourceIds
+            normalizedSourceIds
         );
 
-      const currentLinks =
+    const currentLinks =
         sourceLinksForTarget(
-          targetType,
-          targetId,
-          targetProjectId
+            targetType,
+            targetId,
+            targetProjectId
         );
 
-      const affectedSourceIds =
+    const affectedSourceIds =
         new Set([
-          ...currentLinks.map(link =>
-            link.sourceId
-          ),
-          ...normalizedSourceIds
+            ...currentLinks.map(link =>
+                link.sourceId
+            ),
+            ...normalizedSourceIds
         ]);
 
-      sampleData.sourceLinks =
+    sampleData.sourceLinks =
         (
-          sampleData.sourceLinks || []
-        ).filter(link => {
-          const sameTarget =
-            link.projectId
+            sampleData.sourceLinks || []
+        ).filter(link =>
+        {
+            const sameTarget =
+                link.projectId
               === targetProjectId
             && link.targetType
               === targetType
             && link.targetId
               === targetId;
 
-          return (
-            !sameTarget
+            return (
+                !sameTarget
             || desiredIds.has(
-              link.sourceId
+                link.sourceId
             )
-          );
+            );
         });
 
-      const retainedIds =
+    const retainedIds =
         new Set(
-          sourceIdsForTarget(
-            targetType,
-            targetId,
-            targetProjectId
-          )
+            sourceIdsForTarget(
+                targetType,
+                targetId,
+                targetProjectId
+            )
         );
 
-      normalizedSourceIds.forEach(
-        sourceId => {
-          if (
-            retainedIds.has(
-              sourceId
+    normalizedSourceIds.forEach(
+        sourceId =>
+        {
+            if (
+                retainedIds.has(
+                    sourceId
+                )
             )
-          ) {
-            return;
-          }
+            {
+                return;
+            }
 
-          sampleData.sourceLinks.push({
-            id:
+            sampleData.sourceLinks.push({
+                id:
               createRuntimeId(
-                'source-link'
+                  'source-link'
               ),
 
-            projectId:
+                projectId:
               targetProjectId,
 
-            sourceId,
-            targetType,
-            targetId
-          });
+                sourceId,
+                targetType,
+                targetId
+            });
         }
-      );
+    );
 
-      const now =
+    const now =
         new Date().toISOString();
 
-      affectedSourceIds.forEach(
-        sourceId => {
-          const source =
-            archiveSourceById(
-              sourceId,
-              targetProjectId
-            );
+    affectedSourceIds.forEach(
+        sourceId =>
+        {
+            const source =
+                archiveSourceById(
+                    sourceId,
+                    targetProjectId
+                );
 
-          if (source) {
-            source.updatedAt =
-              now;
-          }
+            if (source)
+            {
+                source.updatedAt =
+                    now;
+            }
         }
-      );
+    );
 
-      target.updatedAt =
+    target.updatedAt =
         now;
 
-      if (targetType === 'file') {
+    if (targetType === 'file')
+    {
         target.updated =
-          'Just now';
-      }
+            'Just now';
+    }
 
-      return sourceIdsForTarget(
+    return sourceIdsForTarget(
         targetType,
         targetId,
         targetProjectId
-      );
-    }
+    );
+}
 
-    function setSourceLink(
-      sourceId,
-      targetType,
-      targetId,
-      shouldLink = true,
-      {
+function setSourceLink(
+    sourceId,
+    targetType,
+    targetId,
+    shouldLink = true,
+    {
         projectId =
-          currentProjectId()
-      } = {}
-    ) {
-      const currentIds =
+            currentProjectId()
+    } = {}
+)
+{
+    const currentIds =
         sourceIdsForTarget(
-          targetType,
-          targetId,
-          projectId
+            targetType,
+            targetId,
+            projectId
         );
 
-      const nextIds =
+    const nextIds =
         shouldLink
-          ? archiveUniqueIds([
-              ...currentIds,
-              sourceId
+            ? archiveUniqueIds([
+                ...currentIds,
+                sourceId
             ])
-          : currentIds.filter(id =>
-              id !== sourceId
+            : currentIds.filter(id =>
+                id !== sourceId
             );
 
-      const savedIds =
+    const savedIds =
         setSourceIdsForTarget(
-          targetType,
-          targetId,
-          nextIds,
-          {
-            projectId
-          }
+            targetType,
+            targetId,
+            nextIds,
+            {
+                projectId
+            }
         );
 
-      if (!savedIds) {
+    if (!savedIds)
+    {
         return false;
-      }
-
-      return shouldLink
-        ? savedIds.includes(
-            sourceId
-          )
-        : !savedIds.includes(
-            sourceId
-          );
     }
 
-    function sourcesForTarget(
-      targetType,
-      targetId,
-      projectId =
-        currentProjectId()
-    ) {
-      if (
-        !sourceTargetRecord(
-          targetType,
-          targetId,
-          projectId
+    return shouldLink
+        ? savedIds.includes(
+            sourceId
         )
-      ) {
-        return [];
-      }
+        : !savedIds.includes(
+            sourceId
+        );
+}
 
-      return sourceIdsForTarget(
+function sourcesForTarget(
+    targetType,
+    targetId,
+    projectId =
+        currentProjectId()
+)
+{
+    if (
+        !sourceTargetRecord(
+            targetType,
+            targetId,
+            projectId
+        )
+    )
+    {
+        return [];
+    }
+
+    return sourceIdsForTarget(
         targetType,
         targetId,
         projectId
-      )
+    )
         .map(sourceId =>
-          archiveSourceById(
-            sourceId,
-            projectId
-          )
+            archiveSourceById(
+                sourceId,
+                projectId
+            )
         )
         .filter(Boolean);
-    }
+}
 
-    function connectedSourceMeta(
-      source
-    ) {
-      return [
+function connectedSourceMeta(
+    source
+)
+{
+    return [
         localizedSourceCategoryLabel(
-          source?.category,
-          ''
+            source?.category,
+            ''
         ),
 
         source?.providedBy,
 
         source?.reference
-      ]
+    ]
         .filter(Boolean)
         .slice(0, 2)
         .join(' · ')
         || 'Source record';
-    }
+}
 
-    function connectedSourceOrigin(
-      source
-    ) {
-      return String(
+function connectedSourceOrigin(
+    source
+)
+{
+    return String(
         source?.providedBy
         || source?.location
         || ''
-      ).trim()
+    ).trim()
       || 'Origin not specified';
-    }
+}
 
-    function connectedSourceDetailMeta(
-      source
-    ) {
-      const category =
+function connectedSourceDetailMeta(
+    source
+)
+{
+    const category =
         localizedSourceCategoryLabel(
-          source?.category,
-          ''
+            source?.category,
+            ''
         );
 
-      const reference =
+    const reference =
         String(
-          source?.reference
+            source?.reference
           || ''
         ).trim();
 
-      const accessed =
+    const accessed =
         source?.accessedDate
-          ? `Accessed ${
-              archiveFormatDate(
-                source.accessedDate
-              )
+            ? `Accessed ${
+                archiveFormatDate(
+                    source.accessedDate
+                )
             }`
-          : '';
+            : '';
 
-      return [
+    return [
         category,
 
         /*
@@ -1150,126 +1206,132 @@
           Use the date only as a fallback.
         */
         reference || accessed
-      ]
+    ]
         .filter(Boolean)
         .join(' · ')
         || 'Source record';
-    }
+}
 
-    function openConnectedSource(
-      sourceId,
-      projectId =
+function openConnectedSource(
+    sourceId,
+    projectId =
         currentProjectId()
-    ) {
-      const source =
+)
+{
+    const source =
         archiveSourceById(
-          sourceId,
-          projectId
+            sourceId,
+            projectId
         );
 
-      if (!source) {
+    if (!source)
+    {
         showToast(
-          'The source is no longer available.'
+            'The source is no longer available.'
         );
 
         return;
-      }
+    }
 
-      if (
+    if (
         state.activeModule === 'Archive'
         && typeof archiveRememberCurrentLocation
           === 'function'
-      ) {
+    )
+    {
         archiveRememberCurrentLocation();
-      }
+    }
 
-      state.activeModule =
+    state.activeModule =
         'Archive';
 
-      state.archiveView =
+    state.archiveView =
         'sources';
 
-      state.archiveSearch =
+    state.archiveSearch =
         '';
 
-      state.archiveSourceCategoryFilter =
+    state.archiveSourceCategoryFilter =
         'all';
 
-      state.archiveSourceConnectionFilter =
+    state.archiveSourceConnectionFilter =
         'all';
 
-      state.archiveSourceFavouriteOnly =
+    state.archiveSourceFavouriteOnly =
         false;
 
-      state.archiveSelectedSourceId =
+    state.archiveSelectedSourceId =
         source.id;
 
-      state.archiveInspectorCollapsed =
+    state.archiveInspectorCollapsed =
         false;
 
-      state.archiveSelectedFileIds =
+    state.archiveSelectedFileIds =
         [];
 
-      render();
-    }
-        function renderConnectedSourceList({
-      targetType,
-      targetId,
+    render();
+}
+function renderConnectedSourceList({
+    targetType,
+    targetId,
 
-      projectId =
+    projectId =
         currentProjectId(),
 
-      sources =
+    sources =
         sourcesForTarget(
-          targetType,
-          targetId,
-          projectId
+            targetType,
+            targetId,
+            projectId
         ),
 
-      emptyText =
+    emptyText =
         'No sources linked.',
 
-      readOnly =
+    readOnly =
         false
-    }) {
-      const validSources =
+})
+{
+    const validSources =
         (
-          Array.isArray(sources)
-            ? sources
-            : []
+            Array.isArray(sources)
+                ? sources
+                : []
         ).filter(Boolean);
 
-      const visibleSources =
+    const visibleSources =
         validSources.slice(0, 4);
 
-      if (!visibleSources.length) {
+    if (!visibleSources.length)
+    {
         return renderInspectorSectionEmpty(
-          emptyText
+            emptyText
         );
-      }
+    }
 
-      const sourceItems =
+    const sourceItems =
         visibleSources
-          .map(source => {
-            const title =
-              source.title
+            .map(source =>
+            {
+                const title =
+                    source.title
               || 'Untitled source';
 
-            const sourceProjectId =
-              source.projectId
+                const sourceProjectId =
+                    source.projectId
               || projectId;
 
-            const origin =
-              connectedSourceOrigin(
-                source
-              );
+                const origin =
+                    connectedSourceOrigin(
+                        source
+                    );
 
-            const metadata =
-              connectedSourceDetailMeta(
-                source
-              );
+                const metadata =
+                    connectedSourceDetailMeta(
+                        source
+                    );
 
-            const mainContent = `
+                const mainContent = `
               <span
                 class="connected-source-icon"
                 aria-hidden="true">
@@ -1309,7 +1371,7 @@
               </span>
             `;
 
-            return `
+                return `
               <div
                 class="
                   relation-row
@@ -1317,8 +1379,8 @@
                 ">
 
                 ${
-                  readOnly
-                    ? `
+                    readOnly
+                        ? `
                       <div
                         class="
                           relation-row-main
@@ -1328,7 +1390,7 @@
                         ${mainContent}
                       </div>
                     `
-                    : `
+                        : `
                       <button
                         class="
                           relation-row-main
@@ -1336,13 +1398,13 @@
                         "
                         type="button"
                         data-connected-source-open="${escapeHtml(
-                          source.id
+                            source.id
                         )}"
                         data-connected-source-project="${escapeHtml(
-                          sourceProjectId
+                            sourceProjectId
                         )}"
                         aria-label="Open source ${escapeHtml(
-                          title
+                            title
                         )}">
 
                         ${mainContent}
@@ -1351,9 +1413,9 @@
                 }
 
                 ${
-                  readOnly
-                    ? ''
-                    : `
+                    readOnly
+                        ? ''
+                        : `
                       <div class="relation-actions">
                         <button
                           class="
@@ -1362,20 +1424,20 @@
                           "
                           type="button"
                           data-connected-source-unlink="${escapeHtml(
-                            source.id
-                          )}"
+                                source.id
+                            )}"
                           data-connected-source-target-type="${escapeHtml(
-                            targetType
-                          )}"
+                                targetType
+                            )}"
                           data-connected-source-target-id="${escapeHtml(
-                            targetId
-                          )}"
+                                targetId
+                            )}"
                           data-connected-source-project="${escapeHtml(
-                            sourceProjectId
-                          )}"
+                                sourceProjectId
+                            )}"
                           aria-label="Unlink ${escapeHtml(
-                            title
-                          )}"
+                                title
+                            )}"
                           title="Unlink source">
 
                           ${icon.unlink}
@@ -1385,10 +1447,10 @@
                 }
               </div>
             `;
-          })
-          .join('');
+            })
+            .join('');
 
-      return `
+    return `
         <div
           class="relationship-list connected-source-list"
           data-connected-source-list>
@@ -1415,49 +1477,51 @@
           </button>
         </div>
       `;
-    }
+}
 
-    function openConnectedSourceUnlinkConfirm({
-      sourceId,
-      targetType,
-      targetId,
-      projectId = currentProjectId(),
-      onUnlinked = null
-    }) {
-      const source =
+function openConnectedSourceUnlinkConfirm({
+    sourceId,
+    targetType,
+    targetId,
+    projectId = currentProjectId(),
+    onUnlinked = null
+})
+{
+    const source =
         archiveSourceById(sourceId, projectId);
 
-      const target =
+    const target =
         sourceTargetRecord(
-          targetType,
-          targetId,
-          projectId
+            targetType,
+            targetId,
+            projectId
         );
 
-      if (!source || !target) {
+    if (!source || !target)
+    {
         showToast(
-          t('The source or connected record is no longer available.')
+            t('The source or connected record is no longer available.')
         );
         return;
-      }
+    }
 
-      const sourceLabel =
+    const sourceLabel =
         source.title || t('Untitled source');
 
-      const targetLabel =
+    const targetLabel =
         connectedSourceTargetLabel(targetType, target);
 
-      const question = t(
+    const question = t(
         'Remove the connection between “{source}” and “{record}”?'
-      ).replace(
+    ).replace(
         /\{source\}|\{record\}/g,
         token =>
-          token === '{source}'
-            ? sourceLabel
-            : targetLabel
-      );
+            token === '{source}'
+                ? sourceLabel
+                : targetLabel
+    );
 
-      openModal(`
+    openModal(`
         <div
           class="modal"
           role="dialog"
@@ -1489,7 +1553,7 @@
             <div class="unlink-relationship-warning">
               <span>
                 ${escapeHtml(t(
-                  'Only this connection will be removed. Both records and their other connections will remain in the project.'
+                    'Only this connection will be removed. Both records and their other connections will remain in the project.'
                 ))}
               </span>
             </div>
@@ -1513,291 +1577,309 @@
         </div>
       `);
 
-      const confirmButton =
+    const confirmButton =
         modalBackdrop.querySelector(
-          '[data-connected-source-confirm-unlink]'
+            '[data-connected-source-confirm-unlink]'
         );
 
-      confirmButton?.addEventListener('click', () => {
+    confirmButton?.addEventListener('click', () =>
+    {
         // Recheck the records before committing the change.
         const currentSource =
-          archiveSourceById(sourceId, projectId);
+            archiveSourceById(sourceId, projectId);
 
         const currentTarget =
-          sourceTargetRecord(
-            targetType,
-            targetId,
-            projectId
-          );
+            sourceTargetRecord(
+                targetType,
+                targetId,
+                projectId
+            );
 
-        if (!currentSource || !currentTarget) {
-          showToast(t(
-            'The source or connected record is no longer available.'
-          ));
-          return;
+        if (!currentSource || !currentTarget)
+        {
+            showToast(t(
+                'The source or connected record is no longer available.'
+            ));
+            return;
         }
 
         confirmButton.disabled = true;
 
         const removed = setSourceLink(
-          sourceId,
-          targetType,
-          targetId,
-          false,
-          { projectId }
+            sourceId,
+            targetType,
+            targetId,
+            false,
+            { projectId }
         );
 
-        if (!removed) {
-          confirmButton.disabled = false;
-          showToast(t(
-            'The source link could not be removed.'
-          ));
-          return;
+        if (!removed)
+        {
+            confirmButton.disabled = false;
+            showToast(t(
+                'The source link could not be removed.'
+            ));
+            return;
         }
 
         closeModal();
 
-        if (typeof onUnlinked === 'function') {
-          onUnlinked({
-            sourceId,
-            targetType,
-            targetId,
-            projectId
-          });
+        if (typeof onUnlinked === 'function')
+        {
+            onUnlinked({
+                sourceId,
+                targetType,
+                targetId,
+                projectId
+            });
         }
 
         showToast(t('Source unlinked.'));
-      });
+    });
+}
+
+function bindConnectedSourceLinks(
+    root,
+    { onUnlinked = null } = {}
+)
+{
+    if (!root)
+    {
+        return;
     }
 
-    function bindConnectedSourceLinks(
-      root,
-      { onUnlinked = null } = {}
-    ) {
-      if (!root) {
-        return;
-      }
-
-      root.querySelectorAll(
+    root.querySelectorAll(
         '[data-connected-source-view-all]'
-      ).forEach(button => {
-        button.addEventListener('click', () => {
-          openArchiveSourcesForTarget({
-            targetType:
+    ).forEach(button =>
+    {
+        button.addEventListener('click', () =>
+        {
+            openArchiveSourcesForTarget({
+                targetType:
               button.dataset.connectedSourceTargetType,
-            targetId:
+                targetId:
               button.dataset.connectedSourceTargetId,
-            projectId:
+                projectId:
               button.dataset.connectedSourceProject
               || currentProjectId()
-          });
+            });
         });
-      });
+    });
 
-      root.querySelectorAll(
+    root.querySelectorAll(
         '[data-connected-source-open]'
-      ).forEach(button => {
-        button.addEventListener('click', () => {
-          openConnectedSource(
-            button.dataset.connectedSourceOpen,
-            button.dataset.connectedSourceProject
+    ).forEach(button =>
+    {
+        button.addEventListener('click', () =>
+        {
+            openConnectedSource(
+                button.dataset.connectedSourceOpen,
+                button.dataset.connectedSourceProject
               || currentProjectId()
-          );
+            );
         });
-      });
+    });
 
-      root.querySelectorAll(
+    root.querySelectorAll(
         '[data-connected-source-unlink]'
-      ).forEach(button => {
-        button.addEventListener('click', event => {
-          event.preventDefault();
-          event.stopPropagation();
+    ).forEach(button =>
+    {
+        button.addEventListener('click', event =>
+        {
+            event.preventDefault();
+            event.stopPropagation();
 
-          openConnectedSourceUnlinkConfirm({
-            sourceId:
+            openConnectedSourceUnlinkConfirm({
+                sourceId:
               button.dataset.connectedSourceUnlink,
-            targetType:
+                targetType:
               button.dataset.connectedSourceTargetType,
-            targetId:
+                targetId:
               button.dataset.connectedSourceTargetId,
-            projectId:
+                projectId:
               button.dataset.connectedSourceProject
               || currentProjectId(),
-            onUnlinked
-          });
+                onUnlinked
+            });
         });
-      });
-    }
+    });
+}
 
-    function openSourcesForTargetModal({
-      targetType,
-      targetId,
+function openSourcesForTargetModal({
+    targetType,
+    targetId,
 
-      projectId =
+    projectId =
         currentProjectId(),
 
-      title =
+    title =
         'Add sources',
 
-      subtitle =
+    subtitle =
         'Connect existing sources to this record.',
 
-      afterSave =
+    afterSave =
         null
-    }) {
-      const target =
+})
+{
+    const target =
         sourceTargetRecord(
-          targetType,
-          targetId,
-          projectId
-        );
-
-      if (!target) {
-        showToast(
-          'The connected record is no longer available.'
-        );
-
-        return;
-      }
-
-      const records =
-        (sampleData.sources || [])
-          .filter(source =>
-            source.projectId
-              === projectId
-          )
-          .slice()
-          .sort((first, second) =>
-            String(
-              first.title || ''
-            ).localeCompare(
-              String(
-                second.title || ''
-              )
-            )
-          );
-
-      const recordIds =
-        new Set(
-          records.map(source =>
-            source.id
-          )
-        );
-
-      /*
-        Existing connections are protected by this
-        additive modal. They are never removed here.
-      */
-      const existingIds =
-        new Set(
-          sourceIdsForTarget(
             targetType,
             targetId,
             projectId
-          ).filter(sourceId =>
-            recordIds.has(sourceId)
-          )
         );
 
-      /*
+    if (!target)
+    {
+        showToast(
+            'The connected record is no longer available.'
+        );
+
+        return;
+    }
+
+    const records =
+        (sampleData.sources || [])
+            .filter(source =>
+                source.projectId
+              === projectId
+            )
+            .slice()
+            .sort((first, second) =>
+                String(
+                    first.title || ''
+                ).localeCompare(
+                    String(
+                        second.title || ''
+                    )
+                )
+            );
+
+    const recordIds =
+        new Set(
+            records.map(source =>
+                source.id
+            )
+        );
+
+    /*
+        Existing connections are protected by this
+        additive modal. They are never removed here.
+      */
+    const existingIds =
+        new Set(
+            sourceIdsForTarget(
+                targetType,
+                targetId,
+                projectId
+            ).filter(sourceId =>
+                recordIds.has(sourceId)
+            )
+        );
+
+    /*
         Only newly selected sources belong here.
         Existing connections do not contribute to
         the footer count.
       */
-      const selectedIds =
+    const selectedIds =
         new Set();
 
-      let query = '';
+    let query = '';
 
-      const normalizeQuery =
+    const normalizeQuery =
         value =>
-          String(value || '')
-            .trim()
-            .toLocaleLowerCase(
-              state.language === 'ru'
-                ? 'ru'
-                : 'en'
-            );
+            String(value || '')
+                .trim()
+                .toLocaleLowerCase(
+                    state.language === 'ru'
+                        ? 'ru'
+                        : 'en'
+                );
 
-      const sourceSearchText =
+    const sourceSearchText =
         source =>
-          [
-            source.title,
-            source.providedBy,
-            source.location,
-            source.reference,
-            localizedSourceCategoryLabel(
-              source.category,
-              ''
-            ),
-            source.notes
-          ]
-            .filter(Boolean)
-            .join(' ')
-            .toLocaleLowerCase(
-              state.language === 'ru'
-                ? 'ru'
-                : 'en'
-            );
+            [
+                source.title,
+                source.providedBy,
+                source.location,
+                source.reference,
+                localizedSourceCategoryLabel(
+                    source.category,
+                    ''
+                ),
+                source.notes
+            ]
+                .filter(Boolean)
+                .join(' ')
+                .toLocaleLowerCase(
+                    state.language === 'ru'
+                        ? 'ru'
+                        : 'en'
+                );
 
-      const visibleSources =
-        () => {
-          const normalized =
-            normalizeQuery(query);
+    const visibleSources =
+        () =>
+        {
+            const normalized =
+                normalizeQuery(query);
 
-          return records
-            .filter(source =>
-              !selectedIds.has(
-                source.id
-              )
-            )
-            .filter(source => {
-              if (normalized) {
-                return sourceSearchText(
-                  source
-                ).includes(normalized);
-              }
+            return records
+                .filter(source =>
+                    !selectedIds.has(
+                        source.id
+                    )
+                )
+                .filter(source =>
+                {
+                    if (normalized)
+                    {
+                        return sourceSearchText(
+                            source
+                        ).includes(normalized);
+                    }
 
-              /*
+                    /*
                 Hide existing connections from the
                 default suggestions. A direct search
                 can still reveal them.
               */
-              return !existingIds.has(
-                source.id
-              );
-            });
+                    return !existingIds.has(
+                        source.id
+                    );
+                });
         };
 
-      const sourceCountText =
+    const sourceCountText =
         count =>
-          translateDynamicPhrase(
-            `${count} ${
-              count === 1
-                ? 'source'
-                : 'sources'
-            }`
-          );
-
-      const renderChoice =
-        source => {
-          const sourceTitle =
-            source.title
-            || 'Untitled source';
-
-          const alreadyLinked =
-            existingIds.has(
-              source.id
+            translateDynamicPhrase(
+                `${count} ${
+                    count === 1
+                        ? 'source'
+                        : 'sources'
+                }`
             );
 
-          return `
+    const renderChoice =
+        source =>
+        {
+            const sourceTitle =
+                source.title
+            || 'Untitled source';
+
+            const alreadyLinked =
+                existingIds.has(
+                    source.id
+                );
+
+            return `
             <label
               class="
                 source-picker-choice
                 ${
-                  alreadyLinked
-                    ? 'already-linked'
-                    : ''
+                    alreadyLinked
+                        ? 'already-linked'
+                        : ''
                 }
               ">
 
@@ -1822,95 +1904,97 @@
                 <strong
                   class="source-picker-choice-title"
                   title="${escapeHtml(
-                    sourceTitle
-                  )}">
+                        sourceTitle
+                    )}">
 
                   ${escapeHtml(
-                    sourceTitle
-                  )}
+                        sourceTitle
+                    )}
                 </strong>
 
                 <span
                   class="source-picker-choice-origin">
 
                   ${escapeHtml(
-                    connectedSourceOrigin(
-                      source
-                    )
-                  )}
+                        connectedSourceOrigin(
+                            source
+                        )
+                    )}
                 </span>
 
                 <span
                   class="source-picker-choice-meta">
 
                   ${escapeHtml(
-                    connectedSourceDetailMeta(
-                      source
-                    )
-                  )}
+                        connectedSourceDetailMeta(
+                            source
+                        )
+                    )}
                 </span>
               </span>
 
               ${
-                alreadyLinked
-                  ? `
+                    alreadyLinked
+                        ? `
                     <span
                       class="source-picker-choice-status">
                       Already linked
                     </span>
                   `
-                  : ''
-              }
+                        : ''
+                }
 
               <input
                 type="checkbox"
                 value="${escapeHtml(
-                  source.id
+                    source.id
                 )}"
                 data-target-source-choice
                 ${
-                  alreadyLinked
-                    ? 'checked disabled'
-                    : ''
+                    alreadyLinked
+                        ? 'checked disabled'
+                        : ''
                 }
                 aria-label="${
-                  alreadyLinked
-                    ? `Already linked: ${escapeHtml(
-                        sourceTitle
-                      )}`
-                    : `Select ${escapeHtml(
-                        sourceTitle
-                      )}`
+                    alreadyLinked
+                        ? `Already linked: ${escapeHtml(
+                            sourceTitle
+                        )}`
+                        : `Select ${escapeHtml(
+                            sourceTitle
+                        )}`
                 }">
             </label>
           `;
         };
 
-      const renderSelectedSources =
-        () => {
-          const selectedSources =
-            [...selectedIds]
-              .map(sourceId =>
-                records.find(source =>
-                  source.id === sourceId
-                )
-              )
-              .filter(Boolean)
-              .sort((first, second) =>
-                String(
-                  first.title || ''
-                ).localeCompare(
-                  String(
-                    second.title || ''
-                  )
-                )
-              );
+    const renderSelectedSources =
+        () =>
+        {
+            const selectedSources =
+                [...selectedIds]
+                    .map(sourceId =>
+                        records.find(source =>
+                            source.id === sourceId
+                        )
+                    )
+                    .filter(Boolean)
+                    .sort((first, second) =>
+                        String(
+                            first.title || ''
+                        ).localeCompare(
+                            String(
+                                second.title || ''
+                            )
+                        )
+                    );
 
-          if (!selectedSources.length) {
-            return '';
-          }
+            if (!selectedSources.length)
+            {
+                return '';
+            }
 
-          return `
+            return `
             <div
               class="notes-related-selected-head">
               <strong>
@@ -1922,21 +2006,22 @@
               class="source-picker-selected-list">
 
               ${selectedSources
-                .map(source => {
-                  const sourceTitle =
-                    source.title
+                    .map(source =>
+                    {
+                        const sourceTitle =
+                            source.title
                     || 'Untitled source';
 
-                  return `
+                        return `
                     <div
                       class="source-picker-selected-row">
 
                       <span
                         title="${escapeHtml(
-                          sourceTitle
+                            sourceTitle
                         )}">
                         ${escapeHtml(
-                          sourceTitle
+                            sourceTitle
                         )}
                       </span>
 
@@ -1944,10 +2029,10 @@
                         class="relation-action-button"
                         type="button"
                         data-target-source-remove="${escapeHtml(
-                          source.id
+                            source.id
                         )}"
                         aria-label="Remove ${escapeHtml(
-                          sourceTitle
+                            sourceTitle
                         )} from selection"
                         title="Remove from selection">
 
@@ -1955,19 +2040,21 @@
                       </button>
                     </div>
                   `;
-                })
-                .join('')}
+                    })
+                    .join('')}
             </div>
           `;
         };
 
-      const renderEmptyState =
-        () => {
-          const normalized =
-            normalizeQuery(query);
+    const renderEmptyState =
+        () =>
+        {
+            const normalized =
+                normalizeQuery(query);
 
-          if (!records.length) {
-            return `
+            if (!records.length)
+            {
+                return `
               <div class="notes-related-empty">
                 <strong>
                   No sources available
@@ -1979,10 +2066,11 @@
                 </span>
               </div>
             `;
-          }
+            }
 
-          if (normalized) {
-            return `
+            if (normalized)
+            {
+                return `
               <div class="notes-related-empty">
                 <strong>
                   No sources match this search
@@ -2001,17 +2089,18 @@
                 </button>
               </div>
             `;
-          }
+            }
 
-          const unlinkedSources =
-            records.filter(source =>
-              !existingIds.has(
-                source.id
-              )
-            );
+            const unlinkedSources =
+                records.filter(source =>
+                    !existingIds.has(
+                        source.id
+                    )
+                );
 
-          if (!unlinkedSources.length) {
-            return `
+            if (!unlinkedSources.length)
+            {
+                return `
               <div class="notes-related-empty">
                 <strong>
                   All available sources are linked
@@ -2023,16 +2112,17 @@
                 </span>
               </div>
             `;
-          }
+            }
 
-          if (
-            unlinkedSources.every(source =>
-              selectedIds.has(
-                source.id
-              )
+            if (
+                unlinkedSources.every(source =>
+                    selectedIds.has(
+                        source.id
+                    )
+                )
             )
-          ) {
-            return `
+            {
+                return `
               <div class="notes-related-empty">
                 <strong>
                   All available sources are selected
@@ -2044,9 +2134,9 @@
                 </span>
               </div>
             `;
-          }
+            }
 
-          return `
+            return `
             <div class="notes-related-empty">
               <strong>
                 No sources available
@@ -2055,7 +2145,7 @@
           `;
         };
 
-      openModal(`
+    openModal(`
         <div
           class="
             modal
@@ -2195,854 +2285,907 @@
         </div>
       `);
 
-      const modal =
+    const modal =
         modalBackdrop.querySelector(
-          '.target-source-picker-modal'
+            '.target-source-picker-modal'
         );
 
-      if (!modal) {
+    if (!modal)
+    {
         return;
-      }
+    }
 
-      const searchInput =
+    const searchInput =
         modal.querySelector(
-          '[data-target-source-search]'
+            '[data-target-source-search]'
         );
 
-      const selectedHost =
+    const selectedHost =
         modal.querySelector(
-          '[data-target-source-selected]'
+            '[data-target-source-selected]'
         );
 
-      const resultsHost =
+    const resultsHost =
         modal.querySelector(
-          '[data-target-source-results]'
+            '[data-target-source-results]'
         );
 
-      const resultsTitle =
+    const resultsTitle =
         modal.querySelector(
-          '[data-target-source-results-title]'
+            '[data-target-source-results-title]'
         );
 
-      const resultsMeta =
+    const resultsMeta =
         modal.querySelector(
-          '[data-target-source-results-meta]'
+            '[data-target-source-results-meta]'
         );
 
-      const countElement =
+    const countElement =
         modal.querySelector(
-          '[data-target-source-count]'
+            '[data-target-source-count]'
         );
 
-      const saveButton =
+    const saveButton =
         modal.querySelector(
-          '[data-target-source-save]'
+            '[data-target-source-save]'
         );
 
-      const refresh =
-        () => {
-          const visible =
-            visibleSources();
+    const refresh =
+        () =>
+        {
+            const visible =
+                visibleSources();
 
-          const normalized =
-            normalizeQuery(query);
+            const normalized =
+                normalizeQuery(query);
 
-          resultsTitle.textContent =
-            t(
-              normalized
-                ? 'Search results'
-                : 'Suggested sources'
-            );
+            resultsTitle.textContent =
+                t(
+                    normalized
+                        ? 'Search results'
+                        : 'Suggested sources'
+                );
 
-          const availableCount =
-            visible.filter(source =>
-              !existingIds.has(
-                source.id
-              )
-            ).length;
+            const availableCount =
+                visible.filter(source =>
+                    !existingIds.has(
+                        source.id
+                    )
+                ).length;
 
-          resultsMeta.textContent =
-            state.language === 'ru'
-              ? `Доступно: ${
-                  sourceCountText(
-                    availableCount
-                  )
-                } · Уже связано: ${
-                  sourceCountText(
-                    existingIds.size
-                  )
-                }`
-              : `${
-                  sourceCountText(
-                    availableCount
-                  )
-                } available · ${
-                  sourceCountText(
-                    existingIds.size
-                  )
-                } already linked`;
-
-          resultsHost.innerHTML =
-            visible.length
-              ? visible
-                  .map(renderChoice)
-                  .join('')
-              : renderEmptyState();
-
-          const selectedHtml =
-            renderSelectedSources();
-
-          selectedHost.hidden =
-            !selectedHtml;
-
-          selectedHost.innerHTML =
-            selectedHtml;
-
-          const selectedCount =
-            selectedIds.size;
-
-          countElement.textContent =
-            `${selectedCount} ${
-              selectedCount === 1
-                ? 'source'
-                : 'sources'
-            } selected`;
-
-          saveButton.disabled =
-            selectedCount === 0;
-
-          saveButton.textContent =
-            selectedCount === 0
-              ? t('Add sources')
-              : selectedCount === 1
-                ? t('Add source')
-                : state.language === 'ru'
-                  ? `Добавить ${
-                      sourceCountText(
-                        selectedCount
-                      )
+            resultsMeta.textContent =
+                state.language === 'ru'
+                    ? `Доступно: ${
+                        sourceCountText(
+                            availableCount
+                        )
+                    } · Уже связано: ${
+                        sourceCountText(
+                            existingIds.size
+                        )
                     }`
-                  : `Add ${
-                      sourceCountText(
-                        selectedCount
-                      )
-                    }`;
+                    : `${
+                        sourceCountText(
+                            availableCount
+                        )
+                    } available · ${
+                        sourceCountText(
+                            existingIds.size
+                        )
+                    } already linked`;
 
-          localizeUI(
-            modal,
-            {
-              suppressObserverReplay:
+            resultsHost.innerHTML =
+                visible.length
+                    ? visible
+                        .map(renderChoice)
+                        .join('')
+                    : renderEmptyState();
+
+            const selectedHtml =
+                renderSelectedSources();
+
+            selectedHost.hidden =
+                !selectedHtml;
+
+            selectedHost.innerHTML =
+                selectedHtml;
+
+            const selectedCount =
+                selectedIds.size;
+
+            countElement.textContent =
+                `${selectedCount} ${
+                    selectedCount === 1
+                        ? 'source'
+                        : 'sources'
+                } selected`;
+
+            saveButton.disabled =
+                selectedCount === 0;
+
+            saveButton.textContent =
+                selectedCount === 0
+                    ? t('Add sources')
+                    : selectedCount === 1
+                        ? t('Add source')
+                        : state.language === 'ru'
+                            ? `Добавить ${
+                                sourceCountText(
+                                    selectedCount
+                                )
+                            }`
+                            : `Add ${
+                                sourceCountText(
+                                    selectedCount
+                                )
+                            }`;
+
+            localizeUI(
+                modal,
+                {
+                    suppressObserverReplay:
                 true
-            }
-          );
+                }
+            );
         };
 
-      searchInput.addEventListener(
+    searchInput.addEventListener(
         'input',
-        event => {
-          query =
-            event.currentTarget.value;
+        event =>
+        {
+            query =
+                event.currentTarget.value;
 
-          refresh();
+            refresh();
         }
-      );
+    );
 
-      modal.addEventListener(
+    modal.addEventListener(
         'change',
-        event => {
-          const input =
-            event.target.closest(
-              '[data-target-source-choice]'
-            );
+        event =>
+        {
+            const input =
+                event.target.closest(
+                    '[data-target-source-choice]'
+                );
 
-          if (
-            !input
+            if (
+                !input
             || input.disabled
-          ) {
-            return;
-          }
+            )
+            {
+                return;
+            }
 
-          if (input.checked) {
-            selectedIds.add(
-              input.value
-            );
-          } else {
-            selectedIds.delete(
-              input.value
-            );
-          }
-
-          refresh();
-        }
-      );
-
-      modal.addEventListener(
-        'click',
-        event => {
-          const removeButton =
-            event.target.closest(
-              '[data-target-source-remove]'
-            );
-
-          if (removeButton) {
-            selectedIds.delete(
-              removeButton.dataset
-                .targetSourceRemove
-            );
+            if (input.checked)
+            {
+                selectedIds.add(
+                    input.value
+                );
+            }
+            else
+            {
+                selectedIds.delete(
+                    input.value
+                );
+            }
 
             refresh();
-            return;
-          }
-
-          const clearButton =
-            event.target.closest(
-              '[data-target-source-clear-search]'
-            );
-
-          if (clearButton) {
-            query = '';
-            searchInput.value = '';
-
-            refresh();
-
-            searchInput.focus({
-              preventScroll: true
-            });
-          }
         }
-      );
+    );
 
-      saveButton.addEventListener(
+    modal.addEventListener(
         'click',
-        () => {
-          if (!selectedIds.size) {
-            return;
-          }
+        event =>
+        {
+            const removeButton =
+                event.target.closest(
+                    '[data-target-source-remove]'
+                );
 
-          const nextSourceIds =
-            archiveUniqueIds([
-              ...existingIds,
-              ...selectedIds
-            ]);
+            if (removeButton)
+            {
+                selectedIds.delete(
+                    removeButton.dataset
+                        .targetSourceRemove
+                );
 
-          const savedIds =
-            setSourceIdsForTarget(
-              targetType,
-              targetId,
-              nextSourceIds,
-              {
-                projectId
-              }
-            );
+                refresh();
+                return;
+            }
 
-          const savedSet =
-            new Set(
-              savedIds || []
-            );
+            const clearButton =
+                event.target.closest(
+                    '[data-target-source-clear-search]'
+                );
 
-          const savedCorrectly =
-            Array.isArray(savedIds)
+            if (clearButton)
+            {
+                query = '';
+                searchInput.value = '';
+
+                refresh();
+
+                searchInput.focus({
+                    preventScroll: true
+                });
+            }
+        }
+    );
+
+    saveButton.addEventListener(
+        'click',
+        () =>
+        {
+            if (!selectedIds.size)
+            {
+                return;
+            }
+
+            const nextSourceIds =
+                archiveUniqueIds([
+                    ...existingIds,
+                    ...selectedIds
+                ]);
+
+            const savedIds =
+                setSourceIdsForTarget(
+                    targetType,
+                    targetId,
+                    nextSourceIds,
+                    {
+                        projectId
+                    }
+                );
+
+            const savedSet =
+                new Set(
+                    savedIds || []
+                );
+
+            const savedCorrectly =
+                Array.isArray(savedIds)
             && nextSourceIds.every(
-              sourceId =>
-                savedSet.has(
-                  sourceId
-                )
+                sourceId =>
+                    savedSet.has(
+                        sourceId
+                    )
             );
 
-          if (!savedCorrectly) {
-            showToast(
-              'Source links could not be updated.'
-            );
+            if (!savedCorrectly)
+            {
+                showToast(
+                    'Source links could not be updated.'
+                );
 
-            return;
-          }
-
-          closeModal();
-
-          if (
-            typeof afterSave
-              === 'function'
-          ) {
-            afterSave();
-          }
-
-          showToast(
-            'Source links updated.'
-          );
-        }
-      );
-
-      modal
-        .querySelector(
-          '[data-target-source-create]'
-        )
-        .addEventListener(
-          'click',
-          () => {
-            const pendingSourceIds =
-              [...selectedIds];
+                return;
+            }
 
             closeModal();
 
-            openArchiveSourceModal(
-              '',
-              {
-                onCreated:
-                  createdSource => {
-                    const nextSourceIds =
-                      archiveUniqueIds([
-                        ...existingIds,
-                        ...pendingSourceIds,
-                        createdSource.id
-                      ]);
+            if (
+                typeof afterSave
+              === 'function'
+            )
+            {
+                afterSave();
+            }
 
-                    const savedIds =
-                      setSourceIdsForTarget(
-                        targetType,
-                        targetId,
-                        nextSourceIds,
-                        {
-                          projectId
-                        }
-                      );
-
-                    const savedSet =
-                      new Set(
-                        savedIds || []
-                      );
-
-                    const savedCorrectly =
-                      Array.isArray(
-                        savedIds
-                      )
-                      && nextSourceIds.every(
-                        sourceId =>
-                          savedSet.has(
-                            sourceId
-                          )
-                      );
-
-                    if (!savedCorrectly) {
-                      showToast(
-                        'Source created, but it could not be linked.'
-                      );
-
-                      return;
-                    }
-
-                    if (
-                      typeof afterSave
-                        === 'function'
-                    ) {
-                      afterSave();
-                    }
-
-                    showToast(
-                      'Source created and linked.'
-                    );
-                  }
-              }
+            showToast(
+                'Source links updated.'
             );
-          }
+        }
+    );
+
+    modal
+        .querySelector(
+            '[data-target-source-create]'
+        )
+        .addEventListener(
+            'click',
+            () =>
+            {
+                const pendingSourceIds =
+                    [...selectedIds];
+
+                closeModal();
+
+                openArchiveSourceModal(
+                    '',
+                    {
+                        onCreated:
+                  createdSource =>
+                  {
+                      const nextSourceIds =
+                          archiveUniqueIds([
+                              ...existingIds,
+                              ...pendingSourceIds,
+                              createdSource.id
+                          ]);
+
+                      const savedIds =
+                          setSourceIdsForTarget(
+                              targetType,
+                              targetId,
+                              nextSourceIds,
+                              {
+                                  projectId
+                              }
+                          );
+
+                      const savedSet =
+                          new Set(
+                              savedIds || []
+                          );
+
+                      const savedCorrectly =
+                          Array.isArray(
+                              savedIds
+                          )
+                      && nextSourceIds.every(
+                          sourceId =>
+                              savedSet.has(
+                                  sourceId
+                              )
+                      );
+
+                      if (!savedCorrectly)
+                      {
+                          showToast(
+                              'Source created, but it could not be linked.'
+                          );
+
+                          return;
+                      }
+
+                      if (
+                          typeof afterSave
+                        === 'function'
+                      )
+                      {
+                          afterSave();
+                      }
+
+                      showToast(
+                          'Source created and linked.'
+                      );
+                  }
+                    }
+                );
+            }
         );
 
-      refresh();
+    refresh();
 
-      requestAnimationFrame(() => {
+    requestAnimationFrame(() =>
+    {
         searchInput.focus({
-          preventScroll: true
+            preventScroll: true
         });
-      });
-    }
+    });
+}
 
-    function removeSourceLinksForSource(
-      sourceId
-    ) {
-      sampleData.sourceLinks =
+function removeSourceLinksForSource(
+    sourceId
+)
+{
+    sampleData.sourceLinks =
         (
-          sampleData.sourceLinks || []
+            sampleData.sourceLinks || []
         ).filter(link =>
-          link.sourceId !== sourceId
+            link.sourceId !== sourceId
         );
-    }
+}
 
-    function removeSourceLinksForTarget(
-      targetType,
-      targetId
-    ) {
-      sampleData.sourceLinks =
+function removeSourceLinksForTarget(
+    targetType,
+    targetId
+)
+{
+    sampleData.sourceLinks =
         (
-          sampleData.sourceLinks || []
+            sampleData.sourceLinks || []
         ).filter(link =>
-          !(
-            link.targetType
+            !(
+                link.targetType
               === targetType
             && link.targetId
               === targetId
-          )
+            )
         );
-    }
+}
 
-    function removeSourceLinksForTargets(
-      targetType,
-      targetIds
-    ) {
-      const ids =
+function removeSourceLinksForTargets(
+    targetType,
+    targetIds
+)
+{
+    const ids =
         new Set(
-          targetIds || []
+            targetIds || []
         );
 
-      sampleData.sourceLinks =
+    sampleData.sourceLinks =
         (
-          sampleData.sourceLinks || []
+            sampleData.sourceLinks || []
         ).filter(link =>
-          !(
-            link.targetType
+            !(
+                link.targetType
               === targetType
             && ids.has(
-              link.targetId
+                link.targetId
             )
-          )
+            )
         );
-    }
+}
 
-    function pruneInvalidSourceLinks() {
-      const seen =
+function pruneInvalidSourceLinks()
+{
+    const seen =
         new Set();
 
-      sampleData.sourceLinks =
+    sampleData.sourceLinks =
         (
-          sampleData.sourceLinks || []
-        ).filter(link => {
-          if (
-            !link
+            sampleData.sourceLinks || []
+        ).filter(link =>
+        {
+            if (
+                !link
             || !link.id
             || !link.projectId
             || !link.sourceId
             || !link.targetId
             || !SOURCE_LINK_TARGET_TYPES
-              .includes(
-                link.targetType
-              )
-          ) {
-            return false;
-          }
+                .includes(
+                    link.targetType
+                )
+            )
+            {
+                return false;
+            }
 
-          const source =
-            archiveSourceById(
-              link.sourceId,
-              link.projectId
-            );
+            const source =
+                archiveSourceById(
+                    link.sourceId,
+                    link.projectId
+                );
 
-          const target =
-            sourceTargetRecord(
-              link.targetType,
-              link.targetId,
-              link.projectId
-            );
+            const target =
+                sourceTargetRecord(
+                    link.targetType,
+                    link.targetId,
+                    link.projectId
+                );
 
-          const key =
-            [
-              link.projectId,
-              link.sourceId,
-              link.targetType,
-              link.targetId
-            ].join('|');
+            const key =
+                [
+                    link.projectId,
+                    link.sourceId,
+                    link.targetType,
+                    link.targetId
+                ].join('|');
 
-          if (
-            !source
+            if (
+                !source
             || !target
             || seen.has(key)
-          ) {
-            return false;
-          }
+            )
+            {
+                return false;
+            }
 
-          seen.add(
-            key
-          );
+            seen.add(
+                key
+            );
 
-          return true;
+            return true;
         });
-    }
+}
 
-    const ARCHIVE_ROOT_PICKER_VALUE =
-      '__archive_root__';
+const ARCHIVE_ROOT_PICKER_VALUE =
+    '__archive_root__';
 
-    const ARCHIVE_ROOT_LABEL =
-      'All files';
+const ARCHIVE_ROOT_LABEL =
+    'All files';
 
-    const ARCHIVE_MOVE_NO_DESTINATION =
-      '__archive_move_no_destination__';
+const ARCHIVE_MOVE_NO_DESTINATION =
+    '__archive_move_no_destination__';
 
-    function archiveMoveHasDestination(
-      folderId
-    ) {
-      return folderId
+function archiveMoveHasDestination(
+    folderId
+)
+{
+    return folderId
         !== ARCHIVE_MOVE_NO_DESTINATION;
-    }
+}
 
-    function archiveIsRootLocation(
-      folderId
-    ) {
-      return (
+function archiveIsRootLocation(
+    folderId
+)
+{
+    return (
         folderId === null
         || folderId === undefined
         || folderId === ''
-      );
-    }
+    );
+}
 
-    function archiveNormalizeFolderId(
-      folderId
-    ) {
-      if (
+function archiveNormalizeFolderId(
+    folderId
+)
+{
+    if (
         archiveIsRootLocation(
-          folderId
+            folderId
         )
-      ) {
+    )
+    {
         return null;
-      }
+    }
 
-      return archiveFolderById(
+    return archiveFolderById(
         folderId
-      )?.id
+    )?.id
       || null;
-    }
+}
 
-    function archiveFileFolderId(
-      file
-    ) {
-      return archiveNormalizeFolderId(
+function archiveFileFolderId(
+    file
+)
+{
+    return archiveNormalizeFolderId(
         file?.folderId
-      );
+    );
+}
+
+function archiveFolderParentId(
+    folder
+)
+{
+    if (!folder)
+    {
+        return null;
     }
 
-    function archiveFolderParentId(
-      folder
-    ) {
-      if (!folder) {
-        return null;
-      }
-
-      return archiveNormalizeFolderId(
+    return archiveNormalizeFolderId(
         folder.parentId
         ?? folder.parent
         ?? null
-      );
-    }
+    );
+}
 
-    function archiveFolderChildren(
-      folderId = null
-    ) {
-      const rootLocation =
+function archiveFolderChildren(
+    folderId = null
+)
+{
+    const rootLocation =
         archiveIsRootLocation(
-          folderId
+            folderId
         );
 
-      if (
+    if (
         !rootLocation
         && !archiveFolderById(
-          folderId
+            folderId
         )
-      ) {
+    )
+    {
         return [];
-      }
+    }
 
-      const parentId =
+    const parentId =
         rootLocation
-          ? null
-          : folderId;
+            ? null
+            : folderId;
 
-      return (
+    return (
         sampleData.archiveFolders
         || []
-      )
+    )
         .filter(folder =>
-          folder.projectId === currentProjectId()
+            folder.projectId === currentProjectId()
           &&
           archiveFolderParentId(
-            folder
+              folder
           ) === parentId
         )
         .sort((a, b) =>
-          String(
-            a.name || ''
-          ).localeCompare(
             String(
-              b.name || ''
+                a.name || ''
+            ).localeCompare(
+                String(
+                    b.name || ''
+                )
             )
-          )
         );
+}
+
+function archiveFolderAncestors(
+    folderId
+)
+{
+    if (
+        archiveIsRootLocation(
+            folderId
+        )
+    )
+    {
+        return [];
     }
 
-    function archiveFolderAncestors(
-      folderId
-    ) {
-      if (
-        archiveIsRootLocation(
-          folderId
-        )
-      ) {
-        return [];
-      }
-
-      const result = [];
-      const seen =
+    const result = [];
+    const seen =
         new Set();
 
-      let current =
+    let current =
         archiveFolderById(
-          folderId
+            folderId
         );
 
-      while (
+    while (
         current
         && !seen.has(
-          current.id
+            current.id
         )
-      ) {
+    )
+    {
         result.unshift(
-          current
+            current
         );
 
         seen.add(
-          current.id
+            current.id
         );
 
         current =
-          archiveFolderById(
-            archiveFolderParentId(
-              current
-            )
-          );
-      }
-
-      return result;
+            archiveFolderById(
+                archiveFolderParentId(
+                    current
+                )
+            );
     }
 
-    function archiveFolderPath(
-      folderId
-    ) {
-      const folders =
+    return result;
+}
+
+function archiveFolderPath(
+    folderId
+)
+{
+    const folders =
         archiveFolderAncestors(
-          folderId
+            folderId
         );
 
-      if (!folders.length) {
+    if (!folders.length)
+    {
         return ARCHIVE_ROOT_LABEL;
-      }
-
-      return folders
-        .map(folder =>
-          folder.name
-        )
-        .join(' / ');
     }
 
-    /*
+    return folders
+        .map(folder =>
+            folder.name
+        )
+        .join(' / ');
+}
+
+/*
       Returns every physical folder inside a
       location. At the virtual root, null is also
       included so root-level files belong to the
       scope.
     */
 
-    function archiveFolderScopeIds(
-      folderId
-    ) {
-      const ids =
+function archiveFolderScopeIds(
+    folderId
+)
+{
+    const ids =
         new Set();
 
-      const visit =
-        id => {
-          ids.add(
-            id
-          );
+    const visit =
+        id =>
+        {
+            ids.add(
+                id
+            );
 
-          archiveFolderChildren(
-            id
-          ).forEach(child =>
-            visit(
-              child.id
-            )
-          );
+            archiveFolderChildren(
+                id
+            ).forEach(child =>
+                visit(
+                    child.id
+                )
+            );
         };
 
-      if (
+    if (
         archiveIsRootLocation(
-          folderId
+            folderId
         )
-      ) {
+    )
+    {
         ids.add(
-          null
+            null
         );
 
         archiveFolderChildren(
-          null
+            null
         ).forEach(child =>
-          visit(
-            child.id
-          )
+            visit(
+                child.id
+            )
         );
 
         return ids;
-      }
-
-      const normalizedId =
-        archiveNormalizeFolderId(
-          folderId
-        );
-
-      if (normalizedId) {
-        visit(
-          normalizedId
-        );
-      }
-
-      return ids;
     }
 
-    /*
+    const normalizedId =
+        archiveNormalizeFolderId(
+            folderId
+        );
+
+    if (normalizedId)
+    {
+        visit(
+            normalizedId
+        );
+    }
+
+    return ids;
+}
+
+/*
       This helper is for real-folder operations
       such as delete and move. The virtual root is
       deliberately excluded.
     */
 
-    function archiveFolderDescendantIds(
-      folderId,
-      {
+function archiveFolderDescendantIds(
+    folderId,
+    {
         includeSelf =
-          true
-      } = {}
-    ) {
-      const folder =
+            true
+    } = {}
+)
+{
+    const folder =
         archiveFolderById(
-          folderId
+            folderId
         );
 
-      if (!folder) {
+    if (!folder)
+    {
         return [];
-      }
+    }
 
-      const ids = [];
+    const ids = [];
 
-      const visit =
-        id => {
-          if (
-            !ids.includes(
-              id
+    const visit =
+        id =>
+        {
+            if (
+                !ids.includes(
+                    id
+                )
             )
-          ) {
-            ids.push(
-              id
+            {
+                ids.push(
+                    id
+                );
+            }
+
+            archiveFolderChildren(
+                id
+            ).forEach(child =>
+                visit(
+                    child.id
+                )
             );
-          }
-
-          archiveFolderChildren(
-            id
-          ).forEach(child =>
-            visit(
-              child.id
-            )
-          );
         };
 
-      visit(
+    visit(
         folder.id
-      );
+    );
 
-      return includeSelf
+    return includeSelf
         ? ids
         : ids.filter(
             id =>
-              id !== folder.id
-          );
-    }
+                id !== folder.id
+        );
+}
 
-    function archiveFlattenFolders(
-      parentId = null,
-      depth = 0
-    ) {
-      return archiveFolderChildren(
+function archiveFlattenFolders(
+    parentId = null,
+    depth = 0
+)
+{
+    return archiveFolderChildren(
         parentId
-      )
+    )
         .flatMap(folder => [
-          {
-            folder,
-            depth
-          },
+            {
+                folder,
+                depth
+            },
 
-          ...archiveFlattenFolders(
-            folder.id,
-            depth + 1
-          )
+            ...archiveFlattenFolders(
+                folder.id,
+                depth + 1
+            )
         ]);
-    }
+}
 
-    function archiveFolderImpact(
-      folderId
-    ) {
-      const folder =
+function archiveFolderImpact(
+    folderId
+)
+{
+    const folder =
         archiveFolderById(
-          folderId
+            folderId
         );
 
-      if (!folder) {
+    if (!folder)
+    {
         return {
-          folderIds:
+            folderIds:
             [],
 
-          folders:
+            folders:
             0,
 
-          files:
+            files:
             0
         };
-      }
+    }
 
-      const descendantIds =
+    const descendantIds =
         new Set(
-          archiveFolderDescendantIds(
-            folder.id
-          )
+            archiveFolderDescendantIds(
+                folder.id
+            )
         );
 
-      return {
+    return {
         folderIds:
           [
-            ...descendantIds
+              ...descendantIds
           ],
 
         folders:
           Math.max(
-            0,
-            descendantIds.size - 1
+              0,
+              descendantIds.size - 1
           ),
 
         files:
           archiveProjectFiles()
-            .filter(file =>
-              descendantIds.has(
-                archiveFileFolderId(
-                  file
-                )
+              .filter(file =>
+                  descendantIds.has(
+                      archiveFileFolderId(
+                          file
+                      )
+                  )
               )
-            )
-            .length
-      };
-    }
+              .length
+    };
+}
 
-    function archiveFolderIdFromChoice(
-      value
-    ) {
-      return value
+function archiveFolderIdFromChoice(
+    value
+)
+{
+    return value
         === ARCHIVE_ROOT_PICKER_VALUE
-          ? null
-          : archiveNormalizeFolderId(
-              value
-            );
-    }
+        ? null
+        : archiveNormalizeFolderId(
+            value
+        );
+}
 
-    const defaultArchiveFileFilters =
-      Object.freeze({
+const defaultArchiveFileFilters =
+    Object.freeze({
         scope: 'all',
         fileType: 'all',
         connections: 'all',
@@ -3053,645 +3196,663 @@
           Object.freeze([]),
         documentYears:
           Object.freeze({
-            mode:
+              mode:
               '',
-            from:
+              from:
               '',
-            to:
+              to:
               ''
           }),
 
         favouriteOnly:
           false
-      });
+    });
 
-    function archiveFilePersonIds(
-      file
-    ) {
-      return archiveUniqueIds(
+function archiveFilePersonIds(
+    file
+)
+{
+    return archiveUniqueIds(
         file?.linkedPersonIds
         || []
-      );
-    }
+    );
+}
 
-    function archiveFilePlaceIds(
-      file
-    ) {
-      const documentPlace =
+function archiveFilePlaceIds(
+    file
+)
+{
+    const documentPlace =
         archiveDocumentPlace(
-          file
+            file
         );
 
-      return archiveUniqueIds([
+    return archiveUniqueIds([
         documentPlace.placeId,
 
         ...(
-          file?.linkedPlaceIds
+            file?.linkedPlaceIds
           || []
         ),
 
         ...(
-          file?.placeIds
+            file?.placeIds
           || []
         )
-      ]);
-    }
+    ]);
+}
 
-    function archiveFilterCollator() {
-      return new Intl.Collator(
+function archiveFilterCollator()
+{
+    return new Intl.Collator(
         state.language === 'ru'
-          ? 'ru'
-          : 'en',
+            ? 'ru'
+            : 'en',
         {
-          sensitivity:
+            sensitivity:
             'base'
         }
-      );
-    }
+    );
+}
 
-    function archivePersonFilterOptions() {
-      const files =
+function archivePersonFilterOptions()
+{
+    const files =
         archiveProjectFiles();
 
-      const counts =
+    const counts =
         new Map();
 
-      files.forEach(file => {
+    files.forEach(file =>
+    {
         archiveFilePersonIds(
-          file
-        ).forEach(personId => {
-          counts.set(
-            personId,
-            (
-              counts.get(personId)
+            file
+        ).forEach(personId =>
+        {
+            counts.set(
+                personId,
+                (
+                    counts.get(personId)
               || 0
-            ) + 1
-          );
+                ) + 1
+            );
         });
-      });
+    });
 
-      return getPeople(
+    return getPeople(
         currentProjectId()
-      )
+    )
         .filter(person =>
-          counts.has(person.id)
+            counts.has(person.id)
         )
         .map(person => ({
-          value:
+            value:
             person.id,
 
-          label:
+            label:
             personResourceDisplayName(
-              person
+                person
             ),
 
-          count:
+            count:
             counts.get(person.id)
             || 0
         }))
         .sort(
-          (left, right) =>
-            archiveFilterCollator()
-              .compare(
-                left.label,
-                right.label
-              )
+            (left, right) =>
+                archiveFilterCollator()
+                    .compare(
+                        left.label,
+                        right.label
+                    )
         );
-    }
+}
 
-    function archivePlaceFilterOptions() {
-      const files =
+function archivePlaceFilterOptions()
+{
+    const files =
         archiveProjectFiles();
 
-      const counts =
+    const counts =
         new Map();
 
-      files.forEach(file => {
+    files.forEach(file =>
+    {
         archiveFilePlaceIds(
-          file
-        ).forEach(placeId => {
-          counts.set(
-            placeId,
-            (
-              counts.get(placeId)
+            file
+        ).forEach(placeId =>
+        {
+            counts.set(
+                placeId,
+                (
+                    counts.get(placeId)
               || 0
-            ) + 1
-          );
+                ) + 1
+            );
         });
-      });
+    });
 
-      return [
+    return [
         ...counts.entries()
-      ]
+    ]
         .map(([
-          placeId,
-          count
-        ]) => {
-          const place =
-            getPlace(placeId);
+            placeId,
+            count
+        ]) =>
+        {
+            const place =
+                getPlace(placeId);
 
-          return {
-            value:
+            return {
+                value:
               placeId,
 
-            label:
+                label:
               getPlaceDisplay(
-                placeId
+                  placeId
               )
               || place?.name
               || placeId,
 
-            /*
+                /*
             * Alternative names improve searching,
             * but are not displayed or localized.
             */
-            keywords:
+                keywords:
               place?.alternativeNames
               || [],
 
-            count
-          };
+                count
+            };
         })
         .sort(
-          (left, right) =>
-            archiveFilterCollator()
-              .compare(
-                left.label,
-                right.label
-              )
+            (left, right) =>
+                archiveFilterCollator()
+                    .compare(
+                        left.label,
+                        right.label
+                    )
         );
-    }
+}
 
-    const archiveFileFilterSchema =
-      Object.freeze([
+const archiveFileFilterSchema =
+    Object.freeze([
         Object.freeze({
-          key: 'sourceId',
-          label: 'Source',
-          control: 'combobox',
-          multiple: false,
-          layout: 'full',
-          placeholder: 'Search sources...',
-          defaultValue: '',
-          getOptions: connectedSourceFilterOptions
+            key: 'sourceId',
+            label: 'Source',
+            control: 'combobox',
+            multiple: false,
+            layout: 'full',
+            placeholder: 'Search sources...',
+            defaultValue: '',
+            getOptions: connectedSourceFilterOptions
         }),
         Object.freeze({
-          key:
+            key:
             'scope',
 
-          label:
+            label:
             'Location',
 
-          control:
+            control:
             'select',
 
-          defaultValue:
+            defaultValue:
             'all',
 
-          options:
+            options:
             Object.freeze([
-              Object.freeze({
-                value:
+                Object.freeze({
+                    value:
                   'all',
 
-                label:
+                    label:
                   'All Archive'
-              }),
+                }),
 
-              Object.freeze({
-                value:
+                Object.freeze({
+                    value:
                   'folder',
 
-                label:
+                    label:
                   'Current folder and subfolders'
-              })
+                })
             ])
         }),
 
         Object.freeze({
-          key:
+            key:
             'fileType',
 
-          label:
+            label:
             'File type',
 
-          control:
+            control:
             'select',
 
-          defaultValue:
+            defaultValue:
             'all',
 
-          options:
+            options:
             Object.freeze([
-              Object.freeze({
-                value:
+                Object.freeze({
+                    value:
                   'all',
 
-                label:
+                    label:
                   'All types'
-              }),
+                }),
 
-              Object.freeze({
-                value:
+                Object.freeze({
+                    value:
                   'pdf',
 
-                label:
+                    label:
                   'PDF'
-              }),
+                }),
 
-              Object.freeze({
-                value:
+                Object.freeze({
+                    value:
                   'img',
 
-                label:
+                    label:
                   'Images'
-              }),
+                }),
 
-              Object.freeze({
-                value:
+                Object.freeze({
+                    value:
                   'doc',
 
-                label:
+                    label:
                   'Documents'
-              }),
+                }),
 
-              Object.freeze({
-                value:
+                Object.freeze({
+                    value:
                   'sheet',
 
-                label:
+                    label:
                   'Spreadsheets'
-              }),
+                }),
 
-              Object.freeze({
-                value:
+                Object.freeze({
+                    value:
                   'audio',
 
-                label:
+                    label:
                   'Audio'
-              }),
+                }),
 
-              Object.freeze({
-                value:
+                Object.freeze({
+                    value:
                   'archive',
 
-                label:
+                    label:
                   'Archive files'
-              })
+                })
             ])
         }),
 
         Object.freeze({
-          key:
+            key:
             'connections',
 
-          label:
+            label:
             'Connections',
 
-          control:
+            control:
             'select',
 
-          defaultValue:
+            defaultValue:
             'all',
 
-          options:
+            options:
             Object.freeze([
-              Object.freeze({
-                value:
+                Object.freeze({
+                    value:
                   'all',
 
-                label:
+                    label:
                   'All files'
-              }),
+                }),
 
-              Object.freeze({
-                value:
+                Object.freeze({
+                    value:
                   'linked',
 
-                label:
+                    label:
                   'Linked files'
-              }),
+                }),
 
-              Object.freeze({
-                value:
+                Object.freeze({
+                    value:
                   'unlinked',
 
-                label:
+                    label:
                   'Unlinked files'
-              })
+                })
             ])
         }),
 
         Object.freeze({
-          key:
+            key:
             'favouriteOnly',
 
-          label:
+            label:
             'Favourites',
 
-          control:
+            control:
             'boolean',
 
-          defaultValue:
+            defaultValue:
             false,
 
-          checkboxLabel:
+            checkboxLabel:
             'Favourites only'
         }),
 
         Object.freeze({
-          key:
+            key:
             'personIds',
 
-          label:
+            label:
             'People',
 
-          control:
+            control:
             'combobox',
 
-          multiple:
+            multiple:
             true,
 
-          layout:
+            layout:
             'full',
 
-          placeholder:
+            placeholder:
             'Search people',
 
-          defaultValue:
+            defaultValue:
             Object.freeze([]),
 
-          getOptions:
+            getOptions:
             archivePersonFilterOptions
         }),
 
         Object.freeze({
-          key:
+            key:
             'placeIds',
 
-          label:
+            label:
             'Places',
 
-          control:
+            control:
             'combobox',
 
-          multiple:
+            multiple:
             true,
 
-          layout:
+            layout:
             'full',
 
-          placeholder:
+            placeholder:
             'Search places',
 
-          defaultValue:
+            defaultValue:
             Object.freeze([]),
 
-          getOptions:
+            getOptions:
             archivePlaceFilterOptions
         }),
 
         Object.freeze({
-          key:
+            key:
             'documentYears',
 
-          label:
+            label:
             'Document date',
 
-          control:
+            control:
             'year-range',
 
-          layout:
+            layout:
             'full',
 
-          defaultValue:
+            defaultValue:
             Object.freeze({
-              mode:
+                mode:
                 '',
 
-              from:
+                from:
                 '',
 
-              to:
+                to:
                 ''
             })
         }),
-      ]);
+    ]);
 
-    const archiveSourceFilterSchema =
-      Object.freeze([
+const archiveSourceFilterSchema =
+    Object.freeze([
         Object.freeze({
-          key:
+            key:
             'sourceCategory',
 
-          label:
+            label:
             'Source category',
 
-          control:
+            control:
             'select',
 
-          defaultValue:
+            defaultValue:
             'all',
 
-          getOptions:
+            getOptions:
             () => [
-              {
-                value:
+                {
+                    value:
                   'all',
 
-                label:
+                    label:
                   'All source categories'
-              },
+                },
 
-              ...SOURCE_CATEGORIES.map(
-                category => ({
-                  value:
+                ...SOURCE_CATEGORIES.map(
+                    category => ({
+                        value:
                     category.value,
 
-                  label:
+                        label:
                     category.label
-                })
-              )
+                    })
+                )
             ]
         }),
         Object.freeze({
-          key:
+            key:
             'sourceConnections',
 
-          label:
+            label:
             'Connection status',
 
-          control:
+            control:
             'select',
 
-          defaultValue:
+            defaultValue:
             'all',
 
-          options:
+            options:
             Object.freeze([
-              Object.freeze({
-                value:
+                Object.freeze({
+                    value:
                   'all',
 
-                label:
+                    label:
                   'Any connection status'
-              }),
+                }),
 
-              Object.freeze({
-                value:
+                Object.freeze({
+                    value:
                   'linked',
 
-                label:
+                    label:
                   'With connections'
-              }),
+                }),
 
-              Object.freeze({
-                value:
+                Object.freeze({
+                    value:
                   'unlinked',
 
-                label:
+                    label:
                   'Without connections'
-              })
+                })
             ])
         }),
         Object.freeze({
-          key:
+            key:
             'sourceFavouriteOnly',
 
-          label:
+            label:
             'Favourites',
 
-          control:
+            control:
             'boolean',
 
-          defaultValue:
+            defaultValue:
             false,
 
-          checkboxLabel:
+            checkboxLabel:
             'Favourite sources only'
         })
-      ]);
+    ]);
 
-    function archiveFileFiltersWithDefaults(
-      filters =
+function archiveFileFiltersWithDefaults(
+    filters =
         state.archiveFileFilters
-    ) {
-      return cloneSharedFilterValues(
+)
+{
+    return cloneSharedFilterValues(
         archiveFileFilterSchema,
         {
-          ...defaultArchiveFileFilters,
-          ...(filters || {})
+            ...defaultArchiveFileFilters,
+            ...(filters || {})
         }
-      );
-    }
+    );
+}
 
-    function archiveEffectiveFileFilters() {
-      const filters =
+function archiveEffectiveFileFilters()
+{
+    const filters =
         archiveFileFiltersWithDefaults();
 
-      /*
+    /*
       * The Favourites sidebar item is a shortcut
       * into the same predicate, not a second
       * filtering implementation.
       */
-      if (
+    if (
         state.archiveView
           === 'favorites'
-      ) {
+    )
+    {
         filters.favouriteOnly =
-          true;
-      }
-
-      return filters;
+            true;
     }
 
-    function archiveFileFilteringActive(
-      filters =
-        archiveEffectiveFileFilters()
-    ) {
-      const structuredFilterActive =
-        archiveFileFilterSchema
-          .filter(definition =>
-            definition.key !== 'scope'
-          )
-          .some(definition =>
-            sharedFilterValueIsActive(
-              definition,
-              filters[
-                definition.key
-              ]
-            )
-          );
+    return filters;
+}
 
-      return Boolean(
+function archiveFileFilteringActive(
+    filters =
+        archiveEffectiveFileFilters()
+)
+{
+    const structuredFilterActive =
+        archiveFileFilterSchema
+            .filter(definition =>
+                definition.key !== 'scope'
+            )
+            .some(definition =>
+                sharedFilterValueIsActive(
+                    definition,
+                    filters[
+                        definition.key
+                    ]
+                )
+            );
+
+    return Boolean(
         String(
-          state.archiveSearch || ''
+            state.archiveSearch || ''
         ).trim()
         || structuredFilterActive
-      );
-    }
+    );
+}
 
-    function archiveFileFilterCount() {
-      const filters =
+function archiveFileFilterCount()
+{
+    const filters =
         archiveEffectiveFileFilters();
 
-      return archiveFileFilterSchema
+    return archiveFileFilterSchema
         .filter(definition =>
-          sharedFilterValueIsActive(
-            definition,
-            filters[
-              definition.key
-            ]
-          )
+            sharedFilterValueIsActive(
+                definition,
+                filters[
+                    definition.key
+                ]
+            )
         )
         .length;
-    }
+}
 
-    const ARCHIVE_NAVIGATION_HISTORY_LIMIT =
-      50;
+const ARCHIVE_NAVIGATION_HISTORY_LIMIT =
+    50;
 
-    function archiveIsLocationView(
-      view
-    ) {
-      return (
+function archiveIsLocationView(
+    view
+)
+{
+    return (
         view === 'files'
         || view === 'favorites'
-      );
+    );
+}
+
+function archiveNormalizeLocationSnapshot(
+    snapshot = {}
+)
+{
+    const view =
+        snapshot.view === 'favorites'
+            ? 'favorites'
+            : 'files';
+
+    const selectedFile =
+        archiveFileById(
+            snapshot.selectedFileId
+        );
+
+    const fileFilters =
+        archiveFileFiltersWithDefaults(
+            snapshot.fileFilters
+        );
+
+    if (view === 'favorites')
+    {
+        fileFilters.favouriteOnly =
+            true;
     }
 
-    function archiveNormalizeLocationSnapshot(
-      snapshot = {}
-    ) {
-      const view =
-        snapshot.view === 'favorites'
-          ? 'favorites'
-          : 'files';
-
-      const selectedFile =
-        archiveFileById(
-          snapshot.selectedFileId
-        );
-
-      const fileFilters =
-        archiveFileFiltersWithDefaults(
-          snapshot.fileFilters
-        );
-
-      if (view === 'favorites') {
-        fileFilters.favouriteOnly =
-          true;
-      }
-
-      return {
+    return {
         view,
 
         folderId:
           archiveNormalizeFolderId(
-            snapshot.folderId
+              snapshot.folderId
           ),
 
         search:
           String(
-            snapshot.search || ''
+              snapshot.search || ''
           ),
 
         fileFilters,
@@ -3704,7 +3865,7 @@
 
         filterScopeFolderId:
           archiveNormalizeFolderId(
-            snapshot.filterScopeFolderId
+              snapshot.filterScopeFolderId
           ),
 
         selectedFileId:
@@ -3713,13 +3874,14 @@
 
         inspectorCollapsed:
           Boolean(
-            snapshot.inspectorCollapsed
+              snapshot.inspectorCollapsed
           )
-      };
-    }
+    };
+}
 
-    function archiveCurrentLocationSnapshot() {
-      return archiveNormalizeLocationSnapshot({
+function archiveCurrentLocationSnapshot()
+{
+    return archiveNormalizeLocationSnapshot({
         view:
           state.archiveView,
 
@@ -3743,18 +3905,19 @@
 
         inspectorCollapsed:
           state.archiveInspectorCollapsed
-      });
-    }
+    });
+}
 
-    function archiveLocationSnapshotKey(
-      snapshot
-    ) {
-      const normalized =
+function archiveLocationSnapshotKey(
+    snapshot
+)
+{
+    const normalized =
         archiveNormalizeLocationSnapshot(
-          snapshot
+            snapshot
         );
 
-      return JSON.stringify([
+    return JSON.stringify([
         normalized.view,
         normalized.folderId,
         normalized.search,
@@ -3763,384 +3926,411 @@
         normalized.filterScopeFolderId,
         normalized.selectedFileId,
         normalized.inspectorCollapsed
-      ]);
-    }
+    ]);
+}
 
-    function archivePushHistoryEntry(
-      stack,
-      snapshot
-    ) {
-      const normalized =
+function archivePushHistoryEntry(
+    stack,
+    snapshot
+)
+{
+    const normalized =
         archiveNormalizeLocationSnapshot(
-          snapshot
+            snapshot
         );
 
-      const previous =
+    const previous =
         stack[
-          stack.length - 1
+            stack.length - 1
         ];
 
-      if (
+    if (
         previous
         && archiveLocationSnapshotKey(
-          previous
+            previous
         )
           === archiveLocationSnapshotKey(
-            normalized
+              normalized
           )
-      ) {
+    )
+    {
         return;
-      }
+    }
 
-      stack.push(
+    stack.push(
         normalized
-      );
+    );
 
-      if (
+    if (
         stack.length
           > ARCHIVE_NAVIGATION_HISTORY_LIMIT
-      ) {
+    )
+    {
         stack.splice(
-          0,
-          stack.length
+            0,
+            stack.length
             - ARCHIVE_NAVIGATION_HISTORY_LIMIT
         );
-      }
+    }
+}
+
+function archiveRememberCurrentLocation()
+{
+    if (
+        !archiveIsLocationView(
+            state.archiveView
+        )
+    )
+    {
+        return;
     }
 
-    function archiveRememberCurrentLocation() {
-      if (
-        !archiveIsLocationView(
-          state.archiveView
-        )
-      ) {
-        return;
-      }
-
-      archivePushHistoryEntry(
+    archivePushHistoryEntry(
         state.archiveNavigationBackStack,
         archiveCurrentLocationSnapshot()
-      );
-    }
+    );
+}
 
-    function archiveApplyLocationSnapshot(
-      snapshot
-    ) {
-      const normalized =
+function archiveApplyLocationSnapshot(
+    snapshot
+)
+{
+    const normalized =
         archiveNormalizeLocationSnapshot(
-          snapshot
+            snapshot
         );
 
-      state.archiveView =
+    state.archiveView =
         normalized.view;
 
-      state.archiveSelectedFolderId =
+    state.archiveSelectedFolderId =
         normalized.folderId;
 
-      state.archiveSearch =
+    state.archiveSearch =
         normalized.search;
 
-      state.archiveFileFilters =
+    state.archiveFileFilters =
         archiveFileFiltersWithDefaults(
-          normalized.fileFilters
+            normalized.fileFilters
         );
 
-      state.archiveFilterPresentation =
+    state.archiveFilterPresentation =
         normalized.filterPresentation;
 
-      state.archiveFilterScopeFolderId =
+    state.archiveFilterScopeFolderId =
         normalized.filterScopeFolderId;
 
-      state.archiveSelectedFileId =
+    state.archiveSelectedFileId =
         normalized.selectedFileId;
 
-      state.archiveSelectedFolderItemId =
+    state.archiveSelectedFolderItemId =
         null;
 
-      state.archiveSelectedFileIds =
+    state.archiveSelectedFileIds =
         [];
 
-      state.archiveInspectorCollapsed =
+    state.archiveInspectorCollapsed =
         normalized.inspectorCollapsed;
-    }
+}
 
-    function archivePrepareTreeForLocation(
-      folderId,
-      {
+function archivePrepareTreeForLocation(
+    folderId,
+    {
         expandCurrent =
-          false
-      } = {}
-    ) {
-      const normalizedFolderId =
+            false
+    } = {}
+)
+{
+    const normalizedFolderId =
         archiveNormalizeFolderId(
-          folderId
+            folderId
         );
 
-      if (!normalizedFolderId) {
+    if (!normalizedFolderId)
+    {
         state.archivePendingTreeRevealId =
-          null;
+            null;
 
         return;
-      }
-
-      const path =
-        archiveFolderAncestors(
-          normalizedFolderId
-        );
-
-      const foldersToExpand =
-        expandCurrent
-          ? path
-          : path.slice(
-              0,
-              -1
-            );
-
-      foldersToExpand.forEach(
-        folder => {
-          state
-            .archiveExpandedFolders[
-              folder.id
-            ] = true;
-        }
-      );
-
-      state.archivePendingTreeRevealId =
-        normalizedFolderId;
     }
 
-    function archiveNavigateToLocationCommit(
-      location = {},
-      {
-        recordHistory =
-          true,
-
-        clearForward =
-          true,
-
-        expandCurrent =
-          false,
-
-        renderMode =
-          'archive'
-      } = {}
-    ) {
-      const currentIsLocation =
-        archiveIsLocationView(
-          state.archiveView
+    const path =
+        archiveFolderAncestors(
+            normalizedFolderId
         );
 
-      const current =
+    const foldersToExpand =
+        expandCurrent
+            ? path
+            : path.slice(
+                0,
+                -1
+            );
+
+    foldersToExpand.forEach(
+        folder =>
+        {
+            state
+                .archiveExpandedFolders[
+                    folder.id
+                ] = true;
+        }
+    );
+
+    state.archivePendingTreeRevealId =
+        normalizedFolderId;
+}
+
+function archiveNavigateToLocationCommit(
+    location = {},
+    {
+        recordHistory =
+            true,
+
+        clearForward =
+            true,
+
+        expandCurrent =
+            false,
+
+        renderMode =
+            'archive'
+    } = {}
+)
+{
+    const currentIsLocation =
+        archiveIsLocationView(
+            state.archiveView
+        );
+
+    const current =
         archiveCurrentLocationSnapshot();
 
-      const base =
+    const base =
         currentIsLocation
-          ? current
-          : archiveNormalizeLocationSnapshot({
-              view:
+            ? current
+            : archiveNormalizeLocationSnapshot({
+                view:
                 location.view
                 || 'files',
 
-              folderId:
+                folderId:
                 null,
 
-              search:
+                search:
                 '',
 
-              fileFilters:
+                fileFilters:
                 archiveFileFiltersWithDefaults(
-                  state.archiveFileFilters
+                    state.archiveFileFilters
                 ),
 
-              filterPresentation:
+                filterPresentation:
                 state.archiveFilterPresentation,
 
-              filterScopeFolderId:
+                filterScopeFolderId:
                 state.archiveFilterScopeFolderId,
 
-              selectedFileId:
+                selectedFileId:
                 null,
 
-              inspectorCollapsed:
+                inspectorCollapsed:
                 false
             });
 
-      const target =
+    const target =
         archiveNormalizeLocationSnapshot({
-          ...base,
-          ...location
+            ...base,
+            ...location
         });
 
-      const changed =
+    const changed =
         !currentIsLocation
         || archiveLocationSnapshotKey(
-          current
+            current
         )
           !== archiveLocationSnapshotKey(
-            target
+              target
           );
 
-      if (
+    if (
         recordHistory
         && currentIsLocation
         && changed
-      ) {
+    )
+    {
         archivePushHistoryEntry(
-          state.archiveNavigationBackStack,
-          current
+            state.archiveNavigationBackStack,
+            current
         );
-      }
+    }
 
-      if (
+    if (
         clearForward
         && changed
-      ) {
+    )
+    {
         state.archiveNavigationForwardStack =
-          [];
-      }
+            [];
+    }
 
-      archiveApplyLocationSnapshot(
+    archiveApplyLocationSnapshot(
         target
-      );
+    );
 
-      archivePrepareTreeForLocation(
+    archivePrepareTreeForLocation(
         target.folderId,
         {
-          expandCurrent
+            expandCurrent
         }
-      );
+    );
 
-      ensureArchiveSelection();
+    ensureArchiveSelection();
 
-      if (
+    if (
         renderMode === 'app'
-      ) {
+    )
+    {
         render();
-      } else {
+    }
+    else
+    {
         renderArchive();
-      }
     }
+}
 
-    function archiveNavigationCanGoBack() {
-      return Boolean(
+function archiveNavigationCanGoBack()
+{
+    return Boolean(
         state
-          .archiveNavigationBackStack
-          .length
-      );
-    }
+            .archiveNavigationBackStack
+            .length
+    );
+}
 
-    function archiveNavigationCanGoForward() {
-      return Boolean(
+function archiveNavigationCanGoForward()
+{
+    return Boolean(
         state
-          .archiveNavigationForwardStack
-          .length
-      );
-    }
+            .archiveNavigationForwardStack
+            .length
+    );
+}
 
-    function archiveNavigationCanGoUp() {
-      return Boolean(
+function archiveNavigationCanGoUp()
+{
+    return Boolean(
         archiveFolderById(
-          state.archiveSelectedFolderId
+            state.archiveSelectedFolderId
         )
-      );
-    }
+    );
+}
 
-    function archiveNavigateBackCommit() {
-      const target =
+function archiveNavigateBackCommit()
+{
+    const target =
         state
-          .archiveNavigationBackStack
-          .pop();
+            .archiveNavigationBackStack
+            .pop();
 
-      if (!target) {
+    if (!target)
+    {
         return;
-      }
-
-      if (
-        archiveIsLocationView(
-          state.archiveView
-        )
-      ) {
-        archivePushHistoryEntry(
-          state.archiveNavigationForwardStack,
-          archiveCurrentLocationSnapshot()
-        );
-      }
-
-      archiveApplyLocationSnapshot(
-        target
-      );
-
-      archivePrepareTreeForLocation(
-        target.folderId
-      );
-
-      ensureArchiveSelection();
-      renderArchive();
     }
 
-    function archiveNavigateForwardCommit() {
-      const target =
+    if (
+        archiveIsLocationView(
+            state.archiveView
+        )
+    )
+    {
+        archivePushHistoryEntry(
+            state.archiveNavigationForwardStack,
+            archiveCurrentLocationSnapshot()
+        );
+    }
+
+    archiveApplyLocationSnapshot(
+        target
+    );
+
+    archivePrepareTreeForLocation(
+        target.folderId
+    );
+
+    ensureArchiveSelection();
+    renderArchive();
+}
+
+function archiveNavigateForwardCommit()
+{
+    const target =
         state
-          .archiveNavigationForwardStack
-          .pop();
+            .archiveNavigationForwardStack
+            .pop();
 
-      if (!target) {
+    if (!target)
+    {
         return;
-      }
-
-      if (
-        archiveIsLocationView(
-          state.archiveView
-        )
-      ) {
-        archivePushHistoryEntry(
-          state.archiveNavigationBackStack,
-          archiveCurrentLocationSnapshot()
-        );
-      }
-
-      archiveApplyLocationSnapshot(
-        target
-      );
-
-      archivePrepareTreeForLocation(
-        target.folderId
-      );
-
-      ensureArchiveSelection();
-      renderArchive();
     }
 
-    function archiveNavigateUpCommit() {
-      const currentFolder =
+    if (
+        archiveIsLocationView(
+            state.archiveView
+        )
+    )
+    {
+        archivePushHistoryEntry(
+            state.archiveNavigationBackStack,
+            archiveCurrentLocationSnapshot()
+        );
+    }
+
+    archiveApplyLocationSnapshot(
+        target
+    );
+
+    archivePrepareTreeForLocation(
+        target.folderId
+    );
+
+    ensureArchiveSelection();
+    renderArchive();
+}
+
+function archiveNavigateUpCommit()
+{
+    const currentFolder =
         archiveFolderById(
-          state.archiveSelectedFolderId
+            state.archiveSelectedFolderId
         );
 
-      if (!currentFolder) {
+    if (!currentFolder)
+    {
         return;
-      }
+    }
 
-      const scopeRoot =
+    const scopeRoot =
         archiveFileFilteringActive()
         && archiveEffectiveFileFilters()
-          .scope === 'folder'
-          ? archiveNormalizeFolderId(
-              state.archiveFilterScopeFolderId
+            .scope === 'folder'
+            ? archiveNormalizeFolderId(
+                state.archiveFilterScopeFolderId
             )
-          : null;
+            : null;
 
-      if (
+    if (
         scopeRoot
         && currentFolder.id === scopeRoot
-      ) {
+    )
+    {
         return;
-      }
+    }
 
-      archiveNavigateToLocationCommit({
+    archiveNavigateToLocationCommit({
         folderId:
           archiveFolderParentId(
-            currentFolder
+              currentFolder
           ),
 
         selectedFileId:
@@ -4148,233 +4338,253 @@
 
         inspectorCollapsed:
           false
-      });
-    }
-    /*
+    });
+}
+/*
       Public navigation functions always protect
       an active file-edit draft.
     */
 
-    function archiveNavigateToLocation(
-      location = {},
-      options = {}
-    ) {
-      runAfterArchiveFileEditGuard(
-        () => {
-          archiveNavigateToLocationCommit(
-            location,
-            options
-          );
+function archiveNavigateToLocation(
+    location = {},
+    options = {}
+)
+{
+    runAfterArchiveFileEditGuard(
+        () =>
+        {
+            archiveNavigateToLocationCommit(
+                location,
+                options
+            );
         }
-      );
-    }
+    );
+}
 
-    function archiveNavigateBack() {
-      runAfterArchiveFileEditGuard(
+function archiveNavigateBack()
+{
+    runAfterArchiveFileEditGuard(
         archiveNavigateBackCommit
-      );
-    }
+    );
+}
 
-    function archiveNavigateForward() {
-      runAfterArchiveFileEditGuard(
+function archiveNavigateForward()
+{
+    runAfterArchiveFileEditGuard(
         archiveNavigateForwardCommit
-      );
-    }
+    );
+}
 
-    function archiveNavigateUp() {
-      runAfterArchiveFileEditGuard(
+function archiveNavigateUp()
+{
+    runAfterArchiveFileEditGuard(
         archiveNavigateUpCommit
-      );
-    }
+    );
+}
 
-    function selectArchiveFolderItem(
-      folderId
-    ) {
-      const folder =
+function selectArchiveFolderItem(
+    folderId
+)
+{
+    const folder =
         archiveFolderById(
-          folderId
+            folderId
         );
 
-      if (!folder) {
+    if (!folder)
+    {
         return;
-      }
+    }
 
-      runAfterArchiveFileEditGuard(
-        () => {
-          state.archiveSelectedFolderItemId =
-            folder.id;
+    runAfterArchiveFileEditGuard(
+        () =>
+        {
+            state.archiveSelectedFolderItemId =
+                folder.id;
 
-          /*
+            /*
             File and folder detail selection are
             mutually exclusive.
           */
-          state.archiveSelectedFileId =
-            null;
+            state.archiveSelectedFileId =
+                null;
 
-          state.archiveInspectorCollapsed =
-            false;
+            state.archiveInspectorCollapsed =
+                false;
 
-          renderArchiveMain();
+            renderArchiveMain();
         }
-      );
-    }
+    );
+}
 
-    function archiveOpenFolder(
-      folderId
-    ) {
-      const folder =
+function archiveOpenFolder(
+    folderId
+)
+{
+    const folder =
         archiveFolderById(
-          folderId
+            folderId
         );
 
-      if (!folder) {
+    if (!folder)
+    {
         return;
-      }
+    }
 
-      archiveNavigateToLocation(
+    archiveNavigateToLocation(
         {
-          view:
+            view:
             state.archiveView
               === 'favorites'
                 ? 'favorites'
                 : 'files',
 
-          folderId:
+            folderId:
             folder.id,
 
-          selectedFileId:
+            selectedFileId:
             null,
 
-          inspectorCollapsed:
+            inspectorCollapsed:
             false
         },
         {
-          expandCurrent:
+            expandCurrent:
             true
         }
-      );
-    }
+    );
+}
 
-    function archivePruneNavigationHistory() {
-      const cleanStack =
-        stack => {
-          const result = [];
+function archivePruneNavigationHistory()
+{
+    const cleanStack =
+        stack =>
+        {
+            const result = [];
 
-          stack.forEach(
-            snapshot => {
-              const folderValid =
-                archiveIsRootLocation(
-                  snapshot.folderId
-                )
+            stack.forEach(
+                snapshot =>
+                {
+                    const folderValid =
+                        archiveIsRootLocation(
+                            snapshot.folderId
+                        )
                 || Boolean(
-                  archiveFolderById(
-                    snapshot.folderId
-                  )
+                    archiveFolderById(
+                        snapshot.folderId
+                    )
                 );
 
-              if (!folderValid) {
-                return;
-              }
+                    if (!folderValid)
+                    {
+                        return;
+                    }
 
-              const normalized =
-                archiveNormalizeLocationSnapshot(
-                  snapshot
-                );
+                    const normalized =
+                        archiveNormalizeLocationSnapshot(
+                            snapshot
+                        );
 
-              const previous =
-                result[
-                  result.length - 1
-                ];
+                    const previous =
+                        result[
+                            result.length - 1
+                        ];
 
-              if (
-                previous
+                    if (
+                        previous
                 && archiveLocationSnapshotKey(
-                  previous
+                    previous
                 )
                   === archiveLocationSnapshotKey(
-                    normalized
+                      normalized
                   )
-              ) {
-                return;
-              }
+                    )
+                    {
+                        return;
+                    }
 
-              result.push(
-                normalized
-              );
-            }
-          );
+                    result.push(
+                        normalized
+                    );
+                }
+            );
 
-          return result.slice(
-            -ARCHIVE_NAVIGATION_HISTORY_LIMIT
-          );
+            return result.slice(
+                -ARCHIVE_NAVIGATION_HISTORY_LIMIT
+            );
         };
 
-      state.archiveNavigationBackStack =
+    state.archiveNavigationBackStack =
         cleanStack(
-          state.archiveNavigationBackStack
+            state.archiveNavigationBackStack
           || []
         );
 
-      state.archiveNavigationForwardStack =
+    state.archiveNavigationForwardStack =
         cleanStack(
-          state.archiveNavigationForwardStack
+            state.archiveNavigationForwardStack
           || []
         );
-    }
+}
 
-    function openArchiveLocation(
-      location,
-      {
+function openArchiveLocation(
+    location,
+    {
         recordHistory =
-          true,
+            true,
 
         expandCurrent =
-          false
-      } = {}
-    ) {
-      state.activeModule =
+            false
+    } = {}
+)
+{
+    state.activeModule =
         'Archive';
 
-      archiveNavigateToLocation(
+    archiveNavigateToLocation(
         location,
         {
-          recordHistory,
-          expandCurrent,
-          renderMode:
+            recordHistory,
+            expandCurrent,
+            renderMode:
             'app'
         }
-      );
-    }
+    );
+}
 
-    function archiveProjectFiles() {
-      const projectId = currentProjectId();
-      return projectId
+function archiveProjectFiles()
+{
+    const projectId = currentProjectId();
+    return projectId
         ? (sampleData.archiveFiles || []).filter(file => file.projectId === projectId)
         : [];
-    }
+}
 
-    function archiveProjectSources() {
-      const projectId = currentProjectId();
-      return projectId
+function archiveProjectSources()
+{
+    const projectId = currentProjectId();
+    return projectId
         ? (sampleData.sources || []).filter(source => source.projectId === projectId)
         : [];
-    }
+}
 
-    function archiveFileKind(file) {
-      const value = String(file?.kind || file?.type || '').toLowerCase();
-      if (value.includes('folder')) return 'folder';
-      if (value.includes('pdf')) return 'pdf';
-      if (value.includes('image') || value.includes('img') || /\.(jpg|jpeg|png|tif|tiff|webp)$/i.test(file?.name || '')) return 'img';
-      if (value.includes('audio') || /\.(mp3|wav|m4a)$/i.test(file?.name || '')) return 'audio';
-      if (value.includes('spreadsheet') || /\.(xlsx|xls|csv)$/i.test(file?.name || '')) return 'sheet';
-      if (value.includes('document') || /\.(docx|doc|rtf|txt)$/i.test(file?.name || '')) return 'doc';
-      if (/\.(zip|7z|rar)$/i.test(file?.name || '')) return 'archive';
-      return 'file';
-    }
+function archiveFileKind(file)
+{
+    const value = String(file?.kind || file?.type || '').toLowerCase();
+    if (value.includes('folder')) return 'folder';
+    if (value.includes('pdf')) return 'pdf';
+    if (value.includes('image') || value.includes('img') || /\.(jpg|jpeg|png|tif|tiff|webp)$/i.test(file?.name || '')) return 'img';
+    if (value.includes('audio') || /\.(mp3|wav|m4a)$/i.test(file?.name || '')) return 'audio';
+    if (value.includes('spreadsheet') || /\.(xlsx|xls|csv)$/i.test(file?.name || '')) return 'sheet';
+    if (value.includes('document') || /\.(docx|doc|rtf|txt)$/i.test(file?.name || '')) return 'doc';
+    if (/\.(zip|7z|rar)$/i.test(file?.name || '')) return 'archive';
+    return 'file';
+}
 
-    function archiveFileTypeLabel(file) {
-      const kind = archiveFileKind(file);
-      return ({
+function archiveFileTypeLabel(file)
+{
+    const kind = archiveFileKind(file);
+    return ({
         folder: 'Folder',
         pdf: 'PDF document',
         img: 'Image',
@@ -4383,265 +4593,271 @@
         doc: 'Document',
         archive: 'Archive file',
         file: file?.type || 'File'
-      })[kind];
-    }
+    })[kind];
+}
 
-    function archiveFileIcon(file) {
-      const kind = archiveFileKind(file);
-      if (kind === 'folder') return `<span class="archive-file-icon folder" aria-hidden="true">${icon.folder}</span>`;
-      const label = ({ pdf: 'PDF', img: 'IMG', audio: 'AUD', sheet: 'XLS', doc: 'DOC', archive: 'ZIP', file: 'FILE' })[kind];
-      return `<span class="archive-file-icon ${kind}" aria-hidden="true">${escapeHtml(label)}</span>`;
-    }
+function archiveFileIcon(file)
+{
+    const kind = archiveFileKind(file);
+    if (kind === 'folder') return `<span class="archive-file-icon folder" aria-hidden="true">${icon.folder}</span>`;
+    const label = ({ pdf: 'PDF', img: 'IMG', audio: 'AUD', sheet: 'XLS', doc: 'DOC', archive: 'ZIP', file: 'FILE' })[kind];
+    return `<span class="archive-file-icon ${kind}" aria-hidden="true">${escapeHtml(label)}</span>`;
+}
 
-    function connectedFileMeta(
-      file
-    ) {
-      if (!file) {
+function connectedFileMeta(
+    file
+)
+{
+    if (!file)
+    {
         return 'Archive file';
-      }
+    }
 
-      return [
+    return [
         archiveFileTypeLabel(
-          file
+            file
         ),
 
         String(
-          file.size || ''
+            file.size || ''
         ).trim()
-      ]
+    ]
         .filter(Boolean)
         .join(' · ')
         || 'Archive file';
-    }
+}
 
-    function connectedFileContextConfig(
-      contextType
-    ) {
-      return {
+function connectedFileContextConfig(
+    contextType
+)
+{
+    return {
         person: {
-          noun:
+            noun:
             'person',
 
-          record:
+            record:
             contextId =>
-              getPerson(
-                contextId
-              ),
+                getPerson(
+                    contextId
+                ),
 
-          label:
+            label:
             record =>
-              record?.names?.display
+                record?.names?.display
               || record?.name
               || 'this person',
 
-          isLinked:
+            isLinked:
             (
-              file,
-              contextId
-            ) =>
-              archiveConnectionIds(
-                'file',
-                file.id,
-                'person'
-              ).includes(
+                file,
                 contextId
-              ),
-
-          unlink:
-            (
-              file,
-              contextId
             ) =>
-              archiveSetConnection(
-                'file',
-                file.id,
-                'person',
-                contextId,
-                false
-              )
+                archiveConnectionIds(
+                    'file',
+                    file.id,
+                    'person'
+                ).includes(
+                    contextId
+                ),
+
+            unlink:
+            (
+                file,
+                contextId
+            ) =>
+                archiveSetConnection(
+                    'file',
+                    file.id,
+                    'person',
+                    contextId,
+                    false
+                )
         },
 
         note: {
-          noun:
+            noun:
             'note',
 
-          record:
+            record:
             contextId =>
-              getNote(
-                contextId,
-                {
-                  includeArchived:
+                getNote(
+                    contextId,
+                    {
+                        includeArchived:
                     true
-                }
-              ),
+                    }
+                ),
 
-          label:
+            label:
             record =>
-              record?.title
+                record?.title
               || 'Untitled note',
 
-          isLinked:
+            isLinked:
             (
-              file,
-              contextId
-            ) =>
-              archiveConnectionIds(
-                'file',
-                file.id,
-                'note'
-              ).includes(
+                file,
                 contextId
-              ),
-
-          unlink:
-            (
-              file,
-              contextId
             ) =>
-              archiveSetConnection(
-                'file',
-                file.id,
-                'note',
-                contextId,
-                false
-              )
+                archiveConnectionIds(
+                    'file',
+                    file.id,
+                    'note'
+                ).includes(
+                    contextId
+                ),
+
+            unlink:
+            (
+                file,
+                contextId
+            ) =>
+                archiveSetConnection(
+                    'file',
+                    file.id,
+                    'note',
+                    contextId,
+                    false
+                )
         },
 
         place: {
-          noun:
+            noun:
             'place',
 
-          record:
+            record:
             contextId =>
-              getPlace(
-                contextId
-              ),
+                getPlace(
+                    contextId
+                ),
 
-          label:
+            label:
             record =>
-              record?.name
+                record?.name
               || 'this place',
 
-          isLinked:
+            isLinked:
             (
-              file,
-              contextId
-            ) =>
-              archiveConnectionIds(
-                'file',
-                file.id,
-                'place'
-              ).includes(
+                file,
                 contextId
-              ),
-
-          unlink:
-            (
-              file,
-              contextId
             ) =>
-              archiveSetConnection(
-                'file',
-                file.id,
-                'place',
-                contextId,
-                false
-              )
+                archiveConnectionIds(
+                    'file',
+                    file.id,
+                    'place'
+                ).includes(
+                    contextId
+                ),
+
+            unlink:
+            (
+                file,
+                contextId
+            ) =>
+                archiveSetConnection(
+                    'file',
+                    file.id,
+                    'place',
+                    contextId,
+                    false
+                )
         },
 
         source: {
-          noun:
+            noun:
             'source',
 
-          record:
+            record:
             contextId =>
-              archiveSourceById(
-                contextId
-              ),
+                archiveSourceById(
+                    contextId
+                ),
 
-          label:
+            label:
             record =>
-              record?.title
+                record?.title
               || 'Untitled source',
 
-          isLinked:
+            isLinked:
             (
-              file,
-              contextId
+                file,
+                contextId
             ) =>
-              archiveConnectionIds(
-                'source',
-                contextId,
-                'file'
-              ).includes(
-                file.id
-              ),
+                archiveConnectionIds(
+                    'source',
+                    contextId,
+                    'file'
+                ).includes(
+                    file.id
+                ),
 
-          unlink:
+            unlink:
             (
-              file,
-              contextId
+                file,
+                contextId
             ) =>
-              archiveSetConnection(
-                'source',
-                contextId,
-                'file',
-                file.id,
-                false
-              )
+                archiveSetConnection(
+                    'source',
+                    contextId,
+                    'file',
+                    file.id,
+                    false
+                )
         }
-      }[
+    }[
         contextType
-      ] || null;
+    ] || null;
+}
+
+function renderConnectedFileItem({
+    file,
+
+    contextType =
+        '',
+
+    contextId =
+        '',
+
+    allowUnlink =
+        true
+} = {})
+{
+    if (!file)
+    {
+        return '';
     }
 
-    function renderConnectedFileItem({
-      file,
-
-      contextType =
-        '',
-
-      contextId =
-        '',
-
-      allowUnlink =
-        true
-    } = {}) {
-      if (!file) {
-        return '';
-      }
-
-      const title =
+    const title =
         file.name
         || file.title
         || 'Untitled file';
 
-      const meta =
+    const meta =
         connectedFileMeta(
-          file
+            file
         );
 
-      const contextConfig =
+    const contextConfig =
         connectedFileContextConfig(
-          contextType
+            contextType
         );
 
-      const unlinkSupported =
+    const unlinkSupported =
         Boolean(
-          allowUnlink
+            allowUnlink
           && contextId
           && contextConfig
         );
 
-      return `
+    return `
         <div
           class="
             connected-file-item
 
             ${
-              unlinkSupported
-                ? 'can-unlink'
-                : ''
+                unlinkSupported
+                    ? 'can-unlink'
+                    : ''
             }
           ">
 
@@ -4651,14 +4867,14 @@
             "
             type="button"
             data-connected-file-id="${escapeHtml(
-              file.id
+                file.id
             )}"
             aria-label="Open ${escapeHtml(
-              title
+                title
             )} in Archive">
 
             ${archiveFileIcon(
-              file
+                file
             )}
 
             <span
@@ -4671,11 +4887,11 @@
                   connected-file-title
                 "
                 title="${escapeHtml(
-                  title
+                    title
                 )}">
 
                 ${escapeHtml(
-                  title
+                    title
                 )}
               </strong>
 
@@ -4684,79 +4900,81 @@
                   connected-file-meta
                 "
                 title="${escapeHtml(
-                  meta
+                    meta
                 )}">
 
                 ${escapeHtml(
-                  meta
+                    meta
                 )}
               </span>
             </span>
           </button>
 
           ${
-            unlinkSupported
-              ? `
+                unlinkSupported
+                    ? `
                 <button
                   class="
                     connected-file-unlink
                   "
                   type="button"
                   data-connected-file-unlink="${escapeHtml(
-                    file.id
-                  )}"
+                        file.id
+                    )}"
                   data-connected-file-context-type="${escapeHtml(
-                    contextType
-                  )}"
+                        contextType
+                    )}"
                   data-connected-file-context-id="${escapeHtml(
-                    contextId
-                  )}"
+                        contextId
+                    )}"
                   aria-label="Unlink ${escapeHtml(
-                    title
-                  )} from this ${escapeHtml(
-                    contextConfig.noun
-                  )}"
+                        title
+                    )} from this ${escapeHtml(
+                        contextConfig.noun
+                    )}"
                   title="Unlink file">
 
                   ${icon.unlink}
                 </button>
               `
-              : ''
-          }
+                    : ''
+            }
         </div>
       `;
-    }
+}
 
-    function renderConnectedFileList({
-      files =
+function renderConnectedFileList({
+    files =
         [],
 
-      limit =
+    limit =
         null,
 
-      emptyText =
+    emptyText =
         'No files linked.',
 
-      contextType =
+    contextType =
         '',
 
-      contextId =
+    contextId =
         '',
 
-      allowUnlink =
+    allowUnlink =
         true
-    } = {}) {
-      const validFiles =
+} = {})
+{
+    const validFiles =
         (
-          Array.isArray(
-            files
-          )
-            ? files
-            : []
+            Array.isArray(
+                files
+            )
+                ? files
+                : []
         )
-          .filter(Boolean);
+            .filter(Boolean);
 
-      if (!validFiles.length) {
+    if (!validFiles.length)
+    {
         return `
           <div
             class="
@@ -4764,195 +4982,204 @@
             ">
 
             ${escapeHtml(
-              emptyText
+                emptyText
             )}
           </div>
         `;
-      }
+    }
 
-      /*
+    /*
         null means "no extra limit".
         Do not convert null to Number(null) === 0.
       */
-      const hasLimit =
+    const hasLimit =
         limit !== null
         && limit !== undefined
         && Number.isFinite(
-          Number(
-            limit
-          )
+            Number(
+                limit
+            )
         )
         && Number(
-          limit
+            limit
         ) >= 0;
 
-      const visibleFiles =
+    const visibleFiles =
         hasLimit
-          ? validFiles.slice(
-              0,
-              Number(
-                limit
-              )
+            ? validFiles.slice(
+                0,
+                Number(
+                    limit
+                )
             )
-          : validFiles;
+            : validFiles;
 
-      return `
+    return `
         <div
           class="
             connected-file-list
           ">
 
           ${visibleFiles
-            .map(file =>
-              renderConnectedFileItem({
-                file,
+                .map(file =>
+                    renderConnectedFileItem({
+                        file,
 
-                contextType,
+                        contextType,
 
-                contextId,
+                        contextId,
 
-                allowUnlink
-              })
-            )
-            .join('')}
+                        allowUnlink
+                    })
+                )
+                .join('')}
         </div>
       `;
-    }
+}
 
-    function connectedFileRelationshipExists({
-      fileId,
-      contextType,
-      contextId
-    }) {
-      const file =
+function connectedFileRelationshipExists({
+    fileId,
+    contextType,
+    contextId
+})
+{
+    const file =
         archiveFileById(
-          fileId
+            fileId
         );
 
-      const config =
+    const config =
         connectedFileContextConfig(
-          contextType
+            contextType
         );
 
-      if (
+    if (
         !file
         || !config
         || !contextId
-      ) {
+    )
+    {
         return false;
-      }
+    }
 
-      return Boolean(
+    return Boolean(
         config.isLinked(
-          file,
-          contextId
+            file,
+            contextId
         )
-      );
-    }
+    );
+}
 
-    function unlinkConnectedFileRelationship({
-      fileId,
-      contextType,
-      contextId
-    }) {
-      const file =
+function unlinkConnectedFileRelationship({
+    fileId,
+    contextType,
+    contextId
+})
+{
+    const file =
         archiveFileById(
-          fileId
+            fileId
         );
 
-      const config =
+    const config =
         connectedFileContextConfig(
-          contextType
+            contextType
         );
 
-      if (
+    if (
         !file
         || !config
         || !contextId
-      ) {
+    )
+    {
         return false;
-      }
+    }
 
-      if (
+    if (
         !config.isLinked(
-          file,
-          contextId
+            file,
+            contextId
         )
-      ) {
+    )
+    {
         return false;
-      }
-
-      return Boolean(
-        config.unlink(
-          file,
-          contextId
-        )
-      );
     }
 
-    function openConnectedFileUnlinkConfirm({
-      fileId,
-      contextType,
-      contextId,
-      onUnlinked =
+    return Boolean(
+        config.unlink(
+            file,
+            contextId
+        )
+    );
+}
+
+function openConnectedFileUnlinkConfirm({
+    fileId,
+    contextType,
+    contextId,
+    onUnlinked =
         null
-    } = {}) {
-      const file =
+} = {})
+{
+    const file =
         archiveFileById(
-          fileId
+            fileId
         );
 
-      const config =
+    const config =
         connectedFileContextConfig(
-          contextType
+            contextType
         );
 
-      if (
+    if (
         !file
         || !config
         || !contextId
-      ) {
+    )
+    {
         return;
-      }
+    }
 
-      if (
+    if (
         !connectedFileRelationshipExists({
-          fileId,
-          contextType,
-          contextId
+            fileId,
+            contextType,
+            contextId
         })
-      ) {
+    )
+    {
         showToast(
-          'This file is no longer linked.'
+            'This file is no longer linked.'
         );
 
         return;
-      }
+    }
 
-      const contextRecord =
+    const contextRecord =
         config.record(
-          contextId
+            contextId
         );
 
-      if (!contextRecord) {
+    if (!contextRecord)
+    {
         showToast(
-          'Linked record not found.'
+            'Linked record not found.'
         );
 
         return;
-      }
+    }
 
-      const fileName =
+    const fileName =
         file.name
         || file.title
         || 'Untitled file';
 
-      const contextName =
+    const contextName =
         config.label(
-          contextRecord
+            contextRecord
         );
 
-      openModal(`
+    openModal(`
         <div
           class="
             modal
@@ -4969,13 +5196,13 @@
 
                 Unlink file from
                 ${escapeHtml(
-                  config.noun
+                    config.noun
                 )}?
               </h2>
 
               <p>
                 ${escapeHtml(
-                  fileName
+                    fileName
                 )}
               </p>
             </div>
@@ -5011,10 +5238,10 @@
               <span>
                 Only the connection between
                 “${escapeHtml(
-                  fileName
+                    fileName
                 )}” and
                 “${escapeHtml(
-                  contextName
+                    contextName
                 )}” will be removed.
                 The file will remain available
                 in Archive and keep all its
@@ -5049,1067 +5276,1158 @@
         </div>
       `);
 
-      modalBackdrop
+    modalBackdrop
         .querySelector(
-          '[data-confirm-connected-file-unlink]'
+            '[data-confirm-connected-file-unlink]'
         )
         ?.addEventListener(
-          'click',
-          () => {
-            const unlinked =
-              unlinkConnectedFileRelationship({
-                fileId:
+            'click',
+            () =>
+            {
+                const unlinked =
+                    unlinkConnectedFileRelationship({
+                        fileId:
                   file.id,
 
-                contextType,
+                        contextType,
 
-                contextId
-              });
+                        contextId
+                    });
 
-            /*
+                /*
               Match the Connected Note flow:
               close before rerendering the source
               inspector.
             */
-            closeModal();
+                closeModal();
 
-            if (!unlinked) {
-              showToast(
-                'The file could not be unlinked.'
-              );
+                if (!unlinked)
+                {
+                    showToast(
+                        'The file could not be unlinked.'
+                    );
 
-              return;
-            }
+                    return;
+                }
 
-            if (
-              typeof onUnlinked
+                if (
+                    typeof onUnlinked
               === 'function'
-            ) {
-              onUnlinked({
-                fileId:
+                )
+                {
+                    onUnlinked({
+                        fileId:
                   file.id,
 
-                contextType,
+                        contextType,
 
-                contextId
-              });
-            } else {
-              render();
+                        contextId
+                    });
+                }
+                else
+                {
+                    render();
+                }
+
+                showToast(
+                    `File unlinked from ${
+                        config.noun
+                    }.`
+                );
             }
-
-            showToast(
-              `File unlinked from ${
-                config.noun
-              }.`
-            );
-          }
         );
-    }
+}
 
-    function bindConnectedFileLinks(
-      root,
-      {
+function bindConnectedFileLinks(
+    root,
+    {
         onUnlinked =
-          null
-      } = {}
-    ) {
-      if (!root) {
+            null
+    } = {}
+)
+{
+    if (!root)
+    {
         return;
-      }
-
-      root
-        .querySelectorAll(
-          '[data-connected-file-id]'
-        )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              openFamilyArchiveItem(
-                button.dataset
-                  .connectedFileId
-              );
-            }
-          );
-        });
-
-      root
-        .querySelectorAll(
-          '[data-connected-file-unlink]'
-        )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            event => {
-              event.preventDefault();
-              event.stopPropagation();
-
-              openConnectedFileUnlinkConfirm({
-                fileId:
-                  button.dataset
-                    .connectedFileUnlink,
-
-                contextType:
-                  button.dataset
-                    .connectedFileContextType
-                  || '',
-
-                contextId:
-                  button.dataset
-                    .connectedFileContextId
-                  || '',
-
-                onUnlinked
-              });
-            }
-          );
-        });
     }
 
-    function archiveDateValue(value) {
-      if (!value) return 0;
-      const parsed = Date.parse(value);
-      return Number.isFinite(parsed) ? parsed : 0;
-    }
+    root
+        .querySelectorAll(
+            '[data-connected-file-id]'
+        )
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
+                {
+                    openFamilyArchiveItem(
+                        button.dataset
+                            .connectedFileId
+                    );
+                }
+            );
+        });
 
-    function archiveFormatDate(value, fallback = 'Unknown') {
-      const parsed = Date.parse(value || '');
-      if (!Number.isFinite(parsed)) return value || fallback;
-      return new Intl.DateTimeFormat(state.language === 'ru' ? 'ru' : 'en-US', {
+    root
+        .querySelectorAll(
+            '[data-connected-file-unlink]'
+        )
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                event =>
+                {
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    openConnectedFileUnlinkConfirm({
+                        fileId:
+                  button.dataset
+                      .connectedFileUnlink,
+
+                        contextType:
+                  button.dataset
+                      .connectedFileContextType
+                  || '',
+
+                        contextId:
+                  button.dataset
+                      .connectedFileContextId
+                  || '',
+
+                        onUnlinked
+                    });
+                }
+            );
+        });
+}
+
+function archiveDateValue(value)
+{
+    if (!value) return 0;
+    const parsed = Date.parse(value);
+    return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function archiveFormatDate(value, fallback = 'Unknown')
+{
+    const parsed = Date.parse(value || '');
+    if (!Number.isFinite(parsed)) return value || fallback;
+    return new Intl.DateTimeFormat(state.language === 'ru' ? 'ru' : 'en-US', {
         year: 'numeric', month: 'short', day: 'numeric'
-      }).format(new Date(parsed));
-    }
+    }).format(new Date(parsed));
+}
 
-    function archiveUniqueIds(values) {
-      return [...new Set((values || []).filter(Boolean))];
-    }
+function archiveUniqueIds(values)
+{
+    return [...new Set((values || []).filter(Boolean))];
+}
 
-    function restoreModalChoiceFocus({
-      modal,
-      selector,
-      value,
-      index = 0,
-      fallbackSelector = 'input[type="search"]'
-    }) {
-      requestAnimationFrame(() => {
+function restoreModalChoiceFocus({
+    modal,
+    selector,
+    value,
+    index = 0,
+    fallbackSelector = 'input[type="search"]'
+})
+{
+    requestAnimationFrame(() =>
+    {
         const choices = [
-          ...(
-            modal?.querySelectorAll(
-              selector
-            ) || []
-          )
+            ...(
+                modal?.querySelectorAll(
+                    selector
+                ) || []
+            )
         ].filter(choice =>
-          !choice.disabled
+            !choice.disabled
         );
 
         const matchingChoice =
-          choices.find(choice =>
-            choice.value === value
-          );
+            choices.find(choice =>
+                choice.value === value
+            );
 
         const nextChoice =
-          matchingChoice
+            matchingChoice
           || choices[
-            Math.min(
-              Math.max(index, 0),
-              Math.max(choices.length - 1, 0)
-            )
+              Math.min(
+                  Math.max(index, 0),
+                  Math.max(choices.length - 1, 0)
+              )
           ];
 
-        if (nextChoice) {
-          nextChoice.focus();
-          return;
+        if (nextChoice)
+        {
+            nextChoice.focus();
+            return;
         }
 
         modal
-          ?.querySelector(
-            fallbackSelector
-          )
-          ?.focus();
-      });
-    }
+            ?.querySelector(
+                fallbackSelector
+            )
+            ?.focus();
+    });
+}
 
-    function archiveEventLabel(event) {
-      if (!event) return 'Event';
-      const people = (event.personIds || []).map(id => getPerson(id)?.names?.display).filter(Boolean);
-      return [event.title || event.type || 'Event', people.join(' & ')].filter(Boolean).join(' · ');
-    }
+function archiveEventLabel(event)
+{
+    if (!event) return 'Event';
+    const people = (event.personIds || []).map(id => getPerson(id)?.names?.display).filter(Boolean);
+    return [event.title || event.type || 'Event', people.join(' & ')].filter(Boolean).join(' · ');
+}
 
-    function archiveEventMeta(event) {
-      const date = event?.dateLabel || event?.dateText || event?.sortDate || event?.date || '';
-      const place = getPlaceDisplay(event?.placeId) || event?.placeText || '';
-      return [date, place].filter(Boolean).join(' · ') || event?.description || 'Genealogy event';
-    }
+function archiveEventMeta(event)
+{
+    const date = event?.dateLabel || event?.dateText || event?.sortDate || event?.date || '';
+    const place = getPlaceDisplay(event?.placeId) || event?.placeText || '';
+    return [date, place].filter(Boolean).join(' · ') || event?.description || 'Genealogy event';
+}
 
-    function archiveNoteIdsForFile(file) {
-      const reciprocal = (sampleData.notes || [])
+function archiveNoteIdsForFile(file)
+{
+    const reciprocal = (sampleData.notes || [])
         .filter(note => (note.linkedArchiveFileIds || []).includes(file.id))
         .map(note => note.id);
-      return archiveUniqueIds([...(file.linkedNoteIds || []), ...reciprocal]);
-    }
+    return archiveUniqueIds([...(file.linkedNoteIds || []), ...reciprocal]);
+}
 
-    function archiveNoteIdsForSource(
-      source
-    ) {
-      return source
+function archiveNoteIdsForSource(
+    source
+)
+{
+    return source
         ? sourceTargetIds(
             source.id,
             'note',
             source.projectId
-          )
+        )
         : [];
-    }
+}
 
-    function archiveFilesForSource(
-      sourceId
-    ) {
-      const source =
+function archiveFilesForSource(
+    sourceId
+)
+{
+    const source =
         archiveSourceById(
-          sourceId
+            sourceId
         );
 
-      if (!source) {
+    if (!source)
+    {
         return [];
-      }
+    }
 
-      return sourceTargetIds(
+    return sourceTargetIds(
         source.id,
         'file',
         source.projectId
-      )
+    )
         .map(fileId =>
-          archiveFileById(
-            fileId,
-            source.projectId
-          )
+            archiveFileById(
+                fileId,
+                source.projectId
+            )
         )
         .filter(Boolean);
+}
+
+function archiveConnectionIds(
+    ownerType,
+    ownerId,
+    entityType
+)
+{
+    if (ownerType === 'file')
+    {
+        const file =
+            archiveFileById(
+                ownerId
+            );
+
+        if (!file)
+        {
+            return [];
+        }
+
+        if (entityType === 'person')
+        {
+            return file.linkedPersonIds || [];
+        }
+
+        if (entityType === 'event')
+        {
+            return file.linkedEventIds || [];
+        }
+
+        if (entityType === 'note')
+        {
+            return archiveNoteIdsForFile(
+                file
+            );
+        }
+
+        if (entityType === 'place')
+        {
+            const placeId =
+                archiveDocumentPlace(
+                    file
+                ).placeId;
+
+            return placeId
+                ? [placeId]
+                : [];
+        }
+
+        if (entityType === 'source')
+        {
+            return sourceIdsForTarget(
+                'file',
+                file.id,
+                file.projectId
+            );
+        }
     }
 
-    function archiveConnectionIds(
-      ownerType,
-      ownerId,
-      entityType
-    ) {
-      if (ownerType === 'file') {
-        const file =
-          archiveFileById(
-            ownerId
-          );
-
-        if (!file) {
-          return [];
-        }
-
-        if (entityType === 'person') {
-          return file.linkedPersonIds || [];
-        }
-
-        if (entityType === 'event') {
-          return file.linkedEventIds || [];
-        }
-
-        if (entityType === 'note') {
-          return archiveNoteIdsForFile(
-            file
-          );
-        }
-
-        if (entityType === 'place') {
-          const placeId =
-            archiveDocumentPlace(
-              file
-            ).placeId;
-
-          return placeId
-            ? [placeId]
-            : [];
-        }
-
-        if (entityType === 'source') {
-          return sourceIdsForTarget(
-            'file',
-            file.id,
-            file.projectId
-          );
-        }
-      }
-
-      if (ownerType === 'source') {
+    if (ownerType === 'source')
+    {
         const source =
-          archiveSourceById(
-            ownerId
-          );
+            archiveSourceById(
+                ownerId
+            );
 
-        if (!source) {
-          return [];
+        if (!source)
+        {
+            return [];
         }
 
         return sourceTargetIds(
-          source.id,
-          entityType,
-          source.projectId
+            source.id,
+            entityType,
+            source.projectId
         );
-      }
-
-      return [];
     }
 
-    function archiveEntityConfig(type) {
-      const projectId = currentProjectId();
-      const configs = {
+    return [];
+}
+
+function archiveEntityConfig(type)
+{
+    const projectId = currentProjectId();
+    const configs = {
         person: {
-          singular: 'person', title: 'People', addLabel: 'Add people',
-          records: () => (sampleData.people || []).filter(person => !person.deleted && person.projectId === projectId),
-          label: record => record?.names?.display || record?.name || 'Person',
-          meta: record =>
-            archiveFilePersonMeta(
-              record
-            )
+            singular: 'person', title: 'People', addLabel: 'Add people',
+            records: () => (sampleData.people || []).filter(person => !person.deleted && person.projectId === projectId),
+            label: record => record?.names?.display || record?.name || 'Person',
+            meta: record =>
+                archiveFilePersonMeta(
+                    record
+                )
         },
         event: {
-          singular: 'event', title: 'Events', addLabel: 'Add events',
-          records: () => (sampleData.events || []).filter(event => event.projectId === projectId),
-          label: archiveEventLabel,
-          meta: archiveEventMeta
+            singular: 'event', title: 'Events', addLabel: 'Add events',
+            records: () => (sampleData.events || []).filter(event => event.projectId === projectId),
+            label: archiveEventLabel,
+            meta: archiveEventMeta
         },
         note: {
-          singular: 'note', title: 'Notes', addLabel: 'Add notes',
-          records: () => typeof getProjectNotes === 'function' ? getProjectNotes(projectId, { includeArchived: false }) : (sampleData.notes || []).filter(note => note.projectId === projectId && !note.archived),
-          label: record => record?.title || 'Untitled note',
-          meta: record => typeof noteExcerpt === 'function' ? (noteExcerpt(record, 90) || 'No note content') : 'Research note'
+            singular: 'note', title: 'Notes', addLabel: 'Add notes',
+            records: () => typeof getProjectNotes === 'function' ? getProjectNotes(projectId, { includeArchived: false }) : (sampleData.notes || []).filter(note => note.projectId === projectId && !note.archived),
+            label: record => record?.title || 'Untitled note',
+            meta: record => typeof noteExcerpt === 'function' ? (noteExcerpt(record, 90) || 'No note content') : 'Research note'
         },
         place: {
-          singular: 'place', title: 'Places', addLabel: 'Add places',
-          records: () => (sampleData.places || []).filter(place => !place.deleted && place.projectId === projectId),
-          label: record => record?.name || 'Place',
-          meta: record => (record?.alternativeNames || []).slice(0, 2).join(' · ') || 'Place record'
+            singular: 'place', title: 'Places', addLabel: 'Add places',
+            records: () => (sampleData.places || []).filter(place => !place.deleted && place.projectId === projectId),
+            label: record => record?.name || 'Place',
+            meta: record => (record?.alternativeNames || []).slice(0, 2).join(' · ') || 'Place record'
         },
         photo: {
-          singular:
+            singular:
             'photo',
 
-          title:
+            title:
             'Photos',
 
-          addLabel:
+            addLabel:
             'Add photos',
 
-          records:
+            records:
             () =>
-              getProjectPhotos(
-                projectId
-              ),
+                getProjectPhotos(
+                    projectId
+                ),
 
-          label:
+            label:
             record =>
-              record?.title
+                record?.title
               || record?.filename
               || 'Untitled photo',
 
-          meta:
+            meta:
             record =>
-              [
-                formatPhotoDate(
-                  record
-                ),
+                [
+                    formatPhotoDate(
+                        record
+                    ),
 
-                record?.filename
-              ]
-                .filter(Boolean)
-                .join(' · ')
+                    record?.filename
+                ]
+                    .filter(Boolean)
+                    .join(' · ')
               || 'Photo'
         },
         source: {
-          singular: 'source', title: 'Sources', addLabel: 'Add sources',
-          records: archiveProjectSources,
-          label: record => record?.title || 'Untitled source',
-          meta:
+            singular: 'source', title: 'Sources', addLabel: 'Add sources',
+            records: archiveProjectSources,
+            label: record => record?.title || 'Untitled source',
+            meta:
             record =>
-              [
-                localizedSourceCategoryLabel(
-                  record?.category,
-                  ''
-                ),
+                [
+                    localizedSourceCategoryLabel(
+                        record?.category,
+                        ''
+                    ),
 
-                record?.providedBy
-              ]
-                .filter(Boolean)
-                .join(' · ')
+                    record?.providedBy
+                ]
+                    .filter(Boolean)
+                    .join(' · ')
               || 'Source record'
         },
         file: {
-          singular: 'file', title: 'Files', addLabel: 'Add files',
-          records: archiveProjectFiles,
-          label: record => record?.name || 'Untitled file',
-          meta: record => [archiveFileTypeLabel(record), archiveFolderPath(record?.folderId)].filter(Boolean).join(' · ')
+            singular: 'file', title: 'Files', addLabel: 'Add files',
+            records: archiveProjectFiles,
+            label: record => record?.name || 'Untitled file',
+            meta: record => [archiveFileTypeLabel(record), archiveFolderPath(record?.folderId)].filter(Boolean).join(' · ')
         }
-      };
-      return configs[type] || null;
+    };
+    return configs[type] || null;
+}
+
+function archiveConnectionRecord(
+    type,
+    id
+)
+{
+    if (type === 'person')
+    {
+        return getPerson(
+            id
+        );
     }
 
-    function archiveConnectionRecord(
-      type,
-      id
-    ) {
-      if (type === 'person') {
-        return getPerson(
-          id
-        );
-      }
-
-      if (type === 'event') {
+    if (type === 'event')
+    {
         return (
-          sampleData.events || []
+            sampleData.events || []
         ).find(event =>
-          event.id === id
+            event.id === id
         ) || null;
-      }
+    }
 
-      if (type === 'note') {
+    if (type === 'note')
+    {
         return typeof getNote
           === 'function'
             ? getNote(
                 id,
                 {
-                  includeArchived:
+                    includeArchived:
                     true
                 }
-              )
+            )
             : (
                 sampleData.notes || []
-              ).find(note =>
+            ).find(note =>
                 note.id === id
-              ) || null;
-      }
-
-      if (type === 'place') {
-        return getPlace(
-          id
-        );
-      }
-
-      if (type === 'photo') {
-        return getPhoto(
-          id,
-          {
-            projectId:
-              currentProjectId()
-          }
-        );
-      }
-
-      if (type === 'source') {
-        return archiveSourceById(
-          id
-        );
-      }
-
-      if (type === 'file') {
-        return archiveFileById(
-          id
-        );
-      }
-
-      return null;
+            ) || null;
     }
 
-    function archiveSyncNoteLink(
-      noteId,
-      entityType,
-      entityId,
-      shouldLink
-    ) {
-      if (entityType !== 'file') {
-        return;
-      }
+    if (type === 'place')
+    {
+        return getPlace(
+            id
+        );
+    }
 
-      const note =
+    if (type === 'photo')
+    {
+        return getPhoto(
+            id,
+            {
+                projectId:
+              currentProjectId()
+            }
+        );
+    }
+
+    if (type === 'source')
+    {
+        return archiveSourceById(
+            id
+        );
+    }
+
+    if (type === 'file')
+    {
+        return archiveFileById(
+            id
+        );
+    }
+
+    return null;
+}
+
+function archiveSyncNoteLink(
+    noteId,
+    entityType,
+    entityId,
+    shouldLink
+)
+{
+    if (entityType !== 'file')
+    {
+        return;
+    }
+
+    const note =
         getNote(
-          noteId,
-          {
-            includeArchived:
+            noteId,
+            {
+                includeArchived:
               true
-          }
+            }
         );
 
-      if (!note) {
+    if (!note)
+    {
         return;
-      }
+    }
 
-      const nextIds =
+    const nextIds =
         new Set(
-          note.linkedArchiveFileIds
+            note.linkedArchiveFileIds
           || []
         );
 
-      if (shouldLink) {
+    if (shouldLink)
+    {
         nextIds.add(
-          entityId
+            entityId
         );
-      } else {
+    }
+    else
+    {
         nextIds.delete(
-          entityId
+            entityId
         );
-      }
+    }
 
-      setNoteEntityLinks(
+    setNoteEntityLinks(
         note.id,
         'archiveFile',
         [...nextIds],
         {
-          projectId:
+            projectId:
             note.projectId
         }
-      );
-    }
+    );
+}
 
-    function archiveSetConnection(
-      ownerType,
-      ownerId,
-      entityType,
-      entityId,
-      shouldLink
-    ) {
-      if (
+function archiveSetConnection(
+    ownerType,
+    ownerId,
+    entityType,
+    entityId,
+    shouldLink
+)
+{
+    if (
         ownerType === 'file'
         && entityType === 'source'
-      ) {
+    )
+    {
         const file =
-          archiveFileById(
-            ownerId
-          );
+            archiveFileById(
+                ownerId
+            );
 
         return Boolean(
-          file
+            file
           && setSourceLink(
-            entityId,
-            'file',
-            file.id,
-            shouldLink,
-            {
-              projectId:
+              entityId,
+              'file',
+              file.id,
+              shouldLink,
+              {
+                  projectId:
                 file.projectId
-            }
+              }
           )
         );
-      }
+    }
 
-      if (ownerType === 'source') {
+    if (ownerType === 'source')
+    {
         const source =
-          archiveSourceById(
-            ownerId
-          );
+            archiveSourceById(
+                ownerId
+            );
 
         if (
-          !source
+            !source
           || !SOURCE_LINK_TARGET_TYPES
-            .includes(
-              entityType
-            )
-        ) {
-          return false;
+              .includes(
+                  entityType
+              )
+        )
+        {
+            return false;
         }
 
         return setSourceLink(
-          source.id,
-          entityType,
-          entityId,
-          shouldLink,
-          {
-            projectId:
+            source.id,
+            entityType,
+            entityId,
+            shouldLink,
+            {
+                projectId:
               source.projectId
-          }
+            }
         );
-      }
+    }
 
-      if (ownerType !== 'file') {
+    if (ownerType !== 'file')
+    {
         return false;
-      }
+    }
 
-      const file =
+    const file =
         archiveFileById(
-          ownerId
+            ownerId
         );
 
-      const record =
+    const record =
         archiveConnectionRecord(
-          entityType,
-          entityId
+            entityType,
+            entityId
         );
 
-      if (
+    if (
         !file
         || (
-          shouldLink
+            shouldLink
           && !record
         )
         || (
-          record?.projectId
+            record?.projectId
           && file.projectId
           && record.projectId
             !== file.projectId
         )
-      ) {
+    )
+    {
         return false;
-      }
+    }
 
-      if (entityType === 'place') {
+    if (entityType === 'place')
+    {
         const currentPlaceId =
-          archiveDocumentPlace(
-            file
-          ).placeId;
+            archiveDocumentPlace(
+                file
+            ).placeId;
 
-        if (shouldLink) {
-          archiveApplyDocumentPlace(
-            file,
-            entityId,
-            ''
-          );
-        } else if (
-          currentPlaceId === entityId
-        ) {
-          archiveApplyDocumentPlace(
-            file,
-            '',
-            ''
-          );
-        } else {
-          return false;
+        if (shouldLink)
+        {
+            archiveApplyDocumentPlace(
+                file,
+                entityId,
+                ''
+            );
         }
-      } else {
+        else if (
+            currentPlaceId === entityId
+        )
+        {
+            archiveApplyDocumentPlace(
+                file,
+                '',
+                ''
+            );
+        }
+        else
+        {
+            return false;
+        }
+    }
+    else
+    {
         const field =
-          ({
-            person:
+            ({
+                person:
               'linkedPersonIds',
 
-            event:
+                event:
               'linkedEventIds',
 
-            note:
+                note:
               'linkedNoteIds'
-          })[entityType];
+            })[entityType];
 
-        if (!field) {
-          return false;
+        if (!field)
+        {
+            return false;
         }
 
         const ids =
-          new Set(
-            file[field] || []
-          );
+            new Set(
+                file[field] || []
+            );
 
-        if (shouldLink) {
-          ids.add(
-            entityId
-          );
-        } else {
-          ids.delete(
-            entityId
-          );
+        if (shouldLink)
+        {
+            ids.add(
+                entityId
+            );
+        }
+        else
+        {
+            ids.delete(
+                entityId
+            );
         }
 
         file[field] =
-          [...ids];
+            [...ids];
 
-        if (entityType === 'note') {
-          archiveSyncNoteLink(
-            entityId,
-            'file',
-            file.id,
-            shouldLink
-          );
+        if (entityType === 'note')
+        {
+            archiveSyncNoteLink(
+                entityId,
+                'file',
+                file.id,
+                shouldLink
+            );
         }
-      }
-
-      file.updatedAt =
-        new Date().toISOString();
-
-      file.updated =
-        'Just now';
-
-      const savedIds =
-        archiveConnectionIds(
-          'file',
-          file.id,
-          entityType
-        );
-
-      return shouldLink
-        ? savedIds.includes(
-            entityId
-          )
-        : !savedIds.includes(
-            entityId
-          );
     }
 
-    function archiveSetConnectionsAtomically(
-      writes = []
-    ) {
-      const normalizedWrites =
+    file.updatedAt =
+        new Date().toISOString();
+
+    file.updated =
+        'Just now';
+
+    const savedIds =
+        archiveConnectionIds(
+            'file',
+            file.id,
+            entityType
+        );
+
+    return shouldLink
+        ? savedIds.includes(
+            entityId
+        )
+        : !savedIds.includes(
+            entityId
+        );
+}
+
+function archiveSetConnectionsAtomically(
+    writes = []
+)
+{
+    const normalizedWrites =
         writes.map(write => ({
-          ownerType:
+            ownerType:
             write?.ownerType || '',
 
-          ownerId:
+            ownerId:
             String(write?.ownerId || '').trim(),
 
-          entityType:
+            entityType:
             write?.entityType || '',
 
-          entityId:
+            entityId:
             String(write?.entityId || '').trim(),
 
-          shouldLink:
+            shouldLink:
             write?.shouldLink !== false
         }));
 
-      const valid =
-        normalizedWrites.every(write => {
-          const owner =
-            archiveConnectionRecord(
-              write.ownerType,
-              write.ownerId
-            );
+    const valid =
+        normalizedWrites.every(write =>
+        {
+            const owner =
+                archiveConnectionRecord(
+                    write.ownerType,
+                    write.ownerId
+                );
 
-          const record =
-            archiveConnectionRecord(
-              write.entityType,
-              write.entityId
-            );
+            const record =
+                archiveConnectionRecord(
+                    write.entityType,
+                    write.entityId
+                );
 
-          if (
-            !owner
+            if (
+                !owner
             || !write.entityType
             || !write.entityId
-          ) {
-            return false;
-          }
+            )
+            {
+                return false;
+            }
 
-          if (
-            write.shouldLink
+            if (
+                write.shouldLink
             && !record
-          ) {
-            return false;
-          }
+            )
+            {
+                return false;
+            }
 
-          return !(
-            write.shouldLink
+            return !(
+                write.shouldLink
             && owner.projectId
             && record?.projectId
             && owner.projectId
               !== record.projectId
-          );
+            );
         });
 
-      if (!valid) {
+    if (!valid)
+    {
         return {
-          ok: false,
-          changedCount: 0
+            ok: false,
+            changedCount: 0
         };
-      }
+    }
 
-      const applied =
+    const applied =
         [];
 
-      for (const write of normalizedWrites) {
+    for (const write of normalizedWrites)
+    {
         const previousPlace =
-          write.ownerType === 'file'
+            write.ownerType === 'file'
           && write.entityType === 'place'
-            ? archiveDocumentPlace(
-                archiveFileById(
-                  write.ownerId
+                ? archiveDocumentPlace(
+                    archiveFileById(
+                        write.ownerId
+                    )
                 )
-              )
-            : null;
+                : null;
 
         const wasLinked =
-          archiveConnectionIds(
-            write.ownerType,
-            write.ownerId,
-            write.entityType
-          ).includes(
-            write.entityId
-          );
+            archiveConnectionIds(
+                write.ownerType,
+                write.ownerId,
+                write.entityType
+            ).includes(
+                write.entityId
+            );
 
         if (
-          wasLinked
+            wasLinked
             === write.shouldLink
-        ) {
-          continue;
+        )
+        {
+            continue;
         }
 
         if (
-          !archiveSetConnection(
-            write.ownerType,
-            write.ownerId,
-            write.entityType,
-            write.entityId,
-            write.shouldLink
-          )
-        ) {
-          applied
-            .slice()
-            .reverse()
-            .forEach(previous => {
-              if (
-                previous.ownerType === 'file'
+            !archiveSetConnection(
+                write.ownerType,
+                write.ownerId,
+                write.entityType,
+                write.entityId,
+                write.shouldLink
+            )
+        )
+        {
+            applied
+                .slice()
+                .reverse()
+                .forEach(previous =>
+                {
+                    if (
+                        previous.ownerType === 'file'
                 && previous.entityType === 'place'
-              ) {
-                const file =
-                  archiveFileById(
-                    previous.ownerId
-                  );
+                    )
+                    {
+                        const file =
+                            archiveFileById(
+                                previous.ownerId
+                            );
 
-                if (file) {
-                  archiveApplyDocumentPlace(
-                    file,
-                    previous.previousPlace?.placeId
+                        if (file)
+                        {
+                            archiveApplyDocumentPlace(
+                                file,
+                                previous.previousPlace?.placeId
                       || '',
 
-                    previous.previousPlace?.placeText
+                                previous.previousPlace?.placeText
                       || ''
-                  );
+                            );
 
-                  file.updatedAt =
-                    new Date().toISOString();
+                            file.updatedAt =
+                                new Date().toISOString();
 
-                  file.updated =
-                    'Just now';
-                }
-              } else {
-                archiveSetConnection(
-                  previous.ownerType,
-                  previous.ownerId,
-                  previous.entityType,
-                  previous.entityId,
-                  previous.wasLinked
-                );
-              }
-            });
+                            file.updated =
+                                'Just now';
+                        }
+                    }
+                    else
+                    {
+                        archiveSetConnection(
+                            previous.ownerType,
+                            previous.ownerId,
+                            previous.entityType,
+                            previous.entityId,
+                            previous.wasLinked
+                        );
+                    }
+                });
 
-          return {
-            ok: false,
-            changedCount: 0
-          };
+            return {
+                ok: false,
+                changedCount: 0
+            };
         }
 
         applied.push({
-          ...write,
-          wasLinked,
-          previousPlace
+            ...write,
+            wasLinked,
+            previousPlace
         });
-      }
+    }
 
-      return {
+    return {
         ok: true,
         changedCount:
           applied.length
-      };
-    }
+    };
+}
 
-    function archiveFileEditIsActive(
-      fileId =
+function archiveFileEditIsActive(
+    fileId =
         state.archiveSelectedFileId
-    ) {
-      return Boolean(
+)
+{
+    return Boolean(
         state.archiveFileEditing
         && state.archiveFileEditDraft
-          ?.fileId === fileId
-      );
-    }
+            ?.fileId === fileId
+    );
+}
 
-    function archiveDocumentDateModel(
-      file
-    ) {
-      const stored =
+function archiveDocumentDateModel(
+    file
+)
+{
+    const stored =
         file?.documentDate
         || {};
 
-      /*
+    /*
         Canonical records already use the shared
         genealogy-date model.
       */
-      if (
+    if (
         stored.dateType
         || stored.date
         || stored.dateLabel
         || stored.originalText
-      ) {
+    )
+    {
         return normalizeGenealogyDateInput(
-          stored,
-          stored.dateType
+            stored,
+            stored.dateType
           || 'Exact date'
         );
-      }
+    }
 
-      /*
+    /*
         Convert the existing Archive prototype's
         { type, value } format.
       */
-      const legacyType =
+    const legacyType =
         String(
-          stored.type || ''
+            stored.type || ''
         ).trim();
 
-      const legacyValue =
+    const legacyValue =
         String(
-          stored.value || ''
+            stored.value || ''
         ).trim();
 
-      if (
+    if (
         !legacyValue
         || legacyType === 'Unknown'
-      ) {
+    )
+    {
         return emptyGenealogyDate(
-          'Exact date'
+            'Exact date'
         );
-      }
+    }
 
-      let dateType =
+    let dateType =
         legacyType
         || 'Exact date';
 
-      /*
+    /*
         Existing Archive data stores year-only
         values as Exact date.
       */
-      if (
+    if (
         dateType === 'Exact date'
         && /^\d{4}$/.test(
-          legacyValue
+            legacyValue
         )
-      ) {
+    )
+    {
         dateType =
-          'Year only';
-      }
+            'Year only';
+    }
 
-      if (
+    if (
         dateType === 'Between'
-      ) {
+    )
+    {
         const parts =
-          legacyValue
-            .split(
-              /\s+(?:-|to)\s+|[–—]/i
-            )
-            .map(value =>
-              value.trim()
-            )
-            .filter(Boolean);
+            legacyValue
+                .split(
+                    /\s+(?:-|to)\s+|[–—]/i
+                )
+                .map(value =>
+                    value.trim()
+                )
+                .filter(Boolean);
 
         if (
-          parts.length >= 2
-        ) {
-          const parsed =
-            parseGenealogyDateTextAsType(
-              parts[0],
-              'Between',
-              {
-                date2:
+            parts.length >= 2
+        )
+        {
+            const parsed =
+                parseGenealogyDateTextAsType(
+                    parts[0],
+                    'Between',
+                    {
+                        date2:
                   parts[1],
 
-                date2Label:
+                        date2Label:
                   parts[1]
-              }
-            );
+                    }
+                );
 
-          if (parsed.valid) {
-            return parsed.value;
-          }
+            if (parsed.valid)
+            {
+                return parsed.value;
+            }
         }
-      }
+    }
 
-      const parsed =
+    const parsed =
         parseGenealogyDateTextAsType(
-          legacyValue,
-          dateType
+            legacyValue,
+            dateType
         );
 
-      return parsed.valid
+    return parsed.valid
         ? parsed.value
         : {
             ...emptyGenealogyDate(
-              dateType
+                dateType
             ),
 
             originalText:
               legacyValue
-          };
-    }
+        };
+}
 
-    function archiveDocumentPlace(
-      file
-    ) {
-      const placeId =
+function archiveDocumentPlace(
+    file
+)
+{
+    const placeId =
         file?.documentPlaceId
         || (
-          file?.linkedPlaceIds
+            file?.linkedPlaceIds
           || []
         )[0]
         || (
-          file?.placeIds
+            file?.placeIds
           || []
         )[0]
         || '';
 
-      return {
+    return {
         placeId,
 
         placeText:
           String(
-            file?.documentPlaceText
+              file?.documentPlaceText
             || ''
           ).trim()
-      };
-    }
+    };
+}
 
-    function archiveApplyDocumentPlace(
-      file,
-      placeId,
-      placeText
-    ) {
-      const normalizedPlaceId =
+function archiveApplyDocumentPlace(
+    file,
+    placeId,
+    placeText
+)
+{
+    const normalizedPlaceId =
         String(
-          placeId || ''
+            placeId || ''
         ).trim();
 
-      file.documentPlaceId =
+    file.documentPlaceId =
         normalizedPlaceId
         || null;
 
-      file.documentPlaceText =
+    file.documentPlaceText =
         String(
-          placeText || ''
+            placeText || ''
         ).trim();
 
-      /*
+    /*
         Preserve compatibility with Places and
         Archive search while making document place
         the single inspector concept.
       */
-      file.linkedPlaceIds =
+    file.linkedPlaceIds =
         normalizedPlaceId
-          ? [
-              normalizedPlaceId
+            ? [
+                normalizedPlaceId
             ]
-          : [];
+            : [];
 
-      file.placeIds =
+    file.placeIds =
         [
-          ...file.linkedPlaceIds
+            ...file.linkedPlaceIds
         ];
-    }
+}
 
-    function archiveFileEditDraftFromFile(
-      file
-    ) {
-      const place =
+function archiveFileEditDraftFromFile(
+    file
+)
+{
+    const place =
         archiveDocumentPlace(
-          file
+            file
         );
 
-      return {
+    return {
         fileId:
           file.id,
 
@@ -6122,9 +6440,9 @@
           || '',
 
         documentDate: {
-          ...archiveDocumentDateModel(
-            file
-          )
+            ...archiveDocumentDateModel(
+                file
+            )
         },
 
         documentPlaceId:
@@ -6134,98 +6452,102 @@
         documentPlaceText:
           place.placeText
           || ''
-      };
-    }
+    };
+}
 
-    function normalizedArchiveFileEditDraft(
-      draft
-    ) {
-      return {
+function normalizedArchiveFileEditDraft(
+    draft
+)
+{
+    return {
         name:
           String(
-            draft?.name || ''
+              draft?.name || ''
           ).trim(),
 
         description:
           String(
-            draft?.description || ''
+              draft?.description || ''
           ).trim(),
 
         documentDate:
           mediaDateFromGenealogyModel(
-            draft?.documentDate
+              draft?.documentDate
             || {}
           ),
 
         documentPlaceId:
           String(
-            draft?.documentPlaceId
+              draft?.documentPlaceId
             || ''
           ),
 
         documentPlaceText:
           String(
-            draft?.documentPlaceText
+              draft?.documentPlaceText
             || ''
           ).trim()
-      };
+    };
+}
+
+function collectArchiveFileEditDraft({
+    allowInvalidDate =
+        false
+} = {})
+{
+    if (
+        !state.archiveFileEditing
+    )
+    {
+        return null;
     }
 
-    function collectArchiveFileEditDraft({
-      allowInvalidDate =
-        false
-    } = {}) {
-      if (
-        !state.archiveFileEditing
-      ) {
-        return null;
-      }
-
-      const documentDate =
+    const documentDate =
         collectGenealogyDateField(
-          'archiveFileDocumentDate',
-          {
-            allowInvalid:
+            'archiveFileDocumentDate',
+            {
+                allowInvalid:
               allowInvalidDate
-          }
+            }
         );
 
-      if (!documentDate) {
+    if (!documentDate)
+    {
         return null;
-      }
+    }
 
-      /*
+    /*
         Draft collection must be side-effect free.
 
         readPlaceInputValue() reads the typed value
         without creating a new Place record.
       */
-      const place =
+    const place =
         readPlaceInputValue(
-          '#archiveFileDocumentPlace',
-          main
+            '#archiveFileDocumentPlace',
+            main
         );
 
-      return {
+    return {
         fileId:
           state.archiveSelectedFileId,
 
         name:
           main
-            .querySelector(
-              '#archiveFileName'
-            )
-            ?.value
-            .trim()
+              .querySelector(
+                  '#archiveFileName'
+              )
+              ?.value
+              .trim()
           || '',
 
         description:
           main
-            .querySelector(
-              '#archiveFileDescription'
-            )
-            ?.value
-            .trim()
+              .querySelector(
+                  '#archiveFileDescription'
+              )
+              ?.value
+              .trim()
           || '',
 
         documentDate,
@@ -6237,208 +6559,222 @@
         documentPlaceText:
           place.text
           || ''
-      };
-    }
+    };
+}
 
-    function archiveFileEditIsDirty() {
-      if (
+function archiveFileEditIsDirty()
+{
+    if (
         !state.archiveFileEditing
         || !state.archiveFileEditOriginal
-      ) {
+    )
+    {
         return false;
-      }
+    }
 
-      const current =
+    const current =
         collectArchiveFileEditDraft({
-          allowInvalidDate:
+            allowInvalidDate:
             true
         });
 
-      /*
+    /*
         An invalid live date is still an unsaved
         change and must trigger the discard guard.
       */
-      if (
+    if (
         !current
         || current.documentDate
-          ?.invalid
-      ) {
+            ?.invalid
+    )
+    {
         return true;
-      }
-
-      return JSON.stringify(
-        normalizedArchiveFileEditDraft(
-          current
-        )
-      ) !== JSON.stringify(
-        normalizedArchiveFileEditDraft(
-          state.archiveFileEditOriginal
-        )
-      );
     }
 
-    function resetArchiveFileEditState() {
-      state.archiveFileEditing =
+    return JSON.stringify(
+        normalizedArchiveFileEditDraft(
+            current
+        )
+    ) !== JSON.stringify(
+        normalizedArchiveFileEditDraft(
+            state.archiveFileEditOriginal
+        )
+    );
+}
+
+function resetArchiveFileEditState()
+{
+    state.archiveFileEditing =
         false;
 
-      state.archiveFileEditOriginal =
+    state.archiveFileEditOriginal =
         null;
 
-      state.archiveFileEditDraft =
+    state.archiveFileEditDraft =
         null;
+}
+
+function beginArchiveFileEdit()
+{
+    const file =
+        archiveFileById(
+            state.archiveSelectedFileId
+        );
+
+    if (!file)
+    {
+        return;
     }
 
-    function beginArchiveFileEdit() {
-      const file =
-        archiveFileById(
-          state.archiveSelectedFileId
-        );
-
-      if (!file) {
-        return;
-      }
-
-      const draft =
+    const draft =
         archiveFileEditDraftFromFile(
-          file
+            file
         );
 
-      state.archiveFileEditing =
+    state.archiveFileEditing =
         true;
 
-      state.archiveFileEditOriginal = {
+    state.archiveFileEditOriginal = {
         ...draft,
 
         documentDate: {
-          ...draft.documentDate
+            ...draft.documentDate
         }
-      };
+    };
 
-      state.archiveFileEditDraft = {
+    state.archiveFileEditDraft = {
         ...draft,
 
         documentDate: {
-          ...draft.documentDate
+            ...draft.documentDate
         }
-      };
+    };
 
-      state.archiveInspectorSections
+    state.archiveInspectorSections
         .details =
-          true;
+            true;
 
-      renderArchiveMain();
-    }
+    renderArchiveMain();
+}
 
-    function cancelArchiveFileEdit() {
-      resetArchiveFileEditState();
-      renderArchiveMain();
-    }
+function cancelArchiveFileEdit()
+{
+    resetArchiveFileEditState();
+    renderArchiveMain();
+}
 
-    function saveArchiveFileEdit() {
-      const file =
+function saveArchiveFileEdit()
+{
+    const file =
         archiveFileById(
-          state.archiveSelectedFileId
+            state.archiveSelectedFileId
         );
 
-      if (!file) {
+    if (!file)
+    {
         resetArchiveFileEditState();
         renderArchiveMain();
 
         return;
-      }
+    }
 
-      const draft =
+    const draft =
         collectArchiveFileEditDraft();
 
-      if (!draft) {
+    if (!draft)
+    {
         showToast(
-          'Check the historical date before saving.'
+            'Check the historical date before saving.'
         );
 
         return;
-      }
+    }
 
-      if (!draft.name.trim()) {
+    if (!draft.name.trim())
+    {
         showToast(
-          'Enter a file name before saving.'
+            'Enter a file name before saving.'
         );
 
         main
-          .querySelector(
-            '#archiveFileName'
-          )
-          ?.focus();
+            .querySelector(
+                '#archiveFileName'
+            )
+            ?.focus();
 
         return;
-      }
+    }
 
-      file.name =
+    file.name =
         draft.name.trim();
 
-      file.description =
+    file.description =
         draft.description
         || '';
 
-      /*
+    /*
         Store the canonical genealogy-date model.
         The old { type, value } representation is
         no longer written.
       */
-      file.documentDate =
+    file.documentDate =
         normalizeGenealogyDateInput(
-          draft.documentDate,
-          draft.documentDate
-            ?.dateType
+            draft.documentDate,
+            draft.documentDate
+                ?.dateType
           || 'Exact date'
         );
 
-      const resolvedPlace =
+    const resolvedPlace =
         resolvePlaceInputValue(
-          draft.documentPlaceText,
-          draft.documentPlaceId
+            draft.documentPlaceText,
+            draft.documentPlaceId
         );
 
-      archiveApplyDocumentPlace(
+    archiveApplyDocumentPlace(
         file,
         resolvedPlace.placeId,
         resolvedPlace.placeText
-      );
+    );
 
-      file.updatedAt =
+    file.updatedAt =
         new Date()
-          .toISOString();
+            .toISOString();
 
-      file.updated =
+    file.updated =
         'Just now';
 
-      resetArchiveFileEditState();
-      renderArchive();
-      showToast(
+    resetArchiveFileEditState();
+    renderArchive();
+    showToast(
         'File updated.'
-      );
-    }
+    );
+}
 
-    function runAfterArchiveFileEditGuard(
-      action
-    ) {
-      if (
+function runAfterArchiveFileEditGuard(
+    action
+)
+{
+    if (
         !state.archiveFileEditing
-      ) {
+    )
+    {
         action();
 
         return;
-      }
+    }
 
-      if (
+    if (
         !archiveFileEditIsDirty()
-      ) {
+    )
+    {
         resetArchiveFileEditState();
         action();
 
         return;
-      }
+    }
 
-      openModal(`
+    openModal(`
         <div
           class="modal"
           role="dialog"
@@ -6488,486 +6824,518 @@
         </div>
       `);
 
-      modalBackdrop
+    modalBackdrop
         .querySelector(
-          '[data-discard-archive-file-edit]'
+            '[data-discard-archive-file-edit]'
         )
         ?.addEventListener(
-          'click',
-          () => {
-            closeModal();
-            resetArchiveFileEditState();
-            action();
-          }
+            'click',
+            () =>
+            {
+                closeModal();
+                resetArchiveFileEditState();
+                action();
+            }
         );
-    }
+}
 
-    function archiveInspectorSectionIsOpen(
-      sectionId
-    ) {
-      return state
+function archiveInspectorSectionIsOpen(
+    sectionId
+)
+{
+    return state
         .archiveInspectorSections[
-          sectionId
+            sectionId
         ] !== false;
-    }
+}
 
-    function renderArchiveFileSection(
-      sectionId,
-      title,
-      content,
-      actionHtml = '',
-      meta = ''
-    ) {
-      return renderInspectorSection(
+function renderArchiveFileSection(
+    sectionId,
+    title,
+    content,
+    actionHtml = '',
+    meta = ''
+)
+{
+    return renderInspectorSection(
         sectionId,
         title,
         meta,
         content,
         actionHtml,
         {
-          inlineAction:
+            inlineAction:
             Boolean(
-              actionHtml
+                actionHtml
             ),
 
-          alwaysShowAction:
+            alwaysShowAction:
             true,
 
-          open:
+            open:
             archiveInspectorSectionIsOpen(
-              sectionId
+                sectionId
             ),
 
-          toggleAttribute:
+            toggleAttribute:
             'data-archive-section-toggle',
 
-          sectionId:
+            sectionId:
             `archive-file-section-${sectionId}`
         }
-      );
+    );
+}
+
+function renderArchiveFileSectionAction(
+    entityType,
+    label,
+    locked
+)
+{
+    if (locked)
+    {
+        return '';
     }
 
-    function renderArchiveFileSectionAction(
-      entityType,
-      label,
-      locked
-    ) {
-      if (locked) {
-        return '';
-      }
-
-      const attribute =
+    const attribute =
         {
-          person:
+            person:
             'data-archive-add-file-person',
 
-          event:
+            event:
             'data-archive-add-file-event',
 
-          note:
+            note:
             'data-archive-add-file-note',
 
-          source:
+            source:
             'data-archive-add-file-source'
         }[entityType];
 
-      if (!attribute) {
+    if (!attribute)
+    {
         return '';
-      }
+    }
 
-      return `
+    return `
         <button
           class="link"
           type="button"
           ${attribute}>
 
           ${renderPanelButtonLabel(
-            icon.plus,
-            label
-          )}
+                icon.plus,
+                label
+            )}
         </button>
       `;
-    }
+}
 
-    function archiveSearchText(file) {
-      const people =
+function archiveSearchText(file)
+{
+    const people =
         archiveFilePersonIds(file)
-          .map(id =>
-            getPerson(id)
-              ?.names?.display
+            .map(id =>
+                getPerson(id)
+                    ?.names?.display
             || ''
-          )
-          .join(' ');
+            )
+            .join(' ');
 
-      const events =
+    const events =
         (
-          file.linkedEventIds
+            file.linkedEventIds
           || []
         )
-          .map(id =>
-            archiveEventLabel(
-              archiveConnectionRecord(
-                'event',
-                id
-              )
+            .map(id =>
+                archiveEventLabel(
+                    archiveConnectionRecord(
+                        'event',
+                        id
+                    )
+                )
             )
-          )
-          .join(' ');
+            .join(' ');
 
-      const notes =
+    const notes =
         archiveNoteIdsForFile(file)
-          .map(id =>
-            archiveConnectionRecord(
-              'note',
-              id
-            )?.title
+            .map(id =>
+                archiveConnectionRecord(
+                    'note',
+                    id
+                )?.title
             || ''
-          )
-          .join(' ');
+            )
+            .join(' ');
 
-      const places =
+    const places =
         archiveFilePlaceIds(file)
-          .map(id =>
-            getPlace(id)?.name
+            .map(id =>
+                getPlace(id)?.name
             || ''
-          )
-          .join(' ');
+            )
+            .join(' ');
 
-      const sources =
+    const sources =
         sourceIdsForTarget(
-          'file',
-          file.id,
-          file.projectId
+            'file',
+            file.id,
+            file.projectId
         )
-          .map(sourceId =>
-            archiveSourceById(
-              sourceId,
-              file.projectId
-            )?.title
+            .map(sourceId =>
+                archiveSourceById(
+                    sourceId,
+                    file.projectId
+                )?.title
             || ''
-          )
-          .join(' ');
+            )
+            .join(' ');
 
-      return [
+    return [
         file.name,
         file.description,
         archiveFolderPath(
-          file.folderId
+            file.folderId
         ),
         people,
         events,
         notes,
         places,
         sources
-      ]
+    ]
         .join(' ')
         .toLocaleLowerCase(
-          state.language === 'ru'
-            ? 'ru'
-            : 'en'
+            state.language === 'ru'
+                ? 'ru'
+                : 'en'
         );
+}
+
+function archiveFileHasLinks(
+    file
+)
+{
+    if (!file)
+    {
+        return false;
     }
 
-    function archiveFileHasLinks(
-      file
-    ) {
-      if (!file) {
-        return false;
-      }
-
-      return Boolean(
+    return Boolean(
         archiveFilePersonIds(
-          file
+            file
         ).length
 
         || (
-          file.linkedEventIds
+            file.linkedEventIds
           || []
         ).length
 
         || archiveNoteIdsForFile(
-          file
+            file
         ).length
 
         || archiveFilePlaceIds(
-          file
+            file
         ).length
 
         || sourceIdsForTarget(
-          'file',
-          file.id,
-          file.projectId
+            'file',
+            file.id,
+            file.projectId
         ).length
-      );
-    }
+    );
+}
 
-    function archiveDocumentYearInterval(
-      file
-    ) {
-      const model =
+function archiveDocumentYearInterval(
+    file
+)
+{
+    const model =
         archiveDocumentDateModel(
-          file
+            file
         );
 
-      const text = [
+    const text = [
         model.date,
         model.dateLabel,
         model.originalText,
         model.date2,
         model.date2Label
-      ]
+    ]
         .filter(Boolean)
         .join(' ');
 
-      const years =
+    const years =
         (
-          text.match(
-            /\b\d{4}\b/g
-          )
+            text.match(
+                /\b\d{4}\b/g
+            )
           || []
         )
-          .map(Number)
-          .filter(year =>
-            Number.isInteger(year)
+            .map(Number)
+            .filter(year =>
+                Number.isInteger(year)
             && year >= 1
             && year <= 9999
-          );
+            );
 
-      if (!years.length) {
+    if (!years.length)
+    {
         return null;
-      }
+    }
 
-      const type =
+    const type =
         String(
-          model.dateType || ''
+            model.dateType || ''
         )
-          .trim()
-          .toLowerCase();
+            .trim()
+            .toLowerCase();
 
-      const firstYear =
+    const firstYear =
         years[0];
 
-      if (type === 'before') {
+    if (type === 'before')
+    {
         return {
-          from:
+            from:
             1,
 
-          to:
+            to:
             Math.max(
-              1,
-              firstYear - 1
+                1,
+                firstYear - 1
             )
         };
-      }
+    }
 
-      if (type === 'after') {
+    if (type === 'after')
+    {
         return {
-          from:
+            from:
             Math.min(
-              9999,
-              firstYear + 1
+                9999,
+                firstYear + 1
             ),
 
-          to:
+            to:
             9999
         };
-      }
+    }
 
-      if (
+    if (
         type === 'between'
         && years.length >= 2
-      ) {
+    )
+    {
         return {
-          from:
+            from:
             Math.min(
-              years[0],
-              years[1]
+                years[0],
+                years[1]
             ),
 
-          to:
+            to:
             Math.max(
-              years[0],
-              years[1]
+                years[0],
+                years[1]
             )
         };
-      }
+    }
 
-      return {
+    return {
         from:
           firstYear,
 
         to:
           firstYear
-      };
+    };
+}
+
+function archiveDocumentYearMatches(
+    file,
+    value
+)
+{
+    const range =
+        normalizeSharedFilterYearRange(
+            value
+        );
+
+    if (!range.mode)
+    {
+        return true;
     }
 
-    function archiveDocumentYearMatches(
-      file,
-      value
-    ) {
-      const range =
-        normalizeSharedFilterYearRange(
-          value
-        );
-
-      if (!range.mode) {
-        return true;
-      }
-
-      if (
+    if (
         sharedFilterYearRangeError(
-          range
+            range
         )
-      ) {
+    )
+    {
         return false;
-      }
+    }
 
-      const fileInterval =
+    const fileInterval =
         archiveDocumentYearInterval(
-          file
+            file
         );
 
-      if (!fileInterval) {
+    if (!fileInterval)
+    {
         return false;
-      }
+    }
 
-      const fromYear =
+    const fromYear =
         sharedFilterYearNumber(
-          range.from
+            range.from
         );
 
-      let filterFrom = 1;
-      let filterTo = 9999;
+    let filterFrom = 1;
+    let filterTo = 9999;
 
-      if (range.mode === 'before') {
+    if (range.mode === 'before')
+    {
         filterTo =
-          Math.max(
-            1,
-            fromYear - 1
-          );
-      }
+            Math.max(
+                1,
+                fromYear - 1
+            );
+    }
 
-      if (range.mode === 'after') {
+    if (range.mode === 'after')
+    {
         filterFrom =
-          Math.min(
-            9999,
-            fromYear + 1
-          );
-      }
+            Math.min(
+                9999,
+                fromYear + 1
+            );
+    }
 
-      if (range.mode === 'between') {
+    if (range.mode === 'between')
+    {
         filterFrom =
-          fromYear;
+            fromYear;
 
         filterTo =
-          sharedFilterYearNumber(
-            range.to
-          );
-      }
+            sharedFilterYearNumber(
+                range.to
+            );
+    }
 
-      /*
+    /*
       * Historical date ranges match when they
       * overlap the requested period.
       */
-      return (
+    return (
         fileInterval.from
           <= filterTo
 
         && fileInterval.to
           >= filterFrom
-      );
-    }
+    );
+}
 
-    function archiveFileMatchesFilters(
-      file,
-      filters,
-      query
-    ) {
-      if (
+function archiveFileMatchesFilters(
+    file,
+    filters,
+    query
+)
+{
+    if (
         filters.sourceId
         && !archiveFilesForSource(filters.sourceId)
-          .some(linkedFile => linkedFile.id === file.id)
-      ) {
+            .some(linkedFile => linkedFile.id === file.id)
+    )
+    {
         return false;
-      }
-      if (
+    }
+    if (
         query
         && !archiveSearchText(
-          file
+            file
         ).includes(query)
-      ) {
+    )
+    {
         return false;
-      }
+    }
 
-      if (
+    if (
         filters.fileType !== 'all'
         && archiveFileKind(file)
           !== filters.fileType
-      ) {
+    )
+    {
         return false;
-      }
-
-      if (
-        filters.connections === 'linked'
-        && !archiveFileHasLinks(file)
-      ) {
-        return false;
-      }
-
-      if (
-        filters.connections === 'unlinked'
-        && archiveFileHasLinks(file)
-      ) {
-        return false;
-      }
-
-      if (
-        filters.favouriteOnly
-        && !file.favorite
-      ) {
-        return false;
-      }
-
-      if (
-        filters.personIds.length
-        && !archiveFilePersonIds(file)
-          .some(personId =>
-            filters.personIds.includes(
-              personId
-            )
-          )
-      ) {
-        return false;
-      }
-
-      if (
-        filters.placeIds.length
-        && !archiveFilePlaceIds(file)
-          .some(placeId =>
-            filters.placeIds.includes(
-              placeId
-            )
-          )
-      ) {
-        return false;
-      }
-
-      if (
-        !archiveDocumentYearMatches(
-          file,
-          filters.documentYears
-        )
-      ) {
-        return false;
-      }
-
-      return true;
     }
 
-    function archiveSortFilteredFiles(
-      files
-    ) {
-      return appSortRecords(files, {
+    if (
+        filters.connections === 'linked'
+        && !archiveFileHasLinks(file)
+    )
+    {
+        return false;
+    }
+
+    if (
+        filters.connections === 'unlinked'
+        && archiveFileHasLinks(file)
+    )
+    {
+        return false;
+    }
+
+    if (
+        filters.favouriteOnly
+        && !file.favorite
+    )
+    {
+        return false;
+    }
+
+    if (
+        filters.personIds.length
+        && !archiveFilePersonIds(file)
+            .some(personId =>
+                filters.personIds.includes(
+                    personId
+                )
+            )
+    )
+    {
+        return false;
+    }
+
+    if (
+        filters.placeIds.length
+        && !archiveFilePlaceIds(file)
+            .some(placeId =>
+                filters.placeIds.includes(
+                    placeId
+                )
+            )
+    )
+    {
+        return false;
+    }
+
+    if (
+        !archiveDocumentYearMatches(
+            file,
+            filters.documentYears
+        )
+    )
+    {
+        return false;
+    }
+
+    return true;
+}
+
+function archiveSortFilteredFiles(
+    files
+)
+{
+    return appSortRecords(files, {
         field:
           state.archiveFileSort,
 
@@ -6975,307 +7343,324 @@
           state.archiveFileSortDirection,
 
         extractors: {
-          name: {
-            type:
+            name: {
+                type:
               'text',
 
-            get:
+                get:
               file => file.name
-          },
+            },
 
-          updated: {
-            type:
+            updated: {
+                type:
               'number',
 
-            get:
+                get:
               file =>
-                appSortTimestamp(
-                  file.updatedAt
-                )
-          },
+                  appSortTimestamp(
+                      file.updatedAt
+                  )
+            },
 
-          added: {
-            type:
+            added: {
+                type:
               'number',
 
-            get:
+                get:
               file =>
-                appSortTimestamp(
-                  file.addedAt
-                )
-          },
+                  appSortTimestamp(
+                      file.addedAt
+                  )
+            },
 
-          type: {
-            type:
+            type: {
+                type:
               'text',
 
-            get:
+                get:
               archiveFileTypeLabel
-          }
+            }
         },
 
         getFallback:
           file => file.name
-      });
-    }
+    });
+}
 
-    function archiveMatchingFiles() {
-      const filters =
+function archiveMatchingFiles()
+{
+    const filters =
         archiveEffectiveFileFilters();
 
-      const query =
+    const query =
         String(
-          state.archiveSearch || ''
+            state.archiveSearch || ''
         )
-          .trim()
-          .toLocaleLowerCase(
-            state.language === 'ru'
-              ? 'ru'
-              : 'en'
-          );
+            .trim()
+            .toLocaleLowerCase(
+                state.language === 'ru'
+                    ? 'ru'
+                    : 'en'
+            );
 
-      /*
+    /*
       * Without a filter, Archive remains ordinary
       * direct-folder browsing.
       */
-      if (
+    if (
         !archiveFileFilteringActive(
-          filters
+            filters
         )
-      ) {
+    )
+    {
         return archiveSortFilteredFiles(
-          archiveProjectFiles()
-            .filter(file =>
-              archiveFileFolderId(
-                file
-              ) ===
+            archiveProjectFiles()
+                .filter(file =>
+                    archiveFileFolderId(
+                        file
+                    ) ===
               archiveNormalizeFolderId(
-                state.archiveSelectedFolderId
+                  state.archiveSelectedFolderId
               )
-            )
+                )
         );
-      }
+    }
 
-      let files =
+    let files =
         archiveProjectFiles();
 
-      if (filters.scope === 'folder') {
+    if (filters.scope === 'folder')
+    {
         const scopeRoot =
-          archiveNormalizeFolderId(
-            state.archiveFilterScopeFolderId
-          );
+            archiveNormalizeFolderId(
+                state.archiveFilterScopeFolderId
+            );
 
         const scopeIds =
-          archiveFolderScopeIds(
-            scopeRoot
-          );
+            archiveFolderScopeIds(
+                scopeRoot
+            );
 
         files =
-          files.filter(file =>
-            scopeIds.has(
-              archiveFileFolderId(
-                file
-              )
-            )
-          );
-      }
-
-      return archiveSortFilteredFiles(
-        files.filter(file =>
-          archiveFileMatchesFilters(
-            file,
-            filters,
-            query
-          )
-        )
-      );
+            files.filter(file =>
+                scopeIds.has(
+                    archiveFileFolderId(
+                        file
+                    )
+                )
+            );
     }
 
-    function archiveFolderMatchProjection(
-      matchingFiles =
+    return archiveSortFilteredFiles(
+        files.filter(file =>
+            archiveFileMatchesFilters(
+                file,
+                filters,
+                query
+            )
+        )
+    );
+}
+
+function archiveFolderMatchProjection(
+    matchingFiles =
         archiveMatchingFiles()
-    ) {
-      const visibleFolderIds =
+)
+{
+    const visibleFolderIds =
         new Set();
 
-      const matchingCountByFolder =
+    const matchingCountByFolder =
         new Map();
 
-      const filters =
+    const filters =
         archiveEffectiveFileFilters();
 
-      const scopeRoot =
+    const scopeRoot =
         filters.scope === 'folder'
-          ? archiveNormalizeFolderId(
-              state.archiveFilterScopeFolderId
+            ? archiveNormalizeFolderId(
+                state.archiveFilterScopeFolderId
             )
-          : null;
+            : null;
 
-      matchingFiles.forEach(file => {
+    matchingFiles.forEach(file =>
+    {
         let folderId =
-          archiveFileFolderId(
-            file
-          );
+            archiveFileFolderId(
+                file
+            );
 
-        while (folderId) {
-          visibleFolderIds.add(
-            folderId
-          );
-
-          matchingCountByFolder.set(
-            folderId,
-            (
-              matchingCountByFolder.get(
+        while (folderId)
+        {
+            visibleFolderIds.add(
                 folderId
-              )
+            );
+
+            matchingCountByFolder.set(
+                folderId,
+                (
+                    matchingCountByFolder.get(
+                        folderId
+                    )
               || 0
-            ) + 1
-          );
+                ) + 1
+            );
 
-          if (
-            scopeRoot
+            if (
+                scopeRoot
             && folderId === scopeRoot
-          ) {
-            break;
-          }
+            )
+            {
+                break;
+            }
 
-          const folder =
-            archiveFolderById(
-              folderId
-            );
+            const folder =
+                archiveFolderById(
+                    folderId
+                );
 
-          folderId =
-            archiveFolderParentId(
-              folder
-            );
+            folderId =
+                archiveFolderParentId(
+                    folder
+                );
         }
-      });
+    });
 
-      return {
+    return {
         visibleFolderIds,
         matchingCountByFolder
-      };
-    }
+    };
+}
 
-    function archiveVisibleFiles(
-      matchingFiles =
+function archiveVisibleFiles(
+    matchingFiles =
         archiveMatchingFiles()
-    ) {
-      if (
+)
+{
+    if (
         !archiveFileFilteringActive()
         || state.archiveFilterPresentation
           === 'flat'
-      ) {
+    )
+    {
         return matchingFiles;
-      }
-
-      const folderId =
-        archiveNormalizeFolderId(
-          state.archiveSelectedFolderId
-        );
-
-      return matchingFiles.filter(file =>
-        archiveFileFolderId(
-          file
-        ) === folderId
-      );
     }
 
-    function archiveVisibleChildFolders(
-      matchingFiles =
-        archiveMatchingFiles()
-    ) {
-      if (
-        !archiveFileFilteringActive()
-      ) {
-        return archiveFolderChildren(
-          archiveNormalizeFolderId(
+    const folderId =
+        archiveNormalizeFolderId(
             state.archiveSelectedFolderId
-          )
         );
-      }
 
-      if (
+    return matchingFiles.filter(file =>
+        archiveFileFolderId(
+            file
+        ) === folderId
+    );
+}
+
+function archiveVisibleChildFolders(
+    matchingFiles =
+        archiveMatchingFiles()
+)
+{
+    if (
+        !archiveFileFilteringActive()
+    )
+    {
+        return archiveFolderChildren(
+            archiveNormalizeFolderId(
+                state.archiveSelectedFolderId
+            )
+        );
+    }
+
+    if (
         state.archiveFilterPresentation
           === 'flat'
-      ) {
+    )
+    {
         return [];
-      }
-
-      const projection =
-        archiveFolderMatchProjection(
-          matchingFiles
-        );
-
-      return archiveFolderChildren(
-        archiveNormalizeFolderId(
-          state.archiveSelectedFolderId
-        )
-      ).filter(folder =>
-        projection.visibleFolderIds.has(
-          folder.id
-        )
-      );
     }
 
-    function archiveSourceConnectedSearchText(
-      source
-    ) {
-      if (!source) {
-        return '';
-      }
+    const projection =
+        archiveFolderMatchProjection(
+            matchingFiles
+        );
 
-      return sourceLinksForSource(
+    return archiveFolderChildren(
+        archiveNormalizeFolderId(
+            state.archiveSelectedFolderId
+        )
+    ).filter(folder =>
+        projection.visibleFolderIds.has(
+            folder.id
+        )
+    );
+}
+
+function archiveSourceConnectedSearchText(
+    source
+)
+{
+    if (!source)
+    {
+        return '';
+    }
+
+    return sourceLinksForSource(
         source.id,
         '',
         source.projectId
-      )
-        .flatMap(link => {
-          const record =
-            sourceTargetRecord(
-              link.targetType,
-              link.targetId,
-              link.projectId
-            );
+    )
+        .flatMap(link =>
+        {
+            const record =
+                sourceTargetRecord(
+                    link.targetType,
+                    link.targetId,
+                    link.projectId
+                );
 
-          const config =
-            archiveEntityConfig(
-              link.targetType
-            );
+            const config =
+                archiveEntityConfig(
+                    link.targetType
+                );
 
-          if (!record || !config) {
-            return [];
-          }
+            if (!record || !config)
+            {
+                return [];
+            }
 
-          return [
-            config.title,
-            config.singular,
-            config.label(
-              record
-            ),
-            config.meta(
-              record
-            )
-          ];
+            return [
+                config.title,
+                config.singular,
+                config.label(
+                    record
+                ),
+                config.meta(
+                    record
+                )
+            ];
         })
         .filter(Boolean)
         .join(' ');
-    }
+}
 
-    function archiveSourceSearchText(
-      source
-    ) {
-      return [
+function archiveSourceSearchText(
+    source
+)
+{
+    return [
         source?.title,
 
         sourceCategoryLabel(
-          source?.category,
-          ''
+            source?.category,
+            ''
         ),
 
         localizedSourceCategoryLabel(
-          source?.category,
-          ''
+            source?.category,
+            ''
         ),
 
         source?.providedBy,
@@ -7285,403 +7670,428 @@
         source?.notes,
 
         archiveSourceConnectedSearchText(
-          source
+            source
         )
-      ]
+    ]
         .filter(Boolean)
         .join(' ')
         .toLocaleLowerCase(
-          state.language === 'ru'
-            ? 'ru'
-            : 'en'
-        );
-    }
-
-    function archiveFilteredSources() {
-      const query =
-        String(
-          state.archiveSearch || ''
-        )
-          .trim()
-          .toLocaleLowerCase(
             state.language === 'ru'
-              ? 'ru'
-              : 'en'
-          );
+                ? 'ru'
+                : 'en'
+        );
+}
 
-      let sources =
+function archiveFilteredSources()
+{
+    const query =
+        String(
+            state.archiveSearch || ''
+        )
+            .trim()
+            .toLocaleLowerCase(
+                state.language === 'ru'
+                    ? 'ru'
+                    : 'en'
+            );
+
+    let sources =
         archiveProjectSources();
 
-      const targetFilter =
+    const targetFilter =
         currentArchiveSourceTargetFilter();
 
-      if (targetFilter) {
+    if (targetFilter)
+    {
         const connectedSourceIds =
-          new Set(
-            sourceIdsForTarget(
-              targetFilter.targetType,
-              targetFilter.targetId,
-              targetFilter.projectId
-            )
-          );
+            new Set(
+                sourceIdsForTarget(
+                    targetFilter.targetType,
+                    targetFilter.targetId,
+                    targetFilter.projectId
+                )
+            );
 
         sources =
-          sources.filter(source =>
-            connectedSourceIds.has(
-              source.id
-            )
-          );
-      }
+            sources.filter(source =>
+                connectedSourceIds.has(
+                    source.id
+                )
+            );
+    }
 
-      if (
+    if (
         state.archiveSourceCategoryFilter
         && state.archiveSourceCategoryFilter
           !== 'all'
-      ) {
+    )
+    {
         sources =
-          sources.filter(source =>
-            source.category
+            sources.filter(source =>
+                source.category
               === state
-                .archiveSourceCategoryFilter
-          );
-      }
-      if (
+                  .archiveSourceCategoryFilter
+            );
+    }
+    if (
         state.archiveSourceConnectionFilter
           === 'linked'
-      ) {
+    )
+    {
         sources =
-          sources.filter(source =>
-            archiveSourceConnectionCount(
-              source
-            ) > 0
-          );
-      }
-
-      if (
-        state.archiveSourceConnectionFilter
-          === 'unlinked'
-      ) {
-        sources =
-          sources.filter(source =>
-            archiveSourceConnectionCount(
-              source
-            ) === 0
-          );
-      }
-      if (
-        state.archiveSourceFavouriteOnly
-      ) {
-        sources =
-          sources.filter(source =>
-            source.favorite
-          );
-      }
-
-      if (query) {
-        sources =
-          sources.filter(source =>
-            archiveSourceSearchText(
-              source
-            ).includes(
-              query
-            )
-          );
-      }
-
-      return appSortRecords(
-        sources,
-        {
-          field:
-            state.archiveSourceSort,
-
-          direction:
-            state.archiveSourceSortDirection,
-
-          extractors: {
-            name: {
-              type:
-                'text',
-
-              get:
-                source =>
-                  source.title
-            },
-
-            updated: {
-              type:
-                'number',
-
-              get:
-                source =>
-                  appSortTimestamp(
-                    source.updatedAt
-                  )
-            },
-
-            created: {
-              type:
-                'number',
-
-              get:
-                source =>
-                  appSortTimestamp(
-                    source.createdAt
-                  )
-            }
-          },
-
-          getFallback:
-            source =>
-              source.title
-        }
-      );
+            sources.filter(source =>
+                archiveSourceConnectionCount(
+                    source
+                ) > 0
+            );
     }
 
-    function ensureArchiveSelection() {
-      state.archiveSelectedFolderId =
+    if (
+        state.archiveSourceConnectionFilter
+          === 'unlinked'
+    )
+    {
+        sources =
+            sources.filter(source =>
+                archiveSourceConnectionCount(
+                    source
+                ) === 0
+            );
+    }
+    if (
+        state.archiveSourceFavouriteOnly
+    )
+    {
+        sources =
+            sources.filter(source =>
+                source.favorite
+            );
+    }
+
+    if (query)
+    {
+        sources =
+            sources.filter(source =>
+                archiveSourceSearchText(
+                    source
+                ).includes(
+                    query
+                )
+            );
+    }
+
+    return appSortRecords(
+        sources,
+        {
+            field:
+            state.archiveSourceSort,
+
+            direction:
+            state.archiveSourceSortDirection,
+
+            extractors: {
+                name: {
+                    type:
+                'text',
+
+                    get:
+                source =>
+                    source.title
+                },
+
+                updated: {
+                    type:
+                'number',
+
+                    get:
+                source =>
+                    appSortTimestamp(
+                        source.updatedAt
+                    )
+                },
+
+                created: {
+                    type:
+                'number',
+
+                    get:
+                source =>
+                    appSortTimestamp(
+                        source.createdAt
+                    )
+                }
+            },
+
+            getFallback:
+            source =>
+                source.title
+        }
+    );
+}
+
+function ensureArchiveSelection()
+{
+    state.archiveSelectedFolderId =
         archiveNormalizeFolderId(
-          state.archiveSelectedFolderId
+            state.archiveSelectedFolderId
         );
 
-      state.archiveSelectedFileIds =
+    state.archiveSelectedFileIds =
         archiveUniqueIds(
-          state.archiveSelectedFileIds
+            state.archiveSelectedFileIds
         )
-          .filter(id =>
-            archiveFileById(
-              id
-            )
-          );
+            .filter(id =>
+                archiveFileById(
+                    id
+                )
+            );
 
-      if (
+    if (
         (
-          state.archiveView
+            state.archiveView
             === 'files'
           || state.archiveView
             === 'favorites'
         )
         && state.archiveSelectedFileId
         && !archiveFileById(
-          state.archiveSelectedFileId
+            state.archiveSelectedFileId
         )
-      ) {
+    )
+    {
         state.archiveSelectedFileId =
-          null;
-      }
+            null;
+    }
 
-      /*
+    /*
         A selected folder item is valid only when
         it is a direct child of the current Files
         location and folders are actually visible.
       */
-      const selectedFolderItem =
+    const selectedFolderItem =
         archiveFolderById(
-          state.archiveSelectedFolderItemId
+            state.archiveSelectedFolderItemId
         );
 
-      const currentFolderId =
+    const currentFolderId =
         archiveNormalizeFolderId(
-          state.archiveSelectedFolderId
+            state.archiveSelectedFolderId
         );
 
-      const folderItemVisible =
+    const folderItemVisible =
         state.archiveView === 'files'
         && !archiveFileFilteringActive()
         && selectedFolderItem
         && archiveFolderParentId(
-          selectedFolderItem
+            selectedFolderItem
         ) === currentFolderId;
 
-      if (
+    if (
         !folderItemVisible
         || state.archiveSelectedFileId
-      ) {
+    )
+    {
         state.archiveSelectedFolderItemId =
-          null;
-      }
+            null;
+    }
 
-      if (
+    if (
         state.archiveView
           === 'sources'
         && state.archiveSelectedSourceId
         && !archiveSourceById(
-          state.archiveSelectedSourceId
+            state.archiveSelectedSourceId
         )
-      ) {
+    )
+    {
         state.archiveSelectedSourceId =
-          null;
-      }
+            null;
+    }
 
-      if (
+    if (
         state.archiveView
           === 'sources'
-      ) {
+    )
+    {
         state.archiveSelectedFolderItemId =
-          null;
-      }
+            null;
+    }
 
-      if (
+    if (
         state.archiveView
           === 'sources'
         && !state.archiveSelectedSourceId
-      ) {
+    )
+    {
         state.archiveSelectedSourceId =
-          archiveFilteredSources()[0]?.id
+            archiveFilteredSources()[0]?.id
           || null;
-      }
     }
+}
 
-    function renderArchive() {
-      workspace.classList.remove(
+function renderArchive()
+{
+    workspace.classList.remove(
         'no-sidebar'
-      );
+    );
 
-      archivePruneNavigationHistory();
-      ensureArchiveSelection();
+    archivePruneNavigationHistory();
+    ensureArchiveSelection();
 
-      renderArchiveSidebar();
-      renderArchiveMain();
-    }
+    renderArchiveSidebar();
+    renderArchiveMain();
+}
 
-    function renderArchivePreservingSourceInspectorScroll() {
-      if (
+function renderArchivePreservingSourceInspectorScroll()
+{
+    if (
         state.archiveView !== 'sources'
         || !state.archiveSelectedSourceId
-      ) {
+    )
+    {
         renderArchive();
         return;
-      }
+    }
 
-      const sourceId =
+    const sourceId =
         state.archiveSelectedSourceId;
 
-      const currentScroller =
+    const currentScroller =
         main.querySelector(
-          '.archive-inspector-scroll'
+            '.archive-inspector-scroll'
         );
 
-      const previousScrollTop =
+    const previousScrollTop =
         currentScroller?.scrollTop
         || 0;
 
-      renderArchive();
+    renderArchive();
 
-      requestAnimationFrame(() => {
+    requestAnimationFrame(() =>
+    {
         /*
           Do not restore an old position if rendering
           changed the selected Source or left Sources.
         */
         if (
-          state.archiveView !== 'sources'
+            state.archiveView !== 'sources'
           || state.archiveSelectedSourceId
             !== sourceId
-        ) {
-          return;
+        )
+        {
+            return;
         }
 
         const nextScroller =
-          main.querySelector(
-            '.archive-inspector-scroll'
-          );
+            main.querySelector(
+                '.archive-inspector-scroll'
+            );
 
-        if (!nextScroller) {
-          return;
+        if (!nextScroller)
+        {
+            return;
         }
 
         const maximumScrollTop =
-          Math.max(
-            0,
-            nextScroller.scrollHeight
+            Math.max(
+                0,
+                nextScroller.scrollHeight
               - nextScroller.clientHeight
-          );
+            );
 
         nextScroller.scrollTop =
-          Math.min(
-            previousScrollTop,
-            maximumScrollTop
-          );
-      });
-    }
+            Math.min(
+                previousScrollTop,
+                maximumScrollTop
+            );
+    });
+}
 
-    function renderArchivePreservingFileInspectorScroll() {
-      if (
+function renderArchivePreservingFileInspectorScroll()
+{
+    if (
         !archiveIsLocationView(
-          state.archiveView
+            state.archiveView
         )
         || !state.archiveSelectedFileId
-      ) {
+    )
+    {
         renderArchive();
         return;
-      }
+    }
 
-      const fileId =
+    const fileId =
         state.archiveSelectedFileId;
 
-      const currentScroller =
+    const currentScroller =
         main.querySelector(
-          '.archive-inspector-scroll'
+            '.archive-inspector-scroll'
         );
 
-      const previousScrollTop =
+    const previousScrollTop =
         currentScroller?.scrollTop
         || 0;
 
-      renderArchive();
+    renderArchive();
 
-      requestAnimationFrame(() => {
+    requestAnimationFrame(() =>
+    {
         /*
           Do not restore the previous position if the
           selected file or Archive view changed while
           the inspector was rendering.
         */
         if (
-          !archiveIsLocationView(
-            state.archiveView
-          )
+            !archiveIsLocationView(
+                state.archiveView
+            )
           || state.archiveSelectedFileId
             !== fileId
-        ) {
-          return;
+        )
+        {
+            return;
         }
 
         const nextScroller =
-          main.querySelector(
-            '.archive-inspector-scroll'
-          );
+            main.querySelector(
+                '.archive-inspector-scroll'
+            );
 
-        if (!nextScroller) {
-          return;
+        if (!nextScroller)
+        {
+            return;
         }
 
         const maximumScrollTop =
-          Math.max(
-            0,
-            nextScroller.scrollHeight
+            Math.max(
+                0,
+                nextScroller.scrollHeight
               - nextScroller.clientHeight
-          );
+            );
 
         nextScroller.scrollTop =
-          Math.min(
-            previousScrollTop,
-            maximumScrollTop
-          );
-      });
-    }
-    
-    function renderArchiveSidebarNavItem(
-      id,
-      label,
-      svg
-    ) {
-      const active =
-        id === 'files'
-          ? state.archiveView === 'files'
-            && archiveIsRootLocation(
-              state.archiveSelectedFolderId
-            )
-          : state.archiveView === id;
+            Math.min(
+                previousScrollTop,
+                maximumScrollTop
+            );
+    });
+}
 
-      return `
+function renderArchiveSidebarNavItem(
+    id,
+    label,
+    svg
+)
+{
+    const active =
+        id === 'files'
+            ? state.archiveView === 'files'
+            && archiveIsRootLocation(
+                state.archiveSelectedFolderId
+            )
+            : state.archiveView === id;
+
+    return `
         <button
           class="
             side-link
@@ -7690,10 +8100,10 @@
           type="button"
           data-archive-view="${escapeHtml(id)}"
           aria-current="${
-            active
-              ? 'page'
-              : 'false'
-          }">
+                active
+                    ? 'page'
+                    : 'false'
+            }">
 
           ${svg}
 
@@ -7702,98 +8112,100 @@
           </span>
         </button>
       `;
-    }
+}
 
-    function renderArchiveFolderTree(
-      parentId = null,
-      depth = 0
-    ) {
-      const folders =
+function renderArchiveFolderTree(
+    parentId = null,
+    depth = 0
+)
+{
+    const folders =
         archiveFolderChildren(
-          parentId
+            parentId
         );
 
-      return folders
-        .map(folder => {
-          const children =
-            archiveFolderChildren(
-              folder.id
-            );
+    return folders
+        .map(folder =>
+        {
+            const children =
+                archiveFolderChildren(
+                    folder.id
+                );
 
-          const expanded =
-            Boolean(
-              state
-                .archiveExpandedFolders[
-                  folder.id
-                ]
-            );
+            const expanded =
+                Boolean(
+                    state
+                        .archiveExpandedFolders[
+                            folder.id
+                        ]
+                );
 
-          const active =
-            folder.id
+            const active =
+                folder.id
             === archiveNormalizeFolderId(
-              state.archiveSelectedFolderId
+                state.archiveSelectedFolderId
             );
 
-          return `
+            return `
             <div
               role="treeitem"
               aria-selected="${
-                active
-                  ? 'true'
-                  : 'false'
-              }"
+                    active
+                        ? 'true'
+                        : 'false'
+                }"
               ${
-                children.length
-                  ? `aria-expanded="${String(
-                      expanded
-                    )}"`
-                  : ''
-              }>
+                    children.length
+                        ? `aria-expanded="${String(
+                            expanded
+                        )}"`
+                        : ''
+                }>
 
               <div
                 class="
                   archive-folder-row
                   ${
-                    active
-                      ? 'active'
-                      : ''
-                  }
+                        active
+                            ? 'active'
+                            : ''
+                    }
                 "
                 style="padding-left:${
-                  Math.max(
-                    4,
-                    depth * 14 + 4
-                  )
+                    Math.max(
+                        4,
+                        depth * 14 + 4
+                    )
                 }px">
 
                 ${
-                  children.length
-                    ? `
+                    children.length
+                        ? `
                       <button
                         class="
                           archive-folder-toggle
                           ${
-                            expanded
-                              ? 'expanded'
-                              : ''
-                          }
+                                expanded
+                                    ? 'expanded'
+                                    : ''
+                            }
                         "
                         type="button"
                         data-archive-toggle-folder="${escapeHtml(
-                          folder.id
+                            folder.id
                         )}"
                         aria-label="${
-                          expanded
-                            ? 'Collapse'
-                            : 'Expand'
+                            expanded
+                                ? 'Collapse'
+                                : 'Expand'
                         } ${escapeHtml(
-                          folder.name
+                            folder.name
                         )}">
 
                         ${icon.chevron}
                       </button>
                     `
-                    : `
+                        : `
                       <span
                         aria-hidden="true">
                       </span>
@@ -7806,95 +8218,99 @@
                   "
                   type="button"
                   data-archive-folder="${escapeHtml(
-                    folder.id
-                  )}"
+                        folder.id
+                    )}"
                   title="${escapeHtml(
-                    folder.name
-                  )}">
+                        folder.name
+                    )}">
 
                   ${icon.folderyellow}
 
                   <span>
                     ${escapeHtml(
-                      folder.name
+                        folder.name
                     )}
                   </span>
                 </button>
               </div>
 
               ${
-                children.length
+                    children.length
                 && expanded
-                  ? `
+                        ? `
                     <div role="group">
                       ${renderArchiveFolderTree(
-                        folder.id,
-                        depth + 1
-                      )}
+                            folder.id,
+                            depth + 1
+                        )}
                     </div>
                   `
-                  : ''
-              }
+                        : ''
+                }
             </div>
           `;
         })
         .join('');
-    }
+}
 
-    function archiveRevealPendingFolderInSidebar() {
-      const folderId =
+function archiveRevealPendingFolderInSidebar()
+{
+    const folderId =
         state.archivePendingTreeRevealId;
 
-      if (!folderId) {
+    if (!folderId)
+    {
         return;
-      }
-
-      requestAnimationFrame(
-        () => {
-          const button =
-            [
-              ...sidebar.querySelectorAll(
-                '[data-archive-folder]'
-              )
-            ].find(item =>
-              item.dataset
-                .archiveFolder
-                === folderId
-            );
-
-          button?.scrollIntoView({
-            block:
-              'nearest',
-
-            inline:
-              'nearest'
-          });
-
-          state.archivePendingTreeRevealId =
-            null;
-        }
-      );
     }
 
-    function renderArchiveSourceFilters() {
-      const sources =
+    requestAnimationFrame(
+        () =>
+        {
+            const button =
+                [
+                    ...sidebar.querySelectorAll(
+                        '[data-archive-folder]'
+                    )
+                ].find(item =>
+                    item.dataset
+                        .archiveFolder
+                === folderId
+                );
+
+            button?.scrollIntoView({
+                block:
+              'nearest',
+
+                inline:
+              'nearest'
+            });
+
+            state.archivePendingTreeRevealId =
+                null;
+        }
+    );
+}
+
+function renderArchiveSourceFilters()
+{
+    const sources =
         archiveProjectSources();
 
-      const populatedCategories =
+    const populatedCategories =
         SOURCE_CATEGORIES.filter(
-          category =>
-            sources.some(source =>
-              source.category
+            category =>
+                sources.some(source =>
+                    source.category
                 === category.value
-            )
+                )
         );
 
-      const button = ({
+    const button = ({
         value,
         label,
         active,
         title = ''
-      }) => `
+    }) => `
         <button
           class="
             archive-source-filter
@@ -7904,10 +8320,10 @@
           data-archive-source-filter="${escapeHtml(value)}"
           aria-pressed="${active ? 'true' : 'false'}"
           ${
-            title
-              ? `title="${escapeHtml(title)}"`
-              : ''
-          }>
+                title
+                    ? `title="${escapeHtml(title)}"`
+                    : ''
+            }>
 
           <span class="archive-source-filter-label">
             ${escapeHtml(label)}
@@ -7915,7 +8331,7 @@
         </button>
       `;
 
-      return `
+    return `
         <div class="archive-source-browser">
           <div
             class="archive-source-filter-list"
@@ -7923,21 +8339,21 @@
             aria-label="Browse sources">
 
             ${button({
-              value:
+                value:
                 'all',
 
-              label:
+                label:
                 'All sources',
 
-              active:
+                active:
                 state.archiveSourceCategoryFilter
                   === 'all'
             })}
           </div>
 
           ${
-            populatedCategories.length
-              ? `
+                populatedCategories.length
+                    ? `
                 <div>
                   <div class="side-section-title">
                     Source categories
@@ -7949,55 +8365,58 @@
                     aria-label="Source categories">
 
                     ${populatedCategories
-                      .map(category =>
-                        button({
-                          value:
+                        .map(category =>
+                            button({
+                                value:
                             category.value,
 
-                          label:
+                                label:
                             category.shortLabel,
 
-                          title:
+                                title:
                             category.label,
 
-                          active:
+                                active:
                             state
-                              .archiveSourceCategoryFilter
+                                .archiveSourceCategoryFilter
                               === category.value
-                        })
-                      )
-                      .join('')}
+                            })
+                        )
+                        .join('')}
                   </div>
                 </div>
               `
-              : ''
-          }
+                    : ''
+            }
         </div>
       `;
-    }
+}
 
-    function openArchiveCreateFolderFromTrigger(
-      button
-    ) {
-      const parentId =
+function openArchiveCreateFolderFromTrigger(
+    button
+)
+{
+    const parentId =
         button?.dataset
-          .archiveParentFolder
+            .archiveParentFolder
         || state.archiveSelectedFolderId;
 
-      runAfterArchiveFileEditGuard(
-        () => {
-          openArchiveCreateFolderModal(
-            parentId
-          );
+    runAfterArchiveFileEditGuard(
+        () =>
+        {
+            openArchiveCreateFolderModal(
+                parentId
+            );
         }
-      );
-    }
+    );
+}
 
-    function renderArchiveSidebar() {
-      const sourceView =
+function renderArchiveSidebar()
+{
+    const sourceView =
         state.archiveView
           === 'sources';
-        sidebar.innerHTML = `
+    sidebar.innerHTML = `
           <nav
             class="archive-sidebar"
             aria-label="Archive navigation">
@@ -8009,21 +8428,21 @@
 
               <div class="side-nav">
                 ${renderArchiveSidebarNavItem(
-                  'files',
-                  ARCHIVE_ROOT_LABEL,
-                  icon.folder
+                    'files',
+                    ARCHIVE_ROOT_LABEL,
+                    icon.folder
                 )}
 
                 ${renderArchiveSidebarNavItem(
-                  'favorites',
-                  'Favourites',
-                  icon.star
+                    'favorites',
+                    'Favourites',
+                    icon.star
                 )}
 
                 ${renderArchiveSidebarNavItem(
-                  'sources',
-                  'Sources',
-                  icon.archive
+                    'sources',
+                    'Sources',
+                    icon.archive
                 )}
               </div>
             </section>
@@ -8038,24 +8457,24 @@
                 class="
                   side-section-title
                   ${
-                    sourceView
-                      ? ''
-                      : 'with-add'
-                  }
+                        sourceView
+                            ? ''
+                            : 'with-add'
+                    }
                 ">
 
                 <span>
                   ${
-                    sourceView
-                      ? 'Browse sources'
-                      : 'Folders'
-                  }
+                        sourceView
+                            ? 'Browse sources'
+                            : 'Folders'
+                    }
                 </span>
 
                 ${
-                  sourceView
-                    ? ''
-                    : `
+                    sourceView
+                        ? ''
+                        : `
                       <button
                         class="side-add-button"
                         type="button"
@@ -8070,9 +8489,9 @@
               </div>
 
               ${
-                sourceView
-                  ? renderArchiveSourceFilters()
-                  : `
+                    sourceView
+                        ? renderArchiveSourceFilters()
+                        : `
                     <div
                       class="
                         archive-folder-tree
@@ -8084,295 +8503,312 @@
                       ${renderArchiveFolderTree()}
                     </div>
                   `
-              }
+                }
             </section>
           </nav>
         `;
 
-      sidebar
+    sidebar
         .querySelectorAll(
-          '[data-archive-view]'
+            '[data-archive-view]'
         )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              const nextView =
-                button.dataset
-                  .archiveView;
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
+                {
+                    const nextView =
+                        button.dataset
+                            .archiveView;
 
-            if (
-              nextView === 'sources'
-            ) {
-              runAfterArchiveFileEditGuard(
-                () => {
-                  archiveRememberCurrentLocation();
+                    if (
+                        nextView === 'sources'
+                    )
+                    {
+                        runAfterArchiveFileEditGuard(
+                            () =>
+                            {
+                                archiveRememberCurrentLocation();
 
-                  state.archiveView =
-                    'sources';
+                                state.archiveView =
+                                    'sources';
 
-                  state.archiveSearch =
-                    '';
+                                state.archiveSearch =
+                                    '';
 
-                  state.archiveSelectedFileId =
-                    null;
+                                state.archiveSelectedFileId =
+                                    null;
 
-                  state.archiveSelectedFileIds =
-                    [];
+                                state.archiveSelectedFileIds =
+                                    [];
 
-                  state.archiveInspectorCollapsed =
-                    false;
-                  state.archiveSourceTargetFilter = null;
-                  ensureArchiveSelection();
-                  renderArchive();
-                }
-              );
+                                state.archiveInspectorCollapsed =
+                                    false;
+                                state.archiveSourceTargetFilter = null;
+                                ensureArchiveSelection();
+                                renderArchive();
+                            }
+                        );
 
-              return;
-            }
+                        return;
+                    }
 
-              archiveNavigateToLocation({
-                view:
+                    archiveNavigateToLocation({
+                        view:
                   nextView,
 
-                folderId:
+                        folderId:
                   null,
 
-                search:
+                        search:
                   '',
 
-                fileFilters: {
-                  ...archiveFileFiltersWithDefaults(
-                    state.archiveFileFilters
-                  ),
+                        fileFilters: {
+                            ...archiveFileFiltersWithDefaults(
+                                state.archiveFileFilters
+                            ),
 
-                  favouriteOnly:
+                            favouriteOnly:
                     nextView === 'favorites'
-                },
+                        },
 
-                filterPresentation:
+                        filterPresentation:
                   nextView === 'favorites'
-                    ? 'flat'
-                    : state.archiveFilterPresentation,
+                      ? 'flat'
+                      : state.archiveFilterPresentation,
 
-                filterScopeFolderId:
+                        filterScopeFolderId:
                   null,
 
-                selectedFileId:
+                        selectedFileId:
                   null,
 
-                inspectorCollapsed:
+                        inspectorCollapsed:
                   false
-              });
-            }
-          );
+                    });
+                }
+            );
         });
 
     sidebar
-      .querySelectorAll(
-        '[data-archive-source-filter]'
-      )
-      .forEach(button => {
-        button.addEventListener(
-          'click',
-          () => {
-            const value =
-              button.dataset
-                .archiveSourceFilter;
-
-            if (
-              value !== 'all'
-              && !SOURCE_CATEGORY_BY_VALUE
-                .has(value)
-            ) {
-              return;
-            }
-            state.archiveSourceTargetFilter = null;
-            state.archiveSourceCategoryFilter =
-              value;
-
-            state.archiveSelectedSourceId =
-              null;
-
-            renderArchive();
-          }
-        );
-      });
-
-    sidebar
-      .querySelector(
-        '[data-archive-create-folder]'
-      )
-      ?.addEventListener(
-        'click',
-        event => {
-          event.stopPropagation();
-
-          openArchiveCreateFolderFromTrigger(
-            event.currentTarget
-          );
-        }
-      );
-
-      sidebar
         .querySelectorAll(
-          '[data-archive-toggle-folder]'
+            '[data-archive-source-filter]'
         )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            event => {
-              event.stopPropagation();
-
-              const id =
-                button.dataset
-                  .archiveToggleFolder;
-
-              state.archiveExpandedFolders[id] =
-                !state
-                  .archiveExpandedFolders[id];
-
-              renderArchiveSidebar();
-            }
-          );
-        });
-
-      sidebar
-        .querySelectorAll(
-          '[data-archive-folder]'
-        )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              archiveNavigateToLocation(
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
                 {
-                  view:
+                    const value =
+                        button.dataset
+                            .archiveSourceFilter;
+
+                    if (
+                        value !== 'all'
+              && !SOURCE_CATEGORY_BY_VALUE
+                  .has(value)
+                    )
+                    {
+                        return;
+                    }
+                    state.archiveSourceTargetFilter = null;
+                    state.archiveSourceCategoryFilter =
+                        value;
+
+                    state.archiveSelectedSourceId =
+                        null;
+
+                    renderArchive();
+                }
+            );
+        });
+
+    sidebar
+        .querySelector(
+            '[data-archive-create-folder]'
+        )
+        ?.addEventListener(
+            'click',
+            event =>
+            {
+                event.stopPropagation();
+
+                openArchiveCreateFolderFromTrigger(
+                    event.currentTarget
+                );
+            }
+        );
+
+    sidebar
+        .querySelectorAll(
+            '[data-archive-toggle-folder]'
+        )
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                event =>
+                {
+                    event.stopPropagation();
+
+                    const id =
+                        button.dataset
+                            .archiveToggleFolder;
+
+                    state.archiveExpandedFolders[id] =
+                        !state
+                            .archiveExpandedFolders[id];
+
+                    renderArchiveSidebar();
+                }
+            );
+        });
+
+    sidebar
+        .querySelectorAll(
+            '[data-archive-folder]'
+        )
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
+                {
+                    archiveNavigateToLocation(
+                        {
+                            view:
                     state.archiveView
                       === 'favorites'
                         ? 'favorites'
                         : 'files',
 
-                  folderId:
+                            folderId:
                     button.dataset
-                      .archiveFolder,
+                        .archiveFolder,
 
-                  search:
+                            search:
                     '',
 
-                  searchScope:
+                            searchScope:
                     'folder',
 
-                  personFilterId:
+                            personFilterId:
                     '',
 
-                  selectedFileId:
+                            selectedFileId:
                     null,
 
-                  inspectorCollapsed:
+                            inspectorCollapsed:
                     false
-                },
-                {
-                  expandCurrent:
+                        },
+                        {
+                            expandCurrent:
                     true
+                        }
+                    );
                 }
-              );
-            }
-          );
+            );
         });
 
-      localizeUI(
+    localizeUI(
         sidebar
-      );
+    );
 
-      archiveRevealPendingFolderInSidebar();
-    }
+    archiveRevealPendingFolderInSidebar();
+}
 
-    function ensureArchiveVisibleSelection() {
-      if (
+function ensureArchiveVisibleSelection()
+{
+    if (
         state.archiveView === 'sources'
-      ) {
+    )
+    {
         const visibleSources =
-          archiveFilteredSources();
+            archiveFilteredSources();
 
         const visibleSourceIds =
-          new Set(
-            visibleSources.map(
-              source =>
-                source.id
-            )
-          );
+            new Set(
+                visibleSources.map(
+                    source =>
+                        source.id
+                )
+            );
 
         if (
-          state.archiveSelectedSourceId
-          && !visibleSourceIds.has(
             state.archiveSelectedSourceId
+          && !visibleSourceIds.has(
+              state.archiveSelectedSourceId
           )
-        ) {
-          state.archiveSelectedSourceId =
-            visibleSources[0]?.id
+        )
+        {
+            state.archiveSelectedSourceId =
+                visibleSources[0]?.id
             || null;
         }
 
         return;
-      }
+    }
 
-      const visibleFiles =
+    const visibleFiles =
         archiveVisibleFiles();
 
-      const visibleFileIds =
+    const visibleFileIds =
         new Set(
-          visibleFiles.map(
-            file =>
-              file.id
-          )
+            visibleFiles.map(
+                file =>
+                    file.id
+            )
         );
 
-      /*
+    /*
         Do not retain hidden batch selections.
         Otherwise actions could affect files the
         user cannot currently see.
       */
-      state.archiveSelectedFileIds =
+    state.archiveSelectedFileIds =
         (
-          state.archiveSelectedFileIds
+            state.archiveSelectedFileIds
           || []
         ).filter(
-          fileId =>
-            visibleFileIds.has(
-              fileId
-            )
+            fileId =>
+                visibleFileIds.has(
+                    fileId
+                )
         );
 
-      if (
+    if (
         state.archiveSelectedFileId
         && !visibleFileIds.has(
-          state.archiveSelectedFileId
+            state.archiveSelectedFileId
         )
-      ) {
+    )
+    {
         state.archiveSelectedFileId =
-          null;
-      }
+            null;
     }
+}
 
-    function renderArchiveMain() {
-      ensureArchiveVisibleSelection();
+function renderArchiveMain()
+{
+    ensureArchiveVisibleSelection();
 
-      main.innerHTML = `
+    main.innerHTML = `
         <div
           class="
             archive-shell
 
             ${
-              state.archiveInspectorCollapsed
-                ? 'inspector-collapsed'
-                : ''
+                state.archiveInspectorCollapsed
+                    ? 'inspector-collapsed'
+                    : ''
             }
 
             ${
-              archiveFileEditIsActive()
-                ? 'file-editing'
-                : ''
+                archiveFileEditIsActive()
+                    ? 'file-editing'
+                    : ''
             }
           ">
 
@@ -8381,31 +8817,32 @@
             aria-label="Archive workspace">
 
             ${
-              state.archiveView
+                state.archiveView
                 === 'sources'
-                  ? renderArchiveSourcesView()
-                  : renderArchiveFilesView()
+                    ? renderArchiveSourcesView()
+                    : renderArchiveFilesView()
             }
           </section>
 
           ${
-            state.archiveInspectorCollapsed
-              ? renderArchiveInspectorCollapsed()
-              : renderArchiveInspector()
-          }
+                state.archiveInspectorCollapsed
+                    ? renderArchiveInspectorCollapsed()
+                    : renderArchiveInspector()
+            }
         </div>
       `;
 
-      bindArchiveControls();
-      localizeUI(main);
-    }
+    bindArchiveControls();
+    localizeUI(main);
+}
 
-    function renderArchivePageHead({
-      title,
-      subtitle,
-      actions = ''
-    }) {
-      return `
+function renderArchivePageHead({
+    title,
+    subtitle,
+    actions = ''
+})
+{
+    return `
         <header
           class="
             archive-page-head
@@ -8418,20 +8855,20 @@
 
             <h1 class="app-page-title">
               ${escapeHtml(
-                title
-              )}
+                    title
+                )}
             </h1>
 
             <p>
               ${escapeHtml(
-                subtitle
-              )}
+                    subtitle
+                )}
             </p>
           </div>
 
           ${
-            actions
-              ? `
+                actions
+                    ? `
                 <div
                   class="
                     archive-page-actions
@@ -8440,54 +8877,59 @@
                   ${actions}
                 </div>
               `
-              : ''
-          }
+                    : ''
+            }
         </header>
       `;
+}
+
+function archiveFilesViewSubtitle(
+    currentFolder,
+    person
+)
+{
+    if (person)
+    {
+        return `Files linked to ${
+            personResourceDisplayName(
+                person
+            )
+        }.`;
     }
 
-    function archiveFilesViewSubtitle(
-      currentFolder,
-      person
-    ) {
-      if (person) {
-        return `Files linked to ${
-          personResourceDisplayName(
-            person
-          )
-        }.`;
-      }
-
-      if (
+    if (
         state.archiveView
           === 'favorites'
-      ) {
+    )
+    {
         return currentFolder
-          ? `Favourite files in ${
-              currentFolder.name
+            ? `Favourite files in ${
+                currentFolder.name
             }.`
-          : 'Files marked as favourites.';
-      }
-
-      if (!currentFolder) {
-        return 'Organize your research files and folders.';
-      }
-
-      return `Browse files and subfolders in ${
-        currentFolder.name
-      }.`;
+            : 'Files marked as favourites.';
     }
 
-    function renderArchiveFilesHeaderActions() {
-      const favoritesView =
+    if (!currentFolder)
+    {
+        return 'Organize your research files and folders.';
+    }
+
+    return `Browse files and subfolders in ${
+        currentFolder.name
+    }.`;
+}
+
+function renderArchiveFilesHeaderActions()
+{
+    const favoritesView =
         state.archiveView
           === 'favorites';
 
-      return `
+    return `
         ${
-          favoritesView
-            ? ''
-            : `
+            favoritesView
+                ? ''
+                : `
               <button
                 class="
                   button secondary
@@ -8512,14 +8954,16 @@
           Add files
         </button>
       `;
-    }
+}
 
-    function archiveSourcesViewSubtitle() {
-      return 'Document where your research files and information came from.';
-    }
+function archiveSourcesViewSubtitle()
+{
+    return 'Document where your research files and information came from.';
+}
 
-    function renderArchiveSourcesHeaderActions() {
-      return `
+function renderArchiveSourcesHeaderActions()
+{
+    return `
         <button
           class="
             button primary
@@ -8531,15 +8975,16 @@
           Add source
         </button>
       `;
-    }
+}
 
-    function renderArchiveLocationButton(
-      action,
-      label,
-      modifier,
-      disabled
-    ) {
-      return `
+function renderArchiveLocationButton(
+    action,
+    label,
+    modifier,
+    disabled
+)
+{
+    return `
         <button
           class="
             archive-location-button
@@ -8548,41 +8993,42 @@
           type="button"
           data-archive-nav-${action}
           aria-label="${escapeHtml(
-            label
-          )}"
+                label
+            )}"
           title="${escapeHtml(
-            label
-          )}"
+                label
+            )}"
           ${
-            disabled
-              ? 'disabled aria-disabled="true"'
-              : ''
-          }>
+                disabled
+                    ? 'disabled aria-disabled="true"'
+                    : ''
+            }>
 
           ${icon.arrow}
         </button>
       `;
-    }
+}
 
-    function renderArchiveBreadcrumbs() {
-      const folders =
+function renderArchiveBreadcrumbs()
+{
+    const folders =
         archiveFolderAncestors(
-          state.archiveSelectedFolderId
+            state.archiveSelectedFolderId
         );
 
-      const favoritesView =
+    const favoritesView =
         state.archiveView
           === 'favorites';
 
-      const rootLabel =
+    const rootLabel =
         favoritesView
-          ? 'Favourites'
-          : ARCHIVE_ROOT_LABEL;
+            ? 'Favourites'
+            : ARCHIVE_ROOT_LABEL;
 
-      const rootCurrent =
+    const rootCurrent =
         !folders.length;
 
-      return `
+    return `
         <nav
           class="
             archive-breadcrumbs
@@ -8596,9 +9042,9 @@
             aria-hidden="true">
 
             ${
-              favoritesView
-                ? icon.star
-                : icon.folderyellow
+                favoritesView
+                    ? icon.star
+                    : icon.folderyellow
             }
           </span>
 
@@ -8610,59 +9056,60 @@
               ">
 
               ${
-                rootCurrent
-                  ? `
+                    rootCurrent
+                        ? `
                     <span
                       class="
                         archive-breadcrumb-current
                       "
                       aria-current="page"
                       title="${escapeHtml(
-                        rootLabel
-                      )}">
+                            rootLabel
+                        )}">
 
                       ${escapeHtml(
-                        rootLabel
-                      )}
+                            rootLabel
+                        )}
                     </span>
                   `
-                  : `
+                        : `
                     <button
                       type="button"
                       data-archive-breadcrumb-root
                       aria-label="Go to ${escapeHtml(
-                        rootLabel
-                      )} root"
+                            rootLabel
+                        )} root"
                       title="${escapeHtml(
-                        rootLabel
-                      )}">
+                            rootLabel
+                        )}">
 
                       ${escapeHtml(
-                        rootLabel
-                      )}
+                            rootLabel
+                        )}
                     </button>
                   `
-              }
+                }
             </li>
 
             ${folders
-              .map(
-                (
-                  folder,
-                  index
-                ) => {
-                  const current =
-                    index
+                .map(
+                    (
+                        folder,
+                        index
+                    ) =>
+                    {
+                        const current =
+                            index
                       === folders.length - 1;
 
-                  return `
+                        return `
                     <li
                       class="
                         archive-breadcrumb-item
                         ${
-                          current
-                            ? 'archive-breadcrumb-item--current'
-                            : 'archive-breadcrumb-item--middle'
+                            current
+                                ? 'archive-breadcrumb-item--current'
+                                : 'archive-breadcrumb-item--middle'
                         }
                       ">
 
@@ -8676,53 +9123,54 @@
                       </span>
 
                       ${
-                        current
-                          ? `
+                            current
+                                ? `
                             <span
                               class="
                                 archive-breadcrumb-current
                               "
                               aria-current="page"
                               title="${escapeHtml(
-                                folder.name
-                              )}">
+                                    folder.name
+                                )}">
 
                               ${escapeHtml(
-                                folder.name
-                              )}
+                                    folder.name
+                                )}
                             </span>
                           `
-                          : `
+                                : `
                             <button
                               type="button"
                               data-archive-breadcrumb="${escapeHtml(
-                                folder.id
-                              )}"
+                                    folder.id
+                                )}"
                               aria-label="Open ${escapeHtml(
-                                folder.name
-                              )}"
+                                    folder.name
+                                )}"
                               title="${escapeHtml(
-                                folder.name
-                              )}">
+                                    folder.name
+                                )}">
 
                               ${escapeHtml(
-                                folder.name
-                              )}
+                                    folder.name
+                                )}
                             </button>
                           `
-                      }
+                        }
                     </li>
                   `;
-                }
-              )
-              .join('')}
+                    }
+                )
+                .join('')}
           </ol>
         </nav>
       `;
-    }
+}
 
-    function renderArchiveLocationRow() {
-      return `
+function renderArchiveLocationRow()
+{
+    return `
         <div
           class="
             archive-location-row
@@ -8736,49 +9184,51 @@
             aria-label="Folder navigation">
 
             ${renderArchiveLocationButton(
-              'back',
-              'Go back',
-              'archive-location-button--back',
-              !archiveNavigationCanGoBack()
+                'back',
+                'Go back',
+                'archive-location-button--back',
+                !archiveNavigationCanGoBack()
             )}
 
             ${renderArchiveLocationButton(
-              'forward',
-              'Go forward',
-              'archive-location-button--forward',
-              !archiveNavigationCanGoForward()
+                'forward',
+                'Go forward',
+                'archive-location-button--forward',
+                !archiveNavigationCanGoForward()
             )}
 
             ${renderArchiveLocationButton(
-              'up',
-              'Go up one level',
-              'archive-location-button--up',
-              !archiveNavigationCanGoUp()
+                'up',
+                'Go up one level',
+                'archive-location-button--up',
+                !archiveNavigationCanGoUp()
             )}
           </div>
 
           ${renderArchiveBreadcrumbs()}
         </div>
       `;
+}
+
+function renderArchiveFilterResultsBar(
+    matchingCount
+)
+{
+    if (
+        !archiveFileFilteringActive()
+    )
+    {
+        return '';
     }
 
-    function renderArchiveFilterResultsBar(
-      matchingCount
-    ) {
-      if (
-        !archiveFileFilteringActive()
-      ) {
-        return '';
-      }
-
-      const fileLabel =
+    const fileLabel =
         `${matchingCount} ${
-          matchingCount === 1
-            ? 'file'
-            : 'files'
+            matchingCount === 1
+                ? 'file'
+                : 'files'
         }`;
 
-      return `
+    return `
         <div
           class="archive-filter-results-bar">
 
@@ -8794,16 +9244,16 @@
             <button
               type="button"
               class="${
-                state.archiveFilterPresentation
+                    state.archiveFilterPresentation
                   === 'flat'
-                    ? 'active'
-                    : ''
-              }"
+                        ? 'active'
+                        : ''
+                }"
               data-archive-filter-presentation="flat"
               aria-pressed="${
-                state.archiveFilterPresentation
+                    state.archiveFilterPresentation
                   === 'flat'
-              }">
+                }">
 
               Files only
             </button>
@@ -8811,41 +9261,43 @@
             <button
               type="button"
               class="${
-                state.archiveFilterPresentation
+                    state.archiveFilterPresentation
                   === 'folders'
-                    ? 'active'
-                    : ''
-              }"
+                        ? 'active'
+                        : ''
+                }"
               data-archive-filter-presentation="folders"
               aria-pressed="${
-                state.archiveFilterPresentation
+                    state.archiveFilterPresentation
                   === 'folders'
-              }">
+                }">
 
               Folder structure
             </button>
           </div>
         </div>
       `;
-    }
+}
 
-    function renderArchiveSelectionBar(files) {
-      const selected = state.archiveSelectedFileIds.filter(id => archiveFileById(id));
-      if (!selected.length) return '';
-      const allFavorite = selected.every(id => archiveFileById(id)?.favorite);
-      return `<div class="archive-selection-bar"><strong>${selected.length} ${selected.length === 1 ? 'file' : 'files'} selected</strong><div class="archive-selection-actions">
+function renderArchiveSelectionBar(files)
+{
+    const selected = state.archiveSelectedFileIds.filter(id => archiveFileById(id));
+    if (!selected.length) return '';
+    const allFavorite = selected.every(id => archiveFileById(id)?.favorite);
+    return `<div class="archive-selection-bar"><strong>${selected.length} ${selected.length === 1 ? 'file' : 'files'} selected</strong><div class="archive-selection-actions">
         <button class="button secondary" type="button" data-archive-selection-action="move">Move</button>
         <button class="button secondary" type="button" data-archive-selection-action="links">Add links</button>
         <button class="button secondary" type="button" data-archive-selection-action="favorite">${allFavorite ? 'Remove from favourites' : 'Add to favourites'}</button>
         <button class="button danger" type="button" data-archive-selection-action="delete">Delete permanently</button>
         <button class="button ghost" type="button" data-archive-selection-action="clear">Cancel</button>
       </div></div>`;
-    }
+}
 
-    function archiveSortFoldersForTable(
-      folders
-    ) {
-      return appSortRecords(folders, {
+function archiveSortFoldersForTable(
+    folders
+)
+{
+    return appSortRecords(folders, {
         field:
           state.archiveFileSort,
 
@@ -8853,49 +9305,50 @@
           state.archiveFileSortDirection,
 
         extractors: {
-          name: {
-            type: 'text',
-            get: folder =>
-              folder.name
-          },
+            name: {
+                type: 'text',
+                get: folder =>
+                    folder.name
+            },
 
-          updated: {
-            type: 'number',
-            get: folder =>
-              appSortTimestamp(
-                folder.updatedAt
+            updated: {
+                type: 'number',
+                get: folder =>
+                    appSortTimestamp(
+                        folder.updatedAt
                 || folder.createdAt
-              )
-          },
+                    )
+            },
 
-          added: {
-            type: 'number',
-            get: folder =>
-              appSortTimestamp(
-                folder.createdAt
-              )
-          },
+            added: {
+                type: 'number',
+                get: folder =>
+                    appSortTimestamp(
+                        folder.createdAt
+                    )
+            },
 
-          /*
+            /*
           * All these records have the same type.
           * The fallback name determines their
           * order within the Folder group.
           */
-          type: {
-            type: 'text',
-            get: () => 'Folder'
-          }
+            type: {
+                type: 'text',
+                get: () => 'Folder'
+            }
         },
 
         getFallback:
           folder => folder.name
-      });
-    }
+    });
+}
 
-    function renderArchiveTableGroupRow(
-      label
-    ) {
-      return `
+function renderArchiveTableGroupRow(
+    label
+)
+{
+    return `
         <tr
           class="
             archive-table-group-row
@@ -8906,73 +9359,74 @@
             colspan="7">
 
             ${escapeHtml(
-              label
+                label
             )}
           </th>
         </tr>
       `;
-    }
+}
 
-    function renderArchiveFolderTableRow(
-      folder,
-      matchingFileCount = null
-    ) {
-      const directFiles =
+function renderArchiveFolderTableRow(
+    folder,
+    matchingFileCount = null
+)
+{
+    const directFiles =
         archiveProjectFiles()
-          .filter(file =>
-            archiveFileFolderId(
-              file
-            ) === folder.id
-          )
-          .length;
+            .filter(file =>
+                archiveFileFolderId(
+                    file
+                ) === folder.id
+            )
+            .length;
 
-      const childFolders =
+    const childFolders =
         archiveFolderChildren(
-          folder.id
+            folder.id
         ).length;
 
-      const filtering =
+    const filtering =
         Number.isFinite(
-          matchingFileCount
+            matchingFileCount
         );
 
-      const itemCount =
+    const itemCount =
         filtering
-          ? matchingFileCount
-          : directFiles
+            ? matchingFileCount
+            : directFiles
             + childFolders;
 
-      const itemLabel =
+    const itemLabel =
         filtering
-          ? `${itemCount} ${
-              itemCount === 1
-                ? 'matching file'
-                : 'matching files'
+            ? `${itemCount} ${
+                itemCount === 1
+                    ? 'matching file'
+                    : 'matching files'
             }`
-          : `${itemCount} ${
-              itemCount === 1
-                ? 'item'
-                : 'items'
+            : `${itemCount} ${
+                itemCount === 1
+                    ? 'item'
+                    : 'items'
             }`;
 
-      const detailSelected =
+    const detailSelected =
         state.archiveSelectedFolderItemId
           === folder.id;
 
-      return `
+    return `
         <tr
           class="
             archive-table-folder-row
 
             ${
-              detailSelected
-                ? 'selected-detail'
-                : ''
+                detailSelected
+                    ? 'selected-detail'
+                    : ''
             }
           "
           data-archive-folder-row="${escapeHtml(
-            folder.id
-          )}"
+                folder.id
+            )}"
           tabindex="0">
 
           <td></td>
@@ -8984,9 +9438,9 @@
               ">
 
               ${archiveFileIcon({
-                kind:
+                    kind:
                   'folder'
-              })}
+                })}
 
               <div
                 class="
@@ -8999,11 +9453,11 @@
 
                   <strong
                     title="${escapeHtml(
-                      folder.name
+                        folder.name
                     )}">
 
                     ${escapeHtml(
-                      folder.name
+                        folder.name
                     )}
                   </strong>
                 </div>
@@ -9017,16 +9471,16 @@
 
           <td>
             ${escapeHtml(
-              itemLabel
+                itemLabel
             )}
           </td>
 
           <td>
             ${escapeHtml(
-              archiveFormatDate(
-                folder.updatedAt
+                archiveFormatDate(
+                    folder.updatedAt
                 || folder.createdAt
-              )
+                )
             )}
           </td>
 
@@ -9040,8 +9494,8 @@
               type="button"
               data-archive-row-actions="folder"
               data-archive-row-id="${escapeHtml(
-                folder.id
-              )}"
+                    folder.id
+                )}"
               aria-label="Folder actions">
 
               ${icon.more}
@@ -9049,39 +9503,40 @@
           </td>
         </tr>
       `;
-    }
+}
 
-    function archiveVisibleSelectionState(
-      files =
+function archiveVisibleSelectionState(
+    files =
         archiveVisibleFiles()
-    ) {
-      const visibleIds =
+)
+{
+    const visibleIds =
         (
-          Array.isArray(
-            files
-          )
-            ? files
-            : []
+            Array.isArray(
+                files
+            )
+                ? files
+                : []
         )
-          .map(file =>
-            file?.id
-          )
-          .filter(Boolean);
+            .map(file =>
+                file?.id
+            )
+            .filter(Boolean);
 
-      const selectedIds =
+    const selectedIds =
         new Set(
-          state.archiveSelectedFileIds
+            state.archiveSelectedFileIds
           || []
         );
 
-      const selectedVisibleIds =
+    const selectedVisibleIds =
         visibleIds.filter(id =>
-          selectedIds.has(
-            id
-          )
+            selectedIds.has(
+                id
+            )
         );
 
-      return {
+    return {
         visibleIds,
 
         selectedVisibleIds,
@@ -9093,145 +9548,156 @@
 
         someVisibleSelected:
           selectedVisibleIds.length > 0
-      };
-    }
+    };
+}
 
-    function toggleAllVisibleArchiveFiles(
-      files =
+function toggleAllVisibleArchiveFiles(
+    files =
         archiveVisibleFiles()
-    ) {
-      const selection =
+)
+{
+    const selection =
         archiveVisibleSelectionState(
-          files
+            files
         );
 
-      const selectedIds =
+    const selectedIds =
         new Set(
-          state.archiveSelectedFileIds
+            state.archiveSelectedFileIds
           || []
         );
 
-      selection.visibleIds
-        .forEach(id => {
-          if (
-            selection.allVisibleSelected
-          ) {
-            selectedIds.delete(
-              id
-            );
-          } else {
-            selectedIds.add(
-              id
-            );
-          }
+    selection.visibleIds
+        .forEach(id =>
+        {
+            if (
+                selection.allVisibleSelected
+            )
+            {
+                selectedIds.delete(
+                    id
+                );
+            }
+            else
+            {
+                selectedIds.add(
+                    id
+                );
+            }
         });
 
-      state.archiveSelectedFileIds = [
+    state.archiveSelectedFileIds = [
         ...selectedIds
-      ];
+    ];
 
-      renderArchiveMain();
-    }
+    renderArchiveMain();
+}
 
-    function toggleArchiveFileSelection(
-      fileId
-    ) {
-      const file =
+function toggleArchiveFileSelection(
+    fileId
+)
+{
+    const file =
         archiveFileById(
-          fileId
+            fileId
         );
 
-      if (!file) {
+    if (!file)
+    {
         return;
-      }
+    }
 
-      const selectedIds =
+    const selectedIds =
         new Set(
-          state.archiveSelectedFileIds
+            state.archiveSelectedFileIds
           || []
         );
 
-      if (
+    if (
         selectedIds.has(
-          file.id
+            file.id
         )
-      ) {
+    )
+    {
         selectedIds.delete(
-          file.id
+            file.id
         );
-      } else {
+    }
+    else
+    {
         selectedIds.add(
-          file.id
+            file.id
         );
-      }
+    }
 
-      state.archiveSelectedFileIds = [
+    state.archiveSelectedFileIds = [
         ...selectedIds
-      ];
+    ];
 
-      /*
+    /*
         Match Albums: selecting through the checkbox
         also makes that record the inspector item.
       */
-      
-      state.archiveSelectedFolderItemId = null;
-      state.archiveSelectedFileId =
+
+    state.archiveSelectedFolderItemId = null;
+    state.archiveSelectedFileId =
         file.id;
 
-      state.archiveInspectorCollapsed =
+    state.archiveInspectorCollapsed =
         false;
 
-      renderArchiveMain();
-    }
+    renderArchiveMain();
+}
 
-    function renderArchiveFileTableRow(
-      file,
-      showPath = false
-    ) {
-      const detailSelected =
+function renderArchiveFileTableRow(
+    file,
+    showPath = false
+)
+{
+    const detailSelected =
         state.archiveSelectedFileId
           === file.id;
 
-      const checked =
+    const checked =
         state.archiveSelectedFileIds
-          .includes(
-            file.id
-          );
+            .includes(
+                file.id
+            );
 
-      const secondaryLabel =
+    const secondaryLabel =
         showPath
-          ? archiveFolderPath(
-              file.folderId
-            )
-          : (
-              file.description
-              || archiveFolderPath(
+            ? archiveFolderPath(
                 file.folderId
+            )
+            : (
+                file.description
+              || archiveFolderPath(
+                  file.folderId
               )
             );
 
-      return `
+    return `
         <tr
           class="
             ${
-              detailSelected
-                ? 'selected-detail'
-                : ''
+                detailSelected
+                    ? 'selected-detail'
+                    : ''
             }
 
             ${
-              checked
-                ? 'is-checked'
-                : ''
+                checked
+                    ? 'is-checked'
+                    : ''
             }
           "
           data-archive-file-row="${escapeHtml(
-            file.id
-          )}"
+                file.id
+            )}"
           tabindex="0"
           aria-selected="${String(
-            checked
-          )}">
+                checked
+            )}">
 
           <td
             class="
@@ -9244,20 +9710,20 @@
               "
               type="checkbox"
               data-archive-file-checkbox="${escapeHtml(
-                file.id
-              )}"
+                    file.id
+                )}"
               ${
-                checked
-                  ? 'checked'
-                  : ''
-              }
+                    checked
+                        ? 'checked'
+                        : ''
+                }
               aria-label="${escapeHtml(
-                `${
-                  checked
-                    ? 'Deselect'
-                    : 'Select'
-                } ${file.name}`
-              )}">
+                    `${
+                        checked
+                            ? 'Deselect'
+                            : 'Select'
+                    } ${file.name}`
+                )}">
           </td>
 
           <td>
@@ -9267,8 +9733,8 @@
               ">
 
               ${archiveFileIcon(
-                file
-              )}
+                    file
+                )}
 
               <div
                 class="
@@ -9277,18 +9743,18 @@
 
                 <strong
                   title="${escapeHtml(
-                    file.name
-                  )}">
+                        file.name
+                    )}">
 
                   ${escapeHtml(
-                    file.name
-                  )}
+                        file.name
+                    )}
                 </strong>
 
                 <span>
                   ${escapeHtml(
-                    secondaryLabel
-                  )}
+                        secondaryLabel
+                    )}
                 </span>
               </div>
             </div>
@@ -9296,26 +9762,26 @@
 
           <td>
             ${escapeHtml(
-              archiveFileTypeLabel(
-                file
-              )
+                archiveFileTypeLabel(
+                    file
+                )
             )}
           </td>
 
           <td>
             ${escapeHtml(
-              file.size
+                file.size
               || '—'
             )}
           </td>
 
           <td>
             ${escapeHtml(
-              archiveFormatDate(
-                file.updatedAt,
-                file.updated
+                archiveFormatDate(
+                    file.updatedAt,
+                    file.updated
                 || 'Unknown'
-              )
+                )
             )}
           </td>
 
@@ -9329,20 +9795,20 @@
               class="
                 archive-row-icon-button
                 ${
-                  file.favorite
-                    ? 'active'
-                    : ''
+                    file.favorite
+                        ? 'active'
+                        : ''
                 }
               "
               type="button"
               data-archive-toggle-favorite="${escapeHtml(
-                file.id
-              )}"
+                    file.id
+                )}"
               aria-label="${
-                file.favorite
-                  ? 'Remove from favourites'
-                  : 'Add to favourites'
-              }">
+                    file.favorite
+                        ? 'Remove from favourites'
+                        : 'Add to favourites'
+                }">
 
               ${icon.star}
             </button>
@@ -9356,8 +9822,8 @@
               type="button"
               data-archive-row-actions="file"
               data-archive-row-id="${escapeHtml(
-                file.id
-              )}"
+                    file.id
+                )}"
               aria-label="File actions">
 
               ${icon.more}
@@ -9365,75 +9831,76 @@
           </td>
         </tr>
       `;
-    }
+}
 
-    function renderArchiveFileTable(
-      files,
-      folders,
-      {
+function renderArchiveFileTable(
+    files,
+    folders,
+    {
         showPaths =
-          false,
+            false,
 
         matchingCountByFolder =
-          new Map()
-      } = {}
-    ) {
-      const sortedFolders =
+            new Map()
+    } = {}
+)
+{
+    const sortedFolders =
         archiveSortFoldersForTable(
-          folders
+            folders
         );
 
-      const showGroupLabels =
+    const showGroupLabels =
         Boolean(
-          sortedFolders.length
+            sortedFolders.length
           && files.length
         );
 
-      const folderRows = `
+    const folderRows = `
         ${
-          showGroupLabels
-            ? renderArchiveTableGroupRow(
-                'Folders'
-              )
-            : ''
+            showGroupLabels
+                ? renderArchiveTableGroupRow(
+                    'Folders'
+                )
+                : ''
         }
 
         ${sortedFolders
-          .map(folder =>
-            renderArchiveFolderTableRow(
-              folder,
-              matchingCountByFolder.has(
-                folder.id
-              )
-                ? matchingCountByFolder.get(
-                    folder.id
-                  )
-                : null
+            .map(folder =>
+                renderArchiveFolderTableRow(
+                    folder,
+                    matchingCountByFolder.has(
+                        folder.id
+                    )
+                        ? matchingCountByFolder.get(
+                            folder.id
+                        )
+                        : null
+                )
             )
-          )
-          .join('')}
+            .join('')}
       `;
 
-      const fileRows = `
+    const fileRows = `
         ${
-          showGroupLabels
-            ? renderArchiveTableGroupRow(
-                'Files'
-              )
-            : ''
+            showGroupLabels
+                ? renderArchiveTableGroupRow(
+                    'Files'
+                )
+                : ''
         }
 
         ${files
-          .map(file =>
-            renderArchiveFileTableRow(
-              file,
-              showPaths
+            .map(file =>
+                renderArchiveFileTableRow(
+                    file,
+                    showPaths
+                )
             )
-          )
-          .join('')}
+            .join('')}
       `;
 
-      return `
+    return `
         <div
           class="
             archive-table-wrap
@@ -9513,42 +9980,44 @@
           </table>
         </div>
       `;
-    }
+}
 
-    function renderArchiveEmpty(
-      title,
-      copy,
-      action = ''
-    ) {
-      return `
+function renderArchiveEmpty(
+    title,
+    copy,
+    action = ''
+)
+{
+    return `
         <div class="archive-empty">
           <div>
             <h2>
               ${escapeHtml(
-                title
-              )}
+                    title
+                )}
             </h2>
 
             <p>
               ${escapeHtml(
-                copy
-              )}
+                    copy
+                )}
             </p>
 
             ${action}
           </div>
         </div>
       `;
-    }
+}
 
-    function renderArchiveFileDropzone(
-      folder = null
-    ) {
-      const folderName =
+function renderArchiveFileDropzone(
+    folder = null
+)
+{
+    const folderName =
         folder?.name
         || 'Files';
 
-      return `
+    return `
         <button
           class="
             archive-empty
@@ -9557,8 +10026,8 @@
           type="button"
           data-archive-empty-add-files
           aria-label="${escapeHtml(
-            `Add files to ${folderName}`
-          )}">
+                `Add files to ${folderName}`
+            )}">
 
           <span
             class="
@@ -9588,10 +10057,10 @@
               ">
 
               ${escapeHtml(
-                folder
-                  ? `Drop files here to add them to “${folder.name}”, or click to choose files.`
-                  : 'Drop files here to add them to Archive, or click to choose files.'
-              )}
+                    folder
+                        ? `Drop files here to add them to “${folder.name}”, or click to choose files.`
+                        : 'Drop files here to add them to Archive, or click to choose files.'
+                )}
             </span>
 
             <span
@@ -9604,148 +10073,152 @@
           </span>
         </button>
       `;
-    }
+}
 
-    function renderArchiveFilesView() {
-      const matchingFiles =
+function renderArchiveFilesView()
+{
+    const matchingFiles =
         archiveMatchingFiles();
 
-      const files =
+    const files =
         archiveVisibleFiles(
-          matchingFiles
+            matchingFiles
         );
 
-      const folders =
+    const folders =
         archiveVisibleChildFolders(
-          matchingFiles
+            matchingFiles
         );
 
-      const projection =
+    const projection =
         archiveFolderMatchProjection(
-          matchingFiles
+            matchingFiles
         );
 
-      const filtering =
+    const filtering =
         archiveFileFilteringActive();
 
-      const flatResults =
+    const flatResults =
         filtering
         && state.archiveFilterPresentation
           === 'flat';
 
-      const currentFolder =
+    const currentFolder =
         archiveFolderById(
-          state.archiveSelectedFolderId
+            state.archiveSelectedFolderId
         );
 
-      const title =
+    const title =
         state.archiveView
           === 'favorites'
             ? 'Favourites'
             : currentFolder
-              ? 'Files'
-              : ARCHIVE_ROOT_LABEL;
+                ? 'Files'
+                : ARCHIVE_ROOT_LABEL;
 
-      const subtitle =
+    const subtitle =
         filtering
-          ? 'Browse files matching the active filters.'
-          : archiveFilesViewSubtitle(
-              currentFolder
+            ? 'Browse files matching the active filters.'
+            : archiveFilesViewSubtitle(
+                currentFolder
             );
 
-      const hasRows =
+    const hasRows =
         files.length
         || folders.length;
 
-      const emptyTitle =
+    const emptyTitle =
         flatResults
-          ? 'No files match these filters.'
-          : 'No folders contain matching files.';
+            ? 'No files match these filters.'
+            : 'No folders contain matching files.';
 
-      const emptyCopy =
+    const emptyCopy =
         'Change or clear the active filters and try again.';
 
-      return `
+    return `
         <div class="archive-page">
           ${renderArchivePageHead({
-            title,
-            subtitle,
-            actions:
+                title,
+                subtitle,
+                actions:
               renderArchiveFilesHeaderActions()
-          })}
+            })}
 
           ${renderArchiveToolbar()}
 
           ${renderArchiveActiveFilterbar()}
 
           ${renderArchiveFilterResultsBar(
-            matchingFiles.length
-          )}
+                matchingFiles.length
+            )}
 
           ${
-            flatResults
-              ? ''
-              : renderArchiveLocationRow()
-          }
+                flatResults
+                    ? ''
+                    : renderArchiveLocationRow()
+            }
 
           ${renderArchiveSelectionBar(
-            files
-          )}
+                files
+            )}
 
           ${
-            hasRows
-              ? renderArchiveFileTable(
-                  files,
-                  folders,
-                  {
-                    showPaths:
+                hasRows
+                    ? renderArchiveFileTable(
+                        files,
+                        folders,
+                        {
+                            showPaths:
                       flatResults,
 
-                    matchingCountByFolder:
+                            matchingCountByFolder:
                       projection
-                        .matchingCountByFolder
-                  }
-                )
-              : filtering
-                ? renderArchiveEmpty(
-                    emptyTitle,
-                    emptyCopy
-                  )
-                : renderArchiveFileDropzone(
-                    currentFolder
-                  )
-          }
+                          .matchingCountByFolder
+                        }
+                    )
+                    : filtering
+                        ? renderArchiveEmpty(
+                            emptyTitle,
+                            emptyCopy
+                        )
+                        : renderArchiveFileDropzone(
+                            currentFolder
+                        )
+            }
         </div>
       `;
-    }
+}
 
-    function archiveToolbarIsSources() {
-      return state.archiveView
+function archiveToolbarIsSources()
+{
+    return state.archiveView
         === 'sources';
-    }
+}
 
-    function archiveToolbarFilterCount() {
-      if (
+function archiveToolbarFilterCount()
+{
+    if (
         archiveToolbarIsSources()
-      ) {
+    )
+    {
         return [
-          state.archiveSourceCategoryFilter
+            state.archiveSourceCategoryFilter
             && state.archiveSourceCategoryFilter
               !== 'all',
 
-          state.archiveSourceConnectionFilter
+            state.archiveSourceConnectionFilter
             && state.archiveSourceConnectionFilter
               !== 'all',
 
-          state.archiveSourceFavouriteOnly
+            state.archiveSourceFavouriteOnly
         ]
-          .filter(Boolean)
-          .length;
-      }
+            .filter(Boolean)
+            .length;
+    }
 
-      return [
+    return [
         Boolean(
-          currentArchiveSourceTargetFilter()
+            currentArchiveSourceTargetFilter()
         ),
         state.archiveSearchScope
           === 'all',
@@ -9757,54 +10230,58 @@
         state.archiveLinkFilter
           && state.archiveLinkFilter
             !== 'all'
-      ]
+    ]
         .filter(Boolean)
         .length;
+}
+
+function archiveToolbarSearchPlaceholder()
+{
+    if (
+        archiveToolbarIsSources()
+    )
+    {
+        return 'Search sources...';
     }
 
-    function archiveToolbarSearchPlaceholder() {
-      if (
-        archiveToolbarIsSources()
-      ) {
-        return 'Search sources...';
-      }
-
-      if (
+    if (
         state.archiveView
           === 'favorites'
-      ) {
+    )
+    {
         return state.archiveSearchScope
           === 'all'
             ? 'Search favourite files'
             : 'Search favourites in this folder';
-      }
-
-      return state.archiveSearchScope
-        === 'all'
-          ? 'Search all files...'
-          : 'Search this folder...';
     }
 
-    function renderArchiveToolbar() {
-      const sourcesView =
+    return state.archiveSearchScope
+        === 'all'
+        ? 'Search all files...'
+        : 'Search this folder...';
+}
+
+function renderArchiveToolbar()
+{
+    const sourcesView =
         archiveToolbarIsSources();
 
-      const activeFilterCount =
+    const activeFilterCount =
         archiveToolbarFilterCount();
 
-      const searchPlaceholder =
+    const searchPlaceholder =
         archiveToolbarSearchPlaceholder();
 
-      return `
+    return `
         <div
           class="
             archive-toolbar
           "
           aria-label="${
-            sourcesView
-              ? 'Source controls'
-              : 'File controls'
-          }">
+                sourcesView
+                    ? 'Source controls'
+                    : 'File controls'
+            }">
 
           <div
             class="
@@ -9816,10 +10293,10 @@
                 app-search-field
               "
               aria-label="${
-                sourcesView
-                  ? 'Search sources'
-                  : 'Search files'
-              }">
+                    sourcesView
+                        ? 'Search sources'
+                        : 'Search files'
+                }">
 
               ${icon.search}
 
@@ -9828,11 +10305,11 @@
                 type="search"
                 data-archive-search
                 value="${escapeHtml(
-                  state.archiveSearch
+                    state.archiveSearch
                   || ''
                 )}"
                 placeholder="${escapeHtml(
-                  searchPlaceholder
+                    searchPlaceholder
                 )}">
             </label>
           </div>
@@ -9846,20 +10323,20 @@
               class="
                 module-filter-button
                 ${
-                  activeFilterCount
-                    ? 'active'
-                    : ''
+                    activeFilterCount
+                        ? 'active'
+                        : ''
                 }
               "
               type="button"
               id="archiveFilterButton"
               aria-label="${
-                activeFilterCount
-                  ? `Filters, ${activeFilterCount} active`
-                  : sourcesView
-                    ? 'Open source filters'
-                    : 'Open file filters'
-              }"
+                    activeFilterCount
+                        ? `Filters, ${activeFilterCount} active`
+                        : sourcesView
+                            ? 'Open source filters'
+                            : 'Open file filters'
+                }"
               aria-expanded="false">
 
               <span
@@ -9869,9 +10346,9 @@
                 aria-hidden="true">
 
                 ${
-                  activeFilterCount
-                    ? icon.filterclear
-                    : icon.filter
+                    activeFilterCount
+                        ? icon.filterclear
+                        : icon.filter
                 }
               </span>
 
@@ -9880,8 +10357,8 @@
               </span>
 
               ${
-                activeFilterCount
-                  ? `
+                    activeFilterCount
+                        ? `
                     <span
                       class="
                         module-filter-count
@@ -9890,217 +10367,225 @@
                       ${activeFilterCount}
                     </span>
                   `
-                  : ''
-              }
+                        : ''
+                }
             </button>
             ${renderAppSortControl({
-              id: 'archiveSort',
-              field:
+                id: 'archiveSort',
+                field:
                 sourcesView
-                  ? state.archiveSourceSort
-                  : state.archiveFileSort,
-              direction:
+                    ? state.archiveSourceSort
+                    : state.archiveFileSort,
+                direction:
                 sourcesView
-                  ? state.archiveSourceSortDirection
-                  : state.archiveFileSortDirection,
-              ariaLabel:
+                    ? state.archiveSourceSortDirection
+                    : state.archiveFileSortDirection,
+                ariaLabel:
                 sourcesView
-                  ? 'Sort sources'
-                  : 'Sort files',
-              options:
+                    ? 'Sort sources'
+                    : 'Sort files',
+                options:
                 sourcesView
-                  ? APP_SORT_OPTIONS.archiveSources
-                  : APP_SORT_OPTIONS.archiveFiles
+                    ? APP_SORT_OPTIONS.archiveSources
+                    : APP_SORT_OPTIONS.archiveFiles
             })}
           </div>
         </div>
       `;
-    }
+}
 
-    let archiveFilterReturnFocus =
-      null;
+let archiveFilterReturnFocus =
+    null;
 
-    function closeArchiveFilterPopover({
-      restoreFocus =
+function closeArchiveFilterPopover({
+    restoreFocus =
         false
-    } = {}) {
-      document
+} = {})
+{
+    document
         .getElementById(
-          'archiveFilterPopover'
+            'archiveFilterPopover'
         )
         ?.remove();
 
-      document.removeEventListener(
+    document.removeEventListener(
         'click',
         closeArchiveFilterOnOutside
-      );
+    );
 
-      document.removeEventListener(
+    document.removeEventListener(
         'keydown',
         closeArchiveFilterOnEscape
-      );
+    );
 
-      if (
+    if (
         restoreFocus
         && archiveFilterReturnFocus
-          ?.isConnected
-      ) {
+            ?.isConnected
+    )
+    {
         archiveFilterReturnFocus.focus({
-          preventScroll:
+            preventScroll:
             true
         });
-      }
-
-      archiveFilterReturnFocus =
-        null;
     }
 
-    function closeArchiveFilterOnOutside(
-      event
-    ) {
-      const panel =
+    archiveFilterReturnFocus =
+        null;
+}
+
+function closeArchiveFilterOnOutside(
+    event
+)
+{
+    const panel =
         document.getElementById(
-          'archiveFilterPopover'
+            'archiveFilterPopover'
         );
 
-      const trigger =
+    const trigger =
         document.getElementById(
-          'archiveFilterButton'
+            'archiveFilterButton'
         );
 
-      if (!panel) {
+    if (!panel)
+    {
         return;
-      }
+    }
 
-      const path =
+    const path =
         typeof event.composedPath
           === 'function'
             ? event.composedPath()
             : [];
 
-      const insidePanel =
+    const insidePanel =
         path.length
-          ? path.includes(panel)
-          : panel.contains(
-              event.target
+            ? path.includes(panel)
+            : panel.contains(
+                event.target
             );
 
-      const insideTrigger =
+    const insideTrigger =
         path.length
-          ? path.includes(trigger)
-          : trigger?.contains(
-              event.target
+            ? path.includes(trigger)
+            : trigger?.contains(
+                event.target
             );
 
-      if (
+    if (
         insidePanel
         || insideTrigger
-      ) {
+    )
+    {
         return;
-      }
-
-      closeArchiveFilterPopover();
     }
 
-    function closeArchiveFilterOnEscape(
-      event
-    ) {
-      if (event.key !== 'Escape') {
+    closeArchiveFilterPopover();
+}
+
+function closeArchiveFilterOnEscape(
+    event
+)
+{
+    if (event.key !== 'Escape')
+    {
         return;
-      }
+    }
 
-      event.preventDefault();
+    event.preventDefault();
 
-      closeArchiveFilterPopover({
+    closeArchiveFilterPopover({
         restoreFocus:
           true
-      });
-    }
+    });
+}
 
-    function openArchiveFilterPopover(
-      anchor
-    ) {
-      closeArchiveFilterPopover();
-      closeAlbumsFilterPopover();
-      closePeopleFilterPopover();
-      closeMenu();
+function openArchiveFilterPopover(
+    anchor
+)
+{
+    closeArchiveFilterPopover();
+    closeAlbumsFilterPopover();
+    closePeopleFilterPopover();
+    closeMenu();
 
-      archiveFilterReturnFocus =
+    archiveFilterReturnFocus =
         anchor;
 
-      const sourcesView =
+    const sourcesView =
         archiveToolbarIsSources();
 
-      const schema =
+    const schema =
         sourcesView
-          ? archiveSourceFilterSchema
-          : archiveFileFilterSchema;
+            ? archiveSourceFilterSchema
+            : archiveFileFilterSchema;
 
-      const values =
+    const values =
         sourcesView
-          ? {
-              sourceCategory:
+            ? {
+                sourceCategory:
                 state.archiveSourceCategoryFilter
                 || 'all',
 
-              sourceConnections:
+                sourceConnections:
                 state.archiveSourceConnectionFilter
                 || 'all',
 
-              sourceFavouriteOnly:
+                sourceFavouriteOnly:
                 Boolean(
-                  state.archiveSourceFavouriteOnly
+                    state.archiveSourceFavouriteOnly
                 )
             }
-          : archiveFileFiltersWithDefaults();
+            : archiveFileFiltersWithDefaults();
 
-      const prefix =
+    const prefix =
         sourcesView
-          ? 'archive-source-filter'
-          : 'archive-file-filter';
+            ? 'archive-source-filter'
+            : 'archive-file-filter';
 
-      const panel =
+    const panel =
         document.createElement(
-          'div'
+            'div'
         );
 
-      panel.className =
+    panel.className =
         'shared-filter-panel archive-shared-filter-popover';
 
-      panel.id =
+    panel.id =
         'archiveFilterPopover';
 
-      panel.setAttribute(
+    panel.setAttribute(
         'role',
         'dialog'
-      );
+    );
 
-      panel.setAttribute(
+    panel.setAttribute(
         'aria-label',
         translateText(
-          sourcesView
-            ? 'Filter sources'
-            : 'Filter files'
+            sourcesView
+                ? 'Filter sources'
+                : 'Filter files'
         )
-      );
+    );
 
-      panel.innerHTML = `
+    panel.innerHTML = `
         <div class="shared-filter-panel-header">
           <div>
             <h3>
               ${
-                sourcesView
-                  ? 'Filter sources'
-                  : 'Filter files'
-              }
+                    sourcesView
+                        ? 'Filter sources'
+                        : 'Filter files'
+                }
             </h3>
 
             <p>
               ${
-                sourcesView
-                  ? 'Narrow sources by category, connection status, or favourite status.'
-                  : 'Filter files across Archive and choose how results are displayed.'
-              }
+                    sourcesView
+                        ? 'Narrow sources by category, connection status, or favourite status.'
+                        : 'Filter files across Archive and choose how results are displayed.'
+                }
             </p>
           </div>
 
@@ -10116,10 +10601,10 @@
 
         <div class="shared-filter-panel-body">
           ${renderSharedFilterFields({
-            schema,
-            values,
-            prefix
-          })}
+                schema,
+                values,
+                prefix
+            })}
         </div>
 
         <div class="shared-filter-panel-footer">
@@ -10151,306 +10636,330 @@
         </div>
       `;
 
-      document.body.appendChild(
+    document.body.appendChild(
         panel
-      );
+    );
 
-      localizeUI(panel);
+    localizeUI(panel);
 
-      const controller =
+    const controller =
         bindSharedFilterFields(
-          panel,
-          {
-            schema,
-            values,
-            prefix
-          }
+            panel,
+            {
+                schema,
+                values,
+                prefix
+            }
         );
 
-      panel
+    panel
         .querySelector(
-          '[data-archive-filter-reset]'
+            '[data-archive-filter-reset]'
         )
         ?.addEventListener(
-          'click',
-          () => {
-            controller?.reset();
-          }
+            'click',
+            () =>
+            {
+                controller?.reset();
+            }
         );
 
-      panel
+    panel
         .querySelector(
-          '[data-archive-filter-close]'
+            '[data-archive-filter-close]'
         )
         ?.addEventListener(
-          'click',
-          () => {
-            closeArchiveFilterPopover({
-              restoreFocus:
+            'click',
+            () =>
+            {
+                closeArchiveFilterPopover({
+                    restoreFocus:
                 true
-            });
-          }
+                });
+            }
         );
 
-      panel
+    panel
         .querySelector(
-          '[data-archive-filter-cancel]'
+            '[data-archive-filter-cancel]'
         )
         ?.addEventListener(
-          'click',
-          () => {
-            closeArchiveFilterPopover({
-              restoreFocus:
+            'click',
+            () =>
+            {
+                closeArchiveFilterPopover({
+                    restoreFocus:
                 true
-            });
-          }
+                });
+            }
         );
 
-      panel
+    panel
         .querySelector(
-          '[data-archive-filter-apply]'
+            '[data-archive-filter-apply]'
         )
         ?.addEventListener(
-          'click',
-          () => {
-            const errors =
-              controller?.getErrors()
+            'click',
+            () =>
+            {
+                const errors =
+                    controller?.getErrors()
               || [];
 
-            if (errors.length) {
-              controller
-                ?.focusFirstInvalid();
+                if (errors.length)
+                {
+                    controller
+                        ?.focusFirstInvalid();
 
-              return;
-            }
+                    return;
+                }
 
-            const nextValues =
-              controller?.getValues()
+                const nextValues =
+                    controller?.getValues()
               || values;
 
-            if (sourcesView) {
-              state.archiveSourceCategoryFilter =
-                nextValues.sourceCategory
+                if (sourcesView)
+                {
+                    state.archiveSourceCategoryFilter =
+                        nextValues.sourceCategory
                 || 'all';
 
-              state.archiveSourceConnectionFilter =
-                nextValues.sourceConnections
+                    state.archiveSourceConnectionFilter =
+                        nextValues.sourceConnections
                 || 'all';
 
-              state.archiveSourceFavouriteOnly =
-                Boolean(
-                  nextValues
-                    .sourceFavouriteOnly
-                );
+                    state.archiveSourceFavouriteOnly =
+                        Boolean(
+                            nextValues
+                                .sourceFavouriteOnly
+                        );
 
-              state.archiveSelectedSourceId =
-                null;
-            } else {
-              const wasFiltering =
-                archiveFileFilteringActive();
+                    state.archiveSelectedSourceId =
+                        null;
+                }
+                else
+                {
+                    const wasFiltering =
+                        archiveFileFilteringActive();
 
-              state.archiveFileFilters =
-                archiveFileFiltersWithDefaults(
-                  nextValues
-                );
+                    state.archiveFileFilters =
+                        archiveFileFiltersWithDefaults(
+                            nextValues
+                        );
 
-              state.archiveFilterScopeFolderId =
-                nextValues.scope === 'folder'
-                  ? archiveNormalizeFolderId(
-                      state.archiveSelectedFolderId
-                    )
-                  : null;
+                    state.archiveFilterScopeFolderId =
+                        nextValues.scope === 'folder'
+                            ? archiveNormalizeFolderId(
+                                state.archiveSelectedFolderId
+                            )
+                            : null;
 
-              if (
-                state.archiveView
+                    if (
+                        state.archiveView
                   === 'favorites'
                 && !nextValues
-                  .favouriteOnly
-              ) {
-                state.archiveView =
-                  'files';
-              }
+                    .favouriteOnly
+                    )
+                    {
+                        state.archiveView =
+                            'files';
+                    }
 
-              /*
+                    /*
               * Start a newly filtered hierarchy at
               * its logical root.
               */
-              if (
-                !wasFiltering
+                    if (
+                        !wasFiltering
                 || state.archiveFilterPresentation
                   === 'folders'
-              ) {
-                state.archiveSelectedFolderId =
-                  nextValues.scope === 'folder'
-                    ? state
-                        .archiveFilterScopeFolderId
-                    : null;
-              }
+                    )
+                    {
+                        state.archiveSelectedFolderId =
+                            nextValues.scope === 'folder'
+                                ? state
+                                    .archiveFilterScopeFolderId
+                                : null;
+                    }
 
-              state.archiveSelectedFolderItemId =
-                null;
+                    state.archiveSelectedFolderItemId =
+                        null;
 
-              state.archiveSelectedFileId =
-                null;
+                    state.archiveSelectedFileId =
+                        null;
 
-              state.archiveSelectedFileIds =
-                [];
+                    state.archiveSelectedFileIds =
+                        [];
+                }
+
+                closeArchiveFilterPopover();
+                renderArchive();
             }
-
-            closeArchiveFilterPopover();
-            renderArchive();
-          }
         );
 
-      positionSharedFilterPanel(
+    positionSharedFilterPanel(
         panel,
         anchor
-      );
+    );
 
-      requestAnimationFrame(() => {
+    requestAnimationFrame(() =>
+    {
         controller?.focusFirst();
-      });
+    });
 
-      setTimeout(() => {
+    setTimeout(() =>
+    {
         document.addEventListener(
-          'click',
-          closeArchiveFilterOnOutside
+            'click',
+            closeArchiveFilterOnOutside
         );
 
         document.addEventListener(
-          'keydown',
-          closeArchiveFilterOnEscape
+            'keydown',
+            closeArchiveFilterOnEscape
         );
-      }, 0);
-    }
+    }, 0);
+}
 
-    function archiveActiveToolbarFilters() {
-      if (
+function archiveActiveToolbarFilters()
+{
+    if (
         archiveToolbarIsSources()
-      ) {
+    )
+    {
         const filters =
-          [];
+            [];
 
         const targetFilter =
-          currentArchiveSourceTargetFilter();
+            currentArchiveSourceTargetFilter();
 
-        if (targetFilter) {
-          filters.push({
-            key:
+        if (targetFilter)
+        {
+            filters.push({
+                key:
               'sourceTarget',
 
-            label:
+                label:
               `${t('Connected to')}: ${
-                connectedSourceTargetLabel(
-                  targetFilter.targetType,
-                  targetFilter.target
-                )
+                  connectedSourceTargetLabel(
+                      targetFilter.targetType,
+                      targetFilter.target
+                  )
               }`
-          });
+            });
         }
         if (
-          state.archiveSourceCategoryFilter
+            state.archiveSourceCategoryFilter
           && state.archiveSourceCategoryFilter
             !== 'all'
-        ) {
-          filters.push({
-            key:
+        )
+        {
+            filters.push({
+                key:
               'sourceCategory',
 
-            label:
+                label:
               localizedSourceCategoryLabel(
-                state
-                  .archiveSourceCategoryFilter
+                  state
+                      .archiveSourceCategoryFilter
               )
-          });
+            });
         }
         if (
-          state.archiveSourceConnectionFilter
+            state.archiveSourceConnectionFilter
           && state.archiveSourceConnectionFilter
             !== 'all'
-        ) {
-          filters.push({
-            key:
+        )
+        {
+            filters.push({
+                key:
               'sourceConnections',
 
-            label:
+                label:
               state.archiveSourceConnectionFilter
                 === 'linked'
                   ? translateText(
                       'With connections'
-                    )
+                  )
                   : translateText(
                       'Without connections'
-                    )
-          });
+                  )
+            });
         }
         if (
-          state.archiveSourceFavouriteOnly
-        ) {
-          filters.push({
-            key:
+            state.archiveSourceFavouriteOnly
+        )
+        {
+            filters.push({
+                key:
               'sourceFavouriteOnly',
 
-            label:
+                label:
               translateText(
-                'Favourite sources'
+                  'Favourite sources'
               )
-          });
+            });
         }
 
         return filters;
-      }
-
-      const filters =
-        archiveEffectiveFileFilters();
-
-      return archiveFileFilterSchema
-        .filter(definition =>
-          sharedFilterValueIsActive(
-            definition,
-            filters[
-              definition.key
-            ]
-          )
-        )
-        .map(definition => {
-          let label;
-
-          if (
-            definition.control
-              === 'boolean'
-          ) {
-            label =
-              definition.checkboxLabel
-              || definition.label;
-          } else {
-            label =
-              sharedFilterDisplayValue(
-                definition,
-                filters[
-                  definition.key
-                ]
-              );
-          }
-
-          return {
-            key:
-              definition.key,
-
-            label
-          };
-        });
     }
 
-    function renderArchiveActiveFilterbar() {
-      const filters =
+    const filters =
+        archiveEffectiveFileFilters();
+
+    return archiveFileFilterSchema
+        .filter(definition =>
+            sharedFilterValueIsActive(
+                definition,
+                filters[
+                    definition.key
+                ]
+            )
+        )
+        .map(definition =>
+        {
+            let label;
+
+            if (
+                definition.control
+              === 'boolean'
+            )
+            {
+                label =
+                    definition.checkboxLabel
+              || definition.label;
+            }
+            else
+            {
+                label =
+                    sharedFilterDisplayValue(
+                        definition,
+                        filters[
+                            definition.key
+                        ]
+                    );
+            }
+
+            return {
+                key:
+              definition.key,
+
+                label
+            };
+        });
+}
+
+function renderArchiveActiveFilterbar()
+{
+    const filters =
         archiveActiveToolbarFilters();
 
-      if (!filters.length) {
+    if (!filters.length)
+    {
         return '';
-      }
+    }
 
-      return `
+    return `
         <div
           class="
             module-active-filterbar
@@ -10458,7 +10967,7 @@
           aria-label="Active Archive filters">
 
           ${filters
-            .map(filter => `
+                .map(filter => `
               <span
                 class="
                   filter-chip
@@ -10471,8 +10980,8 @@
                   ">
 
                   ${escapeHtml(
-                    filter.label
-                  )}
+                        filter.label
+                    )}
                 </span>
 
                 <button
@@ -10481,18 +10990,18 @@
                   "
                   type="button"
                   data-archive-remove-filter="${escapeHtml(
-                    filter.key
-                  )}"
+                        filter.key
+                    )}"
                   aria-label="Remove ${escapeHtml(
-                    filter.label
-                  )} filter"
+                        filter.label
+                    )} filter"
                   title="Remove filter">
 
                   ${icon.close}
                 </button>
               </span>
             `)
-            .join('')}
+                .join('')}
 
           <span
             class="
@@ -10509,253 +11018,278 @@
           </span>
         </div>
       `;
+}
+
+function removeArchiveToolbarFilter(
+    key
+)
+{
+    if (key === 'sourceTarget')
+    {
+        state.archiveSourceTargetFilter =
+            null;
+
+        state.archiveSelectedSourceId =
+            null;
+
+        renderArchive();
+
+        return;
+    }
+    if (
+        key === 'sourceCategory'
+    )
+    {
+        state.archiveSourceCategoryFilter =
+            'all';
+
+        state.archiveSelectedSourceId =
+            null;
+
+        renderArchive();
+
+        return;
+    }
+    if (
+        key === 'sourceConnections'
+    )
+    {
+        state.archiveSourceConnectionFilter =
+            'all';
+
+        state.archiveSelectedSourceId =
+            null;
+
+        renderArchive();
+
+        return;
+    }
+    if (
+        key === 'sourceFavouriteOnly'
+    )
+    {
+        state.archiveSourceFavouriteOnly =
+            false;
+
+        state.archiveSelectedSourceId =
+            null;
+
+        renderArchive();
+
+        return;
     }
 
-    function removeArchiveToolbarFilter(
-      key
-    ) {
-      if (key === 'sourceTarget') {
-        state.archiveSourceTargetFilter =
-          null;
-
-        state.archiveSelectedSourceId =
-          null;
-
-        renderArchive();
-
-        return;
-      }
-      if (
-        key === 'sourceCategory'
-      ) {
-        state.archiveSourceCategoryFilter =
-          'all';
-
-        state.archiveSelectedSourceId =
-          null;
-
-        renderArchive();
-
-        return;
-      }
-      if (
-        key === 'sourceConnections'
-      ) {
-        state.archiveSourceConnectionFilter =
-          'all';
-
-        state.archiveSelectedSourceId =
-          null;
-
-        renderArchive();
-
-        return;
-      }
-      if (
-        key === 'sourceFavouriteOnly'
-      ) {
-        state.archiveSourceFavouriteOnly =
-          false;
-
-        state.archiveSelectedSourceId =
-          null;
-
-        renderArchive();
-
-        return;
-      }
-
-      const definition =
+    const definition =
         sharedFilterDefinitionByKey(
-          archiveFileFilterSchema,
-          key
+            archiveFileFilterSchema,
+            key
         );
 
-      if (!definition) {
+    if (!definition)
+    {
         return;
-      }
+    }
 
-      const defaults =
+    const defaults =
         archiveFileFiltersWithDefaults(
-          {}
+            {}
         );
 
-      state.archiveFileFilters = {
+    state.archiveFileFilters = {
         ...archiveFileFiltersWithDefaults(),
         [key]:
           defaults[key]
-      };
+    };
 
-      if (key === 'scope') {
+    if (key === 'scope')
+    {
         state.archiveFilterScopeFolderId =
-          null;
-      }
+            null;
+    }
 
-      if (
+    if (
         key === 'favouriteOnly'
         && state.archiveView
           === 'favorites'
-      ) {
+    )
+    {
         state.archiveView =
-          'files';
-      }
-
-      state.archiveSelectedFileId =
-        null;
-
-      state.archiveSelectedFileIds =
-        [];
-
-      renderArchive();
+            'files';
     }
 
-    function clearArchiveToolbarFilters() {
-      if (
+    state.archiveSelectedFileId =
+        null;
+
+    state.archiveSelectedFileIds =
+        [];
+
+    renderArchive();
+}
+
+function clearArchiveToolbarFilters()
+{
+    if (
         archiveToolbarIsSources()
-      ) {
+    )
+    {
         state.archiveSourceCategoryFilter =
-          'all';
+            'all';
         state.archiveSourceConnectionFilter =
-          'all';
+            'all';
         state.archiveSourceFavouriteOnly =
-          false;
+            false;
         state.archiveSourceTargetFilter = null;
         state.archiveSelectedSourceId =
-          null;
-      } else {
+            null;
+    }
+    else
+    {
         state.archiveFileFilters =
-          archiveFileFiltersWithDefaults(
-            {}
-          );
+            archiveFileFiltersWithDefaults(
+                {}
+            );
 
         state.archiveFilterScopeFolderId =
-          null;
+            null;
 
         state.archiveFilterPresentation =
-          'flat';
+            'flat';
 
         if (
-          state.archiveView
+            state.archiveView
             === 'favorites'
-        ) {
-          state.archiveView =
-            'files';
+        )
+        {
+            state.archiveView =
+                'files';
         }
 
         state.archiveSelectedFileId =
-          null;
+            null;
 
         state.archiveSelectedFileIds =
-          [];
-      }
-
-      renderArchive();
+            [];
     }
 
-    function archiveSourceConnectionCount(
-      source
-    ) {
-      if (!source) {
-        return 0;
-      }
+    renderArchive();
+}
 
-      return sourceLinksForSource(
+function archiveSourceConnectionCount(
+    source
+)
+{
+    if (!source)
+    {
+        return 0;
+    }
+
+    return sourceLinksForSource(
         source.id,
         '',
         source.projectId
-      ).length;
+    ).length;
+}
+
+function archiveSourceOriginLabel(
+    source
+)
+{
+    if (!source)
+    {
+        return 'Source record';
     }
 
-    function archiveSourceOriginLabel(
-      source
-    ) {
-      if (!source) {
-        return 'Source record';
-      }
-
-      const values =
+    const values =
         [
-          source.providedBy,
-          source.location
+            source.providedBy,
+            source.location
         ]
-          .map(value =>
-            String(value || '').trim()
-          )
-          .filter(
-            (
-              value,
-              index,
-              records
-            ) =>
-              value
+            .map(value =>
+                String(value || '').trim()
+            )
+            .filter(
+                (
+                    value,
+                    index,
+                    records
+                ) =>
+                    value
               && records.indexOf(value)
                 === index
-          );
+            );
 
-      return values.join(' · ')
+    return values.join(' · ')
         || 'Source record';
-    }
+}
 
-    function archiveSourceWebsiteHost(
-      value
-    ) {
-      const normalized =
+function archiveSourceWebsiteHost(
+    value
+)
+{
+    const normalized =
         String(value || '').trim();
 
-      if (!normalized) {
+    if (!normalized)
+    {
         return '';
-      }
-
-      try {
-        return new URL(
-          normalized
-        )
-          .hostname
-          .replace(
-            /^www\./i,
-            ''
-          );
-      } catch {
-        return normalized;
-      }
     }
 
-    function archiveSourceReferenceLabel(
-      source
-    ) {
-      if (!source) {
-        return 'Not specified';
-      }
+    try
+    {
+        return new URL(
+            normalized
+        )
+            .hostname
+            .replace(
+                /^www\./i,
+                ''
+            );
+    }
+    catch
+    {
+        return normalized;
+    }
+}
 
-      const values =
+function archiveSourceReferenceLabel(
+    source
+)
+{
+    if (!source)
+    {
+        return 'Not specified';
+    }
+
+    const values =
         [
-          source.reference,
-          archiveSourceWebsiteHost(
-            source.url
-          )
+            source.reference,
+            archiveSourceWebsiteHost(
+                source.url
+            )
         ]
-          .map(value =>
-            String(value || '').trim()
-          )
-          .filter(
-            (
-              value,
-              index,
-              records
-            ) =>
-              value
+            .map(value =>
+                String(value || '').trim()
+            )
+            .filter(
+                (
+                    value,
+                    index,
+                    records
+                ) =>
+                    value
               && records.indexOf(value)
                 === index
-          );
+            );
 
-      return values.join(' · ')
+    return values.join(' · ')
         || 'Not specified';
-    }
+}
 
-    function renderArchiveSourceTable(
-      sources
-    ) {
-      return `
+function renderArchiveSourceTable(
+    sources
+)
+{
+    return `
         <div class="archive-table-wrap">
           <table
             class="
@@ -10798,59 +11332,60 @@
             </thead>
 
             <tbody>
-              ${sources.map(source => {
-                const selected =
-                  state.archiveSelectedSourceId
+              ${sources.map(source =>
+                {
+                    const selected =
+                        state.archiveSelectedSourceId
                     === source.id;
 
-                const categoryLabel =
-                  localizedSourceCategoryShortLabel(
-                    source.category
-                  );
+                    const categoryLabel =
+                        localizedSourceCategoryShortLabel(
+                            source.category
+                        );
 
-                const fullCategoryLabel =
-                  localizedSourceCategoryLabel(
-                    source.category
-                  );
+                    const fullCategoryLabel =
+                        localizedSourceCategoryLabel(
+                            source.category
+                        );
 
-                const originLabel =
-                  archiveSourceOriginLabel(
-                    source
-                  );
+                    const originLabel =
+                        archiveSourceOriginLabel(
+                            source
+                        );
 
-                const referenceLabel =
-                  archiveSourceReferenceLabel(
-                    source
-                  );
+                    const referenceLabel =
+                        archiveSourceReferenceLabel(
+                            source
+                        );
 
-                const connectionCount =
-                  archiveSourceConnectionCount(
-                    source
-                  );
+                    const connectionCount =
+                        archiveSourceConnectionCount(
+                            source
+                        );
 
-                const accessedLabel =
-                  source.accessedDate
-                    ? archiveFormatDate(
+                    const accessedLabel =
                         source.accessedDate
-                      )
-                    : 'Not specified';
+                            ? archiveFormatDate(
+                                source.accessedDate
+                            )
+                            : 'Not specified';
 
-                return `
+                    return `
                   <tr
                     class="
                       archive-source-row
                       ${
-                        selected
-                          ? 'selected-detail'
-                          : ''
-                      }
+                            selected
+                                ? 'selected-detail'
+                                : ''
+                        }
                     "
                     data-archive-source-row="${escapeHtml(source.id)}"
                     tabindex="0"
                     aria-selected="${
-                      selected
-                        ? 'true'
-                        : 'false'
+                        selected
+                            ? 'true'
+                            : 'false'
                     }">
 
                     <td>
@@ -10906,17 +11441,17 @@
                         class="
                           archive-row-icon-button
                           ${
-                            source.favorite
-                              ? 'active'
-                              : ''
-                          }
+                                source.favorite
+                                    ? 'active'
+                                    : ''
+                            }
                         "
                         type="button"
                         data-archive-source-favorite="${escapeHtml(source.id)}"
                         aria-label="${
-                          source.favorite
-                            ? 'Remove source from favourites'
-                            : 'Add source to favourites'
+                            source.favorite
+                                ? 'Remove source from favourites'
+                                : 'Add source to favourites'
                         }">
                         ${icon.star}
                       </button>
@@ -10937,192 +11472,200 @@
                     </td>
                   </tr>
                 `;
-              }).join('')}
+                }).join('')}
             </tbody>
           </table>
         </div>
       `;
-    }
+}
 
-    function renderArchiveSourcesView() {
-      const sources =
+function renderArchiveSourcesView()
+{
+    const sources =
         archiveFilteredSources();
 
-      return `
+    return `
         <div
           class="
             archive-page
           ">
 
           ${renderArchivePageHead({
-            title:
+                title:
               'Sources',
 
-            subtitle:
+                subtitle:
               archiveSourcesViewSubtitle(),
 
-            actions:
+                actions:
               renderArchiveSourcesHeaderActions()
-          })}
+            })}
 
           ${renderArchiveToolbar()}
 
           ${renderArchiveActiveFilterbar()}
 
           ${
-            sources.length
-              ? renderArchiveSourceTable(
-                  sources
-                )
-              : renderArchiveEmpty(
-                  'No sources found',
+                sources.length
+                    ? renderArchiveSourceTable(
+                        sources
+                    )
+                    : renderArchiveEmpty(
+                        'No sources found',
 
-                  state.archiveSearch
-                    ? 'Try a different search term or source type.'
-                    : 'Create a lightweight source record to document where files and information came from.'
-                )
-          }
+                        state.archiveSearch
+                            ? 'Try a different search term or source type.'
+                            : 'Create a lightweight source record to document where files and information came from.'
+                    )
+            }
         </div>
       `;
-    }
+}
 
-    function archiveInspectorToolbarContext() {
-      if (
+function archiveInspectorToolbarContext()
+{
+    if (
         state.archiveView
           === 'sources'
-      ) {
+    )
+    {
         const source =
-          archiveSourceById(
-            state.archiveSelectedSourceId
-          );
+            archiveSourceById(
+                state.archiveSelectedSourceId
+            );
 
         return source
-          ? {
-              type:
+            ? {
+                type:
                 'source',
 
-              id:
+                id:
                 source.id,
 
-              label:
+                label:
                 source.title
                 || 'Source',
 
-              favorite:
+                favorite:
                 Boolean(
-                  source.favorite
+                    source.favorite
                 ),
 
-              supportsFavourite:
+                supportsFavourite:
                 true
             }
-          : null;
-      }
+            : null;
+    }
 
-      const file =
+    const file =
         archiveFileById(
-          state.archiveSelectedFileId
+            state.archiveSelectedFileId
         );
 
-      if (file) {
+    if (file)
+    {
         return {
-          type:
+            type:
             'file',
 
-          id:
+            id:
             file.id,
 
-          label:
+            label:
             file.name
             || 'File',
 
-          favorite:
+            favorite:
             Boolean(
-              file.favorite
+                file.favorite
             ),
 
-          supportsFavourite:
+            supportsFavourite:
             true
         };
-      }
+    }
 
-      const selectedFolder =
+    const selectedFolder =
         archiveFolderById(
-          state.archiveSelectedFolderItemId
+            state.archiveSelectedFolderItemId
         );
 
-      if (selectedFolder) {
+    if (selectedFolder)
+    {
         return {
-          type:
+            type:
             'folder',
 
-          id:
+            id:
             selectedFolder.id,
 
-          label:
+            label:
             selectedFolder.name
             || 'Folder',
 
-          folderMode:
+            folderMode:
             'selected',
 
-          favorite:
+            favorite:
             false,
 
-          supportsFavourite:
+            supportsFavourite:
             false
         };
-      }
+    }
 
-      const currentFolder =
+    const currentFolder =
         archiveFolderById(
-          state.archiveSelectedFolderId
+            state.archiveSelectedFolderId
         );
 
-      if (currentFolder) {
+    if (currentFolder)
+    {
         return {
-          type:
+            type:
             'folder',
 
-          id:
+            id:
             currentFolder.id,
 
-          label:
+            label:
             currentFolder.name
             || 'Folder',
 
-          folderMode:
+            folderMode:
             'current',
 
-          favorite:
+            favorite:
             false,
 
-          supportsFavourite:
+            supportsFavourite:
             false
         };
-      }
+    }
 
-      /*
+    /*
         The virtual Files root is a location, not
         a stored record, so it has no favourite or
         more-actions control.
       */
 
-      return null;
-    }
+    return null;
+}
 
-    function renderArchiveInspectorFolderOpenButton(
-      context
-    ) {
-      if (
+function renderArchiveInspectorFolderOpenButton(
+    context
+)
+{
+    if (
         context?.type !== 'folder'
         || context.folderMode
           !== 'selected'
-      ) {
+    )
+    {
         return '';
-      }
+    }
 
-      return `
+    return `
         <button
           class="
             archive-inspector-action
@@ -11130,153 +11673,160 @@
           "
           type="button"
           data-archive-inspector-open-folder="${escapeHtml(
-            context.id
-          )}"
+                context.id
+            )}"
           aria-label="Open folder"
           title="Open folder">
 
           Open
         </button>
       `;
+}
+
+function renderArchiveInspectorRenameButton(
+    context
+)
+{
+    if (
+        context?.type !== 'folder'
+    )
+    {
+        return '';
     }
 
-    function renderArchiveInspectorRenameButton(
-      context
-    ) {
-      if (
-        context?.type !== 'folder'
-      ) {
-        return '';
-      }
-
-      return `
+    return `
         <button
           class="
             archive-inspector-action
           "
           type="button"
           data-archive-inspector-rename-folder="${escapeHtml(
-            context.id
-          )}"
+                context.id
+            )}"
           aria-label="Rename folder"
           title="Rename folder">
 
           ${icon.edit}
         </button>
       `;
-    }
+}
 
-    function renderArchiveInspectorMoveButton(
-      context
-    ) {
-      if (
+function renderArchiveInspectorMoveButton(
+    context
+)
+{
+    if (
         !context
         || ![
-          'file',
-          'folder'
+            'file',
+            'folder'
         ].includes(
-          context.type
+            context.type
         )
-      ) {
+    )
+    {
         return '';
-      }
+    }
 
-      const itemLabel =
+    const itemLabel =
         context.type === 'file'
-          ? 'file'
-          : 'folder';
+            ? 'file'
+            : 'folder';
 
-      return `
+    return `
         <button
           class="
             archive-inspector-action
           "
           type="button"
           data-archive-inspector-move="${escapeHtml(
-            context.type
-          )}"
+                context.type
+            )}"
           data-archive-inspector-move-id="${escapeHtml(
-            context.id
-          )}"
+                context.id
+            )}"
           aria-label="Move ${escapeHtml(
-            itemLabel
-          )}"
+                itemLabel
+            )}"
           title="Move ${escapeHtml(
-            itemLabel
-          )}">
+                itemLabel
+            )}">
 
           ${icon.movefolder}
         </button>
       `;
-    }
+}
 
-    function renderArchiveInspectorFavouriteButton(
-      context
-    ) {
-      if (
+function renderArchiveInspectorFavouriteButton(
+    context
+)
+{
+    if (
         !context
         || !context.supportsFavourite
-      ) {
+    )
+    {
         return '';
-      }
+    }
 
-      const actionLabel =
+    const actionLabel =
         context.favorite
-          ? 'Remove from favourites'
-          : 'Add to favourites';
+            ? 'Remove from favourites'
+            : 'Add to favourites';
 
-      const dataAttribute =
+    const dataAttribute =
         context.type
           === 'source'
             ? `
               data-archive-source-favorite="${escapeHtml(
-                context.id
-              )}"
+                    context.id
+                )}"
             `
             : `
               data-archive-toggle-favorite="${escapeHtml(
-                context.id
-              )}"
+                    context.id
+                )}"
             `;
 
-      return `
+    return `
         <button
           class="
             archive-inspector-action
             ${
-              context.favorite
-                ? 'active'
-                : ''
+                context.favorite
+                    ? 'active'
+                    : ''
             }
           "
           type="button"
           ${dataAttribute}
           aria-label="${escapeHtml(
-            actionLabel
-          )}"
+                actionLabel
+            )}"
           aria-pressed="${String(
-            context.favorite
-          )}"
+                context.favorite
+            )}"
           title="${escapeHtml(
-            actionLabel
-          )}">
+                actionLabel
+            )}">
 
           ${icon.star}
         </button>
       `;
-    }
+}
 
-    function renderArchiveInspectorToolbar() {
-      const context =
+function renderArchiveInspectorToolbar()
+{
+    const context =
         archiveInspectorToolbarContext();
 
-      const editing =
+    const editing =
         context?.type === 'file'
         && archiveFileEditIsActive(
-          context.id
+            context.id
         );
 
-      const collapseButton = `
+    const collapseButton = `
         <button
           class="
             people-collapse-button
@@ -11292,7 +11842,8 @@
         </button>
       `;
 
-      if (editing) {
+    if (editing)
+    {
         return `
           <div
             class="
@@ -11333,9 +11884,9 @@
             </div>
           </div>
         `;
-      }
+    }
 
-      return `
+    return `
         <div
           class="
             archive-inspector-toolbar
@@ -11352,8 +11903,8 @@
             aria-hidden="true">
           </span>
           ${
-            context?.type === 'file'
-              ? `
+                context?.type === 'file'
+                    ? `
                 <button
                   class="
                     archive-inspector-action
@@ -11366,15 +11917,15 @@
                   ${icon.edit}
                 </button>
               `
-              : context?.type === 'source'
-                ? `
+                    : context?.type === 'source'
+                        ? `
                   <button
                     class="
                       archive-inspector-action
                     "
                     type="button"
                     data-archive-edit-source="${escapeHtml(
-                      context.id
+                        context.id
                     )}"
                     aria-label="Edit source"
                     title="Edit source">
@@ -11382,41 +11933,41 @@
                     ${icon.edit}
                   </button>
                 `
-                : ''
-          }
+                        : ''
+            }
 
           ${renderArchiveInspectorFolderOpenButton(
-            context
-          )}
+                context
+            )}
 
           ${renderArchiveInspectorRenameButton(
-            context
-          )}
+                context
+            )}
 
           ${renderArchiveInspectorMoveButton(
-            context
-          )}
+                context
+            )}
 
           ${renderArchiveInspectorFavouriteButton(
-            context
-          )}
+                context
+            )}
           ${
-            context
-              ? `
+                context
+                    ? `
                 <button
                   class="
                     archive-inspector-action
                   "
                   type="button"
                   data-archive-row-actions="${escapeHtml(
-                    context.type
-                  )}"
+                        context.type
+                    )}"
                   data-archive-row-id="${escapeHtml(
-                    context.id
-                  )}"
+                        context.id
+                    )}"
                   aria-label="More actions for ${escapeHtml(
-                    context.label
-                  )}"
+                        context.label
+                    )}"
                   aria-haspopup="menu"
                   aria-expanded="false"
                   title="More actions">
@@ -11424,14 +11975,15 @@
                   ${icon.more}
                 </button>
               `
-              : ''
-          }
+                    : ''
+            }
         </div>
       `;
-    }
+}
 
-    function renderArchiveInspectorCollapsed() {
-      return `
+function renderArchiveInspectorCollapsed()
+{
+    return `
         <aside
           class="
             archive-inspector-collapsed
@@ -11453,84 +12005,90 @@
           </button>
         </aside>
       `;
-    }
+}
 
-    function renderArchiveRootInspector() {
-      const favoritesView =
+function renderArchiveRootInspector()
+{
+    const favoritesView =
         state.archiveView
           === 'favorites';
 
-      return renderArchiveInspectorShell({
+    return renderArchiveInspectorShell({
         title:
           favoritesView
-            ? 'Favourites'
-            : ARCHIVE_ROOT_LABEL,
+              ? 'Favourites'
+              : ARCHIVE_ROOT_LABEL,
 
         subtitle:
           'No item selected',
 
         content:
           renderInspectorSectionEmpty(
-            'Select a file or folder to view its details.'
+              'Select a file or folder to view its details.'
           )
-      });
-    }
+    });
+}
 
-    function renderArchiveInspector() {
-      if (
+function renderArchiveInspector()
+{
+    if (
         state.archiveView
           === 'sources'
-      ) {
+    )
+    {
         return renderArchiveSourceInspector();
-      }
+    }
 
-      const file =
+    const file =
         archiveFileById(
-          state.archiveSelectedFileId
+            state.archiveSelectedFileId
         );
 
-      if (file) {
+    if (file)
+    {
         return renderArchiveFileInspector(
-          file
+            file
         );
-      }
+    }
 
-      const selectedFolder =
+    const selectedFolder =
         archiveFolderById(
-          state.archiveSelectedFolderItemId
+            state.archiveSelectedFolderItemId
         );
 
-      if (selectedFolder) {
+    if (selectedFolder)
+    {
         return renderArchiveFolderInspector(
-          selectedFolder,
-          {
-            mode:
+            selectedFolder,
+            {
+                mode:
               'selected'
-          }
+            }
         );
-      }
+    }
 
-      const currentFolder =
+    const currentFolder =
         archiveFolderById(
-          state.archiveSelectedFolderId
+            state.archiveSelectedFolderId
         );
 
-      return currentFolder
+    return currentFolder
         ? renderArchiveFolderInspector(
             currentFolder,
             {
-              mode:
+                mode:
                 'current'
             }
-          )
+        )
         : renderArchiveRootInspector();
-    }
+}
 
-    function renderArchiveInspectorHeader(
-      title,
-      subtitle = ''
-    ) {
-      return `
+function renderArchiveInspectorHeader(
+    title,
+    subtitle = ''
+)
+{
+    return `
         <div
           class="
             archive-inspector-head
@@ -11543,36 +12101,37 @@
 
             <h2>
               ${escapeHtml(
-                title
-              )}
+                    title
+                )}
             </h2>
 
             ${
-              subtitle
-                ? `
+                subtitle
+                    ? `
                   <p>
                     ${escapeHtml(
-                      subtitle
+                        subtitle
                     )}
                   </p>
                 `
-                : ''
+                    : ''
             }
           </div>
         </div>
       `;
-    }
+}
 
-    function renderArchiveInspectorShell({
-      content,
-      title = '',
-      subtitle = '',
-      showHeader = true,
-      bodyClass =
+function renderArchiveInspectorShell({
+    content,
+    title = '',
+    subtitle = '',
+    showHeader = true,
+    bodyClass =
         'archive-inspector-body',
-      className = ''
-    }) {
-      return `
+    className = ''
+})
+{
+    return `
         <aside
           class="
             archive-inspector
@@ -11588,44 +12147,46 @@
             ">
 
             ${
-              showHeader
-                ? renderArchiveInspectorHeader(
-                    title,
-                    subtitle
-                  )
-                : ''
+                showHeader
+                    ? renderArchiveInspectorHeader(
+                        title,
+                        subtitle
+                    )
+                    : ''
             }
 
             <div
               class="${escapeHtml(
-                bodyClass
-              )}">
+                    bodyClass
+                )}">
 
               ${content}
             </div>
           </div>
         </aside>
       `;
-    }
+}
 
-    function renderArchivePreview(
-      file
-    ) {
-      const kind =
+function renderArchivePreview(
+    file
+)
+{
+    const kind =
         archiveFileKind(
-          file
+            file
         );
 
-      const imageSource =
+    const imageSource =
         file.previewUrl
         || file.thumbnailUrl
         || file.src
         || '';
 
-      if (
+    if (
         kind === 'img'
         && imageSource
-      ) {
+    )
+    {
         return `
           <div
             class="
@@ -11637,57 +12198,57 @@
                 archive-file-preview-image
               "
               src="${escapeHtml(
-                imageSource
-              )}"
+                    imageSource
+                )}"
               alt="">
           </div>
         `;
-      }
+    }
 
-      const previewIcon =
+    const previewIcon =
         kind === 'img'
-          ? icon.image
-          : kind === 'audio'
-            ? icon.note
-            : icon.file;
+            ? icon.image
+            : kind === 'audio'
+                ? icon.note
+                : icon.file;
 
-      const title =
+    const title =
         {
-          pdf:
+            pdf:
             'PDF preview',
 
-          img:
+            img:
             'Image preview',
 
-          audio:
+            audio:
             'Audio preview',
 
-          sheet:
+            sheet:
             'Spreadsheet preview',
 
-          doc:
+            doc:
             'Document preview',
 
-          archive:
+            archive:
             'Archive-file preview',
 
-          file:
+            file:
             'File preview'
         }[kind]
         || 'File preview';
 
-      const description =
+    const description =
         [
-          'pdf',
-          'img',
-          'audio'
+            'pdf',
+            'img',
+            'audio'
         ].includes(
-          kind
+            kind
         )
-          ? 'The file preview is represented conceptually in this prototype.'
-          : 'Preview is not available for this file type. Open the original file to view it.';
+            ? 'The file preview is represented conceptually in this prototype.'
+            : 'Preview is not available for this file type. Open the original file to view it.';
 
-      return `
+    return `
         <div
           class="
             archive-file-preview
@@ -11702,24 +12263,25 @@
 
             <strong>
               ${escapeHtml(
-                title
-              )}
+                    title
+                )}
             </strong>
 
             <span>
               ${escapeHtml(
-                description
-              )}
+                    description
+                )}
             </span>
           </div>
         </div>
       `;
-    }
+}
 
-    function renderArchiveFileOpenAction(
-      file
-    ) {
-      return `
+function renderArchiveFileOpenAction(
+    file
+)
+{
+    return `
         <button
           class="
             button
@@ -11728,55 +12290,56 @@
           "
           type="button"
           data-archive-open-file="${escapeHtml(
-            file.id
-          )}">
+                file.id
+            )}">
 
           Open file
         </button>
       `;
-    }
+}
 
-    function renderArchiveFileIdentity(
-      file,
-      editing
-    ) {
-      const draft =
+function renderArchiveFileIdentity(
+    file,
+    editing
+)
+{
+    const draft =
         state.archiveFileEditDraft
         || archiveFileEditDraftFromFile(
-          file
+            file
         );
 
-      const summary =
+    const summary =
         [
-          archiveFileTypeLabel(
-            file
-          ),
+            archiveFileTypeLabel(
+                file
+            ),
 
-          file.size
+            file.size
           || (
-            Number.isFinite(
-              Number(
-                file.sizeBytes
+              Number.isFinite(
+                  Number(
+                      file.sizeBytes
+                  )
               )
-            )
-              ? formatMediaBytes(
-                  file.sizeBytes
-                )
-              : ''
+                  ? formatMediaBytes(
+                      file.sizeBytes
+                  )
+                  : ''
           )
         ]
-          .filter(Boolean)
-          .join(' · ');
+            .filter(Boolean)
+            .join(' · ');
 
-      return `
+    return `
         <div
           class="
             archive-file-identity
           ">
 
           ${
-            editing
-              ? `
+                editing
+                    ? `
                 <label
                   class="
                     archive-file-title-field
@@ -11790,20 +12353,20 @@
                     id="archiveFileName"
                     maxlength="220"
                     value="${escapeHtml(
-                      draft.name
+                        draft.name
                       || ''
                     )}">
                 </label>
               `
-              : `
+                    : `
                 <h2>
                   ${escapeHtml(
-                    file.name
+                        file.name
                     || 'Untitled file'
-                  )}
+                    )}
                 </h2>
               `
-          }
+            }
 
           <p
             class="
@@ -11811,49 +12374,52 @@
             ">
 
             ${escapeHtml(
-              summary
+                summary
               || 'File'
             )}
           </p>
         </div>
       `;
-    }
+}
 
-    function renderArchiveFileHero(
-      file,
-      editing
-    ) {
-      return `
+function renderArchiveFileHero(
+    file,
+    editing
+)
+{
+    return `
         <div
           class="
             archive-file-hero
           ">
 
           ${renderArchivePreview(
-            file
-          )}
+                file
+            )}
 
           ${renderArchiveFileOpenAction(
-            file
-          )}
+                file
+            )}
 
           ${renderArchiveFileIdentity(
-            file,
-            editing
-          )}
+                file,
+                editing
+            )}
         </div>
       `;
-    }
+}
 
-    function renderArchiveFileDetails(
-      file,
-      editing
-    ) {
-      if (editing) {
+function renderArchiveFileDetails(
+    file,
+    editing
+)
+{
+    if (editing)
+    {
         const draft =
-          state.archiveFileEditDraft
+            state.archiveFileEditDraft
           || archiveFileEditDraftFromFile(
-            file
+              file
           );
 
         return `
@@ -11863,46 +12429,46 @@
             ">
 
             ${renderGenealogyDateField(
-              'archiveFileDocumentDate',
-              'Date',
-              draft.documentDate,
-              {
-                inputId:
+                'archiveFileDocumentDate',
+                'Date',
+                draft.documentDate,
+                {
+                    inputId:
                   'archiveFileDocumentDateInput',
 
-                typeId:
+                    typeId:
                   'archiveFileDocumentDateType',
 
-                defaultDateType:
+                    defaultDateType:
                   'Exact date',
 
-                className:
+                    className:
                   'genealogy-date-inline-range'
-              }
+                }
             )}
 
             ${renderPlaceCombobox({
-              id:
+                id:
                 'archiveFileDocumentPlace',
 
-              label:
+                label:
                 'Place',
 
-              value:
+                value:
                 getPlaceDisplay(
-                  draft.documentPlaceId
+                    draft.documentPlaceId
                 )
                 || draft.documentPlaceText
                 || '',
 
-              selectedPlaceId:
+                selectedPlaceId:
                 draft.documentPlaceId
                 || '',
 
-              showAddress:
+                showAddress:
                 false,
 
-              className:
+                className:
                 'full'
             })}
 
@@ -11921,42 +12487,42 @@
                 id="archiveFileDescription"
                 maxlength="1200"
                 placeholder="Add a description of this file">${escapeHtml(
-                  draft.description
+                    draft.description
                   || ''
                 )}</textarea>
             </div>
           </div>
         `;
-      }
+    }
 
-      const dateLabel =
+    const dateLabel =
         formatGenealogyDateLabel(
-          archiveDocumentDateModel(
-            file
-          )
+            archiveDocumentDateModel(
+                file
+            )
         )
         || 'Date unknown';
 
-      const place =
+    const place =
         archiveDocumentPlace(
-          file
+            file
         );
 
-      const placeLabel =
+    const placeLabel =
         getPlaceDisplay(
-          place.placeId
+            place.placeId
         )
         || place.placeText
         || 'Place not recorded';
 
-      const description =
+    const description =
         String(
-          file.description
+            file.description
           || ''
         ).trim()
         || 'No description';
 
-      return `
+    return `
         <dl
           class="
             archive-file-read-list
@@ -11973,8 +12539,8 @@
 
             <dd>
               ${escapeHtml(
-                dateLabel
-              )}
+                    dateLabel
+                )}
             </dd>
           </div>
 
@@ -11989,8 +12555,8 @@
 
             <dd>
               ${escapeHtml(
-                placeLabel
-              )}
+                    placeLabel
+                )}
             </dd>
           </div>
 
@@ -12003,78 +12569,84 @@
               Description
             </dt>
             <dd class="archive-file-read-description">${escapeHtml(
-              description
+                description
             )}</dd>
           </div>
         </dl>
       `;
-    }
+}
 
-    function archiveFilePersonMeta(
-      person
-    ) {
-      const birth =
+function archiveFilePersonMeta(
+    person
+)
+{
+    const birth =
         formatGenealogyDateLabel(
-          person?.birth
+            person?.birth
         );
 
-      const death =
+    const death =
         formatGenealogyDateLabel(
-          person?.death
+            person?.death
         );
 
-      if (
+    if (
         birth
         && death
-      ) {
+    )
+    {
         return `${birth} – ${death}`;
-      }
-
-      if (birth) {
-        return `Born ${birth}`;
-      }
-
-      if (death) {
-        return `Died ${death}`;
-      }
-
-      return 'Person profile';
     }
 
-    function renderArchiveFileConnectionRow({
-      file,
-      entityType,
-      record,
-      leadingHtml,
-      readOnly = false
-    }) {
-      const config =
+    if (birth)
+    {
+        return `Born ${birth}`;
+    }
+
+    if (death)
+    {
+        return `Died ${death}`;
+    }
+
+    return 'Person profile';
+}
+
+function renderArchiveFileConnectionRow({
+    file,
+    entityType,
+    record,
+    leadingHtml,
+    readOnly = false
+})
+{
+    const config =
         archiveEntityConfig(
-          entityType
+            entityType
         );
 
-      if (
+    if (
         !config
         || !record
-      ) {
+    )
+    {
         return '';
-      }
+    }
 
-      const label =
+    const label =
         config.label(
-          record
+            record
         );
 
-      const meta =
+    const meta =
         entityType === 'person'
-          ? archiveFilePersonMeta(
-              record
+            ? archiveFilePersonMeta(
+                record
             )
-          : config.meta(
-              record
+            : config.meta(
+                record
             );
 
-      const mainContent = `
+    const mainContent = `
         ${leadingHtml}
 
         <span
@@ -12084,27 +12656,27 @@
 
           <strong>
             ${escapeHtml(
-              label
+                label
             )}
           </strong>
 
           <span>
             ${escapeHtml(
-              meta
+                meta
             )}
           </span>
         </span>
       `;
 
-      return `
+    return `
         <div
           class="
             relation-row
           ">
 
           ${
-            readOnly
-              ? `
+                readOnly
+                    ? `
                 <div
                   class="
                     relation-row-main
@@ -12113,31 +12685,31 @@
                   ${mainContent}
                 </div>
               `
-              : `
+                    : `
                 <button
                   class="
                     relation-row-main
                   "
                   type="button"
                   data-archive-open-connection="${escapeHtml(
-                    entityType
-                  )}"
+                        entityType
+                    )}"
                   data-archive-connection-id="${escapeHtml(
-                    record.id
-                  )}"
+                        record.id
+                    )}"
                   aria-label="Open ${escapeHtml(
-                    label
-                  )}">
+                        label
+                    )}">
 
                   ${mainContent}
                 </button>
               `
-          }
+            }
 
           ${
-            readOnly
-              ? ''
-              : `
+                readOnly
+                    ? ''
+                    : `
                 <div
                   class="
                     relation-actions
@@ -12150,16 +12722,16 @@
                     type="button"
                     data-archive-unlink-owner-type="file"
                     data-archive-unlink-owner-id="${escapeHtml(
-                      file.id
+                        file.id
                     )}"
                     data-archive-unlink-type="${escapeHtml(
-                      entityType
+                        entityType
                     )}"
                     data-archive-unlink-id="${escapeHtml(
-                      record.id
+                        record.id
                     )}"
                     aria-label="Unlink ${escapeHtml(
-                      label
+                        label
                     )}"
                     title="Unlink">
 
@@ -12167,102 +12739,107 @@
                   </button>
                 </div>
               `
-          }
+            }
         </div>
       `;
-    }
+}
 
-    function renderArchiveFilePeople(
-      file,
-      readOnly
-    ) {
-      const people =
+function renderArchiveFilePeople(
+    file,
+    readOnly
+)
+{
+    const people =
         (
-          file.linkedPersonIds
+            file.linkedPersonIds
           || []
         )
-          .map(id =>
-            getPerson(
-              id
+            .map(id =>
+                getPerson(
+                    id
+                )
             )
-          )
-          .filter(Boolean);
+            .filter(Boolean);
 
-      if (!people.length) {
+    if (!people.length)
+    {
         return renderInspectorSectionEmpty(
-          'No people linked to this file.'
+            'No people linked to this file.'
         );
-      }
+    }
 
-      return `
+    return `
         <div
           class="
             relationship-list
           ">
 
           ${people
-            .map(person =>
-              renderArchiveFileConnectionRow({
-                file,
-                entityType:
+                .map(person =>
+                    renderArchiveFileConnectionRow({
+                        file,
+                        entityType:
                   'person',
-                record:
+                        record:
                   person,
-                leadingHtml:
+                        leadingHtml:
                   renderPersonAvatar(
-                    person,
-                    'small-avatar',
-                    {
-                      element:
+                      person,
+                      'small-avatar',
+                      {
+                          element:
                         'span'
-                    }
+                      }
                   ),
-                readOnly
-              })
-            )
-            .join('')}
+                        readOnly
+                    })
+                )
+                .join('')}
         </div>
       `;
-    }
+}
 
-    function archiveFileEventRecords(
-      file
-    ) {
-      return (
+function archiveFileEventRecords(
+    file
+)
+{
+    return (
         file?.linkedEventIds
         || []
-      )
+    )
         .map(id =>
-          archiveConnectionRecord(
-            'event',
-            id
-          )
+            archiveConnectionRecord(
+                'event',
+                id
+            )
         )
         .filter(event =>
-          Boolean(
-            eventRelationItemModel(
-              event
+            Boolean(
+                eventRelationItemModel(
+                    event
+                )
             )
-          )
+        );
+}
+
+function renderArchiveFileEvents(
+    file,
+    readOnly
+)
+{
+    const events =
+        archiveFileEventRecords(
+            file
+        );
+
+    if (!events.length)
+    {
+        return renderInspectorSectionEmpty(
+            'No events linked to this file.'
         );
     }
 
-    function renderArchiveFileEvents(
-      file,
-      readOnly
-    ) {
-      const events =
-        archiveFileEventRecords(
-          file
-        );
-
-      if (!events.length) {
-        return renderInspectorSectionEmpty(
-          'No events linked to this file.'
-        );
-      }
-
-      return `
+    return `
         <div
           class="
             relationship-list
@@ -12270,104 +12847,108 @@
           ">
 
           ${events
-            .map(event =>
-              renderEventRelationItem({
-                event,
+                .map(event =>
+                    renderEventRelationItem({
+                        event,
 
-                openAttributes:
+                        openAttributes:
                   `
                     data-archive-open-connection="event"
                     data-archive-connection-id="${escapeHtml(
-                      event.id
+                        event.id
                     )}"
                   `,
 
-                removeAttributes:
+                        removeAttributes:
                   `
                     data-archive-unlink-owner-type="file"
                     data-archive-unlink-owner-id="${escapeHtml(
-                      file.id
+                        file.id
                     )}"
                     data-archive-unlink-type="event"
                     data-archive-unlink-id="${escapeHtml(
-                      event.id
+                        event.id
                     )}"
                   `,
 
-                removeContextLabel:
+                        removeContextLabel:
                   'file',
 
-                readOnly
-              })
-            )
-            .join('')}
+                        readOnly
+                    })
+                )
+                .join('')}
         </div>
       `;
-    }
+}
 
-    function archiveFileNoteRecords(
-      file
-    ) {
-      return archiveNoteIdsForFile(
+function archiveFileNoteRecords(
+    file
+)
+{
+    return archiveNoteIdsForFile(
         file
-      )
+    )
         .map(id =>
-          archiveConnectionRecord(
-            'note',
-            id
-          )
+            archiveConnectionRecord(
+                'note',
+                id
+            )
         )
         .filter(Boolean);
+}
+
+function renderArchiveFileNotes(file, readOnly)
+{
+    const notes = archiveFileNoteRecords(file);
+
+    if (!notes.length)
+    {
+        return renderInspectorSectionEmpty(
+            'No notes linked to this file.'
+        );
     }
 
-    function renderArchiveFileNotes(file, readOnly) {
-      const notes = archiveFileNoteRecords(file);
-
-      if (!notes.length) {
-        return renderInspectorSectionEmpty(
-          'No notes linked to this file.'
-        );
-      }
-
-      const items = notes.slice(0, CONNECTED_NOTES_PREVIEW_LIMIT).map(note =>
+    const items = notes.slice(0, CONNECTED_NOTES_PREVIEW_LIMIT).map(note =>
         renderRelatedNoteRelationItem({
-          note,
+            note,
 
-          openAttributes: `
+            openAttributes: `
             data-archive-open-connection="note"
             data-archive-connection-id="${escapeHtml(note.id)}"
           `,
 
-          removeAttributes: `
+            removeAttributes: `
             data-archive-unlink-owner-type="file"
             data-archive-unlink-owner-id="${escapeHtml(file.id)}"
             data-archive-unlink-type="note"
             data-archive-unlink-id="${escapeHtml(note.id)}"
           `,
 
-          removeContextLabel: 'file',
-          readOnly
+            removeContextLabel: 'file',
+            readOnly
         })
-      ).join('');
+    ).join('');
 
-      return `
+    return `
         <div class="relationship-list notes-related-list">
           ${items}
         </div>
 
         ${renderConnectedNotesFooter({
-          contextType: 'archiveFile',
-          contextId: file.id,
-          count: notes.length
+            contextType: 'archiveFile',
+            contextId: file.id,
+            count: notes.length
         })}
       `;
-    }
+}
 
-    function renderArchiveFileSources(
-      file,
-      readOnly
-    ) {
-      return renderConnectedSourceList({
+function renderArchiveFileSources(
+    file,
+    readOnly
+)
+{
+    return renderConnectedSourceList({
         targetType:
           'file',
 
@@ -12389,69 +12970,70 @@
           'No sources linked to this file.',
 
         readOnly
-      });
-    }
+    });
+}
 
-    function renderArchiveFileMetadata(
-      file
-    ) {
-      const rows = [
+function renderArchiveFileMetadata(
+    file
+)
+{
+    const rows = [
         [
-          'Folder',
-          archiveFolderPath(
-            file.folderId
-          )
+            'Folder',
+            archiveFolderPath(
+                file.folderId
+            )
         ],
 
         [
-          'Date added',
-          archiveFormatDate(
-            file.addedAt,
-            file.added
-          )
+            'Date added',
+            archiveFormatDate(
+                file.addedAt,
+                file.added
+            )
         ],
 
         [
-          'Date modified',
-          archiveFormatDate(
-            file.updatedAt,
-            file.updated
-          )
+            'Date modified',
+            archiveFormatDate(
+                file.updatedAt,
+                file.updated
+            )
         ],
 
         file.originalName
         && file.originalName
           !== file.name
-          ? [
-              'Original filename',
-              file.originalName
+            ? [
+                'Original filename',
+                file.originalName
             ]
-          : null,
+            : null,
 
         file.mimeType
-          ? [
-              'MIME type',
-              file.mimeType
+            ? [
+                'MIME type',
+                file.mimeType
             ]
-          : null,
+            : null,
 
         [
-          'File ID',
-          file.id
+            'File ID',
+            file.id
         ]
-      ].filter(Boolean);
+    ].filter(Boolean);
 
-      return `
+    return `
         <div
           class="
             archive-file-metadata-list
           ">
 
           ${rows
-            .map(([
-              label,
-              value
-            ]) => `
+                .map(([
+                    label,
+                    value
+                ]) => `
               <div
                 class="
                   archive-file-metadata-row
@@ -12459,180 +13041,189 @@
 
                 <span>
                   ${escapeHtml(
-                    label
-                  )}
+                        label
+                    )}
                 </span>
 
                 <strong>
                   ${escapeHtml(
-                    value
+                        value
                     || 'Unknown'
-                  )}
+                    )}
                 </strong>
               </div>
             `)
-            .join('')}
+                .join('')}
         </div>
       `;
-    }
+}
 
-    function renderArchiveSourceSection(
-      sectionId,
-      title,
-      content,
-      actionHtml = '',
-      meta = '',
-      footerHtml = ''
-    ) {
-      const stateKey = `source-${sectionId}`;
+function renderArchiveSourceSection(
+    sectionId,
+    title,
+    content,
+    actionHtml = '',
+    meta = '',
+    footerHtml = ''
+)
+{
+    const stateKey = `source-${sectionId}`;
 
-      return renderInspectorSection(
+    return renderInspectorSection(
         stateKey,
         title,
         meta,
         content,
         actionHtml,
         {
-          inlineAction: Boolean(actionHtml),
-          alwaysShowAction: true,
-          open: archiveInspectorSectionIsOpen(stateKey),
-          toggleAttribute: 'data-archive-section-toggle',
-          sectionId: `archive-source-section-${sectionId}`,
-          footerHtml
+            inlineAction: Boolean(actionHtml),
+            alwaysShowAction: true,
+            open: archiveInspectorSectionIsOpen(stateKey),
+            toggleAttribute: 'data-archive-section-toggle',
+            sectionId: `archive-source-section-${sectionId}`,
+            footerHtml
         }
-      );
+    );
+}
+
+function archiveSourceConnectionRecords(
+    source,
+    entityType
+)
+{
+    if (!source)
+    {
+        return [];
     }
 
-    function archiveSourceConnectionRecords(
-      source,
-      entityType
-    ) {
-      if (!source) {
-        return [];
-      }
-
-      if (entityType === 'file') {
+    if (entityType === 'file')
+    {
         return archiveFilesForSource(
-          source.id
+            source.id
         );
-      }
+    }
 
-      return archiveConnectionIds(
+    return archiveConnectionIds(
         'source',
         source.id,
         entityType
-      )
+    )
         .map(id =>
-          archiveConnectionRecord(
-            entityType,
-            id
-          )
+            archiveConnectionRecord(
+                entityType,
+                id
+            )
         )
         .filter(Boolean);
-    }
+}
 
-    function renderArchiveSourceSectionAction(
-      source,
-      entityType
-    ) {
-      const config =
+function renderArchiveSourceSectionAction(
+    source,
+    entityType
+)
+{
+    const config =
         archiveEntityConfig(
-          entityType
+            entityType
         );
 
-      if (!source || !config) {
+    if (!source || !config)
+    {
         return '';
-      }
+    }
 
-      return `
+    return `
         <button
           class="link"
           type="button"
           data-archive-add-connection="${escapeHtml(
-            entityType
-          )}"
+                entityType
+            )}"
           data-archive-owner-type="source"
           data-archive-owner-id="${escapeHtml(
-            source.id
-          )}">
+                source.id
+            )}">
 
           ${renderPanelButtonLabel(
-            icon.plus,
-            config.addLabel
-          )}
+                icon.plus,
+                config.addLabel
+            )}
         </button>
       `;
+}
+
+function renderArchiveSourceConnectionContent(
+    source,
+    entityType,
+    records
+)
+{
+    const config =
+        archiveEntityConfig(
+            entityType
+        );
+
+    if (!config)
+    {
+        return '';
     }
 
-    function renderArchiveSourceConnectionContent(
-      source,
-      entityType,
-      records
-    ) {
-      const config =
-        archiveEntityConfig(
-          entityType
-        );
-
-      if (!config) {
-        return '';
-      }
-
-      const validRecords =
+    const validRecords =
         (
-          Array.isArray(
-            records
-          )
-            ? records
-            : []
+            Array.isArray(
+                records
+            )
+                ? records
+                : []
         )
-          .filter(Boolean);
+            .filter(Boolean);
 
-      if (!validRecords.length) {
+    if (!validRecords.length)
+    {
         return renderInspectorSectionEmpty(
-          `No ${config.title.toLowerCase()} linked.`
+            `No ${config.title.toLowerCase()} linked.`
         );
-      }
+    }
 
-      const previewLimits = {
+    const previewLimits = {
         photo: PERSON_PANEL_PREVIEW_LIMITS.photos,
         file: PERSON_PANEL_PREVIEW_LIMITS.archive,
         note: CONNECTED_NOTES_PREVIEW_LIMIT
-      };
+    };
 
-      const visibleRecords = validRecords.slice(
+    const visibleRecords = validRecords.slice(
         0,
         previewLimits[entityType] ?? 4
-      );
+    );
 
-      const openAttributes =
+    const openAttributes =
         recordId => `
           data-archive-open-connection="${escapeHtml(
-            entityType
-          )}"
+                entityType
+            )}"
           data-archive-connection-id="${escapeHtml(
-            recordId
-          )}"
+                recordId
+            )}"
         `;
 
-      const removeAttributes =
+    const removeAttributes =
         recordId => `
           data-archive-unlink-owner-type="source"
           data-archive-unlink-owner-id="${escapeHtml(
-            source.id
-          )}"
+                source.id
+            )}"
           data-archive-unlink-type="${escapeHtml(
-            entityType
-          )}"
+                entityType
+            )}"
           data-archive-unlink-id="${escapeHtml(
-            recordId
-          )}"
+                recordId
+            )}"
         `;
 
-      const renderRelationRemoveAction =
+    const renderRelationRemoveAction =
         (
-          recordId,
-          label
+            recordId,
+            label
         ) => `
           <div class="relation-actions">
             <button
@@ -12642,11 +13233,11 @@
               "
               type="button"
               ${removeAttributes(
-                recordId
-              )}
+                    recordId
+                )}
               aria-label="Remove ${escapeHtml(
-                label
-              )} from source"
+                    label
+                )} from source"
               title="Remove link">
 
               ${icon.close}
@@ -12654,30 +13245,32 @@
           </div>
         `;
 
-      /*
+    /*
         Notes uses the shared connected-file
         component for linked Archive files.
       */
-      if (entityType === 'file') {
+    if (entityType === 'file')
+    {
         return renderConnectedFileList({
-          files:
+            files:
             visibleRecords,
 
-          contextType:
+            contextType:
             'source',
 
-          contextId:
+            contextId:
             source.id,
 
-          emptyText:
+            emptyText:
             'No files linked.'
         });
-      }
+    }
 
-      /*
+    /*
         Reuse the Notes linked-photo grid.
       */
-      if (entityType === 'photo') {
+    if (entityType === 'photo')
+    {
         return `
           <div
             class="
@@ -12686,13 +13279,14 @@
             ">
 
             ${visibleRecords
-              .map(photo => {
-                const label =
-                  config.label(
-                    photo
-                  );
+                .map(photo =>
+                {
+                    const label =
+                        config.label(
+                            photo
+                        );
 
-                return `
+                    return `
                   <div
                     class="
                       notes-linked-photo-item
@@ -12703,21 +13297,21 @@
                       class="connected-photo-button"
                       type="button"
                       ${openAttributes(
-                        photo.id
-                      )}
+                            photo.id
+                        )}
                       title="${escapeHtml(
-                        label
-                      )}"
+                            label
+                        )}"
                       aria-label="Open ${escapeHtml(
-                        label
-                      )} in Albums">
+                            label
+                        )} in Albums">
 
                       ${renderPhotoThumbnail(
-                        photo,
-                        {
-                          label
-                        }
-                      )}
+                            photo,
+                            {
+                                label
+                            }
+                        )}
                     </button>
 
                     <button
@@ -12727,28 +13321,29 @@
                       "
                       type="button"
                       ${removeAttributes(
-                        photo.id
-                      )}
+                            photo.id
+                        )}
                       aria-label="Unlink ${escapeHtml(
-                        label
-                      )} from source"
+                            label
+                        )} from source"
                       title="Unlink photo">
 
                       ${icon.unlink}
                     </button>
                   </div>
                 `;
-              })
-              .join('')}
+                })
+                .join('')}
           </div>
         `;
-      }
+    }
 
-      /*
+    /*
         Reuse the person rows from the
         Notes right-side panel.
       */
-      if (entityType === 'person') {
+    if (entityType === 'person')
+    {
         return `
           <div
             class="
@@ -12757,73 +13352,75 @@
             ">
 
             ${visibleRecords
-              .map(person => {
-                const name =
-                  person.names?.display
+                .map(person =>
+                {
+                    const name =
+                        person.names?.display
                   || person.name
                   || 'Unnamed person';
 
-                const dates =
-                  albumPhotoPersonDates(
-                    person
-                  )
+                    const dates =
+                        albumPhotoPersonDates(
+                            person
+                        )
                   || config.meta(
-                    person
+                      person
                   );
 
-                return `
+                    return `
                   <div class="relation-row">
                     <button
                       class="relation-row-main"
                       type="button"
                       ${openAttributes(
-                        person.id
-                      )}
+                            person.id
+                        )}
                       aria-label="Open profile for ${escapeHtml(
-                        name
-                      )}">
+                            name
+                        )}">
 
                       ${renderPersonAvatar(
-                        person,
-                        'small-avatar',
-                        {
-                          element:
+                            person,
+                            'small-avatar',
+                            {
+                                element:
                             'span'
-                        }
-                      )}
+                            }
+                        )}
 
                       <span class="relation-row-copy">
                         <strong>
                           ${escapeHtml(
-                            name
-                          )}
+                                name
+                            )}
                         </strong>
 
                         <span>
                           ${escapeHtml(
-                            dates
-                          )}
+                                dates
+                            )}
                         </span>
                       </span>
                     </button>
 
                     ${renderRelationRemoveAction(
-                      person.id,
-                      name
+                        person.id,
+                        name
                     )}
                   </div>
                 `;
-              })
-              .join('')}
+                })
+                .join('')}
           </div>
         `;
-      }
+    }
 
-      /*
+    /*
         renderEventRelationItem() is already
         shared by Notes and Archive.
       */
-      if (entityType === 'event') {
+    if (entityType === 'event')
+    {
         return `
           <div
             class="
@@ -12832,34 +13429,35 @@
             ">
 
             ${visibleRecords
-              .map(event =>
-                renderEventRelationItem({
-                  event,
+                .map(event =>
+                    renderEventRelationItem({
+                        event,
 
-                  openAttributes:
+                        openAttributes:
                     openAttributes(
-                      event.id
+                        event.id
                     ),
 
-                  removeAttributes:
+                        removeAttributes:
                     removeAttributes(
-                      event.id
+                        event.id
                     ),
 
-                  removeContextLabel:
+                        removeContextLabel:
                     'source'
-                })
-              )
-              .join('')}
+                    })
+                )
+                .join('')}
           </div>
         `;
-      }
+    }
 
-      /*
+    /*
         Related-note rows already have a
         reusable renderer.
       */
-      if (entityType === 'note') {
+    if (entityType === 'note')
+    {
         return `
           <div
             class="
@@ -12868,34 +13466,35 @@
             ">
 
             ${visibleRecords
-              .map(note =>
-                renderRelatedNoteRelationItem({
-                  note,
+                .map(note =>
+                    renderRelatedNoteRelationItem({
+                        note,
 
-                  openAttributes:
+                        openAttributes:
                     openAttributes(
-                      note.id
+                        note.id
                     ),
 
-                  removeAttributes:
+                        removeAttributes:
                     removeAttributes(
-                      note.id
+                        note.id
                     ),
 
-                  removeContextLabel:
+                        removeContextLabel:
                     'source'
-                })
-              )
-              .join('')}
+                    })
+                )
+                .join('')}
           </div>
         `;
-      }
+    }
 
-      /*
+    /*
         Reuse the full place presentation
         from the Notes inspector.
       */
-      if (entityType === 'place') {
+    if (entityType === 'place')
+    {
         return `
           <div
             class="
@@ -12904,60 +13503,61 @@
             ">
 
             ${visibleRecords
-              .map(place => {
-                const primaryName =
-                  placePrimaryName(
-                    place
-                  )
+                .map(place =>
+                {
+                    const primaryName =
+                        placePrimaryName(
+                            place
+                        )
                   || place.name
                   || 'Unnamed place';
 
-                const secondaryName =
-                  placeSecondaryName(
-                    place
-                  )
+                    const secondaryName =
+                        placeSecondaryName(
+                            place
+                        )
                   || 'No broader place recorded';
 
-                const connectionCounts =
-                  getPlaceConnectionCounts(
-                    place.id,
-                    {
-                      projectId:
+                    const connectionCounts =
+                        getPlaceConnectionCounts(
+                            place.id,
+                            {
+                                projectId:
                         place.projectId
                         || currentProjectId()
-                    }
-                  );
+                            }
+                        );
 
-                const connectionTotal =
-                  Object.values(
-                    connectionCounts
-                  ).reduce(
-                    (
-                      total,
-                      count
-                    ) =>
-                      total
+                    const connectionTotal =
+                        Object.values(
+                            connectionCounts
+                        ).reduce(
+                            (
+                                total,
+                                count
+                            ) =>
+                                total
                       + Number(
                           count || 0
-                        ),
-                    0
-                  );
+                      ),
+                            0
+                        );
 
-                const connectionLabel =
-                  `${connectionTotal} ${
-                    connectionTotal === 1
-                      ? 'connected record'
-                      : 'connected records'
-                  }`;
+                    const connectionLabel =
+                        `${connectionTotal} ${
+                            connectionTotal === 1
+                                ? 'connected record'
+                                : 'connected records'
+                        }`;
 
-                const metadata =
-                  placeHasCoordinates(
-                    place
-                  )
-                    ? connectionLabel
-                    : `${connectionLabel} · No map position`;
+                    const metadata =
+                        placeHasCoordinates(
+                            place
+                        )
+                            ? connectionLabel
+                            : `${connectionLabel} · No map position`;
 
-                return `
+                    return `
                   <div
                     class="
                       relation-row
@@ -12971,11 +13571,11 @@
                       "
                       type="button"
                       ${openAttributes(
-                        place.id
-                      )}
+                            place.id
+                        )}
                       aria-label="Open ${escapeHtml(
-                        primaryName
-                      )} in Places">
+                            primaryName
+                        )} in Places">
 
                       <span
                         class="notes-place-icon"
@@ -12987,76 +13587,77 @@
                       <span class="notes-place-copy">
                         <strong>
                           ${escapeHtml(
-                            primaryName
-                          )}
+                                primaryName
+                            )}
                         </strong>
 
                         <span class="notes-place-secondary">
                           ${escapeHtml(
-                            secondaryName
-                          )}
+                                secondaryName
+                            )}
                         </span>
 
                         <span class="notes-place-meta">
                           ${escapeHtml(
-                            metadata
-                          )}
+                                metadata
+                            )}
                         </span>
                       </span>
                     </button>
 
                     ${renderRelationRemoveAction(
-                      place.id,
-                      primaryName
+                        place.id,
+                        primaryName
                     )}
                   </div>
                 `;
-              })
-              .join('')}
+                })
+                .join('')}
           </div>
         `;
-      }
+    }
 
-      /*
+    /*
         Safe fallback for any connection type
         added to the Source inspector later.
       */
-      return `
+    return `
         <div class="notes-linked-list">
           ${visibleRecords
-            .map(record => {
-              const label =
-                config.label(
-                  record
-                );
+                .map(record =>
+                {
+                    const label =
+                        config.label(
+                            record
+                        );
 
-              const metadata =
-                config.meta(
-                  record
-                );
+                    const metadata =
+                        config.meta(
+                            record
+                        );
 
-              return `
+                    return `
                 <div class="notes-linked-row">
                   <button
                     class="notes-linked-main"
                     type="button"
                     ${openAttributes(
-                      record.id
+                        record.id
                     )}
                     aria-label="Open ${escapeHtml(
-                      label
+                        label
                     )}">
 
                     <strong>
                       ${escapeHtml(
-                        label
-                      )}
+                            label
+                        )}
                     </strong>
 
                     <span>
                       ${escapeHtml(
-                        metadata
-                      )}
+                            metadata
+                        )}
                     </span>
                   </button>
 
@@ -13068,11 +13669,11 @@
                       "
                       type="button"
                       ${removeAttributes(
-                        record.id
-                      )}
+                            record.id
+                        )}
                       aria-label="Remove ${escapeHtml(
-                        label
-                      )} from source"
+                            label
+                        )} from source"
                       title="Remove link">
 
                       ${icon.close}
@@ -13080,28 +13681,29 @@
                   </div>
                 </div>
               `;
-            })
-            .join('')}
+                })
+                .join('')}
         </div>
       `;
-    }
+}
 
-    function renderSourceConnectionViewAll(source, entityType, count) {
-      const labels = {
+function renderSourceConnectionViewAll(source, entityType, count)
+{
+    const labels = {
         photo: ['photo', 'photos'],
         file: ['file', 'files'],
         note: ['note', 'notes']
-      };
+    };
 
-      const nouns = labels[entityType];
+    const nouns = labels[entityType];
 
-      if (!source?.id || !count || !nouns) return '';
+    if (!source?.id || !count || !nouns) return '';
 
-      const label = translateText(
+    const label = translateText(
         `View all ${count} ${count === 1 ? nouns[0] : nouns[1]}`
-      );
+    );
 
-      return `
+    return `
         <button
           class="panel-section-view-all"
           type="button"
@@ -13115,132 +13717,135 @@
           </span>
         </button>
       `;
+}
+
+function renderArchiveSourceConnectionSection(
+    source,
+    entityType
+)
+{
+    const config =
+        archiveEntityConfig(
+            entityType
+        );
+
+    if (!source || !config)
+    {
+        return '';
     }
 
-    function renderArchiveSourceConnectionSection(
-      source,
-      entityType
-    ) {
-      const config =
-        archiveEntityConfig(
-          entityType
-        );
-
-      if (!source || !config) {
-        return '';
-      }
-
-      const records =
+    const records =
         archiveSourceConnectionRecords(
-          source,
-          entityType
+            source,
+            entityType
         );
-      const countLabel =
+    const countLabel =
         state.language === 'ru'
         && entityType === 'photo'
-          ? `${
-              RU_NUMBER_FORMATTER.format(
-                records.length
-              )
+            ? `${
+                RU_NUMBER_FORMATTER.format(
+                    records.length
+                )
             } фото`
-          : translateText(
-              `${records.length} ${
-                records.length === 1
-                  ? config.singular
-                  : config.title.toLowerCase()
-              }`
+            : translateText(
+                `${records.length} ${
+                    records.length === 1
+                        ? config.singular
+                        : config.title.toLowerCase()
+                }`
             );
-      return renderArchiveSourceSection(
+    return renderArchiveSourceSection(
         entityType,
         config.title,
         renderArchiveSourceConnectionContent(
-          source,
-          entityType,
-          records
+            source,
+            entityType,
+            records
         ),
         renderArchiveSourceSectionAction(
-          source,
-          entityType
+            source,
+            entityType
         ),
         countLabel,
         renderSourceConnectionViewAll(
-          source,
-          entityType,
-          records.length
+            source,
+            entityType,
+            records.length
         )
-        );
-    }
+    );
+}
 
-    function renderArchiveSourceDetails(
-      source,
-      categoryLabel
-    ) {
-      const url =
+function renderArchiveSourceDetails(
+    source,
+    categoryLabel
+)
+{
+    const url =
         String(
-          source.url
+            source.url
           || ''
         ).trim();
 
-      const rows = [
+    const rows = [
         {
-          label:
+            label:
             'Category',
 
-          value:
+            value:
             categoryLabel
             || 'Not specified'
         },
         {
-          label:
+            label:
             'Obtained from',
 
-          value:
+            value:
             source.providedBy
             || 'Not specified'
         },
         {
-          label:
+            label:
             'Location',
 
-          value:
+            value:
             source.location
             || 'Not specified'
         },
         {
-          label:
+            label:
             'Where can it be found?',
 
-          value:
+            value:
             source.reference
             || 'Not specified'
         },
         {
-          label:
+            label:
             'Website or link',
 
-          value:
+            value:
             url
             || 'Not specified',
 
-          isLink:
+            isLink:
             Boolean(
-              url
+                url
             )
         },
         {
-          label:
+            label:
             'Date accessed or received',
 
-          value:
+            value:
             source.accessedDate
-              ? archiveFormatDate(
-                  source.accessedDate
+                ? archiveFormatDate(
+                    source.accessedDate
                 )
-              : 'Not specified'
+                : 'Not specified'
         }
-      ];
+    ];
 
-      return `
+    return `
         <dl
           class="
             archive-file-read-list
@@ -13248,47 +13853,47 @@
           ">
 
           ${rows
-            .map(row => `
+                .map(row => `
               <div class="archive-file-read-row">
                 <dt>
                   ${escapeHtml(
-                    row.label
-                  )}
+                        row.label
+                    )}
                 </dt>
 
                 <dd>
                   ${
-                    row.isLink
-                      ? `
+                        row.isLink
+                            ? `
                         <a
                           class="
                             link
                             archive-source-url
                           "
                           href="${escapeHtml(
-                            row.value
-                          )}"
+                                row.value
+                            )}"
                           target="_blank"
                           rel="noopener noreferrer">
 
                           ${escapeHtml(
-                            row.value
-                          )}
+                                row.value
+                            )}
                         </a>
                       `
-                      : escapeHtml(
-                          row.value
-                        )
-                  }
+                            : escapeHtml(
+                                row.value
+                            )
+                    }
                 </dd>
               </div>
             `)
-            .join('')}
+                .join('')}
         </dl>
 
         ${
-          source.notes
-            ? `
+            source.notes
+                ? `
               <div class="archive-source-notes">
                 <strong>
                   Source notes
@@ -13296,34 +13901,36 @@
 
                 <p>${escapeHtml(
                     source.notes
-                  )}</p>
+                )}</p>
               </div>
             `
-            : ''
+                : ''
         }
       `;
+}
+
+function openArchiveSourceFilesModal(
+    sourceId
+)
+{
+    const source =
+        archiveSourceById(
+            sourceId
+        );
+
+    if (!source)
+    {
+        return;
     }
 
-    function openArchiveSourceFilesModal(
-      sourceId
-    ) {
-      const source =
-        archiveSourceById(
-          sourceId
-        );
-
-      if (!source) {
-        return;
-      }
-
-      const existingFileIds =
+    const existingFileIds =
         archiveFilesForSource(
-          source.id
+            source.id
         ).map(file =>
-          file.id
+            file.id
         );
 
-      openConnectedFilesModal({
+    openConnectedFilesModal({
         projectId:
           source.projectId
           || currentProjectId(),
@@ -13333,57 +13940,59 @@
 
         subtitle:
           `Connect Archive files to “${
-            source.title
+              source.title
             || 'this source'
           }”.`,
 
         existingFileIds,
 
         onSave:
-          fileIds => {
-            const currentSource =
-              archiveSourceById(
-                source.id
-              );
+          fileIds =>
+          {
+              const currentSource =
+                  archiveSourceById(
+                      source.id
+                  );
 
-            if (!currentSource) {
-              return {
-                ok:
+              if (!currentSource)
+              {
+                  return {
+                      ok:
                   false
-              };
-            }
+                  };
+              }
 
-            const writes =
-              fileIds.map(fileId => ({
-                ownerType:
+              const writes =
+                  fileIds.map(fileId => ({
+                      ownerType:
                   'source',
 
-                ownerId:
+                      ownerId:
                   currentSource.id,
 
-                entityType:
+                      entityType:
                   'file',
 
-                entityId:
+                      entityId:
                   fileId,
 
-                shouldLink:
+                      shouldLink:
                   true
-              }));
+                  }));
 
-            const committed =
-              archiveSetConnectionsAtomically(
-                writes
-              );
+              const committed =
+                  archiveSetConnectionsAtomically(
+                      writes
+                  );
 
-            return {
-              ...committed,
+              return {
+                  ...committed,
 
-              ok:
+                  ok:
                 committed.ok
                 && committed.changedCount
                   === writes.length
-            };
+              };
           },
 
         afterSave:
@@ -13391,154 +14000,156 @@
 
         successMessage:
           count =>
-            `${count} ${
-              count === 1
-                ? 'file'
-                : 'files'
-            } added to source.`
-      });
-    }
+              `${count} ${
+                  count === 1
+                      ? 'file'
+                      : 'files'
+              } added to source.`
+    });
+}
 
-    function renderArchiveFileInspector(
-      file
-    ) {
-      if (
+function renderArchiveFileInspector(
+    file
+)
+{
+    if (
         state.archiveFileEditing
         && state.archiveFileEditDraft
-          ?.fileId !== file.id
-      ) {
+            ?.fileId !== file.id
+    )
+    {
         resetArchiveFileEditState();
-      }
+    }
 
-      const editing =
+    const editing =
         archiveFileEditIsActive(
-          file.id
+            file.id
         );
 
-      const peopleCount =
+    const peopleCount =
         (
-          file.linkedPersonIds
+            file.linkedPersonIds
           || []
         ).length;
 
-      const eventCount =
+    const eventCount =
         archiveFileEventRecords(
-          file
-        ).length;
-
-      const noteCount =
-        archiveFileNoteRecords(
-          file
-        ).length;
-
-      const sourceCount =
-        sourceIdsForTarget(
-          'file',
-          file.id,
-          file.projectId
-        ).length;
-
-      const content = `
-        ${renderArchiveFileHero(
-          file,
-          editing
-        )}
-
-        ${renderArchiveFileSection(
-          'details',
-          'Details',
-          renderArchiveFileDetails(
-            file,
-            editing
-          )
-        )}
-
-        ${renderArchiveFileSection(
-          'people',
-          'People',
-          renderArchiveFilePeople(
-            file,
-            editing
-          ),
-          renderArchiveFileSectionAction(
-            'person',
-            'Add person',
-            editing
-          ),
-          `${peopleCount} ${
-            peopleCount === 1
-              ? 'person'
-              : 'people'
-          }`
-        )}
-
-        ${renderArchiveFileSection(
-          'events',
-          'Events',
-          renderArchiveFileEvents(
-            file,
-            editing
-          ),
-          renderArchiveFileSectionAction(
-            'event',
-            'Add event',
-            editing
-          ),
-          `${eventCount} ${
-            eventCount === 1
-              ? 'event'
-              : 'events'
-          }`
-        )}
-
-        ${renderArchiveFileSection(
-          'notes',
-          'Notes',
-          renderArchiveFileNotes(
-            file,
-            editing
-          ),
-          renderArchiveFileSectionAction(
-            'note',
-            'Add note',
-            editing
-          ),
-          `${noteCount} ${
-            noteCount === 1
-              ? 'note'
-              : 'notes'
-          }`
-        )}
-
-        ${renderArchiveFileSection(
-          'sources',
-          'Sources',
-          renderArchiveFileSources(
-            file,
-            editing
-          ),
-          renderArchiveFileSectionAction(
-            'source',
-            'Add source',
-            editing
-          ),
-          `${sourceCount} ${
-            sourceCount === 1
-              ? 'source'
-              : 'sources'
-          }`
-        )}
-
-        ${renderArchiveFileSection(
-          'metadata',
-          'File metadata',
-          renderArchiveFileMetadata(
             file
-          )
+        ).length;
+
+    const noteCount =
+        archiveFileNoteRecords(
+            file
+        ).length;
+
+    const sourceCount =
+        sourceIdsForTarget(
+            'file',
+            file.id,
+            file.projectId
+        ).length;
+
+    const content = `
+        ${renderArchiveFileHero(
+            file,
+            editing
+        )}
+
+        ${renderArchiveFileSection(
+            'details',
+            'Details',
+            renderArchiveFileDetails(
+                file,
+                editing
+            )
+        )}
+
+        ${renderArchiveFileSection(
+            'people',
+            'People',
+            renderArchiveFilePeople(
+                file,
+                editing
+            ),
+            renderArchiveFileSectionAction(
+                'person',
+                'Add person',
+                editing
+            ),
+            `${peopleCount} ${
+                peopleCount === 1
+                    ? 'person'
+                    : 'people'
+            }`
+        )}
+
+        ${renderArchiveFileSection(
+            'events',
+            'Events',
+            renderArchiveFileEvents(
+                file,
+                editing
+            ),
+            renderArchiveFileSectionAction(
+                'event',
+                'Add event',
+                editing
+            ),
+            `${eventCount} ${
+                eventCount === 1
+                    ? 'event'
+                    : 'events'
+            }`
+        )}
+
+        ${renderArchiveFileSection(
+            'notes',
+            'Notes',
+            renderArchiveFileNotes(
+                file,
+                editing
+            ),
+            renderArchiveFileSectionAction(
+                'note',
+                'Add note',
+                editing
+            ),
+            `${noteCount} ${
+                noteCount === 1
+                    ? 'note'
+                    : 'notes'
+            }`
+        )}
+
+        ${renderArchiveFileSection(
+            'sources',
+            'Sources',
+            renderArchiveFileSources(
+                file,
+                editing
+            ),
+            renderArchiveFileSectionAction(
+                'source',
+                'Add source',
+                editing
+            ),
+            `${sourceCount} ${
+                sourceCount === 1
+                    ? 'source'
+                    : 'sources'
+            }`
+        )}
+
+        ${renderArchiveFileSection(
+            'metadata',
+            'File metadata',
+            renderArchiveFileMetadata(
+                file
+            )
         )}
       `;
 
-      return renderArchiveInspectorShell({
+    return renderArchiveInspectorShell({
         showHeader:
           false,
 
@@ -13547,76 +14158,80 @@
 
         className:
           editing
-            ? 'is-editing'
-            : '',
+              ? 'is-editing'
+              : '',
 
         content
-      });
+    });
+}
+
+function archiveFolderInspectorPath(
+    folder
+)
+{
+    if (!folder)
+    {
+        return 'Files';
     }
 
-    function archiveFolderInspectorPath(
-      folder
-    ) {
-      if (!folder) {
-        return 'Files';
-      }
-
-      const names =
+    const names =
         archiveFolderAncestors(
-          folder.id
+            folder.id
         )
-          .map(item =>
-            item?.name
-          )
-          .filter(Boolean);
+            .map(item =>
+                item?.name
+            )
+            .filter(Boolean);
 
-      return [
+    return [
         'Files',
         ...names
-      ].join(
+    ].join(
         ' / '
-      );
+    );
+}
+
+function renderArchiveFolderInspector(
+    folder,
+    {
+        mode =
+            'current'
+    } = {}
+)
+{
+    if (!folder)
+    {
+        return renderArchiveRootInspector();
     }
 
-    function renderArchiveFolderInspector(
-      folder,
-      {
-        mode =
-          'current'
-      } = {}
-    ) {
-      if (!folder) {
-        return renderArchiveRootInspector();
-      }
-
-      const selectedFolder =
+    const selectedFolder =
         mode === 'selected';
 
-      const impact =
+    const impact =
         archiveFolderImpact(
-          folder.id
+            folder.id
         );
 
-      const directFolders =
+    const directFolders =
         archiveFolderChildren(
-          folder.id
+            folder.id
         ).length;
 
-      const directFiles =
+    const directFiles =
         archiveProjectFiles()
-          .filter(file =>
-            archiveFileFolderId(
-              file
-            ) === folder.id
-          )
-          .length;
+            .filter(file =>
+                archiveFileFolderId(
+                    file
+                ) === folder.id
+            )
+            .length;
 
-      const location =
+    const location =
         archiveFolderInspectorPath(
-          folder
+            folder
         );
 
-      const body = `
+    const body = `
         <div
           class="
             archive-inspector-actions
@@ -13630,7 +14245,7 @@
             type="button"
             data-archive-create-folder
             data-archive-parent-folder="${escapeHtml(
-              folder.id
+                folder.id
             )}">
 
             ${icon.plus}
@@ -13644,7 +14259,7 @@
             type="button"
             data-archive-add-files
             data-archive-parent-folder="${escapeHtml(
-              folder.id
+                folder.id
             )}">
 
             ${icon.plus}
@@ -13688,7 +14303,7 @@
 
               <span>
                 ${escapeHtml(
-                  location
+                    location
                 )}
               </span>
             </div>
@@ -13704,9 +14319,9 @@
 
               <span>
                 ${escapeHtml(
-                  archiveFormatDate(
-                    folder.createdAt
-                  )
+                    archiveFormatDate(
+                        folder.createdAt
+                    )
                 )}
               </span>
             </div>
@@ -13757,53 +14372,55 @@
         </section>
       `;
 
-      return renderArchiveInspectorShell({
+    return renderArchiveInspectorShell({
         title:
           folder.name,
 
         subtitle:
           selectedFolder
-            ? 'Selected folder'
-            : 'Current folder',
+              ? 'Selected folder'
+              : 'Current folder',
 
         content:
           body
-      });
-    }
+    });
+}
 
-    function renderArchiveSourceInspector() {
-      const source =
+function renderArchiveSourceInspector()
+{
+    const source =
         archiveSourceById(
-          state.archiveSelectedSourceId
+            state.archiveSelectedSourceId
         )
         || archiveFilteredSources()[0]
         || null;
 
-      if (!source) {
+    if (!source)
+    {
         return renderArchiveInspectorShell({
-          title:
+            title:
             'Sources',
 
-          subtitle:
+            subtitle:
             'No source selected',
 
-          content:
+            content:
             renderInspectorSectionEmpty(
-              'Select or create a source record.'
+                'Select or create a source record.'
             )
         });
-      }
+    }
 
-      const categoryLabel =
+    const categoryLabel =
         localizedSourceCategoryLabel(
-          source.category
+            source.category
         );
 
-      const content = `
+    const content = `
         ${renderArchiveSourceSection(
-          'details',
-          'Source details',
-          renderArchiveSourceDetails(source, categoryLabel)
+            'details',
+            'Source details',
+            renderArchiveSourceDetails(source, categoryLabel)
         )}
 
         ${renderArchiveSourceConnectionSection(source, 'person')}
@@ -13814,7 +14431,7 @@
         ${renderArchiveSourceConnectionSection(source, 'place')}
       `;
 
-      return renderArchiveInspectorShell({
+    return renderArchiveInspectorShell({
         title:
           source.title,
 
@@ -13825,147 +14442,155 @@
           'archive-source-inspector-content',
 
         content
-      });
-    }
+    });
+}
 
-    function openArchiveAddFilesModal() {
-      showToast('File adding will be available in the working MVP.');
-    }
+function openArchiveAddFilesModal()
+{
+    showToast('File adding will be available in the working MVP.');
+}
 
-    function connectedFilesForProject(
-      projectId =
+function connectedFilesForProject(
+    projectId =
         currentProjectId()
-    ) {
-      return (
+)
+{
+    return (
         sampleData.archiveFiles
         || []
-      )
+    )
         .filter(file =>
-          !file.deleted
+            !file.deleted
           && Boolean(projectId)
           && file.projectId === projectId
         );
+}
+
+function connectedFilePickerSearchText(
+    file
+)
+{
+    if (!file)
+    {
+        return '';
     }
 
-    function connectedFilePickerSearchText(
-      file
-    ) {
-      if (!file) {
-        return '';
-      }
-
-      return [
+    return [
         archiveSearchText(
-          file
+            file
         ),
 
         archiveFileTypeLabel(
-          file
+            file
         ),
 
         archiveFolderPath(
-          file.folderId
+            file.folderId
         ),
 
         file.size
-      ]
+    ]
         .filter(Boolean)
         .join(' ')
         .toLowerCase();
-    }
+}
 
-    function connectedFilesSelectionLabel(
-      count
-    ) {
-      return `${count} ${
+function connectedFilesSelectionLabel(
+    count
+)
+{
+    return `${count} ${
         count === 1
-          ? 'file'
-          : 'files'
-      } selected`;
-    }
+            ? 'file'
+            : 'files'
+    } selected`;
+}
 
-    function connectedFilesActionLabel(
-      count
-    ) {
-      if (!count) {
+function connectedFilesActionLabel(
+    count
+)
+{
+    if (!count)
+    {
         return 'Add files';
-      }
-
-      return `Add ${count} ${
-        count === 1
-          ? 'file'
-          : 'files'
-      }`;
     }
 
-    function openConnectedFilesModal({
-      projectId =
+    return `Add ${count} ${
+        count === 1
+            ? 'file'
+            : 'files'
+    }`;
+}
+
+function openConnectedFilesModal({
+    projectId =
         currentProjectId(),
 
-      title =
+    title =
         'Add files',
 
-      subtitle =
+    subtitle =
         'Connect existing Archive files or add new files.',
 
-      existingFileIds =
+    existingFileIds =
         [],
 
-      onSave =
+    onSave =
         null,
 
-      afterSave =
+    afterSave =
         null,
 
-      successMessage =
+    successMessage =
         null,
 
-      modalOpener =
+    modalOpener =
         openModal
-    } = {}) {
-      const allFiles =
+} = {})
+{
+    const allFiles =
         connectedFilesForProject(
-          projectId
+            projectId
         );
 
-      const validFileIds =
+    const validFileIds =
         new Set(
-          allFiles.map(file =>
-            file.id
-          )
-        );
-
-      const existingIds =
-        new Set(
-          archiveUniqueIds(
-            existingFileIds
-          ).filter(id =>
-            validFileIds.has(
-              id
+            allFiles.map(file =>
+                file.id
             )
-          )
         );
 
-      const selectedIds =
+    const existingIds =
+        new Set(
+            archiveUniqueIds(
+                existingFileIds
+            ).filter(id =>
+                validFileIds.has(
+                    id
+                )
+            )
+        );
+
+    const selectedIds =
         new Set();
 
-      let query =
+    let query =
         '';
 
-      let sourceTab =
+    let sourceTab =
         allFiles.length
-          ? 'archive'
-          : 'new';
+            ? 'archive'
+            : 'new';
 
-      const compactTitle = translateText('Add files');
-      const contextTitle = String(title || '').trim();
+    const compactTitle = translateText('Add files');
+    const contextTitle = String(title || '').trim();
 
-      const compactSubtitle =
+    const compactSubtitle =
         contextTitle && contextTitle !== 'Add files'
-          ? `${translateText(contextTitle)}. ${translateText(subtitle)}`
-          : translateText(subtitle);
+            ? `${translateText(contextTitle)}. ${translateText(subtitle)}`
+            : translateText(subtitle);
 
-      modalOpener(`
+    modalOpener(`
         <div
           class="
             modal
@@ -14019,7 +14644,7 @@
                 role="tab"
                 data-connected-files-tab="archive"
                 aria-selected="${
-                  sourceTab === 'archive'
+                    sourceTab === 'archive'
                 }">
 
                 Archive files
@@ -14033,7 +14658,7 @@
                 role="tab"
                 data-connected-files-tab="new"
                 aria-selected="${
-                  sourceTab === 'new'
+                    sourceTab === 'new'
                 }">
 
                 Add new
@@ -14084,10 +14709,10 @@
               "
               data-connected-files-panel="new"
               ${
-                sourceTab === 'new'
-                  ? ''
-                  : 'hidden'
-              }>
+                    sourceTab === 'new'
+                        ? ''
+                        : 'hidden'
+                }>
 
               <div
                 class="
@@ -14172,88 +14797,91 @@
         </div>
       `);
 
-      const modal =
+    const modal =
         modalBackdrop.querySelector(
-          '[data-connected-files-modal]'
+            '[data-connected-files-modal]'
         );
 
-      if (!modal) {
+    if (!modal)
+    {
         return;
-      }
+    }
 
-      const resultsHost =
+    const resultsHost =
         modal.querySelector(
-          '[data-connected-files-results]'
+            '[data-connected-files-results]'
         );
 
-      const searchInput =
+    const searchInput =
         modal.querySelector(
-          '[data-connected-files-search]'
+            '[data-connected-files-search]'
         );
 
-      const countElement =
+    const countElement =
         modal.querySelector(
-          '[data-connected-files-count]'
+            '[data-connected-files-count]'
         );
 
-      const saveButton =
+    const saveButton =
         modal.querySelector(
-          '[data-connected-files-save]'
+            '[data-connected-files-save]'
         );
 
-      const dropzone =
+    const dropzone =
         modal.querySelector(
-          '[data-connected-files-dropzone]'
+            '[data-connected-files-dropzone]'
         );
 
-      const pickerText = (english, russian) =>
+    const pickerText = (english, russian) =>
         state.language === 'ru' ? russian : english;
 
-      const selectedHost = modal.querySelector(
+    const selectedHost = modal.querySelector(
         '[data-connected-files-selected]'
-      );
+    );
 
-      const resultsTitle = modal.querySelector(
+    const resultsTitle = modal.querySelector(
         '[data-connected-files-results-title]'
-      );
+    );
 
-      const resultsMeta = modal.querySelector(
+    const resultsMeta = modal.querySelector(
         '[data-connected-files-results-meta]'
-      );
+    );
 
-      const fileLabel = file =>
+    const fileLabel = file =>
         file.name || file.title || pickerText(
-          'Untitled file',
-          'Файл без названия'
+            'Untitled file',
+            'Файл без названия'
         );
 
-      const visibleFiles = () => {
+    const visibleFiles = () =>
+    {
         const normalizedQuery = query.trim().toLowerCase();
 
         return allFiles
-          .filter(file => !existingIds.has(file.id))
-          .filter(file =>
-            !normalizedQuery
+            .filter(file => !existingIds.has(file.id))
+            .filter(file =>
+                !normalizedQuery
             || connectedFilePickerSearchText(file)
-              .includes(normalizedQuery)
-          )
-          .sort((a, b) =>
-            fileLabel(a).localeCompare(
-              fileLabel(b),
-              state.language === 'ru' ? 'ru' : 'en'
+                .includes(normalizedQuery)
             )
-          );
-      };
+            .sort((a, b) =>
+                fileLabel(a).localeCompare(
+                    fileLabel(b),
+                    state.language === 'ru' ? 'ru' : 'en'
+                )
+            );
+    };
 
-      const renderChoice = file => {
+    const renderChoice = file =>
+    {
         const selected = selectedIds.has(file.id);
         const name = fileLabel(file);
         const path = archiveFolderPath(file.folderId);
 
         return `
           <label class="connected-files-choice ${
-            selected ? 'is-selected' : ''
-          }">
+                selected ? 'is-selected' : ''
+            }">
             ${archiveFileIcon(file)}
 
             <span class="connected-files-choice-copy">
@@ -14279,32 +14907,34 @@
               value="${escapeHtml(file.id)}"
               ${selected ? 'checked' : ''}
               aria-label="${escapeHtml(
-                pickerText('Select file: ', 'Выбрать файл: ') + name
-              )}">
+                    pickerText('Select file: ', 'Выбрать файл: ') + name
+                )}">
           </label>
         `;
-      };
+    };
 
-      const renderSelectedFiles = () => {
+    const renderSelectedFiles = () =>
+    {
         if (!selectedHost) return;
 
         const selected = allFiles.filter(file =>
-          selectedIds.has(file.id)
+            selectedIds.has(file.id)
         );
 
         selectedHost.hidden = selected.length === 0;
 
         selectedHost.innerHTML = selected.length
-          ? `
+            ? `
             <div class="notes-related-selected-list">
-              ${selected.map(file => {
-                const name = fileLabel(file);
-                const removeLabel = pickerText(
-                  'Remove from selection',
-                  'Убрать из выбранного'
-                );
+              ${selected.map(file =>
+                {
+                    const name = fileLabel(file);
+                    const removeLabel = pickerText(
+                        'Remove from selection',
+                        'Убрать из выбранного'
+                    );
 
-                return `
+                    return `
                   <div class="notes-related-selected-row">
                     <span title="${escapeHtml(name)}">
                       ${escapeHtml(name)}
@@ -14319,13 +14949,14 @@
                     </button>
                   </div>
                 `;
-              }).join('')}
+                }).join('')}
             </div>
           `
-          : '';
-      };
+            : '';
+    };
 
-      const renderResults = () => {
+    const renderResults = () =>
+    {
         if (!resultsHost) return;
 
         const scrollTop = resultsHost.scrollTop;
@@ -14333,41 +14964,44 @@
         const searching = Boolean(query.trim());
 
         resultsTitle.textContent = searching
-          ? pickerText('Search results', 'Результаты поиска')
-          : pickerText('Suggested files', 'Предлагаемые файлы');
+            ? pickerText('Search results', 'Результаты поиска')
+            : pickerText('Suggested files', 'Предлагаемые файлы');
 
         resultsMeta.textContent = pickerText(
-          `${files.length} ${
-            files.length === 1 ? 'file' : 'files'
-          } available · ${existingIds.size} already linked`,
-          `Доступно файлов: ${files.length} · Уже связано: ${existingIds.size}`
+            `${files.length} ${
+                files.length === 1 ? 'file' : 'files'
+            } available · ${existingIds.size} already linked`,
+            `Доступно файлов: ${files.length} · Уже связано: ${existingIds.size}`
         );
 
         renderSelectedFiles();
 
-        if (files.length) {
-          resultsHost.innerHTML = `
+        if (files.length)
+        {
+            resultsHost.innerHTML = `
             <div class="connected-files-choice-list">
               ${files.map(renderChoice).join('')}
             </div>
           `;
-        } else {
-          const message = !allFiles.length
-            ? pickerText(
-                'No Archive files yet. Open Add new to add files.',
-                'В архиве пока нет файлов. Откройте вкладку «Добавить новые».'
-              )
-            : searching
-              ? pickerText(
-                  'No files match this search.',
-                  'По вашему запросу файлы не найдены.'
+        }
+        else
+        {
+            const message = !allFiles.length
+                ? pickerText(
+                    'No Archive files yet. Open Add new to add files.',
+                    'В архиве пока нет файлов. Откройте вкладку «Добавить новые».'
                 )
-              : pickerText(
-                  'All available files are already linked.',
-                  'Все доступные файлы уже связаны.'
-                );
+                : searching
+                    ? pickerText(
+                        'No files match this search.',
+                        'По вашему запросу файлы не найдены.'
+                    )
+                    : pickerText(
+                        'All available files are already linked.',
+                        'Все доступные файлы уже связаны.'
+                    );
 
-          resultsHost.innerHTML = `
+            resultsHost.innerHTML = `
             <div class="connected-files-empty">
               <div class="connected-files-empty-content">
                 <strong>${escapeHtml(message)}</strong>
@@ -14377,7 +15011,7 @@
                     type="button"
                     data-connected-files-clear-search>
                     ${escapeHtml(
-                      pickerText('Clear search', 'Очистить поиск')
+                        pickerText('Clear search', 'Очистить поиск')
                     )}
                   </button>
                 ` : ''}
@@ -14387,37 +15021,41 @@
         }
 
         resultsHost.scrollTop = scrollTop;
-      };
+    };
 
-      const refreshFooter =
-        () => {
-          const count =
-            selectedIds.size;
+    const refreshFooter =
+        () =>
+        {
+            const count =
+                selectedIds.size;
 
-          if (countElement) {
-            countElement.textContent =
-              translateText(
-                connectedFilesSelectionLabel(
-                  count
-                )
-              );
-          }
+            if (countElement)
+            {
+                countElement.textContent =
+                    translateText(
+                        connectedFilesSelectionLabel(
+                            count
+                        )
+                    );
+            }
 
-          if (saveButton) {
-            saveButton.disabled =
-              count === 0;
+            if (saveButton)
+            {
+                saveButton.disabled =
+                    count === 0;
 
-            saveButton.textContent =
-              translateText(
-                connectedFilesActionLabel(
-                  count
-                )
-              );
-          }
+                saveButton.textContent =
+                    translateText(
+                        connectedFilesActionLabel(
+                            count
+                        )
+                    );
+            }
         };
-      modal.addEventListener('click', event => {
+    modal.addEventListener('click', event =>
+    {
         const button = event.target.closest(
-          '[data-connected-files-remove]'
+            '[data-connected-files-remove]'
         );
 
         if (!button) return;
@@ -14427,482 +15065,526 @@
 
         selectedIds.delete(button.dataset.connectedFilesRemove);
         refreshSelection();
-      });
-      const refreshSelection =
-        () => {
-          renderResults();
-          refreshFooter();
+    });
+    const refreshSelection =
+        () =>
+        {
+            renderResults();
+            refreshFooter();
         };
 
-      const setTab =
+    const setTab =
         (
-          nextTab,
-          {
-            focus =
-              true
-          } = {}
-        ) => {
-          if (
-            ![
-              'archive',
-              'new'
-            ].includes(
-              nextTab
+            nextTab,
+            {
+                focus =
+                    true
+            } = {}
+        ) =>
+        {
+            if (
+                ![
+                    'archive',
+                    'new'
+                ].includes(
+                    nextTab
+                )
             )
-          ) {
-            return;
-          }
+            {
+                return;
+            }
 
-          sourceTab =
-            nextTab;
+            sourceTab =
+                nextTab;
 
-          modal
-            .querySelectorAll(
-              '[data-connected-files-tab]'
-            )
-            .forEach(button => {
-              const selected =
-                button.dataset
-                  .connectedFilesTab
+            modal
+                .querySelectorAll(
+                    '[data-connected-files-tab]'
+                )
+                .forEach(button =>
+                {
+                    const selected =
+                        button.dataset
+                            .connectedFilesTab
                   === sourceTab;
 
-              button.setAttribute(
-                'aria-selected',
-                String(
-                  selected
+                    button.setAttribute(
+                        'aria-selected',
+                        String(
+                            selected
+                        )
+                    );
+                });
+
+            modal
+                .querySelectorAll(
+                    '[data-connected-files-panel]'
                 )
-              );
-            });
-
-          modal
-            .querySelectorAll(
-              '[data-connected-files-panel]'
-            )
-            .forEach(panel => {
-              panel.hidden =
-                panel.dataset
-                  .connectedFilesPanel
+                .forEach(panel =>
+                {
+                    panel.hidden =
+                        panel.dataset
+                            .connectedFilesPanel
                   !== sourceTab;
-            });
+                });
 
-          if (!focus) {
-            return;
-          }
+            if (!focus)
+            {
+                return;
+            }
 
-          requestAnimationFrame(
-            () => {
-              if (
-                sourceTab === 'archive'
-              ) {
-                searchInput?.focus({
-                  preventScroll:
+            requestAnimationFrame(
+                () =>
+                {
+                    if (
+                        sourceTab === 'archive'
+                    )
+                    {
+                        searchInput?.focus({
+                            preventScroll:
                     true
+                        });
+
+                        return;
+                    }
+
+                    dropzone?.focus({
+                        preventScroll:
+                  true
+                    });
+                }
+            );
+        };
+
+    modal
+        .querySelectorAll(
+            '[data-connected-files-tab]'
+        )
+        .forEach(
+            (
+                tab,
+                index,
+                tabs
+            ) =>
+            {
+                tab.addEventListener(
+                    'click',
+                    () =>
+                    {
+                        setTab(
+                            tab.dataset
+                                .connectedFilesTab
+                        );
+                    }
+                );
+
+                tab.addEventListener(
+                    'keydown',
+                    event =>
+                    {
+                        if (
+                            ![
+                                'ArrowLeft',
+                                'ArrowRight'
+                            ].includes(
+                                event.key
+                            )
+                        )
+                        {
+                            return;
+                        }
+
+                        event.preventDefault();
+
+                        const direction =
+                            event.key
+                    === 'ArrowRight'
+                                ? 1
+                                : -1;
+
+                        const nextIndex =
+                            (
+                                index
+                    + direction
+                    + tabs.length
+                            )
+                  % tabs.length;
+
+                        const next =
+                            tabs[
+                                nextIndex
+                            ];
+
+                        setTab(
+                            next.dataset
+                                .connectedFilesTab,
+                            {
+                                focus:
+                      false
+                            }
+                        );
+
+                        next.focus();
+                    }
+                );
+            }
+        );
+
+    searchInput
+        ?.addEventListener(
+            'input',
+            event =>
+            {
+                query =
+                    event.currentTarget
+                        .value;
+
+                renderResults();
+            }
+        );
+
+    modal.addEventListener(
+        'change',
+        event =>
+        {
+            const input =
+                event.target.closest(
+                    '[data-connected-files-choice]'
+                );
+
+            if (
+                !input
+            || input.disabled
+            )
+            {
+                return;
+            }
+
+            if (
+                input.checked
+            )
+            {
+                selectedIds.add(
+                    input.value
+                );
+            }
+            else
+            {
+                selectedIds.delete(
+                    input.value
+                );
+            }
+
+            refreshSelection();
+        }
+    );
+
+    modal.addEventListener(
+        'click',
+        event =>
+        {
+            if (
+                event.target.closest(
+                    '[data-connected-files-clear-search]'
+                )
+            )
+            {
+                query =
+                    '';
+
+                if (searchInput)
+                {
+                    searchInput.value =
+                        '';
+                }
+
+                renderResults();
+
+                searchInput?.focus({
+                    preventScroll:
+                true
                 });
 
                 return;
-              }
-
-              dropzone?.focus({
-                preventScroll:
-                  true
-              });
             }
-          );
-        };
 
-      modal
-        .querySelectorAll(
-          '[data-connected-files-tab]'
-        )
-        .forEach(
-          (
-            tab,
-            index,
-            tabs
-          ) => {
-            tab.addEventListener(
-              'click',
-              () => {
+            if (
+                event.target.closest(
+                    '[data-connected-files-show-new]'
+                )
+            )
+            {
                 setTab(
-                  tab.dataset
-                    .connectedFilesTab
+                    'new'
                 );
-              }
-            );
 
-            tab.addEventListener(
-              'keydown',
-              event => {
+                return;
+            }
+
+            if (
+                event.target.closest(
+                    '[data-connected-files-add-new]'
+                )
+            )
+            {
+                event.preventDefault();
+                event.stopPropagation();
+
+                openArchiveAddFilesModal();
+
+                return;
+            }
+        }
+    );
+
+    if (dropzone)
+    {
+        dropzone.addEventListener(
+            'click',
+            event =>
+            {
                 if (
-                  ![
-                    'ArrowLeft',
-                    'ArrowRight'
-                  ].includes(
-                    event.key
-                  )
-                ) {
-                  return;
+                    event.target.closest(
+                        '[data-connected-files-add-new]'
+                    )
+                )
+                {
+                    return;
+                }
+
+                openArchiveAddFilesModal();
+            }
+        );
+
+        dropzone.addEventListener(
+            'keydown',
+            event =>
+            {
+                if (
+                    ![
+                        'Enter',
+                        ' '
+                    ].includes(
+                        event.key
+                    )
+                )
+                {
+                    return;
+                }
+
+                if (
+                    event.target.closest(
+                        'button'
+                    )
+                )
+                {
+                    return;
                 }
 
                 event.preventDefault();
 
-                const direction =
-                  event.key
-                    === 'ArrowRight'
-                      ? 1
-                      : -1;
-
-                const nextIndex =
-                  (
-                    index
-                    + direction
-                    + tabs.length
-                  )
-                  % tabs.length;
-
-                const next =
-                  tabs[
-                    nextIndex
-                  ];
-
-                setTab(
-                  next.dataset
-                    .connectedFilesTab,
-                  {
-                    focus:
-                      false
-                  }
-                );
-
-                next.focus();
-              }
-            );
-          }
-        );
-
-      searchInput
-        ?.addEventListener(
-          'input',
-          event => {
-            query =
-              event.currentTarget
-                .value;
-
-            renderResults();
-          }
-        );
-
-      modal.addEventListener(
-        'change',
-        event => {
-          const input =
-            event.target.closest(
-              '[data-connected-files-choice]'
-            );
-
-          if (
-            !input
-            || input.disabled
-          ) {
-            return;
-          }
-
-          if (
-            input.checked
-          ) {
-            selectedIds.add(
-              input.value
-            );
-          } else {
-            selectedIds.delete(
-              input.value
-            );
-          }
-
-          refreshSelection();
-        }
-      );
-
-      modal.addEventListener(
-        'click',
-        event => {
-          if (
-            event.target.closest(
-              '[data-connected-files-clear-search]'
-            )
-          ) {
-            query =
-              '';
-
-            if (searchInput) {
-              searchInput.value =
-                '';
+                openArchiveAddFilesModal();
             }
-
-            renderResults();
-
-            searchInput?.focus({
-              preventScroll:
-                true
-            });
-
-            return;
-          }
-
-          if (
-            event.target.closest(
-              '[data-connected-files-show-new]'
-            )
-          ) {
-            setTab(
-              'new'
-            );
-
-            return;
-          }
-
-          if (
-            event.target.closest(
-              '[data-connected-files-add-new]'
-            )
-          ) {
-            event.preventDefault();
-            event.stopPropagation();
-
-            openArchiveAddFilesModal();
-
-            return;
-          }
-        }
-      );
-
-      if (dropzone) {
-        dropzone.addEventListener(
-          'click',
-          event => {
-            if (
-              event.target.closest(
-                '[data-connected-files-add-new]'
-              )
-            ) {
-              return;
-            }
-
-            openArchiveAddFilesModal();
-          }
-        );
-
-        dropzone.addEventListener(
-          'keydown',
-          event => {
-            if (
-              ![
-                'Enter',
-                ' '
-              ].includes(
-                event.key
-              )
-            ) {
-              return;
-            }
-
-            if (
-              event.target.closest(
-                'button'
-              )
-            ) {
-              return;
-            }
-
-            event.preventDefault();
-
-            openArchiveAddFilesModal();
-          }
         );
 
         [
-          'dragenter',
-          'dragover'
-        ].forEach(type => {
-          dropzone.addEventListener(
-            type,
-            event => {
-              event.preventDefault();
+            'dragenter',
+            'dragover'
+        ].forEach(type =>
+        {
+            dropzone.addEventListener(
+                type,
+                event =>
+                {
+                    event.preventDefault();
 
-              dropzone
-                .classList
-                .add(
-                  'is-dragging'
-                );
-            }
-          );
+                    dropzone
+                        .classList
+                        .add(
+                            'is-dragging'
+                        );
+                }
+            );
         });
 
         [
-          'dragleave',
-          'drop'
-        ].forEach(type => {
-          dropzone.addEventListener(
-            type,
-            event => {
-              event.preventDefault();
+            'dragleave',
+            'drop'
+        ].forEach(type =>
+        {
+            dropzone.addEventListener(
+                type,
+                event =>
+                {
+                    event.preventDefault();
 
-              dropzone
-                .classList
-                .remove(
-                  'is-dragging'
-                );
-            }
-          );
+                    dropzone
+                        .classList
+                        .remove(
+                            'is-dragging'
+                        );
+                }
+            );
         });
 
         dropzone.addEventListener(
-          'drop',
-          () => {
-            openArchiveAddFilesModal();
-          }
-        );
-      }
-
-      saveButton
-        ?.addEventListener(
-          'click',
-          () => {
-            const fileIds = [
-              ...selectedIds
-            ];
-
-            if (
-              !fileIds.length
-            ) {
-              return;
+            'drop',
+            () =>
+            {
+                openArchiveAddFilesModal();
             }
+        );
+    }
 
-            const result =
-              typeof onSave
+    saveButton
+        ?.addEventListener(
+            'click',
+            () =>
+            {
+                const fileIds = [
+                    ...selectedIds
+                ];
+
+                if (
+                    !fileIds.length
+                )
+                {
+                    return;
+                }
+
+                const result =
+                    typeof onSave
                 === 'function'
-                  ? onSave(
-                      fileIds
-                    )
-                  : false;
+                        ? onSave(
+                            fileIds
+                        )
+                        : false;
 
-            const saved =
-              result === true
+                const saved =
+                    result === true
               || (
-                result
+                  result
                 && typeof result
                   === 'object'
                 && result.ok
                   !== false
               );
 
-            if (!saved) {
-              showToast(
-                'No file links were added.'
-              );
-
-              return;
-            }
-
-            closeModal();
-
-            if (
-              typeof afterSave
-                === 'function'
-            ) {
-              afterSave(
-                fileIds,
-                result
-              );
-            }
-
-            const message =
-              typeof successMessage
-                === 'function'
-                  ? successMessage(
-                      fileIds.length,
-                      result
-                    )
-                  : String(
-                      successMessage
-                      || ''
+                if (!saved)
+                {
+                    showToast(
+                        'No file links were added.'
                     );
 
-            if (message) {
-              showToast(
-                message
-              );
+                    return;
+                }
+
+                closeModal();
+
+                if (
+                    typeof afterSave
+                === 'function'
+                )
+                {
+                    afterSave(
+                        fileIds,
+                        result
+                    );
+                }
+
+                const message =
+                    typeof successMessage
+                === 'function'
+                        ? successMessage(
+                            fileIds.length,
+                            result
+                        )
+                        : String(
+                            successMessage
+                      || ''
+                        );
+
+                if (message)
+                {
+                    showToast(
+                        message
+                    );
+                }
             }
-          }
         );
 
-      renderResults();
-      refreshFooter();
-      setTab(
+    renderResults();
+    refreshFooter();
+    setTab(
         sourceTab,
         {
-          focus:
+            focus:
             false
         }
-      );
+    );
 
-      requestAnimationFrame(
-        () => {
-          if (
-            sourceTab === 'archive'
-          ) {
-            searchInput?.focus({
-              preventScroll:
+    requestAnimationFrame(
+        () =>
+        {
+            if (
+                sourceTab === 'archive'
+            )
+            {
+                searchInput?.focus({
+                    preventScroll:
                 true
-            });
-          }
+                });
+            }
         }
-      );
-    }
+    );
+}
 
-    function createArchiveFolderRecord(
-      name,
-      parentId = null
-    ) {
-      const projectId = requireActiveProjectId();
-      if (!projectId) return null;
-      const normalizedName =
+function createArchiveFolderRecord(
+    name,
+    parentId = null
+)
+{
+    const projectId = requireActiveProjectId();
+    if (!projectId) return null;
+    const normalizedName =
         String(
-          name || ''
+            name || ''
         ).trim();
 
-      if (!normalizedName) {
+    if (!normalizedName)
+    {
         return null;
-      }
+    }
 
-      const normalizedParentId =
+    const normalizedParentId =
         archiveNormalizeFolderId(
-          parentId
+            parentId
         );
 
-      let id =
+    let id =
         `folder-${Date.now()}`;
 
-      let suffix =
+    let suffix =
         1;
 
-      while (
+    while (
         archiveFolderById(
-          id
+            id
         )
-      ) {
+    )
+    {
         id =
-          `folder-${Date.now()}-${suffix}`;
+            `folder-${Date.now()}-${suffix}`;
 
         suffix +=
-          1;
-      }
+            1;
+    }
 
-      const now =
+    const now =
         new Date()
-          .toISOString();
+            .toISOString();
 
-      const folder = {
+    const folder = {
         id,
 
         projectId,
@@ -14918,68 +15600,72 @@
 
         updatedAt:
           now
-      };
+    };
 
-      sampleData.archiveFolders =
+    sampleData.archiveFolders =
         sampleData.archiveFolders
         || [];
 
-      sampleData
+    sampleData
         .archiveFolders
         .push(
-          folder
+            folder
         );
 
-      if (
+    if (
         normalizedParentId
-      ) {
+    )
+    {
         state.archiveExpandedFolders[
-          normalizedParentId
+            normalizedParentId
         ] = true;
-      }
-
-      return folder;
     }
 
-    function openArchiveCreateFolderModal(
-      parentId =
+    return folder;
+}
+
+function openArchiveCreateFolderModal(
+    parentId =
         state.archiveSelectedFolderId
-    ) {
-      const initialParentId =
+)
+{
+    const initialParentId =
         archiveNormalizeFolderId(
-          parentId
+            parentId
         );
 
-      let selectedParentId =
+    let selectedParentId =
         initialParentId;
 
-      let query =
+    let query =
         '';
 
-      const expandedIds =
+    const expandedIds =
         new Set([
-          null
+            null
         ]);
 
-      /*
+    /*
         Reveal the initially selected parent and
         all of its ancestors.
       */
-      archiveFolderAncestors(
+    archiveFolderAncestors(
         initialParentId
-      ).forEach(folder => {
+    ).forEach(folder =>
+    {
         expandedIds.add(
-          folder.id
+            folder.id
         );
-      });
+    });
 
-      if (initialParentId) {
+    if (initialParentId)
+    {
         expandedIds.add(
-          initialParentId
+            initialParentId
         );
-      }
+    }
 
-      openModal(`
+    openModal(`
         <div
           class="
             modal
@@ -15073,41 +15759,43 @@
         </div>
       `);
 
-      const modal =
+    const modal =
         modalBackdrop.querySelector(
-          '.archive-create-folder-modal'
+            '.archive-create-folder-modal'
         );
 
-      const form =
+    const form =
         modal?.querySelector(
-          '[data-archive-create-folder-form]'
+            '[data-archive-create-folder-form]'
         );
 
-      const nameInput =
+    const nameInput =
         form?.querySelector(
-          '[data-archive-folder-name]'
+            '[data-archive-folder-name]'
         );
 
-      const parentPickerRoot =
+    const parentPickerRoot =
         form?.querySelector(
-          '[data-archive-create-folder-parent-picker]'
+            '[data-archive-create-folder-parent-picker]'
         );
 
-      const renderParentPicker =
+    const renderParentPicker =
         ({
-          focusSearch =
-            false
-        } = {}) => {
-          if (!parentPickerRoot) {
-            return;
-          }
+            focusSearch =
+                false
+        } = {}) =>
+        {
+            if (!parentPickerRoot)
+            {
+                return;
+            }
 
-          const parentPath =
-            archiveMoveFolderPath(
-              selectedParentId
-            );
+            const parentPath =
+                archiveMoveFolderPath(
+                    selectedParentId
+                );
 
-          parentPickerRoot.innerHTML = `
+            parentPickerRoot.innerHTML = `
             <label
               class="
                 app-search-field
@@ -15122,7 +15810,7 @@
                 data-archive-create-folder-search
                 placeholder="Search folders"
                 value="${escapeHtml(
-                  query
+                    query
                 )}">
             </label>
 
@@ -15146,7 +15834,7 @@
                 ">
 
                 ${escapeHtml(
-                  parentPath
+                    parentPath
                 )}
               </strong>
             </div>
@@ -15160,32 +15848,32 @@
             </div>
 
             ${renderArchiveMovePicker({
-              query,
+                query,
 
-              selectedId:
+                selectedId:
                 selectedParentId,
 
-              expandedIds,
+                expandedIds,
 
-              /*
+                /*
                 The Create modal has no unavailable
                 moving/current folder. Every folder
                 is a valid parent destination.
               */
-              movingFolder:
+                movingFolder:
                 null,
 
-              /*
+                /*
                 This argument is used by the latest
                 shared picker implementation. Older
                 signatures safely ignore it.
               */
-              currentFolderState:
+                currentFolderState:
                 null
             })}
           `;
 
-          /*
+            /*
            * This picker is rendered after openModal()
            * has localized the initial modal content.
            *
@@ -15194,358 +15882,383 @@
            * after search, selection, and expand/collapse
            * rerenders.
            */
-          localizeUI(
-            parentPickerRoot,
-            {
-              suppressObserverReplay:
+            localizeUI(
+                parentPickerRoot,
+                {
+                    suppressObserverReplay:
                 true
-            }
-          );
+                }
+            );
 
-          requestAnimationFrame(
-            () => {
-              if (!focusSearch) {
-                return;
-              }
+            requestAnimationFrame(
+                () =>
+                {
+                    if (!focusSearch)
+                    {
+                        return;
+                    }
 
-              const searchInput =
-                parentPickerRoot
-                  .querySelector(
-                    '[data-archive-create-folder-search]'
-                  );
+                    const searchInput =
+                        parentPickerRoot
+                            .querySelector(
+                                '[data-archive-create-folder-search]'
+                            );
 
-              searchInput?.focus();
+                    searchInput?.focus();
 
-              const end =
-                searchInput?.value
-                  .length
+                    const end =
+                        searchInput?.value
+                            .length
                 || 0;
 
-              searchInput
-                ?.setSelectionRange(
-                  end,
-                  end
-                );
-            }
-          );
+                    searchInput
+                        ?.setSelectionRange(
+                            end,
+                            end
+                        );
+                }
+            );
         };
 
-      /*
+    /*
         Search is delegated because the picker
         content is rerendered after every query.
       */
-      modal?.addEventListener(
+    modal?.addEventListener(
         'input',
-        event => {
-          const searchInput =
-            event.target.closest(
-              '[data-archive-create-folder-search]'
-            );
+        event =>
+        {
+            const searchInput =
+                event.target.closest(
+                    '[data-archive-create-folder-search]'
+                );
 
-          if (!searchInput) {
-            return;
-          }
+            if (!searchInput)
+            {
+                return;
+            }
 
-          query =
-            searchInput.value;
+            query =
+                searchInput.value;
 
-          renderParentPicker({
-            focusSearch:
+            renderParentPicker({
+                focusSearch:
               true
-          });
+            });
         }
-      );
+    );
 
-      /*
+    /*
         Reuse the Move picker expand and select
         controls inside this modal only.
       */
-      modal?.addEventListener(
+    modal?.addEventListener(
         'click',
-        event => {
-          const toggle =
-            event.target.closest(
-              '[data-archive-move-toggle]'
-            );
+        event =>
+        {
+            const toggle =
+                event.target.closest(
+                    '[data-archive-move-toggle]'
+                );
 
-          if (toggle) {
-            const folderId =
-              archiveFolderIdFromChoice(
-                toggle.dataset
-                  .archiveMoveToggle
-              );
+            if (toggle)
+            {
+                const folderId =
+                    archiveFolderIdFromChoice(
+                        toggle.dataset
+                            .archiveMoveToggle
+                    );
 
-            if (
-              expandedIds.has(
-                folderId
-              )
-            ) {
-              expandedIds.delete(
-                folderId
-              );
-            } else {
-              expandedIds.add(
-                folderId
-              );
+                if (
+                    expandedIds.has(
+                        folderId
+                    )
+                )
+                {
+                    expandedIds.delete(
+                        folderId
+                    );
+                }
+                else
+                {
+                    expandedIds.add(
+                        folderId
+                    );
+                }
+
+                renderParentPicker();
+
+                return;
             }
 
-            renderParentPicker();
+            const destination =
+                event.target.closest(
+                    '[data-archive-move-select]'
+                );
 
-            return;
-          }
+            if (!destination)
+            {
+                return;
+            }
 
-          const destination =
-            event.target.closest(
-              '[data-archive-move-select]'
-            );
-
-          if (!destination) {
-            return;
-          }
-
-          if (
-            destination.disabled
+            if (
+                destination.disabled
             || destination.getAttribute(
-              'aria-disabled'
+                'aria-disabled'
             ) === 'true'
-          ) {
-            return;
-          }
+            )
+            {
+                return;
+            }
 
-          selectedParentId =
-            archiveFolderIdFromChoice(
-              destination.dataset
-                .archiveMoveSelect
-            );
+            selectedParentId =
+                archiveFolderIdFromChoice(
+                    destination.dataset
+                        .archiveMoveSelect
+                );
 
-          /*
+            /*
             Ensure a parent selected through search
             is revealed when the search is cleared.
           */
-          archiveFolderAncestors(
-            selectedParentId
-          ).forEach(folder => {
-            expandedIds.add(
-              folder.id
-            );
-          });
+            archiveFolderAncestors(
+                selectedParentId
+            ).forEach(folder =>
+            {
+                expandedIds.add(
+                    folder.id
+                );
+            });
 
-          if (selectedParentId) {
-            expandedIds.add(
-              selectedParentId
-            );
-          }
+            if (selectedParentId)
+            {
+                expandedIds.add(
+                    selectedParentId
+                );
+            }
 
-          renderParentPicker();
+            renderParentPicker();
         }
-      );
+    );
 
-      form?.addEventListener(
+    form?.addEventListener(
         'submit',
-        event => {
-          event.preventDefault();
+        event =>
+        {
+            event.preventDefault();
 
-          const name =
-            nameInput
-              ?.value
-              .trim()
+            const name =
+                nameInput
+                    ?.value
+                    .trim()
             || '';
 
-          if (!name) {
-            nameInput?.focus();
-
-            return;
-          }
-
-          const folder =
-            createArchiveFolderRecord(
-              name,
-              selectedParentId
-            );
-
-          if (!folder) {
-            nameInput?.focus();
-
-            return;
-          }
-
-          closeModal();
-
-          archiveNavigateToLocation(
+            if (!name)
             {
-              view:
+                nameInput?.focus();
+
+                return;
+            }
+
+            const folder =
+                createArchiveFolderRecord(
+                    name,
+                    selectedParentId
+                );
+
+            if (!folder)
+            {
+                nameInput?.focus();
+
+                return;
+            }
+
+            closeModal();
+
+            archiveNavigateToLocation(
+                {
+                    view:
                 'files',
 
-              folderId:
+                    folderId:
                 folder.id,
 
-              search:
+                    search:
                 '',
 
-              searchScope:
+                    searchScope:
                 'folder',
 
-              personFilterId:
+                    personFilterId:
                 '',
 
-              selectedFileId:
+                    selectedFileId:
                 null,
 
-              inspectorCollapsed:
+                    inspectorCollapsed:
                 false
-            },
-            {
-              expandCurrent:
+                },
+                {
+                    expandCurrent:
                 true
-            }
-          );
+                }
+            );
 
-          showToast(
-            'Folder created.'
-          );
+            showToast(
+                'Folder created.'
+            );
         }
-      );
+    );
 
-      renderParentPicker();
+    renderParentPicker();
 
-      requestAnimationFrame(
-        () => {
-          nameInput?.focus();
+    requestAnimationFrame(
+        () =>
+        {
+            nameInput?.focus();
         }
-      );
-    }
+    );
+}
 
-    function archiveSourceAccessedDateToIso(
-      dateModel
-    ) {
-      if (
+function archiveSourceAccessedDateToIso(
+    dateModel
+)
+{
+    if (
         !dateModel
         || (
-          !dateModel.date
+            !dateModel.date
           && !dateModel.dateLabel
           && !dateModel.originalText
         )
-      ) {
+    )
+    {
         return '';
-      }
+    }
 
-      const sortDate =
+    const sortDate =
         String(
-          dateModel.sortDate
+            dateModel.sortDate
           || ''
         );
 
-      if (
+    if (
         !/^\d{8}$/.test(
-          sortDate
+            sortDate
         )
-      ) {
+    )
+    {
         return null;
-      }
+    }
 
-      const year =
+    const year =
         sortDate.slice(
-          0,
-          4
+            0,
+            4
         );
 
-      const month =
+    const month =
         sortDate.slice(
-          4,
-          6
+            4,
+            6
         );
 
-      const day =
+    const day =
         sortDate.slice(
-          6,
-          8
+            6,
+            8
         );
 
-      if (
+    if (
         month === '00'
         || day === '00'
         || !isValidGregorianDate(
-          year,
-          month,
-          day
+            year,
+            month,
+            day
         )
-      ) {
+    )
+    {
         return null;
-      }
-
-      return `${year}-${month}-${day}`;
     }
 
-    function collectArchiveSourceAccessedDate() {
-      const fieldId =
+    return `${year}-${month}-${day}`;
+}
+
+function collectArchiveSourceAccessedDate()
+{
+    const fieldId =
         'archiveSourceAccessed';
 
-      const fieldRoot =
+    const fieldRoot =
         modalBackdrop
-          ?.querySelector(
-            `[data-genealogy-date-field="${fieldId}"]`
-          );
+            ?.querySelector(
+                `[data-genealogy-date-field="${fieldId}"]`
+            );
 
-      const dateModel =
+    const dateModel =
         collectGenealogyDateField(
-          fieldId
+            fieldId
         );
 
-      if (!dateModel) {
+    if (!dateModel)
+    {
         return null;
-      }
-
-      const isoDate =
-        archiveSourceAccessedDateToIso(
-          dateModel
-        );
-
-      if (isoDate === null) {
-        setGenealogyDateFieldError(
-          fieldRoot,
-          'Enter a complete date with day, month, and year.'
-        );
-
-        return null;
-      }
-
-      return isoDate;
     }
 
-    function openArchiveSourceModal(
-      sourceId = '',
-      {
+    const isoDate =
+        archiveSourceAccessedDateToIso(
+            dateModel
+        );
+
+    if (isoDate === null)
+    {
+        setGenealogyDateFieldError(
+            fieldRoot,
+            'Enter a complete date with day, month, and year.'
+        );
+
+        return null;
+    }
+
+    return isoDate;
+}
+
+function openArchiveSourceModal(
+    sourceId = '',
+    {
         onCreated =
-          null
-      } = {}
-    ) {
-      const source =
+            null
+    } = {}
+)
+{
+    const source =
         archiveSourceById(
-          sourceId
+            sourceId
         );
 
-      const editing =
+    const editing =
         Boolean(
-          source
+            source
         );
 
-      const categoryOptions =
+    const categoryOptions =
         SOURCE_CATEGORIES
-          .map(category => `
+            .map(category => `
             <option
               value="${escapeHtml(category.value)}"
               ${
-                source?.category
+                    source?.category
                   === category.value
-                    ? 'selected'
-                    : ''
-              }>
+                        ? 'selected'
+                        : ''
+                }>
               ${escapeHtml(category.label)}
             </option>
           `)
-          .join('');
+            .join('');
 
-      openModal(`
+    openModal(`
         <div
           class="modal archive-source-modal"
           role="dialog"
@@ -15556,9 +16269,9 @@
             <div>
               <h2 id="archiveSourceModalTitle">
                 ${
-                  editing
-                    ? 'Edit source'
-                    : 'Add source'
+                    editing
+                        ? 'Edit source'
+                        : 'Add source'
                 }
               </h2>
 
@@ -15730,30 +16443,30 @@
                   </div>
 
                   ${renderGenealogyDateField(
-                    'archiveSourceAccessed',
-                    'Date accessed or received',
-                    source?.accessedDate
+                        'archiveSourceAccessed',
+                        'Date accessed or received',
+                        source?.accessedDate
                       || '',
-                    {
-                      inputId:
+                        {
+                            inputId:
                         'archiveSourceAccessedInput',
 
-                      typeId:
+                            typeId:
                         'archiveSourceAccessedType',
 
-                      defaultDateType:
+                            defaultDateType:
                         'Exact date',
 
-                      placeholder:
+                            placeholder:
                         'e.g. 24 May 2026',
 
-                      className:
+                            className:
                         'archive-source-accessed-date',
 
-                      exactOnly:
+                            exactOnly:
                         true
-                    }
-                  )}
+                        }
+                    )}
                 </div>
               </section>
 
@@ -15796,9 +16509,9 @@
                 class="button primary"
                 type="submit">
                 ${
-                  editing
-                    ? 'Save source'
-                    : 'Create source'
+                    editing
+                        ? 'Save source'
+                        : 'Create source'
                 }
               </button>
             </div>
@@ -15806,234 +16519,243 @@
         </div>
       `);
 
-      const form =
+    const form =
         modalBackdrop.querySelector(
-          '[data-archive-source-form]'
+            '[data-archive-source-form]'
         );
 
-      bindGenealogyDateFields(
+    bindGenealogyDateFields(
         modalBackdrop
-      );
+    );
 
-      requestAnimationFrame(
-        () => {
-          modalBackdrop
-            .querySelector(
-              '#archiveSourceName'
-            )
-            ?.focus({
-              preventScroll: true
-            });
+    requestAnimationFrame(
+        () =>
+        {
+            modalBackdrop
+                .querySelector(
+                    '#archiveSourceName'
+                )
+                ?.focus({
+                    preventScroll: true
+                });
         }
-      );
+    );
 
-      form?.addEventListener(
+    form?.addEventListener(
         'submit',
-        event => {
-          event.preventDefault();
+        event =>
+        {
+            event.preventDefault();
 
-          const projectId =
-            source?.projectId
+            const projectId =
+                source?.projectId
             || requireActiveProjectId();
 
-          if (!projectId) {
-            return;
-          }
+            if (!projectId)
+            {
+                return;
+            }
 
-          const title =
-            form
-              .querySelector(
-                '[data-archive-source-title]'
-              )
-              .value
-              .trim();
+            const title =
+                form
+                    .querySelector(
+                        '[data-archive-source-title]'
+                    )
+                    .value
+                    .trim();
 
-          if (!title) {
-            return;
-          }
+            if (!title)
+            {
+                return;
+            }
 
-          const accessedDate =
-            collectArchiveSourceAccessedDate();
+            const accessedDate =
+                collectArchiveSourceAccessedDate();
 
-          if (accessedDate === null) {
-            form
-              .querySelector(
-                '[data-genealogy-date-input]'
-              )
-              ?.focus({
-                preventScroll: true
-              });
+            if (accessedDate === null)
+            {
+                form
+                    .querySelector(
+                        '[data-genealogy-date-input]'
+                    )
+                    ?.focus({
+                        preventScroll: true
+                    });
 
-            return;
-          }
+                return;
+            }
 
-          const now =
-            new Date().toISOString();
+            const now =
+                new Date().toISOString();
 
-          const target =
-            source
+            const target =
+                source
             || {
-              id:
+                id:
                 createRuntimeId(
-                  'source'
+                    'source'
                 ),
 
-              projectId,
+                projectId,
 
-              favorite:
+                favorite:
                 false,
 
-              createdAt:
+                createdAt:
                 now
             };
 
-          target.title =
-            title;
+            target.title =
+                title;
 
-          target.category =
-            form
-              .querySelector(
-                '[data-archive-source-form-category]'
-              )
-              .value;
+            target.category =
+                form
+                    .querySelector(
+                        '[data-archive-source-form-category]'
+                    )
+                    .value;
 
-          target.providedBy =
-            form
-              .querySelector(
-                '[data-archive-source-provided-by]'
-              )
-              .value
-              .trim();
+            target.providedBy =
+                form
+                    .querySelector(
+                        '[data-archive-source-provided-by]'
+                    )
+                    .value
+                    .trim();
 
-          target.location =
-            form
-              .querySelector(
-                '[data-archive-source-location]'
-              )
-              .value
-              .trim();
+            target.location =
+                form
+                    .querySelector(
+                        '[data-archive-source-location]'
+                    )
+                    .value
+                    .trim();
 
-          target.reference =
-            form
-              .querySelector(
-                '[data-archive-source-reference]'
-              )
-              .value
-              .trim();
+            target.reference =
+                form
+                    .querySelector(
+                        '[data-archive-source-reference]'
+                    )
+                    .value
+                    .trim();
 
-          target.url =
-            form
-              .querySelector(
-                '[data-archive-source-url]'
-              )
-              .value
-              .trim();
+            target.url =
+                form
+                    .querySelector(
+                        '[data-archive-source-url]'
+                    )
+                    .value
+                    .trim();
 
-          target.accessedDate =
-            accessedDate;
+            target.accessedDate =
+                accessedDate;
 
-          target.notes =
-            form
-              .querySelector(
-                '[data-archive-source-notes]'
-              )
-              .value
-              .trim();
+            target.notes =
+                form
+                    .querySelector(
+                        '[data-archive-source-notes]'
+                    )
+                    .value
+                    .trim();
 
-          target.updatedAt =
-            now;
+            target.updatedAt =
+                now;
 
-          const created =
-            !source;
+            const created =
+                !source;
 
-          if (created) {
-            sampleData.sources.unshift(
-              target
-            );
-          }
+            if (created)
+            {
+                sampleData.sources.unshift(
+                    target
+                );
+            }
 
-          if (
-            created
+            if (
+                created
             && typeof onCreated
               === 'function'
-          ) {
+            )
+            {
+                closeModal();
+
+                onCreated(
+                    target
+                );
+
+                return;
+            }
+
+            state.archiveView =
+                'sources';
+
+            state.archiveSelectedSourceId =
+                target.id;
+
+            state.archiveSearch =
+                '';
+
             closeModal();
+            renderArchive();
 
-            onCreated(
-              target
+            showToast(
+                editing
+                    ? 'Source updated.'
+                    : 'Source created.'
             );
-
-            return;
-          }
-
-          state.archiveView =
-            'sources';
-
-          state.archiveSelectedSourceId =
-            target.id;
-
-          state.archiveSearch =
-            '';
-
-          closeModal();
-          renderArchive();
-
-          showToast(
-            editing
-              ? 'Source updated.'
-              : 'Source created.'
-          );
         }
-      );
-    }
+    );
+}
 
-    function openArchiveRenameItemModal(
-      type,
-      id
-    ) {
-      const file =
+function openArchiveRenameItemModal(
+    type,
+    id
+)
+{
+    const file =
         type === 'file'
-          ? archiveFileById(
-              id
+            ? archiveFileById(
+                id
             )
-          : null;
+            : null;
 
-      const folder =
+    const folder =
         type === 'folder'
-          ? archiveFolderById(
-              id
+            ? archiveFolderById(
+                id
             )
-          : null;
+            : null;
 
-      const item =
+    const item =
         file
         || folder;
 
-      if (!item) {
+    if (!item)
+    {
         return;
-      }
+    }
 
-      const itemType =
+    const itemType =
         file
-          ? 'file'
-          : 'folder';
+            ? 'file'
+            : 'folder';
 
-      const currentName =
+    const currentName =
         file?.name
         || folder?.name
         || '';
 
-      const title =
+    const title =
         file
-          ? 'Rename file'
-          : 'Rename folder';
+            ? 'Rename file'
+            : 'Rename folder';
 
-      const description =
+    const description =
         file
-          ? 'Update the file name without changing its contents, folder, or links.'
-          : 'Update the folder name without changing its contents or location.';
+            ? 'Update the file name without changing its contents, folder, or links.'
+            : 'Update the folder name without changing its contents or location.';
 
-      openModal(`
+    openModal(`
         <div
           class="modal"
           role="dialog"
@@ -16046,13 +16768,13 @@
                 id="archiveRenameItemTitle">
 
                 ${escapeHtml(
-                  title
+                    title
                 )}
               </h2>
 
               <p>
                 ${escapeHtml(
-                  description
+                    description
                 )}
               </p>
             </div>
@@ -16083,8 +16805,8 @@
                   required
                   maxlength="220"
                   value="${escapeHtml(
-                    currentName
-                  )}">
+                        currentName
+                    )}">
               </div>
             </div>
 
@@ -16108,321 +16830,344 @@
         </div>
       `);
 
-      const form =
+    const form =
         modalBackdrop.querySelector(
-          '[data-archive-rename-item-form]'
+            '[data-archive-rename-item-form]'
         );
 
-      const input =
+    const input =
         form?.querySelector(
-          '#archiveRenameItemValue'
+            '#archiveRenameItemValue'
         );
 
-      form?.addEventListener(
+    form?.addEventListener(
         'submit',
-        event => {
-          event.preventDefault();
+        event =>
+        {
+            event.preventDefault();
 
-          const value =
-            input
-              ?.value
-              .trim()
+            const value =
+                input
+                    ?.value
+                    .trim()
             || '';
 
-          if (!value) {
+            if (!value)
+            {
+                input?.focus();
+
+                return;
+            }
+
+            const now =
+                new Date()
+                    .toISOString();
+
+            if (file)
+            {
+                file.name =
+                    value;
+
+                file.updatedAt =
+                    now;
+
+                file.updated =
+                    'Just now';
+            }
+
+            if (folder)
+            {
+                folder.name =
+                    value;
+
+                folder.updatedAt =
+                    now;
+            }
+
+            closeModal();
+            renderArchive();
+
+            showToast(
+                `${
+                    itemType === 'file'
+                        ? 'File'
+                        : 'Folder'
+                } renamed.`
+            );
+        }
+    );
+
+    requestAnimationFrame(
+        () =>
+        {
             input?.focus();
-
-            return;
-          }
-
-          const now =
-            new Date()
-              .toISOString();
-
-          if (file) {
-            file.name =
-              value;
-
-            file.updatedAt =
-              now;
-
-            file.updated =
-              'Just now';
-          }
-
-          if (folder) {
-            folder.name =
-              value;
-
-            folder.updatedAt =
-              now;
-          }
-
-          closeModal();
-          renderArchive();
-
-          showToast(
-            `${
-              itemType === 'file'
-                ? 'File'
-                : 'Folder'
-            } renamed.`
-          );
+            input?.select();
         }
-      );
+    );
+}
 
-      requestAnimationFrame(
-        () => {
-          input?.focus();
-          input?.select();
-        }
-      );
-    }
-
-    function archiveMoveFolderPath(
-      folderId
-    ) {
-      const folders =
+function archiveMoveFolderPath(
+    folderId
+)
+{
+    const folders =
         archiveFolderAncestors(
-          folderId
+            folderId
         );
 
-      return [
+    return [
         ARCHIVE_ROOT_LABEL,
 
         ...folders.map(
-          folder =>
-            folder.name
+            folder =>
+                folder.name
         )
-      ].join(
+    ].join(
         ' / '
-      );
-    }
+    );
+}
 
-    function archiveMoveCurrentFolderState({
-      movingFolder,
-      files
-    }) {
-      /*
+function archiveMoveCurrentFolderState({
+    movingFolder,
+    files
+})
+{
+    /*
         When moving a folder, the folder itself is
         the unavailable "Current folder" row.
       */
-      if (movingFolder) {
+    if (movingFolder)
+    {
         return {
-          hasCurrentFolder:
+            hasCurrentFolder:
             true,
 
-          folderId:
+            folderId:
             movingFolder.id
         };
-      }
+    }
 
-      /*
+    /*
         A single current folder exists only when
         all selected files share the same folder.
       */
-      const folderIds =
+    const folderIds =
         [
-          ...new Set(
-            files.map(file =>
-              archiveFileFolderId(
-                file
-              )
+            ...new Set(
+                files.map(file =>
+                    archiveFileFolderId(
+                        file
+                    )
+                )
             )
-          )
         ];
 
-      return {
+    return {
         hasCurrentFolder:
           folderIds.length === 1,
 
         folderId:
           folderIds.length === 1
-            ? folderIds[0]
-            : null
-      };
-    }
+              ? folderIds[0]
+              : null
+    };
+}
 
-    function archiveMoveNewFolderParentId({
-      movingFolder,
-      selectedId,
-      currentFolderState
-    }) {
-      /*
+function archiveMoveNewFolderParentId({
+    movingFolder,
+    selectedId,
+    currentFolderState
+})
+{
+    /*
         Create inside the explicitly selected
         destination whenever one exists.
       */
-      if (
+    if (
         archiveMoveHasDestination(
-          selectedId
+            selectedId
         )
-      ) {
+    )
+    {
         return selectedId;
-      }
+    }
 
-      /*
+    /*
         A new destination for a moving folder
         must not be created inside that folder.
         Default to its existing parent.
       */
-      if (movingFolder) {
+    if (movingFolder)
+    {
         return archiveFolderParentId(
-          movingFolder
+            movingFolder
         );
-      }
+    }
 
-      /*
+    /*
         For files from one location, creating a
         subfolder inside their current folder is
         a useful default.
       */
-      if (
+    if (
         currentFolderState
-          .hasCurrentFolder
-      ) {
+            .hasCurrentFolder
+    )
+    {
         return currentFolderState
-          .folderId;
-      }
+            .folderId;
+    }
 
-      /*
+    /*
         Mixed-origin bulk selection defaults to
         the Files root.
       */
-      return null;
-    }
+    return null;
+}
 
-    const ARCHIVE_FOLDER_DOUBLE_CLICK_MS =
-      420;
+const ARCHIVE_FOLDER_DOUBLE_CLICK_MS =
+    420;
 
-    let archiveLastFolderRowClick = {
-      folderId:
+let archiveLastFolderRowClick = {
+    folderId:
         null,
 
-      at:
+    at:
         0
-    };
+};
 
-    function archiveFolderRowWasDoubleClick(
-      folderId
-    ) {
-      const now =
+function archiveFolderRowWasDoubleClick(
+    folderId
+)
+{
+    const now =
         performance.now();
 
-      const repeated =
+    const repeated =
         archiveLastFolderRowClick
-          .folderId === folderId
+            .folderId === folderId
         && now
           - archiveLastFolderRowClick.at
           <= ARCHIVE_FOLDER_DOUBLE_CLICK_MS;
 
-      archiveLastFolderRowClick = {
+    archiveLastFolderRowClick = {
         folderId,
 
         at:
           now
-      };
+    };
 
-      return repeated;
-    }
+    return repeated;
+}
 
-    function resetArchiveFolderRowClick() {
-      archiveLastFolderRowClick = {
+function resetArchiveFolderRowClick()
+{
+    archiveLastFolderRowClick = {
         folderId:
           null,
 
         at:
           0
-      };
-    }
+    };
+}
 
-    function archiveMoveInitialRevealFolderId({
-      movingFolder,
-      files,
-      currentFolderState
-    }) {
-      if (movingFolder) {
+function archiveMoveInitialRevealFolderId({
+    movingFolder,
+    files,
+    currentFolderState
+})
+{
+    if (movingFolder)
+    {
         return movingFolder.id;
-      }
-
-      if (
-        currentFolderState
-          .hasCurrentFolder
-      ) {
-        return currentFolderState
-          .folderId;
-      }
-
-      return archiveFileFolderId(
-        files[0]
-      );
     }
 
-    function renderArchiveMoveItemSummary({
-      movingFolder,
-      files
-    }) {
-      let itemIcon =
+    if (
+        currentFolderState
+            .hasCurrentFolder
+    )
+    {
+        return currentFolderState
+            .folderId;
+    }
+
+    return archiveFileFolderId(
+        files[0]
+    );
+}
+
+function renderArchiveMoveItemSummary({
+    movingFolder,
+    files
+})
+{
+    let itemIcon =
         icon.file;
 
-      let itemName =
+    let itemName =
         '';
 
-      let itemMeta =
+    let itemMeta =
         '';
 
-      if (movingFolder) {
+    if (movingFolder)
+    {
         const impact =
-          archiveFolderImpact(
-            movingFolder.id
-          );
+            archiveFolderImpact(
+                movingFolder.id
+            );
 
         itemIcon =
-          icon.folder;
+            icon.folder;
 
         itemName =
-          movingFolder.name
+            movingFolder.name
           || 'Untitled folder';
 
         itemMeta =
-          `${impact.files} ${
-            impact.files === 1
-              ? 'file'
-              : 'files'
-          } · ${impact.folders} ${
-            impact.folders === 1
-              ? 'subfolder'
-              : 'subfolders'
-          }`;
-      } else if (
+            `${impact.files} ${
+                impact.files === 1
+                    ? 'file'
+                    : 'files'
+            } · ${impact.folders} ${
+                impact.folders === 1
+                    ? 'subfolder'
+                    : 'subfolders'
+            }`;
+    }
+    else if (
         files.length === 1
-      ) {
+    )
+    {
         const file =
-          files[0];
+            files[0];
 
         itemName =
-          file.name
+            file.name
           || 'Untitled file';
 
         itemMeta =
-          [
-            archiveFileTypeLabel(
-              file
-            ),
+            [
+                archiveFileTypeLabel(
+                    file
+                ),
 
-            file.size
+                file.size
             || ''
-          ]
-            .filter(Boolean)
-            .join(' · ');
-      } else {
+            ]
+                .filter(Boolean)
+                .join(' · ');
+    }
+    else
+    {
         itemName =
-          `${files.length} files`;
+            `${files.length} files`;
 
         itemMeta =
-          'Selected files';
-      }
+            'Selected files';
+    }
 
-      return `
+    return `
         <div
           class="
             archive-move-item-summary
@@ -16457,21 +17202,21 @@
 
               <strong>
                 ${escapeHtml(
-                  itemName
+                    itemName
                 )}
               </strong>
 
               ${
-                itemMeta
-                  ? `
+                    itemMeta
+                        ? `
                     <span>
                       ${escapeHtml(
-                        itemMeta
-                      )}
+                            itemMeta
+                        )}
                     </span>
                   `
-                  : ''
-              }
+                        : ''
+                }
             </span>
 
             <button
@@ -16492,69 +17237,72 @@
           </div>
         </div>
       `;
-    }
+}
 
-    function archiveMoveSelectionStats({
-      movingFolder,
-      files,
-      selectedId
-    }) {
-      if (
+function archiveMoveSelectionStats({
+    movingFolder,
+    files,
+    selectedId
+})
+{
+    if (
         !archiveMoveHasDestination(
-          selectedId
+            selectedId
         )
-      ) {
+    )
+    {
         return {
-          canMove:
+            canMove:
             false,
 
-          movableFiles:
+            movableFiles:
             [],
 
-          movableCount:
+            movableCount:
             0,
 
-          alreadyThere:
+            alreadyThere:
             0
         };
-      }
+    }
 
-      if (movingFolder) {
+    if (movingFolder)
+    {
         const currentParentId =
-          archiveFolderParentId(
-            movingFolder
-          );
+            archiveFolderParentId(
+                movingFolder
+            );
 
         const canMove =
-          currentParentId
+            currentParentId
             !== selectedId;
 
         return {
-          canMove,
+            canMove,
 
-          movableFiles:
+            movableFiles:
             [],
 
-          movableCount:
+            movableCount:
             canMove
-              ? 1
-              : 0,
+                ? 1
+                : 0,
 
-          alreadyThere:
+            alreadyThere:
             canMove
-              ? 0
-              : 1
+                ? 0
+                : 1
         };
-      }
+    }
 
-      const movableFiles =
+    const movableFiles =
         files.filter(file =>
-          archiveFileFolderId(
-            file
-          ) !== selectedId
+            archiveFileFolderId(
+                file
+            ) !== selectedId
         );
 
-      return {
+    return {
         canMove:
           movableFiles.length > 0,
 
@@ -16566,76 +17314,80 @@
         alreadyThere:
           files.length
           - movableFiles.length
-      };
+    };
+}
+
+function archiveMoveHighlightMatch(
+    label,
+    query
+)
+{
+    const normalizedLabel =
+        String(
+            label || ''
+        );
+
+    const normalizedQuery =
+        String(
+            query || ''
+        )
+            .trim();
+
+    if (!normalizedQuery)
+    {
+        return escapeHtml(
+            normalizedLabel
+        );
     }
 
-    function archiveMoveHighlightMatch(
-      label,
-      query
-    ) {
-      const normalizedLabel =
-        String(
-          label || ''
-        );
-
-      const normalizedQuery =
-        String(
-          query || ''
-        )
-          .trim();
-
-      if (!normalizedQuery) {
-        return escapeHtml(
-          normalizedLabel
-        );
-      }
-
-      const index =
+    const index =
         normalizedLabel
-          .toLowerCase()
-          .indexOf(
-            normalizedQuery
-              .toLowerCase()
-          );
+            .toLowerCase()
+            .indexOf(
+                normalizedQuery
+                    .toLowerCase()
+            );
 
-      if (index < 0) {
+    if (index < 0)
+    {
         return escapeHtml(
-          normalizedLabel
+            normalizedLabel
         );
-      }
+    }
 
-      const before =
+    const before =
         normalizedLabel.slice(
-          0,
-          index
+            0,
+            index
         );
 
-      const match =
+    const match =
         normalizedLabel.slice(
-          index,
-          index
+            index,
+            index
             + normalizedQuery.length
         );
 
-      const after =
+    const after =
         normalizedLabel.slice(
-          index
+            index
             + normalizedQuery.length
         );
 
-      return `
+    return `
         ${escapeHtml(
-          before
+            before
         )}<mark>${escapeHtml(
-          match
+            match
         )}</mark>${escapeHtml(
-          after
+            after
         )}
       `;
-    }
+}
 
-    function renderArchiveMoveSelectedMark() {
-      return `
+function renderArchiveMoveSelectedMark()
+{
+    return `
         <span
           class="
             archive-move-selected-mark
@@ -16645,54 +17397,56 @@
           ${icon.check}
         </span>
       `;
-    }
+}
 
-    function renderArchiveMoveTreeFolderRows({
-      parentId,
-      depth,
-      selectedId,
-      expandedIds,
-      movingFolderId,
-      currentFolderState
-    }) {
-      return archiveFolderChildren(
+function renderArchiveMoveTreeFolderRows({
+    parentId,
+    depth,
+    selectedId,
+    expandedIds,
+    movingFolderId,
+    currentFolderState
+})
+{
+    return archiveFolderChildren(
         parentId
-      )
-        .map(folder => {
-          const isMovingFolder =
-            folder.id
+    )
+        .map(folder =>
+        {
+            const isMovingFolder =
+                folder.id
               === movingFolderId;
 
-          const isCurrentFolder =
-            Boolean(
-              currentFolderState
-                ?.hasCurrentFolder
+            const isCurrentFolder =
+                Boolean(
+                    currentFolderState
+                        ?.hasCurrentFolder
               && folder.id
                 === currentFolderState
-                  .folderId
-            );
+                    .folderId
+                );
 
-          const children =
-            archiveFolderChildren(
-              folder.id
-            );
+            const children =
+                archiveFolderChildren(
+                    folder.id
+                );
 
-          const hasChildren =
-            children.length > 0;
+            const hasChildren =
+                children.length > 0;
 
-          const expanded =
-            expandedIds.has(
-              folder.id
-            );
+            const expanded =
+                expandedIds.has(
+                    folder.id
+                );
 
-          const selected =
-            archiveMoveHasDestination(
-              selectedId
-            )
+            const selected =
+                archiveMoveHasDestination(
+                    selectedId
+                )
             && selectedId
               === folder.id;
 
-          return `
+            return `
             <div
               class="
                 archive-move-tree-row
@@ -16703,37 +17457,37 @@
               ">
 
               ${
-                hasChildren
+                    hasChildren
                 && !isMovingFolder
-                  ? `
+                        ? `
                     <button
                       class="
                         archive-move-tree-toggle
                         ${
-                          expanded
-                            ? 'is-expanded'
-                            : ''
+                            expanded
+                                ? 'is-expanded'
+                                : ''
                         }
                       "
                       type="button"
                       data-archive-move-toggle="${escapeHtml(
-                        folder.id
-                      )}"
+                            folder.id
+                        )}"
                       aria-label="${
-                        expanded
-                          ? 'Collapse'
-                          : 'Expand'
-                      } ${escapeHtml(
-                        folder.name
-                      )}"
+                            expanded
+                                ? 'Collapse'
+                                : 'Expand'
+                        } ${escapeHtml(
+                            folder.name
+                        )}"
                       aria-expanded="${String(
-                        expanded
-                      )}">
+                            expanded
+                        )}">
 
                       ${icon.chevron}
                     </button>
                   `
-                  : `
+                        : `
                     <span
                       class="
                         archive-move-tree-toggle
@@ -16742,35 +17496,35 @@
                       aria-hidden="true">
                     </span>
                   `
-              }
+                }
 
               <button
                 class="
                   archive-move-tree-main
 
                   ${
-                    selected
-                      ? 'is-selected'
-                      : ''
-                  }
+                        selected
+                            ? 'is-selected'
+                            : ''
+                    }
 
                   ${
-                    isCurrentFolder
-                      ? 'is-current-folder'
-                      : ''
-                  }
+                        isCurrentFolder
+                            ? 'is-current-folder'
+                            : ''
+                    }
                 "
                 type="button"
                 data-archive-move-select="${escapeHtml(
-                  folder.id
+                    folder.id
                 )}"
                 aria-pressed="${String(
-                  selected
+                    selected
                 )}"
                 ${
-                  isCurrentFolder
-                    ? 'disabled aria-disabled="true"'
-                    : ''
+                    isCurrentFolder
+                        ? 'disabled aria-disabled="true"'
+                        : ''
                 }>
 
                 ${icon.folder}
@@ -16782,90 +17536,91 @@
 
                   <strong>
                     ${escapeHtml(
-                      folder.name
+                        folder.name
                     )}
                   </strong>
 
                   ${
-                    isCurrentFolder
-                      ? `
+                        isCurrentFolder
+                            ? `
                         <span>
                           Current folder
                         </span>
                       `
-                      : ''
-                  }
+                            : ''
+                    }
                 </span>
 
                 ${
-                  selected
-                    ? renderArchiveMoveSelectedMark()
-                    : ''
+                    selected
+                        ? renderArchiveMoveSelectedMark()
+                        : ''
                 }
               </button>
             </div>
 
             ${
-              hasChildren
+                hasChildren
               && expanded
               && !isMovingFolder
-                ? renderArchiveMoveTreeFolderRows({
-                    parentId:
+                    ? renderArchiveMoveTreeFolderRows({
+                        parentId:
                       folder.id,
 
-                    depth:
+                        depth:
                       depth + 1,
 
-                    selectedId,
+                        selectedId,
 
-                    expandedIds,
+                        expandedIds,
 
-                    movingFolderId,
+                        movingFolderId,
 
-                    currentFolderState
-                  })
-                : ''
+                        currentFolderState
+                    })
+                    : ''
             }
           `;
         })
         .join('');
-    }
+}
 
-    function renderArchiveMoveTree({
-      selectedId,
-      expandedIds,
-      movingFolderId,
-      currentFolderState
-    }) {
-      const rootExpanded =
+function renderArchiveMoveTree({
+    selectedId,
+    expandedIds,
+    movingFolderId,
+    currentFolderState
+})
+{
+    const rootExpanded =
         expandedIds.has(
-          null
+            null
         );
 
-      const rootCurrent =
+    const rootCurrent =
         Boolean(
-          currentFolderState
-            ?.hasCurrentFolder
-          && archiveIsRootLocation(
             currentFolderState
-              .folderId
+                ?.hasCurrentFolder
+          && archiveIsRootLocation(
+              currentFolderState
+                  .folderId
           )
         );
 
-      const rootSelected =
+    const rootSelected =
         archiveMoveHasDestination(
-          selectedId
+            selectedId
         )
         && archiveIsRootLocation(
-          selectedId
+            selectedId
         );
 
-      const rootHasChildren =
+    const rootHasChildren =
         archiveFolderChildren(
-          null
+            null
         ).length > 0;
 
-      return `
+    return `
         <div
           class="
             archive-move-tree
@@ -16881,32 +17636,32 @@
             ">
 
             ${
-              rootHasChildren
-                ? `
+                rootHasChildren
+                    ? `
                   <button
                     class="
                       archive-move-tree-toggle
                       ${
-                        rootExpanded
-                          ? 'is-expanded'
-                          : ''
-                      }
+                            rootExpanded
+                                ? 'is-expanded'
+                                : ''
+                        }
                     "
                     type="button"
                     data-archive-move-toggle="${ARCHIVE_ROOT_PICKER_VALUE}"
                     aria-label="${
-                      rootExpanded
-                        ? `Collapse ${ARCHIVE_ROOT_LABEL}`
-                        : `Expand ${ARCHIVE_ROOT_LABEL}`
+                        rootExpanded
+                            ? `Collapse ${ARCHIVE_ROOT_LABEL}`
+                            : `Expand ${ARCHIVE_ROOT_LABEL}`
                     }"
                     aria-expanded="${String(
-                      rootExpanded
+                        rootExpanded
                     )}">
 
                     ${icon.chevron}
                   </button>
                 `
-                : `
+                    : `
                   <span
                     class="
                       archive-move-tree-toggle
@@ -16922,27 +17677,27 @@
                 archive-move-tree-main
 
                 ${
-                  rootSelected
-                    ? 'is-selected'
-                    : ''
+                    rootSelected
+                        ? 'is-selected'
+                        : ''
                 }
 
                 ${
-                  rootCurrent
-                    ? 'is-current-folder'
-                    : ''
+                    rootCurrent
+                        ? 'is-current-folder'
+                        : ''
                 }
               "
               type="button"
               data-archive-move-select="${ARCHIVE_ROOT_PICKER_VALUE}"
               aria-pressed="${String(
-                rootSelected
-              )}"
+                    rootSelected
+                )}"
               ${
-                rootCurrent
-                  ? 'disabled aria-disabled="true"'
-                  : ''
-              }>
+                    rootCurrent
+                        ? 'disabled aria-disabled="true"'
+                        : ''
+                }>
 
               ${icon.folder}
 
@@ -16957,117 +17712,119 @@
 
                 <span>
                   ${
-                    rootCurrent
-                      ? 'Current folder'
-                      : 'Top level'
-                  }
+                        rootCurrent
+                            ? 'Current folder'
+                            : 'Top level'
+                    }
                 </span>
               </span>
 
               ${
-                rootSelected
-                  ? renderArchiveMoveSelectedMark()
-                  : ''
-              }
+                    rootSelected
+                        ? renderArchiveMoveSelectedMark()
+                        : ''
+                }
             </button>
           </div>
 
           ${
-            rootExpanded
-              ? renderArchiveMoveTreeFolderRows({
-                  parentId:
+                rootExpanded
+                    ? renderArchiveMoveTreeFolderRows({
+                        parentId:
                     null,
 
-                  depth:
+                        depth:
                     1,
 
-                  selectedId,
+                        selectedId,
 
-                  expandedIds,
+                        expandedIds,
 
-                  movingFolderId,
+                        movingFolderId,
 
-                  currentFolderState
-                })
-              : ''
-          }
+                        currentFolderState
+                    })
+                    : ''
+            }
         </div>
       `;
-    }
+}
 
-    function renderArchiveMoveSearchResults({
-      query,
-      selectedId,
-      movingFolder,
-      currentFolderState
-    }) {
-      const normalizedQuery =
+function renderArchiveMoveSearchResults({
+    query,
+    selectedId,
+    movingFolder,
+    currentFolderState
+})
+{
+    const normalizedQuery =
         String(
-          query || ''
+            query || ''
         )
-          .trim()
-          .toLowerCase();
+            .trim()
+            .toLowerCase();
 
-      const blockedDescendantIds =
+    const blockedDescendantIds =
         new Set(
-          movingFolder
-            ? archiveFolderDescendantIds(
-                movingFolder.id,
-                {
-                  includeSelf:
+            movingFolder
+                ? archiveFolderDescendantIds(
+                    movingFolder.id,
+                    {
+                        includeSelf:
                     false
-                }
-              )
-            : []
+                    }
+                )
+                : []
         );
 
-      const rootMatches =
+    const rootMatches =
         `${ARCHIVE_ROOT_LABEL} files top level`
-          .toLowerCase()
-          .includes(
-            normalizedQuery
-          );
+            .toLowerCase()
+            .includes(
+                normalizedQuery
+            );
 
-      const rootCurrent =
+    const rootCurrent =
         Boolean(
-          currentFolderState
-            ?.hasCurrentFolder
-          && archiveIsRootLocation(
             currentFolderState
-              .folderId
+                ?.hasCurrentFolder
+          && archiveIsRootLocation(
+              currentFolderState
+                  .folderId
           )
         );
 
-      const rootSelected =
+    const rootSelected =
         archiveMoveHasDestination(
-          selectedId
+            selectedId
         )
         && archiveIsRootLocation(
-          selectedId
+            selectedId
         );
 
-      const folders =
+    const folders =
         archiveFlattenFolders()
-          .map(item =>
-            item.folder
-          )
-          .filter(folder =>
-            !blockedDescendantIds.has(
-              folder.id
+            .map(item =>
+                item.folder
             )
+            .filter(folder =>
+                !blockedDescendantIds.has(
+                    folder.id
+                )
             && String(
-              folder.name || ''
+                folder.name || ''
             )
-              .toLowerCase()
-              .includes(
-                normalizedQuery
-              )
-          );
+                .toLowerCase()
+                .includes(
+                    normalizedQuery
+                )
+            );
 
-      if (
+    if (
         !rootMatches
         && !folders.length
-      ) {
+    )
+    {
         return `
           <div
             class="
@@ -17075,47 +17832,47 @@
             ">
 
             No folders match “${escapeHtml(
-              query
+                query
             )}”.
           </div>
         `;
-      }
+    }
 
-      return `
+    return `
         <div
           class="
             archive-move-search-results
           ">
 
           ${
-            rootMatches
-              ? `
+                rootMatches
+                    ? `
                 <button
                   class="
                     archive-move-search-result
 
                     ${
-                      rootSelected
-                        ? 'is-selected'
-                        : ''
+                        rootSelected
+                            ? 'is-selected'
+                            : ''
                     }
 
                     ${
-                      rootCurrent
-                        ? 'is-current-folder'
-                        : ''
+                        rootCurrent
+                            ? 'is-current-folder'
+                            : ''
                     }
                   "
                   type="button"
                   data-archive-move-select="${ARCHIVE_ROOT_PICKER_VALUE}"
                   aria-pressed="${String(
-                    rootSelected
-                  )}"
+                        rootSelected
+                    )}"
                   ${
-                    rootCurrent
-                      ? 'disabled aria-disabled="true"'
-                      : ''
-                  }>
+                        rootCurrent
+                            ? 'disabled aria-disabled="true"'
+                            : ''
+                    }>
 
                   ${icon.folder}
 
@@ -17126,77 +17883,78 @@
 
                     <strong>
                       ${archiveMoveHighlightMatch(
-                        ARCHIVE_ROOT_LABEL,
-                        query
-                      )}
+                            ARCHIVE_ROOT_LABEL,
+                            query
+                        )}
                     </strong>
 
                     <span>
                       ${
-                        rootCurrent
-                          ? 'Current folder'
-                          : 'Top level'
-                      }
+                            rootCurrent
+                                ? 'Current folder'
+                                : 'Top level'
+                        }
                     </span>
                   </span>
 
                   ${
-                    rootSelected
-                      ? renderArchiveMoveSelectedMark()
-                      : ''
-                  }
+                        rootSelected
+                            ? renderArchiveMoveSelectedMark()
+                            : ''
+                    }
                 </button>
               `
-              : ''
-          }
+                    : ''
+            }
 
           ${folders
-            .map(folder => {
-              const isCurrentFolder =
-                Boolean(
-                  currentFolderState
-                    ?.hasCurrentFolder
+                .map(folder =>
+                {
+                    const isCurrentFolder =
+                        Boolean(
+                            currentFolderState
+                                ?.hasCurrentFolder
                   && folder.id
                     === currentFolderState
-                      .folderId
-                );
+                        .folderId
+                        );
 
-              const selected =
-                archiveMoveHasDestination(
-                  selectedId
-                )
+                    const selected =
+                        archiveMoveHasDestination(
+                            selectedId
+                        )
                 && selectedId
                   === folder.id;
 
-              return `
+                    return `
                 <button
                   class="
                     archive-move-search-result
 
                     ${
-                      selected
-                        ? 'is-selected'
-                        : ''
+                        selected
+                            ? 'is-selected'
+                            : ''
                     }
 
                     ${
-                      isCurrentFolder
-                        ? 'is-current-folder'
-                        : ''
+                        isCurrentFolder
+                            ? 'is-current-folder'
+                            : ''
                     }
                   "
                   type="button"
                   data-archive-move-select="${escapeHtml(
-                    folder.id
-                  )}"
+                        folder.id
+                    )}"
                   aria-pressed="${String(
-                    selected
-                  )}"
+                        selected
+                    )}"
                   ${
-                    isCurrentFolder
-                      ? 'disabled aria-disabled="true"'
-                      : ''
-                  }>
+                        isCurrentFolder
+                            ? 'disabled aria-disabled="true"'
+                            : ''
+                    }>
 
                   ${icon.folder}
 
@@ -17207,47 +17965,48 @@
 
                     <strong>
                       ${archiveMoveHighlightMatch(
-                        folder.name,
-                        query
-                      )}
+                            folder.name,
+                            query
+                        )}
                     </strong>
 
                     <span>
                       ${
-                        isCurrentFolder
-                          ? 'Current folder'
-                          : escapeHtml(
-                              archiveMoveFolderPath(
-                                archiveFolderParentId(
-                                  folder
+                            isCurrentFolder
+                                ? 'Current folder'
+                                : escapeHtml(
+                                    archiveMoveFolderPath(
+                                        archiveFolderParentId(
+                                            folder
+                                        )
+                                    )
                                 )
-                              )
-                            )
-                      }
+                        }
                     </span>
                   </span>
 
                   ${
-                    selected
-                      ? renderArchiveMoveSelectedMark()
-                      : ''
-                  }
+                        selected
+                            ? renderArchiveMoveSelectedMark()
+                            : ''
+                    }
                 </button>
               `;
-            })
-            .join('')}
+                })
+                .join('')}
         </div>
       `;
-    }
+}
 
-    function renderArchiveMovePicker({
-      query,
-      selectedId,
-      expandedIds,
-      movingFolder,
-      currentFolderState
-    }) {
-      return `
+function renderArchiveMovePicker({
+    query,
+    selectedId,
+    expandedIds,
+    movingFolder,
+    currentFolderState
+})
+{
+    return `
         <div
           class="
             archive-move-picker
@@ -17255,110 +18014,114 @@
           data-archive-move-picker>
 
           ${
-            String(
-              query || ''
-            ).trim()
-              ? renderArchiveMoveSearchResults({
-                  query,
-                  selectedId,
-                  movingFolder,
-                  currentFolderState
-                })
-              : renderArchiveMoveTree({
-                  selectedId,
-                  expandedIds,
+                String(
+                    query || ''
+                ).trim()
+                    ? renderArchiveMoveSearchResults({
+                        query,
+                        selectedId,
+                        movingFolder,
+                        currentFolderState
+                    })
+                    : renderArchiveMoveTree({
+                        selectedId,
+                        expandedIds,
 
-                  movingFolderId:
+                        movingFolderId:
                     movingFolder?.id
                     || '',
 
-                  currentFolderState
-                })
-          }
+                        currentFolderState
+                    })
+            }
         </div>
       `;
-    }
+}
 
-    function openArchiveMoveModal({
-      fileIds = [],
-      folderId = ''
-    } = {}) {
-      const movingFolder =
+function openArchiveMoveModal({
+    fileIds = [],
+    folderId = ''
+} = {})
+{
+    const movingFolder =
         folderId
-          ? archiveFolderById(
-              folderId
+            ? archiveFolderById(
+                folderId
             )
-          : null;
+            : null;
 
-      const files =
+    const files =
         [
-          ...new Set(
-            fileIds
-          )
-        ]
-          .map(id =>
-            archiveFileById(
-              id
+            ...new Set(
+                fileIds
             )
-          )
-          .filter(Boolean);
+        ]
+            .map(id =>
+                archiveFileById(
+                    id
+                )
+            )
+            .filter(Boolean);
 
-      if (
+    if (
         !movingFolder
         && !files.length
-      ) {
+    )
+    {
         return;
-      }
+    }
 
-      const currentFolderState =
+    const currentFolderState =
         archiveMoveCurrentFolderState({
-          movingFolder,
-          files
+            movingFolder,
+            files
         });
 
-      let selectedId =
+    let selectedId =
         ARCHIVE_MOVE_NO_DESTINATION;
 
-      let query =
+    let query =
         '';
 
-      let creatingFolder =
+    let creatingFolder =
         false;
 
-      const expandedIds =
+    const expandedIds =
         new Set([
-          null
+            null
         ]);
 
-      const revealFolderId =
+    const revealFolderId =
         archiveMoveInitialRevealFolderId({
-          movingFolder,
-          files,
-          currentFolderState
+            movingFolder,
+            files,
+            currentFolderState
         });
 
-      archiveFolderAncestors(
+    archiveFolderAncestors(
         revealFolderId
-      ).forEach(folder => {
+    ).forEach(folder =>
+    {
         expandedIds.add(
-          folder.id
+            folder.id
         );
-      });
+    });
 
-      if (revealFolderId) {
+    if (revealFolderId)
+    {
         expandedIds.add(
-          revealFolderId
+            revealFolderId
         );
-      }
+    }
 
-      const title =
+    const title =
         movingFolder
-          ? 'Move folder'
-          : files.length === 1
-            ? 'Move file'
-            : `Move ${files.length} files`;
+            ? 'Move folder'
+            : files.length === 1
+                ? 'Move file'
+                : `Move ${files.length} files`;
 
-      openModal(`
+    openModal(`
         <div
           class="
             modal
@@ -17374,7 +18137,7 @@
                 id="archiveMoveTitle">
 
                 ${escapeHtml(
-                  title
+                    title
                 )}
               </h2>
 
@@ -17399,8 +18162,8 @@
             ">
 
             ${renderArchiveMoveItemSummary({
-              movingFolder,
-              files
+                movingFolder,
+                files
             })}
 
             <div
@@ -17420,66 +18183,68 @@
         </div>
       `);
 
-      const modal =
+    const modal =
         modalBackdrop.querySelector(
-          '.archive-move-modal'
+            '.archive-move-modal'
         );
 
-      const contentRoot =
+    const contentRoot =
         modal?.querySelector(
-          '[data-archive-move-content]'
+            '[data-archive-move-content]'
         );
 
-      const footerRoot =
+    const footerRoot =
         modal?.querySelector(
-          '[data-archive-move-footer]'
+            '[data-archive-move-footer]'
         );
 
-      const getNewFolderParentId =
+    const getNewFolderParentId =
         () =>
-          archiveMoveNewFolderParentId({
-            movingFolder,
-            selectedId,
-            currentFolderState
-          });
-
-      const renderMoveContent =
-        ({
-          focusSearch =
-            false,
-
-          focusFolderName =
-            false
-        } = {}) => {
-          const stats =
-            archiveMoveSelectionStats({
-              movingFolder,
-              files,
-              selectedId
+            archiveMoveNewFolderParentId({
+                movingFolder,
+                selectedId,
+                currentFolderState
             });
 
-      const hasDestination =
-        archiveMoveHasDestination(
-          selectedId
-        );
+    const renderMoveContent =
+        ({
+            focusSearch =
+                false,
 
-      const destinationPath =
-        hasDestination
-          ? archiveMoveFolderPath(
-              selectedId
-            )
-          : 'Choose a folder';
+            focusFolderName =
+                false
+        } = {}) =>
+        {
+            const stats =
+                archiveMoveSelectionStats({
+                    movingFolder,
+                    files,
+                    selectedId
+                });
 
-      const newFolderParentId =
-        getNewFolderParentId();
+            const hasDestination =
+                archiveMoveHasDestination(
+                    selectedId
+                );
 
-      const newFolderParentPath =
-        archiveMoveFolderPath(
-          newFolderParentId
-        );
+            const destinationPath =
+                hasDestination
+                    ? archiveMoveFolderPath(
+                        selectedId
+                    )
+                    : 'Choose a folder';
 
-          if (contentRoot) {
-            contentRoot.innerHTML = `
+            const newFolderParentId =
+                getNewFolderParentId();
+
+            const newFolderParentPath =
+                archiveMoveFolderPath(
+                    newFolderParentId
+                );
+
+            if (contentRoot)
+            {
+                contentRoot.innerHTML = `
               <label
                 class="
                   app-search-field
@@ -17494,8 +18259,8 @@
                   data-archive-move-search
                   placeholder="Search folders"
                   value="${escapeHtml(
-                    query
-                  )}">
+                        query
+                    )}">
               </label>
 
               <div
@@ -17517,21 +18282,21 @@
                     archive-move-destination-value
 
                     ${
-                      hasDestination
-                        ? ''
-                        : 'is-placeholder'
+                        hasDestination
+                            ? ''
+                            : 'is-placeholder'
                     }
                   ">
 
                   ${escapeHtml(
-                    destinationPath
-                  )}
+                        destinationPath
+                    )}
                 </strong>
               </div>
 
               ${
-                creatingFolder
-                  ? `
+                    creatingFolder
+                        ? `
                     <form
                       class="
                         archive-move-new-folder-form
@@ -17549,8 +18314,8 @@
 
                         <strong>
                           ${escapeHtml(
-                            newFolderParentPath
-                          )}
+                                newFolderParentPath
+                            )}
                         </strong>
                       </div>
 
@@ -17588,8 +18353,8 @@
                       </div>
                     </form>
                   `
-                  : ''
-              }
+                        : ''
+                }
 
               <div
                 class="
@@ -17600,24 +18365,25 @@
               </div>
 
               ${renderArchiveMovePicker({
-                query,
-                selectedId,
-                expandedIds,
-                movingFolder,
-                currentFolderState
-              })}
+                    query,
+                    selectedId,
+                    expandedIds,
+                    movingFolder,
+                    currentFolderState
+                })}
             `;
-          }
+            }
 
-          if (footerRoot) {
-            const buttonLabel =
-              !archiveMoveHasDestination(selectedId)
+            if (footerRoot)
+            {
+                const buttonLabel =
+                    !archiveMoveHasDestination(selectedId)
               || movingFolder
               || files.length === 1
-                ? 'Move here'
-                : `Move ${stats.movableCount} files`;
+                        ? 'Move here'
+                        : `Move ${stats.movableCount} files`;
 
-            footerRoot.innerHTML = `
+                footerRoot.innerHTML = `
               <button
                 class="button secondary"
                 type="button"
@@ -17634,565 +18400,605 @@
               </button>
             `;
 
-            // The footer is recreated on every render, so bind its new button.
-            footerRoot
-              .querySelector('[data-close]')
-              ?.addEventListener('click', closeModal);
-          }
+                // The footer is recreated on every render, so bind its new button.
+                footerRoot
+                    .querySelector('[data-close]')
+                    ?.addEventListener('click', closeModal);
+            }
 
-          // Translate after both the folder picker and footer have been rendered.
-          localizeUI(modal, {
-            suppressObserverReplay: true
-          });
+            // Translate after both the folder picker and footer have been rendered.
+            localizeUI(modal, {
+                suppressObserverReplay: true
+            });
 
-          requestAnimationFrame(
-            () => {
-              if (focusSearch) {
-                const searchInput =
-                  modal?.querySelector(
-                    '[data-archive-move-search]'
-                  );
+            requestAnimationFrame(
+                () =>
+                {
+                    if (focusSearch)
+                    {
+                        const searchInput =
+                            modal?.querySelector(
+                                '[data-archive-move-search]'
+                            );
 
-                searchInput?.focus();
+                        searchInput?.focus();
 
-                const end =
-                  searchInput?.value
-                    .length
+                        const end =
+                            searchInput?.value
+                                .length
                   || 0;
 
-                searchInput?.setSelectionRange(
-                  end,
-                  end
-                );
-              }
-
-              if (focusFolderName) {
-                modal
-                  ?.querySelector(
-                    '[data-archive-move-new-folder-name]'
-                  )
-                  ?.focus();
-              }
-            }
-          );
-        };
-
-      const commitMove =
-        () => {
-          if (
-            !archiveMoveHasDestination(
-              selectedId
-            )
-          ) {
-            return;
-          }
-          if (
-            selectedId
-            && !archiveFolderById(
-              selectedId
-            )
-          ) {
-            return;
-          }
-
-          const stats =
-            archiveMoveSelectionStats({
-              movingFolder,
-              files,
-              selectedId
-            });
-
-          if (!stats.canMove) {
-            return;
-          }
-
-          const destinationPath =
-            archiveMoveFolderPath(
-              selectedId
-            );
-
-          const now =
-            new Date()
-              .toISOString();
-
-          const folderSnapshot =
-            movingFolder
-              ? {
-                  id:
-                    movingFolder.id,
-
-                  parentId:
-                    archiveFolderParentId(
-                      movingFolder
-                    ),
-
-                  updatedAt:
-                    movingFolder.updatedAt
-                }
-              : null;
-
-          const fileSnapshots =
-            stats.movableFiles
-              .map(file => ({
-                id:
-                  file.id,
-
-                folderId:
-                  archiveFileFolderId(
-                    file
-                  ),
-
-                updatedAt:
-                  file.updatedAt,
-
-                updated:
-                  file.updated
-              }));
-
-          if (movingFolder) {
-            movingFolder.parentId =
-              selectedId;
-
-            movingFolder.updatedAt =
-              now;
-
-            if (selectedId) {
-              state.archiveExpandedFolders[
-                selectedId
-              ] = true;
-            }
-          } else {
-            stats.movableFiles
-              .forEach(file => {
-                file.folderId =
-                  selectedId;
-
-                file.updatedAt =
-                  now;
-
-                file.updated =
-                  'Just now';
-              });
-
-            state.archiveSelectedFileIds =
-              [];
-
-            if (
-              stats.movableFiles
-                .some(file =>
-                  file.id
-                    === state.archiveSelectedFileId
-                )
-            ) {
-              state.archiveSelectedFileId =
-                null;
-            }
-          }
-
-          const movedCount =
-            movingFolder
-              ? 1
-              : stats.movableCount;
-
-          const movedMessage =
-            movingFolder
-              ? `${
-                  movingFolder.name
-                  || 'Folder'
-                } moved to ${destinationPath}.`
-              : movedCount === 1
-                ? `${
-                    stats.movableFiles[0]
-                      ?.name
-                    || 'File'
-                  } moved to ${destinationPath}.`
-                : `${movedCount} files moved to ${destinationPath}.`;
-
-          const openFolderId =
-            movingFolder
-              ? movingFolder.id
-              : selectedId;
-
-          closeModal();
-          renderArchive();
-
-          showActionToast({
-            message:
-              movedMessage,
-
-            actions: [
-              {
-                label:
-                  'Undo',
-
-                onClick:
-                  () => {
-                    if (folderSnapshot) {
-                      const folder =
-                        archiveFolderById(
-                          folderSnapshot.id
+                        searchInput?.setSelectionRange(
+                            end,
+                            end
                         );
-
-                      if (folder) {
-                        folder.parentId =
-                          folderSnapshot.parentId;
-
-                        folder.updatedAt =
-                          folderSnapshot.updatedAt;
-                      }
                     }
 
-                    fileSnapshots
-                      .forEach(snapshot => {
-                        const file =
-                          archiveFileById(
-                            snapshot.id
-                          );
-
-                        if (!file) {
-                          return;
-                        }
-
-                        file.folderId =
-                          snapshot.folderId;
-
-                        file.updatedAt =
-                          snapshot.updatedAt;
-
-                        file.updated =
-                          snapshot.updated;
-                      });
-
-                    renderArchive();
-
-                    showToast(
-                      'Move undone.'
-                    );
-                  }
-              },
-
-              {
-                label:
-                  'Open folder',
-
-                onClick:
-                  () => {
-                    archiveNavigateToLocation(
-                      {
-                        view:
-                          'files',
-
-                        folderId:
-                          openFolderId,
-
-                        search:
-                          '',
-
-                        searchScope:
-                          'folder',
-
-                        personFilterId:
-                          '',
-
-                        selectedFileId:
-                          null,
-
-                        inspectorCollapsed:
-                          false
-                      },
-                      {
-                        expandCurrent:
-                          true
-                      }
-                    );
-                  }
-              }
-            ]
-          });
+                    if (focusFolderName)
+                    {
+                        modal
+                            ?.querySelector(
+                                '[data-archive-move-new-folder-name]'
+                            )
+                            ?.focus();
+                    }
+                }
+            );
         };
 
-      modal?.addEventListener(
-        'input',
-        event => {
-          const searchInput =
-            event.target.closest(
-              '[data-archive-move-search]'
-            );
-
-          if (!searchInput) {
-            return;
-          }
-
-          query =
-            searchInput.value;
-
-          renderMoveContent({
-            focusSearch:
-              true
-          });
-        }
-      );
-
-      modal?.addEventListener(
-        'submit',
-        event => {
-          const form =
-            event.target.closest(
-              '[data-archive-move-new-folder-form]'
-            );
-
-          if (!form) {
-            return;
-          }
-
-          event.preventDefault();
-
-          const name =
-            form
-              .querySelector(
-                '[data-archive-move-new-folder-name]'
-              )
-              ?.value
-              .trim()
-            || '';
-
-          const parentId =
-            getNewFolderParentId();
-
-          const folder =
-            createArchiveFolderRecord(
-              name,
-              parentId
-            );
-
-          if (!folder) {
-            form
-              .querySelector(
-                '[data-archive-move-new-folder-name]'
-              )
-              ?.focus();
-
-            return;
-          }
-
-          expandedIds.add(
-            parentId
-          );
-
-          selectedId =
-            folder.id;
-
-          query =
-            '';
-
-          creatingFolder =
-            false;
-
-          renderMoveContent();
-        }
-      );
-
-      modal?.addEventListener(
-        'click',
-        event => {
-          const toggle =
-            event.target.closest(
-              '[data-archive-move-toggle]'
-            );
-
-          if (toggle) {
-            const folderId =
-              archiveFolderIdFromChoice(
-                toggle.dataset
-                  .archiveMoveToggle
-              );
-
+    const commitMove =
+        () =>
+        {
             if (
-              expandedIds.has(
-                folderId
-              )
-            ) {
-              expandedIds.delete(
-                folderId
-              );
-            } else {
-              expandedIds.add(
-                folderId
-              );
-            }
-
-            renderMoveContent();
-
-            return;
-          }
-
-          const destination =
-            event.target.closest(
-              '[data-archive-move-select]'
-            );
-
-          if (destination) {
-            if (
-              destination.disabled
-              || destination.getAttribute(
-                'aria-disabled'
-              ) === 'true'
-            ) {
-              return;
-            }
-
-            selectedId =
-              archiveFolderIdFromChoice(
-                destination.dataset
-                  .archiveMoveSelect
-              );
-
-            renderMoveContent();
-
-            return;
-          }
-
-          if (
-            event.target.closest(
-              '[data-archive-move-new-folder]'
-            )
-          ) {
-            if (
-              creatingFolder
-            ) {
-              modal
-                ?.querySelector(
-                  '[data-archive-move-new-folder-name]'
+                !archiveMoveHasDestination(
+                    selectedId
                 )
-                ?.focus();
-
-              return;
+            )
+            {
+                return;
+            }
+            if (
+                selectedId
+            && !archiveFolderById(
+                selectedId
+            )
+            )
+            {
+                return;
             }
 
-            creatingFolder =
-              true;
+            const stats =
+                archiveMoveSelectionStats({
+                    movingFolder,
+                    files,
+                    selectedId
+                });
+
+            if (!stats.canMove)
+            {
+                return;
+            }
+
+            const destinationPath =
+                archiveMoveFolderPath(
+                    selectedId
+                );
+
+            const now =
+                new Date()
+                    .toISOString();
+
+            const folderSnapshot =
+                movingFolder
+                    ? {
+                        id:
+                    movingFolder.id,
+
+                        parentId:
+                    archiveFolderParentId(
+                        movingFolder
+                    ),
+
+                        updatedAt:
+                    movingFolder.updatedAt
+                    }
+                    : null;
+
+            const fileSnapshots =
+                stats.movableFiles
+                    .map(file => ({
+                        id:
+                  file.id,
+
+                        folderId:
+                  archiveFileFolderId(
+                      file
+                  ),
+
+                        updatedAt:
+                  file.updatedAt,
+
+                        updated:
+                  file.updated
+                    }));
+
+            if (movingFolder)
+            {
+                movingFolder.parentId =
+                    selectedId;
+
+                movingFolder.updatedAt =
+                    now;
+
+                if (selectedId)
+                {
+                    state.archiveExpandedFolders[
+                        selectedId
+                    ] = true;
+                }
+            }
+            else
+            {
+                stats.movableFiles
+                    .forEach(file =>
+                    {
+                        file.folderId =
+                            selectedId;
+
+                        file.updatedAt =
+                            now;
+
+                        file.updated =
+                            'Just now';
+                    });
+
+                state.archiveSelectedFileIds =
+                    [];
+
+                if (
+                    stats.movableFiles
+                        .some(file =>
+                            file.id
+                    === state.archiveSelectedFileId
+                        )
+                )
+                {
+                    state.archiveSelectedFileId =
+                        null;
+                }
+            }
+
+            const movedCount =
+                movingFolder
+                    ? 1
+                    : stats.movableCount;
+
+            const movedMessage =
+                movingFolder
+                    ? `${
+                        movingFolder.name
+                  || 'Folder'
+                    } moved to ${destinationPath}.`
+                    : movedCount === 1
+                        ? `${
+                            stats.movableFiles[0]
+                                ?.name
+                    || 'File'
+                        } moved to ${destinationPath}.`
+                        : `${movedCount} files moved to ${destinationPath}.`;
+
+            const openFolderId =
+                movingFolder
+                    ? movingFolder.id
+                    : selectedId;
+
+            closeModal();
+            renderArchive();
+
+            showActionToast({
+                message:
+              movedMessage,
+
+                actions: [
+                    {
+                        label:
+                  'Undo',
+
+                        onClick:
+                  () =>
+                  {
+                      if (folderSnapshot)
+                      {
+                          const folder =
+                              archiveFolderById(
+                                  folderSnapshot.id
+                              );
+
+                          if (folder)
+                          {
+                              folder.parentId =
+                                  folderSnapshot.parentId;
+
+                              folder.updatedAt =
+                                  folderSnapshot.updatedAt;
+                          }
+                      }
+
+                      fileSnapshots
+                          .forEach(snapshot =>
+                          {
+                              const file =
+                                  archiveFileById(
+                                      snapshot.id
+                                  );
+
+                              if (!file)
+                              {
+                                  return;
+                              }
+
+                              file.folderId =
+                                  snapshot.folderId;
+
+                              file.updatedAt =
+                                  snapshot.updatedAt;
+
+                              file.updated =
+                                  snapshot.updated;
+                          });
+
+                      renderArchive();
+
+                      showToast(
+                          'Move undone.'
+                      );
+                  }
+                    },
+
+                    {
+                        label:
+                  'Open folder',
+
+                        onClick:
+                  () =>
+                  {
+                      archiveNavigateToLocation(
+                          {
+                              view:
+                          'files',
+
+                              folderId:
+                          openFolderId,
+
+                              search:
+                          '',
+
+                              searchScope:
+                          'folder',
+
+                              personFilterId:
+                          '',
+
+                              selectedFileId:
+                          null,
+
+                              inspectorCollapsed:
+                          false
+                          },
+                          {
+                              expandCurrent:
+                          true
+                          }
+                      );
+                  }
+                    }
+                ]
+            });
+        };
+
+    modal?.addEventListener(
+        'input',
+        event =>
+        {
+            const searchInput =
+                event.target.closest(
+                    '[data-archive-move-search]'
+                );
+
+            if (!searchInput)
+            {
+                return;
+            }
+
+            query =
+                searchInput.value;
 
             renderMoveContent({
-              focusFolderName:
-                true
+                focusSearch:
+              true
             });
+        }
+    );
 
-            return;
-          }
+    modal?.addEventListener(
+        'submit',
+        event =>
+        {
+            const form =
+                event.target.closest(
+                    '[data-archive-move-new-folder-form]'
+                );
 
-          if (
-            event.target.closest(
-              '[data-archive-move-cancel-new-folder]'
-            )
-          ) {
+            if (!form)
+            {
+                return;
+            }
+
+            event.preventDefault();
+
+            const name =
+                form
+                    .querySelector(
+                        '[data-archive-move-new-folder-name]'
+                    )
+                    ?.value
+                    .trim()
+            || '';
+
+            const parentId =
+                getNewFolderParentId();
+
+            const folder =
+                createArchiveFolderRecord(
+                    name,
+                    parentId
+                );
+
+            if (!folder)
+            {
+                form
+                    .querySelector(
+                        '[data-archive-move-new-folder-name]'
+                    )
+                    ?.focus();
+
+                return;
+            }
+
+            expandedIds.add(
+                parentId
+            );
+
+            selectedId =
+                folder.id;
+
+            query =
+                '';
+
             creatingFolder =
-              false;
+                false;
 
             renderMoveContent();
-
-            return;
-          }
-
-          if (
-            event.target.closest(
-              '[data-archive-move-confirm]'
-            )
-          ) {
-            commitMove();
-          }
         }
-      );
+    );
 
-      renderMoveContent();
+    modal?.addEventListener(
+        'click',
+        event =>
+        {
+            const toggle =
+                event.target.closest(
+                    '[data-archive-move-toggle]'
+                );
+
+            if (toggle)
+            {
+                const folderId =
+                    archiveFolderIdFromChoice(
+                        toggle.dataset
+                            .archiveMoveToggle
+                    );
+
+                if (
+                    expandedIds.has(
+                        folderId
+                    )
+                )
+                {
+                    expandedIds.delete(
+                        folderId
+                    );
+                }
+                else
+                {
+                    expandedIds.add(
+                        folderId
+                    );
+                }
+
+                renderMoveContent();
+
+                return;
+            }
+
+            const destination =
+                event.target.closest(
+                    '[data-archive-move-select]'
+                );
+
+            if (destination)
+            {
+                if (
+                    destination.disabled
+              || destination.getAttribute(
+                  'aria-disabled'
+              ) === 'true'
+                )
+                {
+                    return;
+                }
+
+                selectedId =
+                    archiveFolderIdFromChoice(
+                        destination.dataset
+                            .archiveMoveSelect
+                    );
+
+                renderMoveContent();
+
+                return;
+            }
+
+            if (
+                event.target.closest(
+                    '[data-archive-move-new-folder]'
+                )
+            )
+            {
+                if (
+                    creatingFolder
+                )
+                {
+                    modal
+                        ?.querySelector(
+                            '[data-archive-move-new-folder-name]'
+                        )
+                        ?.focus();
+
+                    return;
+                }
+
+                creatingFolder =
+                    true;
+
+                renderMoveContent({
+                    focusFolderName:
+                true
+                });
+
+                return;
+            }
+
+            if (
+                event.target.closest(
+                    '[data-archive-move-cancel-new-folder]'
+                )
+            )
+            {
+                creatingFolder =
+                    false;
+
+                renderMoveContent();
+
+                return;
+            }
+
+            if (
+                event.target.closest(
+                    '[data-archive-move-confirm]'
+                )
+            )
+            {
+                commitMove();
+            }
+        }
+    );
+
+    renderMoveContent();
+}
+
+function archiveFilesForLinkAction(
+    fileIds
+)
+{
+    const files =
+        archiveUniqueIds(
+            fileIds
+        )
+            .map(id =>
+                archiveFileById(
+                    id
+                )
+            )
+            .filter(Boolean);
+
+    if (!files.length)
+    {
+        return [];
     }
 
-    function archiveFilesForLinkAction(
-      fileIds
-    ) {
-      const files =
-        archiveUniqueIds(
-          fileIds
-        )
-          .map(id =>
-            archiveFileById(
-              id
-            )
-          )
-          .filter(Boolean);
-
-      if (!files.length) {
-        return [];
-      }
-
-      const projectId =
+    const projectId =
         files[0].projectId
         || currentProjectId();
 
-      return files.filter(file =>
+    return files.filter(file =>
         (
-          file.projectId
+            file.projectId
           || currentProjectId()
         ) === projectId
-      );
-    }
+    );
+}
 
-    function archiveCommonFileConnectionIds(
-      files,
-      entityType
-    ) {
-      if (!files.length) {
+function archiveCommonFileConnectionIds(
+    files,
+    entityType
+)
+{
+    if (!files.length)
+    {
         return [];
-      }
-
-      const remainingSets =
-        files
-          .slice(1)
-          .map(file =>
-            new Set(
-              archiveConnectionIds(
-                'file',
-                file.id,
-                entityType
-              )
-            )
-          );
-
-      return archiveUniqueIds(
-        archiveConnectionIds(
-          'file',
-          files[0].id,
-          entityType
-        )
-      ).filter(recordId =>
-        remainingSets.every(set =>
-          set.has(
-            recordId
-          )
-        )
-      );
     }
 
-    function archiveCommitFileConnections({
-      fileIds =
+    const remainingSets =
+        files
+            .slice(1)
+            .map(file =>
+                new Set(
+                    archiveConnectionIds(
+                        'file',
+                        file.id,
+                        entityType
+                    )
+                )
+            );
+
+    return archiveUniqueIds(
+        archiveConnectionIds(
+            'file',
+            files[0].id,
+            entityType
+        )
+    ).filter(recordId =>
+        remainingSets.every(set =>
+            set.has(
+                recordId
+            )
+        )
+    );
+}
+
+function archiveCommitFileConnections({
+    fileIds =
         [],
 
-      entityType =
+    entityType =
         '',
 
-      recordIds =
+    recordIds =
         []
-    } = {}) {
-      const normalizedFileIds =
+} = {})
+{
+    const normalizedFileIds =
         archiveUniqueIds(
-          fileIds
+            fileIds
         );
 
-      const normalizedRecordIds =
+    const normalizedRecordIds =
         archiveUniqueIds(
-          recordIds
+            recordIds
         );
 
-      const result = {
+    const result = {
         ok:
           false,
 
@@ -18210,257 +19016,275 @@
 
         failedWrites:
           []
-      };
+    };
 
-      if (
+    if (
         !normalizedFileIds.length
         || !normalizedRecordIds.length
-      ) {
+    )
+    {
         return result;
-      }
+    }
 
-      if (
+    if (
         entityType === 'place'
         && normalizedRecordIds.length > 1
-      ) {
+    )
+    {
         result.failedWrites.push({
-          fileId: '',
-          recordId: '',
-          reason: 'Archive files support one place'
+            fileId: '',
+            recordId: '',
+            reason: 'Archive files support one place'
         });
 
         return result;
-      }
+    }
 
-      const files =
+    const files =
         normalizedFileIds.map(fileId =>
-          archiveFileById(fileId)
+            archiveFileById(fileId)
         );
 
-      const records =
+    const records =
         normalizedRecordIds.map(recordId =>
-          archiveConnectionRecord(
-            entityType,
-            recordId
-          )
+            archiveConnectionRecord(
+                entityType,
+                recordId
+            )
         );
 
-      files.forEach((file, index) => {
-        if (!file) {
-          result.failedWrites.push({
-            fileId:
+    files.forEach((file, index) =>
+    {
+        if (!file)
+        {
+            result.failedWrites.push({
+                fileId:
               normalizedFileIds[index],
 
-            recordId: '',
-            reason: 'File not found'
-          });
+                recordId: '',
+                reason: 'File not found'
+            });
         }
-      });
+    });
 
-      records.forEach((record, index) => {
-        if (!record) {
-          result.failedWrites.push({
-            fileId: '',
-            recordId:
+    records.forEach((record, index) =>
+    {
+        if (!record)
+        {
+            result.failedWrites.push({
+                fileId: '',
+                recordId:
               normalizedRecordIds[index],
 
-            reason: 'Linked record not found'
-          });
+                reason: 'Linked record not found'
+            });
         }
-      });
+    });
 
-      files.filter(Boolean).forEach(file => {
-        records.filter(Boolean).forEach(record => {
-          if (
-            file.projectId
+    files.filter(Boolean).forEach(file =>
+    {
+        records.filter(Boolean).forEach(record =>
+        {
+            if (
+                file.projectId
             && record.projectId
             && file.projectId
               !== record.projectId
-          ) {
-            result.failedWrites.push({
-              fileId:
+            )
+            {
+                result.failedWrites.push({
+                    fileId:
                 file.id,
 
-              recordId:
+                    recordId:
                 record.id,
 
-              reason:
+                    reason:
                 'Records belong to different projects'
-            });
-          }
+                });
+            }
         });
-      });
+    });
 
-      if (result.failedWrites.length) {
+    if (result.failedWrites.length)
+    {
         console.warn(
-          '[Archive bulk links]',
-          result.failedWrites
+            '[Archive bulk links]',
+            result.failedWrites
         );
 
         return result;
-      }
+    }
 
-      const writes =
+    const writes =
         files.flatMap(file =>
-          normalizedRecordIds
-            .filter(recordId =>
-              !archiveConnectionIds(
-                'file',
-                file.id,
-                entityType
-              ).includes(recordId)
-            )
-            .map(recordId => ({
-              ownerType: 'file',
-              ownerId: file.id,
-              entityType,
-              entityId: recordId,
-              shouldLink: true
-            }))
+            normalizedRecordIds
+                .filter(recordId =>
+                    !archiveConnectionIds(
+                        'file',
+                        file.id,
+                        entityType
+                    ).includes(recordId)
+                )
+                .map(recordId => ({
+                    ownerType: 'file',
+                    ownerId: file.id,
+                    entityType,
+                    entityId: recordId,
+                    shouldLink: true
+                }))
         );
 
-      if (!writes.length) {
+    if (!writes.length)
+    {
         return result;
-      }
+    }
 
-      const committed =
+    const committed =
         archiveSetConnectionsAtomically(
-          writes
+            writes
         );
 
-      if (!committed.ok) {
+    if (!committed.ok)
+    {
         result.failedWrites.push({
-          fileId: '',
-          recordId: '',
-          reason: 'Relationships were not written'
+            fileId: '',
+            recordId: '',
+            reason: 'Relationships were not written'
         });
 
         console.warn(
-          '[Archive bulk links]',
-          result.failedWrites
+            '[Archive bulk links]',
+            result.failedWrites
         );
 
         return result;
-      }
+    }
 
-      result.addedLinkCount =
+    result.addedLinkCount =
         committed.changedCount;
 
-      result.changedFileCount =
+    result.changedFileCount =
         new Set(
-          writes.map(write =>
-            write.ownerId
-          )
+            writes.map(write =>
+                write.ownerId
+            )
         ).size;
 
-      result.ok =
+    result.ok =
         result.addedLinkCount > 0;
 
-      if (
+    if (
         result.failedWrites.length
-      ) {
+    )
+    {
         console.warn(
-          '[Archive bulk links]',
-          result.failedWrites
+            '[Archive bulk links]',
+            result.failedWrites
         );
-      }
-
-      return result;
     }
 
-    function archiveBulkLinkSubtitle(
-      files
-    ) {
-      if (
+    return result;
+}
+
+function archiveBulkLinkSubtitle(
+    files
+)
+{
+    if (
         files.length === 1
-      ) {
+    )
+    {
         return files[0].name
           || 'Untitled file';
-      }
-
-      return `${files.length} selected files`;
     }
 
-    function finishArchiveBulkLinkAction(
-      fileIds
-    ) {
-      const normalizedFileIds =
+    return `${files.length} selected files`;
+}
+
+function finishArchiveBulkLinkAction(
+    fileIds
+)
+{
+    const normalizedFileIds =
         archiveUniqueIds(
-          fileIds
+            fileIds
         );
 
-      const firstFile =
+    const firstFile =
         normalizedFileIds
-          .map(fileId =>
-            archiveFileById(
-              fileId
+            .map(fileId =>
+                archiveFileById(
+                    fileId
+                )
             )
-          )
-          .find(Boolean);
+            .find(Boolean);
 
-      state.archiveSelectedFileIds =
+    state.archiveSelectedFileIds =
         [];
 
-      state.archiveSelectedFileId =
+    state.archiveSelectedFileId =
         firstFile?.id
         || state.archiveSelectedFileId;
 
-      state.archiveInspectorCollapsed =
+    state.archiveInspectorCollapsed =
         false;
 
-      renderArchive();
+    renderArchive();
+}
+
+function openArchiveFilesNoteModal(
+    fileIds
+)
+{
+    const files =
+        archiveFilesForLinkAction(
+            fileIds
+        );
+
+    const ids =
+        files.map(file =>
+            file.id
+        );
+
+    if (!files.length)
+    {
+        return;
     }
 
-    function openArchiveFilesNoteModal(
-      fileIds
-    ) {
-      const files =
-        archiveFilesForLinkAction(
-          fileIds
-        );
-
-      const ids =
-        files.map(file =>
-          file.id
-        );
-
-      if (!files.length) {
-        return;
-      }
-
-      const singleFile =
+    const singleFile =
         files.length === 1
-          ? files[0]
-          : null;
+            ? files[0]
+            : null;
 
-      const existingNoteIds =
+    const existingNoteIds =
         singleFile
-          ? archiveNoteIdsForFile(
-              singleFile
+            ? archiveNoteIdsForFile(
+                singleFile
             )
-          : archiveCommonFileConnectionIds(
-              files,
-              'note'
+            : archiveCommonFileConnectionIds(
+                files,
+                'note'
             );
 
-      openNoteLinkPickerModal({
+    openNoteLinkPickerModal({
         projectId:
           files[0].projectId
           || currentProjectId(),
 
         title:
           singleFile
-            ? 'Add note'
-            : 'Add notes',
+              ? 'Add note'
+              : 'Add notes',
 
         description:
           singleFile
-            ? `Link existing notes to “${
-                singleFile.name
+              ? `Link existing notes to “${
+                  singleFile.name
                 || 'this file'
               }”.`
-            : `Link existing notes to ${
-                files.length
+              : `Link existing notes to ${
+                  files.length
               } selected files.`,
 
         existingNoteIds,
@@ -18473,8 +19297,8 @@
 
         existingMetaLabel:
           singleFile
-            ? 'already linked'
-            : 'linked to all selected files',
+              ? 'already linked'
+              : 'linked to all selected files',
 
         createLabel:
           'Create linked note',
@@ -18486,145 +19310,153 @@
         */
         onCreate:
           singleFile
-            ? () =>
-                openNewNoteForContext(
-                  'archiveFile',
-                  singleFile.id
-                )
-            : null,
+              ? () =>
+                  openNewNoteForContext(
+                      'archiveFile',
+                      singleFile.id
+                  )
+              : null,
 
         onSave:
-          selectedNoteIds => {
-            if (singleFile) {
-              const currentFile =
-                archiveFileById(
-                  singleFile.id
-                );
+          selectedNoteIds =>
+          {
+              if (singleFile)
+              {
+                  const currentFile =
+                      archiveFileById(
+                          singleFile.id
+                      );
 
-              if (!currentFile) {
-                return false;
+                  if (!currentFile)
+                  {
+                      return false;
+                  }
+
+                  const result =
+                      archiveCommitFileConnections({
+                          fileIds: [
+                              currentFile.id
+                          ],
+
+                          entityType:
+                    'note',
+
+                          recordIds:
+                    selectedNoteIds
+                      });
+
+                  return result.ok
+                      ? result
+                      : false;
               }
 
               const result =
-                archiveCommitFileConnections({
-                  fileIds: [
-                    currentFile.id
-                  ],
-
-                  entityType:
-                    'note',
-
-                  recordIds:
-                    selectedNoteIds
-                });
-
-              return result.ok
-                ? result
-                : false;
-            }
-
-            const result =
-              archiveCommitFileConnections({
-                fileIds:
+                  archiveCommitFileConnections({
+                      fileIds:
                   ids,
 
-                entityType:
+                      entityType:
                   'note',
 
-                recordIds:
+                      recordIds:
                   selectedNoteIds
-              });
+                  });
 
-            if (!result.ok) {
-              showToast(
-                'No notes were linked.'
-              );
+              if (!result.ok)
+              {
+                  showToast(
+                      'No notes were linked.'
+                  );
 
-              return false;
-            }
+                  return false;
+              }
 
-            return result;
+              return result;
           },
 
         afterSave:
           singleFile
-            ? renderArchive
-            : () => {
-                finishArchiveBulkLinkAction(
-                  ids
-                );
+              ? renderArchive
+              : () =>
+              {
+                  finishArchiveBulkLinkAction(
+                      ids
+                  );
               },
 
         successMessage:
           singleFile
-            ? count =>
-                `${count} ${
-                  count === 1
-                    ? 'note was'
-                    : 'notes were'
-                } linked to the file.`
-            : count =>
-                `${count} ${
-                  count === 1
-                    ? 'link was'
-                    : 'links were'
-                } added to ${files.length} files.`
-      });
-    }
+              ? count =>
+                  `${count} ${
+                      count === 1
+                          ? 'note was'
+                          : 'notes were'
+                  } linked to the file.`
+              : count =>
+                  `${count} ${
+                      count === 1
+                          ? 'link was'
+                          : 'links were'
+                  } added to ${files.length} files.`
+    });
+}
 
-    function openArchiveFileNoteModal(
-      fileId
-    ) {
-      openArchiveFilesNoteModal(
+function openArchiveFileNoteModal(
+    fileId
+)
+{
+    openArchiveFilesNoteModal(
         [
-          fileId
+            fileId
         ]
-      );
+    );
+}
+
+function openArchiveFilesPlaceModal(
+    fileIds
+)
+{
+    const files =
+        archiveFilesForLinkAction(
+            fileIds
+        );
+
+    if (!files.length)
+    {
+        return;
     }
 
-    function openArchiveFilesPlaceModal(
-      fileIds
-    ) {
-      const files =
-        archiveFilesForLinkAction(
-          fileIds
-        );
-
-      if (!files.length) {
-        return;
-      }
-
-      const config =
+    const config =
         archiveEntityConfig(
-          'place'
+            'place'
         );
 
-      const records =
+    const records =
         config.records();
 
-      const currentPlaceIds =
+    const currentPlaceIds =
         files.map(file =>
-          archiveDocumentPlace(
-            file
-          ).placeId
+            archiveDocumentPlace(
+                file
+            ).placeId
           || ''
         );
 
-      const commonPlaceId =
+    const commonPlaceId =
         currentPlaceIds.length
         && currentPlaceIds.every(id =>
-          id === currentPlaceIds[0]
+            id === currentPlaceIds[0]
         )
-          ? currentPlaceIds[0]
-          : '';
+            ? currentPlaceIds[0]
+            : '';
 
-      let query =
+    let query =
         '';
 
-      let selectedPlaceId =
+    let selectedPlaceId =
         commonPlaceId;
 
-      openModal(`
+    openModal(`
         <div
           class="modal notes-related-modal archive-link-picker-modal"
           role="dialog"
@@ -18697,74 +19529,77 @@
         </div>
       `);
 
-      const modal =
+    const modal =
         modalBackdrop.querySelector(
-          '.archive-link-picker-modal'
+            '.archive-link-picker-modal'
         );
 
-      const results =
+    const results =
         modal.querySelector(
-          '[data-archive-place-results]'
+            '[data-archive-place-results]'
         );
 
-      const status =
+    const status =
         modal.querySelector(
-          '[data-archive-place-status]'
+            '[data-archive-place-status]'
         );
 
-      const save =
+    const save =
         modal.querySelector(
-          '[data-archive-place-save]'
+            '[data-archive-place-save]'
         );
 
-      const updateStatus = () => {
+    const updateStatus = () =>
+    {
         const changedFiles =
-          selectedPlaceId
-            ? currentPlaceIds.filter(id =>
-                id !== selectedPlaceId
-              ).length
-            : 0;
+            selectedPlaceId
+                ? currentPlaceIds.filter(id =>
+                    id !== selectedPlaceId
+                ).length
+                : 0;
 
         status.textContent =
-          selectedPlaceId
-            ? changedFiles
-              ? `${changedFiles} ${changedFiles === 1 ? 'file' : 'files'} will be updated`
-              : 'This place is already linked'
-            : 'Select one place';
+            selectedPlaceId
+                ? changedFiles
+                    ? `${changedFiles} ${changedFiles === 1 ? 'file' : 'files'} will be updated`
+                    : 'This place is already linked'
+                : 'Select one place';
 
         save.disabled =
-          !selectedPlaceId
+            !selectedPlaceId
           || changedFiles === 0;
-      };
+    };
 
-      const refresh = () => {
+    const refresh = () =>
+    {
         const normalizedQuery =
-          query.trim().toLowerCase();
+            query.trim().toLowerCase();
 
         const visible =
-          records.filter(record =>
-            [
-              config.label(record),
-              config.meta(record),
-              ...(record.alternativeNames || [])
-            ]
-              .join(' ')
-              .toLowerCase()
-              .includes(normalizedQuery)
-          );
+            records.filter(record =>
+                [
+                    config.label(record),
+                    config.meta(record),
+                    ...(record.alternativeNames || [])
+                ]
+                    .join(' ')
+                    .toLowerCase()
+                    .includes(normalizedQuery)
+            );
 
         results.innerHTML =
-          visible.length
-            ? visible.map(record => {
-                const selected =
-                  record.id === selectedPlaceId;
+            visible.length
+                ? visible.map(record =>
+                {
+                    const selected =
+                        record.id === selectedPlaceId;
 
-                const current =
-                  currentPlaceIds.includes(
-                    record.id
-                  );
+                    const current =
+                        currentPlaceIds.includes(
+                            record.id
+                        );
 
-                return `
+                    return `
                   <label class="archive-modal-choice">
                     <input
                       type="radio"
@@ -18781,174 +19616,183 @@
                     <span>${current ? 'Current' : ''}</span>
                   </label>
                 `;
-              }).join('')
-            : '<div class="archive-section-empty">No matching places.</div>';
+                }).join('')
+                : '<div class="archive-section-empty">No matching places.</div>';
 
         updateStatus();
-      };
+    };
 
-      modal
+    modal
         .querySelector(
-          '[data-archive-place-search]'
+            '[data-archive-place-search]'
         )
         ?.addEventListener(
-          'input',
-          event => {
-            query =
-              event.currentTarget.value;
+            'input',
+            event =>
+            {
+                query =
+                    event.currentTarget.value;
 
-            refresh();
-          }
+                refresh();
+            }
         );
 
-      modal.addEventListener(
+    modal.addEventListener(
         'change',
-        event => {
-          const input =
-            event.target.closest(
-              '[data-archive-place-choice]'
-            );
+        event =>
+        {
+            const input =
+                event.target.closest(
+                    '[data-archive-place-choice]'
+                );
 
-          if (!input) {
-            return;
-          }
+            if (!input)
+            {
+                return;
+            }
 
-          selectedPlaceId =
-            input.value;
+            selectedPlaceId =
+                input.value;
 
-          updateStatus();
+            updateStatus();
         }
-      );
+    );
 
-      save.addEventListener(
+    save.addEventListener(
         'click',
-        () => {
-          if (
-            !selectedPlaceId
+        () =>
+        {
+            if (
+                !selectedPlaceId
             || save.disabled
-          ) {
-            return;
-          }
-
-          const changedFiles =
-            files.filter(file =>
-              archiveDocumentPlace(file).placeId
-                !== selectedPlaceId
-            );
-
-          const writes =
-            changedFiles.flatMap(file => {
-              const currentPlaceId =
-                archiveDocumentPlace(
-                  file
-                ).placeId;
-
-              return [
-                ...(currentPlaceId
-                  ? [{
-                      ownerType: 'file',
-                      ownerId: file.id,
-                      entityType: 'place',
-                      entityId: currentPlaceId,
-                      shouldLink: false
-                    }]
-                  : []),
-
-                {
-                  ownerType: 'file',
-                  ownerId: file.id,
-                  entityType: 'place',
-                  entityId: selectedPlaceId,
-                  shouldLink: true
-                }
-              ];
-            });
-
-          const committed =
-            archiveSetConnectionsAtomically(
-              writes
-            );
-
-          if (!committed.ok) {
-            showToast(
-              'The place could not be linked to every file.'
-            );
-
-            return;
-          }
-
-          const changedCount =
-            changedFiles.length;
-
-          closeModal();
-          finishArchiveBulkLinkAction(
-            files.map(file =>
-              file.id
             )
-          );
+            {
+                return;
+            }
 
-          showToast(
-            changedCount === 1
-              ? 'File place updated.'
-              : `${changedCount} file places updated.`
-          );
+            const changedFiles =
+                files.filter(file =>
+                    archiveDocumentPlace(file).placeId
+                !== selectedPlaceId
+                );
+
+            const writes =
+                changedFiles.flatMap(file =>
+                {
+                    const currentPlaceId =
+                        archiveDocumentPlace(
+                            file
+                        ).placeId;
+
+                    return [
+                        ...(currentPlaceId
+                            ? [{
+                                ownerType: 'file',
+                                ownerId: file.id,
+                                entityType: 'place',
+                                entityId: currentPlaceId,
+                                shouldLink: false
+                            }]
+                            : []),
+
+                        {
+                            ownerType: 'file',
+                            ownerId: file.id,
+                            entityType: 'place',
+                            entityId: selectedPlaceId,
+                            shouldLink: true
+                        }
+                    ];
+                });
+
+            const committed =
+                archiveSetConnectionsAtomically(
+                    writes
+                );
+
+            if (!committed.ok)
+            {
+                showToast(
+                    'The place could not be linked to every file.'
+                );
+
+                return;
+            }
+
+            const changedCount =
+                changedFiles.length;
+
+            closeModal();
+            finishArchiveBulkLinkAction(
+                files.map(file =>
+                    file.id
+                )
+            );
+
+            showToast(
+                changedCount === 1
+                    ? 'File place updated.'
+                    : `${changedCount} file places updated.`
+            );
         }
-      );
+    );
 
-      refresh();
+    refresh();
 
-      requestAnimationFrame(() =>
+    requestAnimationFrame(() =>
         modal
-          .querySelector(
-            '[data-archive-place-search]'
-          )
-          ?.focus()
-      );
-    }
+            .querySelector(
+                '[data-archive-place-search]'
+            )
+            ?.focus()
+    );
+}
 
-    function openArchiveSourcePeopleModal(
-      sourceId
-    ) {
-      const source =
+function openArchiveSourcePeopleModal(
+    sourceId
+)
+{
+    const source =
         archiveSourceById(
-          sourceId
+            sourceId
         );
 
-      if (!source) {
+    if (!source)
+    {
         showToast(
-          'The source is no longer available.'
+            'The source is no longer available.'
         );
 
         return;
-      }
+    }
 
-      const projectId =
+    const projectId =
         source.projectId
         || currentProjectId();
 
-      const initialPersonIds =
+    const initialPersonIds =
         sourceTargetIds(
-          source.id,
-          'person',
-          projectId
+            source.id,
+            'person',
+            projectId
         );
 
-      /*
+    /*
         People connected to files from this source
         receive priority in Suggested people.
         All project people remain searchable.
       */
-      const suggestedPersonIds =
+    const suggestedPersonIds =
         archiveUniqueIds(
-          archiveFilesForSource(
-            source.id
-          ).flatMap(file =>
-            file.linkedPersonIds
+            archiveFilesForSource(
+                source.id
+            ).flatMap(file =>
+                file.linkedPersonIds
             || []
-          )
+            )
         );
 
-      openPeopleLinkModal({
+    openPeopleLinkModal({
         projectId,
 
         title:
@@ -18969,135 +19813,139 @@
           'Save people',
 
         onSave:
-          nextPersonIds => {
-            const currentSource =
-              archiveSourceById(
-                source.id,
-                projectId
-              );
+          nextPersonIds =>
+          {
+              const currentSource =
+                  archiveSourceById(
+                      source.id,
+                      projectId
+                  );
 
-            if (!currentSource) {
-              showToast(
-                'The source is no longer available.'
-              );
+              if (!currentSource)
+              {
+                  showToast(
+                      'The source is no longer available.'
+                  );
 
-              return false;
-            }
+                  return false;
+              }
 
-            const currentIds =
-              new Set(
-                sourceTargetIds(
-                  currentSource.id,
-                  'person',
-                  projectId
-                )
-              );
+              const currentIds =
+                  new Set(
+                      sourceTargetIds(
+                          currentSource.id,
+                          'person',
+                          projectId
+                      )
+                  );
 
-            const desiredIds =
-              new Set(
-                archiveUniqueIds(
-                  nextPersonIds
-                )
-              );
+              const desiredIds =
+                  new Set(
+                      archiveUniqueIds(
+                          nextPersonIds
+                      )
+                  );
 
-            /*
+              /*
               Save the entire edited selection:
               remove deselected people and add newly
               selected people in one atomic operation.
             */
-            const writes = [
-              ...[...currentIds]
-                .filter(personId =>
-                  !desiredIds.has(
-                    personId
-                  )
-                )
-                .map(personId => ({
-                  ownerType:
+              const writes = [
+                  ...[...currentIds]
+                      .filter(personId =>
+                          !desiredIds.has(
+                              personId
+                          )
+                      )
+                      .map(personId => ({
+                          ownerType:
                     'source',
 
-                  ownerId:
+                          ownerId:
                     currentSource.id,
 
-                  entityType:
+                          entityType:
                     'person',
 
-                  entityId:
+                          entityId:
                     personId,
 
-                  shouldLink:
+                          shouldLink:
                     false
-                })),
+                      })),
 
-              ...[...desiredIds]
-                .filter(personId =>
-                  !currentIds.has(
-                    personId
-                  )
-                )
-                .map(personId => ({
-                  ownerType:
+                  ...[...desiredIds]
+                      .filter(personId =>
+                          !currentIds.has(
+                              personId
+                          )
+                      )
+                      .map(personId => ({
+                          ownerType:
                     'source',
 
-                  ownerId:
+                          ownerId:
                     currentSource.id,
 
-                  entityType:
+                          entityType:
                     'person',
 
-                  entityId:
+                          entityId:
                     personId,
 
-                  shouldLink:
+                          shouldLink:
                     true
-                }))
-            ];
+                      }))
+              ];
 
-            const committed =
-              archiveSetConnectionsAtomically(
-                writes
-              );
+              const committed =
+                  archiveSetConnectionsAtomically(
+                      writes
+                  );
 
-            if (!committed.ok) {
-              showToast(
-                'People links could not be updated.'
-              );
+              if (!committed.ok)
+              {
+                  showToast(
+                      'People links could not be updated.'
+                  );
 
-              return false;
-            }
+                  return false;
+              }
 
-            /*
+              /*
               Verify that the canonical sourceLinks
               collection now matches the modal state.
             */
-            const savedIds =
-              new Set(
-                sourceTargetIds(
-                  currentSource.id,
-                  'person',
-                  projectId
-                )
-              );
+              const savedIds =
+                  new Set(
+                      sourceTargetIds(
+                          currentSource.id,
+                          'person',
+                          projectId
+                      )
+                  );
 
-            const savedCorrectly =
-              savedIds.size
+              const savedCorrectly =
+                  savedIds.size
                 === desiredIds.size
               && [...desiredIds].every(
-                personId =>
-                  savedIds.has(
-                    personId
-                  )
+                  personId =>
+                      savedIds.has(
+                          personId
+                      )
               );
 
-            if (!savedCorrectly) {
-              showToast(
-                'People links could not be updated.'
-              );
+              if (!savedCorrectly)
+              {
+                  showToast(
+                      'People links could not be updated.'
+                  );
 
-              return false;
-            }
+                  return false;
+              }
 
-            return committed;
+              return committed;
           },
 
         afterSave:
@@ -19105,62 +19953,64 @@
 
         successMessage:
           'Linked people updated.'
-      });
-    }
+    });
+}
 
-    function openArchiveSourceEventsModal(
-      sourceId
-    ) {
-      const source =
+function openArchiveSourceEventsModal(
+    sourceId
+)
+{
+    const source =
         archiveSourceById(
-          sourceId
+            sourceId
         );
 
-      if (!source) {
+    if (!source)
+    {
         showToast(
-          'The source is no longer available.'
+            'The source is no longer available.'
         );
 
         return;
-      }
+    }
 
-      const projectId =
+    const projectId =
         source.projectId
         || currentProjectId();
 
-      const initiallyLinkedEventIds =
+    const initiallyLinkedEventIds =
         sourceTargetIds(
-          source.id,
-          'event',
-          projectId
+            source.id,
+            'event',
+            projectId
         );
 
-      /*
+    /*
         People connected directly to the Source
         appear first in the Notes-style person list.
       */
-      const primaryPersonIds =
+    const primaryPersonIds =
         sourceTargetIds(
-          source.id,
-          'person',
-          projectId
+            source.id,
+            'person',
+            projectId
         );
 
-      /*
+    /*
         People connected through files from this
         Source are useful secondary suggestions.
       */
-      const secondaryPersonIds =
+    const secondaryPersonIds =
         archiveUniqueIds(
-          archiveFilesForSource(
-            source.id
-          ).flatMap(file =>
-            file.linkedPersonIds
+            archiveFilesForSource(
+                source.id
+            ).flatMap(file =>
+                file.linkedPersonIds
             || []
-          )
+            )
         );
 
-      openEventLinkModal({
+    openEventLinkModal({
         projectId,
 
         title:
@@ -19180,113 +20030,117 @@
           'this source',
 
         onSave:
-          selectedEventIds => {
-            const currentSource =
-              archiveSourceById(
-                source.id,
-                projectId
-              );
+          selectedEventIds =>
+          {
+              const currentSource =
+                  archiveSourceById(
+                      source.id,
+                      projectId
+                  );
 
-            if (!currentSource) {
-              showToast(
-                'The source is no longer available.'
-              );
+              if (!currentSource)
+              {
+                  showToast(
+                      'The source is no longer available.'
+                  );
 
-              return false;
-            }
+                  return false;
+              }
 
-            const currentEventIds =
-              new Set(
-                sourceTargetIds(
-                  currentSource.id,
-                  'event',
-                  projectId
-                )
-              );
+              const currentEventIds =
+                  new Set(
+                      sourceTargetIds(
+                          currentSource.id,
+                          'event',
+                          projectId
+                      )
+                  );
 
-            /*
+              /*
               openEventLinkModal is additive:
               previously linked Events are disabled,
               and selectedEventIds contains new choices.
             */
-            const eventIdsToAdd =
-              archiveUniqueIds(
-                selectedEventIds
-              ).filter(eventId =>
-                !currentEventIds.has(
-                  eventId
-                )
-              );
+              const eventIdsToAdd =
+                  archiveUniqueIds(
+                      selectedEventIds
+                  ).filter(eventId =>
+                      !currentEventIds.has(
+                          eventId
+                      )
+                  );
 
-            const writes =
-              eventIdsToAdd.map(
-                eventId => ({
-                  ownerType:
+              const writes =
+                  eventIdsToAdd.map(
+                      eventId => ({
+                          ownerType:
                     'source',
 
-                  ownerId:
+                          ownerId:
                     currentSource.id,
 
-                  entityType:
+                          entityType:
                     'event',
 
-                  entityId:
+                          entityId:
                     eventId,
 
-                  shouldLink:
+                          shouldLink:
                     true
-                })
-              );
+                      })
+                  );
 
-            const committed =
-              archiveSetConnectionsAtomically(
-                writes
-              );
+              const committed =
+                  archiveSetConnectionsAtomically(
+                      writes
+                  );
 
-            if (!committed.ok) {
-              showToast(
-                'No events were linked.'
-              );
+              if (!committed.ok)
+              {
+                  showToast(
+                      'No events were linked.'
+                  );
 
-              return false;
-            }
+                  return false;
+              }
 
-            /*
+              /*
               Verify the canonical sourceLinks data,
               including the unlikely case where the
               Source changed while the modal was open.
             */
-            const savedEventIds =
-              new Set(
-                sourceTargetIds(
-                  currentSource.id,
-                  'event',
-                  projectId
-                )
-              );
+              const savedEventIds =
+                  new Set(
+                      sourceTargetIds(
+                          currentSource.id,
+                          'event',
+                          projectId
+                      )
+                  );
 
-            const savedCorrectly =
-              selectedEventIds.every(
-                eventId =>
-                  savedEventIds.has(
-                    eventId
-                  )
-              );
+              const savedCorrectly =
+                  selectedEventIds.every(
+                      eventId =>
+                          savedEventIds.has(
+                              eventId
+                          )
+                  );
 
-            if (!savedCorrectly) {
-              showToast(
-                'No events were linked.'
-              );
+              if (!savedCorrectly)
+              {
+                  showToast(
+                      'No events were linked.'
+                  );
 
-              return false;
-            }
+                  return false;
+              }
 
-            return {
-              ...committed,
+              return {
+                  ...committed,
 
-              addedLinkCount:
+                  addedLinkCount:
                 eventIdsToAdd.length
-            };
+              };
           },
 
         afterSave:
@@ -19294,42 +20148,44 @@
 
         successMessage:
           count =>
-            `${count} ${
-              count === 1
-                ? 'event'
-                : 'events'
-            } added to source.`
-      });
-    }
+              `${count} ${
+                  count === 1
+                      ? 'event'
+                      : 'events'
+              } added to source.`
+    });
+}
 
-    function openArchiveSourceNotesModal(
-      sourceId
-    ) {
-      const source =
+function openArchiveSourceNotesModal(
+    sourceId
+)
+{
+    const source =
         archiveSourceById(
-          sourceId
+            sourceId
         );
 
-      if (!source) {
+    if (!source)
+    {
         showToast(
-          'The source is no longer available.'
+            'The source is no longer available.'
         );
 
         return;
-      }
+    }
 
-      const projectId =
+    const projectId =
         source.projectId
         || currentProjectId();
 
-      const existingNoteIds =
+    const existingNoteIds =
         sourceTargetIds(
-          source.id,
-          'note',
-          projectId
+            source.id,
+            'note',
+            projectId
         );
 
-      openNoteLinkPickerModal({
+    openNoteLinkPickerModal({
         projectId,
 
         title:
@@ -19337,7 +20193,7 @@
 
         description:
           `Link existing notes to “${
-            source.title
+              source.title
             || 'Untitled source'
           }”.`,
 
@@ -19359,104 +20215,109 @@
           'Create linked note',
 
         onCreate:
-          () => {
-            const currentSource =
-              archiveSourceById(
-                source.id,
-                projectId
-              );
+          () =>
+          {
+              const currentSource =
+                  archiveSourceById(
+                      source.id,
+                      projectId
+                  );
 
-            if (!currentSource) {
-              showToast(
-                'The source is no longer available.'
-              );
+              if (!currentSource)
+              {
+                  showToast(
+                      'The source is no longer available.'
+                  );
 
-              return;
-            }
+                  return;
+              }
 
-            /*
+              /*
               Source is already supported by the
               canonical Notes context model.
             */
-            openNewNoteForContext(
-              'source',
-              currentSource.id
-            );
+              openNewNoteForContext(
+                  'source',
+                  currentSource.id
+              );
           },
 
         onSave:
-          selectedNoteIds => {
-            const currentSource =
-              archiveSourceById(
-                source.id,
-                projectId
-              );
+          selectedNoteIds =>
+          {
+              const currentSource =
+                  archiveSourceById(
+                      source.id,
+                      projectId
+                  );
 
-            if (!currentSource) {
-              showToast(
-                'The source is no longer available.'
-              );
+              if (!currentSource)
+              {
+                  showToast(
+                      'The source is no longer available.'
+                  );
 
-              return false;
-            }
+                  return false;
+              }
 
-            const currentNoteIds =
-              new Set(
-                sourceTargetIds(
-                  currentSource.id,
-                  'note',
-                  projectId
-                )
-              );
+              const currentNoteIds =
+                  new Set(
+                      sourceTargetIds(
+                          currentSource.id,
+                          'note',
+                          projectId
+                      )
+                  );
 
-            const noteIdsToAdd =
-              archiveUniqueIds(
-                selectedNoteIds
-              ).filter(noteId =>
-                !currentNoteIds.has(
-                  noteId
-                )
-              );
+              const noteIdsToAdd =
+                  archiveUniqueIds(
+                      selectedNoteIds
+                  ).filter(noteId =>
+                      !currentNoteIds.has(
+                          noteId
+                      )
+                  );
 
-            const writes =
-              noteIdsToAdd.map(
-                noteId => ({
-                  ownerType:
+              const writes =
+                  noteIdsToAdd.map(
+                      noteId => ({
+                          ownerType:
                     'source',
 
-                  ownerId:
+                          ownerId:
                     currentSource.id,
 
-                  entityType:
+                          entityType:
                     'note',
 
-                  entityId:
+                          entityId:
                     noteId,
 
-                  shouldLink:
+                          shouldLink:
                     true
-                })
-              );
+                      })
+                  );
 
-            const committed =
-              archiveSetConnectionsAtomically(
-                writes
-              );
+              const committed =
+                  archiveSetConnectionsAtomically(
+                      writes
+                  );
 
-            if (!committed.ok) {
-              showToast(
-                'No notes were linked.'
-              );
+              if (!committed.ok)
+              {
+                  showToast(
+                      'No notes were linked.'
+                  );
 
-              return false;
-            }
+                  return false;
+              }
 
-            return {
-              ...committed,
+              return {
+                  ...committed,
 
-              addedLinkCount:
+                  addedLinkCount:
                 committed.changedCount
-            };
+              };
           },
 
         afterSave:
@@ -19464,37 +20325,39 @@
 
         successMessage:
           'Notes linked to source.'
-      });
-    }
+    });
+}
 
-    function openArchiveSourcePhotosModal(
-      sourceId
-    ) {
-      const source =
+function openArchiveSourcePhotosModal(
+    sourceId
+)
+{
+    const source =
         archiveSourceById(
-          sourceId
+            sourceId
         );
 
-      if (!source) {
+    if (!source)
+    {
         showToast(
-          'The source is no longer available.'
+            'The source is no longer available.'
         );
 
         return;
-      }
+    }
 
-      const projectId =
+    const projectId =
         source.projectId
         || currentProjectId();
 
-      const initialPhotoIds =
+    const initialPhotoIds =
         sourceTargetIds(
-          source.id,
-          'photo',
-          projectId
+            source.id,
+            'photo',
+            projectId
         );
 
-      openPhotoLinkModal({
+    openPhotoLinkModal({
         projectId,
 
         title:
@@ -19502,7 +20365,7 @@
 
         description:
           `Selected and uploaded photos will be linked to ${
-            source.title
+              source.title
             || 'Untitled source'
           }.`,
 
@@ -19519,86 +20382,89 @@
           `photo-source-${source.id}`,
 
         onSave:
-          addedIds => {
-            const currentSource =
-              archiveSourceById(
-                source.id,
-                projectId
-              );
+          addedIds =>
+          {
+              const currentSource =
+                  archiveSourceById(
+                      source.id,
+                      projectId
+                  );
 
-            if (!currentSource) {
-              return false;
-            }
+              if (!currentSource)
+              {
+                  return false;
+              }
 
-            const currentIds =
-              new Set(
-                sourceTargetIds(
-                  currentSource.id,
-                  'photo',
-                  projectId
-                )
-              );
+              const currentIds =
+                  new Set(
+                      sourceTargetIds(
+                          currentSource.id,
+                          'photo',
+                          projectId
+                      )
+                  );
 
-            const photoIdsToAdd =
-              archiveUniqueIds(
-                addedIds
-              ).filter(photoId =>
-                !currentIds.has(
-                  photoId
-                )
-              );
+              const photoIdsToAdd =
+                  archiveUniqueIds(
+                      addedIds
+                  ).filter(photoId =>
+                      !currentIds.has(
+                          photoId
+                      )
+                  );
 
-            const writes =
-              photoIdsToAdd.map(
-                photoId => ({
-                  ownerType:
+              const writes =
+                  photoIdsToAdd.map(
+                      photoId => ({
+                          ownerType:
                     'source',
 
-                  ownerId:
+                          ownerId:
                     currentSource.id,
 
-                  entityType:
+                          entityType:
                     'photo',
 
-                  entityId:
+                          entityId:
                     photoId,
 
-                  shouldLink:
+                          shouldLink:
                     true
-                })
-              );
+                      })
+                  );
 
-            const committed =
-              archiveSetConnectionsAtomically(
-                writes
-              );
+              const committed =
+                  archiveSetConnectionsAtomically(
+                      writes
+                  );
 
-            if (!committed.ok) {
-              return false;
-            }
+              if (!committed.ok)
+              {
+                  return false;
+              }
 
-            const savedIds =
-              new Set(
-                sourceTargetIds(
-                  currentSource.id,
-                  'photo',
-                  projectId
-                )
-              );
+              const savedIds =
+                  new Set(
+                      sourceTargetIds(
+                          currentSource.id,
+                          'photo',
+                          projectId
+                      )
+                  );
 
-            const savedCorrectly =
-              addedIds.every(
-                photoId =>
-                  savedIds.has(
-                    photoId
-                  )
-              );
+              const savedCorrectly =
+                  addedIds.every(
+                      photoId =>
+                          savedIds.has(
+                              photoId
+                          )
+                  );
 
-            return {
-              ...committed,
-              ok:
+              return {
+                  ...committed,
+                  ok:
                 savedCorrectly
-            };
+              };
           },
 
         afterSave:
@@ -19606,613 +20472,652 @@
 
         successMessage:
           count =>
-            `${count} ${
-              count === 1
-                ? 'photo'
-                : 'photos'
-            } added to source.`
-      });
-    }
+              `${count} ${
+                  count === 1
+                      ? 'photo'
+                      : 'photos'
+              } added to source.`
+    });
+}
 
-    function openArchiveSourcePlacesModal(
-      sourceId
-    ) {
-      const source =
+function openArchiveSourcePlacesModal(
+    sourceId
+)
+{
+    const source =
         archiveSourceById(
-          sourceId
+            sourceId
         );
 
-      if (!source) {
+    if (!source)
+    {
         showToast(
-          'The source is no longer available.'
+            'The source is no longer available.'
         );
 
         return;
-      }
+    }
 
-      const projectId =
+    const projectId =
         source.projectId
         || currentProjectId();
 
-      const initialPlaceIds =
+    const initialPlaceIds =
         sourceTargetIds(
-          source.id,
-          'place',
-          projectId
+            source.id,
+            'place',
+            projectId
         );
 
-      const filePlaceIds =
+    const filePlaceIds =
         archiveFilesForSource(
-          source.id
+            source.id
         )
-          .map(file =>
-            archiveDocumentPlace(
-              file
-            ).placeId
-          )
-          .filter(Boolean);
+            .map(file =>
+                archiveDocumentPlace(
+                    file
+                ).placeId
+            )
+            .filter(Boolean);
 
-      const notePlaceIds =
+    const notePlaceIds =
         sourceTargetIds(
-          source.id,
-          'note',
-          projectId
-        ).flatMap(noteId => {
-          const note =
-            getNote(
-              noteId,
-              {
-                projectId,
-                includeArchived:
+            source.id,
+            'note',
+            projectId
+        ).flatMap(noteId =>
+        {
+            const note =
+                getNote(
+                    noteId,
+                    {
+                        projectId,
+                        includeArchived:
                   true
-              }
-            );
+                    }
+                );
 
-          return note?.linkedPlaceIds
+            return note?.linkedPlaceIds
             || [];
         });
 
-      const eventPlaceIds =
+    const eventPlaceIds =
         sourceTargetIds(
-          source.id,
-          'event',
-          projectId
+            source.id,
+            'event',
+            projectId
         )
-          .map(eventId =>
-            archiveConnectionRecord(
-              'event',
-              eventId
-            )?.placeId
-          )
-          .filter(Boolean);
+            .map(eventId =>
+                archiveConnectionRecord(
+                    'event',
+                    eventId
+                )?.placeId
+            )
+            .filter(Boolean);
 
-      const suggestedPlaceIds =
+    const suggestedPlaceIds =
         archiveUniqueIds([
-          ...filePlaceIds,
-          ...notePlaceIds,
-          ...eventPlaceIds
+            ...filePlaceIds,
+            ...notePlaceIds,
+            ...eventPlaceIds
         ]);
 
-      openNotesPlacesModal({
+    openNotesPlacesModal({
         linkContext: {
-          projectId,
+            projectId,
 
-          title:
+            title:
             'Add places',
 
-          subtitle:
+            subtitle:
             source.title
             || 'Untitled source',
 
-          initialPlaceIds,
+            initialPlaceIds,
 
-          suggestedPlaceIds,
+            suggestedPlaceIds,
 
-          renderContext:
+            renderContext:
             renderArchivePreservingSourceInspectorScroll,
 
-          onSave:
-            nextPlaceIds => {
-              const currentSource =
-                archiveSourceById(
-                  source.id,
-                  projectId
-                );
+            onSave:
+            nextPlaceIds =>
+            {
+                const currentSource =
+                    archiveSourceById(
+                        source.id,
+                        projectId
+                    );
 
-              if (!currentSource) {
-                showToast(
-                  'The source is no longer available.'
-                );
+                if (!currentSource)
+                {
+                    showToast(
+                        'The source is no longer available.'
+                    );
 
-                return false;
-              }
+                    return false;
+                }
 
-              const currentIds =
-                new Set(
-                  sourceTargetIds(
-                    currentSource.id,
-                    'place',
-                    projectId
-                  )
-                );
+                const currentIds =
+                    new Set(
+                        sourceTargetIds(
+                            currentSource.id,
+                            'place',
+                            projectId
+                        )
+                    );
 
-              const desiredIds =
-                new Set(
-                  archiveUniqueIds(
-                    nextPlaceIds
-                  )
-                );
+                const desiredIds =
+                    new Set(
+                        archiveUniqueIds(
+                            nextPlaceIds
+                        )
+                    );
 
-              const writes = [
-                ...[...currentIds]
-                  .filter(placeId =>
-                    !desiredIds.has(
-                      placeId
-                    )
-                  )
-                  .map(placeId => ({
-                    ownerType:
+                const writes = [
+                    ...[...currentIds]
+                        .filter(placeId =>
+                            !desiredIds.has(
+                                placeId
+                            )
+                        )
+                        .map(placeId => ({
+                            ownerType:
                       'source',
 
-                    ownerId:
+                            ownerId:
                       currentSource.id,
 
-                    entityType:
+                            entityType:
                       'place',
 
-                    entityId:
+                            entityId:
                       placeId,
 
-                    shouldLink:
+                            shouldLink:
                       false
-                  })),
+                        })),
 
-                ...[...desiredIds]
-                  .filter(placeId =>
-                    !currentIds.has(
-                      placeId
-                    )
-                  )
-                  .map(placeId => ({
-                    ownerType:
+                    ...[...desiredIds]
+                        .filter(placeId =>
+                            !currentIds.has(
+                                placeId
+                            )
+                        )
+                        .map(placeId => ({
+                            ownerType:
                       'source',
 
-                    ownerId:
+                            ownerId:
                       currentSource.id,
 
-                    entityType:
+                            entityType:
                       'place',
 
-                    entityId:
+                            entityId:
                       placeId,
 
-                    shouldLink:
+                            shouldLink:
                       true
-                  }))
-              ];
+                        }))
+                ];
 
-              const committed =
-                archiveSetConnectionsAtomically(
-                  writes
-                );
+                const committed =
+                    archiveSetConnectionsAtomically(
+                        writes
+                    );
 
-              if (!committed.ok) {
-                showToast(
-                  'Place links could not be updated.'
-                );
+                if (!committed.ok)
+                {
+                    showToast(
+                        'Place links could not be updated.'
+                    );
 
-                return false;
-              }
+                    return false;
+                }
 
-              const savedIds =
-                new Set(
-                  sourceTargetIds(
-                    currentSource.id,
-                    'place',
-                    projectId
-                  )
-                );
+                const savedIds =
+                    new Set(
+                        sourceTargetIds(
+                            currentSource.id,
+                            'place',
+                            projectId
+                        )
+                    );
 
-              const savedCorrectly =
-                savedIds.size
+                const savedCorrectly =
+                    savedIds.size
                   === desiredIds.size
                 && [...desiredIds].every(
-                  placeId =>
-                    savedIds.has(
-                      placeId
-                    )
+                    placeId =>
+                        savedIds.has(
+                            placeId
+                        )
                 );
 
-              if (!savedCorrectly) {
-                showToast(
-                  'Place links could not be updated.'
-                );
+                if (!savedCorrectly)
+                {
+                    showToast(
+                        'Place links could not be updated.'
+                    );
 
-                return false;
-              }
+                    return false;
+                }
 
-              return committed;
+                return committed;
             },
 
-          afterSave:
+            afterSave:
             renderArchivePreservingSourceInspectorScroll,
 
-          successMessage:
+            successMessage:
             'Place links updated.'
         }
-      });
-    }
+    });
+}
 
-    function openArchiveConnectionPicker({ ownerType, ownerIds, entityType }) {
-      const config = archiveEntityConfig(entityType);
-      const ids = archiveUniqueIds(ownerIds);
-      if (!config || !ids.length) return;
-      const records = config.records();
-      const existingSets = ids.map(ownerId => new Set(archiveConnectionIds(ownerType, ownerId, entityType)));
-      const linkedToAll = recordId => existingSets.every(set => set.has(recordId));
-      let query = '';
-      const selected = new Set();
-      openModal(`<div class="modal notes-related-modal archive-link-picker-modal" role="dialog" aria-modal="true" aria-labelledby="archiveLinkPickerTitle"><div class="modal-header"><div><h2 id="archiveLinkPickerTitle">${escapeHtml(config.addLabel)}</h2><p>Choose existing ${escapeHtml(config.title.toLowerCase())} to link. Linking does not move or duplicate records.</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><div class="modal-body form-grid"><div class="archive-link-picker-toolbar"><label class="app-search-field archive-link-picker-search" aria-label="Search ${escapeHtml(config.title.toLowerCase())}">${icon.search}<input type="search" data-archive-link-search placeholder="Search ${escapeHtml(config.title.toLowerCase())}..." aria-label="Search ${escapeHtml(config.title.toLowerCase())}" autocomplete="off"></label>${entityType === 'source' ? `<button class="button secondary" type="button" data-archive-create-source-from-picker>${icon.plus} Create source</button>` : ''}</div><div class="archive-modal-list" data-archive-link-results></div></div><div class="modal-footer"><span class="archive-link-picker-status" data-archive-link-count aria-live="polite">0 selected</span><div class="archive-modal-actions"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="button" data-archive-link-save disabled>Add links</button></div></div></div>`);
-      const modal = modalBackdrop.querySelector('.modal');
-      const results = modal.querySelector('[data-archive-link-results]');
-      const count = modal.querySelector('[data-archive-link-count]');
-      const save = modal.querySelector('[data-archive-link-save]');
-      const updateSelectionStatus = () => {
+function openArchiveConnectionPicker({ ownerType, ownerIds, entityType })
+{
+    const config = archiveEntityConfig(entityType);
+    const ids = archiveUniqueIds(ownerIds);
+    if (!config || !ids.length) return;
+    const records = config.records();
+    const existingSets = ids.map(ownerId => new Set(archiveConnectionIds(ownerType, ownerId, entityType)));
+    const linkedToAll = recordId => existingSets.every(set => set.has(recordId));
+    let query = '';
+    const selected = new Set();
+    openModal(`<div class="modal notes-related-modal archive-link-picker-modal" role="dialog" aria-modal="true" aria-labelledby="archiveLinkPickerTitle"><div class="modal-header"><div><h2 id="archiveLinkPickerTitle">${escapeHtml(config.addLabel)}</h2><p>Choose existing ${escapeHtml(config.title.toLowerCase())} to link. Linking does not move or duplicate records.</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><div class="modal-body form-grid"><div class="archive-link-picker-toolbar"><label class="app-search-field archive-link-picker-search" aria-label="Search ${escapeHtml(config.title.toLowerCase())}">${icon.search}<input type="search" data-archive-link-search placeholder="Search ${escapeHtml(config.title.toLowerCase())}..." aria-label="Search ${escapeHtml(config.title.toLowerCase())}" autocomplete="off"></label>${entityType === 'source' ? `<button class="button secondary" type="button" data-archive-create-source-from-picker>${icon.plus} Create source</button>` : ''}</div><div class="archive-modal-list" data-archive-link-results></div></div><div class="modal-footer"><span class="archive-link-picker-status" data-archive-link-count aria-live="polite">0 selected</span><div class="archive-modal-actions"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="button" data-archive-link-save disabled>Add links</button></div></div></div>`);
+    const modal = modalBackdrop.querySelector('.modal');
+    const results = modal.querySelector('[data-archive-link-results]');
+    const count = modal.querySelector('[data-archive-link-count]');
+    const save = modal.querySelector('[data-archive-link-save]');
+    const updateSelectionStatus = () =>
+    {
         count.textContent = `${selected.size} selected`;
         save.disabled = selected.size === 0;
-      };
-      const refresh = () => {
+    };
+    const refresh = () =>
+    {
         const visible = records.filter(record => [config.label(record), config.meta(record)].join(' ').toLowerCase().includes(query.toLowerCase()));
-        results.innerHTML = visible.length ? visible.map(record => {
-          const existing = linkedToAll(record.id);
-          return `<label class="archive-modal-choice"><input type="checkbox" data-archive-link-choice value="${escapeHtml(record.id)}" ${existing ? 'checked disabled' : selected.has(record.id) ? 'checked' : ''}><span class="archive-modal-choice-copy"><strong>${escapeHtml(config.label(record))}</strong><span>${escapeHtml(config.meta(record))}</span></span><span>${existing ? 'Already linked' : ''}</span></label>`;
+        results.innerHTML = visible.length ? visible.map(record =>
+        {
+            const existing = linkedToAll(record.id);
+            return `<label class="archive-modal-choice"><input type="checkbox" data-archive-link-choice value="${escapeHtml(record.id)}" ${existing ? 'checked disabled' : selected.has(record.id) ? 'checked' : ''}><span class="archive-modal-choice-copy"><strong>${escapeHtml(config.label(record))}</strong><span>${escapeHtml(config.meta(record))}</span></span><span>${existing ? 'Already linked' : ''}</span></label>`;
         }).join('') : `<div class="archive-section-empty">No matching ${escapeHtml(config.title.toLowerCase())}.</div>`;
         updateSelectionStatus();
-      };
-      modal.querySelector('[data-archive-link-search]')?.addEventListener('input', event => { query = event.currentTarget.value; refresh(); });
-      modal.addEventListener('change', event => {
+    };
+    modal.querySelector('[data-archive-link-search]')?.addEventListener('input', event =>
+    {
+        query = event.currentTarget.value; refresh();
+    });
+    modal.addEventListener('change', event =>
+    {
         const input = event.target.closest('[data-archive-link-choice]');
         if (!input || input.disabled) return;
         if (input.checked) selected.add(input.value); else selected.delete(input.value);
         updateSelectionStatus();
-      });
-      modal
+    });
+    modal
         .querySelector(
-          '[data-archive-create-source-from-picker]'
+            '[data-archive-create-source-from-picker]'
         )
         ?.addEventListener(
-          'click',
-          () => {
-            closeModal();
+            'click',
+            () =>
+            {
+                closeModal();
 
-            openArchiveSourceModal(
-              '',
-              {
-                onCreated:
-                  createdSource => {
-                    const committed =
-                      archiveSetConnectionsAtomically(
-                        ids.map(ownerId => ({
-                          ownerType,
-                          ownerId,
-                          entityType: 'source',
-                          entityId: createdSource.id,
-                          shouldLink: true
-                        }))
-                      );
+                openArchiveSourceModal(
+                    '',
+                    {
+                        onCreated:
+                  createdSource =>
+                  {
+                      const committed =
+                          archiveSetConnectionsAtomically(
+                              ids.map(ownerId => ({
+                                  ownerType,
+                                  ownerId,
+                                  entityType: 'source',
+                                  entityId: createdSource.id,
+                                  shouldLink: true
+                              }))
+                          );
 
-                    if (
-                      !committed.ok
+                      if (
+                          !committed.ok
                       || committed.changedCount
                         !== ids.length
-                    ) {
-                      showToast(
-                        'Source created, but it could not be linked.'
-                      );
+                      )
+                      {
+                          showToast(
+                              'Source created, but it could not be linked.'
+                          );
 
-                      return;
-                    }
+                          return;
+                      }
 
-                    state.archiveSelectedFileIds =
-                      [];
+                      state.archiveSelectedFileIds =
+                          [];
 
-                    if (
-                      ownerType === 'file'
-                    ) {
-                      state.archiveView =
-                        'files';
+                      if (
+                          ownerType === 'file'
+                      )
+                      {
+                          state.archiveView =
+                              'files';
 
-                      state.archiveSelectedFileId =
-                        ids[0]
+                          state.archiveSelectedFileId =
+                              ids[0]
                         || null;
-                    }
+                      }
 
-                    renderArchive();
+                      renderArchive();
 
-                    showToast(
-                      'Source created and linked.'
-                    );
+                      showToast(
+                          'Source created and linked.'
+                      );
                   }
-              }
-            );
-          }
+                    }
+                );
+            }
         );
-      save.addEventListener(
+    save.addEventListener(
         'click',
-        () => {
-          if (!selected.size) {
-            return;
-          }
+        () =>
+        {
+            if (!selected.size)
+            {
+                return;
+            }
 
-          /*
+            /*
             File bulk relationships use the verified
             Archive commit path.
           */
-          if (
-            ownerType === 'file'
-          ) {
-            const result =
-              archiveCommitFileConnections({
-                fileIds:
+            if (
+                ownerType === 'file'
+            )
+            {
+                const result =
+                    archiveCommitFileConnections({
+                        fileIds:
                   ids,
 
-                entityType,
+                        entityType,
 
-                recordIds: [
-                  ...selected
-                ]
-              });
+                        recordIds: [
+                            ...selected
+                        ]
+                    });
 
-            if (!result.ok) {
-              showToast(
-                `No ${
-                  config.title.toLowerCase()
-                } were linked.`
-              );
+                if (!result.ok)
+                {
+                    showToast(
+                        `No ${
+                            config.title.toLowerCase()
+                        } were linked.`
+                    );
 
-              return;
+                    return;
+                }
+
+                closeModal();
+
+                finishArchiveBulkLinkAction(
+                    ids
+                );
+
+                showToast(
+                    `${result.addedLinkCount} ${
+                        result.addedLinkCount === 1
+                            ? 'link was'
+                            : 'links were'
+                    } added to ${
+                        result.changedFileCount
+                    } ${
+                        result.changedFileCount === 1
+                            ? 'file'
+                            : 'files'
+                    }.`
+                );
+
+                return;
+            }
+
+            /*
+            Preserve the existing Source-inspector
+            relationship workflow.
+          */
+            const writes =
+                ids.flatMap(ownerId =>
+                    [...selected]
+                        .filter(recordId =>
+                            !archiveConnectionIds(
+                                ownerType,
+                                ownerId,
+                                entityType
+                            ).includes(recordId)
+                        )
+                        .map(recordId => ({
+                            ownerType,
+                            ownerId,
+                            entityType,
+                            entityId: recordId,
+                            shouldLink: true
+                        }))
+                );
+
+            const committed =
+                archiveSetConnectionsAtomically(
+                    writes
+                );
+
+            const addedCount =
+                committed.ok
+                    ? committed.changedCount
+                    : 0;
+
+            if (!addedCount)
+            {
+                showToast(
+                    'No links were added.'
+                );
+
+                return;
             }
 
             closeModal();
 
-            finishArchiveBulkLinkAction(
-              ids
-            );
+            if (
+                ownerType === 'source'
+            )
+            {
+                renderArchivePreservingSourceInspectorScroll();
+            }
+            else
+            {
+                renderArchive();
+            }
 
             showToast(
-              `${result.addedLinkCount} ${
-                result.addedLinkCount === 1
-                  ? 'link was'
-                  : 'links were'
-              } added to ${
-                result.changedFileCount
-              } ${
-                result.changedFileCount === 1
-                  ? 'file'
-                  : 'files'
-              }.`
+                `${addedCount} ${
+                    addedCount === 1
+                        ? 'link was'
+                        : 'links were'
+                } added.`
             );
-
-            return;
-          }
-
-          /*
-            Preserve the existing Source-inspector
-            relationship workflow.
-          */
-          const writes =
-            ids.flatMap(ownerId =>
-              [...selected]
-                .filter(recordId =>
-                  !archiveConnectionIds(
-                    ownerType,
-                    ownerId,
-                    entityType
-                  ).includes(recordId)
-                )
-                .map(recordId => ({
-                  ownerType,
-                  ownerId,
-                  entityType,
-                  entityId: recordId,
-                  shouldLink: true
-                }))
-            );
-
-          const committed =
-            archiveSetConnectionsAtomically(
-              writes
-            );
-
-          const addedCount =
-            committed.ok
-              ? committed.changedCount
-              : 0;
-
-          if (!addedCount) {
-            showToast(
-              'No links were added.'
-            );
-
-            return;
-          }
-
-          closeModal();
-
-          if (
-            ownerType === 'source'
-          ) {
-            renderArchivePreservingSourceInspectorScroll();
-          } else {
-            renderArchive();
-          }
-
-          showToast(
-            `${addedCount} ${
-              addedCount === 1
-                ? 'link was'
-                : 'links were'
-            } added.`
-          );
         }
-      );
-      refresh();
-      requestAnimationFrame(() => modal.querySelector('[data-archive-link-search]')?.focus());
-    }
+    );
+    refresh();
+    requestAnimationFrame(() => modal.querySelector('[data-archive-link-search]')?.focus());
+}
 
-    function openArchiveFilesSourceModal(
-      fileIds
-    ) {
-      const files =
+function openArchiveFilesSourceModal(
+    fileIds
+)
+{
+    const files =
         archiveFilesForLinkAction(
-          fileIds
+            fileIds
         );
 
-      if (!files.length) {
+    if (!files.length)
+    {
         return;
-      }
+    }
 
-      /*
+    /*
         A single selected file uses the same additive
         source picker as People, Albums, and Places.
       */
-      if (files.length === 1) {
+    if (files.length === 1)
+    {
         const file =
-          files[0];
+            files[0];
 
         const fileLabel =
-          file.name
+            file.name
           || file.title
           || 'this file';
 
         openSourcesForTargetModal({
-          targetType:
+            targetType:
             'file',
 
-          targetId:
+            targetId:
             file.id,
 
-          projectId:
+            projectId:
             file.projectId,
 
-          title:
+            title:
             'Add sources',
 
-          subtitle:
+            subtitle:
             `Connect existing sources to ${
-              fileLabel
+                fileLabel
             }.`,
 
-          afterSave:
+            afterSave:
             renderArchivePreservingFileInspectorScroll
         });
 
         return;
-      }
+    }
 
-      /*
+    /*
         Keep the multi-owner Archive picker for bulk
         linking because the shared picker currently
         operates on one target record.
       */
-      openArchiveConnectionPicker({
+    openArchiveConnectionPicker({
         ownerType:
           'file',
 
         ownerIds:
           files.map(file =>
-            file.id
+              file.id
           ),
 
         entityType:
           'source'
-      });
-    }
+    });
+}
 
-    function openArchiveBulkLinkModal(
-      fileIds,
-      entityType
-    ) {
-      const ids =
+function openArchiveBulkLinkModal(
+    fileIds,
+    entityType
+)
+{
+    const ids =
         archiveFilesForLinkAction(
-          fileIds
+            fileIds
         ).map(file =>
-          file.id
+            file.id
         );
 
-      if (!ids.length) {
+    if (!ids.length)
+    {
         return;
-      }
-
-      if (
-        entityType === 'person'
-      ) {
-        openArchiveFilesPeopleModal(
-          ids
-        );
-
-        return;
-      }
-
-      if (
-        entityType === 'event'
-      ) {
-        openArchiveFilesEventsModal(
-          ids
-        );
-
-        return;
-      }
-
-      if (
-        entityType === 'note'
-      ) {
-        openArchiveFilesNoteModal(
-          ids
-        );
-
-        return;
-      }
-
-      if (
-        entityType === 'source'
-      ) {
-        openArchiveFilesSourceModal(
-          ids
-        );
-
-        return;
-      }
-
-      if (
-        entityType === 'place'
-      ) {
-        openArchiveFilesPlaceModal(
-          ids
-        );
-
-        return;
-      }
     }
 
-    function openArchiveAddLinksMenu(
-      fileIds
-    ) {
-      const files =
-        archiveFilesForLinkAction(
-          fileIds
+    if (
+        entityType === 'person'
+    )
+    {
+        openArchiveFilesPeopleModal(
+            ids
         );
 
-      if (!files.length) {
         return;
-      }
+    }
 
-      const ids =
-        files.map(file =>
-          file.id
+    if (
+        entityType === 'event'
+    )
+    {
+        openArchiveFilesEventsModal(
+            ids
         );
 
-      openModal(`
+        return;
+    }
+
+    if (
+        entityType === 'note'
+    )
+    {
+        openArchiveFilesNoteModal(
+            ids
+        );
+
+        return;
+    }
+
+    if (
+        entityType === 'source'
+    )
+    {
+        openArchiveFilesSourceModal(
+            ids
+        );
+
+        return;
+    }
+
+    if (
+        entityType === 'place'
+    )
+    {
+        openArchiveFilesPlaceModal(
+            ids
+        );
+
+        return;
+    }
+}
+
+function openArchiveAddLinksMenu(
+    fileIds
+)
+{
+    const files =
+        archiveFilesForLinkAction(
+            fileIds
+        );
+
+    if (!files.length)
+    {
+        return;
+    }
+
+    const ids =
+        files.map(file =>
+            file.id
+        );
+
+    openModal(`
         <div
           class="modal"
           role="dialog"
@@ -20229,9 +21134,9 @@
 
               <p>
                 Connect the selected ${
-                  ids.length === 1
-                    ? 'file'
-                    : 'files'
+                    ids.length === 1
+                        ? 'file'
+                        : 'files'
                 } to genealogy records.
               </p>
             </div>
@@ -20311,95 +21216,99 @@
         </div>
       `);
 
-      modalBackdrop
+    modalBackdrop
         .querySelectorAll(
-          '[data-archive-link-menu]'
+            '[data-archive-link-menu]'
         )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              const entityType =
-                button.dataset
-                  .archiveLinkMenu;
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
+                {
+                    const entityType =
+                        button.dataset
+                            .archiveLinkMenu;
 
-              closeModal();
+                    closeModal();
 
-              openArchiveBulkLinkModal(
-                ids,
-                entityType
-              );
-            }
-          );
+                    openArchiveBulkLinkModal(
+                        ids,
+                        entityType
+                    );
+                }
+            );
         });
-    }
+}
 
-    function openArchiveUnlinkConfirm({
-      ownerType,
-      ownerId,
-      entityType,
-      entityId
-    }) {
-      const config =
+function openArchiveUnlinkConfirm({
+    ownerType,
+    ownerId,
+    entityType,
+    entityId
+})
+{
+    const config =
         archiveEntityConfig(
-          entityType
+            entityType
         );
 
-      const record =
+    const record =
         archiveConnectionRecord(
-          entityType,
-          entityId
+            entityType,
+            entityId
         );
 
-      const owner =
+    const owner =
         ownerType === 'source'
-          ? archiveSourceById(
-              ownerId
-            )
-          : ownerType === 'file'
-            ? archiveFileById(
+            ? archiveSourceById(
                 ownerId
-              )
-            : null;
+            )
+            : ownerType === 'file'
+                ? archiveFileById(
+                    ownerId
+                )
+                : null;
 
-      if (
+    if (
         !config
         || !record
         || !owner
-      ) {
+    )
+    {
         return;
-      }
+    }
 
-      const recordLabel =
+    const recordLabel =
         config.label(record);
 
-      const ownerLabel =
+    const ownerLabel =
         ownerType === 'source'
-          ? (
-              owner.title
+            ? (
+                owner.title
               || 'Untitled source'
             )
-          : (
-              owner.name
+            : (
+                owner.name
               || owner.title
               || 'Untitled file'
             );
 
-      const ownerKind =
+    const ownerKind =
         ownerType === 'source'
-          ? 'source'
-          : 'file';
+            ? 'source'
+            : 'file';
 
-      const relationshipCopy =
+    const relationshipCopy =
         state.language === 'ru'
-          ? `Связь между «${recordLabel}» и ${
-              ownerType === 'source'
-                ? 'источником'
-                : 'файлом'
+            ? `Связь между «${recordLabel}» и ${
+                ownerType === 'source'
+                    ? 'источником'
+                    : 'файлом'
             } «${ownerLabel}» будет удалена. Обе записи останутся в проекте.`
-          : `“${recordLabel}” will no longer be linked to the ${ownerKind} “${ownerLabel}”. Neither record will be deleted.`;
+            : `“${recordLabel}” will no longer be linked to the ${ownerKind} “${ownerLabel}”. Neither record will be deleted.`;
 
-      openModal(`
+    openModal(`
         <div
           class="modal"
           role="dialog"
@@ -20410,15 +21319,15 @@
             <div>
               <h2 id="archiveUnlinkTitle">
                 ${escapeHtml(
-                  t(
-                    `Unlink ${config.singular}?`
-                  )
+                    t(
+                        `Unlink ${config.singular}?`
+                    )
                 )}
               </h2>
 
               <p>
                 ${escapeHtml(
-                  recordLabel
+                    recordLabel
                 )}
               </p>
             </div>
@@ -20428,8 +21337,8 @@
               type="button"
               data-close
               aria-label="${escapeHtml(
-                t('Close')
-              )}">
+                    t('Close')
+                )}">
               ${icon.close}
             </button>
           </div>
@@ -20438,15 +21347,15 @@
             <div class="unlink-relationship-warning">
               <strong>
                 ${escapeHtml(
-                  t(
-                    'Only the connection will be removed.'
-                  )
+                    t(
+                        'Only the connection will be removed.'
+                    )
                 )}
               </strong>
 
               <span>
                 ${escapeHtml(
-                  relationshipCopy
+                    relationshipCopy
                 )}
               </span>
             </div>
@@ -20458,8 +21367,8 @@
               type="button"
               data-close>
               ${escapeHtml(
-                t('Cancel')
-              )}
+                    t('Cancel')
+                )}
             </button>
 
             <button
@@ -20467,289 +21376,308 @@
               type="button"
               data-archive-unlink-confirm>
               ${escapeHtml(
-                t('Unlink')
-              )}
+                    t('Unlink')
+                )}
             </button>
           </div>
         </div>
       `);
 
-      modalBackdrop
+    modalBackdrop
         .querySelector(
-          '[data-archive-unlink-confirm]'
+            '[data-archive-unlink-confirm]'
         )
         ?.addEventListener(
-          'click',
-          () => {
-            if (
-              !archiveSetConnection(
-                ownerType,
-                ownerId,
-                entityType,
-                entityId,
-                false
-              )
-            ) {
-              showToast(
-                'The link could not be removed.'
-              );
+            'click',
+            () =>
+            {
+                if (
+                    !archiveSetConnection(
+                        ownerType,
+                        ownerId,
+                        entityType,
+                        entityId,
+                        false
+                    )
+                )
+                {
+                    showToast(
+                        'The link could not be removed.'
+                    );
 
-              return;
-            }
+                    return;
+                }
 
-            closeModal();
+                closeModal();
 
-            if (
-              ownerType === 'source'
+                if (
+                    ownerType === 'source'
               && state.archiveView
                 === 'sources'
-            ) {
-              renderArchivePreservingSourceInspectorScroll();
-            } else {
-              renderArchive();
+                )
+                {
+                    renderArchivePreservingSourceInspectorScroll();
+                }
+                else
+                {
+                    renderArchive();
+                }
+
+                showToast(
+                    'Link removed.'
+                );
             }
-
-            showToast(
-              'Link removed.'
-            );
-          }
         );
-    }
+}
 
-    function deleteArchiveFilesPermanently(fileIds) {
-      const ids = new Set(fileIds);
-      removeSourceLinksForTargets(
+function deleteArchiveFilesPermanently(fileIds)
+{
+    const ids = new Set(fileIds);
+    removeSourceLinksForTargets(
         'file',
         [...ids]
-      );
-      (sampleData.notes || []).forEach(note => {
+    );
+    (sampleData.notes || []).forEach(note =>
+    {
         note.linkedArchiveFileIds = (note.linkedArchiveFileIds || []).filter(id => !ids.has(id));
-      });
-      sampleData.archiveFiles = (sampleData.archiveFiles || []).filter(file => !ids.has(file.id));
-      state.archiveSelectedFileIds = [];
-      if (ids.has(state.archiveSelectedFileId)) state.archiveSelectedFileId = null;
-    }
+    });
+    sampleData.archiveFiles = (sampleData.archiveFiles || []).filter(file => !ids.has(file.id));
+    state.archiveSelectedFileIds = [];
+    if (ids.has(state.archiveSelectedFileId)) state.archiveSelectedFileId = null;
+}
 
-    function openArchiveDeleteFileConfirm(fileIds) {
-      const files = archiveUniqueIds(fileIds).map(archiveFileById).filter(Boolean);
-      if (!files.length) return;
-      const label = files.length === 1 ? files[0].name : `${files.length} files`;
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="archiveDeleteFileTitle"><div class="modal-header"><div><h2 id="archiveDeleteFileTitle">Delete permanently?</h2><p>${escapeHtml(label)}</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><div class="modal-body"><div class="archive-delete-summary"><strong>This action cannot be undone.</strong><span>The ${files.length === 1 ? 'file' : 'files'} and all links to People, Events, Notes, Places, and Sources will be removed. Connected records will not be deleted.</span></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" data-archive-delete-file-confirm>Delete permanently</button></div></div>`);
-      modalBackdrop.querySelector('[data-archive-delete-file-confirm]')?.addEventListener('click', () => {
+function openArchiveDeleteFileConfirm(fileIds)
+{
+    const files = archiveUniqueIds(fileIds).map(archiveFileById).filter(Boolean);
+    if (!files.length) return;
+    const label = files.length === 1 ? files[0].name : `${files.length} files`;
+    openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="archiveDeleteFileTitle"><div class="modal-header"><div><h2 id="archiveDeleteFileTitle">Delete permanently?</h2><p>${escapeHtml(label)}</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><div class="modal-body"><div class="archive-delete-summary"><strong>This action cannot be undone.</strong><span>The ${files.length === 1 ? 'file' : 'files'} and all links to People, Events, Notes, Places, and Sources will be removed. Connected records will not be deleted.</span></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" data-archive-delete-file-confirm>Delete permanently</button></div></div>`);
+    modalBackdrop.querySelector('[data-archive-delete-file-confirm]')?.addEventListener('click', () =>
+    {
         deleteArchiveFilesPermanently(files.map(file => file.id));
         closeModal();
         renderArchive();
         showToast(files.length === 1 ? 'File permanently deleted.' : 'Files permanently deleted.');
-      });
-    }
+    });
+}
 
-    function openArchiveDeleteFolderConfirm(folderId) {
-      const folder = archiveFolderById(folderId);
-      if (!folder) {
+function openArchiveDeleteFolderConfirm(folderId)
+{
+    const folder = archiveFolderById(folderId);
+    if (!folder)
+    {
         return;
-      }
-      const impact = archiveFolderImpact(folder.id);
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="archiveDeleteFolderTitle"><div class="modal-header"><div><h2 id="archiveDeleteFolderTitle">Delete folder permanently?</h2><p>${escapeHtml(folder.name)}</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><div class="modal-body"><div class="archive-delete-summary"><strong>This action cannot be undone.</strong><span>${impact.folders} nested ${impact.folders === 1 ? 'folder' : 'folders'} and ${impact.files} ${impact.files === 1 ? 'file' : 'files'} will be permanently deleted. Connections will be removed; connected genealogy records will remain.</span></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" data-archive-delete-folder-confirm>Delete permanently</button></div></div>`);
-      modalBackdrop
+    }
+    const impact = archiveFolderImpact(folder.id);
+    openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="archiveDeleteFolderTitle"><div class="modal-header"><div><h2 id="archiveDeleteFolderTitle">Delete folder permanently?</h2><p>${escapeHtml(folder.name)}</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><div class="modal-body"><div class="archive-delete-summary"><strong>This action cannot be undone.</strong><span>${impact.folders} nested ${impact.folders === 1 ? 'folder' : 'folders'} and ${impact.files} ${impact.files === 1 ? 'file' : 'files'} will be permanently deleted. Connections will be removed; connected genealogy records will remain.</span></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" data-archive-delete-folder-confirm>Delete permanently</button></div></div>`);
+    modalBackdrop
         .querySelector(
-          '[data-archive-delete-folder-confirm]'
+            '[data-archive-delete-folder-confirm]'
         )
         ?.addEventListener(
-          'click',
-          () => {
-            const parentId =
-              archiveFolderParentId(
-                folder
-              );
+            'click',
+            () =>
+            {
+                const parentId =
+                    archiveFolderParentId(
+                        folder
+                    );
 
-            const ids =
-              new Set(
-                impact.folderIds
-              );
+                const ids =
+                    new Set(
+                        impact.folderIds
+                    );
 
-            deleteArchiveFilesPermanently(
-              archiveProjectFiles()
-                .filter(file =>
-                  ids.has(
-                    archiveFileFolderId(
-                      file
-                    )
-                  )
-                )
-                .map(file =>
-                  file.id
-                )
-            );
+                deleteArchiveFilesPermanently(
+                    archiveProjectFiles()
+                        .filter(file =>
+                            ids.has(
+                                archiveFileFolderId(
+                                    file
+                                )
+                            )
+                        )
+                        .map(file =>
+                            file.id
+                        )
+                );
 
-            sampleData.archiveFolders =
-              (
-                sampleData.archiveFolders
+                sampleData.archiveFolders =
+                    (
+                        sampleData.archiveFolders
                 || []
-              ).filter(item =>
-                !ids.has(
-                  item.id
-                )
-              );
+                    ).filter(item =>
+                        !ids.has(
+                            item.id
+                        )
+                    );
 
-            closeModal();
+                closeModal();
 
-            archiveNavigateToLocation(
-              {
-                view:
+                archiveNavigateToLocation(
+                    {
+                        view:
                   'files',
 
-                folderId:
+                        folderId:
                   parentId,
 
-                search:
+                        search:
                   '',
 
-                searchScope:
+                        searchScope:
                   'folder',
 
-                personFilterId:
+                        personFilterId:
                   '',
 
-                selectedFileId:
+                        selectedFileId:
                   null,
 
-                inspectorCollapsed:
+                        inspectorCollapsed:
                   false
-              },
-              {
-                recordHistory:
+                    },
+                    {
+                        recordHistory:
                   false,
 
-                expandCurrent:
+                        expandCurrent:
                   true
-              }
-            );
+                    }
+                );
 
-            showToast(
-              'Folder permanently deleted.'
-            );
-          }
+                showToast(
+                    'Folder permanently deleted.'
+                );
+            }
         );
-    }
+}
 
-    function openArchiveDeleteSourceConfirm(sourceId) {
-      const source = archiveSourceById(sourceId);
-      if (!source) return;
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="archiveDeleteSourceTitle"><div class="modal-header"><div><h2 id="archiveDeleteSourceTitle">Delete source permanently?</h2><p>${escapeHtml(source.title)}</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><div class="modal-body"><div class="archive-delete-summary"><strong>The Source record cannot be restored.</strong><span>Its connections will be removed. Linked files, Photos, People, Events, Notes, and Places will not be deleted.</span></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" data-archive-delete-source-confirm>Delete permanently</button></div></div>`);
-      modalBackdrop.querySelector('[data-archive-delete-source-confirm]')?.addEventListener('click', () => {
+function openArchiveDeleteSourceConfirm(sourceId)
+{
+    const source = archiveSourceById(sourceId);
+    if (!source) return;
+    openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="archiveDeleteSourceTitle"><div class="modal-header"><div><h2 id="archiveDeleteSourceTitle">Delete source permanently?</h2><p>${escapeHtml(source.title)}</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><div class="modal-body"><div class="archive-delete-summary"><strong>The Source record cannot be restored.</strong><span>Its connections will be removed. Linked files, Photos, People, Events, Notes, and Places will not be deleted.</span></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" data-archive-delete-source-confirm>Delete permanently</button></div></div>`);
+    modalBackdrop.querySelector('[data-archive-delete-source-confirm]')?.addEventListener('click', () =>
+    {
         removeSourceLinksForSource(
-          source.id
+            source.id
         );
         sampleData.sources = (sampleData.sources || []).filter(item => item.id !== source.id);
         state.archiveSelectedSourceId = null;
         closeModal();
         renderArchive();
         showToast('Source permanently deleted.');
-      });
+    });
+}
+
+function openArchiveItemActionsPopover(
+    type,
+    id,
+    anchor
+)
+{
+    if (
+        !(anchor instanceof HTMLElement)
+    )
+    {
+        return;
     }
 
-    function openArchiveItemActionsPopover(
-      type,
-      id,
-      anchor
-    ) {
-      if (
-        !(anchor instanceof HTMLElement)
-      ) {
-        return;
-      }
-
-      const file =
+    const file =
         type === 'file'
-          ? archiveFileById(
-              id
+            ? archiveFileById(
+                id
             )
-          : null;
+            : null;
 
-      const folder =
+    const folder =
         type === 'folder'
-          ? archiveFolderById(
-              id
+            ? archiveFolderById(
+                id
             )
-          : null;
-      const folderIsCurrentLocation =
+            : null;
+    const folderIsCurrentLocation =
         Boolean(
-          folder
+            folder
           && folder.id
             === archiveNormalizeFolderId(
-              state.archiveSelectedFolderId
+                state.archiveSelectedFolderId
             )
         );
-      const source =
+    const source =
         type === 'source'
-          ? archiveSourceById(
-              id
+            ? archiveSourceById(
+                id
             )
-          : null;
-      const sourceMenuInInspector =
+            : null;
+    const sourceMenuInInspector =
         Boolean(
-          source
+            source
           && anchor.closest(
-            '.archive-inspector-toolbar'
+              '.archive-inspector-toolbar'
           )
         );
-      const item =
+    const item =
         file
         || folder
         || source;
 
-      if (!item) {
+    if (!item)
+    {
         return;
-      }
+    }
 
-      /*
+    /*
         Clicking the active More button again
         closes its menu instead of reopening it.
       */
-      const alreadyOpen =
+    const alreadyOpen =
         anchor.getAttribute(
-          'aria-expanded'
+            'aria-expanded'
         ) === 'true'
         && Boolean(
-          document.getElementById(
-            'projectMenu'
-          )
+            document.getElementById(
+                'projectMenu'
+            )
         );
 
-      closeMenu();
+    closeMenu();
 
-      if (alreadyOpen) {
+    if (alreadyOpen)
+    {
         return;
-      }
+    }
 
-      const label =
+    const label =
         file?.name
         || folder?.name
         || source?.title
         || 'Item';
 
-      const menu =
+    const menu =
         document.createElement(
-          'div'
+            'div'
         );
 
-      menu.className =
+    menu.className =
         'menu-popover';
 
-      menu.id =
+    menu.id =
         'projectMenu';
 
-      menu.setAttribute(
+    menu.setAttribute(
         'role',
         'menu'
-      );
+    );
 
-      menu.setAttribute(
+    menu.setAttribute(
         'aria-label',
         `More actions for ${label}`
-      );
+    );
 
-      if (file) {
+    if (file)
+    {
         menu.innerHTML = `
           <button
             type="button"
@@ -20776,14 +21704,15 @@
             Delete permanently
           </button>
         `;
-      }
+    }
 
-      if (folder) {
+    if (folder)
+    {
         menu.innerHTML = `
           ${
-            folderIsCurrentLocation
-              ? ''
-              : `
+                folderIsCurrentLocation
+                    ? ''
+                    : `
                 <button
                   type="button"
                   role="menuitem"
@@ -20792,7 +21721,7 @@
                   Open folder
                 </button>
               `
-          }
+            }
 
           <button
             type="button"
@@ -20819,12 +21748,13 @@
             Delete permanently
           </button>
         `;
-      }
+    }
 
-      if (source) {
+    if (source)
+    {
         menu.innerHTML =
-          sourceMenuInInspector
-            ? `
+            sourceMenuInInspector
+                ? `
               <button
                 class="danger"
                 type="button"
@@ -20834,7 +21764,7 @@
                 Delete permanently
               </button>
             `
-            : `
+                : `
               <button
                 type="button"
                 role="menuitem"
@@ -20849,9 +21779,9 @@
                 data-archive-item-action="favorite">
 
                 ${
-                  source.favorite
-                    ? 'Remove from favourites'
-                    : 'Add to favourites'
+                    source.favorite
+                        ? 'Remove from favourites'
+                        : 'Add to favourites'
                 }
               </button>
 
@@ -20864,407 +21794,439 @@
                 Delete permanently
               </button>
             `;
-      }
+    }
 
-      document.body.appendChild(
+    document.body.appendChild(
         menu
-      );
+    );
 
-      /*
+    /*
         Position after mounting so the actual
         menu dimensions are available.
       */
-      const rect =
+    const rect =
         anchor.getBoundingClientRect();
 
-      const viewportMargin =
+    const viewportMargin =
         12;
 
-      const gap =
+    const gap =
         6;
 
-      const left =
+    const left =
         Math.min(
-          Math.max(
-            viewportMargin,
-            rect.right
+            Math.max(
+                viewportMargin,
+                rect.right
               - menu.offsetWidth
-          ),
-          Math.max(
-            viewportMargin,
-            window.innerWidth
+            ),
+            Math.max(
+                viewportMargin,
+                window.innerWidth
               - menu.offsetWidth
               - viewportMargin
-          )
+            )
         );
 
-      const belowTop =
+    const belowTop =
         rect.bottom
         + gap;
 
-      const top =
+    const top =
         belowTop
           + menu.offsetHeight
           <= window.innerHeight
             - viewportMargin
-          ? belowTop
-          : Math.max(
-              viewportMargin,
-              rect.top
+            ? belowTop
+            : Math.max(
+                viewportMargin,
+                rect.top
                 - menu.offsetHeight
                 - gap
             );
 
-      menu.style.left =
+    menu.style.left =
         `${left}px`;
 
-      menu.style.top =
+    menu.style.top =
         `${top}px`;
 
-      anchor.setAttribute(
+    anchor.setAttribute(
         'aria-expanded',
         'true'
-      );
+    );
 
-      menu.addEventListener(
+    menu.addEventListener(
         'click',
-        event => {
-          const actionButton =
-            event.target.closest(
-              '[data-archive-item-action]'
-            );
+        event =>
+        {
+            const actionButton =
+                event.target.closest(
+                    '[data-archive-item-action]'
+                );
 
-          if (!actionButton) {
-            return;
-          }
-
-          const action =
-            actionButton.dataset
-              .archiveItemAction;
-
-          closeMenu();
-
-          if (file) {
-            if (
-              action === 'rename'
-            ) {
-              openArchiveRenameItemModal(
-                'file',
-                file.id
-              );
-
-              return;
+            if (!actionButton)
+            {
+                return;
             }
 
-            if (
-              action === 'move'
-            ) {
-              openArchiveMoveModal({
-                fileIds:
+            const action =
+                actionButton.dataset
+                    .archiveItemAction;
+
+            closeMenu();
+
+            if (file)
+            {
+                if (
+                    action === 'rename'
+                )
+                {
+                    openArchiveRenameItemModal(
+                        'file',
+                        file.id
+                    );
+
+                    return;
+                }
+
+                if (
+                    action === 'move'
+                )
+                {
+                    openArchiveMoveModal({
+                        fileIds:
                   [
-                    file.id
+                      file.id
                   ]
-              });
+                    });
 
-              return;
+                    return;
+                }
+
+                if (
+                    action === 'delete'
+                )
+                {
+                    openArchiveDeleteFileConfirm(
+                        [
+                            file.id
+                        ]
+                    );
+                }
+
+                return;
             }
 
-            if (
-              action === 'delete'
-            ) {
-              openArchiveDeleteFileConfirm(
-                [
-                  file.id
-                ]
-              );
-            }
+            if (folder)
+            {
+                if (
+                    action === 'open'
+                )
+                {
+                    archiveOpenFolder(
+                        folder.id
+                    );
 
-            return;
-          }
+                    return;
+                }
 
-          if (folder) {
-            if (
-              action === 'open'
-            ) {
-              archiveOpenFolder(
-                folder.id
-              );
+                if (
+                    action === 'rename'
+                )
+                {
+                    openArchiveRenameItemModal(
+                        'folder',
+                        folder.id
+                    );
 
-              return;
-            }
+                    return;
+                }
 
-            if (
-              action === 'rename'
-            ) {
-              openArchiveRenameItemModal(
-                'folder',
-                folder.id
-              );
-
-              return;
-            }
-
-            if (
-              action === 'move'
-            ) {
-              openArchiveMoveModal({
-                folderId:
+                if (
+                    action === 'move'
+                )
+                {
+                    openArchiveMoveModal({
+                        folderId:
                   folder.id
-              });
+                    });
 
-              return;
+                    return;
+                }
+
+                if (
+                    action === 'delete'
+                )
+                {
+                    openArchiveDeleteFolderConfirm(
+                        folder.id
+                    );
+                }
+
+                return;
             }
 
-            if (
-              action === 'delete'
-            ) {
-              openArchiveDeleteFolderConfirm(
-                folder.id
-              );
+            if (source)
+            {
+                if (
+                    action === 'edit'
+                )
+                {
+                    openArchiveSourceModal(
+                        source.id
+                    );
+
+                    return;
+                }
+
+                if (
+                    action === 'favorite'
+                )
+                {
+                    source.favorite =
+                        !source.favorite;
+
+                    renderArchive();
+
+                    return;
+                }
+
+                if (
+                    action === 'delete'
+                )
+                {
+                    openArchiveDeleteSourceConfirm(
+                        source.id
+                    );
+                }
             }
-
-            return;
-          }
-
-          if (source) {
-            if (
-              action === 'edit'
-            ) {
-              openArchiveSourceModal(
-                source.id
-              );
-
-              return;
-            }
-
-            if (
-              action === 'favorite'
-            ) {
-              source.favorite =
-                !source.favorite;
-
-              renderArchive();
-
-              return;
-            }
-
-            if (
-              action === 'delete'
-            ) {
-              openArchiveDeleteSourceConfirm(
-                source.id
-              );
-            }
-          }
         }
-      );
+    );
 
-      bindMenuLifecycle(
+    bindMenuLifecycle(
         anchor
-      );
+    );
 
-      requestAnimationFrame(
-        () => {
-          menu
-            .querySelector(
-              '[role="menuitem"]'
-            )
-            ?.focus();
+    requestAnimationFrame(
+        () =>
+        {
+            menu
+                .querySelector(
+                    '[role="menuitem"]'
+                )
+                ?.focus();
         }
-      );
+    );
+}
+
+function openArchiveConnectedRecordCommit(
+    type,
+    id
+)
+{
+    if (
+        type === 'photo'
+    )
+    {
+        openAlbumsForPhoto(
+            id
+        );
+
+        return;
+    }
+    if (
+        type === 'person'
+    )
+    {
+        openPlaceInspectorPerson(
+            id
+        );
+
+        return;
     }
 
-    function openArchiveConnectedRecordCommit(
-      type,
-      id
-    ) {
-      if (
-        type === 'photo'
-      ) {
-        openAlbumsForPhoto(
-          id
-        );
-
-        return;
-      }
-      if (
-        type === 'person'
-      ) {
-        openPlaceInspectorPerson(
-          id
-        );
-
-        return;
-      }
-
-      if (
+    if (
         type === 'note'
-      ) {
+    )
+    {
         openCentralNoteFromContext(
-          id,
+            id,
 
-          state.archiveView
+            state.archiveView
             === 'sources'
-              ? {
-                  type:
+                ? {
+                    type:
                     'source',
 
-                  id:
+                    id:
                     state.archiveSelectedSourceId
                     || ''
                 }
-              : {
-                  type:
+                : {
+                    type:
                     'archiveFile',
 
-                  id:
+                    id:
                     state.archiveSelectedFileId
                     || ''
                 }
         );
 
         return;
-      }
+    }
 
-      if (
+    if (
         type === 'place'
-      ) {
+    )
+    {
         state.activeModule =
-          'Places';
+            'Places';
 
         state.placesView =
-          'all';
+            'all';
 
         state.selectedPlaceId =
-          id;
+            id;
 
         render();
 
         return;
-      }
+    }
 
-      if (
+    if (
         type === 'source'
-      ) {
+    )
+    {
         archiveRememberCurrentLocation();
 
         state.archiveView =
-          'sources';
+            'sources';
 
         state.archiveSelectedSourceId =
-          id;
+            id;
 
         state.archiveInspectorCollapsed =
-          false;
+            false;
 
         renderArchive();
 
         return;
-      }
+    }
 
-      if (
+    if (
         type === 'file'
-      ) {
+    )
+    {
         const file =
-          archiveFileById(
-            id
-          );
+            archiveFileById(
+                id
+            );
 
         archiveNavigateToLocationCommit(
-          {
-            view:
+            {
+                view:
               'files',
 
-            folderId:
+                folderId:
               archiveFileFolderId(
-                file
+                  file
               ),
 
-            search:
+                search:
               '',
 
-            searchScope:
+                searchScope:
               'folder',
 
-            personFilterId:
+                personFilterId:
               '',
 
-            selectedFileId:
+                selectedFileId:
               file?.id
               || null,
 
-            inspectorCollapsed:
+                inspectorCollapsed:
               false
-          },
-          {
-            expandCurrent:
+            },
+            {
+                expandCurrent:
               true
-          }
+            }
         );
 
         return;
-      }
+    }
 
-      if (
+    if (
         type === 'event'
-      ) {
+    )
+    {
         const event =
-          archiveConnectionRecord(
-            'event',
-            id
-          );
+            archiveConnectionRecord(
+                'event',
+                id
+            );
 
         const personId =
-          event?.personIds?.[0];
+            event?.personIds?.[0];
 
-        if (personId) {
-          openPlaceInspectorPerson(
-            personId
-          );
-        } else {
-          showToast(
-            'Opening this event is simulated.'
-          );
+        if (personId)
+        {
+            openPlaceInspectorPerson(
+                personId
+            );
         }
-      }
-    }
-
-    function openArchiveConnectedRecord(
-      type,
-      id
-    ) {
-      runAfterArchiveFileEditGuard(
-        () => {
-          openArchiveConnectedRecordCommit(
-            type,
-            id
-          );
+        else
+        {
+            showToast(
+                'Opening this event is simulated.'
+            );
         }
-      );
     }
+}
 
-    function openSourceConnectedItems(sourceId, entityType) {
-      const source = archiveSourceById(sourceId);
-      if (!source) return;
+function openArchiveConnectedRecord(
+    type,
+    id
+)
+{
+    runAfterArchiveFileEditGuard(
+        () =>
+        {
+            openArchiveConnectedRecordCommit(
+                type,
+                id
+            );
+        }
+    );
+}
 
-      if (entityType === 'note') {
+function openSourceConnectedItems(sourceId, entityType)
+{
+    const source = archiveSourceById(sourceId);
+    if (!source) return;
+
+    if (entityType === 'note')
+    {
         openNotesForContext('source', source.id);
         return;
-      }
+    }
 
-      const records = archiveSourceConnectionRecords(
+    const records = archiveSourceConnectionRecords(
         source,
         entityType
-      );
+    );
 
-      if (entityType === 'photo') {
+    if (entityType === 'photo')
+    {
         state.activeModule = 'Albums';
         state.albumsView = 'all';
         state.activeAlbumId = null;
 
         state.albumsFilters = {
-          ...defaultAlbumFilters,
-          sourceId: source.id
+            ...defaultAlbumFilters,
+            sourceId: source.id
         };
 
         state.albumsSearch = '';
@@ -21275,1064 +22237,1190 @@
         resetAlbumsPage();
         render();
         return;
-      }
-
-      if (entityType === 'file') {
-        openArchiveLocation({
-          view: 'files',
-          folderId: null,
-          search: '',
-          fileFilters: {
-            ...defaultArchiveFileFilters,
-            sourceId: source.id
-          },
-          filterPresentation: 'flat',
-          filterScopeFolderId: null,
-          selectedFileId: records[0]?.id || null,
-          inspectorCollapsed: true
-        });
-      }
     }
 
-    function bindArchiveControls() {
-      const root = main.querySelector('.archive-shell');
-      if (!root) return;
-      root
-        .querySelectorAll('[data-source-connected-view-all]')
-        .forEach(button => {
-          button.onclick = event => {
-            event.preventDefault();
-            event.stopPropagation();
-
-            openSourceConnectedItems(
-              button.dataset.sourceConnectedOwner,
-              button.dataset.sourceConnectedViewAll
-            );
-          };
+    if (entityType === 'file')
+    {
+        openArchiveLocation({
+            view: 'files',
+            folderId: null,
+            search: '',
+            fileFilters: {
+                ...defaultArchiveFileFilters,
+                sourceId: source.id
+            },
+            filterPresentation: 'flat',
+            filterScopeFolderId: null,
+            selectedFileId: records[0]?.id || null,
+            inspectorCollapsed: true
         });
-      bindConnectedNotesFooters(root);
-      bindConnectedFileLinks(
+    }
+}
+
+function bindArchiveControls()
+{
+    const root = main.querySelector('.archive-shell');
+    if (!root) return;
+    root
+        .querySelectorAll('[data-source-connected-view-all]')
+        .forEach(button =>
+        {
+            button.onclick = event =>
+            {
+                event.preventDefault();
+                event.stopPropagation();
+
+                openSourceConnectedItems(
+                    button.dataset.sourceConnectedOwner,
+                    button.dataset.sourceConnectedViewAll
+                );
+            };
+        });
+    bindConnectedNotesFooters(root);
+    bindConnectedFileLinks(
         root,
         {
-          onUnlinked:
+            onUnlinked:
             ({
-              contextType
-            }) => {
-              if (
                 contextType
+            }) =>
+            {
+                if (
+                    contextType
                 !== 'source'
-              ) {
-                return;
-              }
+                )
+                {
+                    return;
+                }
 
-              renderArchivePreservingSourceInspectorScroll();
+                renderArchivePreservingSourceInspectorScroll();
             }
         }
-      );
+    );
 
-      bindConnectedSourceLinks(
+    bindConnectedSourceLinks(
         root,
         {
-          onUnlinked:
+            onUnlinked:
             ({
-              targetType,
-              targetId
-            }) => {
-              if (
-                targetType !== 'file'
+                targetType,
+                targetId
+            }) =>
+            {
+                if (
+                    targetType !== 'file'
                 || targetId
                   !== state.archiveSelectedFileId
-              ) {
-                renderArchive();
-                return;
-              }
+                )
+                {
+                    renderArchive();
+                    return;
+                }
 
-              renderArchivePreservingFileInspectorScroll();
+                renderArchivePreservingFileInspectorScroll();
             }
         }
-      );
+    );
 
-      bindGenealogyDateFields(
+    bindGenealogyDateFields(
         root
-      );
+    );
 
-      bindPlaceComboboxes(
+    bindPlaceComboboxes(
         root
-      );
+    );
     root
-      .querySelector(
-        '[data-archive-inspector-open-folder]'
-      )
-      ?.addEventListener(
-        'click',
-        event => {
-          archiveOpenFolder(
-            event.currentTarget
-              .dataset
-              .archiveInspectorOpenFolder
-          );
-        }
-      );
-
-    root
-      .querySelector(
-        '[data-archive-inspector-rename-folder]'
-      )
-      ?.addEventListener(
-        'click',
-        event => {
-          const folderId =
-            event.currentTarget
-              .dataset
-              .archiveInspectorRenameFolder;
-
-          if (!folderId) {
-            return;
-          }
-
-          openArchiveRenameItemModal(
-            'folder',
-            folderId
-          );
-        }
-      );
-    root
-      .querySelector(
-        '[data-archive-inspector-move]'
-      )
-      ?.addEventListener(
-        'click',
-        event => {
-          const button =
-            event.currentTarget;
-
-          const type =
-            button.dataset
-              .archiveInspectorMove;
-
-          const id =
-            button.dataset
-              .archiveInspectorMoveId;
-
-          if (
-            !type
-            || !id
-          ) {
-            return;
-          }
-
-          if (
-            type === 'file'
-          ) {
-            openArchiveMoveModal({
-              fileIds: [
-                id
-              ]
-            });
-
-            return;
-          }
-
-          if (
-            type === 'folder'
-          ) {
-            openArchiveMoveModal({
-              folderId:
-                id
-            });
-          }
-        }
-      );
-
-      root
         .querySelector(
-          '#archiveCancelFileEdit'
+            '[data-archive-inspector-open-folder]'
         )
         ?.addEventListener(
-          'click',
-          cancelArchiveFileEdit
-        );
-
-      root
-        .querySelector(
-          '#archiveSaveFileEdit'
-        )
-        ?.addEventListener(
-          'click',
-          saveArchiveFileEdit
-        );
-      root
-        .querySelectorAll(
-          '[data-archive-section-toggle]'
-        )
-        .forEach(button => {
-          button.addEventListener(
             'click',
-            event => {
-              if (
-                event.target.closest(
-                  '.link'
-                )
-              ) {
-                return;
-              }
-
-              const sectionId =
-                button.dataset
-                  .archiveSectionToggle;
-
-              const open =
-                !archiveInspectorSectionIsOpen(
-                  sectionId
+            event =>
+            {
+                archiveOpenFolder(
+                    event.currentTarget
+                        .dataset
+                        .archiveInspectorOpenFolder
                 );
-
-              state.archiveInspectorSections[
-                sectionId
-              ] = open;
-
-              const section =
-                button.closest(
-                  '.panel-section'
-                );
-
-              const body =
-                section?.querySelector(
-                  '.panel-section-body'
-                );
-
-              section
-                ?.classList
-                .toggle(
-                  'is-open',
-                  open
-                );
-
-              button.setAttribute(
-                'aria-expanded',
-                String(
-                  open
-                )
-              );
-
-              if (body) {
-                body.hidden =
-                  !open;
-              }
             }
-          );
+        );
+
+    root
+        .querySelector(
+            '[data-archive-inspector-rename-folder]'
+        )
+        ?.addEventListener(
+            'click',
+            event =>
+            {
+                const folderId =
+                    event.currentTarget
+                        .dataset
+                        .archiveInspectorRenameFolder;
+
+                if (!folderId)
+                {
+                    return;
+                }
+
+                openArchiveRenameItemModal(
+                    'folder',
+                    folderId
+                );
+            }
+        );
+    root
+        .querySelector(
+            '[data-archive-inspector-move]'
+        )
+        ?.addEventListener(
+            'click',
+            event =>
+            {
+                const button =
+                    event.currentTarget;
+
+                const type =
+                    button.dataset
+                        .archiveInspectorMove;
+
+                const id =
+                    button.dataset
+                        .archiveInspectorMoveId;
+
+                if (
+                    !type
+            || !id
+                )
+                {
+                    return;
+                }
+
+                if (
+                    type === 'file'
+                )
+                {
+                    openArchiveMoveModal({
+                        fileIds: [
+                            id
+                        ]
+                    });
+
+                    return;
+                }
+
+                if (
+                    type === 'folder'
+                )
+                {
+                    openArchiveMoveModal({
+                        folderId:
+                id
+                    });
+                }
+            }
+        );
+
+    root
+        .querySelector(
+            '#archiveCancelFileEdit'
+        )
+        ?.addEventListener(
+            'click',
+            cancelArchiveFileEdit
+        );
+
+    root
+        .querySelector(
+            '#archiveSaveFileEdit'
+        )
+        ?.addEventListener(
+            'click',
+            saveArchiveFileEdit
+        );
+    root
+        .querySelectorAll(
+            '[data-archive-section-toggle]'
+        )
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                event =>
+                {
+                    if (
+                        event.target.closest(
+                            '.link'
+                        )
+                    )
+                    {
+                        return;
+                    }
+
+                    const sectionId =
+                        button.dataset
+                            .archiveSectionToggle;
+
+                    const open =
+                        !archiveInspectorSectionIsOpen(
+                            sectionId
+                        );
+
+                    state.archiveInspectorSections[
+                        sectionId
+                    ] = open;
+
+                    const section =
+                        button.closest(
+                            '.panel-section'
+                        );
+
+                    const body =
+                        section?.querySelector(
+                            '.panel-section-body'
+                        );
+
+                    section
+                        ?.classList
+                        .toggle(
+                            'is-open',
+                            open
+                        );
+
+                    button.setAttribute(
+                        'aria-expanded',
+                        String(
+                            open
+                        )
+                    );
+
+                    if (body)
+                    {
+                        body.hidden =
+                            !open;
+                    }
+                }
+            );
         });
-      root
+    root
         .querySelector(
-          '[data-archive-add-file-person]'
+            '[data-archive-add-file-person]'
         )
         ?.addEventListener(
-          'click',
-          () => {
-            openArchiveFilePeopleModal(
-              state.archiveSelectedFileId
-            );
-          }
-        );
-      root
-        .querySelector(
-          '[data-archive-add-file-event]'
-        )
-        ?.addEventListener(
-          'click',
-          () => {
-            openArchiveFileEventsModal(
-              state.archiveSelectedFileId
-            );
-          }
-        );
-
-      root
-        .querySelector(
-          '[data-archive-add-file-note]'
-        )
-        ?.addEventListener(
-          'click',
-          () => {
-            openArchiveFileNoteModal(
-              state.archiveSelectedFileId
-            );
-          }
-        );
-
-      root
-        .querySelector(
-          '[data-archive-add-file-source]'
-        )
-        ?.addEventListener(
-          'click',
-          () => {
-            const fileId =
-              state.archiveSelectedFileId;
-
-            if (!fileId) {
-              return;
+            'click',
+            () =>
+            {
+                openArchiveFilePeopleModal(
+                    state.archiveSelectedFileId
+                );
             }
-
-            openArchiveFilesSourceModal([
-              fileId
-            ]);
-          }
         );
-      root.querySelector('[data-archive-search]')?.addEventListener('input', event => {
+    root
+        .querySelector(
+            '[data-archive-add-file-event]'
+        )
+        ?.addEventListener(
+            'click',
+            () =>
+            {
+                openArchiveFileEventsModal(
+                    state.archiveSelectedFileId
+                );
+            }
+        );
+
+    root
+        .querySelector(
+            '[data-archive-add-file-note]'
+        )
+        ?.addEventListener(
+            'click',
+            () =>
+            {
+                openArchiveFileNoteModal(
+                    state.archiveSelectedFileId
+                );
+            }
+        );
+
+    root
+        .querySelector(
+            '[data-archive-add-file-source]'
+        )
+        ?.addEventListener(
+            'click',
+            () =>
+            {
+                const fileId =
+                    state.archiveSelectedFileId;
+
+                if (!fileId)
+                {
+                    return;
+                }
+
+                openArchiveFilesSourceModal([
+                    fileId
+                ]);
+            }
+        );
+    root.querySelector('[data-archive-search]')?.addEventListener('input', event =>
+    {
         const value = event.currentTarget.value;
         const selectionStart = event.currentTarget.selectionStart;
         state.archiveSearch = value;
         renderArchiveMain();
-        requestAnimationFrame(() => {
-          const input = main.querySelector('[data-archive-search]');
-          if (!input) return;
-          input.focus({ preventScroll: true });
-          const position = Math.min(selectionStart ?? value.length, input.value.length);
-          input.setSelectionRange(position, position);
+        requestAnimationFrame(() =>
+        {
+            const input = main.querySelector('[data-archive-search]');
+            if (!input) return;
+            input.focus({ preventScroll: true });
+            const position = Math.min(selectionStart ?? value.length, input.value.length);
+            input.setSelectionRange(position, position);
         });
-      });
-      const sortingSources =
+    });
+    const sortingSources =
         archiveToolbarIsSources();
 
-      bindAppSortControl(root, {
+    bindAppSortControl(root, {
         id: 'archiveSort',
 
         options:
           sortingSources
-            ? APP_SORT_OPTIONS
-                .archiveSources
-            : APP_SORT_OPTIONS
-                .archiveFiles,
+              ? APP_SORT_OPTIONS
+                  .archiveSources
+              : APP_SORT_OPTIONS
+                  .archiveFiles,
 
         getField: () =>
-          sortingSources
-            ? state.archiveSourceSort
-            : state.archiveFileSort,
+            sortingSources
+                ? state.archiveSourceSort
+                : state.archiveFileSort,
 
         getDirection: () =>
-          sortingSources
-            ? state
-                .archiveSourceSortDirection
-            : state
-                .archiveFileSortDirection,
+            sortingSources
+                ? state
+                    .archiveSourceSortDirection
+                : state
+                    .archiveFileSortDirection,
 
         onChange: ({
-          field,
-          direction
-        }) => {
-          if (sortingSources) {
-            state.archiveSourceSort =
-              field;
+            field,
+            direction
+        }) =>
+        {
+            if (sortingSources)
+            {
+                state.archiveSourceSort =
+                    field;
 
-            state
-              .archiveSourceSortDirection =
-              direction;
-          } else {
-            state.archiveFileSort =
-              field;
-
-            state
-              .archiveFileSortDirection =
-              direction;
-          }
-
-          renderArchiveMain();
-        }
-      });
-      root.querySelector('#archiveFilterButton') ?.addEventListener('click', event => {openArchiveFilterPopover(event.currentTarget);});
-      root
-        .querySelectorAll(
-          '[data-archive-filter-presentation]'
-        )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              const presentation =
-                button.dataset
-                  .archiveFilterPresentation;
-
-              if (
-                presentation !== 'flat'
-                && presentation !== 'folders'
-              ) {
-                return;
-              }
-
-              state.archiveFilterPresentation =
-                presentation;
-
-              if (
-                presentation === 'folders'
-              ) {
-                const filters =
-                  archiveEffectiveFileFilters();
-
-                state.archiveSelectedFolderId =
-                  filters.scope === 'folder'
-                    ? archiveNormalizeFolderId(
-                        state
-                          .archiveFilterScopeFolderId
-                      )
-                    : null;
-              }
-
-              state.archiveSelectedFolderItemId =
-                null;
-
-              state.archiveSelectedFileId =
-                null;
-
-              state.archiveSelectedFileIds =
-                [];
-
-              renderArchive();
+                state
+                    .archiveSourceSortDirection =
+                        direction;
             }
-          );
-        });
-      root.querySelectorAll('[data-archive-remove-filter]').forEach(button => {button.addEventListener('click', () => {removeArchiveToolbarFilter(button.dataset.archiveRemoveFilter);});});
-      root
-        .querySelector(
-          '#archiveClearFilters'
-        )
-        ?.addEventListener(
-          'click',
-          clearArchiveToolbarFilters
-        );
-      root
-        .querySelector(
-          '[data-archive-nav-back]'
-        )
-        ?.addEventListener(
-          'click',
-          archiveNavigateBack
-        );
+            else
+            {
+                state.archiveFileSort =
+                    field;
 
-      root
-        .querySelector(
-          '[data-archive-nav-forward]'
-        )
-        ?.addEventListener(
-          'click',
-          archiveNavigateForward
-        );
+                state
+                    .archiveFileSortDirection =
+                        direction;
+            }
 
-      root
-        .querySelector(
-          '[data-archive-nav-up]'
-        )
-        ?.addEventListener(
-          'click',
-          archiveNavigateUp
-        );
-      root
+            renderArchiveMain();
+        }
+    });
+    root.querySelector('#archiveFilterButton') ?.addEventListener('click', event =>
+    {
+        openArchiveFilterPopover(event.currentTarget);
+    });
+    root
         .querySelectorAll(
-          '[data-archive-add-files]'
+            '[data-archive-filter-presentation]'
         )
-        .forEach(button => {
-          button.addEventListener(
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
+                {
+                    const presentation =
+                        button.dataset
+                            .archiveFilterPresentation;
+
+                    if (
+                        presentation !== 'flat'
+                && presentation !== 'folders'
+                    )
+                    {
+                        return;
+                    }
+
+                    state.archiveFilterPresentation =
+                        presentation;
+
+                    if (
+                        presentation === 'folders'
+                    )
+                    {
+                        const filters =
+                            archiveEffectiveFileFilters();
+
+                        state.archiveSelectedFolderId =
+                            filters.scope === 'folder'
+                                ? archiveNormalizeFolderId(
+                                    state
+                                        .archiveFilterScopeFolderId
+                                )
+                                : null;
+                    }
+
+                    state.archiveSelectedFolderItemId =
+                        null;
+
+                    state.archiveSelectedFileId =
+                        null;
+
+                    state.archiveSelectedFileIds =
+                        [];
+
+                    renderArchive();
+                }
+            );
+        });
+    root.querySelectorAll('[data-archive-remove-filter]').forEach(button =>
+    {
+        button.addEventListener('click', () =>
+        {
+            removeArchiveToolbarFilter(button.dataset.archiveRemoveFilter);
+        });
+    });
+    root
+        .querySelector(
+            '#archiveClearFilters'
+        )
+        ?.addEventListener(
+            'click',
+            clearArchiveToolbarFilters
+        );
+    root
+        .querySelector(
+            '[data-archive-nav-back]'
+        )
+        ?.addEventListener(
+            'click',
+            archiveNavigateBack
+        );
+
+    root
+        .querySelector(
+            '[data-archive-nav-forward]'
+        )
+        ?.addEventListener(
+            'click',
+            archiveNavigateForward
+        );
+
+    root
+        .querySelector(
+            '[data-archive-nav-up]'
+        )
+        ?.addEventListener(
+            'click',
+            archiveNavigateUp
+        );
+    root
+        .querySelectorAll(
+            '[data-archive-add-files]'
+        )
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                openArchiveAddFilesModal
+            );
+        });
+    const emptyFileDropzone =
+        root.querySelector(
+            '[data-archive-empty-add-files]'
+        );
+
+    emptyFileDropzone
+        ?.addEventListener(
             'click',
             openArchiveAddFilesModal
-          );
-        });
-      const emptyFileDropzone =
-        root.querySelector(
-          '[data-archive-empty-add-files]'
         );
-
-      emptyFileDropzone
-        ?.addEventListener(
-          'click',
-          openArchiveAddFilesModal
-        );
-      if (
+    if (
         emptyFileDropzone
-      ) {
+    )
+    {
         emptyFileDropzone
-          .addEventListener(
-            'dragenter',
-            event => {
-              event.preventDefault();
+            .addEventListener(
+                'dragenter',
+                event =>
+                {
+                    event.preventDefault();
 
-              emptyFileDropzone
-                .classList
-                .add(
-                  'is-drag-over'
-                );
-            }
-          );
+                    emptyFileDropzone
+                        .classList
+                        .add(
+                            'is-drag-over'
+                        );
+                }
+            );
 
         emptyFileDropzone
-          .addEventListener(
-            'dragover',
-            event => {
-              event.preventDefault();
+            .addEventListener(
+                'dragover',
+                event =>
+                {
+                    event.preventDefault();
 
-              emptyFileDropzone
-                .classList
-                .add(
-                  'is-drag-over'
-                );
-            }
-          );
-
-        emptyFileDropzone
-          .addEventListener(
-            'dragleave',
-            event => {
-              if (
-                emptyFileDropzone
-                  .contains(
-                    event.relatedTarget
-                  )
-              ) {
-                return;
-              }
-
-              emptyFileDropzone
-                .classList
-                .remove(
-                  'is-drag-over'
-                );
-            }
-          );
+                    emptyFileDropzone
+                        .classList
+                        .add(
+                            'is-drag-over'
+                        );
+                }
+            );
 
         emptyFileDropzone
-          .addEventListener(
-            'drop',
-            event => {
-              event.preventDefault();
+            .addEventListener(
+                'dragleave',
+                event =>
+                {
+                    if (
+                        emptyFileDropzone
+                            .contains(
+                                event.relatedTarget
+                            )
+                    )
+                    {
+                        return;
+                    }
 
-              emptyFileDropzone
-                .classList
-                .remove(
-                  'is-drag-over'
-                );
+                    emptyFileDropzone
+                        .classList
+                        .remove(
+                            'is-drag-over'
+                        );
+                }
+            );
 
-              openArchiveAddFilesModal();
-            }
-          );
-      }
-      root
+        emptyFileDropzone
+            .addEventListener(
+                'drop',
+                event =>
+                {
+                    event.preventDefault();
+
+                    emptyFileDropzone
+                        .classList
+                        .remove(
+                            'is-drag-over'
+                        );
+
+                    openArchiveAddFilesModal();
+                }
+            );
+    }
+    root
         .querySelectorAll(
-          '[data-archive-create-folder]'
+            '[data-archive-create-folder]'
         )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              openArchiveCreateFolderFromTrigger(
-                button
-              );
-            }
-          );
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
+                {
+                    openArchiveCreateFolderFromTrigger(
+                        button
+                    );
+                }
+            );
         });
-      root.querySelectorAll('[data-archive-add-source]').forEach(button => button.addEventListener('click', () => openArchiveSourceModal()));
-      root
+    root.querySelectorAll('[data-archive-add-source]').forEach(button => button.addEventListener('click', () => openArchiveSourceModal()));
+    root
         .querySelector(
-          '[data-archive-breadcrumb-root]'
+            '[data-archive-breadcrumb-root]'
         )
         ?.addEventListener(
-          'click',
-          () => {
-            archiveNavigateToLocation({
-              folderId:
+            'click',
+            () =>
+            {
+                archiveNavigateToLocation({
+                    folderId:
                 null,
 
-              search:
+                    search:
                 '',
 
-              searchScope:
+                    searchScope:
                 'folder',
 
-              personFilterId:
+                    personFilterId:
                 '',
 
-              selectedFileId:
+                    selectedFileId:
                 null,
 
-              inspectorCollapsed:
+                    inspectorCollapsed:
                 false
-            });
-          }
+                });
+            }
         );
 
-      root
+    root
         .querySelectorAll(
-          '[data-archive-breadcrumb]'
+            '[data-archive-breadcrumb]'
         )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              archiveNavigateToLocation({
-                folderId:
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
+                {
+                    archiveNavigateToLocation({
+                        folderId:
                   button.dataset
-                    .archiveBreadcrumb,
+                      .archiveBreadcrumb,
 
-                search:
+                        search:
                   '',
 
-                searchScope:
+                        searchScope:
                   'folder',
 
-                personFilterId:
+                        personFilterId:
                   '',
 
-                selectedFileId:
+                        selectedFileId:
                   null,
 
-                inspectorCollapsed:
+                        inspectorCollapsed:
                   false
-              });
-            }
-          );
-        });
-      root
-        .querySelectorAll(
-          '[data-archive-file-row]'
-        )
-        .forEach(row => {
-          const open =
-            () => {
-              runAfterArchiveFileEditGuard(
-                () => {
-                  state.archiveSelectedFolderItemId =
-                    null;
-                  state.archiveSelectedFileId =
-                    row.dataset
-                      .archiveFileRow;
-                  state.archiveInspectorCollapsed =
-                    false;
-
-                  renderArchiveMain();
+                    });
                 }
-              );
-            };
-
-          row.addEventListener(
-            'click',
-            event => {
-              if (
-                !event.target.closest(
-                  'button,input,select,a'
-                )
-              ) {
-                open();
-              }
-            }
-          );
-
-          row.addEventListener(
-            'keydown',
-            event => {
-              if (
-                event.key === 'Enter'
-              ) {
-                event.preventDefault();
-                open();
-              }
-            }
-          );
+            );
         });
-      root
+    root
         .querySelectorAll(
-          '[data-archive-folder-row]'
+            '[data-archive-file-row]'
         )
-        .forEach(row => {
-          const folderId =
-            row.dataset
-              .archiveFolderRow;
+        .forEach(row =>
+        {
+            const open =
+                () =>
+                {
+                    runAfterArchiveFileEditGuard(
+                        () =>
+                        {
+                            state.archiveSelectedFolderItemId =
+                                null;
+                            state.archiveSelectedFileId =
+                                row.dataset
+                                    .archiveFileRow;
+                            state.archiveInspectorCollapsed =
+                                false;
 
-          row.addEventListener(
-            'click',
-            event => {
-              if (
-                event.target.closest(
-                  'button,input,select,a'
-                )
-              ) {
-                return;
-              }
+                            renderArchiveMain();
+                        }
+                    );
+                };
 
-              /*
+            row.addEventListener(
+                'click',
+                event =>
+                {
+                    if (
+                        !event.target.closest(
+                            'button,input,select,a'
+                        )
+                    )
+                    {
+                        open();
+                    }
+                }
+            );
+
+            row.addEventListener(
+                'keydown',
+                event =>
+                {
+                    if (
+                        event.key === 'Enter'
+                    )
+                    {
+                        event.preventDefault();
+                        open();
+                    }
+                }
+            );
+        });
+    root
+        .querySelectorAll(
+            '[data-archive-folder-row]'
+        )
+        .forEach(row =>
+        {
+            const folderId =
+                row.dataset
+                    .archiveFolderRow;
+
+            row.addEventListener(
+                'click',
+                event =>
+                {
+                    if (
+                        event.target.closest(
+                            'button,input,select,a'
+                        )
+                    )
+                    {
+                        return;
+                    }
+
+                    /*
                 First click:
                 select and inspect.
 
                 Second quick click on the same folder:
                 open the folder.
               */
-              if (
-                archiveFolderRowWasDoubleClick(
-                  folderId
-                )
-              ) {
-                resetArchiveFolderRowClick();
+                    if (
+                        archiveFolderRowWasDoubleClick(
+                            folderId
+                        )
+                    )
+                    {
+                        resetArchiveFolderRowClick();
 
-                archiveOpenFolder(
-                  folderId
-                );
+                        archiveOpenFolder(
+                            folderId
+                        );
 
-                return;
-              }
+                        return;
+                    }
 
-              selectArchiveFolderItem(
-                folderId
-              );
-            }
-          );
+                    selectArchiveFolderItem(
+                        folderId
+                    );
+                }
+            );
 
-          row.addEventListener(
-            'keydown',
-            event => {
-              if (
-                event.key === 'Enter'
-              ) {
-                event.preventDefault();
+            row.addEventListener(
+                'keydown',
+                event =>
+                {
+                    if (
+                        event.key === 'Enter'
+                    )
+                    {
+                        event.preventDefault();
 
-                resetArchiveFolderRowClick();
+                        resetArchiveFolderRowClick();
 
-                archiveOpenFolder(
-                  folderId
-                );
+                        archiveOpenFolder(
+                            folderId
+                        );
 
-                return;
-              }
+                        return;
+                    }
 
-              if (
-                event.key === ' '
+                    if (
+                        event.key === ' '
                 || event.key
                   === 'Spacebar'
-              ) {
-                event.preventDefault();
+                    )
+                    {
+                        event.preventDefault();
 
-                resetArchiveFolderRowClick();
+                        resetArchiveFolderRowClick();
 
-                selectArchiveFolderItem(
-                  folderId
-                );
-              }
-            }
-          );
+                        selectArchiveFolderItem(
+                            folderId
+                        );
+                    }
+                }
+            );
         });
-      root.querySelectorAll('[data-archive-source-row]').forEach(row => {
-        const open = () => { state.archiveSelectedSourceId = row.dataset.archiveSourceRow; state.archiveInspectorCollapsed = false; renderArchiveMain(); };
-        row.addEventListener('click', event => { if (!event.target.closest('button,input,select,a')) open(); });
-        row.addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); open(); } });
-      });
-      root
+    root.querySelectorAll('[data-archive-source-row]').forEach(row =>
+    {
+        const open = () =>
+        {
+            state.archiveSelectedSourceId = row.dataset.archiveSourceRow; state.archiveInspectorCollapsed = false; renderArchiveMain();
+        };
+        row.addEventListener('click', event =>
+        {
+            if (!event.target.closest('button,input,select,a')) open();
+        });
+        row.addEventListener('keydown', event =>
+        {
+            if (event.key === 'Enter')
+            {
+                event.preventDefault(); open();
+            }
+        });
+    });
+    root
         .querySelectorAll(
-          '[data-archive-file-checkbox]'
+            '[data-archive-file-checkbox]'
         )
-        .forEach(input => {
-          /*
+        .forEach(input =>
+        {
+            /*
             Prevent checkbox interaction from also
             activating the table row.
           */
-          input.addEventListener(
-            'click',
-            event => {
-              event.stopPropagation();
-            }
-          );
+            input.addEventListener(
+                'click',
+                event =>
+                {
+                    event.stopPropagation();
+                }
+            );
 
-          input.addEventListener(
-            'change',
-            () => {
-              toggleArchiveFileSelection(
-                input.dataset
-                  .archiveFileCheckbox
-              );
-            }
-          );
+            input.addEventListener(
+                'change',
+                () =>
+                {
+                    toggleArchiveFileSelection(
+                        input.dataset
+                            .archiveFileCheckbox
+                    );
+                }
+            );
         });
-      const visibleSelection =
+    const visibleSelection =
         archiveVisibleSelectionState();
 
-      const selectVisibleCheckbox =
+    const selectVisibleCheckbox =
         root.querySelector(
-          '[data-archive-select-all]'
+            '[data-archive-select-all]'
         );
 
-      if (
+    if (
         selectVisibleCheckbox
-      ) {
+    )
+    {
         selectVisibleCheckbox.checked =
-          visibleSelection
-            .allVisibleSelected;
+            visibleSelection
+                .allVisibleSelected;
 
         selectVisibleCheckbox.indeterminate =
-          visibleSelection
-            .someVisibleSelected
+            visibleSelection
+                .someVisibleSelected
           && !visibleSelection
-            .allVisibleSelected;
+              .allVisibleSelected;
 
         selectVisibleCheckbox.disabled =
-          visibleSelection
-            .visibleIds
-            .length === 0;
+            visibleSelection
+                .visibleIds
+                .length === 0;
 
         selectVisibleCheckbox
-          .addEventListener(
-            'click',
-            event => {
-              event.stopPropagation();
+            .addEventListener(
+                'click',
+                event =>
+                {
+                    event.stopPropagation();
 
-              toggleAllVisibleArchiveFiles();
-            }
-          );
-      }
-      root.querySelectorAll('[data-archive-toggle-favorite]').forEach(button => button.addEventListener('click', event => {
+                    toggleAllVisibleArchiveFiles();
+                }
+            );
+    }
+    root.querySelectorAll('[data-archive-toggle-favorite]').forEach(button => button.addEventListener('click', event =>
+    {
         event.stopPropagation();
         const file = archiveFileById(button.dataset.archiveToggleFavorite);
-        if (file) { file.favorite = !file.favorite; renderArchive(); }
-      }));
-      root.querySelectorAll('[data-archive-source-favorite]').forEach(button => button.addEventListener('click', event => {
+        if (file)
+        {
+            file.favorite = !file.favorite; renderArchive();
+        }
+    }));
+    root.querySelectorAll('[data-archive-source-favorite]').forEach(button => button.addEventListener('click', event =>
+    {
         event.stopPropagation();
         const source = archiveSourceById(button.dataset.archiveSourceFavorite);
-        if (source) { source.favorite = !source.favorite; renderArchive(); }
-      }));
-      root
+        if (source)
+        {
+            source.favorite = !source.favorite; renderArchive();
+        }
+    }));
+    root
         .querySelectorAll(
-          '[data-archive-row-actions]'
+            '[data-archive-row-actions]'
         )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            event => {
-              event.stopPropagation();
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                event =>
+                {
+                    event.stopPropagation();
 
-              openArchiveItemActionsPopover(
-                button.dataset
-                  .archiveRowActions,
+                    openArchiveItemActionsPopover(
+                        button.dataset
+                            .archiveRowActions,
 
-                button.dataset
-                  .archiveRowId,
+                        button.dataset
+                            .archiveRowId,
 
-                button
-              );
-            }
-          );
+                        button
+                    );
+                }
+            );
         });
-      root.querySelectorAll('[data-archive-selection-action]').forEach(button => button.addEventListener('click', () => {
+    root.querySelectorAll('[data-archive-selection-action]').forEach(button => button.addEventListener('click', () =>
+    {
         const ids = state.archiveSelectedFileIds.slice();
-        if (button.dataset.archiveSelectionAction === 'clear') { state.archiveSelectedFileIds = []; renderArchiveMain(); }
+        if (button.dataset.archiveSelectionAction === 'clear')
+        {
+            state.archiveSelectedFileIds = []; renderArchiveMain();
+        }
         if (button.dataset.archiveSelectionAction === 'move') openArchiveMoveModal({ fileIds: ids });
         if (button.dataset.archiveSelectionAction === 'links') openArchiveAddLinksMenu(ids);
-        if (button.dataset.archiveSelectionAction === 'favorite') {
-          const allFavorite = ids.every(id => archiveFileById(id)?.favorite);
-          ids.forEach(id => { const file = archiveFileById(id); if (file) file.favorite = !allFavorite; });
-          state.archiveSelectedFileIds = [];
-          renderArchive();
+        if (button.dataset.archiveSelectionAction === 'favorite')
+        {
+            const allFavorite = ids.every(id => archiveFileById(id)?.favorite);
+            ids.forEach(id =>
+            {
+                const file = archiveFileById(id); if (file) file.favorite = !allFavorite;
+            });
+            state.archiveSelectedFileIds = [];
+            renderArchive();
         }
         if (button.dataset.archiveSelectionAction === 'delete') openArchiveDeleteFileConfirm(ids);
-      }));
-      root
+    }));
+    root
         .querySelectorAll(
-          '[data-archive-inspector-collapse]'
+            '[data-archive-inspector-collapse]'
         )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              const collapsed =
-                button.dataset
-                  .archiveInspectorCollapse
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
+                {
+                    const collapsed =
+                        button.dataset
+                            .archiveInspectorCollapse
                 === 'true';
 
-              runAfterArchiveFileEditGuard(
-                () => {
-                  state.archiveInspectorCollapsed =
-                    collapsed;
+                    runAfterArchiveFileEditGuard(
+                        () =>
+                        {
+                            state.archiveInspectorCollapsed =
+                                collapsed;
 
-                  renderArchiveMain();
+                            renderArchiveMain();
+                        }
+                    );
                 }
-              );
-            }
-          );
+            );
         });
-      root.querySelectorAll('[data-archive-open-file]').forEach(button => button.addEventListener('click', () => showToast('Opening the original file is simulated.')));
-      root.querySelectorAll('[data-archive-delete-source]').forEach(button => button.addEventListener('click', () => openArchiveDeleteSourceConfirm(button.dataset.archiveDeleteSource)));
-      root.querySelectorAll('[data-archive-edit-source]').forEach(button => button.addEventListener('click', () => openArchiveSourceModal(button.dataset.archiveEditSource)));
-      root
+    root.querySelectorAll('[data-archive-open-file]').forEach(button => button.addEventListener('click', () => showToast('Opening the original file is simulated.')));
+    root.querySelectorAll('[data-archive-delete-source]').forEach(button => button.addEventListener('click', () => openArchiveDeleteSourceConfirm(button.dataset.archiveDeleteSource)));
+    root.querySelectorAll('[data-archive-edit-source]').forEach(button => button.addEventListener('click', () => openArchiveSourceModal(button.dataset.archiveEditSource)));
+    root
         .querySelectorAll(
-          '[data-archive-add-connection]'
+            '[data-archive-add-connection]'
         )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              const ownerType =
-                button.dataset
-                  .archiveOwnerType;
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
+                {
+                    const ownerType =
+                        button.dataset
+                            .archiveOwnerType;
 
-              const ownerId =
-                button.dataset
-                  .archiveOwnerId;
+                    const ownerId =
+                        button.dataset
+                            .archiveOwnerId;
 
-              const entityType =
-                button.dataset
-                  .archiveAddConnection;
+                    const entityType =
+                        button.dataset
+                            .archiveAddConnection;
 
-              /*
+                    /*
                 Sources use the specialized shared
                 relationship modals for People and Files.
               */
-              if (
-                ownerType === 'source'
-              ) {
-                if (
-                  entityType === 'photo'
-                ) {
-                  openArchiveSourcePhotosModal(
-                    ownerId
-                  );
+                    if (
+                        ownerType === 'source'
+                    )
+                    {
+                        if (
+                            entityType === 'photo'
+                        )
+                        {
+                            openArchiveSourcePhotosModal(
+                                ownerId
+                            );
 
-                  return;
+                            return;
+                        }
+                        if (
+                            entityType === 'person'
+                        )
+                        {
+                            openArchiveSourcePeopleModal(
+                                ownerId
+                            );
+
+                            return;
+                        }
+
+                        if (
+                            entityType === 'event'
+                        )
+                        {
+                            openArchiveSourceEventsModal(
+                                ownerId
+                            );
+
+                            return;
+                        }
+
+                        if (
+                            entityType === 'note'
+                        )
+                        {
+                            openArchiveSourceNotesModal(
+                                ownerId
+                            );
+
+                            return;
+                        }
+
+                        if (
+                            entityType === 'place'
+                        )
+                        {
+                            openArchiveSourcePlacesModal(
+                                ownerId
+                            );
+
+                            return;
+                        }
+
+                        if (
+                            entityType === 'file'
+                        )
+                        {
+                            openArchiveSourceFilesModal(
+                                ownerId
+                            );
+
+                            return;
+                        }
+                    }
+
+                    openArchiveConnectionPicker({
+                        ownerType,
+
+                        ownerIds: [
+                            ownerId
+                        ],
+
+                        entityType
+                    });
                 }
-                if (
-                  entityType === 'person'
-                ) {
-                  openArchiveSourcePeopleModal(
-                    ownerId
-                  );
-
-                  return;
-                }
-
-                if (
-                  entityType === 'event'
-                ) {
-                  openArchiveSourceEventsModal(
-                    ownerId
-                  );
-
-                  return;
-                }
-
-                if (
-                  entityType === 'note'
-                ) {
-                  openArchiveSourceNotesModal(
-                    ownerId
-                  );
-
-                  return;
-                }
-
-                if (
-                  entityType === 'place'
-                ) {
-                  openArchiveSourcePlacesModal(
-                    ownerId
-                  );
-
-                  return;
-                }
-
-                if (
-                  entityType === 'file'
-                ) {
-                  openArchiveSourceFilesModal(
-                    ownerId
-                  );
-
-                  return;
-                }
-              }
-
-              openArchiveConnectionPicker({
-                ownerType,
-
-                ownerIds: [
-                  ownerId
-                ],
-
-                entityType
-              });
-            }
-          );
+            );
         });
-      root.querySelectorAll('[data-archive-unlink-id]').forEach(button => button.addEventListener('click', () => openArchiveUnlinkConfirm({ ownerType: button.dataset.archiveUnlinkOwnerType, ownerId: button.dataset.archiveUnlinkOwnerId, entityType: button.dataset.archiveUnlinkType, entityId: button.dataset.archiveUnlinkId })));
-      root.querySelectorAll('[data-archive-open-connection]').forEach(button => button.addEventListener('click', () => openArchiveConnectedRecord(button.dataset.archiveOpenConnection, button.dataset.archiveConnectionId)));
-      root.addEventListener(
+    root.querySelectorAll('[data-archive-unlink-id]').forEach(button => button.addEventListener('click', () => openArchiveUnlinkConfirm({ ownerType: button.dataset.archiveUnlinkOwnerType, ownerId: button.dataset.archiveUnlinkOwnerId, entityType: button.dataset.archiveUnlinkType, entityId: button.dataset.archiveUnlinkId })));
+    root.querySelectorAll('[data-archive-open-connection]').forEach(button => button.addEventListener('click', () => openArchiveConnectedRecord(button.dataset.archiveOpenConnection, button.dataset.archiveConnectionId)));
+    root.addEventListener(
         'keydown',
-        event => {
-          if (
-            !archiveIsLocationView(
-              state.archiveView
+        event =>
+        {
+            if (
+                !archiveIsLocationView(
+                    state.archiveView
+                )
             )
-          ) {
-            return;
-          }
+            {
+                return;
+            }
 
-          if (
-            !event.altKey
+            if (
+                !event.altKey
             || event.ctrlKey
             || event.metaKey
             || event.shiftKey
-          ) {
-            return;
-          }
+            )
+            {
+                return;
+            }
 
-          if (
-            event.target.closest(
-              `
+            if (
+                event.target.closest(
+                    `
                 input,
                 textarea,
                 select,
                 [contenteditable="true"]
               `
+                )
             )
-          ) {
-            return;
-          }
+            {
+                return;
+            }
 
-          if (
-            event.key === 'ArrowLeft'
+            if (
+                event.key === 'ArrowLeft'
             && archiveNavigationCanGoBack()
-          ) {
-            event.preventDefault();
-            archiveNavigateBack();
+            )
+            {
+                event.preventDefault();
+                archiveNavigateBack();
 
-            return;
-          }
+                return;
+            }
 
-          if (
-            event.key === 'ArrowRight'
+            if (
+                event.key === 'ArrowRight'
             && archiveNavigationCanGoForward()
-          ) {
-            event.preventDefault();
-            archiveNavigateForward();
+            )
+            {
+                event.preventDefault();
+                archiveNavigateForward();
 
-            return;
-          }
+                return;
+            }
 
-          if (
-            event.key === 'ArrowUp'
+            if (
+                event.key === 'ArrowUp'
             && archiveNavigationCanGoUp()
-          ) {
-            event.preventDefault();
-            archiveNavigateUp();
-          }
+            )
+            {
+                event.preventDefault();
+                archiveNavigateUp();
+            }
         }
-      );
-      lockArchiveWorkspaceDuringFileEdit(
+    );
+    lockArchiveWorkspaceDuringFileEdit(
         root
-      );
-      bindToasts(root);
+    );
+    bindToasts(root);
+}
+
+function lockArchiveWorkspaceDuringFileEdit(
+    root
+)
+{
+    if (
+        !archiveFileEditIsActive()
+    )
+    {
+        return;
     }
 
-    function lockArchiveWorkspaceDuringFileEdit(
-      root
-    ) {
-      if (
-        !archiveFileEditIsActive()
-      ) {
-        return;
-      }
-
-      root
+    root
         .querySelectorAll(`
           .archive-main
           button,
@@ -22343,41 +23431,47 @@
           .archive-main
           select
         `)
-        .forEach(control => {
-          control.disabled =
-            true;
+        .forEach(control =>
+        {
+            control.disabled =
+                true;
 
-          control.setAttribute(
-            'aria-disabled',
-            'true'
-          );
+            control.setAttribute(
+                'aria-disabled',
+                'true'
+            );
+        });
+}
+
+function openArchiveCreateSourceModal(prefill = '')
+{
+    openArchiveSourceModal();
+    if (prefill)
+    {
+        requestAnimationFrame(() =>
+        {
+            const input = modalBackdrop.querySelector('[data-archive-source-title]');
+            if (input && !input.value) input.value = `${prefill} source`;
         });
     }
+}
 
-    function openArchiveCreateSourceModal(prefill = '') {
-      openArchiveSourceModal();
-      if (prefill) {
-        requestAnimationFrame(() => {
-          const input = modalBackdrop.querySelector('[data-archive-source-title]');
-          if (input && !input.value) input.value = `${prefill} source`;
-        });
-      }
-    }
+function openArchiveAssignSourceModal()
+{
+    const ids = state.archiveSelectedFileIds.length ? state.archiveSelectedFileIds : [state.archiveSelectedFileId].filter(Boolean);
+    openArchiveConnectionPicker({ ownerType: 'file', ownerIds: ids, entityType: 'source' });
+}
 
-    function openArchiveAssignSourceModal() {
-      const ids = state.archiveSelectedFileIds.length ? state.archiveSelectedFileIds : [state.archiveSelectedFileId].filter(Boolean);
-      openArchiveConnectionPicker({ ownerType: 'file', ownerIds: ids, entityType: 'source' });
-    }
+function openArchiveLinkPersonModal()
+{
+    const ids = state.archiveSelectedFileIds.length ? state.archiveSelectedFileIds : [state.archiveSelectedFileId].filter(Boolean);
+    openArchiveConnectionPicker({ ownerType: 'file', ownerIds: ids, entityType: 'person' });
+}
 
-    function openArchiveLinkPersonModal() {
-      const ids = state.archiveSelectedFileIds.length ? state.archiveSelectedFileIds : [state.archiveSelectedFileId].filter(Boolean);
-      openArchiveConnectionPicker({ ownerType: 'file', ownerIds: ids, entityType: 'person' });
-    }
-
-    const EXPECTED_CANONICAL_NOTE_COUNT = 12;
-    const EXPECTED_CANONICAL_NOTE_COLLECTION_COUNT = 4;
-    sampleData.noteCollections = [
-      {
+const EXPECTED_CANONICAL_NOTE_COUNT = 12;
+const EXPECTED_CANONICAL_NOTE_COLLECTION_COUNT = 4;
+sampleData.noteCollections = [
+    {
         id:
           'note-col-pawford',
 
@@ -22389,9 +23483,9 @@
 
         description:
           'Records, places, and open questions connected to Pawford.'
-      },
+    },
 
-      {
+    {
         id:
           'note-col-whiskerfield',
 
@@ -22403,9 +23497,9 @@
 
         description:
           'Family history, surname research, and household context.'
-      },
+    },
 
-      {
+    {
         id:
           'note-col-sources',
 
@@ -22417,9 +23511,9 @@
 
         description:
           'Transcriptions, extracts, and interpretation of research sources.'
-      },
+    },
 
-      {
+    {
         id:
           'note-col-interviews',
 
@@ -22431,14 +23525,15 @@
 
         description:
           'Interview preparation, recollections, and follow-up questions.'
-      }
-    ];
+    }
+];
 
-    sampleData.notes = (() => {
-      const body = (...lines) =>
+sampleData.notes = (() =>
+{
+    const body = (...lines) =>
         lines.join('\n');
 
-      const note = record => ({
+    const note = record => ({
         id: '',
         projectId: 'p1',
         title: '',
@@ -22460,784 +23555,784 @@
         updatedAt:
           '2026-01-01T00:00:00Z',
         ...record
-      });
+    });
 
-      return [
+    return [
         note({
-          id:
+            id:
             'note-daisy-parentage',
 
-          title:
+            title:
             'Who was Daisy Milkpaw’s father?',
 
-          body: body(
-            'Research question',
-            'Who was Daisy Milkpaw’s father?',
-            '',
-            'Current observations',
-            'Daisy’s records place her in the Pawford area, where the Whiskerfield household appears in the available register material.',
-            'Barnaby Whiskerfield is a plausible lead, but no direct parentage statement has been found.',
-            '',
-            'Next steps',
-            'Review the father entry in the Pawford register.',
-            'Compare household members and witnesses.',
-            'Record evidence both for and against the Whiskerfield connection.'
-          ),
+            body: body(
+                'Research question',
+                'Who was Daisy Milkpaw’s father?',
+                '',
+                'Current observations',
+                'Daisy’s records place her in the Pawford area, where the Whiskerfield household appears in the available register material.',
+                'Barnaby Whiskerfield is a plausible lead, but no direct parentage statement has been found.',
+                '',
+                'Next steps',
+                'Review the father entry in the Pawford register.',
+                'Compare household members and witnesses.',
+                'Record evidence both for and against the Whiskerfield connection.'
+            ),
 
-          collectionIds: [
-            'note-col-pawford',
-            'note-col-whiskerfield'
-          ],
+            collectionIds: [
+                'note-col-pawford',
+                'note-col-whiskerfield'
+            ],
 
-          favorite: true,
+            favorite: true,
 
-          checklist: [
-            {
-              id:
+            checklist: [
+                {
+                    id:
                 'note-daisy-parentage-check-register',
 
-              text:
+                    text:
                 'Check the Pawford register father entry',
 
-              done:
+                    done:
                 false
-            },
+                },
 
-            {
-              id:
+                {
+                    id:
                 'note-daisy-parentage-check-households',
 
-              text:
+                    text:
                 'Compare Daisy and Whiskerfield household records',
 
-              done:
+                    done:
                 false
-            },
+                },
 
-            {
-              id:
+                {
+                    id:
                 'note-daisy-parentage-review-evidence',
 
-              text:
+                    text:
                 'Review additional evidence before changing relationships',
 
-              done:
+                    done:
                 false
-            }
-          ],
+                }
+            ],
 
-          linkedPersonIds: [
-            'daisy',
-            'barnaby'
-          ],
+            linkedPersonIds: [
+                'daisy',
+                'barnaby'
+            ],
 
-          linkedPlaceIds: [
-            'place-pawford'
-          ],
+            linkedPlaceIds: [
+                'place-pawford'
+            ],
 
-          linkedPhotoIds: [
-            'photo-daisy-school',
-            'photo-grandparents-garden'
-          ],
+            linkedPhotoIds: [
+                'photo-daisy-school',
+                'photo-grandparents-garden'
+            ],
 
-          linkedArchiveFileIds: [
-            'af1',
-            'af2'
-          ],
+            linkedArchiveFileIds: [
+                'af1',
+                'af2'
+            ],
 
-          relatedNoteIds: [
-            'note-pawford-household',
-            'note-whiskerfield-surname'
-          ],
+            relatedNoteIds: [
+                'note-pawford-household',
+                'note-whiskerfield-surname'
+            ],
 
-          createdAt:
+            createdAt:
             '2026-06-27T09:00:00Z',
 
-          updatedAt:
+            updatedAt:
             '2026-07-22T16:30:00Z'
         }),
 
         note({
-          id:
+            id:
             'note-old-cattery-burial',
 
-          title:
+            title:
             'Old Cattery burial index observations',
 
-          body: body(
-            'The burial index contains several entries connected to the Old Cattery area.',
-            '',
-            'Pearl Velvetpaw’s entry is clear, but nearby entries should be checked for relatives and alternate surname spellings.',
-            'Daisy’s connection remains indirect and should not be treated as evidence of residence without another record.',
-            '',
-            'The index should be compared with cemetery and household records before adding new facts.'
-          ),
+            body: body(
+                'The burial index contains several entries connected to the Old Cattery area.',
+                '',
+                'Pearl Velvetpaw’s entry is clear, but nearby entries should be checked for relatives and alternate surname spellings.',
+                'Daisy’s connection remains indirect and should not be treated as evidence of residence without another record.',
+                '',
+                'The index should be compared with cemetery and household records before adding new facts.'
+            ),
 
-          collectionIds: [
-            'note-col-sources'
-          ],
+            collectionIds: [
+                'note-col-sources'
+            ],
 
-          archived:
+            archived:
             true,
 
-          linkedPersonIds: [
-            'daisy',
-            'pearl'
-          ],
+            linkedPersonIds: [
+                'daisy',
+                'pearl'
+            ],
 
-          linkedPlaceIds: [
-            'place-old-cattery'
-          ],
+            linkedPlaceIds: [
+                'place-old-cattery'
+            ],
 
-          createdAt:
+            createdAt:
             '2026-05-14T10:00:00Z',
 
-          updatedAt:
+            updatedAt:
             '2026-06-28T11:15:00Z'
         }),
 
         note({
-          id:
+            id:
             'note-meowbridge-transcription',
 
-          title:
+            title:
             'Meowbridge record transcription',
 
-          body: body(
-            'Source details',
-            'Meowbridge record held with the family certificate material.',
-            '',
-            'Extract or transcription',
-            'The record names Meowbridge and confirms the event location. Several handwritten details remain uncertain.',
-            '',
-            'Interpretation',
-            'The place is consistent with other records connected to Daisy and the later Whiskerfield family.',
-            '',
-            'Questions',
-            'Confirm the witnesses and compare their names with household records.'
-          ),
+            body: body(
+                'Source details',
+                'Meowbridge record held with the family certificate material.',
+                '',
+                'Extract or transcription',
+                'The record names Meowbridge and confirms the event location. Several handwritten details remain uncertain.',
+                '',
+                'Interpretation',
+                'The place is consistent with other records connected to Daisy and the later Whiskerfield family.',
+                '',
+                'Questions',
+                'Confirm the witnesses and compare their names with household records.'
+            ),
 
-          collectionIds: [
-            'note-col-sources'
-          ],
+            collectionIds: [
+                'note-col-sources'
+            ],
 
-          linkedPersonIds: [
-            'daisy'
-          ],
+            linkedPersonIds: [
+                'daisy'
+            ],
 
-          linkedPlaceIds: [
-            'place-meowbridge'
-          ],
+            linkedPlaceIds: [
+                'place-meowbridge'
+            ],
 
-          linkedArchiveFileIds: [
-            'af5'
-          ],
+            linkedArchiveFileIds: [
+                'af5'
+            ],
 
-          createdAt:
+            createdAt:
             '2026-06-24T09:30:00Z',
 
-          updatedAt:
+            updatedAt:
             '2026-07-13T14:10:00Z'
         }),
 
         note({
-          id:
+            id:
             'note-pawford-household',
 
-          title:
+            title:
             'Pawford household register notes',
 
-          body: body(
-            'The Pawford household material contains several Whiskerfield entries that may help reconstruct the family group.',
-            '',
-            'Barnaby appears in the correct district and age range to merit further research.',
-            'The current scan does not establish Daisy’s relationship to the household.',
-            '',
-            'Names, occupations, addresses, and witnesses should be transcribed before drawing conclusions.'
-          ),
+            body: body(
+                'The Pawford household material contains several Whiskerfield entries that may help reconstruct the family group.',
+                '',
+                'Barnaby appears in the correct district and age range to merit further research.',
+                'The current scan does not establish Daisy’s relationship to the household.',
+                '',
+                'Names, occupations, addresses, and witnesses should be transcribed before drawing conclusions.'
+            ),
 
-          collectionIds: [
-            'note-col-pawford',
-            'note-col-sources',
-            'note-col-whiskerfield'
-          ],
+            collectionIds: [
+                'note-col-pawford',
+                'note-col-sources',
+                'note-col-whiskerfield'
+            ],
 
-          favorite:
+            favorite:
             true,
 
-          checklist: [
-            {
-              id:
+            checklist: [
+                {
+                    id:
                 'note-pawford-household-transcribe',
 
-              text:
+                    text:
                 'Transcribe every household member',
 
-              done:
+                    done:
                 true
-            },
+                },
 
-            {
-              id:
+                {
+                    id:
                 'note-pawford-household-address',
 
-              text:
+                    text:
                 'Compare the recorded address with nearby events',
 
-              done:
+                    done:
                 false
-            },
+                },
 
-            {
-              id:
+                {
+                    id:
                 'note-pawford-household-continuation',
 
-              text:
+                    text:
                 'Check the register continuation',
 
-              done:
+                    done:
                 false
-            }
-          ],
+                }
+            ],
 
-          linkedPersonIds: [
-            'barnaby',
-            'daisy'
-          ],
+            linkedPersonIds: [
+                'barnaby',
+                'daisy'
+            ],
 
-          linkedPlaceIds: [
-            'place-pawford'
-          ],
+            linkedPlaceIds: [
+                'place-pawford'
+            ],
 
-          linkedArchiveFileIds: [
-            'af1',
-            'af2'
-          ],
+            linkedArchiveFileIds: [
+                'af1',
+                'af2'
+            ],
 
-          relatedNoteIds: [
-            'note-daisy-parentage'
-          ],
+            relatedNoteIds: [
+                'note-daisy-parentage'
+            ],
 
-          createdAt:
+            createdAt:
             '2026-06-22T08:00:00Z',
 
-          updatedAt:
+            updatedAt:
             '2026-07-21T18:20:00Z'
         }),
 
         note({
-          id:
+            id:
             'note-whiskerfield-album',
 
-          title:
+            title:
             'Whiskerfield family album context',
 
-          body: body(
-            'The family album appears to combine photographs from several Whiskerfield households.',
-            '',
-            'Silver and Luna can identify some recent photographs. Barnaby and Daisy may appear in older images, but the captions are incomplete.',
-            '',
-            'Album order, handwriting, paper type, and repeated backgrounds may help group unidentified portraits.'
-          ),
+            body: body(
+                'The family album appears to combine photographs from several Whiskerfield households.',
+                '',
+                'Silver and Luna can identify some recent photographs. Barnaby and Daisy may appear in older images, but the captions are incomplete.',
+                '',
+                'Album order, handwriting, paper type, and repeated backgrounds may help group unidentified portraits.'
+            ),
 
-          collectionIds: [
-            'note-col-whiskerfield'
-          ],
+            collectionIds: [
+                'note-col-whiskerfield'
+            ],
 
-          favorite:
+            favorite:
             true,
 
-          linkedPersonIds: [
-            'silver',
-            'luna',
-            'barnaby',
-            'daisy'
-          ],
+            linkedPersonIds: [
+                'silver',
+                'luna',
+                'barnaby',
+                'daisy'
+            ],
 
-          linkedPlaceIds: [
-            'place-pawford'
-          ],
+            linkedPlaceIds: [
+                'place-pawford'
+            ],
 
-          linkedPhotoIds: [
-            'photo-family-table',
-            'photo-grandparents-garden'
-          ],
+            linkedPhotoIds: [
+                'photo-family-table',
+                'photo-grandparents-garden'
+            ],
 
-          linkedArchiveFileIds: [
-            'af7'
-          ],
+            linkedArchiveFileIds: [
+                'af7'
+            ],
 
-          relatedNoteIds: [
-            'note-luna-interview'
-          ],
+            relatedNoteIds: [
+                'note-luna-interview'
+            ],
 
-          createdAt:
+            createdAt:
             '2026-06-18T10:00:00Z',
 
-          updatedAt:
+            updatedAt:
             '2026-07-18T12:45:00Z'
         }),
 
         note({
-          id:
+            id:
             'note-whiskerfield-surname',
 
-          title:
+            title:
             'Whiskerfield surname variants',
 
-          body: body(
-            'Searches should include likely handwriting and transcription variants of Whiskerfield.',
-            '',
-            'Potential differences include omitted letters, altered vowel groups, and spacing introduced by indexers.',
-            'Every variant should be recorded with its source rather than added as a confirmed family name automatically.'
-          ),
+            body: body(
+                'Searches should include likely handwriting and transcription variants of Whiskerfield.',
+                '',
+                'Potential differences include omitted letters, altered vowel groups, and spacing introduced by indexers.',
+                'Every variant should be recorded with its source rather than added as a confirmed family name automatically.'
+            ),
 
-          collectionIds: [
-            'note-col-whiskerfield',
-            'note-col-pawford'
-          ],
+            collectionIds: [
+                'note-col-whiskerfield',
+                'note-col-pawford'
+            ],
 
-          linkedPersonIds: [
-            'silver',
-            'barnaby',
-            'archibald'
-          ],
+            linkedPersonIds: [
+                'silver',
+                'barnaby',
+                'archibald'
+            ],
 
-          linkedPlaceIds: [
-            'place-pawford'
-          ],
+            linkedPlaceIds: [
+                'place-pawford'
+            ],
 
-          linkedArchiveFileIds: [
-            'af9'
-          ],
+            linkedArchiveFileIds: [
+                'af9'
+            ],
 
-          relatedNoteIds: [
-            'note-daisy-parentage'
-          ],
+            relatedNoteIds: [
+                'note-daisy-parentage'
+            ],
 
-          createdAt:
+            createdAt:
             '2026-06-15T09:10:00Z',
 
-          updatedAt:
+            updatedAt:
             '2026-07-17T15:00:00Z'
         }),
 
         note({
-          id:
+            id:
             'note-rupert-death',
 
-          title:
+            title:
             'Rupert death details to verify',
 
-          body: body(
-            'Rupert Purrington’s death details are incomplete in the current family record.',
-            '',
-            'The available online extract may contain a matching entry, but identity has not been confirmed.',
-            'Check age, residence, relatives, and registration district before entering a death date.'
-          ),
+            body: body(
+                'Rupert Purrington’s death details are incomplete in the current family record.',
+                '',
+                'The available online extract may contain a matching entry, but identity has not been confirmed.',
+                'Check age, residence, relatives, and registration district before entering a death date.'
+            ),
 
-          collectionIds: [
-            'note-col-sources'
-          ],
+            collectionIds: [
+                'note-col-sources'
+            ],
 
-          checklist: [
-            {
-              id:
+            checklist: [
+                {
+                    id:
                 'note-rupert-death-check-index',
 
-              text:
+                    text:
                 'Check the regional death index',
 
-              done:
+                    done:
                 false
-            },
+                },
 
-            {
-              id:
+                {
+                    id:
                 'note-rupert-death-compare-residence',
 
-              text:
+                    text:
                 'Compare residence and family details',
 
-              done:
+                    done:
                 false
-            }
-          ],
+                }
+            ],
 
-          linkedPersonIds: [
-            'rupert'
-          ],
+            linkedPersonIds: [
+                'rupert'
+            ],
 
-          linkedPlaceIds: [
-            'place-fishmarket-row'
-          ],
+            linkedPlaceIds: [
+                'place-fishmarket-row'
+            ],
 
-          linkedArchiveFileIds: [
-            'af9'
-          ],
+            linkedArchiveFileIds: [
+                'af9'
+            ],
 
-          createdAt:
+            createdAt:
             '2026-06-10T13:30:00Z',
 
-          updatedAt:
+            updatedAt:
             '2026-07-16T17:05:00Z'
         }),
 
         note({
-          id:
+            id:
             'note-purrington-surname',
 
-          title:
+            title:
             'Purrington surname variants',
 
-          body: body(
-            'Purrington entries may be indexed with shortened or misread letter groups.',
-            '',
-            'Search plans should include common handwriting substitutions while keeping the recorded spelling attached to each source.',
-            'No variant should replace the central surname without supporting evidence.'
-          ),
+            body: body(
+                'Purrington entries may be indexed with shortened or misread letter groups.',
+                '',
+                'Search plans should include common handwriting substitutions while keeping the recorded spelling attached to each source.',
+                'No variant should replace the central surname without supporting evidence.'
+            ),
 
-          collectionIds: [],
+            collectionIds: [],
 
-          archived:
+            archived:
             true,
 
-          linkedPersonIds: [
-            'rupert',
-            'luna'
-          ],
+            linkedPersonIds: [
+                'rupert',
+                'luna'
+            ],
 
-          createdAt:
+            createdAt:
             '2026-05-01T11:00:00Z',
 
-          updatedAt:
+            updatedAt:
             '2026-06-30T09:20:00Z'
         }),
 
         note({
-          id:
+            id:
             'note-silver-luna-marriage',
 
-          title:
+            title:
             'Silver and Luna marriage record notes',
 
-          body: body(
-            'The marriage record links Silver Whiskerfield and Luna Purrington in Meowbridge.',
-            '',
-            'The names and place are legible. Witness names and the exact certificate reference should be transcribed separately.',
-            '',
-            'The event should remain linked to the original certificate source and scan.'
-          ),
+            body: body(
+                'The marriage record links Silver Whiskerfield and Luna Purrington in Meowbridge.',
+                '',
+                'The names and place are legible. Witness names and the exact certificate reference should be transcribed separately.',
+                '',
+                'The event should remain linked to the original certificate source and scan.'
+            ),
 
-          collectionIds: [
-            'note-col-whiskerfield',
-            'note-col-sources'
-          ],
+            collectionIds: [
+                'note-col-whiskerfield',
+                'note-col-sources'
+            ],
 
-          linkedPersonIds: [
-            'silver',
-            'luna'
-          ],
+            linkedPersonIds: [
+                'silver',
+                'luna'
+            ],
 
-          linkedPlaceIds: [
-            'place-meowbridge'
-          ],
+            linkedPlaceIds: [
+                'place-meowbridge'
+            ],
 
-          linkedEventIds: [
-            'event-rel-silver-luna-partner-rel-silver-luna-partner-marriage'
-          ],
+            linkedEventIds: [
+                'event-rel-silver-luna-partner-rel-silver-luna-partner-marriage'
+            ],
 
-          linkedPhotoIds: [
-            'photo-silver-luna-wedding'
-          ],
+            linkedPhotoIds: [
+                'photo-silver-luna-wedding'
+            ],
 
-          linkedArchiveFileIds: [
-            'af5'
-          ],
+            linkedArchiveFileIds: [
+                'af5'
+            ],
 
-          relatedNoteIds: [
-            'note-silver-profile-checklist'
-          ],
+            relatedNoteIds: [
+                'note-silver-profile-checklist'
+            ],
 
-          createdAt:
+            createdAt:
             '2026-05-19T10:15:00Z',
 
-          updatedAt:
+            updatedAt:
             '2026-07-20T13:35:00Z'
         }),
 
         note({
-          id:
+            id:
             'note-silver-profile-checklist',
 
-          title:
+            title:
             'Silver profile research checklist',
 
-          body: '',
+            body: '',
 
-          collectionIds: [
-            'note-col-whiskerfield'
-          ],
+            collectionIds: [
+                'note-col-whiskerfield'
+            ],
 
-          checklist: [
-            {
-              id:
+            checklist: [
+                {
+                    id:
                 'note-silver-profile-residence',
 
-              text:
+                    text:
                 'Add residence sources',
 
-              done:
+                    done:
                 false
-            },
+                },
 
-            {
-              id:
+                {
+                    id:
                 'note-silver-profile-photos',
 
-              text:
+                    text:
                 'Review context for linked photographs',
 
-              done:
+                    done:
                 true
-            },
+                },
 
-            {
-              id:
+                {
+                    id:
                 'note-silver-profile-events',
 
-              text:
+                    text:
                 'Verify event dates and places',
 
-              done:
+                    done:
                 false
-            }
-          ],
+                }
+            ],
 
-          linkedPersonIds: [
-            'silver'
-          ],
+            linkedPersonIds: [
+                'silver'
+            ],
 
-          linkedPlaceIds: [
-            'place-pawford'
-          ],
+            linkedPlaceIds: [
+                'place-pawford'
+            ],
 
-          relatedNoteIds: [
-            'note-silver-luna-marriage'
-          ],
+            relatedNoteIds: [
+                'note-silver-luna-marriage'
+            ],
 
-          createdAt:
+            createdAt:
             '2026-06-05T08:40:00Z',
 
-          updatedAt:
+            updatedAt:
             '2026-07-19T10:25:00Z'
         }),
 
         note({
-          id:
+            id:
             'note-luna-interview',
 
-          title:
+            title:
             'Family interview with Luna',
 
-          body: body(
-            'Interview focus',
-            'Family movement, the Whiskerfield album, and memories connected to Meowbridge.',
-            '',
-            'Current recollections',
-            'Luna remembers family stories about movement between nearby villages and Pawford.',
-            'She may be able to identify the owner of the old family album.',
-            '',
-            'Follow-up questions',
-            'Who originally kept the album?',
-            'Which relatives lived in Meowbridge?',
-            'Did Daisy discuss siblings or parentage?'
-          ),
+            body: body(
+                'Interview focus',
+                'Family movement, the Whiskerfield album, and memories connected to Meowbridge.',
+                '',
+                'Current recollections',
+                'Luna remembers family stories about movement between nearby villages and Pawford.',
+                'She may be able to identify the owner of the old family album.',
+                '',
+                'Follow-up questions',
+                'Who originally kept the album?',
+                'Which relatives lived in Meowbridge?',
+                'Did Daisy discuss siblings or parentage?'
+            ),
 
-          collectionIds: [
-            'note-col-interviews',
-            'note-col-whiskerfield'
-          ],
+            collectionIds: [
+                'note-col-interviews',
+                'note-col-whiskerfield'
+            ],
 
-          checklist: [
-            {
-              id:
+            checklist: [
+                {
+                    id:
                 'note-luna-interview-follow-up',
 
-              text:
+                    text:
                 'Schedule a follow-up conversation',
 
-              done:
+                    done:
                 false
-            },
+                },
 
-            {
-              id:
+                {
+                    id:
                 'note-luna-interview-album',
 
-              text:
+                    text:
                 'Prepare unidentified album photographs',
 
-              done:
+                    done:
                 false
-            }
-          ],
+                }
+            ],
 
-          linkedPersonIds: [
-            'luna',
-            'silver'
-          ],
+            linkedPersonIds: [
+                'luna',
+                'silver'
+            ],
 
-          linkedPlaceIds: [
-            'place-meowbridge'
-          ],
+            linkedPlaceIds: [
+                'place-meowbridge'
+            ],
 
-          linkedArchiveFileIds: [
-            'af6'
-          ],
+            linkedArchiveFileIds: [
+                'af6'
+            ],
 
-          relatedNoteIds: [
-            'note-whiskerfield-album'
-          ],
+            relatedNoteIds: [
+                'note-whiskerfield-album'
+            ],
 
-          createdAt:
+            createdAt:
             '2026-04-02T14:00:00Z',
 
-          updatedAt:
+            updatedAt:
             '2026-07-15T11:50:00Z'
         }),
 
         note({
-          id:
+            id:
             'note-pawford-archive-visit',
 
-          title:
+            title:
             'Pawford archive visit checklist',
 
-          body: body(
-            'Prepare a focused archive visit for Pawford household and register material.',
-            '',
-            'Capture complete references and adjacent pages rather than isolated entries.',
-            'Record negative searches as well as useful findings.'
-          ),
+            body: body(
+                'Prepare a focused archive visit for Pawford household and register material.',
+                '',
+                'Capture complete references and adjacent pages rather than isolated entries.',
+                'Record negative searches as well as useful findings.'
+            ),
 
-          collectionIds: [
-            'note-col-pawford',
-            'note-col-sources'
-          ],
+            collectionIds: [
+                'note-col-pawford',
+                'note-col-sources'
+            ],
 
-          checklist: [
-            {
-              id:
+            checklist: [
+                {
+                    id:
                 'note-pawford-archive-continuation',
 
-              text:
+                    text:
                 'Review the register continuation',
 
-              done:
+                    done:
                 false
-            },
+                },
 
-            {
-              id:
+                {
+                    id:
                 'note-pawford-archive-households',
 
-              text:
+                    text:
                 'Capture surrounding household pages',
 
-              done:
+                    done:
                 false
-            },
+                },
 
-            {
-              id:
+                {
+                    id:
                 'note-pawford-archive-spellings',
 
-              text:
+                    text:
                 'Search surname spelling variants',
 
-              done:
+                    done:
                 false
-            },
+                },
 
-            {
-              id:
+                {
+                    id:
                 'note-pawford-archive-images',
 
-              text:
+                    text:
                 'Record image and folder references',
 
-              done:
+                    done:
                 false
-            }
-          ],
+                }
+            ],
 
-          linkedPlaceIds: [
-            'place-pawford'
-          ],
+            linkedPlaceIds: [
+                'place-pawford'
+            ],
 
-          linkedArchiveFileIds: [
-            'af1',
-            'af4'
-          ],
+            linkedArchiveFileIds: [
+                'af1',
+                'af4'
+            ],
 
-          createdAt:
+            createdAt:
             '2026-06-01T08:00:00Z',
 
-          updatedAt:
+            updatedAt:
             '2026-07-14T16:20:00Z'
         })
-      ];
-    })();
+    ];
+})();
 
-    sampleData.sourceLinks = [
-      // Source → People
-      ['as1', 'person', 'barnaby'],
-      ['as1', 'person', 'daisy'],
-      ['as2', 'person', 'luna'],
-      ['as3', 'person', 'barnaby'],
-      ['as3', 'person', 'luna'],
-      ['as4', 'person', 'luna'],
-      ['as5', 'person', 'silver'],
+sampleData.sourceLinks = [
+    // Source → People
+    ['as1', 'person', 'barnaby'],
+    ['as1', 'person', 'daisy'],
+    ['as2', 'person', 'luna'],
+    ['as3', 'person', 'barnaby'],
+    ['as3', 'person', 'luna'],
+    ['as4', 'person', 'luna'],
+    ['as5', 'person', 'silver'],
 
-      // Source → Places
-      ['as1', 'place', 'place-archive'],
-      ['as1', 'place', 'place-pawford'],
-      ['as2', 'place', 'place-pawford'],
-      ['as3', 'place', 'place-meowbridge'],
-      ['as5', 'place', 'place-pawford'],
-      ['as6', 'place', 'place-pawford'],
+    // Source → Places
+    ['as1', 'place', 'place-archive'],
+    ['as1', 'place', 'place-pawford'],
+    ['as2', 'place', 'place-pawford'],
+    ['as3', 'place', 'place-meowbridge'],
+    ['as5', 'place', 'place-pawford'],
+    ['as6', 'place', 'place-pawford'],
 
-      // Source → Archive files
-      ['as1', 'file', 'af1'],
-      ['as1', 'file', 'af2'],
-      ['as1', 'file', 'af3'],
-      ['as2', 'file', 'af4'],
-      ['as3', 'file', 'af5'],
-      ['as4', 'file', 'af6'],
-      ['as5', 'file', 'af7'],
-      ['as6', 'file', 'af9'],
+    // Source → Archive files
+    ['as1', 'file', 'af1'],
+    ['as1', 'file', 'af2'],
+    ['as1', 'file', 'af3'],
+    ['as2', 'file', 'af4'],
+    ['as3', 'file', 'af5'],
+    ['as4', 'file', 'af6'],
+    ['as5', 'file', 'af7'],
+    ['as6', 'file', 'af9'],
 
-      // Source → Notes
-      ['as1', 'note', 'note-daisy-parentage'],
-      ['as1', 'note', 'note-pawford-household'],
-      ['as1', 'note', 'note-pawford-archive-visit'],
-      ['as2', 'note', 'note-pawford-archive-visit'],
-      ['as3', 'note', 'note-meowbridge-transcription'],
-      ['as3', 'note', 'note-silver-luna-marriage'],
-      ['as4', 'note', 'note-luna-interview'],
-      ['as5', 'note', 'note-whiskerfield-album'],
-      ['as6', 'note', 'note-whiskerfield-surname'],
-      ['as6', 'note', 'note-rupert-death']
-    ].map(
-      (
+    // Source → Notes
+    ['as1', 'note', 'note-daisy-parentage'],
+    ['as1', 'note', 'note-pawford-household'],
+    ['as1', 'note', 'note-pawford-archive-visit'],
+    ['as2', 'note', 'note-pawford-archive-visit'],
+    ['as3', 'note', 'note-meowbridge-transcription'],
+    ['as3', 'note', 'note-silver-luna-marriage'],
+    ['as4', 'note', 'note-luna-interview'],
+    ['as5', 'note', 'note-whiskerfield-album'],
+    ['as6', 'note', 'note-whiskerfield-surname'],
+    ['as6', 'note', 'note-rupert-death']
+].map(
+    (
         [
-          sourceId,
-          targetType,
-          targetId
+            sourceId,
+            targetType,
+            targetId
         ],
         index
-      ) => ({
+    ) => ({
         id:
           `source-link-seed-${index + 1}`,
 
@@ -23247,1203 +24342,1271 @@
         sourceId,
         targetType,
         targetId
-      })
-    );
+    })
+);
 
-    let runtimeIdSequence = 0;
+let runtimeIdSequence = 0;
 
-    function createRuntimeId(
-      prefix
-    ) {
-      runtimeIdSequence += 1;
+function createRuntimeId(
+    prefix
+)
+{
+    runtimeIdSequence += 1;
 
-      const randomPart =
+    const randomPart =
         typeof crypto !== 'undefined'
         && typeof crypto.randomUUID
           === 'function'
-          ? crypto.randomUUID()
-              .replaceAll('-', '')
-              .slice(0, 10)
-          : Math.random()
-              .toString(36)
-              .slice(2, 12);
+            ? crypto.randomUUID()
+                .replaceAll('-', '')
+                .slice(0, 10)
+            : Math.random()
+                .toString(36)
+                .slice(2, 12);
 
-      return `${prefix}-${
+    return `${prefix}-${
         Date.now().toString(36)
-      }-${runtimeIdSequence.toString(36)}-${
+    }-${runtimeIdSequence.toString(36)}-${
         randomPart
-      }`;
-    }
+    }`;
+}
 
-    function noteTimestamp(
-      note,
-      field = 'updatedAt'
-    ) {
-      const timestamp =
+function noteTimestamp(
+    note,
+    field = 'updatedAt'
+)
+{
+    const timestamp =
         Date.parse(
-          note?.[field] || ''
+            note?.[field] || ''
         );
 
-      return Number.isFinite(timestamp)
+    return Number.isFinite(timestamp)
         ? timestamp
         : 0;
-    }
+}
 
-    function getProjectNotes(
-      projectId =
+function getProjectNotes(
+    projectId =
         currentProjectId(),
-      {
+    {
         includeArchived = false
-      } = {}
-    ) {
-      return (
+    } = {}
+)
+{
+    return (
         sampleData.notes || []
-      )
+    )
         .filter(note =>
-          note.projectId
+            note.projectId
             === projectId
           && (
-            includeArchived
+              includeArchived
             || !note.archived
           )
         )
         .slice()
         .sort(
-          (first, second) =>
-            noteTimestamp(
-              second,
-              'updatedAt'
-            )
+            (first, second) =>
+                noteTimestamp(
+                    second,
+                    'updatedAt'
+                )
             - noteTimestamp(
                 first,
                 'updatedAt'
-              )
+            )
         );
-    }
+}
 
-    function getNote(
-      noteId,
-      {
+function getNote(
+    noteId,
+    {
         projectId =
-          currentProjectId(),
+            currentProjectId(),
         includeArchived = true
-      } = {}
-    ) {
-      const note =
+    } = {}
+)
+{
+    const note =
         (
-          sampleData.notes || []
+            sampleData.notes || []
         ).find(
-          item =>
-            item.id === noteId
+            item =>
+                item.id === noteId
         )
         || null;
 
-      if (
+    if (
         !note
         || (
-          projectId
+            projectId
           && note.projectId
             !== projectId
         )
         || (
-          !includeArchived
+            !includeArchived
           && note.archived
         )
-      ) {
+    )
+    {
         return null;
-      }
-
-      return note;
     }
 
-    function getProjectNoteCollections(
-      projectId =
+    return note;
+}
+
+function getProjectNoteCollections(
+    projectId =
         currentProjectId()
-    ) {
-      return (
+)
+{
+    return (
         sampleData.noteCollections
         || []
-      ).filter(
+    ).filter(
         collection =>
-          collection.projectId
+            collection.projectId
             === projectId
-      );
-    }
+    );
+}
 
-    function getNoteCollection(
-      collectionId,
-      {
+function getNoteCollection(
+    collectionId,
+    {
         projectId =
-          currentProjectId()
-      } = {}
-    ) {
-      const collection =
+            currentProjectId()
+    } = {}
+)
+{
+    const collection =
         (
-          sampleData.noteCollections
+            sampleData.noteCollections
           || []
         ).find(
-          item =>
-            item.id
+            item =>
+                item.id
               === collectionId
         )
         || null;
 
-      if (
+    if (
         !collection
         || (
-          projectId
+            projectId
           && collection.projectId
             !== projectId
         )
-      ) {
+    )
+    {
         return null;
-      }
-
-      return collection;
     }
 
-    function getCollectionsForNote(
-      noteId,
-      {
+    return collection;
+}
+
+function getCollectionsForNote(
+    noteId,
+    {
         projectId =
-          currentProjectId()
-      } = {}
-    ) {
-      const note =
+            currentProjectId()
+    } = {}
+)
+{
+    const note =
         getNote(
-          noteId,
-          {
-            projectId,
-            includeArchived: true
-          }
+            noteId,
+            {
+                projectId,
+                includeArchived: true
+            }
         );
 
-      if (!note) {
+    if (!note)
+    {
         return [];
-      }
+    }
 
-      return (
+    return (
         note.collectionIds || []
-      )
+    )
         .map(collectionId =>
-          getNoteCollection(
-            collectionId,
-            {
-              projectId:
+            getNoteCollection(
+                collectionId,
+                {
+                    projectId:
                 note.projectId
-            }
-          )
+                }
+            )
         )
         .filter(Boolean);
-    }
+}
 
-    function getNotesForCollection(
-      collectionId,
-      {
+function getNotesForCollection(
+    collectionId,
+    {
         projectId =
-          currentProjectId(),
+            currentProjectId(),
         includeArchived = false
-      } = {}
-    ) {
-      const collection =
+    } = {}
+)
+{
+    const collection =
         getNoteCollection(
-          collectionId,
-          {
-            projectId
-          }
+            collectionId,
+            {
+                projectId
+            }
         );
 
-      if (!collection) {
+    if (!collection)
+    {
         return [];
-      }
+    }
 
-      return getProjectNotes(
+    return getProjectNotes(
         collection.projectId,
         {
-          includeArchived
+            includeArchived
         }
-      ).filter(note =>
+    ).filter(note =>
         (
-          note.collectionIds || []
+            note.collectionIds || []
         ).includes(
-          collection.id
+            collection.id
         )
-      );
+    );
+}
+
+function getNotesLinkedById(
+    field,
+    linkedId,
+    {
+        projectId =
+            currentProjectId(),
+        includeArchived = false
+    } = {}
+)
+{
+    if (!linkedId)
+    {
+        return [];
     }
 
-    function getNotesLinkedById(
-      field,
-      linkedId,
-      {
-        projectId =
-          currentProjectId(),
-        includeArchived = false
-      } = {}
-    ) {
-      if (!linkedId) {
-        return [];
-      }
-
-      return getProjectNotes(
+    return getProjectNotes(
         projectId,
         {
-          includeArchived
+            includeArchived
         }
-      ).filter(note =>
+    ).filter(note =>
         (
-          note[field] || []
+            note[field] || []
         ).includes(linkedId)
-      );
-    }
+    );
+}
 
-    const NOTE_ENTITY_TYPES =
-      Object.freeze({
+const NOTE_ENTITY_TYPES =
+    Object.freeze({
         person: Object.freeze({
-          field:
+            field:
             'linkedPersonIds',
 
-          sectionKey:
+            sectionKey:
             'people',
 
-          iconSvg:
+            iconSvg:
             icon.people,
 
-          chipTone:
+            chipTone:
             'people',
 
-          contextLabel:
+            contextLabel:
             'Person',
 
-          title:
+            title:
             'People',
 
-          singular:
+            singular:
             'person',
 
-          plural:
+            plural:
             'people',
 
-          records:
+            records:
             projectId =>
-              (
-                sampleData.people || []
-              ).filter(
-                person =>
-                  person.projectId
+                (
+                    sampleData.people || []
+                ).filter(
+                    person =>
+                        person.projectId
                     === projectId
                   && !person.deleted
-              ),
-
-          label:
-            record =>
-              personResourceDisplayName(
-                record
-              )
-              || 'Unnamed person',
-
-          meta:
-            record => {
-              const dates = [
-                formatGenealogyDateLabel(
-                  record.birth
                 ),
 
-                formatGenealogyDateLabel(
-                  record.death
+            label:
+            record =>
+                personResourceDisplayName(
+                    record
                 )
-              ]
-                .filter(Boolean)
-                .join(' – ');
+              || 'Unnamed person',
 
-              return (
-                dates
+            meta:
+            record =>
+            {
+                const dates = [
+                    formatGenealogyDateLabel(
+                        record.birth
+                    ),
+
+                    formatGenealogyDateLabel(
+                        record.death
+                    )
+                ]
+                    .filter(Boolean)
+                    .join(' – ');
+
+                return (
+                    dates
                 || 'Person record'
-              );
+                );
             },
 
-          open:
-            record => {
-              openPlaceInspectorPerson(
-                record.id
-              );
+            open:
+            record =>
+            {
+                openPlaceInspectorPerson(
+                    record.id
+                );
             }
         }),
 
         place: Object.freeze({
-          field:
+            field:
             'linkedPlaceIds',
 
-          sectionKey:
+            sectionKey:
             'places',
 
-          iconSvg:
+            iconSvg:
             icon.mapPin,
 
-          chipTone:
+            chipTone:
             'places',
 
-          contextLabel:
+            contextLabel:
             'Place',
 
-          title:
+            title:
             'Places',
 
-          singular:
+            singular:
             'place',
 
-          plural:
+            plural:
             'places',
 
-          records:
+            records:
             projectId =>
-              (
-                sampleData.places || []
-              ).filter(
-                place =>
-                  place.projectId
+                (
+                    sampleData.places || []
+                ).filter(
+                    place =>
+                        place.projectId
                     === projectId
                   && !place.deleted
-              ),
+                ),
 
-          label:
+            label:
             record =>
-              placeDisplayText(
-                record
-              )
+                placeDisplayText(
+                    record
+                )
               || 'Unnamed place',
 
-          meta:
+            meta:
             () =>
-              'Place record',
+                'Place record',
 
-          open:
-            record => {
-              state.activeModule =
-                'Places';
+            open:
+            record =>
+            {
+                state.activeModule =
+                    'Places';
 
-              state.placesView =
-                'all';
+                state.placesView =
+                    'all';
 
-              state.selectedPlaceId =
-                record.id;
+                state.selectedPlaceId =
+                    record.id;
 
-              state.placesInspectorCollapsed =
-                false;
+                state.placesInspectorCollapsed =
+                    false;
 
-              render();
+                render();
             }
         }),
 
         event: Object.freeze({
-          field:
+            field:
             'linkedEventIds',
 
-          sectionKey:
+            sectionKey:
             'events',
 
-          iconSvg:
+            iconSvg:
             icon.calendar,
 
-          chipTone:
+            chipTone:
             'events',
 
-          contextLabel:
+            contextLabel:
             'Event',
 
-          title:
+            title:
             'Events',
 
-          singular:
+            singular:
             'event',
 
-          plural:
+            plural:
             'events',
 
-          records:
+            records:
             projectId =>
-              (
-                sampleData.events || []
-              ).filter(
-                event =>
-                  event.projectId
+                (
+                    sampleData.events || []
+                ).filter(
+                    event =>
+                        event.projectId
                     === projectId
-              ),
+                ),
 
-          label:
+            label:
             record =>
-              record.title
+                record.title
               || record.typeLabel
               || record.type
               || 'Event',
 
-          meta:
+            meta:
             record =>
-              [
-                timelineDateLabel(
-                  record
-                ),
+                [
+                    timelineDateLabel(
+                        record
+                    ),
 
-                record.placeId
-                  ? getPlaceDisplay(
-                      record.placeId
-                    )
-                  : record.placeText
-              ]
-                .filter(Boolean)
-                .join(' · ')
+                    record.placeId
+                        ? getPlaceDisplay(
+                            record.placeId
+                        )
+                        : record.placeText
+                ]
+                    .filter(Boolean)
+                    .join(' · ')
               || 'Event record',
 
-          open:
-            record => {
-              const owner =
-                placeInspectorEventOwnerIds(
-                  record
-                )
-                  .map(personId =>
-                    getPerson(
-                      personId
+            open:
+            record =>
+            {
+                const owner =
+                    placeInspectorEventOwnerIds(
+                        record
                     )
-                  )
-                  .find(person =>
-                    person
+                        .map(personId =>
+                            getPerson(
+                                personId
+                            )
+                        )
+                        .find(person =>
+                            person
                     && !person.deleted
                     && (
-                      !record.projectId
+                        !record.projectId
                       || person.projectId
                         === record.projectId
                     )
-                  );
+                        );
 
-              if (!owner) {
-                showToast(
-                  'This event has no valid person owner.'
+                if (!owner)
+                {
+                    showToast(
+                        'This event has no valid person owner.'
+                    );
+
+                    return;
+                }
+
+                openPlaceInspectorPerson(
+                    owner.id
                 );
-
-                return;
-              }
-
-              openPlaceInspectorPerson(
-                owner.id
-              );
             }
         }),
 
         photo: Object.freeze({
-          field:
+            field:
             'linkedPhotoIds',
 
-          sectionKey:
+            sectionKey:
             'photos',
 
-          iconSvg:
+            iconSvg:
             icon.image,
 
-          chipTone:
+            chipTone:
             'photos',
 
-          contextLabel:
+            contextLabel:
             'Photo',
 
-          title:
+            title:
             'Photos',
 
-          singular:
+            singular:
             'photo',
 
-          plural:
+            plural:
             'photos',
 
-          records:
+            records:
             projectId =>
-              getProjectPhotos(
-                projectId
-              ),
+                getProjectPhotos(
+                    projectId
+                ),
 
-          label:
+            label:
             record =>
-              record.title
+                record.title
               || record.filename
               || 'Untitled photo',
 
-          meta:
+            meta:
             record =>
-              [
-                formatPhotoDate(
-                  record
-                ),
+                [
+                    formatPhotoDate(
+                        record
+                    ),
 
-                getPlaceDisplay(
-                  record.placeId
-                )
+                    getPlaceDisplay(
+                        record.placeId
+                    )
                 || record.placeText
-              ]
-                .filter(Boolean)
-                .join(' · ')
+                ]
+                    .filter(Boolean)
+                    .join(' · ')
               || 'Photo',
 
-          open:
-            record => {
-              openAlbumsForPhoto(
-                record.id
-              );
+            open:
+            record =>
+            {
+                openAlbumsForPhoto(
+                    record.id
+                );
             }
         }),
 
         source: Object.freeze({
-          field:
+            field:
             null,
 
-          sectionKey:
+            sectionKey:
             'sources',
 
-          iconSvg:
+            iconSvg:
             icon.archive,
 
-          chipTone:
+            chipTone:
             'sources',
 
-          contextLabel:
+            contextLabel:
             'Source',
 
-          title:
+            title:
             'Sources',
 
-          singular:
+            singular:
             'source',
 
-          plural:
+            plural:
             'sources',
 
-          records:
+            records:
             projectId =>
-              (
-                sampleData.sources || []
-              ).filter(
-                source =>
-                  source.projectId
+                (
+                    sampleData.sources || []
+                ).filter(
+                    source =>
+                        source.projectId
                     === projectId
-              ),
+                ),
 
-          label:
+            label:
             record =>
-              record.title
+                record.title
               || record.name
               || record.citation
               || record.id,
 
-          meta:
+            meta:
             record =>
-              [
-                record.providedBy,
-                record.reference
-              ]
-                .filter(Boolean)
-                .join(' · ')
+                [
+                    record.providedBy,
+                    record.reference
+                ]
+                    .filter(Boolean)
+                    .join(' · ')
               || 'Source record',
 
-          open:
-            record => {
-              state.activeModule =
-                'Archive';
+            open:
+            record =>
+            {
+                state.activeModule =
+                    'Archive';
 
-              state.archiveView =
-                'sources';
+                state.archiveView =
+                    'sources';
 
-              state.archiveSelectedSourceId =
-                record.id;
+                state.archiveSelectedSourceId =
+                    record.id;
 
-              state.archiveInspectorCollapsed =
-                false;
+                state.archiveInspectorCollapsed =
+                    false;
 
-              render();
+                render();
             }
         }),
 
         archiveFile: Object.freeze({
-          field:
+            field:
             'linkedArchiveFileIds',
 
-          sectionKey:
+            sectionKey:
             'files',
 
-          iconSvg:
+            iconSvg:
             icon.file,
 
-          chipTone:
+            chipTone:
             'files',
 
-          contextLabel:
+            contextLabel:
             'File',
 
-          title:
+            title:
             'Archive',
 
-          singular:
+            singular:
             'file',
 
-          plural:
+            plural:
             'files',
 
-          records:
+            records:
             projectId =>
-              (
-                sampleData.archiveFiles
+                (
+                    sampleData.archiveFiles
                 || []
-              ).filter(
-                file =>
-                  !file.deleted
+                ).filter(
+                    file =>
+                        !file.deleted
                   && (
-                    !file.projectId
+                      !file.projectId
                     || file.projectId
                       === projectId
                   )
-              ),
+                ),
 
-          label:
+            label:
             record =>
-              record.name
+                record.name
               || record.title
               || record.id,
 
-          meta:
+            meta:
             record =>
-              record.type
+                record.type
               || record.kind
               || 'Archive file',
 
-          open:
-            record => {
-              openPlaceInspectorArchiveFile(
-                record.id
-              );
+            open:
+            record =>
+            {
+                openPlaceInspectorArchiveFile(
+                    record.id
+                );
             }
         })
-      });
+    });
 
-    function getNoteEntityConfig(
-      type
-    ) {
-      return (
+function getNoteEntityConfig(
+    type
+)
+{
+    return (
         NOTE_ENTITY_TYPES[type]
         || null
-      );
-    }
+    );
+}
 
-    function noteEntityLinkedIds(
-      note,
-      type
-    ) {
-      const config =
+function noteEntityLinkedIds(
+    note,
+    type
+)
+{
+    const config =
         getNoteEntityConfig(
-          type
+            type
         );
 
-      if (!note || !config) {
+    if (!note || !config)
+    {
         return [];
-      }
-
-      if (type === 'source') {
-        return sourceIdsForTarget(
-          'note',
-          note.id,
-          note.projectId
-        );
-      }
-
-      return normalizeCentralNoteIdArray(
-        note[config.field] || []
-      );
     }
 
-    function noteEntityRecordsForNote(
-      note,
-      type
-    ) {
-      if (
+    if (type === 'source')
+    {
+        return sourceIdsForTarget(
+            'note',
+            note.id,
+            note.projectId
+        );
+    }
+
+    return normalizeCentralNoteIdArray(
+        note[config.field] || []
+    );
+}
+
+function noteEntityRecordsForNote(
+    note,
+    type
+)
+{
+    if (
         !note
         || !getNoteEntityConfig(type)
-      ) {
+    )
+    {
         return [];
-      }
-
-      return noteEntityLinkedIds(
-        note,
-        type
-      )
-        .map(id =>
-          noteEntityById(
-            type,
-            id,
-            note.projectId
-          )
-        )
-        .filter(Boolean);
     }
 
-    function noteEntityRecords(
-      type,
-      projectId =
+    return noteEntityLinkedIds(
+        note,
+        type
+    )
+        .map(id =>
+            noteEntityById(
+                type,
+                id,
+                note.projectId
+            )
+        )
+        .filter(Boolean);
+}
+
+function noteEntityRecords(
+    type,
+    projectId =
         currentProjectId()
-    ) {
-      const config =
+)
+{
+    const config =
         getNoteEntityConfig(type);
 
-      if (!config) {
+    if (!config)
+    {
         return [];
-      }
+    }
 
-      return config
+    return config
         .records(projectId)
         .slice()
         .sort(
-          (
-            first,
-            second
-          ) =>
-            config
-              .label(first)
-              .localeCompare(
-                config.label(second)
-              )
+            (
+                first,
+                second
+            ) =>
+                config
+                    .label(first)
+                    .localeCompare(
+                        config.label(second)
+                    )
         );
-    }
+}
 
-    function noteEntityById(
-      type,
-      id,
-      projectId =
+function noteEntityById(
+    type,
+    id,
+    projectId =
         currentProjectId()
-    ) {
-      if (!id) {
+)
+{
+    if (!id)
+    {
         return null;
-      }
+    }
 
-      const config =
+    const config =
         getNoteEntityConfig(type);
 
-      if (!config) {
+    if (!config)
+    {
         return null;
-      }
+    }
 
-      return (
+    return (
         config
-          .records(projectId)
-          .find(
-            record =>
-              record.id === id
-          )
+            .records(projectId)
+            .find(
+                record =>
+                    record.id === id
+            )
         || null
-      );
-    }
+    );
+}
 
-    function noteEntityLabel(
-      type,
-      record
-    ) {
-      const config =
+function noteEntityLabel(
+    type,
+    record
+)
+{
+    const config =
         getNoteEntityConfig(type);
 
-      return (
+    return (
         config && record
-          ? config.label(record)
-          : ''
-      );
-    }
+            ? config.label(record)
+            : ''
+    );
+}
 
-    function noteEntityMeta(
-      type,
-      record
-    ) {
-      const config =
+function noteEntityMeta(
+    type,
+    record
+)
+{
+    const config =
         getNoteEntityConfig(type);
 
-      return (
+    return (
         config && record
-          ? config.meta(record)
-          : ''
-      );
-    }
+            ? config.meta(record)
+            : ''
+    );
+}
 
-    function openNoteEntity(
-      type,
-      record
-    ) {
-      const config =
+function openNoteEntity(
+    type,
+    record
+)
+{
+    const config =
         getNoteEntityConfig(type);
 
-      if (!config || !record) {
+    if (!config || !record)
+    {
         return;
-      }
-
-      config.open(record);
     }
 
-    function getNotesForEntity(
-      type,
-      id,
-      {
+    config.open(record);
+}
+
+function getNotesForEntity(
+    type,
+    id,
+    {
         projectId =
-          currentProjectId(),
+            currentProjectId(),
 
         includeArchived =
-          false
-      } = {}
-    ) {
-      const record =
+            false
+    } = {}
+)
+{
+    const record =
         noteEntityById(
-          type,
-          id,
-          projectId
+            type,
+            id,
+            projectId
         );
 
-      if (!record) {
+    if (!record)
+    {
         return [];
-      }
-
-      return getProjectNotes(
-        projectId,
-        {
-          includeArchived
-        }
-      ).filter(note =>
-        noteEntityLinkedIds(
-          note,
-          type
-        ).includes(
-          id
-        )
-      );
     }
 
-    function getNotesForEvent(
-      eventId,
-      options = {}
-    ) {
-      return getNotesForEntity(
+    return getProjectNotes(
+        projectId,
+        {
+            includeArchived
+        }
+    ).filter(note =>
+        noteEntityLinkedIds(
+            note,
+            type
+        ).includes(
+            id
+        )
+    );
+}
+
+function getNotesForEvent(
+    eventId,
+    options = {}
+)
+{
+    return getNotesForEntity(
         'event',
         eventId,
         options
-      );
-    }
+    );
+}
 
-    function getNotesForSource(
-      sourceId,
-      options = {}
-    ) {
-      return getNotesForEntity(
+function getNotesForSource(
+    sourceId,
+    options = {}
+)
+{
+    return getNotesForEntity(
         'source',
         sourceId,
         options
-      );
-    }
+    );
+}
 
-    function getNotesForArchiveFile(
-      fileId,
-      options = {}
-    ) {
-      return getNotesForEntity(
+function getNotesForArchiveFile(
+    fileId,
+    options = {}
+)
+{
+    return getNotesForEntity(
         'archiveFile',
         fileId,
         options
-      );
-    }
+    );
+}
 
-    function getNotesForPhoto(
-      photoId,
-      options = {}
-    ) {
-      return getNotesForEntity(
+function getNotesForPhoto(
+    photoId,
+    options = {}
+)
+{
+    return getNotesForEntity(
         'photo',
         photoId,
         options
-      );
-    }
+    );
+}
 
-    function getPhotosForNote(
-      noteId,
-      {
+function getPhotosForNote(
+    noteId,
+    {
         projectId =
-          currentProjectId()
-      } = {}
-    ) {
-      const note =
+            currentProjectId()
+    } = {}
+)
+{
+    const note =
         getNote(
-          noteId,
-          {
-            projectId,
-            includeArchived: true
-          }
+            noteId,
+            {
+                projectId,
+                includeArchived: true
+            }
         );
 
-      if (!note) {
+    if (!note)
+    {
         return [];
-      }
-
-      return (
-        note.linkedPhotoIds || []
-      )
-        .map(photoId =>
-          getPhoto(
-            photoId,
-            {
-              projectId:
-                note.projectId
-            }
-          )
-        )
-        .filter(Boolean);
     }
 
-    /*
+    return (
+        note.linkedPhotoIds || []
+    )
+        .map(photoId =>
+            getPhoto(
+                photoId,
+                {
+                    projectId:
+                note.projectId
+                }
+            )
+        )
+        .filter(Boolean);
+}
+
+/*
       Shared mutation path for every
       Note-to-entity relationship.
     */
-    function setNoteEntityLinks(
-      noteId,
-      type,
-      linkedIds,
-      {
+function setNoteEntityLinks(
+    noteId,
+    type,
+    linkedIds,
+    {
         projectId =
-          currentProjectId(),
+            currentProjectId(),
 
         touchUpdatedAt =
-          true,
+            true,
 
         refreshPreview =
-          true
-      } = {}
-    ) {
-      const note =
+            true
+    } = {}
+)
+{
+    const note =
         getNote(
-          noteId,
-          {
-            projectId,
-            includeArchived:
+            noteId,
+            {
+                projectId,
+                includeArchived:
               true
-          }
+            }
         );
 
-      const config =
+    const config =
         getNoteEntityConfig(
-          type
+            type
         );
 
-      if (!note || !config) {
+    if (!note || !config)
+    {
         return null;
-      }
+    }
 
-      const validIds =
+    const validIds =
         new Set(
-          noteEntityRecords(
-            type,
-            note.projectId
-          ).map(record =>
-            record.id
-          )
+            noteEntityRecords(
+                type,
+                note.projectId
+            ).map(record =>
+                record.id
+            )
         );
 
-      const nextIds =
+    const nextIds =
         normalizeCentralNoteIdArray(
-          linkedIds
+            linkedIds
         ).filter(id =>
-          validIds.has(id)
+            validIds.has(id)
         );
 
-      const currentIds =
+    const currentIds =
         noteEntityLinkedIds(
-          note,
-          type
+            note,
+            type
         );
 
-      const unchanged =
+    const unchanged =
         nextIds.length
           === currentIds.length
         && nextIds.every(
-          (
-            id,
-            index
-          ) =>
-            id === currentIds[index]
+            (
+                id,
+                index
+            ) =>
+                id === currentIds[index]
         );
 
-      if (unchanged) {
+    if (unchanged)
+    {
         return note;
-      }
-
-      if (type === 'source') {
-        const savedIds =
-          setSourceIdsForTarget(
-            'note',
-            note.id,
-            nextIds,
-            {
-              projectId:
-                note.projectId
-            }
-          );
-
-        if (!savedIds) {
-          return null;
-        }
-      } else {
-        note[config.field] =
-          nextIds;
-      }
-
-      if (touchUpdatedAt) {
-        if (
-          state.activeModule === 'Notes'
-          && state.selectedNoteId
-            === note.id
-        ) {
-          touchNote(
-            note,
-            {
-              refreshPreview
-            }
-          );
-        } else {
-          note.updatedAt =
-            new Date().toISOString();
-        }
-      }
-
-      return note;
     }
 
-    function setNotePhotoLinks(
-      noteId,
-      photoIds,
-      options = {}
-    ) {
-      return setNoteEntityLinks(
+    if (type === 'source')
+    {
+        const savedIds =
+            setSourceIdsForTarget(
+                'note',
+                note.id,
+                nextIds,
+                {
+                    projectId:
+                note.projectId
+                }
+            );
+
+        if (!savedIds)
+        {
+            return null;
+        }
+    }
+    else
+    {
+        note[config.field] =
+            nextIds;
+    }
+
+    if (touchUpdatedAt)
+    {
+        if (
+            state.activeModule === 'Notes'
+          && state.selectedNoteId
+            === note.id
+        )
+        {
+            touchNote(
+                note,
+                {
+                    refreshPreview
+                }
+            );
+        }
+        else
+        {
+            note.updatedAt =
+                new Date().toISOString();
+        }
+    }
+
+    return note;
+}
+
+function setNotePhotoLinks(
+    noteId,
+    photoIds,
+    options = {}
+)
+{
+    return setNoteEntityLinks(
         noteId,
         'photo',
         photoIds,
         options
-      );
-    }
+    );
+}
 
-    function removePhotosFromAllNotes(
-      photoIds
-    ) {
-      const ids =
+function removePhotosFromAllNotes(
+    photoIds
+)
+{
+    const ids =
         new Set(
-          (
-            Array.isArray(photoIds)
-              ? photoIds
-              : [photoIds]
-          ).filter(Boolean)
+            (
+                Array.isArray(photoIds)
+                    ? photoIds
+                    : [photoIds]
+            ).filter(Boolean)
         );
 
-      if (!ids.size) {
+    if (!ids.size)
+    {
         return;
-      }
+    }
 
-      const now =
+    const now =
         new Date()
-          .toISOString();
+            .toISOString();
 
-      sampleData.notes.forEach(
-        note => {
-          const current =
-            note.linkedPhotoIds || [];
+    sampleData.notes.forEach(
+        note =>
+        {
+            const current =
+                note.linkedPhotoIds || [];
 
-          const next =
-            current.filter(
-              photoId =>
-                !ids.has(photoId)
-            );
+            const next =
+                current.filter(
+                    photoId =>
+                        !ids.has(photoId)
+                );
 
-          if (
-            next.length
+            if (
+                next.length
               === current.length
-          ) {
-            return;
-          }
+            )
+            {
+                return;
+            }
 
-          note.linkedPhotoIds =
-            next;
+            note.linkedPhotoIds =
+                next;
 
-          note.updatedAt =
-            now;
+            note.updatedAt =
+                now;
         }
-      );
-    }
+    );
+}
 
-    function clearNotesContext() {
-      state.notesContext =
+function clearNotesContext()
+{
+    state.notesContext =
         null;
-    }
+}
 
-    function setNotesContext(
-      type,
-      id,
-      {
+function setNotesContext(
+    type,
+    id,
+    {
         projectId =
-          currentProjectId()
-      } = {}
-    ) {
-      const record =
+            currentProjectId()
+    } = {}
+)
+{
+    const record =
         noteEntityById(
-          type,
-          id,
-          projectId
+            type,
+            id,
+            projectId
         );
 
-      if (!record) {
+    if (!record)
+    {
         clearNotesContext();
 
         return null;
-      }
+    }
 
-      state.notesContext = {
+    state.notesContext = {
         type,
         id:
           record.id,
 
         projectId
-      };
+    };
 
-      return record;
-    }
+    return record;
+}
 
-    function activeNotesContext() {
-      const context =
+function activeNotesContext()
+{
+    const context =
         state.notesContext;
 
-      if (!context) {
+    if (!context)
+    {
         return null;
-      }
+    }
 
-      if (
+    if (
         context.projectId
           !== currentProjectId()
-      ) {
+    )
+    {
         clearNotesContext();
 
         return null;
-      }
+    }
 
-      const config =
+    const config =
         getNoteEntityConfig(
-          context.type
+            context.type
         );
 
-      const record =
+    const record =
         noteEntityById(
-          context.type,
-          context.id,
-          context.projectId
+            context.type,
+            context.id,
+            context.projectId
         );
 
-      if (!config || !record) {
+    if (!config || !record)
+    {
         clearNotesContext();
 
         return null;
-      }
+    }
 
-      return {
+    return {
         ...context,
 
         field:
@@ -24456,922 +25619,965 @@
           config.label(record),
 
         record
-      };
-    }
+    };
+}
 
-    function getNotesForContext(
-      type,
-      id,
-      options = {}
-    ) {
-      return getNotesForEntity(
+function getNotesForContext(
+    type,
+    id,
+    options = {}
+)
+{
+    return getNotesForEntity(
         type,
         id,
         options
-      );
-    }
+    );
+}
 
-    function openNotesForContext(
-      type,
-      id
-    ) {
-      const record =
+function openNotesForContext(
+    type,
+    id
+)
+{
+    const record =
         setNotesContext(
-          type,
-          id
+            type,
+            id
         );
 
-      if (!record) {
+    if (!record)
+    {
         return;
-      }
+    }
 
-      state.activeModule =
+    state.activeModule =
         'Notes';
 
-      state.notesView =
+    state.notesView =
         'all';
 
-      state.notesActiveCollectionId =
+    state.notesActiveCollectionId =
         null;
 
-      state.selectedNoteId =
+    state.selectedNoteId =
         null;
 
-      state.notesSearch =
+    state.notesSearch =
         '';
 
-      state.notesRightCollapsed =
+    state.notesRightCollapsed =
         true;
 
-      render();
-    }
+    render();
+}
 
-    function openCentralNoteFromContext(
-      noteId,
-      {
+function openCentralNoteFromContext(
+    noteId,
+    {
         type = '',
         id = ''
-      } = {}
-    ) {
-      const note =
+    } = {}
+)
+{
+    const note =
         getNote(
-          noteId,
-          {
-            includeArchived:
+            noteId,
+            {
+                includeArchived:
               true
-          }
+            }
         );
 
-      if (!note) {
+    if (!note)
+    {
         return;
-      }
+    }
 
-      state.activeModule =
+    state.activeModule =
         'Notes';
 
-      clearNotesContext();
+    clearNotesContext();
 
-      const config =
+    const config =
         getNoteEntityConfig(type);
 
-      if (
+    if (
         config
         && id
         && noteEntityLinkedIds(
-          note,
-          type
+            note,
+            type
         ).includes(id)
-      ) {
+    )
+    {
         setNotesContext(
-          type,
-          id,
-          {
-            projectId:
+            type,
+            id,
+            {
+                projectId:
               note.projectId
-          }
+            }
         );
-      }
-
-      state.notesView =
-        note.archived
-          ? 'archived'
-          : 'all';
-
-      state.notesActiveCollectionId =
-        null;
-
-      state.selectedNoteId =
-        note.id;
-
-      state.notesSearch =
-        '';
-
-      state.notesRightCollapsed =
-        false;
-
-      state.notesMobilePane =
-        'editor';
-
-      render();
     }
 
-    function openNewNoteForContext(
-      type,
-      id
-    ) {
-      const record =
+    state.notesView =
+        note.archived
+            ? 'archived'
+            : 'all';
+
+    state.notesActiveCollectionId =
+        null;
+
+    state.selectedNoteId =
+        note.id;
+
+    state.notesSearch =
+        '';
+
+    state.notesRightCollapsed =
+        false;
+
+    state.notesMobilePane =
+        'editor';
+
+    render();
+}
+
+function openNewNoteForContext(
+    type,
+    id
+)
+{
+    const record =
         noteEntityById(
-          type,
-          id
+            type,
+            id
         );
 
-      if (!record) {
+    if (!record)
+    {
         return null;
-      }
+    }
 
-      return createCentralNote({
+    return createCentralNote({
         contextType:
           type,
 
         contextId:
           record.id
-      });
+    });
+}
+
+
+function getRelatedNotes(
+    noteId,
+    {
+        projectId =
+            currentProjectId(),
+        includeArchived = false
+    } = {}
+)
+{
+    const note =
+        getNote(
+            noteId,
+            {
+                projectId,
+                includeArchived: true
+            }
+        );
+
+    if (!note)
+    {
+        return [];
     }
 
-    
-
-    
-
-    function getRelatedNotes(
-      noteId,
-      {
-        projectId =
-          currentProjectId(),
-        includeArchived = false
-      } = {}
-    ) {
-      const note =
-        getNote(
-          noteId,
-          {
-            projectId,
-            includeArchived: true
-          }
-        );
-
-      if (!note) {
-        return [];
-      }
-
-      const relatedIds =
+    const relatedIds =
         new Set(
-          note.relatedNoteIds || []
+            note.relatedNoteIds || []
         );
 
-      return getProjectNotes(
+    return getProjectNotes(
         note.projectId,
         {
-          includeArchived
+            includeArchived
         }
-      ).filter(relatedNote =>
+    ).filter(relatedNote =>
         relatedIds.has(
-          relatedNote.id
+            relatedNote.id
         )
-      );
-    }
+    );
+}
 
-    function noteExcerpt(
-      note,
-      maxLength = 160
-    ) {
-      const text =
+function noteExcerpt(
+    note,
+    maxLength = 160
+)
+{
+    const text =
         String(
-          state.language === 'ru'
-            ? translateText(
-                note?.body || ''
-              )
-            : note?.body || ''
+            state.language === 'ru'
+                ? translateText(
+                    note?.body || ''
+                )
+                : note?.body || ''
         )
-          .replace(/\s+/g, ' ')
-          .trim();
+            .replace(/\s+/g, ' ')
+            .trim();
 
-      if (
+    if (
         !text
         || text.length <= maxLength
-      ) {
+    )
+    {
         return text;
-      }
+    }
 
-      const draft =
+    const draft =
         text.slice(
-          0,
-          maxLength + 1
+            0,
+            maxLength + 1
         );
 
-      const boundary =
+    const boundary =
         draft.lastIndexOf(' ');
 
-      const clipped =
+    const clipped =
         boundary > maxLength * 0.65
-          ? draft.slice(0, boundary)
-          : draft.slice(0, maxLength);
+            ? draft.slice(0, boundary)
+            : draft.slice(0, maxLength);
 
-      return `${clipped.trim()}…`;
-    }
+    return `${clipped.trim()}…`;
+}
 
-    function noteExternalEntityCount(
-      note
-    ) {
-      return Object.keys(
+function noteExternalEntityCount(
+    note
+)
+{
+    return Object.keys(
         NOTE_ENTITY_TYPES
-      ).reduce(
+    ).reduce(
         (
-          total,
-          type
+            total,
+            type
         ) =>
-          total
+            total
           + new Set(
               noteEntityLinkedIds(
-                note,
-                type
+                  note,
+                  type
               )
-            ).size,
+          ).size,
 
         0
-      );
-    }
+    );
+}
 
-    function noteLinkedEntityCount(
-      note
-    ) {
-      return (
+function noteLinkedEntityCount(
+    note
+)
+{
+    return (
         noteExternalEntityCount(
-          note
+            note
         )
         + new Set(
             note?.relatedNoteIds
             || []
-          ).size
-      );
-    }
+        ).size
+    );
+}
 
-    function formatNoteUpdatedAt(
-      note
-    ) {
-      const timestamp =
+function formatNoteUpdatedAt(
+    note
+)
+{
+    const timestamp =
         Date.parse(
-          note?.updatedAt || ''
+            note?.updatedAt || ''
         );
 
-      if (
+    if (
         !Number.isFinite(timestamp)
-      ) {
+    )
+    {
         return 'Unknown date';
-      }
+    }
 
-      return new Intl.DateTimeFormat(
+    return new Intl.DateTimeFormat(
         state.language === 'ru' ? 'ru-RU' : 'en-GB',
         {
-          dateStyle: 'medium'
+            dateStyle: 'medium'
         }
-      ).format(
+    ).format(
         new Date(timestamp)
-      );
+    );
+}
+
+function setNoteCollections(
+    noteId,
+    collectionIds,
+    {
+        projectId =
+            currentProjectId(),
+        touchUpdatedAt = true
+    } = {}
+)
+{
+    const note =
+        getNote(
+            noteId,
+            {
+                projectId,
+                includeArchived: true
+            }
+        );
+
+    if (!note)
+    {
+        return null;
     }
 
-    function setNoteCollections(
-      noteId,
-      collectionIds,
-      {
-        projectId =
-          currentProjectId(),
-        touchUpdatedAt = true
-      } = {}
-    ) {
-      const note =
-        getNote(
-          noteId,
-          {
-            projectId,
-            includeArchived: true
-          }
-        );
-
-      if (!note) {
-        return null;
-      }
-
-      const validCollectionIds =
+    const validCollectionIds =
         new Set(
-          getProjectNoteCollections(
-            note.projectId
-          ).map(
-            collection =>
-              collection.id
-          )
+            getProjectNoteCollections(
+                note.projectId
+            ).map(
+                collection =>
+                    collection.id
+            )
         );
 
-      const nextCollectionIds =
+    const nextCollectionIds =
         normalizeCentralNoteIdArray(
-          Array.isArray(collectionIds)
-            ? collectionIds
-            : []
+            Array.isArray(collectionIds)
+                ? collectionIds
+                : []
         ).filter(collectionId =>
-          validCollectionIds.has(
-            collectionId
-          )
+            validCollectionIds.has(
+                collectionId
+            )
         );
 
-      const unchanged =
+    const unchanged =
         nextCollectionIds.length
           === note.collectionIds.length
         && nextCollectionIds.every(
-          (
-            collectionId,
-            index
-          ) =>
-            collectionId
-              === note.collectionIds[
+            (
+                collectionId,
                 index
+            ) =>
+                collectionId
+              === note.collectionIds[
+                  index
               ]
         );
 
-      if (unchanged) {
+    if (unchanged)
+    {
         return note;
-      }
+    }
 
-      note.collectionIds =
+    note.collectionIds =
         nextCollectionIds;
 
-      if (touchUpdatedAt) {
+    if (touchUpdatedAt)
+    {
         note.updatedAt =
-          new Date().toISOString();
-      }
-
-      return note;
+            new Date().toISOString();
     }
 
-    function addNoteToCollection(
-      noteId,
-      collectionId,
-      options = {}
-    ) {
-      const note =
+    return note;
+}
+
+function addNoteToCollection(
+    noteId,
+    collectionId,
+    options = {}
+)
+{
+    const note =
         getNote(
-          noteId,
-          {
-            projectId:
+            noteId,
+            {
+                projectId:
               options.projectId
               || currentProjectId(),
-            includeArchived: true
-          }
+                includeArchived: true
+            }
         );
 
-      if (!note) {
+    if (!note)
+    {
         return null;
-      }
+    }
 
-      return setNoteCollections(
+    return setNoteCollections(
         note.id,
         [
-          ...note.collectionIds,
-          collectionId
+            ...note.collectionIds,
+            collectionId
         ],
         options
-      );
-    }
+    );
+}
 
-    function removeNoteFromCollection(
-      noteId,
-      collectionId,
-      options = {}
-    ) {
-      const note =
+function removeNoteFromCollection(
+    noteId,
+    collectionId,
+    options = {}
+)
+{
+    const note =
         getNote(
-          noteId,
-          {
-            projectId:
+            noteId,
+            {
+                projectId:
               options.projectId
               || currentProjectId(),
-            includeArchived: true
-          }
+                includeArchived: true
+            }
         );
 
-      if (!note) {
+    if (!note)
+    {
         return null;
-      }
+    }
 
-      return setNoteCollections(
+    return setNoteCollections(
         note.id,
         note.collectionIds.filter(
-          id =>
-            id !== collectionId
+            id =>
+                id !== collectionId
         ),
         options
-      );
+    );
+}
+
+function destroyNotesRichTextEditor()
+{
+    const instance =
+        notesRichTextRuntime
+            .instance;
+
+    if (
+        instance
+        && notesRichTextRuntime
+            .textChangeHandler
+    )
+    {
+        instance.off(
+            'text-change',
+            notesRichTextRuntime
+                .textChangeHandler
+        );
     }
 
-    function destroyNotesRichTextEditor() {
-      const instance =
-        notesRichTextRuntime
-          .instance;
-
-      if (
+    if (
         instance
         && notesRichTextRuntime
-          .textChangeHandler
-      ) {
-        instance.off(
-          'text-change',
-          notesRichTextRuntime
-            .textChangeHandler
-        );
-      }
-
-      if (
-        instance
-        && notesRichTextRuntime
-          .selectionChangeHandler
-      ) {
-        instance.off(
-          'selection-change',
-          notesRichTextRuntime
             .selectionChangeHandler
+    )
+    {
+        instance.off(
+            'selection-change',
+            notesRichTextRuntime
+                .selectionChangeHandler
         );
-      }
+    }
 
-      notesRichTextRuntime.instance =
+    notesRichTextRuntime.instance =
         null;
 
-      notesRichTextRuntime.noteId =
+    notesRichTextRuntime.noteId =
         '';
 
-      notesRichTextRuntime.toolbarElement =
+    notesRichTextRuntime.toolbarElement =
         null;
 
-      notesRichTextRuntime.editorElement =
+    notesRichTextRuntime.editorElement =
         null;
 
-      notesRichTextRuntime.fallbackElement =
+    notesRichTextRuntime.fallbackElement =
         null;
 
-      notesRichTextRuntime.textChangeHandler =
+    notesRichTextRuntime.textChangeHandler =
         null;
 
-      notesRichTextRuntime.selectionChangeHandler =
+    notesRichTextRuntime.selectionChangeHandler =
         null;
 
-      notesRichTextRuntime.lastSelection =
+    notesRichTextRuntime.lastSelection =
         null;
 
-      notesRichTextRuntime.initializing =
+    notesRichTextRuntime.initializing =
         false;
 
-      notesRichTextRuntime.fallbackActive =
+    notesRichTextRuntime.fallbackActive =
         false;
+}
+
+function plainTextFromQuill(
+    instance
+)
+{
+    if (!instance)
+    {
+        return '';
     }
 
-    function plainTextFromQuill(
-      instance
-    ) {
-      if (!instance) {
-        return '';
-      }
-
-      const text =
+    const text =
         String(
-          instance.getText() || ''
+            instance.getText() || ''
         );
 
-      return text.endsWith('\n')
+    return text.endsWith('\n')
         ? text.slice(0, -1)
         : text;
-    }
+}
 
-    function createRichTextQuill({
-      editorHost,
-      toolbar,
-      bounds,
-      placeholder =
+function createRichTextQuill({
+    editorHost,
+    toolbar,
+    bounds,
+    placeholder =
         'Start writing…',
 
-      toolbarLabel =
+    toolbarLabel =
         'Text formatting',
 
-      editorLabel =
+    editorLabel =
         'Rich text'
-    }) {
-      if (
+})
+{
+    if (
         !editorHost
         || !toolbar
         || typeof window.Quill
           !== 'function'
-      ) {
+    )
+    {
         return null;
-      }
+    }
 
-      const instance =
+    const instance =
         new window.Quill(
-          editorHost,
-          {
-            theme: 'snow',
+            editorHost,
+            {
+                theme: 'snow',
 
-            placeholder: t(placeholder),
+                placeholder: t(placeholder),
 
-            bounds,
+                bounds,
 
-            formats: [
-              'header',
-              'size',
+                formats: [
+                    'header',
+                    'size',
 
-              'bold',
-              'italic',
-              'underline',
-              'strike',
+                    'bold',
+                    'italic',
+                    'underline',
+                    'strike',
 
-              'color',
-              'background',
+                    'color',
+                    'background',
 
-              'blockquote',
-              'list',
-              'align',
-              'indent',
+                    'blockquote',
+                    'list',
+                    'align',
+                    'indent',
 
-              'link'
-            ],
+                    'link'
+                ],
 
-            modules: {
-              toolbar: {
-                container:
+                modules: {
+                    toolbar: {
+                        container:
                   toolbar
-              },
+                    },
 
-              history: {
-                delay: 1000,
-                maxStack: 100,
-                userOnly: true
-              }
+                    history: {
+                        delay: 1000,
+                        maxStack: 100,
+                        userOnly: true
+                    }
+                }
             }
-          }
         );
 
-      prepareRichTextAccessibility(
+    prepareRichTextAccessibility(
         instance,
         toolbar,
         {
-          toolbarLabel,
-          editorLabel
+            toolbarLabel,
+            editorLabel
         }
-      );
+    );
 
-      configureRichTextLinkControl(
+    configureRichTextLinkControl(
         instance
-      );
+    );
 
-      return instance;
-    }
+    return instance;
+}
 
-    function prepareRichTextAccessibility(
-      instance,
-      toolbar,
-      {
+function prepareRichTextAccessibility(
+    instance,
+    toolbar,
+    {
         toolbarLabel =
-          'Text formatting',
+            'Text formatting',
 
         editorLabel =
-          'Rich text'
-      } = {}
-    ) {
-      if (!instance || !toolbar) {
+            'Rich text'
+    } = {}
+)
+{
+    if (!instance || !toolbar)
+    {
         return;
-      }
+    }
 
-      toolbar.setAttribute(
+    toolbar.setAttribute(
         'role',
         'toolbar'
-      );
+    );
 
-      toolbar.setAttribute(
+    toolbar.setAttribute(
         'aria-label',
         toolbarLabel
-      );
+    );
 
-      const controlLabels = [
+    const controlLabels = [
         [
-          'button.ql-bold',
-          'Bold'
+            'button.ql-bold',
+            'Bold'
         ],
 
         [
-          'button.ql-italic',
-          'Italic'
+            'button.ql-italic',
+            'Italic'
         ],
 
         [
-          'button.ql-underline',
-          'Underline'
+            'button.ql-underline',
+            'Underline'
         ],
 
         [
-          'button.ql-strike',
-          'Strikethrough'
+            'button.ql-strike',
+            'Strikethrough'
         ],
 
         [
-          'button.ql-list[value="bullet"]',
-          'Bulleted list'
+            'button.ql-list[value="bullet"]',
+            'Bulleted list'
         ],
 
         [
-          'button.ql-list[value="ordered"]',
-          'Numbered list'
+            'button.ql-list[value="ordered"]',
+            'Numbered list'
         ],
 
         [
-          'button.ql-indent[value="-1"]',
-          'Decrease indent'
+            'button.ql-indent[value="-1"]',
+            'Decrease indent'
         ],
 
         [
-          'button.ql-indent[value="+1"]',
-          'Increase indent'
+            'button.ql-indent[value="+1"]',
+            'Increase indent'
         ],
 
         [
-          'button.ql-blockquote',
-          'Block quote'
+            'button.ql-blockquote',
+            'Block quote'
         ],
 
         [
-          'button.ql-link',
-          'Link'
+            'button.ql-link',
+            'Link'
         ],
 
         [
-          'button.ql-clean',
-          'Clear formatting'
+            'button.ql-clean',
+            'Clear formatting'
         ]
-      ];
+    ];
 
-      controlLabels.forEach(([
+    controlLabels.forEach(([
         selector,
         label
-      ]) => {
+    ]) =>
+    {
         const control =
-          toolbar.querySelector(
-            selector
-          );
+            toolbar.querySelector(
+                selector
+            );
 
-        if (!control) {
-          return;
+        if (!control)
+        {
+            return;
         }
 
         control.setAttribute(
-          'aria-label',
-          label
+            'aria-label',
+            label
         );
 
         control.setAttribute(
-          'title',
-          label
+            'title',
+            label
         );
-      });
+    });
 
-      const pickerLabels = [
+    const pickerLabels = [
         [
-          '.ql-picker.ql-header',
-          'Text style'
+            '.ql-picker.ql-header',
+            'Text style'
         ],
 
         [
-          '.ql-picker.ql-size',
-          'Font size'
+            '.ql-picker.ql-size',
+            'Font size'
         ],
 
         [
-          '.ql-picker.ql-color',
-          'Text color'
+            '.ql-picker.ql-color',
+            'Text color'
         ],
 
         [
-          '.ql-picker.ql-background',
-          'Highlight color'
+            '.ql-picker.ql-background',
+            'Highlight color'
         ],
 
         [
-          '.ql-picker.ql-align',
-          'Alignment'
+            '.ql-picker.ql-align',
+            'Alignment'
         ]
-      ];
+    ];
 
-      pickerLabels.forEach(([
+    pickerLabels.forEach(([
         selector,
         label
-      ]) => {
+    ]) =>
+    {
         const picker =
-          toolbar.querySelector(
-            selector
-          );
+            toolbar.querySelector(
+                selector
+            );
 
         const pickerLabel =
-          picker?.querySelector(
-            '.ql-picker-label'
-          );
+            picker?.querySelector(
+                '.ql-picker-label'
+            );
 
-        if (!pickerLabel) {
-          return;
+        if (!pickerLabel)
+        {
+            return;
         }
 
         pickerLabel.setAttribute(
-          'aria-label',
-          label
+            'aria-label',
+            label
         );
 
         pickerLabel.setAttribute(
-          'title',
-          label
+            'title',
+            label
         );
-      });
+    });
 
-      const sizeLabels = {
+    const sizeLabels = {
         small: 'Small',
         large: 'Large',
         huge: 'Huge'
-      };
+    };
 
-      toolbar
+    toolbar
         .querySelectorAll(
-          '.ql-picker.ql-size .ql-picker-item'
+            '.ql-picker.ql-size .ql-picker-item'
         )
-        .forEach(item => {
-          const value =
-            item.dataset.value || '';
+        .forEach(item =>
+        {
+            const value =
+                item.dataset.value || '';
 
-          const label =
-            sizeLabels[value]
+            const label =
+                sizeLabels[value]
             || 'Normal';
 
-          item.setAttribute(
-            'aria-label',
-            label
-          );
+            item.setAttribute(
+                'aria-label',
+                label
+            );
 
-          item.setAttribute(
-            'title',
-            label
-          );
+            item.setAttribute(
+                'title',
+                label
+            );
         });
 
-      const alignmentLabels = {
+    const alignmentLabels = {
         center: 'Center',
         right: 'Right',
         justify: 'Justify'
-      };
+    };
 
-      toolbar
+    toolbar
         .querySelectorAll(
-          '.ql-picker.ql-align .ql-picker-item'
+            '.ql-picker.ql-align .ql-picker-item'
         )
-        .forEach(item => {
-          const value =
-            item.dataset.value || '';
+        .forEach(item =>
+        {
+            const value =
+                item.dataset.value || '';
 
-          const label =
-            alignmentLabels[value]
+            const label =
+                alignmentLabels[value]
             || 'Left';
 
-          item.setAttribute(
-            'aria-label',
-            label
-          );
+            item.setAttribute(
+                'aria-label',
+                label
+            );
 
-          item.setAttribute(
-            'title',
-            label
-          );
+            item.setAttribute(
+                'title',
+                label
+            );
         });
 
-      [
+    [
         [
-          '.ql-picker.ql-color',
-          'Text color',
-          'Default text color'
+            '.ql-picker.ql-color',
+            'Text color',
+            'Default text color'
         ],
 
         [
-          '.ql-picker.ql-background',
-          'Highlight',
-          'No highlight'
+            '.ql-picker.ql-background',
+            'Highlight',
+            'No highlight'
         ]
-      ].forEach(([
+    ].forEach(([
         selector,
         prefix,
         defaultLabel
-      ]) => {
+    ]) =>
+    {
         toolbar
-          .querySelectorAll(
-            `${selector} .ql-picker-item`
-          )
-          .forEach(item => {
-            const value =
-              item.dataset.value || '';
+            .querySelectorAll(
+                `${selector} .ql-picker-item`
+            )
+            .forEach(item =>
+            {
+                const value =
+                    item.dataset.value || '';
 
-            const label =
-              value
-                ? `${prefix} ${value}`
-                : defaultLabel;
+                const label =
+                    value
+                        ? `${prefix} ${value}`
+                        : defaultLabel;
 
-            item.setAttribute(
-              'aria-label',
-              label
-            );
+                item.setAttribute(
+                    'aria-label',
+                    label
+                );
 
-            item.setAttribute(
-              'title',
-              label
-            );
-          });
-      });
+                item.setAttribute(
+                    'title',
+                    label
+                );
+            });
+    });
 
-      instance.root.setAttribute(
+    instance.root.setAttribute(
         'aria-label',
         editorLabel
-      );
+    );
 
-      instance.root.setAttribute(
+    instance.root.setAttribute(
         'aria-multiline',
         'true'
-      );
+    );
 
-      instance.root.setAttribute(
+    instance.root.setAttribute(
         'spellcheck',
         'true'
-      );
+    );
+}
+
+function configureRichTextLinkControl(
+    instance
+)
+{
+    if (!instance)
+    {
+        return;
     }
 
-    function configureRichTextLinkControl(
-      instance
-    ) {
-      if (!instance) {
-        return;
-      }
-
-      const toolbarModule =
+    const toolbarModule =
         instance.getModule(
-          'toolbar'
+            'toolbar'
         );
 
-      const tooltip =
+    const tooltip =
         instance.theme
-          ?.tooltip;
+            ?.tooltip;
 
-      if (
+    if (
         !toolbarModule
         || !tooltip
-      ) {
+    )
+    {
         return;
-      }
+    }
 
-      const getLinkInput =
+    const getLinkInput =
         () =>
-          tooltip.textbox
+            tooltip.textbox
           || tooltip.root
-            ?.querySelector(
-              'input[type="text"]'
-            )
+              ?.querySelector(
+                  'input[type="text"]'
+              )
           || null;
 
-      const prepareLinkInput =
-        () => {
-          const input =
-            getLinkInput();
+    const prepareLinkInput =
+        () =>
+        {
+            const input =
+                getLinkInput();
 
-          if (!input) {
-            return null;
-          }
+            if (!input)
+            {
+                return null;
+            }
 
-          input.placeholder =
-            'Paste or enter a URL';
+            input.placeholder =
+                'Paste or enter a URL';
 
-          input.setAttribute(
-            'aria-label',
-            'Link URL'
-          );
+            input.setAttribute(
+                'aria-label',
+                'Link URL'
+            );
 
-          input.setAttribute(
-            'autocomplete',
-            'url'
-          );
+            input.setAttribute(
+                'autocomplete',
+                'url'
+            );
 
-          input.setAttribute(
-            'inputmode',
-            'url'
-          );
+            input.setAttribute(
+                'inputmode',
+                'url'
+            );
 
-          return input;
+            return input;
         };
 
-      /*
+    /*
         Override Quill Snow's default handler.
 
         The standard handler copies selected
@@ -25379,432 +26585,458 @@
         GeneoGraph, new links should begin with
         an empty URL field.
       */
-      toolbarModule.addHandler(
+    toolbarModule.addHandler(
         'link',
-        value => {
-          /*
+        value =>
+        {
+            /*
             Quill passes false when the active
             Link button is clicked. Preserve
             the normal unlink behaviour.
           */
-          if (!value) {
-            instance.format(
-              'link',
-              false,
-              'user'
-            );
+            if (!value)
+            {
+                instance.format(
+                    'link',
+                    false,
+                    'user'
+                );
 
-            return;
-          }
+                return;
+            }
 
-          /*
+            /*
             focus=true restores Quill's saved
             selection after the toolbar button
             receives focus.
           */
-          const range =
-            instance.getSelection(
-              true
-            );
+            const range =
+                instance.getSelection(
+                    true
+                );
 
-          if (
-            !range
+            if (
+                !range
             || range.length === 0
-          ) {
-            showToast(
-              'Select text before adding a link.'
-            );
+            )
+            {
+                showToast(
+                    'Select text before adding a link.'
+                );
 
-            return;
-          }
+                return;
+            }
 
-          /*
+            /*
             Open Quill's normal link editor,
             but pass an empty preview value
             instead of the selected word.
           */
-          tooltip.edit(
-            'link',
-            ''
-          );
-
-          const input =
-            prepareLinkInput();
-
-          if (!input) {
-            return;
-          }
-
-          input.value =
-            '';
-
-          requestAnimationFrame(
-            () => {
-              input.focus();
-
-              if (
-                typeof input
-                  .setSelectionRange
-                  === 'function'
-              ) {
-                input.setSelectionRange(
-                  0,
-                  0
-                );
-              }
-            }
-          );
-        }
-      );
-
-      prepareLinkInput();
-    }
-
-    function bindNotesBodyFallback(
-      note,
-      {
-        announce = true
-      } = {}
-    ) {
-      const shell =
-        main.querySelector(
-          '.notes-rich-editor-shell'
-        );
-
-      const toolbar =
-        main.querySelector(
-          '#notesRichTextToolbar'
-        );
-
-      const editorHost =
-        main.querySelector(
-          '#notesRichTextEditor'
-        );
-
-      const textarea =
-        main.querySelector(
-          '#notesBodyInput'
-        );
-
-      if (!textarea) {
-        return;
-      }
-
-      toolbar?.setAttribute(
-        'hidden',
-        ''
-      );
-
-      editorHost?.setAttribute(
-        'hidden',
-        ''
-      );
-
-      textarea.hidden =
-        false;
-
-      textarea.value =
-        localizedDataFieldValue(
-          String(
-            note?.body || ''
-          )
-        );
-
-      shell?.classList.add(
-        'is-fallback'
-      );
-
-      notesRichTextRuntime.fallbackActive =
-        true;
-
-      notesRichTextRuntime.noteId =
-        note?.id || '';
-
-      notesRichTextRuntime.fallbackElement =
-        textarea;
-
-      textarea.addEventListener(
-        'input',
-        event => {
-          const currentNote =
-            getNote(
-              note.id,
-              {
-                projectId:
-                  note.projectId,
-
-                includeArchived:
-                  true
-              }
+            tooltip.edit(
+                'link',
+                ''
             );
 
-          if (!currentNote) {
-            return;
-          }
+            const input =
+                prepareLinkInput();
 
-          currentNote.body =
-            event.currentTarget.value;
+            if (!input)
+            {
+                return;
+            }
 
-          currentNote.bodyDelta =
-            null;
+            input.value =
+                '';
 
-          currentNote.bodyFormat =
-            '';
+            requestAnimationFrame(
+                () =>
+                {
+                    input.focus();
 
-          autoSizeNoteBody(
-            event.currentTarget
-          );
-
-          touchNote(
-            currentNote
-          );
+                    if (
+                        typeof input
+                            .setSelectionRange
+                  === 'function'
+                    )
+                    {
+                        input.setSelectionRange(
+                            0,
+                            0
+                        );
+                    }
+                }
+            );
         }
-      );
+    );
 
-      autoSizeNoteBody(
-        textarea
-      );
+    prepareLinkInput();
+}
 
-      if (
-        announce
-        && !notesRichTextRuntime
-          .fallbackToastShown
-      ) {
-        notesRichTextRuntime.fallbackToastShown =
-          true;
-
-        showToast(
-          'Rich text is unavailable. Note opened in plain-text mode.'
+function bindNotesBodyFallback(
+    note,
+    {
+        announce = true
+    } = {}
+)
+{
+    const shell =
+        main.querySelector(
+            '.notes-rich-editor-shell'
         );
-      }
+
+    const toolbar =
+        main.querySelector(
+            '#notesRichTextToolbar'
+        );
+
+    const editorHost =
+        main.querySelector(
+            '#notesRichTextEditor'
+        );
+
+    const textarea =
+        main.querySelector(
+            '#notesBodyInput'
+        );
+
+    if (!textarea)
+    {
+        return;
     }
 
-    function initializeNotesRichTextEditor(
-      note
-    ) {
-      if (!note) {
+    toolbar?.setAttribute(
+        'hidden',
+        ''
+    );
+
+    editorHost?.setAttribute(
+        'hidden',
+        ''
+    );
+
+    textarea.hidden =
+        false;
+
+    textarea.value =
+        localizedDataFieldValue(
+            String(
+                note?.body || ''
+            )
+        );
+
+    shell?.classList.add(
+        'is-fallback'
+    );
+
+    notesRichTextRuntime.fallbackActive =
+        true;
+
+    notesRichTextRuntime.noteId =
+        note?.id || '';
+
+    notesRichTextRuntime.fallbackElement =
+        textarea;
+
+    textarea.addEventListener(
+        'input',
+        event =>
+        {
+            const currentNote =
+                getNote(
+                    note.id,
+                    {
+                        projectId:
+                  note.projectId,
+
+                        includeArchived:
+                  true
+                    }
+                );
+
+            if (!currentNote)
+            {
+                return;
+            }
+
+            currentNote.body =
+                event.currentTarget.value;
+
+            currentNote.bodyDelta =
+                null;
+
+            currentNote.bodyFormat =
+                '';
+
+            autoSizeNoteBody(
+                event.currentTarget
+            );
+
+            touchNote(
+                currentNote
+            );
+        }
+    );
+
+    autoSizeNoteBody(
+        textarea
+    );
+
+    if (
+        announce
+        && !notesRichTextRuntime
+            .fallbackToastShown
+    )
+    {
+        notesRichTextRuntime.fallbackToastShown =
+            true;
+
+        showToast(
+            'Rich text is unavailable. Note opened in plain-text mode.'
+        );
+    }
+}
+
+function initializeNotesRichTextEditor(
+    note
+)
+{
+    if (!note)
+    {
         return;
-      }
+    }
 
-      const shell =
+    const shell =
         main.querySelector(
-          '.notes-rich-editor-shell'
+            '.notes-rich-editor-shell'
         );
 
-      const toolbar =
+    const toolbar =
         main.querySelector(
-          '#notesRichTextToolbar'
+            '#notesRichTextToolbar'
         );
 
-      const editorHost =
+    const editorHost =
         main.querySelector(
-          '#notesRichTextEditor'
+            '#notesRichTextEditor'
         );
 
-      const fallback =
+    const fallback =
         main.querySelector(
-          '#notesBodyInput'
+            '#notesBodyInput'
         );
 
-      if (
+    if (
         !shell
         || !toolbar
         || !editorHost
         || !fallback
-      ) {
+    )
+    {
         return;
-      }
+    }
 
-      if (
+    if (
         typeof window.Quill
           !== 'function'
-      ) {
+    )
+    {
         bindNotesBodyFallback(
-          note
+            note
         );
 
         return;
-      }
+    }
 
-      notesRichTextRuntime.initializing =
+    notesRichTextRuntime.initializing =
         true;
 
-      try {
+    try
+    {
         toolbar.hidden =
-          false;
+            false;
 
         editorHost.hidden =
-          false;
+            false;
 
         fallback.hidden =
-          true;
+            true;
 
         shell.classList.remove(
-          'is-fallback'
+            'is-fallback'
         );
 
         const instance =
-          createRichTextQuill({
-            editorHost,
-            toolbar,
-            bounds: shell,
+            createRichTextQuill({
+                editorHost,
+                toolbar,
+                bounds: shell,
 
-            placeholder:
+                placeholder:
               'Start writing…',
 
-            toolbarLabel:
+                toolbarLabel:
               'Note formatting',
 
-            editorLabel:
+                editorLabel:
               'Note body'
-          });
+            });
 
-        if (!instance) {
-          bindNotesBodyFallback(
-            note
-          );
+        if (!instance)
+        {
+            bindNotesBodyFallback(
+                note
+            );
 
-          notesRichTextRuntime.initializing =
-            false;
+            notesRichTextRuntime.initializing =
+                false;
 
-          return;
+            return;
         }
 
         const storedDelta =
-          cloneRichTextDelta(
-            note.bodyDelta
-          );
+            cloneRichTextDelta(
+                note.bodyDelta
+            );
 
-        if (storedDelta) {
-          instance.setContents(
-            storedDelta,
-            'silent'
-          );
-        } else {
-          instance.setText(
-            localizedDataFieldValue(
-              String(
-                note.body || ''
-              )
-            ),
-            'silent'
-          );
+        if (storedDelta)
+        {
+            instance.setContents(
+                storedDelta,
+                'silent'
+            );
+        }
+        else
+        {
+            instance.setText(
+                localizedDataFieldValue(
+                    String(
+                        note.body || ''
+                    )
+                ),
+                'silent'
+            );
         }
 
         instance.history.clear();
 
         notesRichTextRuntime.instance =
-          instance;
+            instance;
 
         notesRichTextRuntime.noteId =
-          note.id;
+            note.id;
 
         notesRichTextRuntime.toolbarElement =
-          toolbar;
+            toolbar;
 
         notesRichTextRuntime.editorElement =
-          editorHost;
+            editorHost;
 
         notesRichTextRuntime.fallbackElement =
-          fallback;
+            fallback;
 
         notesRichTextRuntime.fallbackActive =
-          false;
+            false;
 
         const textChangeHandler = (
-          delta,
-          oldDelta,
-          source
-        ) => {
-          if (
-            source !== 'user'
+            delta,
+            oldDelta,
+            source
+        ) =>
+        {
+            if (
+                source !== 'user'
             || notesRichTextRuntime
-              .instance !== instance
+                .instance !== instance
             || notesRichTextRuntime
-              .noteId !== note.id
-          ) {
-            return;
-          }
+                .noteId !== note.id
+            )
+            {
+                return;
+            }
 
-          const currentNote =
-            getNote(
-              note.id,
-              {
-                projectId:
+            const currentNote =
+                getNote(
+                    note.id,
+                    {
+                        projectId:
                   note.projectId,
 
-                includeArchived:
+                        includeArchived:
                   true
-              }
+                    }
+                );
+
+            if (!currentNote)
+            {
+                return;
+            }
+
+            currentNote.bodyDelta =
+                normalizeRichTextDelta(
+                    instance.getContents()
+                );
+
+            currentNote.bodyFormat =
+                currentNote.bodyDelta
+                    ? 'quill-delta-v1'
+                    : '';
+
+            currentNote.body =
+                plainTextFromQuill(
+                    instance
+                );
+
+            touchNote(
+                currentNote
             );
-
-          if (!currentNote) {
-            return;
-          }
-
-          currentNote.bodyDelta =
-            normalizeRichTextDelta(
-              instance.getContents()
-            );
-
-          currentNote.bodyFormat =
-            currentNote.bodyDelta
-              ? 'quill-delta-v1'
-              : '';
-
-          currentNote.body =
-            plainTextFromQuill(
-              instance
-            );
-
-          touchNote(
-            currentNote
-          );
         };
 
         const selectionChangeHandler =
-          range => {
-            notesRichTextRuntime.lastSelection =
-              range
-                ? {
-                    index:
+            range =>
+            {
+                notesRichTextRuntime.lastSelection =
+                    range
+                        ? {
+                            index:
                       range.index,
 
-                    length:
+                            length:
                       range.length
-                  }
-                : null;
-          };
+                        }
+                        : null;
+            };
 
         notesRichTextRuntime.textChangeHandler =
-          textChangeHandler;
+            textChangeHandler;
 
         notesRichTextRuntime.selectionChangeHandler =
-          selectionChangeHandler;
+            selectionChangeHandler;
 
         instance.on(
-          'text-change',
-          textChangeHandler
+            'text-change',
+            textChangeHandler
         );
 
         instance.on(
-          'selection-change',
-          selectionChangeHandler
+            'selection-change',
+            selectionChangeHandler
         );
 
         notesRichTextRuntime.initializing =
-          false;
-      } catch (error) {
+            false;
+    }
+    catch (error)
+    {
         console.warn(
-          '[Notes rich text]',
-          error
+            '[Notes rich text]',
+            error
         );
 
         destroyNotesRichTextEditor();
 
         bindNotesBodyFallback(
-          note
+            note
         );
-      }
     }
+}
 

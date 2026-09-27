@@ -1,93 +1,96 @@
-    function renderNotes() {
-      destroyNotesRichTextEditor();
+function renderNotes()
+{
+    destroyNotesRichTextEditor();
 
-      const validNotesViews =
+    const validNotesViews =
         new Set([
-          'all',
-          'favorites',
-          'archived',
-          'collection'
+            'all',
+            'favorites',
+            'archived',
+            'collection'
         ]);
 
-      if (
+    if (
         !validNotesViews.has(
-          state.notesView
+            state.notesView
         )
-      ) {
+    )
+    {
         state.notesView =
-          'all';
+            'all';
 
         state.notesActiveCollectionId =
-          null;
-      }
+            null;
+    }
 
-      if (
+    if (
         state.notesView === 'collection'
         && !getNoteCollection(
-          state.notesActiveCollectionId
+            state.notesActiveCollectionId
         )
-      ) {
+    )
+    {
         state.notesView =
-          'all';
+            'all';
 
         state.notesActiveCollectionId =
-          null;
-      }
+            null;
+    }
 
-      workspace.classList.remove(
+    workspace.classList.remove(
         'no-sidebar'
-      );
+    );
 
-      renderNotesSidebar();
+    renderNotesSidebar();
 
-      const list =
+    const list =
         filteredNotes();
 
-      ensureNotesSelection(list);
+    ensureNotesSelection(list);
 
-      const selected =
+    const selected =
         selectedNote();
 
-      const editorOpen =
+    const editorOpen =
         Boolean(
-          selected
+            selected
           && !state.notesRightCollapsed
         );
 
-      const shellClasses = [
+    const shellClasses = [
         'notes-shell',
 
         editorOpen
-          ? 'editor-open'
-          : '',
+            ? 'editor-open'
+            : '',
 
         state.notesRightCollapsed
         && selected
-          ? 'right-collapsed'
-          : '',
+            ? 'right-collapsed'
+            : '',
 
         `notes-mobile-${
-          state.notesMobilePane
+            state.notesMobilePane
             === 'editor'
-            ? 'editor'
-            : 'browser'
+                ? 'editor'
+                : 'browser'
         }`
-      ]
+    ]
         .filter(Boolean)
         .join(' ');
 
-      const width =
+    const width =
         Math.max(
-          360,
-          Math.min(
-            600,
-            Number(
-              state.notesBrowserWidth
-            ) || 440
-          )
+            360,
+            Math.min(
+                600,
+                Number(
+                    state.notesBrowserWidth
+                ) || 440
+            )
         );
 
-      main.innerHTML = `
+    main.innerHTML = `
         <div
           class="${shellClasses}"
           style="
@@ -96,36 +99,38 @@
           ">
 
           ${renderNotesBrowserPane(
-            list
-          )}
+                list
+            )}
 
           ${renderNotesRightPanel(
-            selected
-          )}
+                selected
+            )}
         </div>
       `;
 
-      bindNotesControls();
+    bindNotesControls();
 
-      if (editorOpen) {
+    if (editorOpen)
+    {
         initializeNotesRichTextEditor(
-          selected
+            selected
         );
-      }
     }
+}
 
-    function renderNotesSidebar() {
-      const item = (
+function renderNotesSidebar()
+{
+    const item = (
         view,
         label,
         svg
-      ) => `
+    ) => `
         <button
           class="side-link ${
-            state.notesView === view
-              ? 'active'
-              : ''
-          }"
+                state.notesView === view
+                    ? 'active'
+                    : ''
+            }"
           type="button"
           data-notes-view="${view}">
 
@@ -135,17 +140,18 @@
         </button>
       `;
 
-      const collectionRows =
+    const collectionRows =
         getProjectNoteCollections()
-          .map(collection => {
-            const active =
-              state.notesView
+            .map(collection =>
+            {
+                const active =
+                    state.notesView
                 === 'collection'
               && state
-                .notesActiveCollectionId
+                  .notesActiveCollectionId
                 === collection.id;
 
-            return `
+                return `
               <div
                 class="
                   sidebar-entity-row
@@ -156,17 +162,17 @@
                   class="sidebar-entity-main"
                   type="button"
                   data-notes-collection="${escapeHtml(
-                    collection.id
-                  )}"
+                        collection.id
+                    )}"
                   title="${escapeHtml(
-                    collection.name
-                  )}">
+                        collection.name
+                    )}">
 
                   ${icon.folder}
 
                   <span class="sidebar-entity-name">
                     ${escapeHtml(
-                      collection.name
+                        collection.name
                     )}
                   </span>
                 </button>
@@ -178,21 +184,21 @@
                   "
                   type="button"
                   data-notes-collection-menu="${escapeHtml(
-                    collection.id
-                  )}"
+                        collection.id
+                    )}"
                   aria-label="Actions for ${escapeHtml(
-                    collection.name
-                  )}"
+                        collection.name
+                    )}"
                   aria-haspopup="menu">
 
                   ${icon.more}
                 </button>
               </div>
             `;
-          })
-          .join('');
+            })
+            .join('');
 
-      sidebar.innerHTML = `
+    sidebar.innerHTML = `
         <nav
           class="notes-sidebar"
           aria-label="Notes navigation">
@@ -204,22 +210,22 @@
 
             <div class="side-nav">
               ${item(
-                'all',
-                'All notes',
-                icon.note
-              )}
+                    'all',
+                    'All notes',
+                    icon.note
+                )}
 
               ${item(
-                'favorites',
-                'Favourites',
-                icon.star
-              )}
+                    'favorites',
+                    'Favourites',
+                    icon.star
+                )}
 
               ${item(
-                'archived',
-                'Archived',
-                icon.archive
-              )}
+                    'archived',
+                    'Archived',
+                    icon.archive
+                )}
             </div>
           </div>
 
@@ -279,23 +285,25 @@
         </nav>
       `;
 
-      bindNotesSidebarControls(
+    bindNotesSidebarControls(
         sidebar
-      );
-    }
+    );
+}
 
-    function renderNotesContextFilterBar() {
-      const context =
+function renderNotesContextFilterBar()
+{
+    const context =
         activeNotesContext();
 
-      if (!context) {
+    if (!context)
+    {
         return '';
-      }
+    }
 
-      const copy =
+    const copy =
         `${context.label}: ${context.name}`;
 
-      return `
+    return `
         <div
           class="resource-person-filterbar"
           aria-label="Active Notes filter">
@@ -312,13 +320,13 @@
               ">
               <strong>
                 ${escapeHtml(
-                  context.label
+                    context.label
                 )}:
               </strong>
 
               ${escapeHtml(
-                context.name
-              )}
+                    context.name
+                )}
             </span>
 
             <button
@@ -328,8 +336,8 @@
               type="button"
               data-clear-notes-context-filter
               aria-label="${escapeHtml(
-                `Remove ${copy} filter`
-              )}"
+                    `Remove ${copy} filter`
+                )}"
               title="Remove filter">
 
               ${icon.close}
@@ -337,17 +345,18 @@
           </span>
         </div>
       `;
-    }
-    
-    function renderNotesBrowserPane(
-      list
-    ) {
-    const browserSubtitle =
-      notesBrowserSubtitle();
-    const filterCount =
-      notesFilterCount();
+}
 
-      return `
+function renderNotesBrowserPane(
+    list
+)
+{
+    const browserSubtitle =
+        notesBrowserSubtitle();
+    const filterCount =
+        notesFilterCount();
+
+    return `
         <section
           class="notes-browser-pane"
           aria-label="Notes browser">
@@ -357,14 +366,14 @@
               <div class="notes-browser-title">
                 <h1 class="app-page-title">
                   ${escapeHtml(
-                    notesTitle()
-                  )}
+                        notesTitle()
+                    )}
                 </h1>
 
                 <p class="notes-browser-subtitle">
                   ${escapeHtml(
-                    browserSubtitle
-                  )}
+                        browserSubtitle
+                    )}
                 </p>
               </div>
 
@@ -393,7 +402,7 @@
                     type="search"
                     placeholder="Search notes..."
                     value="${escapeHtml(
-                      state.notesSearch
+                        state.notesSearch
                     )}">
                 </label>
               </div>
@@ -404,19 +413,19 @@
                   module-filter-button
                   notes-filter-button
                   ${
-                    filterCount
-                      ? 'active'
-                      : ''
-                  }
+                        filterCount
+                            ? 'active'
+                            : ''
+                    }
                 "
                 type="button"
                 id="notesFilterButton"
                 aria-haspopup="menu"
                 aria-expanded="false"
                 aria-label="${
-                  filterCount
-                    ? `Filter notes, ${filterCount} active`
-                    : 'Filter notes'
+                    filterCount
+                        ? `Filter notes, ${filterCount} active`
+                        : 'Filter notes'
                 }"
                 title="Filter notes">
 
@@ -425,10 +434,10 @@
                   aria-hidden="true">
 
                   ${
-                    filterCount
-                      ? icon.filterclear
-                      : icon.filter
-                  }
+                        filterCount
+                            ? icon.filterclear
+                            : icon.filter
+                    }
                 </span>
 
                 <span class="notes-control-label">
@@ -436,22 +445,22 @@
                 </span>
 
                 ${
-                  filterCount
-                    ? `
+                    filterCount
+                        ? `
                       <span class="module-filter-count">
                         ${filterCount}
                       </span>
                     `
-                    : ''
+                        : ''
                 }
               </button>
               ${renderAppSortControl({
-                id: 'notesSort',
-                field: state.notesSort,
-                direction: state.notesSortDirection,
-                ariaLabel: 'Sort notes',
-                options: APP_SORT_OPTIONS.notes
-              })}
+                    id: 'notesSort',
+                    field: state.notesSort,
+                    direction: state.notesSortDirection,
+                    ariaLabel: 'Sort notes',
+                    options: APP_SORT_OPTIONS.notes
+                })}
               </div>
             </div>
 
@@ -460,225 +469,238 @@
 
           <div class="notes-browser-scroll">
             ${
-              list.length
-                ? renderNotesListView(
-                    list
-                  )
-                : renderNotesBrowserEmpty()
+                list.length
+                    ? renderNotesListView(
+                        list
+                    )
+                    : renderNotesBrowserEmpty()
             }
           </div>
         </section>
       `;
-    }
+}
 
-    function notesBrowserSubtitle() {
-      return 'Capture, organize and connect research notes across your family history.';
-    }
+function notesBrowserSubtitle()
+{
+    return 'Capture, organize and connect research notes across your family history.';
+}
 
-    function formatNoteCollectionSummary(
-      note
-    ) {
-      const collections =
+function formatNoteCollectionSummary(
+    note
+)
+{
+    const collections =
         getCollectionsForNote(
-          note.id,
-          {
-            projectId:
+            note.id,
+            {
+                projectId:
               note.projectId
-          }
+            }
         );
 
-      if (!collections.length) {
+    if (!collections.length)
+    {
         return 'No collections';
-      }
+    }
 
-      const visibleNames =
+    const visibleNames =
         collections
-          .slice(0, 2)
-          .map(
-            collection =>
-              collection.name
-          );
+            .slice(0, 2)
+            .map(
+                collection =>
+                    collection.name
+            );
 
-      const hiddenCount =
+    const hiddenCount =
         collections.length
         - visibleNames.length;
 
-      return [
+    return [
         visibleNames.join(' · '),
 
         hiddenCount > 0
-          ? `+${hiddenCount}`
-          : ''
-      ]
+            ? `+${hiddenCount}`
+            : ''
+    ]
         .filter(Boolean)
         .join(' · ');
+}
+
+function formatNoteRelativeUpdatedAt(
+    note
+)
+{
+    const timestamp =
+        Date.parse(
+            note?.updatedAt || ''
+        );
+
+    if (
+        !Number.isFinite(
+            timestamp
+        )
+    )
+    {
+        return 'Updated date unknown';
     }
 
-    function formatNoteRelativeUpdatedAt(
-      note
-    ) {
-      const timestamp =
-        Date.parse(
-          note?.updatedAt || ''
-        );
-
-      if (
-        !Number.isFinite(
-          timestamp
-        )
-      ) {
-        return 'Updated date unknown';
-      }
-
-      const date =
+    const date =
         new Date(timestamp);
 
-      const now =
+    const now =
         new Date();
 
-      const noteDay =
+    const noteDay =
         new Date(
-          date.getFullYear(),
-          date.getMonth(),
-          date.getDate()
+            date.getFullYear(),
+            date.getMonth(),
+            date.getDate()
         );
 
-      const today =
+    const today =
         new Date(
-          now.getFullYear(),
-          now.getMonth(),
-          now.getDate()
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate()
         );
 
-      const dayDifference =
+    const dayDifference =
         Math.round(
-          (
-            today.getTime()
+            (
+                today.getTime()
             - noteDay.getTime()
-          )
+            )
           / 86400000
         );
 
-      if (dayDifference === 0) {
+    if (dayDifference === 0)
+    {
         return 'Updated today';
-      }
-
-      if (dayDifference === 1) {
-        return 'Updated yesterday';
-      }
-
-      return `Updated ${
-        formatNoteUpdatedAt(
-          note
-        )
-      }`;
     }
 
-    function noteEntityCountItems(
-      note
-    ) {
-      return Object.entries(
-        NOTE_ENTITY_TYPES
-      )
-        .map(([
-          type,
-          config
-        ]) => ({
-          type,
-          config,
+    if (dayDifference === 1)
+    {
+        return 'Updated yesterday';
+    }
 
-          count:
+    return `Updated ${
+        formatNoteUpdatedAt(
+            note
+        )
+    }`;
+}
+
+function noteEntityCountItems(
+    note
+)
+{
+    return Object.entries(
+        NOTE_ENTITY_TYPES
+    )
+        .map(([
+            type,
+            config
+        ]) => ({
+            type,
+            config,
+
+            count:
             new Set(
-              noteEntityLinkedIds(
-                note,
-                type
-              )
+                noteEntityLinkedIds(
+                    note,
+                    type
+                )
             ).size
         }))
         .filter(
-          item =>
-            item.count > 0
+            item =>
+                item.count > 0
         );
-    }
+}
 
-    function noteBrowserEntitySummary(
-      note
-    ) {
-      const entityItems =
+function noteBrowserEntitySummary(
+    note
+)
+{
+    const entityItems =
         noteEntityCountItems(
-          note
+            note
         );
 
-      const relatedCount =
+    const relatedCount =
         new Set(
-          note?.relatedNoteIds
+            note?.relatedNoteIds
           || []
         ).size;
 
-      const items = [
+    const items = [
         ...entityItems.map(item => ({
-          count:
+            count:
             item.count,
 
-          label:
+            label:
             item.count === 1
-              ? item.config.singular
-              : item.config.plural
+                ? item.config.singular
+                : item.config.plural
         })),
 
         ...(relatedCount
-          ? [{
-              count:
+            ? [{
+                count:
                 relatedCount,
 
-              label:
+                label:
                 relatedCount === 1
-                  ? 'note'
-                  : 'notes'
+                    ? 'note'
+                    : 'notes'
             }]
-          : [])
-      ];
+            : [])
+    ];
 
-      if (!items.length) {
+    if (!items.length)
+    {
         return '';
-      }
-
-      if (items.length <= 2) {
-        return items
-          .map(item =>
-            `${item.count} ${
-              item.label
-            }`
-          )
-          .join(' · ');
-      }
-
-      const total =
-        items.reduce(
-          (
-            sum,
-            item
-          ) =>
-            sum + item.count,
-          0
-        );
-
-      return `${total} linked records`;
     }
 
-    function renderNoteBrowserCollectionChips(
-      note
-    ) {
-      const collections =
-        getCollectionsForNote(
-          note.id,
-          {
-            projectId:
-              note.projectId
-          }
+    if (items.length <= 2)
+    {
+        return items
+            .map(item =>
+                `${item.count} ${
+                    item.label
+                }`
+            )
+            .join(' · ');
+    }
+
+    const total =
+        items.reduce(
+            (
+                sum,
+                item
+            ) =>
+                sum + item.count,
+            0
         );
 
-      if (!collections.length) {
+    return `${total} linked records`;
+}
+
+function renderNoteBrowserCollectionChips(
+    note
+)
+{
+    const collections =
+        getCollectionsForNote(
+            note.id,
+            {
+                projectId:
+              note.projectId
+            }
+        );
+
+    if (!collections.length)
+    {
         return `
           <div
             class="
@@ -696,216 +718,222 @@
             </span>
           </div>
         `;
-      }
+    }
 
-      const visible =
+    const visible =
         collections.slice(0, 2);
 
-      const hiddenCount =
+    const hiddenCount =
         collections.length
         - visible.length;
 
-      return [
+    return [
         ...visible.map(collection => `
           <span
             class="notes-row-collection-chip"
             title="${escapeHtml(
-              collection.name
+                collection.name
             )}">
             ${escapeHtml(
-              collection.name
+                collection.name
             )}
           </span>
         `),
 
         hiddenCount > 0
-          ? `
+            ? `
             <span
               class="notes-row-collection-chip"
               title="${escapeHtml(
-                collections
-                  .slice(2)
-                  .map(collection =>
-                    collection.name
-                  )
-                  .join(', ')
-              )}">
+                    collections
+                        .slice(2)
+                        .map(collection =>
+                            collection.name
+                        )
+                        .join(', ')
+                )}">
               +${hiddenCount}
             </span>
           `
-          : ''
-      ]
+            : ''
+    ]
         .filter(Boolean)
         .join('');
-    }
+}
 
-    function noteBrowserMetadata(
-      note
-    ) {
-      return [
+function noteBrowserMetadata(
+    note
+)
+{
+    return [
         noteBrowserEntitySummary(
-          note
+            note
         ),
 
         formatNoteRelativeUpdatedAt(
-          note
+            note
         )
-      ]
+    ]
         .filter(Boolean)
         .join(' · ');
-    }
+}
 
-    function notesFilterCount() {
-      return Object
+function notesFilterCount()
+{
+    return Object
         .values(
-          state.notesFilters
+            state.notesFilters
           || {}
         )
         .filter(
-          value =>
-            value
+            value =>
+                value
             && value !== 'any'
         )
         .length;
-    }
+}
 
-    function notesActiveFilterDescriptors() {
-      const filters =
+function notesActiveFilterDescriptors()
+{
+    const filters =
         state.notesFilters || {};
 
-      const labels = {
+    const labels = {
         linkedRecords: {
-          with:
+            with:
             'Has linked records',
 
-          without:
+            without:
             'No linked records'
         },
 
         relatedNotes: {
-          with:
+            with:
             'Has related notes',
 
-          without:
+            without:
             'No related notes'
         },
 
         collections: {
-          with:
+            with:
             'In a collection',
 
-          without:
+            without:
             'No collection'
         }
-      };
+    };
 
-      return Object
+    return Object
         .entries(filters)
         .filter(([
-          ,
-          value
+            ,
+            value
         ]) =>
-          value
+            value
           && value !== 'any'
         )
         .map(([
-          key,
-          value
+            key,
+            value
         ]) => ({
-          key,
-          label:
+            key,
+            label:
             labels[key]?.[value]
             || value
         }));
-    }
+}
 
-    function renderNotesActiveFilters() {
-      const filters =
+function renderNotesActiveFilters()
+{
+    const filters =
         notesActiveFilterDescriptors();
 
-      if (!filters.length) {
+    if (!filters.length)
+    {
         return '';
-      }
+    }
 
-      return `
+    return `
         <div
           class="notes-active-filters"
           aria-label="Active note filters">
 
           ${filters
-            .map(filter => `
+                .map(filter => `
               <button
                 class="notes-active-filter-chip"
                 type="button"
                 data-clear-notes-filter="${escapeHtml(
-                  filter.key
+                    filter.key
                 )}"
                 aria-label="Remove ${escapeHtml(
-                  filter.label
+                    filter.label
                 )} filter">
                 ${escapeHtml(
-                  filter.label
+                    filter.label
                 )}
                 ${icon.close}
               </button>
             `)
-            .join('')}
+                .join('')}
         </div>
       `;
-    }
+}
 
-    function openNotesFilterMenu(
-      anchor
-    ) {
-      closeMenu();
+function openNotesFilterMenu(
+    anchor
+)
+{
+    closeMenu();
 
-      const rect =
+    const rect =
         anchor.getBoundingClientRect();
 
-      const filters = {
+    const filters = {
         linkedRecords:
           state.notesFilters
-            ?.linkedRecords
+              ?.linkedRecords
           || 'any',
 
         relatedNotes:
           state.notesFilters
-            ?.relatedNotes
+              ?.relatedNotes
           || 'any',
 
         collections:
           state.notesFilters
-            ?.collections
+              ?.collections
           || 'any'
-      };
+    };
 
-      const menu =
+    const menu =
         document.createElement(
-          'div'
+            'div'
         );
 
-      menu.className =
+    menu.className =
         'notes-filter-popover';
 
-      menu.id =
+    menu.id =
         'projectMenu';
 
-      menu.style.top =
+    menu.style.top =
         `${rect.bottom + 6}px`;
 
-      menu.style.left =
+    menu.style.left =
         `${
-          Math.max(
-            12,
-            Math.min(
-              window.innerWidth
+            Math.max(
+                12,
+                Math.min(
+                    window.innerWidth
               - 342,
-              rect.right - 330
+                    rect.right - 330
+                )
             )
-          )
         }px`;
 
-      menu.innerHTML = `
+    menu.innerHTML = `
         <div class="notes-filter-popover-head">
           <strong>Filter notes</strong>
           <span>
@@ -921,30 +949,30 @@
               <option
                 value="any"
                 ${
-                  filters.linkedRecords
+                    filters.linkedRecords
                     === 'any'
-                    ? 'selected'
-                    : ''
+                        ? 'selected'
+                        : ''
                 }>
                 Any
               </option>
               <option
                 value="with"
                 ${
-                  filters.linkedRecords
+                    filters.linkedRecords
                     === 'with'
-                    ? 'selected'
-                    : ''
+                        ? 'selected'
+                        : ''
                 }>
                 Has linked records
               </option>
               <option
                 value="without"
                 ${
-                  filters.linkedRecords
+                    filters.linkedRecords
                     === 'without'
-                    ? 'selected'
-                    : ''
+                        ? 'selected'
+                        : ''
                 }>
                 No linked records
               </option>
@@ -958,30 +986,30 @@
               <option
                 value="any"
                 ${
-                  filters.relatedNotes
+                    filters.relatedNotes
                     === 'any'
-                    ? 'selected'
-                    : ''
+                        ? 'selected'
+                        : ''
                 }>
                 Any
               </option>
               <option
                 value="with"
                 ${
-                  filters.relatedNotes
+                    filters.relatedNotes
                     === 'with'
-                    ? 'selected'
-                    : ''
+                        ? 'selected'
+                        : ''
                 }>
                 Has related notes
               </option>
               <option
                 value="without"
                 ${
-                  filters.relatedNotes
+                    filters.relatedNotes
                     === 'without'
-                    ? 'selected'
-                    : ''
+                        ? 'selected'
+                        : ''
                 }>
                 No related notes
               </option>
@@ -995,30 +1023,30 @@
               <option
                 value="any"
                 ${
-                  filters.collections
+                    filters.collections
                     === 'any'
-                    ? 'selected'
-                    : ''
+                        ? 'selected'
+                        : ''
                 }>
                 Any
               </option>
               <option
                 value="with"
                 ${
-                  filters.collections
+                    filters.collections
                     === 'with'
-                    ? 'selected'
-                    : ''
+                        ? 'selected'
+                        : ''
                 }>
                 In a collection
               </option>
               <option
                 value="without"
                 ${
-                  filters.collections
+                    filters.collections
                     === 'without'
-                    ? 'selected'
-                    : ''
+                        ? 'selected'
+                        : ''
                 }>
                 No collection
               </option>
@@ -1043,180 +1071,186 @@
         </div>
       `;
 
-      document.body.appendChild(
+    document.body.appendChild(
         menu
-      );
+    );
 
-      const menuRect =
+    const menuRect =
         menu.getBoundingClientRect();
 
-      menu.style.top =
+    menu.style.top =
         `${
-          Math.max(
-            12,
-            Math.min(
-              rect.bottom + 6,
-              window.innerHeight
+            Math.max(
+                12,
+                Math.min(
+                    rect.bottom + 6,
+                    window.innerHeight
               - menuRect.height
               - 12
+                )
             )
-          )
         }px`;
 
-      menu
+    menu
         .querySelector(
-          '[data-notes-filter-reset]'
+            '[data-notes-filter-reset]'
         )
         ?.addEventListener(
-          'click',
-          () => {
-            state.notesFilters = {
-              linkedRecords:
+            'click',
+            () =>
+            {
+                state.notesFilters = {
+                    linkedRecords:
                 'any',
 
-              relatedNotes:
+                    relatedNotes:
                 'any',
 
-              collections:
+                    collections:
                 'any'
-            };
+                };
 
-            closeMenu();
-            renderNotes();
-          }
+                closeMenu();
+                renderNotes();
+            }
         );
 
-      menu
+    menu
         .querySelector(
-          '[data-notes-filter-apply]'
+            '[data-notes-filter-apply]'
         )
         ?.addEventListener(
-          'click',
-          () => {
-            state.notesFilters = {
-              linkedRecords:
+            'click',
+            () =>
+            {
+                state.notesFilters = {
+                    linkedRecords:
                 menu
-                  .querySelector(
-                    '[data-notes-filter-input="linkedRecords"]'
-                  )
-                  ?.value
+                    .querySelector(
+                        '[data-notes-filter-input="linkedRecords"]'
+                    )
+                    ?.value
                 || 'any',
 
-              relatedNotes:
+                    relatedNotes:
                 menu
-                  .querySelector(
-                    '[data-notes-filter-input="relatedNotes"]'
-                  )
-                  ?.value
+                    .querySelector(
+                        '[data-notes-filter-input="relatedNotes"]'
+                    )
+                    ?.value
                 || 'any',
 
-              collections:
+                    collections:
                 menu
-                  .querySelector(
-                    '[data-notes-filter-input="collections"]'
-                  )
-                  ?.value
+                    .querySelector(
+                        '[data-notes-filter-input="collections"]'
+                    )
+                    ?.value
                 || 'any'
-            };
+                };
 
-            closeMenu();
-            renderNotes();
-          }
+                closeMenu();
+                renderNotes();
+            }
         );
 
-      bindMenuLifecycle(
+    bindMenuLifecycle(
         anchor
-      );
-    }
+    );
+}
 
-    function formatConnectedNoteMetadata(
-      note
-    ) {
-      return [
+function formatConnectedNoteMetadata(
+    note
+)
+{
+    return [
         formatNoteCollectionSummary(
-          note
+            note
         ),
 
         formatNoteRelativeUpdatedAt(
-          note
+            note
         )
-      ]
+    ]
         .filter(Boolean)
         .join(' · ');
-    }
+}
 
-    function renderConnectedNoteList({
-      notes = [],
+function renderConnectedNoteList({
+    notes = [],
 
-      contextType = '',
+    contextType = '',
 
-      contextId = '',
+    contextId = '',
 
-      limit = CONNECTED_NOTES_PREVIEW_LIMIT,
+    limit = CONNECTED_NOTES_PREVIEW_LIMIT,
 
-      emptyText =
+    emptyText =
         'No connected notes.',
 
-      allowUnlink =
+    allowUnlink =
         true
-    }) {
-      const visible = notes.slice(
+})
+{
+    const visible = notes.slice(
         0,
         Math.min(limit, CONNECTED_NOTES_PREVIEW_LIMIT)
-      );
+    );
 
-      if (!visible.length) {
+    if (!visible.length)
+    {
         return `
           <div class="connected-note-empty">
             ${escapeHtml(
-              emptyText
+                emptyText
             )}
           </div>
         `;
-      }
+    }
 
-      const contextConfig =
+    const contextConfig =
         getNoteEntityConfig(
-          contextType
+            contextType
         );
 
-      const unlinkSupported =
+    const unlinkSupported =
         Boolean(
-          allowUnlink
+            allowUnlink
           && contextId
           && contextConfig
         );
 
-      const contextNoun =
+    const contextNoun =
         contextConfig?.singular
         || String(
-          contextConfig
-            ?.contextLabel
+            contextConfig
+                ?.contextLabel
           || 'item'
-  ).toLowerCase();
+        ).toLowerCase();
 
-      return `
+    return `
         <div class="connected-note-list">
 
           ${visible
-            .map(note => {
-              const noteTitle =
-                note.title
+                .map(note =>
+                {
+                    const noteTitle =
+                        note.title
                 || 'Untitled note';
 
-              const metadata =
-                formatConnectedNoteMetadata(
-                  note
-                );
+                    const metadata =
+                        formatConnectedNoteMetadata(
+                            note
+                        );
 
-              return `
+                    return `
                 <div
                   class="
                     connected-note-item
                     ${
-                      unlinkSupported
-                        ? 'can-unlink'
-                        : ''
+                        unlinkSupported
+                            ? 'can-unlink'
+                            : ''
                     }
                   ">
 
@@ -1224,16 +1258,16 @@
                     class="connected-note-card"
                     type="button"
                     data-connected-note-id="${escapeHtml(
-                      note.id
+                        note.id
                     )}"
                     data-connected-note-context-type="${escapeHtml(
-                      contextType
+                        contextType
                     )}"
                     data-connected-note-context-id="${escapeHtml(
-                      contextId
+                        contextId
                     )}"
                     aria-label="Open ${escapeHtml(
-                      noteTitle
+                        noteTitle
                     )}">
 
                     <strong
@@ -1241,12 +1275,12 @@
                         connected-note-title
                       "
                       title="${escapeHtml(
-                        noteTitle
-                      )}">
+                            noteTitle
+                        )}">
 
                       ${escapeHtml(
-                        noteTitle
-                      )}
+                            noteTitle
+                        )}
                     </strong>
 
                     <span
@@ -1255,12 +1289,12 @@
                       ">
 
                       ${escapeHtml(
-                        noteExcerpt(
-                          note,
-                          120
-                        )
+                            noteExcerpt(
+                                note,
+                                120
+                            )
                         || 'No note content'
-                      )}
+                        )}
                     </span>
 
                     <span
@@ -1268,256 +1302,267 @@
                         connected-note-meta
                       "
                       title="${escapeHtml(
-                        metadata
-                      )}">
+                            metadata
+                        )}">
 
                       ${escapeHtml(
-                        metadata
-                      )}
+                            metadata
+                        )}
                     </span>
                   </button>
 
                   ${
-                    unlinkSupported
-                      ? `
+                        unlinkSupported
+                            ? `
                         <button
                           class="
                             connected-note-unlink
                           "
                           type="button"
                           data-connected-note-unlink="${escapeHtml(
-                            note.id
-                          )}"
+                                note.id
+                            )}"
                           data-connected-note-context-type="${escapeHtml(
-                            contextType
-                          )}"
+                                contextType
+                            )}"
                           data-connected-note-context-id="${escapeHtml(
-                            contextId
-                          )}"
+                                contextId
+                            )}"
                           aria-label="Unlink ${escapeHtml(
-                            noteTitle
-                          )} from this ${escapeHtml(
-                            contextNoun
-                          )}"
+                                noteTitle
+                            )} from this ${escapeHtml(
+                                contextNoun
+                            )}"
                           title="Unlink note">
 
                           ${icon.unlink}
                         </button>
                       `
-                      : ''
-                  }
+                            : ''
+                    }
                 </div>
               `;
-            })
-            .join('')}
+                })
+                .join('')}
         </div>
       `;
-    }
+}
 
-    function connectedNoteContextRecord(
-      contextType,
-      contextId,
-      projectId
-    ) {
-      return noteEntityById(
+function connectedNoteContextRecord(
+    contextType,
+    contextId,
+    projectId
+)
+{
+    return noteEntityById(
         contextType,
         contextId,
         projectId
-      );
-    }
-        
-    function connectedNoteContextName(
-      contextType,
-      record
-    ) {
-      return (
+    );
+}
+
+function connectedNoteContextName(
+    contextType,
+    record
+)
+{
+    return (
         noteEntityLabel(
-          contextType,
-          record
+            contextType,
+            record
         )
         || 'this item'
-      );
-    }
+    );
+}
 
-    function connectedNoteContextNoun(
-      contextType
-    ) {
-      const config =
+function connectedNoteContextNoun(
+    contextType
+)
+{
+    const config =
         getNoteEntityConfig(
-          contextType
+            contextType
         );
 
-      return (
+    return (
         config?.singular
         || String(
-          config?.contextLabel
+            config?.contextLabel
           || 'item'
         ).toLowerCase()
-      );
-    }
+    );
+}
 
-    function unlinkConnectedNote({
-      noteId,
-      contextType,
-      contextId
-    }) {
-      const note =
+function unlinkConnectedNote({
+    noteId,
+    contextType,
+    contextId
+})
+{
+    const note =
         getNote(
-          noteId,
-          {
-            projectId:
+            noteId,
+            {
+                projectId:
               currentProjectId(),
 
-            includeArchived:
+                includeArchived:
               true
-          }
+            }
         );
 
-      const config =
+    const config =
         getNoteEntityConfig(
-          contextType
+            contextType
         );
 
-      if (
+    if (
         !note
         || !config
         || !contextId
-      ) {
+    )
+    {
         return false;
-      }
-
-      const currentIds =
-        Array.isArray(
-          note[
-            config.field
-          ]
-        )
-          ? note[
-              config.field
-            ]
-          : [];
-
-      if (
-        !currentIds.includes(
-          contextId
-        )
-      ) {
-        return false;
-      }
-
-      const updatedNote =
-        setNoteEntityLinks(
-          note.id,
-          contextType,
-          currentIds.filter(
-            id =>
-              id !== contextId
-          ),
-          {
-            projectId:
-              note.projectId
-          }
-        );
-
-      return Boolean(
-        updatedNote
-      );
     }
 
-    function openConnectedNoteUnlinkConfirm({
-      noteId,
-      contextType,
-      contextId,
-      onUnlinked =
-        null
-    }) {
-      const contextConfig =
-        getNoteEntityConfig(
-          contextType
+    const currentIds =
+        Array.isArray(
+            note[
+                config.field
+            ]
+        )
+            ? note[
+                config.field
+            ]
+            : [];
+
+    if (
+        !currentIds.includes(
+            contextId
+        )
+    )
+    {
+        return false;
+    }
+
+    const updatedNote =
+        setNoteEntityLinks(
+            note.id,
+            contextType,
+            currentIds.filter(
+                id =>
+                    id !== contextId
+            ),
+            {
+                projectId:
+              note.projectId
+            }
         );
 
-      if (
+    return Boolean(
+        updatedNote
+    );
+}
+
+function openConnectedNoteUnlinkConfirm({
+    noteId,
+    contextType,
+    contextId,
+    onUnlinked =
+        null
+})
+{
+    const contextConfig =
+        getNoteEntityConfig(
+            contextType
+        );
+
+    if (
         !contextConfig
         || !contextId
-      ) {
+    )
+    {
         return;
-      }
-      const note =
+    }
+    const note =
         getNote(
-          noteId,
-          {
-            projectId:
+            noteId,
+            {
+                projectId:
               currentProjectId(),
 
-            includeArchived:
+                includeArchived:
               true
-          }
+            }
         );
 
-      if (!note) {
+    if (!note)
+    {
         showToast(
-          'Note not found.'
+            'Note not found.'
         );
 
         return;
-      }
+    }
 
-      const config =
+    const config =
         getNoteEntityConfig(
-          contextType
+            contextType
         );
 
-      const linkedIds =
+    const linkedIds =
         config
-          ? note[
-              config.field
+            ? note[
+                config.field
             ] || []
-          : [];
+            : [];
 
-      if (
+    if (
         !config
         || !linkedIds.includes(
-          contextId
+            contextId
         )
-      ) {
+    )
+    {
         showToast(
-          'This note is no longer linked.'
+            'This note is no longer linked.'
         );
 
         return;
-      }
+    }
 
-      const contextRecord =
+    const contextRecord =
         connectedNoteContextRecord(
-          contextType,
-          contextId,
-          note.projectId
+            contextType,
+            contextId,
+            note.projectId
         );
 
-      if (!contextRecord) {
+    if (!contextRecord)
+    {
         showToast(
-          'Linked record not found.'
+            'Linked record not found.'
         );
 
         return;
-      }
+    }
 
-      const noteTitle =
+    const noteTitle =
         note.title
         || 'Untitled note';
 
-      const contextName =
+    const contextName =
         connectedNoteContextName(
-          contextType,
-          contextRecord
+            contextType,
+            contextRecord
         );
 
-      const contextNoun =
+    const contextNoun =
         connectedNoteContextNoun(
-          contextType
+            contextType
         );
 
-      openModal(`
+    openModal(`
         <div
           class="
             modal
@@ -1531,13 +1576,13 @@
             <div>
               <h2 id="connectedNoteUnlinkTitle">
                 Unlink note from ${escapeHtml(
-                  contextNoun
+                    contextNoun
                 )}?
               </h2>
 
               <p>
                 ${escapeHtml(
-                  noteTitle
+                    noteTitle
                 )}
               </p>
             </div>
@@ -1571,10 +1616,10 @@
               <span>
                 Only the connection between
                 “${escapeHtml(
-                  noteTitle
+                    noteTitle
                 )}” and
                 “${escapeHtml(
-                  contextName
+                    contextName
                 )}” will be removed.
                 The note will remain available in
                 Notes and keep all its other links.
@@ -1600,199 +1645,210 @@
         </div>
       `);
 
-      modalBackdrop
+    modalBackdrop
         .querySelector(
-          '[data-confirm-connected-note-unlink]'
+            '[data-confirm-connected-note-unlink]'
         )
         ?.addEventListener(
-          'click',
-          () => {
-            const unlinked =
-              unlinkConnectedNote({
-                noteId:
+            'click',
+            () =>
+            {
+                const unlinked =
+                    unlinkConnectedNote({
+                        noteId:
                   note.id,
 
-                contextType,
+                        contextType,
 
-                contextId
-              });
+                        contextId
+                    });
 
-            /*
+                /*
               Close first so the modal can return
               focus before the sidebar is rerendered.
               The module callback then establishes
               the final stable focus target.
             */
-            closeModal();
+                closeModal();
 
-            if (!unlinked) {
-              showToast(
-                'The note could not be unlinked.'
-              );
+                if (!unlinked)
+                {
+                    showToast(
+                        'The note could not be unlinked.'
+                    );
 
-              return;
-            }
+                    return;
+                }
 
-            onUnlinked?.({
-              noteId:
+                onUnlinked?.({
+                    noteId:
                 note.id,
 
-              contextType,
+                    contextType,
 
-              contextId
-            });
+                    contextId
+                });
 
-            showToast(
-              `Note unlinked from ${contextNoun}.`
-            );
-          }
+                showToast(
+                    `Note unlinked from ${contextNoun}.`
+                );
+            }
         );
-    }
+}
 
-    function bindConnectedNoteLinks(
-      root,
-      {
+function bindConnectedNoteLinks(
+    root,
+    {
         onUnlinked =
-          null
-      } = {}
-    ) {
-      root
+            null
+    } = {}
+)
+{
+    root
         .querySelectorAll(
-          '[data-connected-note-id]'
+            '[data-connected-note-id]'
         )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              openCentralNoteFromContext(
-                button.dataset
-                  .connectedNoteId,
-
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
                 {
-                  type:
+                    openCentralNoteFromContext(
+                        button.dataset
+                            .connectedNoteId,
+
+                        {
+                            type:
                     button.dataset
-                      .connectedNoteContextType
+                        .connectedNoteContextType
                     || '',
 
-                  id:
+                            id:
                     button.dataset
-                      .connectedNoteContextId
+                        .connectedNoteContextId
                     || ''
+                        }
+                    );
                 }
-              );
-            }
-          );
+            );
         });
 
-      root
+    root
         .querySelectorAll(
-          '[data-connected-note-unlink]'
+            '[data-connected-note-unlink]'
         )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            event => {
-              event.preventDefault();
-              event.stopPropagation();
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                event =>
+                {
+                    event.preventDefault();
+                    event.stopPropagation();
 
-              openConnectedNoteUnlinkConfirm({
-                noteId:
+                    openConnectedNoteUnlinkConfirm({
+                        noteId:
                   button.dataset
-                    .connectedNoteUnlink,
+                      .connectedNoteUnlink,
 
-                contextType:
+                        contextType:
                   button.dataset
-                    .connectedNoteContextType
+                      .connectedNoteContextType
                   || '',
 
-                contextId:
+                        contextId:
                   button.dataset
-                    .connectedNoteContextId
+                      .connectedNoteContextId
                   || '',
 
-                onUnlinked:
-                  payload => {
-                    if (
-                      typeof onUnlinked
+                        onUnlinked:
+                  payload =>
+                  {
+                      if (
+                          typeof onUnlinked
                       === 'function'
-                    ) {
-                      onUnlinked(
-                        payload
-                      );
+                      )
+                      {
+                          onUnlinked(
+                              payload
+                          );
 
-                      return;
-                    }
+                          return;
+                      }
 
-                    /*
+                      /*
                       Shared fallback for modules that use
                       connected Note rows but do not yet have
                       a viewport-preserving local renderer.
                     */
-                    render();
+                      render();
                   }
-              });
-            }
-          );
+                    });
+                }
+            );
         });
-    }
+}
 
-    function renderNotesListView(
-      list
-    ) {
-      return `
+function renderNotesListView(
+    list
+)
+{
+    return `
         <div
           class="notes-list"
           role="list">
 
           ${list
-            .map(
-              renderNoteListRow
-            )
-            .join('')}
+                .map(
+                    renderNoteListRow
+                )
+                .join('')}
         </div>
       `;
-    }
+}
 
-    function renderNoteListRow(
-      note
-    ) {
-      const selected =
+function renderNoteListRow(
+    note
+)
+{
+    const selected =
         note.id
           === state.selectedNoteId;
 
-      const metadata =
+    const metadata =
         noteBrowserMetadata(
-          note
+            note
         );
 
-      return `
+    return `
         <article
           class="notes-row ${
-            selected ? 'active' : ''
-          }"
+                selected ? 'active' : ''
+            }"
           role="listitem"
           data-note-id="${escapeHtml(
-            note.id
-          )}">
+                note.id
+            )}">
 
           <button
             class="notes-row-favorite ${
-              note.favorite ? 'active' : ''
+                note.favorite ? 'active' : ''
             }"
             type="button"
             data-note-favorite="${escapeHtml(
-              note.id
+                note.id
             )}"
             aria-pressed="${note.favorite}"
             aria-label="${escapeHtml(
-              note.favorite
-                ? `Remove ${note.title} from favourites`
-                : `Add ${note.title} to favourites`
+                note.favorite
+                    ? `Remove ${note.title} from favourites`
+                    : `Add ${note.title} to favourites`
             )}"
             title="${
-              note.favorite
-                ? 'Remove from favourites'
-                : 'Add to favourites'
+                note.favorite
+                    ? 'Remove from favourites'
+                    : 'Add to favourites'
             }">
             ${icon.star}
           </button>
@@ -1801,47 +1857,47 @@
             class="notes-row-open"
             type="button"
             data-note-row="${escapeHtml(
-              note.id
+                note.id
             )}"
             ${
-              selected
-                ? 'aria-current="true"'
-                : ''
+                selected
+                    ? 'aria-current="true"'
+                    : ''
             }>
             <span
               class="notes-row-title"
               title="${escapeHtml(
-                note.title
-              )}">
+                    note.title
+                )}">
               ${escapeHtml(
-                note.title
-              )}
+                    note.title
+                )}
             </span>
 
             <span class="notes-row-excerpt">
               ${escapeHtml(
-                noteExcerpt(
-                  note,
-                  180
-                )
+                    noteExcerpt(
+                        note,
+                        180
+                    )
                 || 'No note content'
-              )}
+                )}
             </span>
 
             <span class="notes-row-footer">
               <span class="notes-row-collections">
                 ${renderNoteBrowserCollectionChips(
-                  note
+                    note
                 )}
               </span>
 
               <span
                 class="notes-row-metadata"
                 title="${escapeHtml(
-                  metadata
+                    metadata
                 )}">
                 ${escapeHtml(
-                  metadata
+                    metadata
                 )}
               </span>
             </span>
@@ -1852,21 +1908,23 @@
             type="button"
             aria-haspopup="menu"
             data-note-menu="${escapeHtml(
-              note.id
+                note.id
             )}"
             aria-label="${escapeHtml(
-              `More actions for ${note.title}`
+                `More actions for ${note.title}`
             )}">
             ${icon.more}
           </button>
         </article>
       `;
-    }
+}
 
-    function renderNotesBrowserEmpty() {
-      if (
+function renderNotesBrowserEmpty()
+{
+    if (
         state.notesSearch.trim()
-      ) {
+    )
+    {
         return `
           <div class="notes-empty">
             <div class="notes-empty-card">
@@ -1886,20 +1944,20 @@
             </div>
           </div>
         `;
-      }
+    }
 
-      const copy =
+    const copy =
         state.notesView === 'archived'
-          ? [
-              'No archived notes',
-              'Archived notes will appear here.'
+            ? [
+                'No archived notes',
+                'Archived notes will appear here.'
             ]
-          : [
-              'No notes here',
-              'Create a note to start collecting research thoughts.'
+            : [
+                'No notes here',
+                'Create a note to start collecting research thoughts.'
             ];
 
-      return `
+    return `
         <div class="notes-empty">
           <div class="notes-empty-card">
             <h2>${copy[0]}</h2>
@@ -1907,18 +1965,21 @@
           </div>
         </div>
       `;
+}
+
+function renderNotesRightPanel(
+    note
+)
+{
+    if (!note)
+    {
+        return '';
     }
 
-    function renderNotesRightPanel(
-      note
-    ) {
-      if (!note) {
-        return '';
-      }
-
-      if (
+    if (
         state.notesRightCollapsed
-      ) {
+    )
+    {
         return `
           <aside
             class="notes-right-rail"
@@ -1935,9 +1996,9 @@
             </button>
           </aside>
         `;
-      }
+    }
 
-      return `
+    return `
         <div
           class="notes-resizer"
           id="notesResizer"
@@ -1947,9 +2008,9 @@
           aria-valuemin="360"
           aria-valuemax="600"
           aria-valuenow="${Math.round(
-            state.notesBrowserWidth
+                state.notesBrowserWidth
             || 440
-          )}"
+            )}"
           tabindex="0">
         </div>
 
@@ -1958,281 +2019,290 @@
           id="notesRightPane"
           aria-label="Note editor">
           ${renderNoteEditorContent(
-            note
-          )}
+                note
+            )}
         </aside>
       `;
-    }
+}
 
-    
 
-    function noteEditorSectionIsOpen(
-      id
-    ) {
-      return (
+function noteEditorSectionIsOpen(
+    id
+)
+{
+    return (
         state.notesEditorSections?.[
-          id
+            id
         ] !== false
-      );
-    }
+    );
+}
 
-    function renderNoteEditorSection({
-      id,
-      title,
-      meta = '',
-      action = '',
-      body
-    }) {
-      return `
+function renderNoteEditorSection({
+    id,
+    title,
+    meta = '',
+    action = '',
+    body
+})
+{
+    return `
         <div
           class="notes-panel-section"
           data-note-editor-section="${escapeHtml(
-            id
-          )}">
+                id
+            )}">
           ${renderInspectorSection(
-            id,
-            title,
-            meta,
-            body,
-            action,
-            {
-              open:
+                id,
+                title,
+                meta,
+                body,
+                action,
+                {
+                    open:
                 noteEditorSectionIsOpen(
-                  id
+                    id
                 ),
 
-              toggleAttribute:
+                    toggleAttribute:
                 'data-note-editor-section-toggle',
 
-              sectionId:
+                    sectionId:
                 `noteEditorSection-${
-                  id
+                    id
                 }`,
 
-              inlineAction:
+                    inlineAction:
                 Boolean(action),
 
-              alwaysShowAction:
+                    alwaysShowAction:
                 Boolean(action)
-            }
-          )}
+                }
+            )}
         </div>
       `;
-    }
+}
 
-    function renderNoteSummaryChips(
-      note
-    ) {
-      const NOTE_SUMMARY_CHIP_ORDER =
+function renderNoteSummaryChips(
+    note
+)
+{
+    const NOTE_SUMMARY_CHIP_ORDER =
         Object.freeze([
-          'people',
-          'events',
-          'photos',
-          'files',
-          'related',
-          'places',
-          'sources'
+            'people',
+            'events',
+            'photos',
+            'files',
+            'related',
+            'places',
+            'sources'
         ]);
-      const items =
+    const items =
         noteEntityCountItems(
-          note
+            note
         )
-          .map(item => ({
-            sectionKey:
+            .map(item => ({
+                sectionKey:
               item.config.sectionKey,
 
-            tone:
+                tone:
               item.config.chipTone,
 
-            count:
+                count:
               item.count,
 
-            label:
+                label:
               item.count === 1
-                ? item.config.singular
-                : item.config.plural
-          }));
+                  ? item.config.singular
+                  : item.config.plural
+            }));
 
-      const relatedCount =
+    const relatedCount =
         new Set(
-          note.relatedNoteIds || []
+            note.relatedNoteIds || []
         ).size;
 
-      if (relatedCount) {
+    if (relatedCount)
+    {
         items.push({
-          sectionKey:
+            sectionKey:
             'related',
 
-          tone:
+            tone:
             'notes',
 
-          count:
+            count:
             relatedCount,
 
-          label:
+            label:
             relatedCount === 1
-              ? 'note'
-              : 'notes'
+                ? 'note'
+                : 'notes'
         });
-      }
+    }
 
-      items.sort(
+    items.sort(
         (
-          first,
-          second
-        ) => {
-          const firstIndex =
-            NOTE_SUMMARY_CHIP_ORDER
-              .indexOf(
-                first.sectionKey
-              );
+            first,
+            second
+        ) =>
+        {
+            const firstIndex =
+                NOTE_SUMMARY_CHIP_ORDER
+                    .indexOf(
+                        first.sectionKey
+                    );
 
-          const secondIndex =
-            NOTE_SUMMARY_CHIP_ORDER
-              .indexOf(
-                second.sectionKey
-              );
+            const secondIndex =
+                NOTE_SUMMARY_CHIP_ORDER
+                    .indexOf(
+                        second.sectionKey
+                    );
 
-          return (
-            (
-              firstIndex === -1
-                ? NOTE_SUMMARY_CHIP_ORDER
-                    .length
-                : firstIndex
-            )
+            return (
+                (
+                    firstIndex === -1
+                        ? NOTE_SUMMARY_CHIP_ORDER
+                            .length
+                        : firstIndex
+                )
             -
             (
-              secondIndex === -1
-                ? NOTE_SUMMARY_CHIP_ORDER
-                    .length
-                : secondIndex
+                secondIndex === -1
+                    ? NOTE_SUMMARY_CHIP_ORDER
+                        .length
+                    : secondIndex
             )
-          );
+            );
         }
-      );
+    );
 
-      if (!items.length) {
+    if (!items.length)
+    {
         return '';
-      }
+    }
 
-      return `
+    return `
         <div
           class="notes-summary-chips app-chip-row"
           aria-label="Note connections">
           ${items
-            .map(item => `
+                .map(item => `
               <button
                 class="
                   app-chip
                   app-chip--${escapeHtml(
-                    item.tone
-                  )}
+                        item.tone
+                    )}
                 "
                 type="button"
                 data-note-summary-section="${escapeHtml(
-                  item.sectionKey
+                    item.sectionKey
                 )}"
                 aria-label="Show ${item.count} ${escapeHtml(
-                  item.label
+                    item.label
                 )}">
                 ${item.count}
                 ${escapeHtml(
-                  item.label
+                    item.label
                 )}
               </button>
             `)
-            .join('')}
+                .join('')}
         </div>
       `;
-    }
+}
 
-    function noteBodyWordCount(
-      note
-    ) {
-      const body =
+function noteBodyWordCount(
+    note
+)
+{
+    const body =
         String(
-          note?.body || ''
+            note?.body || ''
         )
-          .trim();
+            .trim();
 
-      return body
+    return body
         ? body
             .split(/\s+/)
             .length
         : 0;
-    }
+}
 
-    function formatNoteInfoDate(
-      value
-    ) {
-      const timestamp =
+function formatNoteInfoDate(
+    value
+)
+{
+    const timestamp =
         Date.parse(
-          value || ''
+            value || ''
         );
 
-      if (
+    if (
         !Number.isFinite(
-          timestamp
+            timestamp
         )
-      ) {
+    )
+    {
         return 'Unknown';
-      }
+    }
 
-      return new Intl
+    return new Intl
         .DateTimeFormat(
-          undefined,
-          {
-            dateStyle:
+            undefined,
+            {
+                dateStyle:
               'medium',
 
-            timeStyle:
+                timeStyle:
               'short'
-          }
+            }
         )
         .format(
-          new Date(
-            timestamp
-          )
+            new Date(
+                timestamp
+            )
         );
-    }
+}
 
-    function renderNoteEditorContent(
-      note
-    ) {
-      /*
+function renderNoteEditorContent(
+    note
+)
+{
+    /*
         Do not derive visual order from the property
         order of NOTE_ENTITY_TYPES. The data registry
         and the editor layout serve different purposes.
       */
-      const primaryLinkedSections =
+    const primaryLinkedSections =
         [
-          'person',
-          'event',
-          'photo',
-          'archiveFile'
+            'person',
+            'event',
+            'photo',
+            'archiveFile'
         ]
-          .map(type =>
-            renderNoteLinkedEntitySection(
-              note,
-              type
+            .map(type =>
+                renderNoteLinkedEntitySection(
+                    note,
+                    type
+                )
             )
-          )
-          .join('');
+            .join('');
 
-      const secondaryLinkedSections =
+    const secondaryLinkedSections =
         [
-          'place',
-          'source'
+            'place',
+            'source'
         ]
-          .map(type =>
-            renderNoteLinkedEntitySection(
-              note,
-              type
+            .map(type =>
+                renderNoteLinkedEntitySection(
+                    note,
+                    type
+                )
             )
-          )
-          .join('');
+            .join('');
 
-      return `
+    return `
         <article class="notes-editor-card">
           <header class="notes-editor-header">
             <div class="notes-editor-topline">
@@ -2261,36 +2331,36 @@
               <div class="notes-editor-actions">
                 <span
                   class="notes-save-status ${
-                    state.notesSaveStatus
-                      .toLowerCase()
-                  }"
+                        state.notesSaveStatus
+                            .toLowerCase()
+                    }"
                   id="notesSaveStatus"
                   role="status"
                   aria-live="polite">
                   ${escapeHtml(
-                    state.notesSaveStatus
-                  )}
+                        state.notesSaveStatus
+                    )}
                 </span>
 
                 <button
                   class="notes-icon-button ${
-                    note.favorite
-                      ? 'active'
-                      : ''
-                  }"
+                        note.favorite
+                            ? 'active'
+                            : ''
+                    }"
                   type="button"
                   id="notesFavoriteButton"
                   aria-pressed="${note.favorite}"
                   aria-label="${
-                    note.favorite
-                      ? 'Remove from favourites'
-                      : 'Add to favourites'
-                  }"
+                        note.favorite
+                            ? 'Remove from favourites'
+                            : 'Add to favourites'
+                    }"
                   title="${
-                    note.favorite
-                      ? 'Remove from favourites'
-                      : 'Add to favourites'
-                  }">
+                        note.favorite
+                            ? 'Remove from favourites'
+                            : 'Add to favourites'
+                    }">
                   ${icon.star}
                 </button>
 
@@ -2311,13 +2381,13 @@
               id="notesTitleInput"
               data-source-value="${escapeHtml(note.title)}"
               value="${escapeHtml(
-                localizedDataFieldValue(note.title)
-              )}"
+                    localizedDataFieldValue(note.title)
+                )}"
               placeholder="Untitled note"
               aria-label="Note title">
 
             ${renderNoteSummaryChips(
-              note
+                note
             )}
           </header>
 
@@ -2331,10 +2401,10 @@
                 </span>
 
                 ${renderRichTextToolbar({
-                  id:
+                    id:
                     'notesRichTextToolbar',
 
-                  ariaLabel:
+                    ariaLabel:
                     'Note formatting'
                 })}
 
@@ -2350,92 +2420,93 @@
                   aria-label="Note body"
                   placeholder="Start writing…"
                   hidden>${escapeHtml(
-                    localizedDataFieldValue(note.body)
-                  )}</textarea>
+                        localizedDataFieldValue(note.body)
+                    )}</textarea>
               </div>
             </div>
 
             <div class="notes-editor-sections">
               ${renderNoteCollectionsSection(
-                note
-              )}
+                    note
+                )}
 
               ${renderNoteChecklistSection(
-                note
-              )}
+                    note
+                )}
 
               ${primaryLinkedSections}
 
               ${renderNoteRelatedSection(
-                note
-              )}
+                    note
+                )}
 
               ${secondaryLinkedSections}
 
               ${renderNoteInfoSection(
-                note
-              )}
+                    note
+                )}
             </div>
           </div>
         </article>
       `;
-    }
+}
 
-    function renderNoteCollectionsSection(
-      note
-    ) {
-      const collections =
+function renderNoteCollectionsSection(
+    note
+)
+{
+    const collections =
         getCollectionsForNote(
-          note.id,
-          {
-            projectId:
+            note.id,
+            {
+                projectId:
               note.projectId
-          }
+            }
         );
 
-      const rows =
+    const rows =
         collections.length
-          ? `
+            ? `
             <div class="notes-collection-assignment-list">
               ${collections
-                .map(collection => `
+                    .map(collection => `
                   <div class="notes-collection-assignment">
                     ${icon.folder}
 
                     <span
                       class="notes-collection-assignment-name"
                       title="${escapeHtml(
-                        collection.name
-                      )}">
+                            collection.name
+                        )}">
                       ${escapeHtml(
-                        collection.name
-                      )}
+                            collection.name
+                        )}
                     </span>
 
                     <button
                       class="notes-collection-remove"
                       type="button"
                       data-note-remove-collection="${escapeHtml(
-                        collection.id
-                      )}"
+                            collection.id
+                        )}"
                       aria-label="Remove ${escapeHtml(
-                        collection.name
-                      )} from this note"
+                            collection.name
+                        )} from this note"
                       title="Remove from this note">
                       ${icon.close}
                     </button>
                   </div>
                 `)
-                .join('')}
+                    .join('')}
             </div>
           `
-          : `
+            : `
             <span class="notes-section-empty">
               This note is not in a collection.
             </span>
           `;
 
-      return renderNoteEditorSection({
+    return renderNoteEditorSection({
         id:
           'collections',
 
@@ -2444,9 +2515,9 @@
 
         meta:
           `${collections.length} ${
-            collections.length === 1
-              ? 'collection'
-              : 'collections'
+              collections.length === 1
+                  ? 'collection'
+                  : 'collections'
           }`,
 
         action: `
@@ -2455,91 +2526,91 @@
             type="button"
             id="notesManageCollections">
             ${renderPanelButtonLabel(
-              icon.plus,
-              'Add to collection'
+                icon.plus,
+                'Add to collection'
             )}
           </button>
         `,
 
         body:
           rows
-      });
-    }
+    });
+}
 
-    
 
-    function renderNoteChecklistSection(
-      note
-    ) {
-      const items =
+function renderNoteChecklistSection(
+    note
+)
+{
+    const items =
         note.checklist || [];
 
-      const completed =
+    const completed =
         items.filter(
-          item => item.done
+            item => item.done
         ).length;
 
-      const rows =
+    const rows =
         items.length
-          ? `
+            ? `
             <div class="notes-checklist-list">
               ${items
-                .map(item => `
+                    .map(item => `
                   <div
                     class="notes-checklist-row ${
-                      item.done
-                        ? 'done'
-                        : ''
+                        item.done
+                            ? 'done'
+                            : ''
                     }">
                     <input
                       type="checkbox"
                       data-note-checklist-toggle="${escapeHtml(
-                        item.id
-                      )}"
+                            item.id
+                        )}"
                       aria-label="Complete ${escapeHtml(
-                        item.text
-                      )}"
+                            item.text
+                        )}"
                       ${
-                        item.done
-                          ? 'checked'
-                          : ''
-                      }>
+                            item.done
+                                ? 'checked'
+                                : ''
+                        }>
 
                     <input
                       class="notes-checklist-text"
                       type="text"
                       maxlength="240"
                       data-note-checklist-text="${escapeHtml(
-                        item.id
-                      )}"
+                            item.id
+                        )}"
                       data-source-value="${escapeHtml(item.text)}"
                       value="${escapeHtml(
-                        localizedDataFieldValue(item.text)
-                      )}"
+                            localizedDataFieldValue(item.text)
+                        )}"
                       aria-label="Checklist item">
 
                     <button
                       class="notes-checklist-delete"
                       type="button"
                       data-note-checklist-delete="${escapeHtml(
-                        item.id
-                      )}"
+                            item.id
+                        )}"
                       aria-label="Delete checklist item"
                       title="Delete checklist item">
                       ${icon.trash}
                     </button>
                   </div>
                 `)
-                .join('')}
+                    .join('')}
             </div>
           `
-          : `
+            : `
             <span class="notes-section-empty">
               No checklist items.
             </span>
           `;
 
-      return renderNoteEditorSection({
+    return renderNoteEditorSection({
         id:
           'checklist',
 
@@ -2548,10 +2619,10 @@
 
         meta:
           items.length
-            ? `${completed} of ${
-                items.length
+              ? `${completed} of ${
+                  items.length
               } complete`
-            : 'No items',
+              : 'No items',
 
         action: `
           <button
@@ -2559,179 +2630,191 @@
             type="button"
             id="notesAddChecklistItem">
             ${renderPanelButtonLabel(
-              icon.plus,
-              'Add item'
+                icon.plus,
+                'Add item'
             )}
           </button>
         `,
 
         body:
           rows
-      });
+    });
+}
+
+function eventRelationItemModel(
+    event
+)
+{
+    if (!event)
+    {
+        return null;
     }
 
-    function eventRelationItemModel(
-      event
-    ) {
-      if (!event) {
-        return null;
-      }
-
-      const owner =
+    const owner =
         placeInspectorEventOwnerIds(
-          event
+            event
         )
-          .map(personId =>
-            getPerson(
-              personId
+            .map(personId =>
+                getPerson(
+                    personId
+                )
             )
-          )
-          .find(person =>
-            person
+            .find(person =>
+                person
             && !person.deleted
             && (
-              !event.projectId
+                !event.projectId
               || person.projectId
                 === event.projectId
             )
-          );
+            );
 
-      /*
+    /*
         Events without a valid owner cannot use
         the Notes event-row presentation.
       */
-      if (!owner) {
+    if (!owner)
+    {
         return null;
-      }
+    }
 
-      const ownerName =
+    const ownerName =
         personResourceDisplayName(
-          owner
+            owner
         )
         || owner.names?.display
         || 'Unnamed person';
 
-      const presentation =
+    const presentation =
         placeInspectorEventPresentation(
-          event,
-          owner.id
+            event,
+            owner.id
         );
 
-      const eventTitle =
+    const eventTitle =
         presentation.title
         || placeInspectorEventLabel(
-          event
+            event
         )
         || 'Event';
 
-      const eventDate =
+    const eventDate =
         presentation.date
         || 'Date unknown';
 
-      const eventPlace =
+    const eventPlace =
         timelinePlaceLabel(
-          event
+            event
         );
 
-      const datePlaceLabel =
+    const datePlaceLabel =
         [
-          eventDate,
-          eventPlace
+            eventDate,
+            eventPlace
         ]
-          .filter(Boolean)
-          .join(' · ');
+            .filter(Boolean)
+            .join(' · ');
 
-      const relatedPeople =
+    const relatedPeople =
         placeInspectorEventRelatedPeople(
-          event,
-          owner.id
+            event,
+            owner.id
         );
 
-      let relationshipLabel =
+    let relationshipLabel =
         '';
 
-      if (
+    if (
         event.type
           === 'childBirth'
-      ) {
+    )
+    {
         relationshipLabel =
-          presentation.relationship
+            presentation.relationship
           || '';
-      } else if (
+    }
+    else if (
         relatedPeople.length === 1
-      ) {
+    )
+    {
         relationshipLabel =
-          `With ${
-            personResourceDisplayName(
-              relatedPeople[0]
-            )
+            `With ${
+                personResourceDisplayName(
+                    relatedPeople[0]
+                )
             || relatedPeople[0]
-              .names?.display
+                .names?.display
             || 'another person'
-          }`;
-      } else if (
+            }`;
+    }
+    else if (
         relatedPeople.length > 1
-      ) {
+    )
+    {
         const firstName =
-          personResourceDisplayName(
-            relatedPeople[0]
-          )
+            personResourceDisplayName(
+                relatedPeople[0]
+            )
           || relatedPeople[0]
-            .names?.display
+              .names?.display
           || 'another person';
 
         relationshipLabel =
-          `With ${firstName} + ${
-            relatedPeople.length - 1
-          } ${
-            relatedPeople.length === 2
-              ? 'person'
-              : 'people'
-          }`;
-      } else {
+            `With ${firstName} + ${
+                relatedPeople.length - 1
+            } ${
+                relatedPeople.length === 2
+                    ? 'person'
+                    : 'people'
+            }`;
+    }
+    else
+    {
         relationshipLabel =
-          presentation.relationship
+            presentation.relationship
           || '';
-      }
-
-      return {
-        owner,
-        ownerName,
-        eventTitle,
-        datePlaceLabel,
-        relationshipLabel
-      };
     }
 
-    function renderEventRelationItem({
-      event,
-      openAttributes =
-        '',
-      removeAttributes =
-        '',
-      removeContextLabel =
-        'item',
-      readOnly =
-        false
-    } = {}) {
-      const model =
-        eventRelationItemModel(
-          event
-        );
-
-      if (!model) {
-        return '';
-      }
-
-      const {
+    return {
         owner,
         ownerName,
         eventTitle,
         datePlaceLabel,
         relationshipLabel
-      } = model;
+    };
+}
 
-      const content = `
+function renderEventRelationItem({
+    event,
+    openAttributes =
+        '',
+    removeAttributes =
+        '',
+    removeContextLabel =
+        'item',
+    readOnly =
+        false
+} = {})
+{
+    const model =
+        eventRelationItemModel(
+            event
+        );
+
+    if (!model)
+    {
+        return '';
+    }
+
+    const {
+        owner,
+        ownerName,
+        eventTitle,
+        datePlaceLabel,
+        relationshipLabel
+    } = model;
+
+    const content = `
         <span
           class="
             notes-event-avatar
@@ -2739,16 +2822,16 @@
           aria-hidden="true">
 
           ${renderPersonAvatar(
-            owner,
-            'small-avatar notes-event-owner-avatar',
-            {
-              element:
+                owner,
+                'small-avatar notes-event-owner-avatar',
+                {
+                    element:
                 'span',
 
-              attrs:
+                    attrs:
                 'aria-hidden="true"'
-            }
-          )}
+                }
+            )}
 
           <span
             class="
@@ -2756,7 +2839,7 @@
             ">
 
             ${timelineEventIcon(
-              event
+                event
             )}
           </span>
         </span>
@@ -2772,7 +2855,7 @@
             ">
 
             ${escapeHtml(
-              ownerName
+                ownerName
             )}
           </span>
 
@@ -2782,7 +2865,7 @@
             ">
 
             ${escapeHtml(
-              eventTitle
+                eventTitle
             )}
           </strong>
 
@@ -2792,29 +2875,29 @@
             ">
 
             ${escapeHtml(
-              datePlaceLabel
+                datePlaceLabel
             )}
           </span>
 
           ${
-            relationshipLabel
-              ? `
+                relationshipLabel
+                    ? `
                 <span
                   class="
                     notes-event-relationship
                   ">
 
                   ${escapeHtml(
-                    relationshipLabel
-                  )}
+                        relationshipLabel
+                    )}
                 </span>
               `
-              : ''
-          }
+                    : ''
+            }
         </span>
       `;
 
-      return `
+    return `
         <div
           class="
             relation-row
@@ -2822,8 +2905,8 @@
           ">
 
           ${
-            readOnly
-              ? `
+                readOnly
+                    ? `
                 <div
                   class="
                     relation-row-main
@@ -2833,7 +2916,7 @@
                   ${content}
                 </div>
               `
-              : `
+                    : `
                 <button
                   class="
                     relation-row-main
@@ -2842,20 +2925,20 @@
                   type="button"
                   ${openAttributes}
                   aria-label="Open ${escapeHtml(
-                    eventTitle
-                  )} for ${escapeHtml(
-                    ownerName
-                  )}">
+                        eventTitle
+                    )} for ${escapeHtml(
+                        ownerName
+                    )}">
 
                   ${content}
                 </button>
               `
-          }
+            }
 
           ${
-            !readOnly
+                !readOnly
             && removeAttributes
-              ? `
+                    ? `
                 <div
                   class="
                     relation-actions
@@ -2869,9 +2952,9 @@
                     type="button"
                     ${removeAttributes}
                     aria-label="Remove ${escapeHtml(
-                      eventTitle
+                        eventTitle
                     )} from ${escapeHtml(
-                      removeContextLabel
+                        removeContextLabel
                     )}"
                     title="Remove link">
 
@@ -2879,20 +2962,22 @@
                   </button>
                 </div>
               `
-              : ''
-          }
+                    : ''
+            }
         </div>
       `;
-    }
+}
 
-    function renderNoteLinkedRecordRows(
-      type,
-      config,
-      records,
-      noteId =
+function renderNoteLinkedRecordRows(
+    type,
+    config,
+    records,
+    noteId =
         ''
-    ) {
-      if (type === 'person') {
+)
+{
+    if (type === 'person')
+    {
         return `
           <div
             class="
@@ -2900,12 +2985,13 @@
               notes-people-list
             ">
             ${records
-              .map(person => {
-                const name =
-                  person.names?.display
+                .map(person =>
+                {
+                    const name =
+                        person.names?.display
                   || 'Unnamed person';
 
-                return `
+                    return `
                   <div class="relation-row">
                     <button
                       class="relation-row-main"
@@ -2913,33 +2999,33 @@
                       data-note-linked-open
                       data-note-linked-type="person"
                       data-note-linked-id="${escapeHtml(
-                        person.id
-                      )}"
+                            person.id
+                        )}"
                       aria-label="Open profile for ${escapeHtml(
-                        name
-                      )}">
+                            name
+                        )}">
 
                       ${renderPersonAvatar(
-                        person,
-                        'small-avatar',
-                        {
-                          element: 'span'
-                        }
-                      )}
+                            person,
+                            'small-avatar',
+                            {
+                                element: 'span'
+                            }
+                        )}
 
                       <span class="relation-row-copy">
                         <strong>
                           ${escapeHtml(
-                            name
-                          )}
+                                name
+                            )}
                         </strong>
 
                         <span>
                           ${escapeHtml(
-                            albumPhotoPersonDates(
-                              person
-                            )
-                          )}
+                                albumPhotoPersonDates(
+                                    person
+                                )
+                            )}
                         </span>
                       </span>
                     </button>
@@ -2954,10 +3040,10 @@
                         data-note-linked-remove
                         data-note-linked-type="person"
                         data-note-linked-id="${escapeHtml(
-                          person.id
+                            person.id
                         )}"
                         aria-label="Remove ${escapeHtml(
-                          name
+                            name
                         )} from note"
                         title="Remove link">
 
@@ -2966,13 +3052,14 @@
                     </div>
                   </div>
                 `;
-              })
-              .join('')}
+                })
+                .join('')}
           </div>
         `;
-      }
+    }
 
-      if (type === 'place') {
+    if (type === 'place')
+    {
         return `
           <div
             class="
@@ -2981,60 +3068,61 @@
             ">
 
             ${records
-              .map(place => {
-                const primaryName =
-                  placePrimaryName(
-                    place
-                  )
+                .map(place =>
+                {
+                    const primaryName =
+                        placePrimaryName(
+                            place
+                        )
                   || place.name
                   || 'Unnamed place';
 
-                const secondaryName =
-                  placeSecondaryName(
-                    place
-                  )
+                    const secondaryName =
+                        placeSecondaryName(
+                            place
+                        )
                   || 'No broader place recorded';
 
-                const connectionCounts =
-                  getPlaceConnectionCounts(
-                    place.id,
-                    {
-                      projectId:
+                    const connectionCounts =
+                        getPlaceConnectionCounts(
+                            place.id,
+                            {
+                                projectId:
                         place.projectId
                         || currentProjectId()
-                    }
-                  );
+                            }
+                        );
 
-                const connectionTotal =
-                  Object.values(
-                    connectionCounts
-                  ).reduce(
-                    (
-                      total,
-                      count
-                    ) =>
-                      total
+                    const connectionTotal =
+                        Object.values(
+                            connectionCounts
+                        ).reduce(
+                            (
+                                total,
+                                count
+                            ) =>
+                                total
                       + Number(
                           count || 0
-                        ),
-                    0
-                  );
+                      ),
+                            0
+                        );
 
-                const connectionLabel =
-                  `${connectionTotal} ${
-                    connectionTotal === 1
-                      ? 'connected record'
-                      : 'connected records'
-                  }`;
+                    const connectionLabel =
+                        `${connectionTotal} ${
+                            connectionTotal === 1
+                                ? 'connected record'
+                                : 'connected records'
+                        }`;
 
-                const metadata =
-                  placeHasCoordinates(
-                    place
-                  )
-                    ? connectionLabel
-                    : `${connectionLabel} · No map position`;
+                    const metadata =
+                        placeHasCoordinates(
+                            place
+                        )
+                            ? connectionLabel
+                            : `${connectionLabel} · No map position`;
 
-                return `
+                    return `
                   <div
                     class="
                       relation-row
@@ -3050,11 +3138,11 @@
                       data-note-linked-open
                       data-note-linked-type="place"
                       data-note-linked-id="${escapeHtml(
-                        place.id
-                      )}"
+                            place.id
+                        )}"
                       aria-label="Open ${escapeHtml(
-                        primaryName
-                      )} in Places">
+                            primaryName
+                        )} in Places">
 
                       <span
                         class="notes-place-icon"
@@ -3067,20 +3155,20 @@
 
                         <strong>
                           ${escapeHtml(
-                            primaryName
-                          )}
+                                primaryName
+                            )}
                         </strong>
 
                         <span class="notes-place-secondary">
                           ${escapeHtml(
-                            secondaryName
-                          )}
+                                secondaryName
+                            )}
                         </span>
 
                         <span class="notes-place-meta">
                           ${escapeHtml(
-                            metadata
-                          )}
+                                metadata
+                            )}
                         </span>
                       </span>
                     </button>
@@ -3095,10 +3183,10 @@
                         data-note-linked-remove
                         data-note-linked-type="place"
                         data-note-linked-id="${escapeHtml(
-                          place.id
+                            place.id
                         )}"
                         aria-label="Remove ${escapeHtml(
-                          primaryName
+                            primaryName
                         )} from note"
                         title="Remove link">
 
@@ -3107,15 +3195,16 @@
                     </div>
                   </div>
                 `;
-              })
-              .join('')}
+                })
+                .join('')}
           </div>
         `;
-      }
-      
-      if (
+    }
+
+    if (
         type === 'event'
-      ) {
+    )
+    {
         return `
           <div
             class="
@@ -3124,125 +3213,127 @@
             ">
 
             ${records
-              .map(event =>
-                renderEventRelationItem({
-                  event,
+                .map(event =>
+                    renderEventRelationItem({
+                        event,
 
-                  openAttributes:
+                        openAttributes:
                     `
                       data-note-linked-open
                       data-note-linked-type="event"
                       data-note-linked-id="${escapeHtml(
-                        event.id
-                      )}"
+                            event.id
+                        )}"
                     `,
 
-                  removeAttributes:
+                        removeAttributes:
                     `
                       data-note-linked-remove
                       data-note-linked-type="event"
                       data-note-linked-id="${escapeHtml(
-                        event.id
-                      )}"
+                            event.id
+                        )}"
                     `,
 
-                  removeContextLabel:
+                        removeContextLabel:
                     'note'
-                })
-              )
-              .join('')}
+                    })
+                )
+                .join('')}
           </div>
         `;
-      }
+    }
 
-      if (
+    if (
         type === 'archiveFile'
-      ) {
+    )
+    {
         return renderConnectedFileList({
-          files:
+            files:
             records,
 
-          contextType:
+            contextType:
             'note',
 
-          contextId:
+            contextId:
             noteId,
 
-          emptyText:
+            emptyText:
             'No files linked to this note.'
         });
-      }
+    }
 
-      if (
+    if (
         type === 'source'
-      ) {
+    )
+    {
         const note =
-          getNote(
-            noteId,
-            {
-              includeArchived:
+            getNote(
+                noteId,
+                {
+                    includeArchived:
                 true
-            }
-          );
+                }
+            );
 
         return renderConnectedSourceList({
-          targetType:
+            targetType:
             'note',
 
-          targetId:
+            targetId:
             noteId,
 
-          projectId:
+            projectId:
             note?.projectId
             || records[0]?.projectId
             || currentProjectId(),
 
-          sources:
+            sources:
             records,
 
-          /*
+            /*
             Notes should display every connected
             source, not a shortened preview.
           */
-          limit:
+            limit:
             Number.POSITIVE_INFINITY,
 
-          emptyText:
+            emptyText:
             'No sources linked to this note.'
         });
-      }
+    }
 
-      return `
+    return `
         <div class="notes-linked-list">
           ${records
-            .map(record => `
+                .map(record => `
               <div class="notes-linked-row">
                 <button
                   class="notes-linked-main"
                   type="button"
                   data-note-linked-open
                   data-note-linked-type="${escapeHtml(
-                    type
-                  )}"
+                        type
+                    )}"
                   data-note-linked-id="${escapeHtml(
-                    record.id
-                  )}">
+                        record.id
+                    )}">
 
                   <strong>
                     ${escapeHtml(
-                      noteEntityLabel(
-                        type,
-                        record
-                      )
+                        noteEntityLabel(
+                            type,
+                            record
+                        )
                     )}
                   </strong>
 
                   <span>
                     ${escapeHtml(
-                      noteEntityMeta(
-                        type,
-                        record
-                      )
+                        noteEntityMeta(
+                            type,
+                            record
+                        )
                     )}
                   </span>
                 </button>
@@ -3256,13 +3347,13 @@
                     type="button"
                     data-note-linked-remove
                     data-note-linked-type="${escapeHtml(
-                      type
+                        type
                     )}"
                     data-note-linked-id="${escapeHtml(
-                      record.id
+                        record.id
                     )}"
                     aria-label="Remove ${escapeHtml(
-                      config.singular
+                        config.singular
                     )} link"
                     title="Remove link">
 
@@ -3271,15 +3362,16 @@
                 </div>
               </div>
             `)
-            .join('')}
+                .join('')}
         </div>
       `;
-    }
+}
 
-    function renderNoteLinkedPhotoGrid(
-      records
-    ) {
-      return `
+function renderNoteLinkedPhotoGrid(
+    records
+)
+{
+    return `
         <div
           class="
             connected-photo-grid
@@ -3287,14 +3379,15 @@
           ">
 
           ${records
-            .map(photo => {
-              const label =
-                noteEntityLabel(
-                  'photo',
-                  photo
-                );
+                .map(photo =>
+                {
+                    const label =
+                        noteEntityLabel(
+                            'photo',
+                            photo
+                        );
 
-              return `
+                    return `
                 <div class="notes-linked-photo-item">
                   <button
                     class="connected-photo-button"
@@ -3302,20 +3395,20 @@
                     data-note-linked-open
                     data-note-linked-type="photo"
                     data-note-linked-id="${escapeHtml(
-                      photo.id
+                        photo.id
                     )}"
                     title="${escapeHtml(
-                      label
+                        label
                     )}"
                     aria-label="Open ${escapeHtml(
-                      label
+                        label
                     )} in Albums">
 
                     ${renderPhotoThumbnail(
-                      photo,
-                      {
-                        label
-                      }
+                        photo,
+                        {
+                            label
+                        }
                     )}
                   </button>
 
@@ -3325,7 +3418,7 @@
                     data-note-linked-remove
                     data-note-linked-type="photo"
                     data-note-linked-id="${escapeHtml(
-                      photo.id
+                        photo.id
                     )}"
                     aria-label="Remove photo link"
                     title="Remove link">
@@ -3334,78 +3427,80 @@
                   </button>
                 </div>
               `;
-            })
-            .join('')}
+                })
+                .join('')}
         </div>
       `;
+}
+
+function renderNoteLinkedEntitySection(
+    note,
+    type
+)
+{
+    const config =
+        getNoteEntityConfig(
+            type
+        );
+
+    if (!config)
+    {
+        return '';
     }
 
-    function renderNoteLinkedEntitySection(
-      note,
-      type
-    ) {
-      const config =
-        getNoteEntityConfig(
-          type
-        );
-
-      if (!config) {
-        return '';
-      }
-
-      const records =
+    const records =
         noteEntityRecordsForNote(
-          note,
-          type
+            note,
+            type
         );
 
-      const countLabel =
+    const countLabel =
         `${records.length} ${
-          records.length === 1
-            ? config.singular
-            : config.plural
+            records.length === 1
+                ? config.singular
+                : config.plural
         }`;
 
-      const rows =
+    const rows =
         type === 'source'
-          ? renderConnectedSourceList({
-              targetType:
+            ? renderConnectedSourceList({
+                targetType:
                 'note',
 
-              targetId:
+                targetId:
                 note.id,
 
-              projectId:
+                projectId:
                 note.projectId,
 
-              sources:
+                sources:
                 records,
 
-              emptyText:
+                emptyText:
                 'No sources linked to this note.'
             })
-          : records.length
-            ? (
-                type === 'photo'
-                  ? renderNoteLinkedPhotoGrid(
-                      records
-                    )
-                  : renderNoteLinkedRecordRows(
-                      type,
-                      config,
-                      records,
-                      note.id
-                    )
-              )
-            : `
+            : records.length
+                ? (
+                    type === 'photo'
+                        ? renderNoteLinkedPhotoGrid(
+                            records
+                        )
+                        : renderNoteLinkedRecordRows(
+                            type,
+                            config,
+                            records,
+                            note.id
+                        )
+                )
+                : `
               <span class="notes-section-empty">
                 No ${escapeHtml(
-                  config.plural
+                    config.plural
                 )} linked to this note.
               </span>
             `;
 
-      return renderNoteEditorSection({
+    return renderNoteEditorSection({
         id:
           config.sectionKey,
 
@@ -3420,31 +3515,32 @@
             class="link"
             type="button"
             data-note-manage-links="${escapeHtml(
-              type
+                type
             )}">
 
             ${renderPanelButtonLabel(
-              icon.plus,
-              `Add ${
-                config.singular
-              }`
+                icon.plus,
+                `Add ${
+                    config.singular
+                }`
             )}
           </button>
         `,
 
         body:
           rows
-      });
-    }
+    });
+}
 
-    function renderRelatedNoteIcon(
-      className = ''
-    ) {
-      return `
+function renderRelatedNoteIcon(
+    className = ''
+)
+{
+    return `
         <span
           class="notes-related-icon ${escapeHtml(
-            className
-          )}"
+                className
+            )}"
           aria-hidden="true">
 
           <span class="notes-related-icon-document">
@@ -3456,40 +3552,42 @@
           </span>
         </span>
       `;
+}
+
+function renderRelatedNoteRelationItem({
+    note,
+    openAttributes =
+        '',
+    removeAttributes =
+        '',
+    removeContextLabel =
+        'item',
+    readOnly =
+        false
+} = {})
+{
+    if (!note)
+    {
+        return '';
     }
 
-    function renderRelatedNoteRelationItem({
-      note,
-      openAttributes =
-        '',
-      removeAttributes =
-        '',
-      removeContextLabel =
-        'item',
-      readOnly =
-        false
-    } = {}) {
-      if (!note) {
-        return '';
-      }
-
-      const title =
+    const title =
         note.title
         || 'Untitled note';
 
-      const excerpt =
+    const excerpt =
         noteExcerpt(
-          note,
-          120
+            note,
+            120
         )
         || 'No note content';
 
-      const metadata =
+    const metadata =
         relatedNotePermanentMetadata(
-          note
+            note
         );
 
-      const content = `
+    const content = `
         ${renderRelatedNoteIcon()}
 
         <span
@@ -3508,13 +3606,13 @@
               ">
 
               ${escapeHtml(
-                title
-              )}
+                    title
+                )}
             </strong>
 
             ${
-              note.archived
-                ? `
+                note.archived
+                    ? `
                   <span
                     class="
                       notes-related-archived-badge
@@ -3523,7 +3621,7 @@
                     Archived
                   </span>
                 `
-                : ''
+                    : ''
             }
           </span>
 
@@ -3533,7 +3631,7 @@
             ">
 
             ${escapeHtml(
-              excerpt
+                excerpt
             )}
           </span>
 
@@ -3543,13 +3641,13 @@
             ">
 
             ${escapeHtml(
-              metadata
+                metadata
             )}
           </span>
         </span>
       `;
 
-      return `
+    return `
         <div
           class="
             relation-row
@@ -3557,8 +3655,8 @@
           ">
 
           ${
-            readOnly
-              ? `
+                readOnly
+                    ? `
                 <div
                   class="
                     relation-row-main
@@ -3568,7 +3666,7 @@
                   ${content}
                 </div>
               `
-              : `
+                    : `
                 <button
                   class="
                     relation-row-main
@@ -3577,18 +3675,18 @@
                   type="button"
                   ${openAttributes}
                   aria-label="Open ${escapeHtml(
-                    title
-                  )}">
+                        title
+                    )}">
 
                   ${content}
                 </button>
               `
-          }
+            }
 
           ${
-            !readOnly
+                !readOnly
             && removeAttributes
-              ? `
+                    ? `
                 <div
                   class="
                     relation-actions
@@ -3602,9 +3700,9 @@
                     type="button"
                     ${removeAttributes}
                     aria-label="Remove ${escapeHtml(
-                      title
+                        title
                     )} from ${escapeHtml(
-                      removeContextLabel
+                        removeContextLabel
                     )}"
                     title="Remove link">
 
@@ -3612,178 +3710,182 @@
                   </button>
                 </div>
               `
-              : ''
-          }
+                    : ''
+            }
         </div>
       `;
+}
+
+function renderRelatedNoteCollectionChips(
+    note,
+    limit = 2
+)
+{
+    const collections =
+        getCollectionsForNote(
+            note.id,
+            {
+                projectId:
+              note.projectId
+            }
+        );
+
+    if (!collections.length)
+    {
+        return '';
     }
 
-    function renderRelatedNoteCollectionChips(
-      note,
-      limit = 2
-    ) {
-      const collections =
-        getCollectionsForNote(
-          note.id,
-          {
-            projectId:
-              note.projectId
-          }
-        );
-
-      if (!collections.length) {
-        return '';
-      }
-
-      const visible =
+    const visible =
         collections.slice(
-          0,
-          limit
+            0,
+            limit
         );
 
-      const hiddenCount =
+    const hiddenCount =
         collections.length
         - visible.length;
 
-      return `
+    return `
         <span class="notes-related-collection-chips">
           ${visible
-            .map(collection => `
+                .map(collection => `
               <span class="notes-related-collection-chip">
                 ${escapeHtml(
-                  collection.name
+                    collection.name
                 )}
               </span>
             `)
-            .join('')}
+                .join('')}
 
           ${
-            hiddenCount > 0
-              ? `
+                hiddenCount > 0
+                    ? `
                 <span class="notes-related-collection-chip">
                   +${hiddenCount}
                 </span>
               `
-              : ''
-          }
+                    : ''
+            }
         </span>
       `;
-    }
+}
 
-    function relatedNotePermanentMetadata(
-      note
-    ) {
-      const collections =
+function relatedNotePermanentMetadata(
+    note
+)
+{
+    const collections =
         getCollectionsForNote(
-          note.id,
-          {
-            projectId:
+            note.id,
+            {
+                projectId:
               note.projectId
-          }
+            }
         );
 
-      const collectionLabel =
+    const collectionLabel =
         collections.length
-          ? [
-              collections[0].name,
+            ? [
+                collections[0].name,
 
-              collections.length > 1
-                ? `+${collections.length - 1}`
-                : ''
+                collections.length > 1
+                    ? `+${collections.length - 1}`
+                    : ''
             ]
-              .filter(Boolean)
-              .join(' ')
-          : '';
+                .filter(Boolean)
+                .join(' ')
+            : '';
 
-      const linkedCount =
+    const linkedCount =
         noteExternalEntityCount(
-          note
+            note
         );
 
-      return [
+    return [
         collectionLabel,
 
         `${linkedCount} ${
-          linkedCount === 1
-            ? 'linked record'
-            : 'linked records'
+            linkedCount === 1
+                ? 'linked record'
+                : 'linked records'
         }`,
 
         formatNoteRelativeUpdatedAt(
-          note
+            note
         )
-      ]
+    ]
         .filter(Boolean)
         .join(' · ');
-    }
+}
 
-    function renderNoteRelatedSection(
-      note
-    ) {
-      const related =
+function renderNoteRelatedSection(
+    note
+)
+{
+    const related =
         getRelatedNotes(
-          note.id,
-          {
-            projectId:
+            note.id,
+            {
+                projectId:
               note.projectId,
 
-            includeArchived:
+                includeArchived:
               true
-          }
+            }
         )
-          .slice()
-          .sort((first, second) =>
-            Number(Boolean(first.archived))
+            .slice()
+            .sort((first, second) =>
+                Number(Boolean(first.archived))
             - Number(Boolean(second.archived))
             || String(first.title || '')
-              .localeCompare(
-                String(second.title || '')
-              )
-          );
+                .localeCompare(
+                    String(second.title || '')
+                )
+            );
 
-      const rows =
+    const rows =
         related.length
-          ? `
+            ? `
             <div
               class="
                 relationship-list
                 notes-related-list
               ">
               ${related
-                .slice(0, CONNECTED_NOTES_PREVIEW_LIMIT)
-                .map(item =>
-                  renderRelatedNoteRelationItem({
-                    note:
+                    .slice(0, CONNECTED_NOTES_PREVIEW_LIMIT)
+                    .map(item =>
+                        renderRelatedNoteRelationItem({
+                            note:
                       item,
 
-                    openAttributes:
+                            openAttributes:
                       `
                         data-note-related-open="${escapeHtml(
-                          item.id
+                            item.id
                         )}"
                       `,
 
-                    removeAttributes:
+                            removeAttributes:
                       `
                         data-note-related-remove="${escapeHtml(
-                          item.id
+                            item.id
                         )}"
                       `,
 
-                    removeContextLabel:
+                            removeContextLabel:
                       'note'
-                  })
-                )
-                .join('')}
+                        })
+                    )
+                    .join('')}
             </div>
           `
-          : `
+            : `
             <span class="notes-section-empty">
               No related notes.
             </span>
           `;
 
-      return renderNoteEditorSection({
+    return renderNoteEditorSection({
         id:
           'related',
 
@@ -3792,9 +3894,9 @@
 
         meta:
           `${related.length} ${
-            related.length === 1
-              ? 'note'
-              : 'notes'
+              related.length === 1
+                  ? 'note'
+                  : 'notes'
           }`,
 
         action: `
@@ -3804,26 +3906,27 @@
             id="notesManageRelated">
 
             ${renderPanelButtonLabel(
-              icon.plus,
-              'Add note'
+                icon.plus,
+                'Add note'
             )}
           </button>
         `,
 
         body:
           rows
-      });
-    }
+    });
+}
 
-    function renderNoteInfoSection(
-      note
-    ) {
-      const body =
+function renderNoteInfoSection(
+    note
+)
+{
+    const body =
         String(
-          note.body || ''
+            note.body || ''
         );
 
-      return renderNoteEditorSection({
+    return renderNoteEditorSection({
         id:
           'info',
 
@@ -3836,9 +3939,9 @@
               <span>Created</span>
               <strong>
                 ${escapeHtml(
-                  formatNoteInfoDate(
-                    note.createdAt
-                  )
+                    formatNoteInfoDate(
+                        note.createdAt
+                    )
                 )}
               </strong>
             </div>
@@ -3847,9 +3950,9 @@
               <span>Updated</span>
               <strong>
                 ${escapeHtml(
-                  formatNoteInfoDate(
-                    note.updatedAt
-                  )
+                    formatNoteInfoDate(
+                        note.updatedAt
+                    )
                 )}
               </strong>
             </div>
@@ -3858,7 +3961,7 @@
               <span>Words</span>
               <strong>
                 ${noteBodyWordCount(
-                  note
+                    note
                 )}
               </strong>
             </div>
@@ -3871,153 +3974,161 @@
             </div>
           </div>
         `
-      });
+    });
+}
+
+function openNoteCollectionsModal(
+    noteId
+)
+{
+    const note =
+        getNote(
+            noteId,
+            {
+                includeArchived: true
+            }
+        );
+
+    if (!note)
+    {
+        return;
     }
 
-    function openNoteCollectionsModal(
-      noteId
-    ) {
-      const note =
-        getNote(
-          noteId,
-          {
-            includeArchived: true
-          }
-        );
-
-      if (!note) {
-        return;
-      }
-
-      const projectId =
+    const projectId =
         note.projectId;
 
-      let query = '';
-      let createMode = false;
+    let query = '';
+    let createMode = false;
 
-      const assignedCollectionIds =
+    const assignedCollectionIds =
         new Set(
-          note.collectionIds || []
+            note.collectionIds || []
         );
 
-      /*
+    /*
         Only newly selected collections
         are stored here. Existing memberships
         remain visible but disabled.
       */
-      const selectedCollectionIds =
+    const selectedCollectionIds =
         new Set();
 
-      const createDraft = {
+    const createDraft = {
         name: '',
         description: ''
-      };
+    };
 
-      const allCollections = () =>
+    const allCollections = () =>
         getProjectNoteCollections(
-          projectId
+            projectId
         );
 
-      const collectionSearchText =
+    const collectionSearchText =
         collection =>
-          `
+            `
             ${collection.name || ''}
             ${collection.description || ''}
           `
-            .trim()
-            .toLowerCase();
+                .trim()
+                .toLowerCase();
 
-      const visibleCollections = () => {
+    const visibleCollections = () =>
+    {
         const normalizedQuery =
-          query
-            .trim()
-            .toLowerCase();
+            query
+                .trim()
+                .toLowerCase();
 
-        if (!normalizedQuery) {
-          return allCollections();
+        if (!normalizedQuery)
+        {
+            return allCollections();
         }
 
         return allCollections()
-          .filter(collection =>
-            collectionSearchText(
-              collection
-            ).includes(
-              normalizedQuery
-            )
-          );
-      };
+            .filter(collection =>
+                collectionSearchText(
+                    collection
+                ).includes(
+                    normalizedQuery
+                )
+            );
+    };
 
-      const collectionNoteCount =
+    const collectionNoteCount =
         collection =>
-          getNotesForCollection(
-            collection.id,
-            {
-              projectId,
-              includeArchived: true
-            }
-          ).length;
+            getNotesForCollection(
+                collection.id,
+                {
+                    projectId,
+                    includeArchived: true
+                }
+            ).length;
 
-      const selectionLabel = () => {
+    const selectionLabel = () =>
+    {
         const count =
-          selectedCollectionIds.size;
+            selectedCollectionIds.size;
 
         return `1 note selected · ${count} ${
-          count === 1
-            ? 'collection'
-            : 'collections'
+            count === 1
+                ? 'collection'
+                : 'collections'
         } chosen`;
-      };
+    };
 
-      const saveLabel = () => {
+    const saveLabel = () =>
+    {
         const count =
-          selectedCollectionIds.size;
+            selectedCollectionIds.size;
 
-        if (!count) {
-          return 'Add to collections';
+        if (!count)
+        {
+            return 'Add to collections';
         }
 
         return `Add to ${count} ${
-          count === 1
-            ? 'collection'
-            : 'collections'
+            count === 1
+                ? 'collection'
+                : 'collections'
         }`;
-      };
+    };
 
-      const renderCollectionRow =
-        collection => {
-          const alreadyAssigned =
-            assignedCollectionIds.has(
-              collection.id
-            );
+    const renderCollectionRow =
+        collection =>
+        {
+            const alreadyAssigned =
+                assignedCollectionIds.has(
+                    collection.id
+                );
 
-          const selected =
-            selectedCollectionIds.has(
-              collection.id
-            );
+            const selected =
+                selectedCollectionIds.has(
+                    collection.id
+                );
 
-          const noteCount =
-            collectionNoteCount(
-              collection
-            );
+            const noteCount =
+                collectionNoteCount(
+                    collection
+                );
 
-          return `
+            return `
             <label
               class="
                 album-picker-result
                 ${
-                  selected
-                    ? 'is-selected'
-                    : ''
+                    selected
+                        ? 'is-selected'
+                        : ''
                 }
                 ${
-                  alreadyAssigned
-                    ? 'is-complete'
-                    : ''
+                    alreadyAssigned
+                        ? 'is-complete'
+                        : ''
                 }
               "
               data-note-collection-picker-row="${escapeHtml(
-                collection.id
-              )}">
+                    collection.id
+                )}">
 
               <span class="album-picker-cover">
                 ${icon.folder}
@@ -4026,31 +4137,31 @@
               <span class="album-picker-copy">
                 <strong>
                   ${escapeHtml(
-                    collection.name
+                        collection.name
                     || 'Untitled collection'
-                  )}
+                    )}
                 </strong>
 
                 <span class="album-picker-description">
                   ${escapeHtml(
-                    collection.description
+                        collection.description
                     || 'No description'
-                  )}
+                    )}
                 </span>
 
                 <span class="album-picker-meta">
                   <span>
                     ${noteCount}
                     ${
-                      noteCount === 1
-                        ? 'note'
-                        : 'notes'
+                        noteCount === 1
+                            ? 'note'
+                            : 'notes'
                     }
                   </span>
 
                   ${
-                    alreadyAssigned
-                      ? `
+                        alreadyAssigned
+                            ? `
                         <span
                           aria-hidden="true">
                           ·
@@ -4064,59 +4175,62 @@
                           Already added
                         </span>
                       `
-                      : ''
-                  }
+                            : ''
+                    }
                 </span>
               </span>
 
               <input
                 type="checkbox"
                 value="${escapeHtml(
-                  collection.id
+                    collection.id
                 )}"
                 data-note-collection-picker-choice
                 ${
-                  selected
+                    selected
                   || alreadyAssigned
-                    ? 'checked'
-                    : ''
+                        ? 'checked'
+                        : ''
                 }
                 ${
-                  alreadyAssigned
-                    ? 'disabled'
-                    : ''
+                    alreadyAssigned
+                        ? 'disabled'
+                        : ''
                 }
                 aria-label="${escapeHtml(
-                  alreadyAssigned
-                    ? `${
-                        collection.name
-                      } is already assigned`
-                    : `${
-                        selected
-                          ? 'Remove'
-                          : 'Add'
-                      } ${
-                        collection.name
-                      }`
+                    alreadyAssigned
+                        ? `${
+                            collection.name
+                        } is already assigned`
+                        : `${
+                            selected
+                                ? 'Remove'
+                                : 'Add'
+                        } ${
+                            collection.name
+                        }`
                 )}">
             </label>
           `;
         };
 
-      const renderResults = () => {
+    const renderResults = () =>
+    {
         const collections =
-          visibleCollections();
+            visibleCollections();
 
-        if (collections.length) {
-          return collections
-            .map(
-              renderCollectionRow
-            )
-            .join('');
+        if (collections.length)
+        {
+            return collections
+                .map(
+                    renderCollectionRow
+                )
+                .join('');
         }
 
-        if (query.trim()) {
-          return `
+        if (query.trim())
+        {
+            return `
             <div class="album-picker-empty">
               <div class="album-picker-empty-card">
                 <strong>
@@ -4169,9 +4283,9 @@
             </div>
           </div>
         `;
-      };
+    };
 
-      openModal(`
+    openModal(`
         <div
           class="
             modal
@@ -4191,7 +4305,7 @@
 
               <p>
                 ${escapeHtml(
-                  note.title
+                    note.title
                   || 'Untitled note'
                 )}
               </p>
@@ -4344,78 +4458,82 @@
         </div>
       `);
 
-      const modal =
+    const modal =
         modalBackdrop.querySelector(
-          '.note-collection-picker-modal'
+            '.note-collection-picker-modal'
         );
 
-      if (!modal) {
+    if (!modal)
+    {
         return;
-      }
+    }
 
-      const browsePanel =
+    const browsePanel =
         modal.querySelector(
-          '[data-note-collection-picker-browse]'
+            '[data-note-collection-picker-browse]'
         );
 
-      const createPanel =
+    const createPanel =
         modal.querySelector(
-          '[data-note-collection-picker-create-form]'
+            '[data-note-collection-picker-create-form]'
         );
 
-      const resultsHost =
+    const resultsHost =
         modal.querySelector(
-          '[data-note-collection-picker-results]'
+            '[data-note-collection-picker-results]'
         );
 
-      const resultsTitle =
+    const resultsTitle =
         modal.querySelector(
-          '[data-note-collection-picker-results-title]'
+            '[data-note-collection-picker-results-title]'
         );
 
-      const resultsMeta =
+    const resultsMeta =
         modal.querySelector(
-          '[data-note-collection-picker-results-meta]'
+            '[data-note-collection-picker-results-meta]'
         );
 
-      const countElement =
+    const countElement =
         modal.querySelector(
-          '[data-note-collection-picker-count]'
+            '[data-note-collection-picker-count]'
         );
 
-      const footerActions =
+    const footerActions =
         modal.querySelector(
-          '[data-note-collection-picker-footer-actions]'
+            '[data-note-collection-picker-footer-actions]'
         );
 
-      const searchInput =
+    const searchInput =
         modal.querySelector(
-          '[data-note-collection-picker-search]'
+            '[data-note-collection-picker-search]'
         );
 
-      const nameInput =
+    const nameInput =
         modal.querySelector(
-          '[data-note-collection-picker-name]'
+            '[data-note-collection-picker-name]'
         );
 
-      const descriptionInput =
+    const descriptionInput =
         modal.querySelector(
-          '[data-note-collection-picker-description]'
+            '[data-note-collection-picker-description]'
         );
 
-      const refreshFooter = () => {
+    const refreshFooter = () =>
+    {
         if (
-          !countElement
+            !countElement
           || !footerActions
-        ) {
-          return;
+        )
+        {
+            return;
         }
 
-        if (createMode) {
-          countElement.textContent =
-            'Create a new collection';
+        if (createMode)
+        {
+            countElement.textContent =
+                'Create a new collection';
 
-          footerActions.innerHTML = `
+            footerActions.innerHTML = `
             <button
               class="button secondary"
               type="button"
@@ -4432,23 +4550,23 @@
               type="submit"
               form="noteCollectionPickerCreateForm"
               ${
-                createDraft.name.trim()
-                  ? ''
-                  : 'disabled'
-              }>
+                    createDraft.name.trim()
+                        ? ''
+                        : 'disabled'
+                }>
               ${escapeHtml(
-                t('Create and select')
-              )}
+                    t('Create and select')
+                )}
             </button>
           `;
 
-          return;
+            return;
         }
 
         countElement.textContent =
-          translateText(
-            selectionLabel()
-          );
+            translateText(
+                selectionLabel()
+            );
 
         footerActions.innerHTML = `
           <button
@@ -4467,992 +4585,1060 @@
             type="button"
             data-note-collection-picker-save
             ${
-              selectedCollectionIds.size
-                ? ''
-                : 'disabled'
+                selectedCollectionIds.size
+                    ? ''
+                    : 'disabled'
             }>
             ${escapeHtml(
-              saveLabel()
+                saveLabel()
             )}
           </button>
         `;
-      };
+    };
 
-      const refreshResults = () => {
+    const refreshResults = () =>
+    {
         const collections =
-          visibleCollections();
+            visibleCollections();
 
         const total =
-          allCollections().length;
+            allCollections().length;
 
         const hasQuery =
-          Boolean(
-            query.trim()
-          );
+            Boolean(
+                query.trim()
+            );
 
-        if (resultsTitle) {
-          resultsTitle.textContent =
-            t(
-              hasQuery
-                ? 'Search results'
-                : 'All collections'
+        if (resultsTitle)
+        {
+            resultsTitle.textContent =
+                t(
+                    hasQuery
+                        ? 'Search results'
+                        : 'All collections'
+                );
+        }
+
+        if (resultsMeta)
+        {
+            const source =
+                hasQuery
+                    ? `${collections.length} of ${total} collections`
+                    : `${total} ${
+                        total === 1
+                            ? 'collection'
+                            : 'collections'
+                    }`;
+
+            resultsMeta.textContent =
+                translateText(source);
+        }
+
+        if (resultsHost)
+        {
+            resultsHost.innerHTML =
+                renderResults();
+
+            localizeUI(
+                resultsHost
             );
         }
 
-        if (resultsMeta) {
-          const source =
-            hasQuery
-              ? `${collections.length} of ${total} collections`
-              : `${total} ${
-                  total === 1
-                    ? 'collection'
-                    : 'collections'
-                }`;
-
-          resultsMeta.textContent =
-            translateText(source);
-        }
-
-        if (resultsHost) {
-          resultsHost.innerHTML =
-            renderResults();
-
-          localizeUI(
-            resultsHost
-          );
-        }
-
         refreshFooter();
-      };
+    };
 
-      const showBrowse = () => {
+    const showBrowse = () =>
+    {
         createMode = false;
 
         browsePanel.hidden =
-          false;
+            false;
 
         createPanel.hidden =
-          true;
+            true;
 
         refreshResults();
 
         requestAnimationFrame(
-          () => {
-            searchInput?.focus({
-              preventScroll: true
-            });
-          }
+            () =>
+            {
+                searchInput?.focus({
+                    preventScroll: true
+                });
+            }
         );
-      };
+    };
 
-      const showCreate = () => {
+    const showCreate = () =>
+    {
         createMode = true;
 
         browsePanel.hidden =
-          true;
+            true;
 
         createPanel.hidden =
-          false;
+            false;
 
-        if (nameInput) {
-          nameInput.value =
-            createDraft.name;
+        if (nameInput)
+        {
+            nameInput.value =
+                createDraft.name;
         }
 
-        if (descriptionInput) {
-          descriptionInput.value =
-            createDraft.description;
+        if (descriptionInput)
+        {
+            descriptionInput.value =
+                createDraft.description;
         }
 
         refreshFooter();
 
         requestAnimationFrame(
-          () => {
-            nameInput?.focus({
-              preventScroll: true
-            });
-          }
-        );
-      };
-
-      searchInput?.addEventListener(
-        'input',
-        event => {
-          query =
-            event.currentTarget.value;
-
-          refreshResults();
-        }
-      );
-
-      nameInput?.addEventListener(
-        'input',
-        event => {
-          createDraft.name =
-            event.currentTarget.value;
-
-          refreshFooter();
-        }
-      );
-
-      descriptionInput?.addEventListener(
-        'input',
-        event => {
-          createDraft.description =
-            event.currentTarget.value;
-        }
-      );
-
-      createPanel?.addEventListener(
-        'submit',
-        event => {
-          event.preventDefault();
-
-          const name =
-            createDraft.name.trim();
-
-          if (!name) {
-            nameInput?.focus();
-            return;
-          }
-
-          const duplicate =
-            allCollections()
-              .some(collection =>
-                String(
-                  collection.name || ''
-                )
-                  .trim()
-                  .toLowerCase()
-                === name.toLowerCase()
-              );
-
-          if (duplicate) {
-            showToast(
-              'A collection with this name already exists.'
-            );
-
-            nameInput?.focus();
-            return;
-          }
-
-          const collection = {
-            id:
-              createRuntimeId(
-                'note-col'
-              ),
-
-            projectId,
-
-            name,
-
-            description:
-              createDraft.description
-                .trim()
-          };
-
-          sampleData.noteCollections.push(
-            collection
-          );
-
-          selectedCollectionIds.add(
-            collection.id
-          );
-
-          createDraft.name = '';
-          createDraft.description = '';
-          query = '';
-
-          if (searchInput) {
-            searchInput.value = '';
-          }
-
-          showBrowse();
-
-          requestAnimationFrame(
-            () => {
-              modal
-                .querySelector(
-                  `[data-note-collection-picker-row="${
-                    CSS.escape(
-                      collection.id
-                    )
-                  }"]`
-                )
-                ?.scrollIntoView({
-                  block: 'nearest'
+            () =>
+            {
+                nameInput?.focus({
+                    preventScroll: true
                 });
             }
-          );
-        }
-      );
+        );
+    };
 
-      modal.addEventListener(
-        'change',
-        event => {
-          const checkbox =
-            event.target.closest(
-              '[data-note-collection-picker-choice]'
+    searchInput?.addEventListener(
+        'input',
+        event =>
+        {
+            query =
+                event.currentTarget.value;
+
+            refreshResults();
+        }
+    );
+
+    nameInput?.addEventListener(
+        'input',
+        event =>
+        {
+            createDraft.name =
+                event.currentTarget.value;
+
+            refreshFooter();
+        }
+    );
+
+    descriptionInput?.addEventListener(
+        'input',
+        event =>
+        {
+            createDraft.description =
+                event.currentTarget.value;
+        }
+    );
+
+    createPanel?.addEventListener(
+        'submit',
+        event =>
+        {
+            event.preventDefault();
+
+            const name =
+                createDraft.name.trim();
+
+            if (!name)
+            {
+                nameInput?.focus();
+                return;
+            }
+
+            const duplicate =
+                allCollections()
+                    .some(collection =>
+                        String(
+                            collection.name || ''
+                        )
+                            .trim()
+                            .toLowerCase()
+                === name.toLowerCase()
+                    );
+
+            if (duplicate)
+            {
+                showToast(
+                    'A collection with this name already exists.'
+                );
+
+                nameInput?.focus();
+                return;
+            }
+
+            const collection = {
+                id:
+              createRuntimeId(
+                  'note-col'
+              ),
+
+                projectId,
+
+                name,
+
+                description:
+              createDraft.description
+                  .trim()
+            };
+
+            sampleData.noteCollections.push(
+                collection
             );
 
-          if (!checkbox) {
-            return;
-          }
-
-          const collectionId =
-            checkbox.value;
-
-          if (checkbox.checked) {
             selectedCollectionIds.add(
-              collectionId
+                collection.id
             );
-          } else {
-            selectedCollectionIds.delete(
-              collectionId
-            );
-          }
 
-          refreshResults();
-        }
-      );
-
-      modal.addEventListener(
-        'click',
-        event => {
-          if (
-            event.target.closest(
-              '[data-note-collection-picker-cancel]'
-            )
-          ) {
-            closeModal();
-            return;
-          }
-          if (
-            event.target.closest(
-              '[data-note-collection-picker-create]'
-            )
-          ) {
-            showCreate();
-            return;
-          }
-
-          if (
-            event.target.closest(
-              '[data-note-collection-picker-back]'
-            )
-          ) {
-            showBrowse();
-            return;
-          }
-
-          if (
-            event.target.closest(
-              '[data-note-collection-picker-clear-search]'
-            )
-          ) {
+            createDraft.name = '';
+            createDraft.description = '';
             query = '';
 
-            if (searchInput) {
-              searchInput.value = '';
+            if (searchInput)
+            {
+                searchInput.value = '';
+            }
+
+            showBrowse();
+
+            requestAnimationFrame(
+                () =>
+                {
+                    modal
+                        .querySelector(
+                            `[data-note-collection-picker-row="${
+                                CSS.escape(
+                                    collection.id
+                                )
+                            }"]`
+                        )
+                        ?.scrollIntoView({
+                            block: 'nearest'
+                        });
+                }
+            );
+        }
+    );
+
+    modal.addEventListener(
+        'change',
+        event =>
+        {
+            const checkbox =
+                event.target.closest(
+                    '[data-note-collection-picker-choice]'
+                );
+
+            if (!checkbox)
+            {
+                return;
+            }
+
+            const collectionId =
+                checkbox.value;
+
+            if (checkbox.checked)
+            {
+                selectedCollectionIds.add(
+                    collectionId
+                );
+            }
+            else
+            {
+                selectedCollectionIds.delete(
+                    collectionId
+                );
             }
 
             refreshResults();
+        }
+    );
 
-            searchInput?.focus({
-              preventScroll: true
-            });
-
-            return;
-          }
-
-          if (
-            event.target.closest(
-              '[data-note-collection-picker-save]'
-            )
-          ) {
+    modal.addEventListener(
+        'click',
+        event =>
+        {
             if (
-              !selectedCollectionIds.size
-            ) {
-              return;
+                event.target.closest(
+                    '[data-note-collection-picker-cancel]'
+                )
+            )
+            {
+                closeModal();
+                return;
+            }
+            if (
+                event.target.closest(
+                    '[data-note-collection-picker-create]'
+                )
+            )
+            {
+                showCreate();
+                return;
             }
 
-            const addedCount =
-              selectedCollectionIds.size;
+            if (
+                event.target.closest(
+                    '[data-note-collection-picker-back]'
+                )
+            )
+            {
+                showBrowse();
+                return;
+            }
 
-            setNoteCollections(
-              note.id,
-              [
-                ...assignedCollectionIds,
-                ...selectedCollectionIds
-              ],
-              {
-                projectId
-              }
-            );
+            if (
+                event.target.closest(
+                    '[data-note-collection-picker-clear-search]'
+                )
+            )
+            {
+                query = '';
 
-            closeModal();
+                if (searchInput)
+                {
+                    searchInput.value = '';
+                }
 
-            renderNotesPreservingInteraction();
+                refreshResults();
 
-            showToast(
-              `${addedCount} ${
-                addedCount === 1
-                  ? 'collection'
-                  : 'collections'
-              } added.`
-            );
-          }
+                searchInput?.focus({
+                    preventScroll: true
+                });
+
+                return;
+            }
+
+            if (
+                event.target.closest(
+                    '[data-note-collection-picker-save]'
+                )
+            )
+            {
+                if (
+                    !selectedCollectionIds.size
+                )
+                {
+                    return;
+                }
+
+                const addedCount =
+                    selectedCollectionIds.size;
+
+                setNoteCollections(
+                    note.id,
+                    [
+                        ...assignedCollectionIds,
+                        ...selectedCollectionIds
+                    ],
+                    {
+                        projectId
+                    }
+                );
+
+                closeModal();
+
+                renderNotesPreservingInteraction();
+
+                showToast(
+                    `${addedCount} ${
+                        addedCount === 1
+                            ? 'collection'
+                            : 'collections'
+                    } added.`
+                );
+            }
         }
-      );
+    );
 
-      refreshResults();
-    }
+    refreshResults();
+}
 
-    function addNotesPlaceIdsFromRecord(
-      record,
-      target
-    ) {
-      if (
+function addNotesPlaceIdsFromRecord(
+    record,
+    target
+)
+{
+    if (
         !record
         || !target
-      ) {
+    )
+    {
         return;
-      }
+    }
 
-      [
+    [
         record.placeId,
         record.birthPlaceId,
         record.deathPlaceId,
         record.burialPlaceId
-      ]
+    ]
         .filter(Boolean)
         .forEach(placeId =>
-          target.add(placeId)
+            target.add(placeId)
         );
 
-      if (
+    if (
         Array.isArray(
-          record.placeIds
+            record.placeIds
         )
-      ) {
+    )
+    {
         record.placeIds
-          .filter(Boolean)
-          .forEach(placeId =>
-            target.add(placeId)
-          );
-      }
+            .filter(Boolean)
+            .forEach(placeId =>
+                target.add(placeId)
+            );
     }
+}
 
-    function notesSuggestedPlaceIds(
-      note
-    ) {
-      const placeIds =
+function notesSuggestedPlaceIds(
+    note
+)
+{
+    const placeIds =
         new Set();
 
-      if (!note) {
+    if (!note)
+    {
         return placeIds;
-      }
+    }
 
-      (
+    (
         note.linkedPersonIds || []
-      )
+    )
         .map(personId =>
-          noteEntityById(
-            'person',
-            personId,
-            note.projectId
-          )
+            noteEntityById(
+                'person',
+                personId,
+                note.projectId
+            )
         )
         .filter(Boolean)
-        .forEach(person => {
-          addNotesPlaceIdsFromRecord(
-            person,
-            placeIds
-          );
-
-          addNotesPlaceIdsFromRecord(
-            person.birth,
-            placeIds
-          );
-
-          addNotesPlaceIdsFromRecord(
-            person.death,
-            placeIds
-          );
-
-          (
-            person.events || []
-          ).forEach(event =>
+        .forEach(person =>
+        {
             addNotesPlaceIdsFromRecord(
-              event,
-              placeIds
-            )
-          );
+                person,
+                placeIds
+            );
 
-          (
-            person.attributes || []
-          ).forEach(attribute =>
             addNotesPlaceIdsFromRecord(
-              attribute,
-              placeIds
-            )
-          );
+                person.birth,
+                placeIds
+            );
+
+            addNotesPlaceIdsFromRecord(
+                person.death,
+                placeIds
+            );
+
+            (
+                person.events || []
+            ).forEach(event =>
+                addNotesPlaceIdsFromRecord(
+                    event,
+                    placeIds
+                )
+            );
+
+            (
+                person.attributes || []
+            ).forEach(attribute =>
+                addNotesPlaceIdsFromRecord(
+                    attribute,
+                    placeIds
+                )
+            );
         });
 
-      (
+    (
         note.linkedEventIds || []
-      )
+    )
         .map(eventId =>
-          noteEntityById(
-            'event',
-            eventId,
-            note.projectId
-          )
+            noteEntityById(
+                'event',
+                eventId,
+                note.projectId
+            )
         )
         .filter(Boolean)
         .forEach(event =>
-          addNotesPlaceIdsFromRecord(
-            event,
-            placeIds
-          )
+            addNotesPlaceIdsFromRecord(
+                event,
+                placeIds
+            )
         );
 
-      getPhotosForNote(
+    getPhotosForNote(
         note.id,
         {
-          projectId:
+            projectId:
             note.projectId
         }
-      ).forEach(photo =>
+    ).forEach(photo =>
         addNotesPlaceIdsFromRecord(
-          photo,
-          placeIds
+            photo,
+            placeIds
         )
-      );
+    );
 
-      [
+    [
         [
-          'source',
-          noteEntityLinkedIds(
-            note,
-            'source'
-          )
+            'source',
+            noteEntityLinkedIds(
+                note,
+                'source'
+            )
         ],
         [
-          'archiveFile',
-          note.linkedArchiveFileIds
+            'archiveFile',
+            note.linkedArchiveFileIds
         ]
-      ].forEach(
+    ].forEach(
         (
-          [
-            type,
-            recordIds
-          ]
-        ) => {
-          (
-            recordIds || []
-          )
-            .map(recordId =>
-              noteEntityById(
+            [
                 type,
-                recordId,
-                note.projectId
-              )
+                recordIds
+            ]
+        ) =>
+        {
+            (
+                recordIds || []
             )
-            .filter(Boolean)
-            .forEach(record =>
-              addNotesPlaceIdsFromRecord(
-                record,
-                placeIds
-              )
-            );
+                .map(recordId =>
+                    noteEntityById(
+                        type,
+                        recordId,
+                        note.projectId
+                    )
+                )
+                .filter(Boolean)
+                .forEach(record =>
+                    addNotesPlaceIdsFromRecord(
+                        record,
+                        placeIds
+                    )
+                );
         }
-      );
+    );
 
-      return placeIds;
+    return placeIds;
+}
+
+function setArchiveFileConnectionIds(
+    fileId,
+    entityType,
+    nextIds
+)
+{
+    const file =
+        archiveFileById(
+            fileId
+        );
+
+    if (!file)
+    {
+        return false;
     }
 
-    function setArchiveFileConnectionIds(
-      fileId,
-      entityType,
-      nextIds
-    ) {
-      const file =
-        archiveFileById(
-          fileId
-        );
-
-      if (!file) {
-        return false;
-      }
-
-      if (
+    if (
         ![
-          'person',
-          'event',
-          'note',
-          'source',
-          'place'
+            'person',
+            'event',
+            'note',
+            'source',
+            'place'
         ].includes(entityType)
-      ) {
+    )
+    {
         return false;
-      }
+    }
 
-      const currentIds =
+    const currentIds =
         new Set(
-          archiveConnectionIds(
-            'file',
-            file.id,
-            entityType
-          )
+            archiveConnectionIds(
+                'file',
+                file.id,
+                entityType
+            )
         );
 
-      const normalizedNextIdList =
+    const normalizedNextIdList =
         archiveUniqueIds(
-          nextIds
+            nextIds
         );
 
-      const nextRecords =
+    const nextRecords =
         normalizedNextIdList.map(id =>
-          archiveConnectionRecord(
-            entityType,
-            id
-          )
+            archiveConnectionRecord(
+                entityType,
+                id
+            )
         );
 
-      if (
+    if (
         nextRecords.some(record =>
-          !record
+            !record
           || (
-            file.projectId
+              file.projectId
             && record.projectId
             && file.projectId
               !== record.projectId
           )
         )
-      ) {
+    )
+    {
         return false;
-      }
+    }
 
-      const normalizedNextIds =
+    const normalizedNextIds =
         new Set(
-          normalizedNextIdList
+            normalizedNextIdList
         );
 
-      if (
+    if (
         entityType === 'place'
         && normalizedNextIds.size > 1
-      ) {
+    )
+    {
         return false;
-      }
+    }
 
-      const writes = [
+    const writes = [
         ...[...currentIds]
-          .filter(recordId =>
-            !normalizedNextIds.has(
-              recordId
+            .filter(recordId =>
+                !normalizedNextIds.has(
+                    recordId
+                )
             )
-          )
-          .map(recordId => ({
-            ownerType: 'file',
-            ownerId: file.id,
-            entityType,
-            entityId: recordId,
-            shouldLink: false
-          })),
+            .map(recordId => ({
+                ownerType: 'file',
+                ownerId: file.id,
+                entityType,
+                entityId: recordId,
+                shouldLink: false
+            })),
 
         ...[...normalizedNextIds]
-          .filter(recordId =>
-            !currentIds.has(
-              recordId
+            .filter(recordId =>
+                !currentIds.has(
+                    recordId
+                )
             )
-          )
-          .map(recordId => ({
-            ownerType: 'file',
-            ownerId: file.id,
-            entityType,
-            entityId: recordId,
-            shouldLink: true
-          }))
-      ];
+            .map(recordId => ({
+                ownerType: 'file',
+                ownerId: file.id,
+                entityType,
+                entityId: recordId,
+                shouldLink: true
+            }))
+    ];
 
-      const committed =
+    const committed =
         archiveSetConnectionsAtomically(
-          writes
+            writes
         );
 
-      if (!committed.ok) {
+    if (!committed.ok)
+    {
         return false;
-      }
+    }
 
-      const savedIds =
+    const savedIds =
         new Set(
-          archiveConnectionIds(
-            'file',
-            file.id,
-            entityType
-          )
+            archiveConnectionIds(
+                'file',
+                file.id,
+                entityType
+            )
         );
 
-      const saved =
+    const saved =
         savedIds.size === normalizedNextIds.size
         && [...normalizedNextIds].every(id => savedIds.has(id));
 
-      return saved;
+    return saved;
+}
+
+function archiveFileSuggestedPersonIds(
+    file
+)
+{
+    if (!file)
+    {
+        return [];
     }
 
-    function archiveFileSuggestedPersonIds(
-      file
-    ) {
-      if (!file) {
-        return [];
-      }
-
-      const eventPersonIds =
+    const eventPersonIds =
         (
-          file.linkedEventIds
+            file.linkedEventIds
           || []
-        ).flatMap(eventId => {
-          const event =
-            archiveConnectionRecord(
-              'event',
-              eventId
-            );
+        ).flatMap(eventId =>
+        {
+            const event =
+                archiveConnectionRecord(
+                    'event',
+                    eventId
+                );
 
-          return placeInspectorEventOwnerIds(
-            event
-          );
+            return placeInspectorEventOwnerIds(
+                event
+            );
         });
 
-      const sourcePersonIds =
+    const sourcePersonIds =
         sourceIdsForTarget(
-          'file',
-          file.id,
-          file.projectId
-        ).flatMap(sourceId =>
-          sourceTargetIds(
-            sourceId,
-            'person',
+            'file',
+            file.id,
             file.projectId
-          )
+        ).flatMap(sourceId =>
+            sourceTargetIds(
+                sourceId,
+                'person',
+                file.projectId
+            )
         );
 
-      return archiveUniqueIds([
+    return archiveUniqueIds([
         ...eventPersonIds,
         ...sourcePersonIds
-      ]);
-    }
+    ]);
+}
 
-    function openPeopleLinkModal({
-      projectId,
-      title =
+function openPeopleLinkModal({
+    projectId,
+    title =
         'Add people',
-      subtitle =
+    subtitle =
         '',
-      initialPersonIds =
+    initialPersonIds =
         [],
-      /*
+    /*
         Used by additive workflows such as Archive
         bulk linking. These People are linked to
         every selected owner and cannot be removed
         from this modal.
       */
-      existingPersonIds =
+    existingPersonIds =
         [],
 
-      suggestedPersonIds =
+    suggestedPersonIds =
         [],
 
-      selectedHeading =
+    selectedHeading =
         'Linked people',
 
-      saveLabel =
+    saveLabel =
         'Save people',
 
-      onSave,
-      afterSave =
-        () => {},
-      successMessage =
+    onSave,
+    afterSave =
+        () =>
+        {},
+    successMessage =
         'People links updated.'
-    } = {}) {
-      if (
+} = {})
+{
+    if (
         !projectId
         || typeof onSave
           !== 'function'
-      ) {
+    )
+    {
         return;
-      }
+    }
 
-      const initialSelectedIds =
+    const initialSelectedIds =
         new Set(
-          (
-            initialPersonIds
+            (
+                initialPersonIds
             || []
-          ).filter(personId => {
-            const person =
-              getPerson(
-                personId
-              );
+            ).filter(personId =>
+            {
+                const person =
+                    getPerson(
+                        personId
+                    );
 
-            return (
-              person
+                return (
+                    person
               && !person.deleted
               && person.projectId
                 === projectId
-            );
-          })
+                );
+            })
         );
 
     const existingPersonIdSet =
-      new Set(
-        (
-          existingPersonIds
+        new Set(
+            (
+                existingPersonIds
           || []
-        ).filter(personId => {
-          const person =
-            getPerson(
-              personId
-            );
+            ).filter(personId =>
+            {
+                const person =
+                    getPerson(
+                        personId
+                    );
 
-          return (
-            person
+                return (
+                    person
             && !person.deleted
             && person.projectId
               === projectId
-          );
-        })
-      );
-
-      const selectedIds =
-        new Set(
-          initialSelectedIds
+                );
+            })
         );
 
-      let query = '';
+    const selectedIds =
+        new Set(
+            initialSelectedIds
+        );
 
-      const personName =
+    let query = '';
+
+    const personName =
         person =>
-          personResourceDisplayName(
-            person
-          )
+            personResourceDisplayName(
+                person
+            )
           || 'Unnamed person';
 
-      const personContext =
+    const personContext =
         person =>
-          getPlaceEventDisplay(
-            person?.birth
-          )
+            getPlaceEventDisplay(
+                person?.birth
+            )
           || getPlaceEventDisplay(
-            person?.death
+              person?.death
           )
           || '';
 
-      const personSearchText =
+    const personSearchText =
         person =>
-          [
-            personName(person),
-            person?.names?.first,
-            person?.names?.middle,
-            person?.names?.last,
-            person?.names?.maiden,
-            albumPhotoPersonDates(
-              person
-            ),
-            getPlaceEventDisplay(
-              person?.birth
-            ),
-            getPlaceEventDisplay(
-              person?.death
-            )
-          ]
-            .filter(Boolean)
-            .join(' ')
-            .toLowerCase();
+            [
+                personName(person),
+                person?.names?.first,
+                person?.names?.middle,
+                person?.names?.last,
+                person?.names?.maiden,
+                albumPhotoPersonDates(
+                    person
+                ),
+                getPlaceEventDisplay(
+                    person?.birth
+                ),
+                getPlaceEventDisplay(
+                    person?.death
+                )
+            ]
+                .filter(Boolean)
+                .join(' ')
+                .toLowerCase();
 
-      const selectionChanged =
+    const selectionChanged =
         () =>
-          initialSelectedIds.size
+            initialSelectedIds.size
             !== selectedIds.size
           || [
-            ...initialSelectedIds
+              ...initialSelectedIds
           ].some(personId =>
-            !selectedIds.has(
-              personId
-            )
+              !selectedIds.has(
+                  personId
+              )
           );
 
-      /*
+    /*
         People appearing in photos already
         linked to this Note are suggested first.
       */
-      const suggestedPersonIdSet =
+    const suggestedPersonIdSet =
         new Set(
-          suggestedPersonIds
+            suggestedPersonIds
           || []
         );
 
-      const getCandidates = () => {
+    const getCandidates = () =>
+    {
         const normalizedQuery =
-          query
-            .trim()
-            .toLowerCase();
+            query
+                .trim()
+                .toLowerCase();
 
         const ranked =
-          getPeople(
-            projectId
-          )
-            .filter(person =>
-              person?.id
+            getPeople(
+                projectId
+            )
+                .filter(person =>
+                    person?.id
               && !person.deleted
-            )
-            .filter(person =>
-              !selectedIds.has(
-                person.id
-              )
-            )
+                )
+                .filter(person =>
+                    !selectedIds.has(
+                        person.id
+                    )
+                )
             /*
               Existing links stay out of the default
               suggestions, but remain discoverable through
               an explicit search.
             */
-            .filter(person =>
-              !existingPersonIdSet.has(
-                person.id
-              )
-              || Boolean(
-                normalizedQuery
-              )
-            )
-
-            .filter(person =>
-              !normalizedQuery
-              || personSearchText(
-                person
-              ).includes(
-                normalizedQuery
-              )
-            )
-            .map(person => {
-              const displayName =
-                personName(
-                  person
-                ).toLowerCase();
-
-              const nameParts = [
-                person?.names?.first,
-                person?.names?.middle,
-                person?.names?.last,
-                person?.names?.maiden
-              ]
-                .filter(Boolean)
-                .map(value =>
-                  String(
-                    value
-                  ).toLowerCase()
-                );
-
-              let score = 0;
-
-              if (normalizedQuery) {
-                if (
-                  displayName
-                    === normalizedQuery
-                ) {
-                  score = 500;
-                } else if (
-                  displayName.startsWith(
-                    normalizedQuery
-                  )
-                ) {
-                  score = 400;
-                } else if (
-                  nameParts.some(value =>
-                    value.startsWith(
-                      normalizedQuery
+                .filter(person =>
+                    !existingPersonIdSet.has(
+                        person.id
                     )
-                  )
-                ) {
-                  score = 300;
-                } else if (
-                  displayName.includes(
-                    normalizedQuery
-                  )
-                ) {
-                  score = 200;
-                } else {
-                  score = 100;
-                }
-              } else if (
-                suggestedPersonIdSet.has(
-                  person.id
+              || Boolean(
+                  normalizedQuery
+              )
                 )
-              ) {
-                score += 1000;
-              }
 
-              score += Math.min(
-                getPersonPhotoCount(
-                  person.id
-                ),
-                50
-              );
+                .filter(person =>
+                    !normalizedQuery
+              || personSearchText(
+                  person
+              ).includes(
+                  normalizedQuery
+              )
+                )
+                .map(person =>
+                {
+                    const displayName =
+                        personName(
+                            person
+                        ).toLowerCase();
 
-              return {
-                person,
-                score
-              };
-            })
-            .sort(
-              (
-                first,
-                second
-              ) =>
-                second.score
+                    const nameParts = [
+                        person?.names?.first,
+                        person?.names?.middle,
+                        person?.names?.last,
+                        person?.names?.maiden
+                    ]
+                        .filter(Boolean)
+                        .map(value =>
+                            String(
+                                value
+                            ).toLowerCase()
+                        );
+
+                    let score = 0;
+
+                    if (normalizedQuery)
+                    {
+                        if (
+                            displayName
+                    === normalizedQuery
+                        )
+                        {
+                            score = 500;
+                        }
+                        else if (
+                            displayName.startsWith(
+                                normalizedQuery
+                            )
+                        )
+                        {
+                            score = 400;
+                        }
+                        else if (
+                            nameParts.some(value =>
+                                value.startsWith(
+                                    normalizedQuery
+                                )
+                            )
+                        )
+                        {
+                            score = 300;
+                        }
+                        else if (
+                            displayName.includes(
+                                normalizedQuery
+                            )
+                        )
+                        {
+                            score = 200;
+                        }
+                        else
+                        {
+                            score = 100;
+                        }
+                    }
+                    else if (
+                        suggestedPersonIdSet.has(
+                            person.id
+                        )
+                    )
+                    {
+                        score += 1000;
+                    }
+
+                    score += Math.min(
+                        getPersonPhotoCount(
+                            person.id
+                        ),
+                        50
+                    );
+
+                    return {
+                        person,
+                        score
+                    };
+                })
+                .sort(
+                    (
+                        first,
+                        second
+                    ) =>
+                        second.score
                   - first.score
                 || personName(
-                  first.person
+                    first.person
                 ).localeCompare(
-                  personName(
-                    second.person
-                  )
+                    personName(
+                        second.person
+                    )
                 )
-            );
+                );
 
         return {
-          total:
+            total:
             ranked.length,
 
-          people:
+            people:
             ranked
-              .slice(0, 5)
-              .map(item =>
-                item.person
-              )
+                .slice(0, 5)
+                .map(item =>
+                    item.person
+                )
         };
-      };
+    };
 
-      const renderSelected = () => {
+    const renderSelected = () =>
+    {
         const people = [
-          ...selectedIds
+            ...selectedIds
         ]
-          .map(getPerson)
-          .filter(person =>
-            person
+            .map(getPerson)
+            .filter(person =>
+                person
             && !person.deleted
             && person.projectId
               === projectId
-          );
+            );
 
-        if (!people.length) {
-          return '';
+        if (!people.length)
+        {
+            return '';
         }
 
         return `
           <div class="photo-people-selected-head">
             <strong>
               ${escapeHtml(
-                selectedHeading
-              )}
+                    selectedHeading
+                )}
             </strong>
 
             <span>
@@ -5462,34 +5648,35 @@
 
           <div class="photo-people-selected-list">
             ${people
-              .map(person => {
-                const name =
-                  personName(person);
+                .map(person =>
+                {
+                    const name =
+                        personName(person);
 
-                return `
+                    return `
                   <button
                     class="photo-people-selected-chip"
                     type="button"
                     data-notes-people-remove="${escapeHtml(
-                      person.id
+                        person.id
                     )}"
                     aria-label="${escapeHtml(
-                      `Remove ${name}`
+                        `Remove ${name}`
                     )}">
 
                     ${renderPersonAvatar(
-                      person,
-                      'photo-people-chip-avatar',
-                      {
-                        element:
+                        person,
+                        'photo-people-chip-avatar',
+                        {
+                            element:
                           'span'
-                      }
+                        }
                     )}
 
                     <span class="photo-people-selected-name">
                       ${escapeHtml(
-                        name
-                      )}
+                            name
+                        )}
                     </span>
 
                     <span
@@ -5500,88 +5687,91 @@
                     </span>
                   </button>
                 `;
-              })
-              .join('')}
+                })
+                .join('')}
           </div>
         `;
-      };
+    };
 
-      const renderResults =
-        candidates => {
-          if (
-            !candidates.people.length
-          ) {
-            return `
+    const renderResults =
+        candidates =>
+        {
+            if (
+                !candidates.people.length
+            )
+            {
+                return `
               <div class="photo-people-empty">
                 ${
-                  query.trim()
-                    ? `
+                    query.trim()
+                        ? `
                       No matching people
                       found. Try another
                       name, date, place.
                     `
-                    : `
+                        : `
                       No additional people
                       to suggest.
                     `
                 }
               </div>
             `;
-          }
+            }
 
-          return candidates.people
-            .map(person => {
-              const name =
-                personName(
-                  person
-                );
+            return candidates.people
+                .map(person =>
+                {
+                    const name =
+                        personName(
+                            person
+                        );
 
-              const alreadyLinked =
-                existingPersonIdSet.has(
-                  person.id
-                );
+                    const alreadyLinked =
+                        existingPersonIdSet.has(
+                            person.id
+                        );
 
-              const dates =
-                albumPhotoPersonDates(
-                  person
-                )
+                    const dates =
+                        albumPhotoPersonDates(
+                            person
+                        )
                 || 'Dates unknown';
 
-              const context =
-                personContext(
-                  person
-                );
+                    const context =
+                        personContext(
+                            person
+                        );
 
-              return `
+                    return `
                 <label
                   class="
                     photo-people-result
 
                     ${
-                      alreadyLinked
-                        ? 'is-already-linked'
-                        : ''
+                        alreadyLinked
+                            ? 'is-already-linked'
+                            : ''
                     }
                   "
                   ${
-                    alreadyLinked
-                      ? `
+                        alreadyLinked
+                            ? `
                         title="
                           Already linked to all
                           selected files
                         "
                       `
-                      : ''
-                  }>
+                            : ''
+                    }>
 
                   ${renderPersonAvatar(
-                    person,
-                    'photo-people-result-avatar',
-                    {
-                      element:
+                        person,
+                        'photo-people-result-avatar',
+                        {
+                            element:
                         'span'
-                    }
-                  )}
+                        }
+                    )}
 
                   <span
                     class="
@@ -5590,52 +5780,52 @@
 
                     <strong>
                       ${escapeHtml(
-                        name
-                      )}
+                            name
+                        )}
                     </strong>
 
                     <span>
                       ${escapeHtml(
-                        dates
-                      )}
+                            dates
+                        )}
                     </span>
 
                     ${
-                      context
-                        ? `
+                        context
+                            ? `
                           <span>
                             ${escapeHtml(
-                              context
+                                context
                             )}
                           </span>
                         `
-                        : ''
+                            : ''
                     }
                   </span>
 
                   <input
                     type="checkbox"
                     value="${escapeHtml(
-                      person.id
+                        person.id
                     )}"
                     data-notes-people-choice
                     ${
-                      alreadyLinked
-                        ? 'checked disabled'
-                        : ''
+                        alreadyLinked
+                            ? 'checked disabled'
+                            : ''
                     }
                     aria-label="${escapeHtml(
-                      alreadyLinked
-                        ? `${name} is already linked`
-                        : `Add ${name}`
+                        alreadyLinked
+                            ? `${name} is already linked`
+                            : `Add ${name}`
                     )}">
                 </label>
               `;
-            })
-            .join('');
+                })
+                .join('');
         };
 
-      openModal(`
+    openModal(`
         <div
           class="
             modal
@@ -5650,21 +5840,21 @@
             <div>
               <h2 id="notesPeopleTitle">
                 ${escapeHtml(
-                  title
+                    title
                 )}
               </h2>
 
               ${
-                subtitle
-                  ? `
+                    subtitle
+                        ? `
                     <p>
                       ${escapeHtml(
-                        subtitle
-                      )}
+                            subtitle
+                        )}
                     </p>
                   `
-                  : ''
-              }
+                        : ''
+                }
             </div>
 
             <button
@@ -5760,266 +5950,278 @@
                 data-notes-people-save
                 disabled>
                   ${escapeHtml(
-                    saveLabel
-                  )}
+                        saveLabel
+                    )}
               </button>
             </div>
           </div>
         </div>
       `);
 
-      const modal =
+    const modal =
         modalBackdrop.querySelector(
-          '.notes-people-modal'
+            '.notes-people-modal'
         );
 
-      if (!modal) {
+    if (!modal)
+    {
         return;
-      }
-
-      const refresh = () => {
-        const selectedHtml =
-          renderSelected();
-
-        const selectedPanel =
-          modal.querySelector(
-            '[data-notes-people-selected-panel]'
-          );
-
-        const candidates =
-          getCandidates();
-
-        const queryActive =
-          Boolean(
-            query.trim()
-          );
-
-        selectedPanel.hidden =
-          !selectedHtml;
-
-        selectedPanel.innerHTML =
-          selectedHtml;
-
-        modal
-          .querySelector(
-            '[data-notes-people-results-title]'
-          )
-          .textContent =
-            queryActive
-              ? 'Search results'
-              : 'Suggested people';
-
-        modal
-          .querySelector(
-            '[data-notes-people-results-meta]'
-          )
-          .textContent =
-            candidates.total
-              > candidates.people.length
-              ? `Showing ${
-                  candidates.people.length
-                } of ${
-                  candidates.total
-                }`
-              : candidates.total
-                ? `${candidates.total} ${
-                    queryActive
-                      ? 'match'
-                      : 'suggestion'
-                  }${
-                    candidates.total === 1
-                      ? ''
-                      : 's'
-                  }`
-                : '';
-
-        modal
-          .querySelector(
-            '[data-notes-people-choices]'
-          )
-          .innerHTML =
-            renderResults(
-              candidates
-            );
-
-        modal
-          .querySelector(
-            '[data-notes-people-selection-count]'
-          )
-          .textContent =
-            `${selectedIds.size} ${
-              selectedIds.size === 1
-                ? 'person'
-                : 'people'
-            } selected`;
-
-        modal
-          .querySelector(
-            '[data-notes-people-save]'
-          )
-          .disabled =
-            !selectionChanged();
-
-        localizeUI(
-          modal
-        );
-      };
-
-      modal
-        .querySelector(
-          '[data-notes-people-search]'
-        )
-        ?.addEventListener(
-          'input',
-          event => {
-            query =
-              event.currentTarget.value;
-
-            refresh();
-          }
-        );
-
-      modal.addEventListener(
-        'change',
-        event => {
-          const input =
-            event.target.closest(
-              '[data-notes-people-choice]'
-            );
-
-          if (
-            !input
-            || input.disabled
-          ) {
-            return;
-          }
-
-          const choiceIndex = [
-            ...modal.querySelectorAll(
-              '[data-notes-people-choice]'
-            )
-          ].indexOf(input);
-
-          selectedIds.add(
-            input.value
-          );
-
-          refresh();
-
-          restoreModalChoiceFocus({
-            modal,
-            selector:
-              '[data-notes-people-choice]',
-            value:
-              input.value,
-            index:
-              choiceIndex,
-            fallbackSelector:
-              '[data-notes-people-search]'
-          });
-        }
-      );
-
-      modal.addEventListener(
-        'click',
-        event => {
-          const remove =
-            event.target.closest(
-              '[data-notes-people-remove]'
-            );
-
-          if (remove) {
-            selectedIds.delete(
-              remove.dataset
-                .notesPeopleRemove
-            );
-
-            refresh();
-            return;
-          }
-
-          if (
-            event.target.closest(
-              '[data-notes-people-save]'
-            )
-          ) {
-            if (
-              !selectionChanged()
-            ) {
-              return;
-            }
-
-            const nextIds =
-              [
-                ...selectedIds
-              ];
-
-            const saved =
-              onSave(
-                nextIds
-              );
-
-            if (
-              saved === false
-            ) {
-              return;
-            }
-
-            closeModal();
-
-            afterSave();
-
-            const savedCount =
-              Number.isFinite(
-                saved?.addedLinkCount
-              )
-                ? saved.addedLinkCount
-                : nextIds.length;
-
-            showToast(
-              typeof successMessage
-                === 'function'
-                  ? successMessage(
-                      savedCount
-                    )
-                  : successMessage
-            );
-          }
-        }
-      );
-
-      refresh();
-
-      modal
-        .querySelector(
-          '[data-notes-people-search]'
-        )
-        ?.focus({
-          preventScroll: true
-        });
     }
 
-    function openNotesPeopleModal() {
-      const note =
+    const refresh = () =>
+    {
+        const selectedHtml =
+            renderSelected();
+
+        const selectedPanel =
+            modal.querySelector(
+                '[data-notes-people-selected-panel]'
+            );
+
+        const candidates =
+            getCandidates();
+
+        const queryActive =
+            Boolean(
+                query.trim()
+            );
+
+        selectedPanel.hidden =
+            !selectedHtml;
+
+        selectedPanel.innerHTML =
+            selectedHtml;
+
+        modal
+            .querySelector(
+                '[data-notes-people-results-title]'
+            )
+            .textContent =
+                queryActive
+                    ? 'Search results'
+                    : 'Suggested people';
+
+        modal
+            .querySelector(
+                '[data-notes-people-results-meta]'
+            )
+            .textContent =
+                candidates.total
+              > candidates.people.length
+                    ? `Showing ${
+                        candidates.people.length
+                    } of ${
+                        candidates.total
+                    }`
+                    : candidates.total
+                        ? `${candidates.total} ${
+                            queryActive
+                                ? 'match'
+                                : 'suggestion'
+                        }${
+                            candidates.total === 1
+                                ? ''
+                                : 's'
+                        }`
+                        : '';
+
+        modal
+            .querySelector(
+                '[data-notes-people-choices]'
+            )
+            .innerHTML =
+                renderResults(
+                    candidates
+                );
+
+        modal
+            .querySelector(
+                '[data-notes-people-selection-count]'
+            )
+            .textContent =
+                `${selectedIds.size} ${
+                    selectedIds.size === 1
+                        ? 'person'
+                        : 'people'
+                } selected`;
+
+        modal
+            .querySelector(
+                '[data-notes-people-save]'
+            )
+            .disabled =
+                !selectionChanged();
+
+        localizeUI(
+            modal
+        );
+    };
+
+    modal
+        .querySelector(
+            '[data-notes-people-search]'
+        )
+        ?.addEventListener(
+            'input',
+            event =>
+            {
+                query =
+                    event.currentTarget.value;
+
+                refresh();
+            }
+        );
+
+    modal.addEventListener(
+        'change',
+        event =>
+        {
+            const input =
+                event.target.closest(
+                    '[data-notes-people-choice]'
+                );
+
+            if (
+                !input
+            || input.disabled
+            )
+            {
+                return;
+            }
+
+            const choiceIndex = [
+                ...modal.querySelectorAll(
+                    '[data-notes-people-choice]'
+                )
+            ].indexOf(input);
+
+            selectedIds.add(
+                input.value
+            );
+
+            refresh();
+
+            restoreModalChoiceFocus({
+                modal,
+                selector:
+              '[data-notes-people-choice]',
+                value:
+              input.value,
+                index:
+              choiceIndex,
+                fallbackSelector:
+              '[data-notes-people-search]'
+            });
+        }
+    );
+
+    modal.addEventListener(
+        'click',
+        event =>
+        {
+            const remove =
+                event.target.closest(
+                    '[data-notes-people-remove]'
+                );
+
+            if (remove)
+            {
+                selectedIds.delete(
+                    remove.dataset
+                        .notesPeopleRemove
+                );
+
+                refresh();
+                return;
+            }
+
+            if (
+                event.target.closest(
+                    '[data-notes-people-save]'
+                )
+            )
+            {
+                if (
+                    !selectionChanged()
+                )
+                {
+                    return;
+                }
+
+                const nextIds =
+                    [
+                        ...selectedIds
+                    ];
+
+                const saved =
+                    onSave(
+                        nextIds
+                    );
+
+                if (
+                    saved === false
+                )
+                {
+                    return;
+                }
+
+                closeModal();
+
+                afterSave();
+
+                const savedCount =
+                    Number.isFinite(
+                        saved?.addedLinkCount
+                    )
+                        ? saved.addedLinkCount
+                        : nextIds.length;
+
+                showToast(
+                    typeof successMessage
+                === 'function'
+                        ? successMessage(
+                            savedCount
+                        )
+                        : successMessage
+                );
+            }
+        }
+    );
+
+    refresh();
+
+    modal
+        .querySelector(
+            '[data-notes-people-search]'
+        )
+        ?.focus({
+            preventScroll: true
+        });
+}
+
+function openNotesPeopleModal()
+{
+    const note =
         selectedNote();
 
-      if (!note) {
+    if (!note)
+    {
         return;
-      }
+    }
 
-      const suggestedPersonIds =
+    const suggestedPersonIds =
         getPhotosForNote(
-          note.id,
-          {
-            projectId:
+            note.id,
+            {
+                projectId:
               note.projectId
-          }
+            }
         ).flatMap(photo =>
-          photo.personIds
+            photo.personIds
           || []
         );
 
-      openPeopleLinkModal({
+    openPeopleLinkModal({
         projectId:
           note.projectId,
 
@@ -6037,38 +6239,40 @@
         suggestedPersonIds,
 
         onSave:
-          nextPersonIds => {
-            const currentNote =
-              getNote(
-                note.id,
-                {
-                  projectId:
+          nextPersonIds =>
+          {
+              const currentNote =
+                  getNote(
+                      note.id,
+                      {
+                          projectId:
                     note.projectId,
 
-                  includeArchived:
+                          includeArchived:
                     true
-                }
-              );
+                      }
+                  );
 
-            if (!currentNote) {
-              showToast(
-                'The note is no longer available.'
-              );
-
-              return false;
-            }
-
-            setNoteEntityLinks(
-              currentNote.id,
-              'person',
-              nextPersonIds,
+              if (!currentNote)
               {
-                projectId:
-                  currentNote.projectId
-              }
-            );
+                  showToast(
+                      'The note is no longer available.'
+                  );
 
-            return true;
+                  return false;
+              }
+
+              setNoteEntityLinks(
+                  currentNote.id,
+                  'person',
+                  nextPersonIds,
+                  {
+                      projectId:
+                  currentNote.projectId
+                  }
+              );
+
+              return true;
           },
 
         afterSave:
@@ -6076,53 +6280,55 @@
 
         successMessage:
           'People links updated.'
-      });
+    });
+}
+
+function openArchiveFilesPeopleModal(
+    fileIds
+)
+{
+    const files =
+        archiveFilesForLinkAction(
+            fileIds
+        );
+
+    if (!files.length)
+    {
+        return;
     }
 
-    function openArchiveFilesPeopleModal(
-      fileIds
-    ) {
-      const files =
-        archiveFilesForLinkAction(
-          fileIds
-        );
-
-      if (!files.length) {
-        return;
-      }
-
-      const ids =
+    const ids =
         files.map(file =>
-          file.id
+            file.id
         );
 
-      const singleFile =
+    const singleFile =
         files.length === 1
-          ? files[0]
-          : null;
+            ? files[0]
+            : null;
 
-      const projectId =
+    const projectId =
         files[0].projectId
         || currentProjectId();
 
-      const suggestedPersonIds =
+    const suggestedPersonIds =
         archiveUniqueIds(
-          files.flatMap(file =>
-            archiveFileSuggestedPersonIds(
-              file
+            files.flatMap(file =>
+                archiveFileSuggestedPersonIds(
+                    file
+                )
             )
-          )
         );
 
-      const commonPersonIds =
+    const commonPersonIds =
         singleFile
-          ? []
-          : archiveCommonFileConnectionIds(
-              files,
-              'person'
+            ? []
+            : archiveCommonFileConnectionIds(
+                files,
+                'person'
             );
 
-      openPeopleLinkModal({
+    openPeopleLinkModal({
         projectId,
 
         title:
@@ -6130,7 +6336,7 @@
 
         subtitle:
           archiveBulkLinkSubtitle(
-            files
+              files
           ),
 
         /*
@@ -6139,9 +6345,9 @@
         */
         initialPersonIds:
           singleFile
-            ? singleFile.linkedPersonIds
+              ? singleFile.linkedPersonIds
               || []
-            : [],
+              : [],
 
         existingPersonIds:
           commonPersonIds,
@@ -6150,157 +6356,166 @@
 
         selectedHeading:
           singleFile
-            ? 'Linked people'
-            : 'People to add',
+              ? 'Linked people'
+              : 'People to add',
 
         saveLabel:
           singleFile
-            ? 'Save people'
-            : 'Add people',
+              ? 'Save people'
+              : 'Add people',
 
         onSave:
-          nextPersonIds => {
-            if (singleFile) {
-              const currentFile =
-                archiveFileById(
-                  singleFile.id
-                );
+          nextPersonIds =>
+          {
+              if (singleFile)
+              {
+                  const currentFile =
+                      archiveFileById(
+                          singleFile.id
+                      );
 
-              if (!currentFile) {
-                showToast(
-                  'The file is no longer available.'
-                );
+                  if (!currentFile)
+                  {
+                      showToast(
+                          'The file is no longer available.'
+                      );
 
-                return false;
+                      return false;
+                  }
+
+                  return setArchiveFileConnectionIds(
+                      currentFile.id,
+                      'person',
+                      nextPersonIds
+                  );
               }
 
-              return setArchiveFileConnectionIds(
-                currentFile.id,
-                'person',
-                nextPersonIds
-              );
-            }
-
-            const result =
-              archiveCommitFileConnections({
-                fileIds:
+              const result =
+                  archiveCommitFileConnections({
+                      fileIds:
                   ids,
 
-                entityType:
+                      entityType:
                   'person',
 
-                recordIds:
+                      recordIds:
                   nextPersonIds
-              });
+                  });
 
-            if (!result.ok) {
-              showToast(
-                'No people were linked.'
-              );
+              if (!result.ok)
+              {
+                  showToast(
+                      'No people were linked.'
+                  );
 
-              return false;
-            }
+                  return false;
+              }
 
-            return result;
+              return result;
           },
 
         afterSave:
           singleFile
-            ? renderArchive
-            : () => {
-                finishArchiveBulkLinkAction(
-                  ids
-                );
+              ? renderArchive
+              : () =>
+              {
+                  finishArchiveBulkLinkAction(
+                      ids
+                  );
               },
 
         successMessage:
           singleFile
-            ? 'People links updated.'
-            : count =>
-                `${count} ${
-                  count === 1
-                    ? 'link was'
-                    : 'links were'
-                } added to ${files.length} files.`
-      });
-    }
+              ? 'People links updated.'
+              : count =>
+                  `${count} ${
+                      count === 1
+                          ? 'link was'
+                          : 'links were'
+                  } added to ${files.length} files.`
+    });
+}
 
-    function openArchiveFilePeopleModal(
-      fileId
-    ) {
-      openArchiveFilesPeopleModal(
+function openArchiveFilePeopleModal(
+    fileId
+)
+{
+    openArchiveFilesPeopleModal(
         [
-          fileId
+            fileId
         ]
-      );
-    }
+    );
+}
 
-    function openPhotoLinkModal({
-      projectId =
+function openPhotoLinkModal({
+    projectId =
         currentProjectId(),
 
-      title =
+    title =
         'Add photos',
 
-      description =
+    description =
         '',
 
-      ownerLabel =
+    ownerLabel =
         'this item',
 
-      initiallyLinkedPhotoIds =
+    initiallyLinkedPhotoIds =
         [],
 
-      uploadDraftIdPrefix =
+    uploadDraftIdPrefix =
         'linked-photo-upload-draft',
 
-      uploadedPhotoIdPrefix =
+    uploadedPhotoIdPrefix =
         'photo-link',
 
-      onSave =
+    onSave =
         null,
 
-      afterSave =
-        () => {},
+    afterSave =
+        () =>
+        {},
 
-      successMessage =
+    successMessage =
         count =>
-          `${count} ${
-            count === 1
-              ? 'photo'
-              : 'photos'
-          } added.`
-    } = {}) {
-      if (
+            `${count} ${
+                count === 1
+                    ? 'photo'
+                    : 'photos'
+            } added.`
+} = {})
+{
+    if (
         !projectId
         || typeof onSave !== 'function'
-      ) {
+    )
+    {
         return;
-      }
+    }
 
-      const initiallyLinkedIds =
+    const initiallyLinkedIds =
         new Set(
-          archiveUniqueIds(
-            initiallyLinkedPhotoIds
-          ).filter(photoId =>
-            Boolean(
-              getPhoto(
-                photoId,
-                {
-                  projectId
-                }
-              )
+            archiveUniqueIds(
+                initiallyLinkedPhotoIds
+            ).filter(photoId =>
+                Boolean(
+                    getPhoto(
+                        photoId,
+                        {
+                            projectId
+                        }
+                    )
+                )
             )
-          )
         );
 
-      const picker = {
+    const picker = {
         sourceTab:
           getProjectPhotos(
-            projectId
+              projectId
           ).length
-            ? 'project'
-            : 'upload',
+              ? 'project'
+              : 'upload',
 
         search:
           '',
@@ -6313,191 +6528,196 @@
 
         uploadErrors:
           []
-      };
+    };
 
-      const pendingCount = () =>
+    const pendingCount = () =>
         picker.selectedProjectIds.size
         + picker.uploadDrafts.length;
 
-      const countLabel = () => {
+    const countLabel = () =>
+    {
         const count =
-          pendingCount();
+            pendingCount();
 
         return `${count} ${
-          count === 1
-            ? 'photo'
-            : 'photos'
+            count === 1
+                ? 'photo'
+                : 'photos'
         } selected`;
-      };
+    };
 
-      const actionLabel = () => {
+    const actionLabel = () =>
+    {
         const count =
-          pendingCount();
+            pendingCount();
 
-        if (!count) {
-          return 'Add photos';
+        if (!count)
+        {
+            return 'Add photos';
         }
 
         return `Add ${count} ${
-          count === 1
-            ? 'photo'
-            : 'photos'
+            count === 1
+                ? 'photo'
+                : 'photos'
         }`;
-      };
+    };
 
-      const uploadDraftAsPhoto =
+    const uploadDraftAsPhoto =
         draft => ({
-          id:
+            id:
             draft.id,
 
-          projectId,
+            projectId,
 
-          kind:
+            kind:
             'photo',
 
-          title:
+            title:
             draft.filename
             || 'Uploaded photo',
 
-          filename:
+            filename:
             draft.filename
             || 'Uploaded photo',
 
-          src:
+            src:
             draft.src,
 
-          mimeType:
+            mimeType:
             draft.mimeType,
 
-          width:
+            width:
             draft.width,
 
-          height:
+            height:
             draft.height,
 
-          sizeBytes:
+            sizeBytes:
             draft.sizeBytes,
 
-          placeholder: {
-            pattern:
+            placeholder: {
+                pattern:
               'orbit',
 
-            palette:
+                palette:
               'moss',
 
-            seed:
+                seed:
               draft.seed
               || 97
-          },
+            },
 
-          personIds:
+            personIds:
             [],
 
-          albumIds:
+            albumIds:
             [],
 
-          date:
+            date:
             emptyGenealogyDate(
-              'Exact date'
+                'Exact date'
             ),
 
-          placeId:
+            placeId:
             null,
 
-          placeText:
+            placeText:
             '',
 
-          caption:
+            caption:
             '',
 
-          favorite:
+            favorite:
             false,
 
-          createdAt:
+            createdAt:
             '',
 
-          updatedAt:
+            updatedAt:
             ''
         });
 
-      const projectPhotos = () => {
+    const projectPhotos = () =>
+    {
         const query =
-          picker.search
-            .trim()
-            .toLowerCase();
+            picker.search
+                .trim()
+                .toLowerCase();
 
         return getProjectPhotos(
-          projectId
+            projectId
         )
 
-          .filter(photo =>
-            !query
+            .filter(photo =>
+                !query
             || photoSearchText(
-              photo
+                photo
             ).includes(
-              query
+                query
             )
-          )
-          .map(
-            (
-              photo,
-              index
-            ) => ({
-              photo,
-              index,
+            )
+            .map(
+                (
+                    photo,
+                    index
+                ) => ({
+                    photo,
+                    index,
 
-              alreadyLinked:
+                    alreadyLinked:
                 initiallyLinkedIds.has(
-                  photo.id
+                    photo.id
                 )
-            })
-          )
-          .sort(
-            (
-              first,
-              second
-            ) =>
-              Number(
-                first.alreadyLinked
-              )
+                })
+            )
+            .sort(
+                (
+                    first,
+                    second
+                ) =>
+                    Number(
+                        first.alreadyLinked
+                    )
               - Number(
-                second.alreadyLinked
+                  second.alreadyLinked
               )
               || first.index
               - second.index
-          )
-          .map(item =>
-            item.photo
-          );
-      };
-
-      const renderCandidate =
-        photo => {
-          const alreadyLinked =
-            initiallyLinkedIds.has(
-              photo.id
+            )
+            .map(item =>
+                item.photo
             );
+    };
 
-          const selected =
-            !alreadyLinked
+    const renderCandidate =
+        photo =>
+        {
+            const alreadyLinked =
+                initiallyLinkedIds.has(
+                    photo.id
+                );
+
+            const selected =
+                !alreadyLinked
             && picker
-              .selectedProjectIds
-              .has(
-                photo.id
-              );
+                .selectedProjectIds
+                .has(
+                    photo.id
+                );
 
-          const title =
-            photo.title
+            const title =
+                photo.title
             || photo.filename
             || 'Untitled photo';
 
-          const date =
-            formatPhotoDate(
-              photo
-            )
+            const date =
+                formatPhotoDate(
+                    photo
+                )
             || 'Unknown date';
 
-          return `
+            return `
             <button
               class="
                 person-photo-candidate
@@ -6505,49 +6725,49 @@
               "
               type="button"
               data-notes-photos-adder-candidate="${escapeHtml(
-                photo.id
-              )}"
+                    photo.id
+                )}"
               aria-pressed="${selected}"
               aria-label="${escapeHtml(
-                alreadyLinked
-                  ? `${title} is already linked to ${ownerLabel}`
-                  : `${
-                      selected
-                        ? 'Deselect'
-                        : 'Select'
-                    } ${title}`
-              )}"
+                    alreadyLinked
+                        ? `${title} is already linked to ${ownerLabel}`
+                        : `${
+                            selected
+                                ? 'Deselect'
+                                : 'Select'
+                        } ${title}`
+                )}"
               ${
-                alreadyLinked
-                  ? 'disabled aria-disabled="true"'
-                  : ''
-              }>
+                    alreadyLinked
+                        ? 'disabled aria-disabled="true"'
+                        : ''
+                }>
 
               <span class="person-photo-candidate-preview">
                 ${renderPhotoThumbnail(
-                  photo,
-                  {
-                    label:
+                    photo,
+                    {
+                        label:
                       title
-                  }
+                    }
                 )}
 
                 ${
-                  alreadyLinked
-                    ? `
+                    alreadyLinked
+                        ? `
                       <span class="person-photos-adder-status-badge">
                         Already added
                       </span>
                     `
-                    : ''
+                        : ''
                 }
 
                 <span
                   class="person-photos-adder-check"
                   data-notes-photos-adder-check
                   ${selected
-                    ? ''
-                    : 'hidden'}
+                        ? ''
+                        : 'hidden'}
                   aria-hidden="true">
 
                   ${icon.check}
@@ -6557,32 +6777,34 @@
               <span class="person-photo-candidate-copy">
                 <strong>
                   ${escapeHtml(
-                    title
-                  )}
+                        title
+                    )}
                 </strong>
 
                 <span>
                   ${escapeHtml(
-                    date
-                  )}
+                        date
+                    )}
                 </span>
               </span>
             </button>
           `;
         };
 
-      const renderProjectResults =
-        () => {
-          const allPhotos =
-            getProjectPhotos(
-              projectId
-            );
+    const renderProjectResults =
+        () =>
+        {
+            const allPhotos =
+                getProjectPhotos(
+                    projectId
+                );
 
-          const photos =
-            projectPhotos();
+            const photos =
+                projectPhotos();
 
-          if (!allPhotos.length) {
-            return `
+            if (!allPhotos.length)
+            {
+                return `
               <div class="person-photo-empty">
                 <div>
                   <strong>
@@ -6598,10 +6820,11 @@
                 </div>
               </div>
             `;
-          }
+            }
 
-          if (!photos.length) {
-            return `
+            if (!photos.length)
+            {
+                return `
               <div class="person-photo-empty">
                 <div>
                   <strong>
@@ -6626,9 +6849,9 @@
                 </div>
               </div>
             `;
-          }
+            }
 
-          return `
+            return `
             <div
               class="
                 person-photo-candidate-grid
@@ -6636,15 +6859,15 @@
               ">
 
               ${photos
-                .map(
-                  renderCandidate
-                )
-                .join('')}
+                    .map(
+                        renderCandidate
+                    )
+                    .join('')}
             </div>
           `;
         };
 
-      const renderProjectPanel =
+    const renderProjectPanel =
         () => `
           <div
             class="
@@ -6668,8 +6891,8 @@
                   data-notes-photos-adder-search
                   type="search"
                   value="${escapeHtml(
-                    picker.search
-                  )}"
+                        picker.search
+                    )}"
                   placeholder="Search project photos"
                   autocomplete="off">
               </label>
@@ -6684,18 +6907,19 @@
           </div>
         `;
 
-      const renderUploadDraft =
-        draft => {
-          const photo =
-            uploadDraftAsPhoto(
-              draft
-            );
+    const renderUploadDraft =
+        draft =>
+        {
+            const photo =
+                uploadDraftAsPhoto(
+                    draft
+                );
 
-          const title =
-            draft.filename
+            const title =
+                draft.filename
             || 'Uploaded photo';
 
-          return `
+            return `
             <article
               class="
                 person-photo-candidate
@@ -6704,22 +6928,22 @@
 
               <span class="person-photo-candidate-preview">
                 ${renderPhotoThumbnail(
-                  photo,
-                  {
-                    label:
+                    photo,
+                    {
+                        label:
                       title
-                  }
+                    }
                 )}
 
                 <button
                   class="person-photos-adder-upload-remove"
                   type="button"
                   data-notes-photos-adder-remove-upload="${escapeHtml(
-                    draft.id
-                  )}"
+                        draft.id
+                    )}"
                   aria-label="${escapeHtml(
-                    `Remove ${title}`
-                  )}"
+                        `Remove ${title}`
+                    )}"
                   title="Remove upload">
 
                   ${icon.close}
@@ -6729,75 +6953,78 @@
               <span class="person-photo-candidate-copy">
                 <strong>
                   ${escapeHtml(
-                    title
-                  )}
+                        title
+                    )}
                 </strong>
 
                 <span>
                   ${escapeHtml(
-                    `${
-                      draft.width
-                    } × ${
-                      draft.height
-                    } · ${
-                      formatMediaBytes(
-                        draft.sizeBytes
-                      )
-                    }`
-                  )}
+                        `${
+                            draft.width
+                        } × ${
+                            draft.height
+                        } · ${
+                            formatMediaBytes(
+                                draft.sizeBytes
+                            )
+                        }`
+                    )}
                 </span>
               </span>
             </article>
           `;
         };
 
-      const renderUploadErrors =
-        () => {
-          if (
-            !picker.uploadErrors
-              .length
-          ) {
-            return '';
-          }
+    const renderUploadErrors =
+        () =>
+        {
+            if (
+                !picker.uploadErrors
+                    .length
+            )
+            {
+                return '';
+            }
 
-          return `
+            return `
             <div
               class="person-photos-adder-upload-errors"
               role="alert">
 
               <strong>
                 ${
-                  picker.uploadErrors.length
+                    picker.uploadErrors.length
                     === 1
-                    ? 'One file could not be added:'
-                    : `${picker.uploadErrors.length} files could not be added:`
+                        ? 'One file could not be added:'
+                        : `${picker.uploadErrors.length} files could not be added:`
                 }
               </strong>
 
               <ul>
                 ${picker.uploadErrors
-                  .map(error => `
+                    .map(error => `
                     <li>
                       ${escapeHtml(
-                        error
-                      )}
+                            error
+                        )}
                     </li>
                   `)
-                  .join('')}
+                    .join('')}
               </ul>
             </div>
           `;
         };
 
-      const renderUploadPanel =
-        () => {
-          const maxMegabytes =
-            Math.round(
-              PHOTO_UPLOAD_MAX_BYTES
+    const renderUploadPanel =
+        () =>
+        {
+            const maxMegabytes =
+                Math.round(
+                    PHOTO_UPLOAD_MAX_BYTES
               / (1024 * 1024)
-            );
+                );
 
-          return `
+            return `
             <div class="person-photos-adder-upload-panel">
 
               <div
@@ -6805,11 +7032,11 @@
                   person-photo-upload-dropzone
                   person-photos-adder-upload-dropzone
                   ${
-                    picker.uploadDrafts
-                      .length
-                      ? 'has-drafts'
-                      : ''
-                  }
+                        picker.uploadDrafts
+                            .length
+                            ? 'has-drafts'
+                            : ''
+                    }
                 "
                 data-notes-photos-adder-dropzone>
 
@@ -6825,10 +7052,10 @@
 
                   <strong>
                     ${
-                      picker.uploadDrafts
-                        .length
-                        ? 'Add more photos'
-                        : 'Drop photos here'
+                        picker.uploadDrafts
+                            .length
+                            ? 'Add more photos'
+                            : 'Drop photos here'
                     }
                   </strong>
 
@@ -6849,8 +7076,8 @@
               ${renderUploadErrors()}
 
               ${
-                picker.uploadDrafts.length
-                  ? `
+                    picker.uploadDrafts.length
+                        ? `
                     <div
                       class="
                         person-photo-candidate-grid
@@ -6858,24 +7085,25 @@
                       ">
 
                       ${picker.uploadDrafts
-                        .map(
-                          renderUploadDraft
-                        )
-                        .join('')}
+                            .map(
+                                renderUploadDraft
+                            )
+                            .join('')}
                     </div>
                   `
-                  : ''
-              }
+                        : ''
+                }
             </div>
           `;
         };
 
-      const renderFooter =
-        () => {
-          const count =
-            pendingCount();
+    const renderFooter =
+        () =>
+        {
+            const count =
+                pendingCount();
 
-          return `
+            return `
             <div
               class="
                 modal-footer
@@ -6887,7 +7115,7 @@
                 data-notes-photos-adder-count>
 
                 ${escapeHtml(
-                  countLabel()
+                    countLabel()
                 )}
               </span>
 
@@ -6904,637 +7132,686 @@
                   type="button"
                   data-notes-photos-adder-save
                   ${
-                    count
-                      ? ''
-                      : 'disabled'
-                  }>
+                        count
+                            ? ''
+                            : 'disabled'
+                    }>
 
                   ${escapeHtml(
-                    actionLabel()
-                  )}
+                        actionLabel()
+                    )}
                 </button>
               </div>
             </div>
           `;
         };
 
-      const refreshProjectResults =
-        () => {
-          const host =
-            modalBackdrop.querySelector(
-              '[data-notes-photos-adder-project-results]'
-            );
-
-          if (!host) {
-            return;
-          }
-
-          host.innerHTML =
-            renderProjectResults();
-
-          localizeUI(
-            host
-          );
-        };
-
-      const refreshSelectionUi =
-        () => {
-          const modal =
-            modalBackdrop.querySelector(
-              '[data-notes-photos-adder]'
-            );
-
-          if (!modal) {
-            return;
-          }
-
-          modal
-            .querySelectorAll(
-              '[data-notes-photos-adder-candidate]'
-            )
-            .forEach(card => {
-              const photoId =
-                card.dataset
-                  .notesPhotosAdderCandidate;
-
-              const selected =
-                picker.selectedProjectIds
-                  .has(photoId);
-
-              card.setAttribute(
-                'aria-pressed',
-                String(selected)
-              );
-
-              const check =
-                card.querySelector(
-                  '[data-notes-photos-adder-check]'
+    const refreshProjectResults =
+        () =>
+        {
+            const host =
+                modalBackdrop.querySelector(
+                    '[data-notes-photos-adder-project-results]'
                 );
 
-              if (check) {
-                check.hidden =
-                  !selected;
-              }
-            });
+            if (!host)
+            {
+                return;
+            }
 
-          const count =
-            pendingCount();
+            host.innerHTML =
+                renderProjectResults();
 
-          const countElement =
-            modal.querySelector(
-              '[data-notes-photos-adder-count]'
+            localizeUI(
+                host
             );
-
-          if (countElement) {
-            countElement.textContent =
-              countLabel();
-          }
-
-          const saveButton =
-            modal.querySelector(
-              '[data-notes-photos-adder-save]'
-            );
-
-          if (saveButton) {
-            saveButton.disabled =
-              count === 0;
-
-            saveButton.textContent =
-              actionLabel();
-          }
         };
 
-      const processFiles =
-        async fileList => {
-          const knownSignatures =
-            new Set(
-              picker.uploadDrafts
-                .map(draft =>
-                  draft.signature
-                )
-            );
-
-          const files =
-            Array.from(
-              fileList || []
-            ).filter(file => {
-              const signature =
-                photoUploadFileSignature(
-                  file
+    const refreshSelectionUi =
+        () =>
+        {
+            const modal =
+                modalBackdrop.querySelector(
+                    '[data-notes-photos-adder]'
                 );
 
-              if (
-                knownSignatures.has(
-                  signature
+            if (!modal)
+            {
+                return;
+            }
+
+            modal
+                .querySelectorAll(
+                    '[data-notes-photos-adder-candidate]'
                 )
-              ) {
-                return false;
-              }
+                .forEach(card =>
+                {
+                    const photoId =
+                        card.dataset
+                            .notesPhotosAdderCandidate;
 
-              knownSignatures.add(
-                signature
-              );
+                    const selected =
+                        picker.selectedProjectIds
+                            .has(photoId);
 
-              return true;
-            });
+                    card.setAttribute(
+                        'aria-pressed',
+                        String(selected)
+                    );
 
-          if (!files.length) {
-            return;
-          }
+                    const check =
+                        card.querySelector(
+                            '[data-notes-photos-adder-check]'
+                        );
 
-          const results =
-            await Promise.all(
-              files.map(
-                async file => {
-                  try {
-                    return {
-                      draft:
+                    if (check)
+                    {
+                        check.hidden =
+                            !selected;
+                    }
+                });
+
+            const count =
+                pendingCount();
+
+            const countElement =
+                modal.querySelector(
+                    '[data-notes-photos-adder-count]'
+                );
+
+            if (countElement)
+            {
+                countElement.textContent =
+                    countLabel();
+            }
+
+            const saveButton =
+                modal.querySelector(
+                    '[data-notes-photos-adder-save]'
+                );
+
+            if (saveButton)
+            {
+                saveButton.disabled =
+                    count === 0;
+
+                saveButton.textContent =
+                    actionLabel();
+            }
+        };
+
+    const processFiles =
+        async fileList =>
+        {
+            const knownSignatures =
+                new Set(
+                    picker.uploadDrafts
+                        .map(draft =>
+                            draft.signature
+                        )
+                );
+
+            const files =
+                Array.from(
+                    fileList || []
+                ).filter(file =>
+                {
+                    const signature =
+                        photoUploadFileSignature(
+                            file
+                        );
+
+                    if (
+                        knownSignatures.has(
+                            signature
+                        )
+                    )
+                    {
+                        return false;
+                    }
+
+                    knownSignatures.add(
+                        signature
+                    );
+
+                    return true;
+                });
+
+            if (!files.length)
+            {
+                return;
+            }
+
+            const results =
+                await Promise.all(
+                    files.map(
+                        async file =>
+                        {
+                            try
+                            {
+                                return {
+                                    draft:
                         await createPhotoUploadDraft(
-                          file,
-                          {
-                            idPrefix:
+                            file,
+                            {
+                                idPrefix:
                               uploadDraftIdPrefix
-                          }
+                            }
                         ),
 
-                      error:
+                                    error:
                         ''
-                    };
-                  } catch (error) {
-                    return {
-                      draft:
+                                };
+                            }
+                            catch (error)
+                            {
+                                return {
+                                    draft:
                         null,
 
-                      error:
+                                    error:
                         error?.message
                         || `${
-                          file.name
+                            file.name
                           || 'File'
                         } — could not be read`
-                    };
-                  }
-                }
-              )
+                                };
+                            }
+                        }
+                    )
+                );
+
+            if (
+                !modalBackdrop
+                    .querySelector(
+                        '[data-notes-photos-adder]'
+                    )
+            )
+            {
+                return;
+            }
+
+            picker.uploadDrafts.push(
+                ...results
+                    .map(result =>
+                        result.draft
+                    )
+                    .filter(Boolean)
             );
 
-          if (
-            !modalBackdrop
-              .querySelector(
-                '[data-notes-photos-adder]'
-              )
-          ) {
-            return;
-          }
+            picker.uploadErrors =
+                results
+                    .map(result =>
+                        result.error
+                    )
+                    .filter(Boolean);
 
-          picker.uploadDrafts.push(
-            ...results
-              .map(result =>
-                result.draft
-              )
-              .filter(Boolean)
-          );
-
-          picker.uploadErrors =
-            results
-              .map(result =>
-                result.error
-              )
-              .filter(Boolean);
-
-          renderModal();
+            renderModal();
         };
 
-      const commit = () => {
+    const commit = () =>
+    {
         if (
-          picker.uploadDrafts.some(
-            draft =>
-              !photoUploadDraftIsValid(
-                draft
-              )
-          )
-        ) {
-          picker.uploadErrors = [
-            'One or more uploaded photos are no longer valid. Remove them and choose the files again.'
-          ];
+            picker.uploadDrafts.some(
+                draft =>
+                    !photoUploadDraftIsValid(
+                        draft
+                    )
+            )
+        )
+        {
+            picker.uploadErrors = [
+                'One or more uploaded photos are no longer valid. Remove them and choose the files again.'
+            ];
 
-          picker.sourceTab =
-            'upload';
+            picker.sourceTab =
+                'upload';
 
-          renderModal();
-          return;
+            renderModal();
+            return;
         }
 
         const projectPhotoIds = [
-          ...picker.selectedProjectIds
+            ...picker.selectedProjectIds
         ].filter(photoId =>
-          Boolean(
-            getPhoto(
-              photoId,
-              {
-                projectId
-              }
+            Boolean(
+                getPhoto(
+                    photoId,
+                    {
+                        projectId
+                    }
+                )
             )
-          )
           && !initiallyLinkedIds.has(
-            photoId
+              photoId
           )
         );
 
         const uploadedPhotos =
-          picker.uploadDrafts
-            .map(draft =>
-              createMediaFromPhotoUpload({
-                projectId,
+            picker.uploadDrafts
+                .map(draft =>
+                    createMediaFromPhotoUpload({
+                        projectId,
 
-                draft,
+                        draft,
 
-                personIds:
+                        personIds:
                   [],
 
-                idPrefix:
+                        idPrefix:
                   uploadedPhotoIdPrefix
-              })
-            )
-            .filter(Boolean);
+                    })
+                )
+                .filter(Boolean);
 
         const addedIds =
-          archiveUniqueIds([
-            ...projectPhotoIds,
+            archiveUniqueIds([
+                ...projectPhotoIds,
 
-            ...uploadedPhotos.map(
-              photo =>
-                photo.id
-            )
-          ]);
+                ...uploadedPhotos.map(
+                    photo =>
+                        photo.id
+                )
+            ]);
 
-        if (!addedIds.length) {
-          return;
+        if (!addedIds.length)
+        {
+            return;
         }
 
         const saved =
-          onSave(
-            addedIds
-          );
+            onSave(
+                addedIds
+            );
 
         const saveFailed =
-          saved === false
+            saved === false
           || saved == null
           || (
-            typeof saved === 'object'
+              typeof saved === 'object'
             && saved.ok === false
           );
 
-        if (saveFailed) {
-          /*
+        if (saveFailed)
+        {
+            /*
             Uploaded photos were created before the
             connection write. Remove them if that write
             fails, preventing orphaned media records.
           */
-          const uploadedIds =
-            new Set(
-              uploadedPhotos.map(
-                photo =>
-                  photo.id
-              )
+            const uploadedIds =
+                new Set(
+                    uploadedPhotos.map(
+                        photo =>
+                            photo.id
+                    )
+                );
+
+            sampleData.media =
+                sampleData.media.filter(
+                    photo =>
+                        !uploadedIds.has(
+                            photo.id
+                        )
+                );
+
+            showToast(
+                'Photos could not be linked.'
             );
 
-          sampleData.media =
-            sampleData.media.filter(
-              photo =>
-                !uploadedIds.has(
-                  photo.id
-                )
-            );
-
-          showToast(
-            'Photos could not be linked.'
-          );
-
-          return;
+            return;
         }
 
         closeModal({
-          force:
+            force:
             true
         });
 
         afterSave();
 
         const message =
-          typeof successMessage
+            typeof successMessage
             === 'function'
-              ? successMessage(
-                  addedIds.length
+                ? successMessage(
+                    addedIds.length
                 )
-              : successMessage;
+                : successMessage;
 
-        if (message) {
-          showToast(
-            message
-          );
+        if (message)
+        {
+            showToast(
+                message
+            );
         }
-      };
+    };
 
-      const bindModal = () => {
+    const bindModal = () =>
+    {
         const modal =
-          modalBackdrop.querySelector(
-            '[data-notes-photos-adder]'
-          );
+            modalBackdrop.querySelector(
+                '[data-notes-photos-adder]'
+            );
 
-        if (!modal) {
-          return;
+        if (!modal)
+        {
+            return;
         }
 
         const tabs = [
-          ...modal.querySelectorAll(
-            '[data-notes-photos-adder-tab]'
-          )
+            ...modal.querySelectorAll(
+                '[data-notes-photos-adder-tab]'
+            )
         ];
 
         tabs.forEach(
-          (
-            tab,
-            index
-          ) => {
-            tab.addEventListener(
-              'click',
-              () => {
-                const nextTab =
-                  tab.dataset
-                    .notesPhotosAdderTab;
+            (
+                tab,
+                index
+            ) =>
+            {
+                tab.addEventListener(
+                    'click',
+                    () =>
+                    {
+                        const nextTab =
+                            tab.dataset
+                                .notesPhotosAdderTab;
 
-                if (
-                  ![
-                    'project',
-                    'upload'
-                  ].includes(
-                    nextTab
-                  )
+                        if (
+                            ![
+                                'project',
+                                'upload'
+                            ].includes(
+                                nextTab
+                            )
                   || nextTab
                     === picker.sourceTab
-                ) {
-                  return;
-                }
+                        )
+                        {
+                            return;
+                        }
 
-                picker.sourceTab =
-                  nextTab;
+                        picker.sourceTab =
+                            nextTab;
 
-                renderModal();
-              }
-            );
+                        renderModal();
+                    }
+                );
 
-            tab.addEventListener(
-              'keydown',
-              event => {
-                if (
-                  ![
-                    'ArrowLeft',
-                    'ArrowRight'
-                  ].includes(
-                    event.key
-                  )
-                ) {
-                  return;
-                }
+                tab.addEventListener(
+                    'keydown',
+                    event =>
+                    {
+                        if (
+                            ![
+                                'ArrowLeft',
+                                'ArrowRight'
+                            ].includes(
+                                event.key
+                            )
+                        )
+                        {
+                            return;
+                        }
 
-                event.preventDefault();
+                        event.preventDefault();
 
-                const direction =
-                  event.key
+                        const direction =
+                            event.key
                     === 'ArrowRight'
-                    ? 1
-                    : -1;
+                                ? 1
+                                : -1;
 
-                const nextIndex =
-                  (
-                    index
+                        const nextIndex =
+                            (
+                                index
                     + direction
                     + tabs.length
-                  )
+                            )
                   % tabs.length;
 
-                picker.sourceTab =
-                  tabs[nextIndex]
-                    .dataset
-                    .notesPhotosAdderTab;
+                        picker.sourceTab =
+                            tabs[nextIndex]
+                                .dataset
+                                .notesPhotosAdderTab;
 
-                renderModal();
+                        renderModal();
 
-                requestAnimationFrame(
-                  () => {
-                    modalBackdrop
-                      .querySelector(
-                        `[data-notes-photos-adder-tab="${
-                          CSS.escape(
-                            picker.sourceTab
-                          )
-                        }"]`
-                      )
-                      ?.focus();
-                  }
+                        requestAnimationFrame(
+                            () =>
+                            {
+                                modalBackdrop
+                                    .querySelector(
+                                        `[data-notes-photos-adder-tab="${
+                                            CSS.escape(
+                                                picker.sourceTab
+                                            )
+                                        }"]`
+                                    )
+                                    ?.focus();
+                            }
+                        );
+                    }
                 );
-              }
-            );
-          }
+            }
         );
 
         modal
-          .querySelector(
-            '[data-notes-photos-adder-search]'
-          )
-          ?.addEventListener(
-            'input',
-            event => {
-              picker.search =
-                event.currentTarget
-                  .value;
+            .querySelector(
+                '[data-notes-photos-adder-search]'
+            )
+            ?.addEventListener(
+                'input',
+                event =>
+                {
+                    picker.search =
+                        event.currentTarget
+                            .value;
 
-              refreshProjectResults();
-            }
-          );
+                    refreshProjectResults();
+                }
+            );
 
         const fileInput =
-          modal.querySelector(
-            '[data-notes-photos-adder-file]'
-          );
+            modal.querySelector(
+                '[data-notes-photos-adder-file]'
+            );
 
         modal
-          .querySelectorAll(
-            '[data-notes-photos-adder-choose-files]'
-          )
-          .forEach(button => {
-            button.addEventListener(
-              'click',
-              () =>
-                fileInput?.click()
-            );
-          });
+            .querySelectorAll(
+                '[data-notes-photos-adder-choose-files]'
+            )
+            .forEach(button =>
+            {
+                button.addEventListener(
+                    'click',
+                    () =>
+                        fileInput?.click()
+                );
+            });
 
         fileInput?.addEventListener(
-          'change',
-          () =>
-            processFiles(
-              fileInput.files
-            )
+            'change',
+            () =>
+                processFiles(
+                    fileInput.files
+                )
         );
 
         const dropzone =
-          modal.querySelector(
-            '[data-notes-photos-adder-dropzone]'
-          );
-
-        if (dropzone) {
-          [
-            'dragenter',
-            'dragover'
-          ].forEach(type => {
-            dropzone.addEventListener(
-              type,
-              event => {
-                event.preventDefault();
-
-                dropzone.classList.add(
-                  'is-dragging'
-                );
-              }
+            modal.querySelector(
+                '[data-notes-photos-adder-dropzone]'
             );
-          });
 
-          [
-            'dragleave',
-            'drop'
-          ].forEach(type => {
-            dropzone.addEventListener(
-              type,
-              event => {
-                event.preventDefault();
+        if (dropzone)
+        {
+            [
+                'dragenter',
+                'dragover'
+            ].forEach(type =>
+            {
+                dropzone.addEventListener(
+                    type,
+                    event =>
+                    {
+                        event.preventDefault();
 
-                dropzone.classList.remove(
-                  'is-dragging'
+                        dropzone.classList.add(
+                            'is-dragging'
+                        );
+                    }
                 );
-              }
-            );
-          });
+            });
 
-          dropzone.addEventListener(
-            'drop',
-            event =>
-              processFiles(
-                event.dataTransfer
-                  ?.files
-              )
-          );
+            [
+                'dragleave',
+                'drop'
+            ].forEach(type =>
+            {
+                dropzone.addEventListener(
+                    type,
+                    event =>
+                    {
+                        event.preventDefault();
+
+                        dropzone.classList.remove(
+                            'is-dragging'
+                        );
+                    }
+                );
+            });
+
+            dropzone.addEventListener(
+                'drop',
+                event =>
+                    processFiles(
+                        event.dataTransfer
+                            ?.files
+                    )
+            );
         }
 
         modal.addEventListener(
-          'click',
-          event => {
-            const candidate =
-              event.target.closest(
-                '[data-notes-photos-adder-candidate]'
-              );
+            'click',
+            event =>
+            {
+                const candidate =
+                    event.target.closest(
+                        '[data-notes-photos-adder-candidate]'
+                    );
 
-            if (candidate) {
-              const photoId =
-                candidate.dataset
-                  .notesPhotosAdderCandidate;
+                if (candidate)
+                {
+                    const photoId =
+                        candidate.dataset
+                            .notesPhotosAdderCandidate;
 
-              if (
-                initiallyLinkedIds.has(
-                  photoId
-                )
-              ) {
-                return;
-              }
+                    if (
+                        initiallyLinkedIds.has(
+                            photoId
+                        )
+                    )
+                    {
+                        return;
+                    }
 
-              if (
-                picker.selectedProjectIds
-                  .has(photoId)
-              ) {
-                picker.selectedProjectIds
-                  .delete(photoId);
-              } else {
-                picker.selectedProjectIds
-                  .add(photoId);
-              }
+                    if (
+                        picker.selectedProjectIds
+                            .has(photoId)
+                    )
+                    {
+                        picker.selectedProjectIds
+                            .delete(photoId);
+                    }
+                    else
+                    {
+                        picker.selectedProjectIds
+                            .add(photoId);
+                    }
 
-              refreshSelectionUi();
-              return;
-            }
+                    refreshSelectionUi();
+                    return;
+                }
 
-            const removeUpload =
-              event.target.closest(
-                '[data-notes-photos-adder-remove-upload]'
-              );
+                const removeUpload =
+                    event.target.closest(
+                        '[data-notes-photos-adder-remove-upload]'
+                    );
 
-            if (removeUpload) {
-              picker.uploadDrafts =
-                picker.uploadDrafts
-                  .filter(draft =>
-                    draft.id
+                if (removeUpload)
+                {
+                    picker.uploadDrafts =
+                        picker.uploadDrafts
+                            .filter(draft =>
+                                draft.id
                     !== removeUpload
-                      .dataset
-                      .notesPhotosAdderRemoveUpload
-                  );
+                        .dataset
+                        .notesPhotosAdderRemoveUpload
+                            );
 
-              picker.uploadErrors =
-                [];
+                    picker.uploadErrors =
+                        [];
 
-              renderModal();
-              return;
-            }
+                    renderModal();
+                    return;
+                }
 
-            if (
-              event.target.closest(
-                '[data-notes-photos-adder-clear-search]'
-              )
-            ) {
-              picker.search = '';
+                if (
+                    event.target.closest(
+                        '[data-notes-photos-adder-clear-search]'
+                    )
+                )
+                {
+                    picker.search = '';
 
-              const searchInput =
-                modal.querySelector(
-                  '[data-notes-photos-adder-search]'
-                );
+                    const searchInput =
+                        modal.querySelector(
+                            '[data-notes-photos-adder-search]'
+                        );
 
-              if (searchInput) {
-                searchInput.value =
-                  '';
-              }
+                    if (searchInput)
+                    {
+                        searchInput.value =
+                            '';
+                    }
 
-              refreshProjectResults();
+                    refreshProjectResults();
 
-              searchInput?.focus({
-                preventScroll:
+                    searchInput?.focus({
+                        preventScroll:
                   true
-              });
+                    });
 
-              return;
+                    return;
+                }
+
+                if (
+                    event.target.closest(
+                        '[data-notes-photos-adder-show-upload]'
+                    )
+                )
+                {
+                    picker.sourceTab =
+                        'upload';
+
+                    renderModal();
+                    return;
+                }
+
+                if (
+                    event.target.closest(
+                        '[data-notes-photos-adder-save]'
+                    )
+                )
+                {
+                    commit();
+                }
             }
-
-            if (
-              event.target.closest(
-                '[data-notes-photos-adder-show-upload]'
-              )
-            ) {
-              picker.sourceTab =
-                'upload';
-
-              renderModal();
-              return;
-            }
-
-            if (
-              event.target.closest(
-                '[data-notes-photos-adder-save]'
-              )
-            ) {
-              commit();
-            }
-          }
         );
-      };
+    };
 
-      function renderModal() {
+    function renderModal()
+    {
         openModal(`
           <div
             class="
@@ -7552,14 +7829,14 @@
               <div>
                 <h2 id="notesPhotosAdderTitle">
                   ${escapeHtml(
-                    title
-                  )}
+                        title
+                    )}
                 </h2>
 
                 <p>
                   ${escapeHtml(
-                    description
-                  )}
+                        description
+                    )}
                 </p>
               </div>
 
@@ -7591,9 +7868,9 @@
                   role="tab"
                   data-notes-photos-adder-tab="project"
                   aria-selected="${
-                    picker.sourceTab
+                        picker.sourceTab
                       === 'project'
-                  }">
+                    }">
 
                   Project photos
                 </button>
@@ -7604,9 +7881,9 @@
                   role="tab"
                   data-notes-photos-adder-tab="upload"
                   aria-selected="${
-                    picker.sourceTab
+                        picker.sourceTab
                       === 'upload'
-                  }">
+                    }">
 
                   Upload new
                 </button>
@@ -7615,17 +7892,17 @@
               <div
                 role="tabpanel"
                 aria-label="${
-                  picker.sourceTab
+                    picker.sourceTab
                     === 'project'
-                    ? 'Project photos'
-                    : 'Upload new photos'
+                        ? 'Project photos'
+                        : 'Upload new photos'
                 }">
 
                 ${
-                  picker.sourceTab
+                    picker.sourceTab
                     === 'project'
-                    ? renderProjectPanel()
-                    : renderUploadPanel()
+                        ? renderProjectPanel()
+                        : renderUploadPanel()
                 }
               </div>
             </div>
@@ -7634,20 +7911,22 @@
         `);
 
         bindModal();
-      }
-
-      renderModal();
     }
 
-    function openNotesPhotosModal() {
-      const note =
+    renderModal();
+}
+
+function openNotesPhotosModal()
+{
+    const note =
         selectedNote();
 
-      if (!note) {
+    if (!note)
+    {
         return;
-      }
+    }
 
-      openPhotoLinkModal({
+    openPhotoLinkModal({
         projectId:
           note.projectId,
 
@@ -7656,7 +7935,7 @@
 
         description:
           `Selected and uploaded photos will be linked to ${
-            note.title
+              note.title
             || 'Untitled note'
           }.`,
 
@@ -7665,13 +7944,13 @@
 
         initiallyLinkedPhotoIds:
           getPhotosForNote(
-            note.id,
-            {
-              projectId:
+              note.id,
+              {
+                  projectId:
                 note.projectId
-            }
+              }
           ).map(photo =>
-            photo.id
+              photo.id
           ),
 
         uploadDraftIdPrefix:
@@ -7681,55 +7960,57 @@
           `photo-note-${note.id}`,
 
         onSave:
-          addedIds => {
-            const currentNote =
-              getNote(
-                note.id,
-                {
-                  projectId:
+          addedIds =>
+          {
+              const currentNote =
+                  getNote(
+                      note.id,
+                      {
+                          projectId:
                     note.projectId,
 
-                  includeArchived:
+                          includeArchived:
                     true
-                }
-              );
+                      }
+                  );
 
-            if (!currentNote) {
-              return false;
-            }
+              if (!currentNote)
+              {
+                  return false;
+              }
 
-            const nextIds =
-              archiveUniqueIds([
-                ...(
-                  currentNote
-                    .linkedPhotoIds
+              const nextIds =
+                  archiveUniqueIds([
+                      ...(
+                          currentNote
+                              .linkedPhotoIds
                   || []
-                ),
+                      ),
 
-                ...addedIds
-              ]);
+                      ...addedIds
+                  ]);
 
-            const savedNote =
-              setNotePhotoLinks(
-                currentNote.id,
-                nextIds,
-                {
-                  projectId:
+              const savedNote =
+                  setNotePhotoLinks(
+                      currentNote.id,
+                      nextIds,
+                      {
+                          projectId:
                     currentNote.projectId
-                }
-              );
+                      }
+                  );
 
-            return Boolean(
-              savedNote
-            )
+              return Boolean(
+                  savedNote
+              )
             && addedIds.every(
-              photoId =>
-                (
-                  savedNote.linkedPhotoIds
+                photoId =>
+                    (
+                        savedNote.linkedPhotoIds
                   || []
-                ).includes(
-                  photoId
-                )
+                    ).includes(
+                        photoId
+                    )
             );
           },
 
@@ -7738,18 +8019,18 @@
 
         successMessage:
           count =>
-            `${count} ${
-              count === 1
-                ? 'photo'
-                : 'photos'
-            } added to note.`
-      });
-    }
+              `${count} ${
+                  count === 1
+                      ? 'photo'
+                      : 'photos'
+              } added to note.`
+    });
+}
 
-    function openNotesPlacesModal(
-      {
+function openNotesPlacesModal(
+    {
         noteId =
-          state.selectedNoteId,
+            state.selectedNoteId,
 
         /*
           When absent, this remains the normal
@@ -7760,301 +8041,312 @@
           Source connections.
         */
         linkContext =
-          null,
+            null,
 
         selectedIds:
           resumedSelectedIds =
-            null,
+              null,
 
         query:
           resumedQuery =
-            ''
-      } = {}
-    ) {
-      const note =
+              ''
+    } = {}
+)
+{
+    const note =
         linkContext
-          ? null
-          : getNote(
-              noteId,
-              {
-                includeArchived:
+            ? null
+            : getNote(
+                noteId,
+                {
+                    includeArchived:
                   true
-              }
+                }
             );
 
-      const projectId =
+    const projectId =
         linkContext?.projectId
         || note?.projectId
         || currentProjectId();
 
-      if (
+    if (
         !projectId
         || (
-          !linkContext
+            !linkContext
           && !note
         )
-      ) {
+    )
+    {
         return;
-      }
+    }
 
-      const initialLinkedPlaceIds =
+    const initialLinkedPlaceIds =
         linkContext
-          ? linkContext.initialPlaceIds
+            ? linkContext.initialPlaceIds
             || []
-          : note.linkedPlaceIds
+            : note.linkedPlaceIds
             || [];
 
-      const modalTitle =
+    const modalTitle =
         linkContext?.title
         || 'Add places';
 
-      const modalSubtitle =
+    const modalSubtitle =
         linkContext?.subtitle
         || note?.title
         || 'Untitled note';
 
-      const validPlace =
-        placeId => {
-          const place =
-            getPlace(
-              placeId
-            );
+    const validPlace =
+        placeId =>
+        {
+            const place =
+                getPlace(
+                    placeId
+                );
 
-          return (
-            place
+            return (
+                place
             && !place.deleted
             && place.projectId
               === projectId
-          );
+            );
         };
 
-      const initialSelectedIds =
+    const initialSelectedIds =
         new Set(
-          initialLinkedPlaceIds.filter(
-            validPlace
-          )
+            initialLinkedPlaceIds.filter(
+                validPlace
+            )
         );
 
-      const selectedIds =
+    const selectedIds =
         new Set(
-          (
-            resumedSelectedIds
+            (
+                resumedSelectedIds
             ?? [
-              ...initialSelectedIds
+                ...initialSelectedIds
             ]
-          ).filter(
-            validPlace
-          )
+            ).filter(
+                validPlace
+            )
         );
 
-      const suggestedIds =
+    const suggestedIds =
         linkContext
-          ? new Set(
-              linkContext
-                .suggestedPlaceIds
+            ? new Set(
+                linkContext
+                    .suggestedPlaceIds
               || []
             )
-          : notesSuggestedPlaceIds(
-              note
+            : notesSuggestedPlaceIds(
+                note
             );
 
-      let query =
+    let query =
         String(
-          resumedQuery || ''
+            resumedQuery || ''
         );
 
-      const allPlaces = () =>
+    const allPlaces = () =>
         projectPlaces(
-          projectId
+            projectId
         );
 
-      const placeNames =
+    const placeNames =
         place => [
-          place.name,
-          placePrimaryName(
-            place
-          ),
-          placeSecondaryName(
-            place
-          ),
-          ...placeAlternativeNames(
-            place
-          )
+            place.name,
+            placePrimaryName(
+                place
+            ),
+            placeSecondaryName(
+                place
+            ),
+            ...placeAlternativeNames(
+                place
+            )
         ]
-          .filter(Boolean)
-          .map(
-            normalizePlaceLookupText
-          );
-
-      const placeSearchRank =
-        place => {
-          const normalizedQuery =
-            normalizePlaceLookupText(
-              query
+            .filter(Boolean)
+            .map(
+                normalizePlaceLookupText
             );
 
-          if (!normalizedQuery) {
-            return 0;
-          }
-
-          const names =
-            placeNames(
-              place
-            );
-
-          if (
-            names.some(
-              name =>
-                name
-                  === normalizedQuery
-            )
-          ) {
-            return 0;
-          }
-
-          if (
-            names.some(
-              name =>
-                name.startsWith(
-                  normalizedQuery
-                )
-            )
-          ) {
-            return 1;
-          }
-
-          if (
-            names.some(
-              name =>
-                name.includes(
-                  normalizedQuery
-                )
-            )
-          ) {
-            return 2;
-          }
-
-          return Number.POSITIVE_INFINITY;
-        };
-
-      const matchedAlternativeName =
-        place => {
-          const normalizedQuery =
-            normalizePlaceLookupText(
-              query
-            );
-
-          if (!normalizedQuery) {
-            return '';
-          }
-
-          return (
-            placeAlternativeNames(
-              place
-            ).find(
-              name =>
+    const placeSearchRank =
+        place =>
+        {
+            const normalizedQuery =
                 normalizePlaceLookupText(
-                  name
-                ).includes(
-                  normalizedQuery
+                    query
+                );
+
+            if (!normalizedQuery)
+            {
+                return 0;
+            }
+
+            const names =
+                placeNames(
+                    place
+                );
+
+            if (
+                names.some(
+                    name =>
+                        name
+                  === normalizedQuery
                 )
             )
-            || ''
-          );
+            {
+                return 0;
+            }
+
+            if (
+                names.some(
+                    name =>
+                        name.startsWith(
+                            normalizedQuery
+                        )
+                )
+            )
+            {
+                return 1;
+            }
+
+            if (
+                names.some(
+                    name =>
+                        name.includes(
+                            normalizedQuery
+                        )
+                )
+            )
+            {
+                return 2;
+            }
+
+            return Number.POSITIVE_INFINITY;
         };
 
-      const visiblePlaces =
-        () => {
-          const hasQuery =
-            Boolean(
-              normalizePlaceLookupText(
-                query
-              )
+    const matchedAlternativeName =
+        place =>
+        {
+            const normalizedQuery =
+                normalizePlaceLookupText(
+                    query
+                );
+
+            if (!normalizedQuery)
+            {
+                return '';
+            }
+
+            return (
+                placeAlternativeNames(
+                    place
+                ).find(
+                    name =>
+                        normalizePlaceLookupText(
+                            name
+                        ).includes(
+                            normalizedQuery
+                        )
+                )
+            || ''
             );
+        };
 
-          return allPlaces()
-            .filter(
-              place =>
-                !selectedIds.has(
-                  place.id
+    const visiblePlaces =
+        () =>
+        {
+            const hasQuery =
+                Boolean(
+                    normalizePlaceLookupText(
+                        query
+                    )
+                );
+
+            return allPlaces()
+                .filter(
+                    place =>
+                        !selectedIds.has(
+                            place.id
+                        )
                 )
-            )
-            .map(place => ({
-              place,
+                .map(place => ({
+                    place,
 
-              rank:
+                    rank:
                 hasQuery
-                  ? placeSearchRank(
-                      place
+                    ? placeSearchRank(
+                        place
                     )
-                  : suggestedIds.has(
-                      place.id
+                    : suggestedIds.has(
+                        place.id
                     )
-                    ? 0
-                    : 1
-            }))
-            .filter(
-              item =>
-                Number.isFinite(
-                  item.rank
+                        ? 0
+                        : 1
+                }))
+                .filter(
+                    item =>
+                        Number.isFinite(
+                            item.rank
+                        )
                 )
-            )
-            .sort(
-              (
-                first,
-                second
-              ) =>
-                first.rank
+                .sort(
+                    (
+                        first,
+                        second
+                    ) =>
+                        first.rank
                   - second.rank
                 || placePrimaryName(
-                  first.place
+                    first.place
                 ).localeCompare(
-                  placePrimaryName(
-                    second.place
-                  )
+                    placePrimaryName(
+                        second.place
+                    )
                 )
-            )
-            .map(
-              item =>
-                item.place
-            );
+                )
+                .map(
+                    item =>
+                        item.place
+                );
         };
 
-      const placeConnectionTotal =
+    const placeConnectionTotal =
         place =>
-          Object.values(
-            getPlaceConnectionCounts(
-              place.id,
-              {
-                projectId
-              }
-            )
-          ).reduce(
-            (
-              total,
-              count
-            ) =>
-              total
+            Object.values(
+                getPlaceConnectionCounts(
+                    place.id,
+                    {
+                        projectId
+                    }
+                )
+            ).reduce(
+                (
+                    total,
+                    count
+                ) =>
+                    total
               + Number(
                   count || 0
-                ),
-            0
-          );
+              ),
+                0
+            );
 
-      const selectionChanged =
+    const selectionChanged =
         () =>
-          initialSelectedIds.size
+            initialSelectedIds.size
             !== selectedIds.size
           || [
-            ...initialSelectedIds
+              ...initialSelectedIds
           ].some(
-            placeId =>
-              !selectedIds.has(
-                placeId
-              )
+              placeId =>
+                  !selectedIds.has(
+                      placeId
+                  )
           );
 
-      const renderPlaceIcon =
+    const renderPlaceIcon =
         () => `
           <span
             class="
@@ -8066,22 +8358,24 @@
           </span>
         `;
 
-      const renderSelectedPlaces =
-        () => {
-          const places = [
-            ...selectedIds
-          ]
-            .map(getPlace)
-            .filter(place =>
-              place
+    const renderSelectedPlaces =
+        () =>
+        {
+            const places = [
+                ...selectedIds
+            ]
+                .map(getPlace)
+                .filter(place =>
+                    place
               && !place.deleted
-            );
+                );
 
-          if (!places.length) {
-            return '';
-          }
+            if (!places.length)
+            {
+                return '';
+            }
 
-          return `
+            return `
             <div
               class="
                 notes-related-selected-list
@@ -8089,15 +8383,16 @@
               ">
 
               ${places
-                .map(place => {
-                  const primaryName =
-                    placePrimaryName(
-                      place
-                    )
+                    .map(place =>
+                    {
+                        const primaryName =
+                            placePrimaryName(
+                                place
+                            )
                     || place.name
                     || 'Unnamed place';
 
-                  return `
+                        return `
                     <div
                       class="
                         notes-related-selected-row
@@ -8106,11 +8401,11 @@
 
                       <span
                         title="${escapeHtml(
-                          primaryName
+                            primaryName
                         )}">
 
                         ${escapeHtml(
-                          primaryName
+                            primaryName
                         )}
                       </span>
 
@@ -8118,10 +8413,10 @@
                         class="relation-action-button"
                         type="button"
                         data-notes-place-remove="${escapeHtml(
-                          place.id
+                            place.id
                         )}"
                         aria-label="Remove ${escapeHtml(
-                          primaryName
+                            primaryName
                         )} from selection"
                         title="Remove from selection">
 
@@ -8129,54 +8424,55 @@
                       </button>
                     </div>
                   `;
-                })
-                .join('')}
+                    })
+                    .join('')}
             </div>
           `;
         };
 
-      const renderPlaceResult =
-        place => {
-          const primaryName =
-            placePrimaryName(
-              place
-            );
+    const renderPlaceResult =
+        place =>
+        {
+            const primaryName =
+                placePrimaryName(
+                    place
+                );
 
-          const secondaryName =
-            placeSecondaryName(
-              place
-            )
+            const secondaryName =
+                placeSecondaryName(
+                    place
+                )
             || 'No broader place recorded';
 
-          const connected =
-            placeConnectionTotal(
-              place
-            );
+            const connected =
+                placeConnectionTotal(
+                    place
+                );
 
-          const matchedAlternative =
-            matchedAlternativeName(
-              place
-            );
+            const matchedAlternative =
+                matchedAlternativeName(
+                    place
+                );
 
-          const metaParts = [
-            `${connected} ${
-              connected === 1
-                ? 'connected record'
-                : 'connected records'
-            }`,
+            const metaParts = [
+                `${connected} ${
+                    connected === 1
+                        ? 'connected record'
+                        : 'connected records'
+                }`,
 
-            placeHasCoordinates(
-              place
-            )
-              ? 'Mapped'
-              : 'No map position',
+                placeHasCoordinates(
+                    place
+                )
+                    ? 'Mapped'
+                    : 'No map position',
 
-            matchedAlternative
-              ? `Matched “${matchedAlternative}”`
-              : ''
-          ].filter(Boolean);
+                matchedAlternative
+                    ? `Matched “${matchedAlternative}”`
+                    : ''
+            ].filter(Boolean);
 
-          return `
+            return `
             <label
               class="
                 photo-people-result
@@ -8192,14 +8488,14 @@
 
                 <strong>
                   ${escapeHtml(
-                    primaryName
-                  )}
+                        primaryName
+                    )}
                 </strong>
 
                 <span>
                   ${escapeHtml(
-                    secondaryName
-                  )}
+                        secondaryName
+                    )}
                 </span>
 
                 <span
@@ -8208,35 +8504,37 @@
                   ">
 
                   ${escapeHtml(
-                    metaParts.join(
-                      ' · '
-                    )
-                  )}
+                        metaParts.join(
+                            ' · '
+                        )
+                    )}
                 </span>
               </span>
 
               <input
                 type="checkbox"
                 value="${escapeHtml(
-                  place.id
+                    place.id
                 )}"
                 data-notes-place-choice
                 aria-label="Select ${escapeHtml(
-                  primaryName
+                    primaryName
                 )}">
             </label>
           `;
         };
 
-      const renderResults =
-        places => {
-          const projectPlacesList =
-            allPlaces();
+    const renderResults =
+        places =>
+        {
+            const projectPlacesList =
+                allPlaces();
 
-          if (
-            !projectPlacesList.length
-          ) {
-            return `
+            if (
+                !projectPlacesList.length
+            )
+            {
+                return `
               <div
                 class="
                   photo-people-empty
@@ -8254,22 +8552,24 @@
                 </div>
               </div>
             `;
-          }
+            }
 
-          if (places.length) {
-            return places
-              .map(
-                renderPlaceResult
-              )
-              .join('');
-          }
+            if (places.length)
+            {
+                return places
+                    .map(
+                        renderPlaceResult
+                    )
+                    .join('');
+            }
 
-          if (
-            normalizePlaceLookupText(
-              query
+            if (
+                normalizePlaceLookupText(
+                    query
+                )
             )
-          ) {
-            return `
+            {
+                return `
               <div
                 class="
                   photo-people-empty
@@ -8303,9 +8603,9 @@
                 </div>
               </div>
             `;
-          }
+            }
 
-          return `
+            return `
             <div
               class="
                 photo-people-empty
@@ -8321,7 +8621,7 @@
           `;
         };
 
-      openModal(`
+    openModal(`
         <div
           class="
             modal
@@ -8336,13 +8636,13 @@
             <div>
               <h2 id="notesPlacesTitle">
                 ${escapeHtml(
-                  modalTitle
+                    modalTitle
                 )}
               </h2>
 
               <p>
                 ${escapeHtml(
-                  modalSubtitle
+                    modalSubtitle
                 )}
               </p>
             </div>
@@ -8384,7 +8684,7 @@
                     id="notesPlacesSearch"
                     type="search"
                     value="${escapeHtml(
-                      query
+                        query
                     )}"
                     data-notes-place-search
                     placeholder="Search by name, broader place, or historical name"
@@ -8488,871 +8788,934 @@
         </div>
       `);
 
-      const modal =
+    const modal =
         modalBackdrop.querySelector(
-          '.notes-places-modal'
+            '.notes-places-modal'
         );
 
-      if (!modal) {
+    if (!modal)
+    {
         return;
-      }
+    }
 
-      const searchInput =
+    const searchInput =
         modal.querySelector(
-          '[data-notes-place-search]'
+            '[data-notes-place-search]'
         );
 
-      const selectedPanel =
+    const selectedPanel =
         modal.querySelector(
-          '[data-notes-place-selected]'
+            '[data-notes-place-selected]'
         );
 
-      const resultsHost =
+    const resultsHost =
         modal.querySelector(
-          '[data-notes-place-results]'
+            '[data-notes-place-results]'
         );
 
-      const resultsTitle =
+    const resultsTitle =
         modal.querySelector(
-          '[data-notes-place-results-title]'
+            '[data-notes-place-results-title]'
         );
 
-      const resultsMeta =
+    const resultsMeta =
         modal.querySelector(
-          '[data-notes-place-results-meta]'
+            '[data-notes-place-results-meta]'
         );
 
-      const countElement =
+    const countElement =
         modal.querySelector(
-          '[data-notes-place-count]'
+            '[data-notes-place-count]'
         );
 
-      const saveButton =
+    const saveButton =
         modal.querySelector(
-          '[data-notes-place-save]'
+            '[data-notes-place-save]'
         );
 
-      const refreshSelected =
-        () => {
-          const html =
-            renderSelectedPlaces();
+    const refreshSelected =
+        () =>
+        {
+            const html =
+                renderSelectedPlaces();
 
-          selectedPanel.hidden =
-            !html;
+            selectedPanel.hidden =
+                !html;
 
-          selectedPanel.innerHTML =
-            html;
+            selectedPanel.innerHTML =
+                html;
 
-          localizeUI(
-            selectedPanel
-          );
+            localizeUI(
+                selectedPanel
+            );
         };
 
-      const refreshResults = () => {
+    const refreshResults = () =>
+    {
         const places =
-          visiblePlaces();
+            visiblePlaces();
 
         const queryActive =
-          Boolean(
-            normalizePlaceLookupText(query)
-          );
+            Boolean(
+                normalizePlaceLookupText(query)
+            );
 
         // Saved connections, independent of draft selections.
         const connectedCount =
-          [...initialSelectedIds]
-            .filter(validPlace)
-            .length;
+            [...initialSelectedIds]
+                .filter(validPlace)
+                .length;
 
         const availableLabel =
-          queryActive
-            ? (
-                places.length === 1
-                  ? '{count} match'
-                  : '{count} matches'
-              )
-            : (
-                places.length === 1
-                  ? '{count} place available'
-                  : '{count} places available'
-              );
+            queryActive
+                ? (
+                    places.length === 1
+                        ? '{count} match'
+                        : '{count} matches'
+                )
+                : (
+                    places.length === 1
+                        ? '{count} place available'
+                        : '{count} places available'
+                );
 
         resultsTitle.textContent =
-          t(
-            queryActive
-              ? 'Search results'
-              : 'Suggested places'
-          );
+            t(
+                queryActive
+                    ? 'Search results'
+                    : 'Suggested places'
+            );
 
         const numberFormatter =
-          new Intl.NumberFormat(
-            state.language === 'ru'
-              ? 'ru-RU'
-              : 'en-US'
-          );
+            new Intl.NumberFormat(
+                state.language === 'ru'
+                    ? 'ru-RU'
+                    : 'en-US'
+            );
 
         const availableText =
-          t(availableLabel).replace(
-            '{count}',
-            numberFormatter.format(
-              places.length
-            )
-          );
+            t(availableLabel).replace(
+                '{count}',
+                numberFormatter.format(
+                    places.length
+                )
+            );
 
         const connectedText =
-          t('{count} already connected').replace(
-            '{count}',
-            numberFormatter.format(
-              connectedCount
-            )
-          );
+            t('{count} already connected').replace(
+                '{count}',
+                numberFormatter.format(
+                    connectedCount
+                )
+            );
 
         resultsMeta.textContent =
-          `${availableText} · ${connectedText}`;
+            `${availableText} · ${connectedText}`;
 
         resultsHost.innerHTML =
-          renderResults(places);
+            renderResults(places);
 
         localizeUI(resultsHost);
-      };
+    };
 
-      const refreshFooter =
-        () => {
-          const count =
-            selectedIds.size;
+    const refreshFooter =
+        () =>
+        {
+            const count =
+                selectedIds.size;
 
-          countElement.textContent =
-            `${count} ${
-              count === 1
-                ? 'place'
-                : 'places'
-            } selected`;
+            countElement.textContent =
+                `${count} ${
+                    count === 1
+                        ? 'place'
+                        : 'places'
+                } selected`;
 
-          saveButton.disabled =
-            !selectionChanged();
+            saveButton.disabled =
+                !selectionChanged();
         };
 
-      const refresh =
-        () => {
-          refreshSelected();
-          refreshResults();
-          refreshFooter();
+    const refresh =
+        () =>
+        {
+            refreshSelected();
+            refreshResults();
+            refreshFooter();
         };
 
-      const reopenAfterPlaceEditor =
+    const reopenAfterPlaceEditor =
         (
-          place = null
-        ) => {
-          const nextSelectedIds =
-            new Set(
-              selectedIds
-            );
+            place = null
+        ) =>
+        {
+            const nextSelectedIds =
+                new Set(
+                    selectedIds
+                );
 
-          if (
-            place
+            if (
+                place
             && validPlace(
-              place.id
+                place.id
             )
-          ) {
-            nextSelectedIds.add(
-              place.id
-            );
-          }
+            )
+            {
+                nextSelectedIds.add(
+                    place.id
+                );
+            }
 
-          const nextQuery =
-            query;
+            const nextQuery =
+                query;
 
-          if (linkContext) {
-            linkContext
-              .renderContext?.();
-          } else {
-            renderNotesPreservingInteraction();
-          }
+            if (linkContext)
+            {
+                linkContext
+                    .renderContext?.();
+            }
+            else
+            {
+                renderNotesPreservingInteraction();
+            }
 
-          requestAnimationFrame(
-            () => {
-              openNotesPlacesModal({
-                noteId:
+            requestAnimationFrame(
+                () =>
+                {
+                    openNotesPlacesModal({
+                        noteId:
                   note?.id
                   || noteId,
 
-                linkContext,
+                        linkContext,
 
-                selectedIds: [
-                  ...nextSelectedIds
-                ],
+                        selectedIds: [
+                            ...nextSelectedIds
+                        ],
 
-                query:
+                        query:
                   nextQuery
-              });
-            }
-          );
+                    });
+                }
+            );
         };
 
-      const openNewPlace =
-        () => {
-          openPlaceModal(
-            null,
-            {
-              completion: {
-                onComplete:
+    const openNewPlace =
+        () =>
+        {
+            openPlaceModal(
+                null,
+                {
+                    completion: {
+                        onComplete:
                   place =>
-                    reopenAfterPlaceEditor(
-                      place
-                    ),
+                      reopenAfterPlaceEditor(
+                          place
+                      ),
 
-                onCancel:
+                        onCancel:
                   () =>
-                    reopenAfterPlaceEditor()
-              }
-            }
-          );
+                      reopenAfterPlaceEditor()
+                    }
+                }
+            );
         };
 
-      searchInput
+    searchInput
         ?.addEventListener(
-          'input',
-          event => {
-            query =
-              event.currentTarget
-                .value;
+            'input',
+            event =>
+            {
+                query =
+                    event.currentTarget
+                        .value;
 
-            refreshResults();
-          }
+                refreshResults();
+            }
         );
 
-      modal.addEventListener(
+    modal.addEventListener(
         'change',
-        event => {
-          const input =
-            event.target.closest(
-              '[data-notes-place-choice]'
-            );
+        event =>
+        {
+            const input =
+                event.target.closest(
+                    '[data-notes-place-choice]'
+                );
 
-          if (
-            !input
+            if (
+                !input
             || !input.checked
-          ) {
-            return;
-          }
+            )
+            {
+                return;
+            }
 
-          selectedIds.add(
-            input.value
-          );
-
-          refresh();
-        }
-      );
-
-      modal.addEventListener(
-        'click',
-        event => {
-          const removeButton =
-            event.target.closest(
-              '[data-notes-place-remove]'
-            );
-
-          if (removeButton) {
-            selectedIds.delete(
-              removeButton.dataset
-                .notesPlaceRemove
+            selectedIds.add(
+                input.value
             );
 
             refresh();
-            return;
-          }
+        }
+    );
 
-          if (
-            event.target.closest(
-              '[data-notes-place-clear-search]'
-            )
-          ) {
-            query = '';
+    modal.addEventListener(
+        'click',
+        event =>
+        {
+            const removeButton =
+                event.target.closest(
+                    '[data-notes-place-remove]'
+                );
 
-            if (searchInput) {
-              searchInput.value =
-                '';
+            if (removeButton)
+            {
+                selectedIds.delete(
+                    removeButton.dataset
+                        .notesPlaceRemove
+                );
+
+                refresh();
+                return;
             }
 
-            refreshResults();
-
-            searchInput?.focus({
-              preventScroll: true
-            });
-
-            return;
-          }
-
-          if (
-            event.target.closest(
-              '[data-notes-place-create]'
-            )
-          ) {
-            openNewPlace();
-            return;
-          }
-
-          if (
-            event.target.closest(
-              '[data-notes-place-save]'
-            )
-          ) {
             if (
-              !selectionChanged()
-            ) {
-              return;
+                event.target.closest(
+                    '[data-notes-place-clear-search]'
+                )
+            )
+            {
+                query = '';
+
+                if (searchInput)
+                {
+                    searchInput.value =
+                        '';
+                }
+
+                refreshResults();
+
+                searchInput?.focus({
+                    preventScroll: true
+                });
+
+                return;
             }
 
-          const nextPlaceIds =
-            [
-              ...selectedIds
-            ];
+            if (
+                event.target.closest(
+                    '[data-notes-place-create]'
+                )
+            )
+            {
+                openNewPlace();
+                return;
+            }
 
-          let saved;
+            if (
+                event.target.closest(
+                    '[data-notes-place-save]'
+                )
+            )
+            {
+                if (
+                    !selectionChanged()
+                )
+                {
+                    return;
+                }
 
-          if (linkContext) {
-            saved =
-              linkContext.onSave?.(
-                nextPlaceIds
-              );
-          } else {
-            setNoteEntityLinks(
-              note.id,
-              'place',
-              nextPlaceIds,
-              {
-                projectId
-              }
-            );
+                const nextPlaceIds =
+                    [
+                        ...selectedIds
+                    ];
 
-            saved = true;
-          }
+                let saved;
 
-          if (saved === false) {
-            return;
-          }
+                if (linkContext)
+                {
+                    saved =
+                        linkContext.onSave?.(
+                            nextPlaceIds
+                        );
+                }
+                else
+                {
+                    setNoteEntityLinks(
+                        note.id,
+                        'place',
+                        nextPlaceIds,
+                        {
+                            projectId
+                        }
+                    );
 
-          closeModal();
+                    saved = true;
+                }
 
-          if (linkContext) {
-            linkContext.afterSave?.();
-          } else {
-            renderNotesPreservingInteraction();
-          }
+                if (saved === false)
+                {
+                    return;
+                }
 
-          showToast(
-            linkContext?.successMessage
+                closeModal();
+
+                if (linkContext)
+                {
+                    linkContext.afterSave?.();
+                }
+                else
+                {
+                    renderNotesPreservingInteraction();
+                }
+
+                showToast(
+                    linkContext?.successMessage
             || 'Place links updated.'
-          );
-          }
+                );
+            }
         }
-      );
+    );
 
-      refresh();
+    refresh();
 
-      requestAnimationFrame(
-        () => {
-          searchInput?.focus({
-            preventScroll: true
-          });
+    requestAnimationFrame(
+        () =>
+        {
+            searchInput?.focus({
+                preventScroll: true
+            });
         }
-      );
-    }
+    );
+}
 
-    function openEventLinkModal({
-      projectId,
-      title =
+function openEventLinkModal({
+    projectId,
+    title =
         'Add events',
-      subtitle =
+    subtitle =
         '',
-      initiallyLinkedEventIds =
+    initiallyLinkedEventIds =
         [],
-      primaryPersonIds =
+    primaryPersonIds =
         [],
-      secondaryPersonIds =
+    secondaryPersonIds =
         [],
-      alreadyLinkedTarget =
+    alreadyLinkedTarget =
         'this item',
-      onSave,
-      afterSave =
-        () => {},
-      successMessage =
+    onSave,
+    afterSave =
+        () =>
+        {},
+    successMessage =
         count =>
-          `${count} ${
-            count === 1
-              ? 'event'
-              : 'events'
-          } added.`
-    } = {}) {
-      if (
+            `${count} ${
+                count === 1
+                    ? 'event'
+                    : 'events'
+            } added.`
+} = {})
+{
+    if (
         !projectId
         || typeof onSave
           !== 'function'
-      ) {
+    )
+    {
         return;
-      }
+    }
 
-      const personName =
+    const personName =
         person =>
-          personResourceDisplayName(
-            person
-          )
+            personResourceDisplayName(
+                person
+            )
           || person?.names?.display
           || 'Unnamed person';
 
-      const normalizeSearch =
+    const normalizeSearch =
         value =>
-          String(
-            value || ''
-          )
-            .trim()
-            .toLowerCase();
+            String(
+                value || ''
+            )
+                .trim()
+                .toLowerCase();
 
-      const people =
+    const people =
         getPeople(
-          projectId
+            projectId
         )
-          .filter(person =>
-            person?.id
+            .filter(person =>
+                person?.id
             && !person.deleted
             && person.projectId
               === projectId
-          )
-          .slice();
+            )
+            .slice();
 
-      const peopleById =
+    const peopleById =
         new Map(
-          people.map(person => [
-            person.id,
-            person
-          ])
+            people.map(person => [
+                person.id,
+                person
+            ])
         );
 
-      /*
+    /*
         Events without at least one valid
         Person owner are intentionally excluded.
       */
-      const eventsById =
+    const eventsById =
         new Map();
 
-      const eventsByPersonId =
+    const eventsByPersonId =
         new Map();
 
-      noteEntityRecords(
+    noteEntityRecords(
         'event',
         projectId
-      ).forEach(event => {
-        if (!event?.id) {
-          return;
+    ).forEach(event =>
+    {
+        if (!event?.id)
+        {
+            return;
         }
 
         const ownerIds =
-          placeInspectorEventOwnerIds(
-            event
-          ).filter(personId =>
-            peopleById.has(
-              personId
-            )
-          );
+            placeInspectorEventOwnerIds(
+                event
+            ).filter(personId =>
+                peopleById.has(
+                    personId
+                )
+            );
 
-        if (!ownerIds.length) {
-          return;
+        if (!ownerIds.length)
+        {
+            return;
         }
 
         eventsById.set(
-          event.id,
-          event
+            event.id,
+            event
         );
 
-        ownerIds.forEach(personId => {
-          if (
-            !eventsByPersonId.has(
-              personId
+        ownerIds.forEach(personId =>
+        {
+            if (
+                !eventsByPersonId.has(
+                    personId
+                )
             )
-          ) {
-            eventsByPersonId.set(
-              personId,
-              []
-            );
-          }
+            {
+                eventsByPersonId.set(
+                    personId,
+                    []
+                );
+            }
 
-          eventsByPersonId
-            .get(personId)
-            .push(event);
+            eventsByPersonId
+                .get(personId)
+                .push(event);
         });
-      });
+    });
 
-      eventsByPersonId.forEach(
-        personEvents => {
-          personEvents.sort(
-            (
-              first,
-              second
-            ) =>
-              placeInspectorEventSortValue(
-                first
-              )
+    eventsByPersonId.forEach(
+        personEvents =>
+        {
+            personEvents.sort(
+                (
+                    first,
+                    second
+                ) =>
+                    placeInspectorEventSortValue(
+                        first
+                    )
               - placeInspectorEventSortValue(
-                second
+                  second
               )
               || placeInspectorEventLabel(
-                first
+                  first
               ).localeCompare(
-                placeInspectorEventLabel(
-                  second
-                )
+                  placeInspectorEventLabel(
+                      second
+                  )
               )
-          );
+            );
         }
-      );
+    );
 
-      const initiallyLinkedIds =
+    const initiallyLinkedIds =
         new Set(
-          (
-            initiallyLinkedEventIds
+            (
+                initiallyLinkedEventIds
             || []
-          ).filter(eventId =>
-            eventsById.has(
-              eventId
+            ).filter(eventId =>
+                eventsById.has(
+                    eventId
+                )
             )
-          )
         );
 
-      /*
+    /*
         Only newly selected Events are stored
         here. Existing links stay disabled.
       */
-      const selectedIds =
+    const selectedIds =
         new Set();
 
-      let query = '';
-      let activePersonId = '';
-      let mobilePane = 'people';
+    let query = '';
+    let activePersonId = '';
+    let mobilePane = 'people';
 
-      const personEvents =
+    const personEvents =
         personId =>
-          eventsByPersonId.get(
-            personId
-          )
+            eventsByPersonId.get(
+                personId
+            )
           || [];
 
-      const personSearchText =
+    const personSearchText =
         person =>
-          normalizeSearch(
-            [
-              personName(person),
-              person?.names?.first,
-              person?.names?.middle,
-              person?.names?.last,
-              person?.names?.maiden,
-              albumPhotoPersonDates(
-                person
-              ),
-              getPlaceEventDisplay(
-                person?.birth
-              ),
-              getPlaceEventDisplay(
-                person?.death
-              )
-            ]
-              .filter(Boolean)
-              .join(' ')
-          );
-
-      const eventSearchText =
-        (
-          event,
-          person
-        ) => {
-          const presentation =
-            placeInspectorEventPresentation(
-              event,
-              person.id
+            normalizeSearch(
+                [
+                    personName(person),
+                    person?.names?.first,
+                    person?.names?.middle,
+                    person?.names?.last,
+                    person?.names?.maiden,
+                    albumPhotoPersonDates(
+                        person
+                    ),
+                    getPlaceEventDisplay(
+                        person?.birth
+                    ),
+                    getPlaceEventDisplay(
+                        person?.death
+                    )
+                ]
+                    .filter(Boolean)
+                    .join(' ')
             );
 
-          const relatedNames =
-            placeInspectorEventRelatedPeople(
-              event,
-              person.id
-            )
-              .map(
-                personName
-              )
-              .join(' ');
+    const eventSearchText =
+        (
+            event,
+            person
+        ) =>
+        {
+            const presentation =
+                placeInspectorEventPresentation(
+                    event,
+                    person.id
+                );
 
-          return normalizeSearch([
-            presentation.title,
-            presentation.date,
-            presentation.relationship,
-            timelinePlaceLabel(
-              event
-            ),
-            event?.title,
-            event?.type,
-            event?.typeLabel,
-            event?.eventType,
-            event?.description,
-            event?.notes,
-            event?.address,
-            relatedNames
-          ]
-            .filter(Boolean)
-            .join(' '));
+            const relatedNames =
+                placeInspectorEventRelatedPeople(
+                    event,
+                    person.id
+                )
+                    .map(
+                        personName
+                    )
+                    .join(' ');
+
+            return normalizeSearch([
+                presentation.title,
+                presentation.date,
+                presentation.relationship,
+                timelinePlaceLabel(
+                    event
+                ),
+                event?.title,
+                event?.type,
+                event?.typeLabel,
+                event?.eventType,
+                event?.description,
+                event?.notes,
+                event?.address,
+                relatedNames
+            ]
+                .filter(Boolean)
+                .join(' '));
         };
 
-      const primaryPersonIdSet =
+    const primaryPersonIdSet =
         new Set(
-          (
-            primaryPersonIds
+            (
+                primaryPersonIds
             || []
-          ).filter(personId =>
-            peopleById.has(
-              personId
+            ).filter(personId =>
+                peopleById.has(
+                    personId
+                )
             )
-          )
         );
 
-      const secondaryPersonIdSet =
+    const secondaryPersonIdSet =
         new Set(
-          (
-            secondaryPersonIds
+            (
+                secondaryPersonIds
             || []
-          ).filter(personId =>
-            peopleById.has(
-              personId
+            ).filter(personId =>
+                peopleById.has(
+                    personId
+                )
             )
-          )
         );
 
-      const linkedEventOwnerIds =
+    const linkedEventOwnerIds =
         new Set();
 
-      initiallyLinkedIds.forEach(
-        eventId => {
-          const event =
-            eventsById.get(
-              eventId
-            );
+    initiallyLinkedIds.forEach(
+        eventId =>
+        {
+            const event =
+                eventsById.get(
+                    eventId
+                );
 
-          placeInspectorEventOwnerIds(
-            event
-          ).forEach(personId => {
-            if (
-              peopleById.has(
-                personId
-              )
-            ) {
-              linkedEventOwnerIds.add(
-                personId
-              );
-            }
-          });
+            placeInspectorEventOwnerIds(
+                event
+            ).forEach(personId =>
+            {
+                if (
+                    peopleById.has(
+                        personId
+                    )
+                )
+                {
+                    linkedEventOwnerIds.add(
+                        personId
+                    );
+                }
+            });
         }
-      );
+    );
 
-      const personPriority =
-        personId => {
-          if (
-            primaryPersonIdSet.has(
-              personId
+    const personPriority =
+        personId =>
+        {
+            if (
+                primaryPersonIdSet.has(
+                    personId
+                )
             )
-          ) {
-            return 0;
-          }
+            {
+                return 0;
+            }
 
-          if (
-            secondaryPersonIdSet.has(
-              personId
+            if (
+                secondaryPersonIdSet.has(
+                    personId
+                )
             )
-          ) {
-            return 1;
-          }
+            {
+                return 1;
+            }
 
-          if (
-            linkedEventOwnerIds.has(
-              personId
+            if (
+                linkedEventOwnerIds.has(
+                    personId
+                )
             )
-          ) {
-            return 2;
-          }
+            {
+                return 2;
+            }
 
-          return 3;
+            return 3;
         };
 
-      const candidatePeople =
-        () => {
-          const normalizedQuery =
-            normalizeSearch(
-              query
-            );
-
-          return people
-            .map(person => {
-              const allEvents =
-                personEvents(
-                  person.id
+    const candidatePeople =
+        () =>
+        {
+            const normalizedQuery =
+                normalizeSearch(
+                    query
                 );
 
-              const personText =
-                personSearchText(
-                  person
-                );
+            return people
+                .map(person =>
+                {
+                    const allEvents =
+                        personEvents(
+                            person.id
+                        );
 
-              const personMatched =
-                Boolean(
-                  normalizedQuery
+                    const personText =
+                        personSearchText(
+                            person
+                        );
+
+                    const personMatched =
+                        Boolean(
+                            normalizedQuery
                   && personText.includes(
-                    normalizedQuery
+                      normalizedQuery
                   )
-                );
+                        );
 
-              const matchingEvents =
-                normalizedQuery
-                  ? allEvents.filter(
-                      event =>
-                        eventSearchText(
-                          event,
-                          person
-                        ).includes(
-                          normalizedQuery
-                        )
-                    )
-                  : allEvents;
+                    const matchingEvents =
+                        normalizedQuery
+                            ? allEvents.filter(
+                                event =>
+                                    eventSearchText(
+                                        event,
+                                        person
+                                    ).includes(
+                                        normalizedQuery
+                                    )
+                            )
+                            : allEvents;
 
-              if (
-                normalizedQuery
+                    if (
+                        normalizedQuery
                 && !personMatched
                 && !matchingEvents.length
-              ) {
-                return null;
-              }
+                    )
+                    {
+                        return null;
+                    }
 
-              const normalizedName =
-                normalizeSearch(
-                  personName(person)
-                );
+                    const normalizedName =
+                        normalizeSearch(
+                            personName(person)
+                        );
 
-              let matchRank = 0;
+                    let matchRank = 0;
 
-              if (normalizedQuery) {
-                if (
-                  normalizedName
+                    if (normalizedQuery)
+                    {
+                        if (
+                            normalizedName
                     === normalizedQuery
-                ) {
-                  matchRank = 0;
-                } else if (
-                  normalizedName.startsWith(
-                    normalizedQuery
-                  )
-                ) {
-                  matchRank = 1;
-                } else if (
-                  personMatched
-                ) {
-                  matchRank = 2;
-                } else {
-                  /*
+                        )
+                        {
+                            matchRank = 0;
+                        }
+                        else if (
+                            normalizedName.startsWith(
+                                normalizedQuery
+                            )
+                        )
+                        {
+                            matchRank = 1;
+                        }
+                        else if (
+                            personMatched
+                        )
+                        {
+                            matchRank = 2;
+                        }
+                        else
+                        {
+                            /*
                     The query matched one or more
                     Events rather than the Person.
                   */
-                  matchRank = 3;
-                }
-              }
+                            matchRank = 3;
+                        }
+                    }
 
-              return {
-                person,
-                allEvents,
-                matchingEvents,
-                personMatched,
-                matchRank,
-                priority:
+                    return {
+                        person,
+                        allEvents,
+                        matchingEvents,
+                        personMatched,
+                        matchRank,
+                        priority:
                   personPriority(
-                    person.id
+                      person.id
                   )
-              };
-            })
-            .filter(Boolean)
-            .sort(
-              (
-                first,
-                second
-              ) =>
-                first.matchRank
+                    };
+                })
+                .filter(Boolean)
+                .sort(
+                    (
+                        first,
+                        second
+                    ) =>
+                        first.matchRank
                   - second.matchRank
                 || first.priority
                   - second.priority
                 || personName(
-                  first.person
+                    first.person
                 ).localeCompare(
-                  personName(
-                    second.person
-                  )
+                    personName(
+                        second.person
+                    )
                 )
-            );
+                );
         };
 
-      const visibleEventsForPerson =
-        person => {
-          const allEvents =
-            personEvents(
-              person.id
-            );
+    const visibleEventsForPerson =
+        person =>
+        {
+            const allEvents =
+                personEvents(
+                    person.id
+                );
 
-          const normalizedQuery =
-            normalizeSearch(
-              query
-            );
+            const normalizedQuery =
+                normalizeSearch(
+                    query
+                );
 
-          if (
-            !normalizedQuery
+            if (
+                !normalizedQuery
             || personSearchText(
-              person
-            ).includes(
-              normalizedQuery
-            )
-          ) {
-            return allEvents;
-          }
-
-          return allEvents.filter(
-            event =>
-              eventSearchText(
-                event,
                 person
-              ).includes(
+            ).includes(
                 normalizedQuery
-              )
-          );
+            )
+            )
+            {
+                return allEvents;
+            }
+
+            return allEvents.filter(
+                event =>
+                    eventSearchText(
+                        event,
+                        person
+                    ).includes(
+                        normalizedQuery
+                    )
+            );
         };
 
-      /*
+    /*
         Automatically select a contextual Person,
         but do not select an arbitrary alphabetical
         Person when the Note has no context.
       */
-      const preferredPersonIds = [
+    const preferredPersonIds = [
         ...primaryPersonIdSet,
         ...secondaryPersonIdSet,
         ...linkedEventOwnerIds
-      ];
+    ];
 
-      activePersonId =
+    activePersonId =
         preferredPersonIds.find(
-          personId =>
-            peopleById.has(
-              personId
-            )
+            personId =>
+                peopleById.has(
+                    personId
+                )
         )
         || '';
 
-      if (activePersonId) {
+    if (activePersonId)
+    {
         mobilePane =
-          'events';
-      }
+            'events';
+    }
 
-      const renderPersonResults =
-        candidates => {
-          if (!candidates.length) {
-            return `
+    const renderPersonResults =
+        candidates =>
+        {
+            if (!candidates.length)
+            {
+                return `
               <div class="notes-event-empty">
                 <strong>
                   No people match this search
@@ -9371,102 +9734,103 @@
                 </button>
               </div>
             `;
-          }
+            }
 
-          return candidates
-            .map(candidate => {
-              const person =
-                candidate.person;
+            return candidates
+                .map(candidate =>
+                {
+                    const person =
+                        candidate.person;
 
-              const name =
-                personName(
-                  person
-                );
+                    const name =
+                        personName(
+                            person
+                        );
 
-              const dates =
-                albumPhotoPersonDates(
-                  person
-                )
+                    const dates =
+                        albumPhotoPersonDates(
+                            person
+                        )
                 || 'Dates unknown';
 
-              const eventCount =
-                candidate.personMatched
+                    const eventCount =
+                        candidate.personMatched
                 || !normalizeSearch(
-                  query
+                    query
                 )
-                  ? candidate
-                      .allEvents
-                      .length
-                  : candidate
-                      .matchingEvents
-                      .length;
+                            ? candidate
+                                .allEvents
+                                .length
+                            : candidate
+                                .matchingEvents
+                                .length;
 
-              const eventCountLabel =
-                normalizeSearch(
-                  query
-                )
+                    const eventCountLabel =
+                        normalizeSearch(
+                            query
+                        )
                 && !candidate
-                  .personMatched
-                  ? `${eventCount} matching ${
-                      eventCount === 1
-                        ? 'event'
-                        : 'events'
-                    }`
-                  : `${eventCount} ${
-                      eventCount === 1
-                        ? 'event'
-                        : 'events'
-                    }`;
+                    .personMatched
+                            ? `${eventCount} matching ${
+                                eventCount === 1
+                                    ? 'event'
+                                    : 'events'
+                            }`
+                            : `${eventCount} ${
+                                eventCount === 1
+                                    ? 'event'
+                                    : 'events'
+                            }`;
 
-              const active =
-                person.id
+                    const active =
+                        person.id
                   === activePersonId;
 
-              return `
+                    return `
                 <button
                   class="
                     notes-event-person-result
                     ${
-                      active
-                        ? 'active'
-                        : ''
+                        active
+                            ? 'active'
+                            : ''
                     }
                   "
                   type="button"
                   data-notes-event-person="${escapeHtml(
-                    person.id
-                  )}"
+                        person.id
+                    )}"
                   aria-pressed="${active}"
                   aria-label="View events for ${escapeHtml(
-                    name
-                  )}">
+                        name
+                    )}">
 
                   ${renderPersonAvatar(
-                    person,
-                    'notes-event-person-avatar',
-                    {
-                      element:
+                        person,
+                        'notes-event-person-avatar',
+                        {
+                            element:
                         'span'
-                    }
-                  )}
+                        }
+                    )}
 
                   <span class="notes-event-person-copy">
                     <strong>
                       ${escapeHtml(
-                        name
-                      )}
+                            name
+                        )}
                     </strong>
 
                     <span>
                       ${escapeHtml(
-                        dates
-                      )}
+                            dates
+                        )}
                     </span>
 
                     <span class="notes-event-person-count">
                       ${escapeHtml(
-                        eventCountLabel
-                      )}
+                            eventCountLabel
+                        )}
                     </span>
                   </span>
 
@@ -9477,64 +9841,65 @@
                   </span>
                 </button>
               `;
-            })
-            .join('');
+                })
+                .join('');
         };
 
-      const renderEventRow =
+    const renderEventRow =
         (
-          event,
-          person
-        ) => {
-          const presentation =
-            placeInspectorEventPresentation(
-              event,
-              person.id
-            );
+            event,
+            person
+        ) =>
+        {
+            const presentation =
+                placeInspectorEventPresentation(
+                    event,
+                    person.id
+                );
 
-          const place =
-            timelinePlaceLabel(
-              event
-            );
+            const place =
+                timelinePlaceLabel(
+                    event
+                );
 
-          const alreadyLinked =
-            initiallyLinkedIds.has(
-              event.id
-            );
+            const alreadyLinked =
+                initiallyLinkedIds.has(
+                    event.id
+                );
 
-          const selected =
-            selectedIds.has(
-              event.id
-            );
+            const selected =
+                selectedIds.has(
+                    event.id
+                );
 
-          const ariaLabel =
-            alreadyLinked
-              ? `${
-                  presentation.title
-                } is already linked to ${
-                  alreadyLinkedTarget
-                }`
-              : `${
-                  selected
-                    ? 'Remove'
-                    : 'Add'
-                } ${
-                  presentation.title
-                }`;
+            const ariaLabel =
+                alreadyLinked
+                    ? `${
+                        presentation.title
+                    } is already linked to ${
+                        alreadyLinkedTarget
+                    }`
+                    : `${
+                        selected
+                            ? 'Remove'
+                            : 'Add'
+                    } ${
+                        presentation.title
+                    }`;
 
-          return `
+            return `
             <label
               class="
                 notes-event-result
                 ${
-                  alreadyLinked
-                    ? 'is-complete'
-                    : ''
+                    alreadyLinked
+                        ? 'is-complete'
+                        : ''
                 }
                 ${
-                  selected
-                    ? 'is-selected'
-                    : ''
+                    selected
+                        ? 'is-selected'
+                        : ''
                 }
               ">
 
@@ -9542,91 +9907,93 @@
                 class="notes-event-result-icon"
                 aria-hidden="true">
                 ${timelineEventIcon(
-                  event
+                    event
                 )}
               </span>
 
               <span class="notes-event-result-copy">
                 <strong>
                   ${escapeHtml(
-                    presentation.title
-                  )}
+                        presentation.title
+                    )}
                 </strong>
 
                 <span class="notes-event-result-date">
                   ${escapeHtml(
-                    presentation.date
+                        presentation.date
                     || 'Date unknown'
-                  )}
+                    )}
                 </span>
 
                 ${
-                  place
-                    ? `
+                    place
+                        ? `
                       <span>
                         ${escapeHtml(
-                          place
+                            place
                         )}
                       </span>
                     `
-                    : ''
+                        : ''
                 }
 
                 ${
-                  presentation
-                    .relationship
-                    ? `
+                    presentation
+                        .relationship
+                        ? `
                       <span class="notes-event-result-relationship">
                         ${escapeHtml(
-                          presentation
-                            .relationship
+                            presentation
+                                .relationship
                         )}
                       </span>
                     `
-                    : ''
+                        : ''
                 }
               </span>
 
               <span class="notes-event-result-end">
                 ${
-                  alreadyLinked
-                    ? `
+                    alreadyLinked
+                        ? `
                       <span class="notes-event-already-added">
                         Already added
                       </span>
                     `
-                    : ''
+                        : ''
                 }
 
                 <input
                   type="checkbox"
                   value="${escapeHtml(
-                    event.id
-                  )}"
+                        event.id
+                    )}"
                   data-notes-event-choice
                   aria-label="${escapeHtml(
-                    ariaLabel
-                  )}"
+                        ariaLabel
+                    )}"
                   ${
-                    alreadyLinked
+                        alreadyLinked
                     || selected
-                      ? 'checked'
-                      : ''
-                  }
+                            ? 'checked'
+                            : ''
+                    }
                   ${
-                    alreadyLinked
-                      ? 'disabled'
-                      : ''
-                  }>
+                        alreadyLinked
+                            ? 'disabled'
+                            : ''
+                    }>
               </span>
             </label>
           `;
         };
 
-      const renderTimeline =
-        person => {
-          if (!person) {
-            return `
+    const renderTimeline =
+        person =>
+        {
+            if (!person)
+            {
+                return `
               <div class="notes-event-timeline-empty">
                 <span
                   class="notes-event-timeline-empty-icon"
@@ -9645,42 +10012,42 @@
                 </span>
               </div>
             `;
-          }
+            }
 
-          const name =
-            personName(
-              person
-            );
+            const name =
+                personName(
+                    person
+                );
 
-          const allEvents =
-            personEvents(
-              person.id
-            );
+            const allEvents =
+                personEvents(
+                    person.id
+                );
 
-          const visibleEvents =
-            visibleEventsForPerson(
-              person
-            );
+            const visibleEvents =
+                visibleEventsForPerson(
+                    person
+                );
 
-          const dates =
-            albumPhotoPersonDates(
-              person
-            )
+            const dates =
+                albumPhotoPersonDates(
+                    person
+                )
             || 'Dates unknown';
 
-          const eventMeta =
-            visibleEvents.length
+            const eventMeta =
+                visibleEvents.length
               === allEvents.length
-              ? `${allEvents.length} recorded ${
-                  allEvents.length === 1
-                    ? 'event'
-                    : 'events'
-                }`
-              : `${visibleEvents.length} matching of ${
-                  allEvents.length
-                } events`;
+                    ? `${allEvents.length} recorded ${
+                        allEvents.length === 1
+                            ? 'event'
+                            : 'events'
+                    }`
+                    : `${visibleEvents.length} matching of ${
+                        allEvents.length
+                    } events`;
 
-          return `
+            return `
             <div class="notes-event-person-header">
 
               <button
@@ -9697,52 +10064,52 @@
               </button>
 
               ${renderPersonAvatar(
-                person,
-                'notes-event-active-avatar',
-                {
-                  element:
+                    person,
+                    'notes-event-active-avatar',
+                    {
+                        element:
                     'span'
-                }
-              )}
+                    }
+                )}
 
               <span class="notes-event-active-copy">
                 <strong>
                   ${escapeHtml(
-                    name
-                  )}
+                        name
+                    )}
                 </strong>
 
                 <span>
                   ${escapeHtml(
-                    dates
-                  )}
+                        dates
+                    )}
                 </span>
 
                 <span>
                   ${escapeHtml(
-                    eventMeta
-                  )}
+                        eventMeta
+                    )}
                 </span>
               </span>
             </div>
 
             <div class="notes-event-results">
               ${
-                visibleEvents.length
-                  ? visibleEvents
-                      .map(event =>
-                        renderEventRow(
-                          event,
-                          person
-                        )
-                      )
-                      .join('')
-                  : `
+                    visibleEvents.length
+                        ? visibleEvents
+                            .map(event =>
+                                renderEventRow(
+                                    event,
+                                    person
+                                )
+                            )
+                            .join('')
+                        : `
                     <div class="notes-event-empty">
                       <strong>
                         No events recorded for
                         ${escapeHtml(
-                          name
+                            name
                         )}
                       </strong>
 
@@ -9754,21 +10121,21 @@
                       </span>
                     </div>
                   `
-              }
+                }
             </div>
           `;
         };
 
-      openModal(`
+    openModal(`
         <div
           class="
             modal
             notes-events-modal
             ${
-              mobilePane
+                mobilePane
                 === 'events'
-                  ? 'is-showing-events'
-                  : 'is-showing-people'
+                    ? 'is-showing-events'
+                    : 'is-showing-people'
             }
           "
           role="dialog"
@@ -9779,21 +10146,21 @@
             <div>
               <h2 id="notesEventsTitle">
                 ${escapeHtml(
-                  title
+                    title
                 )}
               </h2>
 
               ${
-                subtitle
-                  ? `
+                    subtitle
+                        ? `
                     <p>
                       ${escapeHtml(
-                        subtitle
-                      )}
+                            subtitle
+                        )}
                     </p>
                   `
-                  : ''
-              }
+                        : ''
+                }
             </div>
 
             <button
@@ -9893,371 +10260,396 @@
         </div>
       `);
 
-      const modal =
+    const modal =
         modalBackdrop.querySelector(
-          '.notes-events-modal'
+            '.notes-events-modal'
         );
 
-      if (!modal) {
+    if (!modal)
+    {
         return;
-      }
+    }
 
-      const searchInput =
+    const searchInput =
         modal.querySelector(
-          '[data-notes-event-search]'
+            '[data-notes-event-search]'
         );
 
-      const peopleTitle =
+    const peopleTitle =
         modal.querySelector(
-          '[data-notes-event-person-title]'
+            '[data-notes-event-person-title]'
         );
 
-      const peopleMeta =
+    const peopleMeta =
         modal.querySelector(
-          '[data-notes-event-person-meta]'
+            '[data-notes-event-person-meta]'
         );
 
-      const peopleHost =
+    const peopleHost =
         modal.querySelector(
-          '[data-notes-event-person-results]'
+            '[data-notes-event-person-results]'
         );
 
-      const timelineHost =
+    const timelineHost =
         modal.querySelector(
-          '[data-notes-event-timeline]'
+            '[data-notes-event-timeline]'
         );
 
-      const countElement =
+    const countElement =
         modal.querySelector(
-          '[data-notes-event-count]'
+            '[data-notes-event-count]'
         );
 
-      const saveButton =
+    const saveButton =
         modal.querySelector(
-          '[data-notes-event-save]'
+            '[data-notes-event-save]'
         );
 
-      const refreshPeople =
-        candidates => {
-          peopleTitle.textContent =
-            normalizeSearch(
-              query
-            )
-              ? 'Search results'
-              : 'Suggested people';
+    const refreshPeople =
+        candidates =>
+        {
+            peopleTitle.textContent =
+                normalizeSearch(
+                    query
+                )
+                    ? 'Search results'
+                    : 'Suggested people';
 
-          peopleMeta.textContent =
-            `${candidates.length} ${
-              candidates.length === 1
-                ? 'person'
-                : 'people'
-            }`;
+            peopleMeta.textContent =
+                `${candidates.length} ${
+                    candidates.length === 1
+                        ? 'person'
+                        : 'people'
+                }`;
 
-          peopleHost.innerHTML =
-            renderPersonResults(
-              candidates
-            );
+            peopleHost.innerHTML =
+                renderPersonResults(
+                    candidates
+                );
         };
 
-      const refreshTimeline =
-        () => {
-          const person =
-            peopleById.get(
-              activePersonId
-            )
+    const refreshTimeline =
+        () =>
+        {
+            const person =
+                peopleById.get(
+                    activePersonId
+                )
             || null;
 
-          timelineHost.innerHTML =
-            renderTimeline(
-              person
-            );
+            timelineHost.innerHTML =
+                renderTimeline(
+                    person
+                );
         };
 
-      const refreshFooter =
-        () => {
-          const count =
-            selectedIds.size;
+    const refreshFooter =
+        () =>
+        {
+            const count =
+                selectedIds.size;
 
-          countElement.textContent =
-            `${count} ${
-              count === 1
-                ? 'event'
-                : 'events'
-            } selected`;
+            countElement.textContent =
+                `${count} ${
+                    count === 1
+                        ? 'event'
+                        : 'events'
+                } selected`;
 
-          saveButton.disabled =
-            count === 0;
+            saveButton.disabled =
+                count === 0;
 
-          saveButton.textContent =
-            count
-              ? `Add ${count} ${
-                  count === 1
-                    ? 'event'
-                    : 'events'
-                }`
-              : 'Add events';
+            saveButton.textContent =
+                count
+                    ? `Add ${count} ${
+                        count === 1
+                            ? 'event'
+                            : 'events'
+                    }`
+                    : 'Add events';
         };
 
-      const refresh = () => {
+    const refresh = () =>
+    {
         const candidates =
-          candidatePeople();
+            candidatePeople();
 
         const candidateIds =
-          new Set(
-            candidates.map(
-              candidate =>
-                candidate.person.id
-            )
-          );
+            new Set(
+                candidates.map(
+                    candidate =>
+                        candidate.person.id
+                )
+            );
 
         if (
-          activePersonId
-          && !candidateIds.has(
             activePersonId
+          && !candidateIds.has(
+              activePersonId
           )
-        ) {
-          activePersonId =
-            '';
+        )
+        {
+            activePersonId =
+                '';
 
-          mobilePane =
-            'people';
+            mobilePane =
+                'people';
         }
 
         modal.classList.toggle(
-          'is-showing-events',
-          mobilePane
+            'is-showing-events',
+            mobilePane
             === 'events'
         );
 
         modal.classList.toggle(
-          'is-showing-people',
-          mobilePane
+            'is-showing-people',
+            mobilePane
             === 'people'
         );
 
         refreshPeople(
-          candidates
+            candidates
         );
 
         refreshTimeline();
         refreshFooter();
 
         localizeUI(
-          modal
+            modal
         );
-      };
+    };
 
-      searchInput?.addEventListener(
+    searchInput?.addEventListener(
         'input',
-        event => {
-          query =
-            event.currentTarget
-              .value;
+        event =>
+        {
+            query =
+                event.currentTarget
+                    .value;
 
-          mobilePane =
-            'people';
+            mobilePane =
+                'people';
 
-          refresh();
+            refresh();
         }
-      );
+    );
 
-      modal.addEventListener(
+    modal.addEventListener(
         'change',
-        event => {
-          const input =
-            event.target.closest(
-              '[data-notes-event-choice]'
-            );
-
-          if (
-            !input
-            || input.disabled
-          ) {
-            return;
-          }
-
-          const eventId =
-            input.value;
-
-          const choiceIndex = [
-            ...modal.querySelectorAll(
-              '[data-notes-event-choice]'
-            )
-          ].indexOf(input);
-
-          if (input.checked) {
-            selectedIds.add(eventId);
-          } else {
-            selectedIds.delete(eventId);
-          }
-
-          refresh();
-
-          restoreModalChoiceFocus({
-            modal,
-            selector:
-              '[data-notes-event-choice]',
-            value:
-              eventId,
-            index:
-              choiceIndex,
-            fallbackSelector:
-              '[data-notes-event-search]'
-          });
-        }
-      );
-
-      modal.addEventListener(
-        'click',
-        event => {
-          const personButton =
-            event.target.closest(
-              '[data-notes-event-person]'
-            );
-
-          if (personButton) {
-            activePersonId =
-              personButton.dataset
-                .notesEventPerson;
-
-            mobilePane =
-              'events';
-
-            refresh();
-
-            return;
-          }
-
-          if (
-            event.target.closest(
-              '[data-notes-event-back]'
-            )
-          ) {
-            mobilePane =
-              'people';
-
-            refresh();
-
-            requestAnimationFrame(
-              () => {
-                searchInput?.focus({
-                  preventScroll:
-                    true
-                });
-              }
-            );
-
-            return;
-          }
-
-          if (
-            event.target.closest(
-              '[data-notes-event-clear-search]'
-            )
-          ) {
-            query = '';
-
-            if (searchInput) {
-              searchInput.value =
-                '';
-            }
-
-            refresh();
-
-            searchInput?.focus({
-              preventScroll:
-                true
-            });
-
-            return;
-          }
-
-          if (
-            event.target.closest(
-              '[data-notes-event-save]'
-            )
-          ) {
-            if (!selectedIds.size) {
-              return;
-            }
-            const nextIds =
-              [
-                ...selectedIds
-              ];
-
-            const saved =
-              onSave(
-                nextIds
-              );
+        event =>
+        {
+            const input =
+                event.target.closest(
+                    '[data-notes-event-choice]'
+                );
 
             if (
-              saved === false
-            ) {
-              return;
+                !input
+            || input.disabled
+            )
+            {
+                return;
             }
 
-            const addedCount =
-              Number.isFinite(
-                saved?.addedLinkCount
-              )
-                ? saved.addedLinkCount
-                : nextIds.length;
+            const eventId =
+                input.value;
 
-            closeModal();
+            const choiceIndex = [
+                ...modal.querySelectorAll(
+                    '[data-notes-event-choice]'
+                )
+            ].indexOf(input);
 
-            afterSave();
+            if (input.checked)
+            {
+                selectedIds.add(eventId);
+            }
+            else
+            {
+                selectedIds.delete(eventId);
+            }
 
-            showToast(
-              typeof successMessage
-                === 'function'
-                  ? successMessage(
-                      addedCount
-                    )
-                  : successMessage
-            );
-          }
+            refresh();
+
+            restoreModalChoiceFocus({
+                modal,
+                selector:
+              '[data-notes-event-choice]',
+                value:
+              eventId,
+                index:
+              choiceIndex,
+                fallbackSelector:
+              '[data-notes-event-search]'
+            });
         }
-      );
+    );
 
-      refresh();
+    modal.addEventListener(
+        'click',
+        event =>
+        {
+            const personButton =
+                event.target.closest(
+                    '[data-notes-event-person]'
+                );
 
-      requestAnimationFrame(
-        () => {
-          if (
-            window.innerWidth > 720
+            if (personButton)
+            {
+                activePersonId =
+                    personButton.dataset
+                        .notesEventPerson;
+
+                mobilePane =
+                    'events';
+
+                refresh();
+
+                return;
+            }
+
+            if (
+                event.target.closest(
+                    '[data-notes-event-back]'
+                )
+            )
+            {
+                mobilePane =
+                    'people';
+
+                refresh();
+
+                requestAnimationFrame(
+                    () =>
+                    {
+                        searchInput?.focus({
+                            preventScroll:
+                    true
+                        });
+                    }
+                );
+
+                return;
+            }
+
+            if (
+                event.target.closest(
+                    '[data-notes-event-clear-search]'
+                )
+            )
+            {
+                query = '';
+
+                if (searchInput)
+                {
+                    searchInput.value =
+                        '';
+                }
+
+                refresh();
+
+                searchInput?.focus({
+                    preventScroll:
+                true
+                });
+
+                return;
+            }
+
+            if (
+                event.target.closest(
+                    '[data-notes-event-save]'
+                )
+            )
+            {
+                if (!selectedIds.size)
+                {
+                    return;
+                }
+                const nextIds =
+                    [
+                        ...selectedIds
+                    ];
+
+                const saved =
+                    onSave(
+                        nextIds
+                    );
+
+                if (
+                    saved === false
+                )
+                {
+                    return;
+                }
+
+                const addedCount =
+                    Number.isFinite(
+                        saved?.addedLinkCount
+                    )
+                        ? saved.addedLinkCount
+                        : nextIds.length;
+
+                closeModal();
+
+                afterSave();
+
+                showToast(
+                    typeof successMessage
+                === 'function'
+                        ? successMessage(
+                            addedCount
+                        )
+                        : successMessage
+                );
+            }
+        }
+    );
+
+    refresh();
+
+    requestAnimationFrame(
+        () =>
+        {
+            if (
+                window.innerWidth > 720
             || mobilePane
               === 'people'
-          ) {
-            searchInput?.focus({
-              preventScroll: true
-            });
-          }
+            )
+            {
+                searchInput?.focus({
+                    preventScroll: true
+                });
+            }
         }
-      );
-    }
+    );
+}
 
-    function openNotesEventsModal() {
-      const note =
+function openNotesEventsModal()
+{
+    const note =
         selectedNote();
 
-      if (!note) {
+    if (!note)
+    {
         return;
-      }
+    }
 
-      const secondaryPersonIds =
+    const secondaryPersonIds =
         getPhotosForNote(
-          note.id,
-          {
-            projectId:
+            note.id,
+            {
+                projectId:
               note.projectId
-          }
+            }
         )
-          .flatMap(photo =>
-            photo.personIds
+            .flatMap(photo =>
+                photo.personIds
             || []
-          );
+            );
 
-      openEventLinkModal({
+    openEventLinkModal({
         projectId:
           note.projectId,
 
@@ -10282,48 +10674,50 @@
           'this note',
 
         onSave:
-          selectedEventIds => {
-            const currentNote =
-              getNote(
-                note.id,
-                {
-                  projectId:
+          selectedEventIds =>
+          {
+              const currentNote =
+                  getNote(
+                      note.id,
+                      {
+                          projectId:
                     note.projectId,
 
-                  includeArchived:
+                          includeArchived:
                     true
-                }
-              );
+                      }
+                  );
 
-            if (!currentNote) {
-              showToast(
-                'The note is no longer available.'
-              );
-
-              return false;
-            }
-
-            const nextEventIds =
-              archiveUniqueIds([
-                ...(
-                  currentNote.linkedEventIds
-                  || []
-                ),
-
-                ...selectedEventIds
-              ]);
-
-            setNoteEntityLinks(
-              currentNote.id,
-              'event',
-              nextEventIds,
+              if (!currentNote)
               {
-                projectId:
-                  currentNote.projectId
-              }
-            );
+                  showToast(
+                      'The note is no longer available.'
+                  );
 
-            return true;
+                  return false;
+              }
+
+              const nextEventIds =
+                  archiveUniqueIds([
+                      ...(
+                          currentNote.linkedEventIds
+                  || []
+                      ),
+
+                      ...selectedEventIds
+                  ]);
+
+              setNoteEntityLinks(
+                  currentNote.id,
+                  'event',
+                  nextEventIds,
+                  {
+                      projectId:
+                  currentNote.projectId
+                  }
+              );
+
+              return true;
           },
 
         afterSave:
@@ -10331,71 +10725,73 @@
 
         successMessage:
           count =>
-            `${count} ${
-              count === 1
-                ? 'event'
-                : 'events'
-            } added to note.`
-      });
+              `${count} ${
+                  count === 1
+                      ? 'event'
+                      : 'events'
+              } added to note.`
+    });
+}
+
+function openArchiveFilesEventsModal(
+    fileIds
+)
+{
+    const files =
+        archiveFilesForLinkAction(
+            fileIds
+        );
+
+    if (!files.length)
+    {
+        return;
     }
 
-    function openArchiveFilesEventsModal(
-      fileIds
-    ) {
-      const files =
-        archiveFilesForLinkAction(
-          fileIds
-        );
-
-      if (!files.length) {
-        return;
-      }
-
-      const ids =
+    const ids =
         files.map(file =>
-          file.id
+            file.id
         );
 
-      const singleFile =
+    const singleFile =
         files.length === 1
-          ? files[0]
-          : null;
+            ? files[0]
+            : null;
 
-      const primaryPersonIds =
+    const primaryPersonIds =
         archiveUniqueIds(
-          files.flatMap(file =>
-            file.linkedPersonIds
+            files.flatMap(file =>
+                file.linkedPersonIds
             || []
-          )
-        );
-
-      const secondaryPersonIds =
-        archiveUniqueIds(
-          files.flatMap(file =>
-            sourceIdsForTarget(
-              'file',
-              file.id,
-              file.projectId
-            ).flatMap(sourceId =>
-              sourceTargetIds(
-                sourceId,
-                'person',
-                file.projectId
-              )
             )
-          )
         );
 
-      const initiallyLinkedEventIds =
+    const secondaryPersonIds =
+        archiveUniqueIds(
+            files.flatMap(file =>
+                sourceIdsForTarget(
+                    'file',
+                    file.id,
+                    file.projectId
+                ).flatMap(sourceId =>
+                    sourceTargetIds(
+                        sourceId,
+                        'person',
+                        file.projectId
+                    )
+                )
+            )
+        );
+
+    const initiallyLinkedEventIds =
         singleFile
-          ? singleFile.linkedEventIds
+            ? singleFile.linkedEventIds
             || []
-          : archiveCommonFileConnectionIds(
-              files,
-              'event'
+            : archiveCommonFileConnectionIds(
+                files,
+                'event'
             );
 
-      openEventLinkModal({
+    openEventLinkModal({
         projectId:
           files[0].projectId
           || currentProjectId(),
@@ -10405,7 +10801,7 @@
 
         subtitle:
           archiveBulkLinkSubtitle(
-            files
+              files
           ),
 
         /*
@@ -10421,119 +10817,127 @@
 
         alreadyLinkedTarget:
           singleFile
-            ? 'this file'
-            : 'all selected files',
+              ? 'this file'
+              : 'all selected files',
 
         onSave:
-          selectedEventIds => {
-            if (singleFile) {
-              const currentFile =
-                archiveFileById(
-                  singleFile.id
-                );
+          selectedEventIds =>
+          {
+              if (singleFile)
+              {
+                  const currentFile =
+                      archiveFileById(
+                          singleFile.id
+                      );
 
-              if (!currentFile) {
-                showToast(
-                  'The file is no longer available.'
-                );
+                  if (!currentFile)
+                  {
+                      showToast(
+                          'The file is no longer available.'
+                      );
 
-                return false;
-              }
+                      return false;
+                  }
 
-              return setArchiveFileConnectionIds(
-                currentFile.id,
-                'event',
-                [
-                  ...(
-                    currentFile.linkedEventIds
+                  return setArchiveFileConnectionIds(
+                      currentFile.id,
+                      'event',
+                      [
+                          ...(
+                              currentFile.linkedEventIds
                     || []
-                  ),
+                          ),
 
-                  ...selectedEventIds
-                ]
-              );
-            }
-            const result =
-              archiveCommitFileConnections({
-                fileIds:
+                          ...selectedEventIds
+                      ]
+                  );
+              }
+              const result =
+                  archiveCommitFileConnections({
+                      fileIds:
                   ids,
 
-                entityType:
+                      entityType:
                   'event',
 
-                recordIds:
+                      recordIds:
                   selectedEventIds
-              });
+                  });
 
-            if (!result.ok) {
-              showToast(
-                'No events were linked.'
-              );
+              if (!result.ok)
+              {
+                  showToast(
+                      'No events were linked.'
+                  );
 
-              return false;
-            }
+                  return false;
+              }
 
-            return result;
+              return result;
           },
 
         afterSave:
           singleFile
-            ? renderArchive
-            : () => {
-                finishArchiveBulkLinkAction(
-                  ids
-                );
+              ? renderArchive
+              : () =>
+              {
+                  finishArchiveBulkLinkAction(
+                      ids
+                  );
               },
 
         successMessage:
           singleFile
-            ? count =>
-                `${count} ${
-                  count === 1
-                    ? 'event'
-                    : 'events'
-                } added to file.`
-            : count =>
-                `${count} ${
-                  count === 1
-                    ? 'link was'
-                    : 'links were'
-                } added to ${files.length} files.`
-      });
-    }
+              ? count =>
+                  `${count} ${
+                      count === 1
+                          ? 'event'
+                          : 'events'
+                  } added to file.`
+              : count =>
+                  `${count} ${
+                      count === 1
+                          ? 'link was'
+                          : 'links were'
+                  } added to ${files.length} files.`
+    });
+}
 
-    function openArchiveFileEventsModal(
-      fileId
-    ) {
-      openArchiveFilesEventsModal(
+function openArchiveFileEventsModal(
+    fileId
+)
+{
+    openArchiveFilesEventsModal(
         [
-          fileId
+            fileId
         ]
-      );
-    }
+    );
+}
 
-    function openNoteFilesModal(
-      noteId =
+function openNoteFilesModal(
+    noteId =
         state.selectedNoteId
-    ) {
-      const note =
+)
+{
+    const note =
         getNote(
-          noteId,
-          {
-            includeArchived:
+            noteId,
+            {
+                includeArchived:
               true
-          }
+            }
         );
 
-      if (!note) {
+    if (!note)
+    {
         return;
-      }
+    }
 
-      const title =
+    const title =
         note.title
         || 'Untitled note';
 
-      openConnectedFilesModal({
+    openConnectedFilesModal({
         projectId:
           note.projectId
           || currentProjectId(),
@@ -10549,157 +10953,168 @@
           || [],
 
         onSave:
-          fileIds => {
-            const currentNote =
-              getNote(
-                note.id,
-                {
-                  projectId:
+          fileIds =>
+          {
+              const currentNote =
+                  getNote(
+                      note.id,
+                      {
+                          projectId:
                     note.projectId,
 
-                  includeArchived:
+                          includeArchived:
                     true
-                }
-              );
+                      }
+                  );
 
-            if (!currentNote) {
-              return {
-                ok:
-                  false
-              };
-            }
-
-            const nextIds =
-              archiveUniqueIds([
-                ...(
-                  currentNote
-                    .linkedArchiveFileIds
-                  || []
-                ),
-
-                ...fileIds
-              ]);
-
-            setNoteEntityLinks(
-              currentNote.id,
-              'archiveFile',
-              nextIds,
+              if (!currentNote)
               {
-                projectId:
-                  currentNote.projectId
+                  return {
+                      ok:
+                  false
+                  };
               }
-            );
 
-            const saved =
-              fileIds.every(fileId =>
-                (
-                  currentNote
-                    .linkedArchiveFileIds
+              const nextIds =
+                  archiveUniqueIds([
+                      ...(
+                          currentNote
+                              .linkedArchiveFileIds
                   || []
-                ).includes(
-                  fileId
-                )
+                      ),
+
+                      ...fileIds
+                  ]);
+
+              setNoteEntityLinks(
+                  currentNote.id,
+                  'archiveFile',
+                  nextIds,
+                  {
+                      projectId:
+                  currentNote.projectId
+                  }
               );
 
-            return {
-              ok:
+              const saved =
+                  fileIds.every(fileId =>
+                      (
+                          currentNote
+                              .linkedArchiveFileIds
+                  || []
+                      ).includes(
+                          fileId
+                      )
+                  );
+
+              return {
+                  ok:
                 saved,
 
-              changedCount:
+                  changedCount:
                 saved
-                  ? fileIds.length
-                  : 0
-            };
+                    ? fileIds.length
+                    : 0
+              };
           },
 
         afterSave:
-          () => {
-            renderNotesPreservingInteraction();
+          () =>
+          {
+              renderNotesPreservingInteraction();
           },
 
         successMessage:
           count =>
-            `${count} ${
-              count === 1
-                ? 'file'
-                : 'files'
-            } added to note.`
-      });
-    }
-    function openNotesLinkEntityModal(
-      type
-    ) {
-      if (
+              `${count} ${
+                  count === 1
+                      ? 'file'
+                      : 'files'
+              } added to note.`
+    });
+}
+function openNotesLinkEntityModal(
+    type
+)
+{
+    if (
         type === 'archiveFile'
-      ) {
+    )
+    {
         openNoteFilesModal();
         return;
-      }
+    }
 
-      if (
+    if (
         type === 'photo'
-      ) {
+    )
+    {
         openNotesPhotosModal();
         return;
-      }
+    }
 
-      if (
+    if (
         type === 'person'
-      ) {
+    )
+    {
         openNotesPeopleModal();
         return;
-      }
+    }
 
-      if (
+    if (
         type === 'event'
-      ) {
+    )
+    {
         openNotesEventsModal();
         return;
-      }
+    }
 
-      if (
+    if (
         type === 'place'
-      ) {
+    )
+    {
         openNotesPlacesModal();
         return;
-      }
+    }
 
-      if (
+    if (
         type === 'source'
-      ) {
+    )
+    {
         const note =
-          selectedNote();
+            selectedNote();
 
-        if (!note) {
-          return;
+        if (!note)
+        {
+            return;
         }
 
         openSourcesForTargetModal({
-          targetType:
+            targetType:
             'note',
 
-          targetId:
+            targetId:
             note.id,
 
-          projectId:
+            projectId:
             note.projectId,
 
-          title:
+            title:
             'Add sources',
 
-          subtitle:
+            subtitle:
             `Connect existing sources to ${
-              note.title
+                note.title
               || 'this note'
             }.`,
 
-          afterSave:
+            afterSave:
             renderNotesPreservingInteraction
         });
-      }
     }
+}
 
-    /*
+/*
       Shared note picker
 
       Used by:
@@ -10715,345 +11130,357 @@
       action in the sidebar/editor where that link is shown.
     */
 
-    function notePickerSharedIds(
-      firstValues = [],
-      secondValues = []
-    ) {
-      const secondIds =
+function notePickerSharedIds(
+    firstValues = [],
+    secondValues = []
+)
+{
+    const secondIds =
         new Set(
-          secondValues || []
+            secondValues || []
         );
 
-      return [
+    return [
         ...new Set(
-          firstValues || []
+            firstValues || []
         )
-      ].filter(id =>
+    ].filter(id =>
         secondIds.has(id)
-      );
-    }
+    );
+}
 
-    function relatedNotePickerSuggestionScore(
-      sourceNote,
-      candidate
-    ) {
-      if (
+function relatedNotePickerSuggestionScore(
+    sourceNote,
+    candidate
+)
+{
+    if (
         !sourceNote
         || !candidate
-      ) {
+    )
+    {
         return 0;
-      }
+    }
 
-      let score = 0;
+    let score = 0;
 
-      const entityWeights = {
+    const entityWeights = {
         person: 9,
         event: 8,
         source: 7,
         archiveFile: 7,
         place: 5,
         photo: 4
-      };
+    };
 
-      Object.entries(
+    Object.entries(
         entityWeights
-      ).forEach(([
+    ).forEach(([
         type,
         weight
-      ]) => {
+    ]) =>
+    {
         const config =
-          getNoteEntityConfig(
-            type
-          );
+            getNoteEntityConfig(
+                type
+            );
 
-        if (!config) {
-          return;
+        if (!config)
+        {
+            return;
         }
 
         score +=
-          notePickerSharedIds(
-            noteEntityLinkedIds(
-              sourceNote,
-              type
-            ),
-            noteEntityLinkedIds(
-              candidate,
-              type
-            )
-          ).length
+            notePickerSharedIds(
+                noteEntityLinkedIds(
+                    sourceNote,
+                    type
+                ),
+                noteEntityLinkedIds(
+                    candidate,
+                    type
+                )
+            ).length
           * weight;
-      });
+    });
 
-      score +=
+    score +=
         notePickerSharedIds(
-          sourceNote.collectionIds,
-          candidate.collectionIds
+            sourceNote.collectionIds,
+            candidate.collectionIds
         ).length
         * 2;
 
-      score +=
+    score +=
         notePickerSharedIds(
-          sourceNote.tags,
-          candidate.tags
+            sourceNote.tags,
+            candidate.tags
         ).length
         * 2;
 
-      return score;
-    }
+    return score;
+}
 
-    function openNoteLinkPickerModal({
-      projectId =
+function openNoteLinkPickerModal({
+    projectId =
         currentProjectId(),
 
-      title =
+    title =
         'Add notes',
 
-      description =
+    description =
         'Link existing notes.',
 
-      helperText =
+    helperText =
         '',
 
-      searchPlaceholder =
+    searchPlaceholder =
         'Search by title, content, person, place, or source',
 
-      existingNoteIds =
+    existingNoteIds =
         [],
 
-      excludeNoteIds =
+    excludeNoteIds =
         [],
 
-      /*
+    /*
         Notes relationships can include archived Notes.
         Albums should pass false to preserve its current
         active-Notes-only linking rule.
       */
-      includeArchived =
+    includeArchived =
         false,
 
-      existingStatus =
+    existingStatus =
         'Already linked',
 
-      existingMetaLabel =
+    existingMetaLabel =
         'already linked',
 
-      createLabel =
+    createLabel =
         'Create note',
 
-      onCreate =
+    onCreate =
         null,
 
-      getSuggestionScore =
+    getSuggestionScore =
         () => 0,
 
-      onSave,
+    onSave,
 
-      afterSave =
+    afterSave =
         null,
 
-      successMessage =
+    successMessage =
         null,
 
-      modalOpener =
+    modalOpener =
         openModal
-    } = {}) {
-      if (
+} = {})
+{
+    if (
         !projectId
         || typeof onSave
           !== 'function'
-      ) {
+    )
+    {
         return;
-      }
+    }
 
-      const existingIds =
+    const existingIds =
         new Set(
-          (
-            existingNoteIds
+            (
+                existingNoteIds
             || []
-          ).filter(Boolean)
+            ).filter(Boolean)
         );
 
-      const excludedIds =
+    const excludedIds =
         new Set(
-          (
-            excludeNoteIds
+            (
+                excludeNoteIds
             || []
-          ).filter(Boolean)
+            ).filter(Boolean)
         );
 
-      /*
+    /*
         selectedIds contains only new links.
         Existing links are never removed by
         this modal.
       */
-      const selectedIds =
+    const selectedIds =
         new Set();
 
-      let query = '';
-      let showArchived = false;
+    let query = '';
+    let showArchived = false;
 
-      const normalizeQuery =
+    const normalizeQuery =
         value =>
-          String(
-            value || ''
-          )
-            .trim()
-            .toLowerCase();
-
-      const allCandidates =
-        () =>
-          getProjectNotes(
-            projectId,
-            {
-              includeArchived
-            }
-          ).filter(note =>
-            !excludedIds.has(
-              note.id
+            String(
+                value || ''
             )
-          );
+                .trim()
+                .toLowerCase();
 
-      const visibleCandidates =
-        () => {
-          const normalized =
-            normalizeQuery(
-              query
+    const allCandidates =
+        () =>
+            getProjectNotes(
+                projectId,
+                {
+                    includeArchived
+                }
+            ).filter(note =>
+                !excludedIds.has(
+                    note.id
+                )
             );
 
-          return allCandidates()
+    const visibleCandidates =
+        () =>
+        {
+            const normalized =
+                normalizeQuery(
+                    query
+                );
+
+            return allCandidates()
             /*
               Selected Notes move into the
               selected review panel.
             */
-            .filter(note =>
-              !selectedIds.has(
-                note.id
-              )
-            )
-            .filter(note => {
-              const alreadyLinked =
-                existingIds.has(
-                  note.id
-                );
+                .filter(note =>
+                    !selectedIds.has(
+                        note.id
+                    )
+                )
+                .filter(note =>
+                {
+                    const alreadyLinked =
+                        existingIds.has(
+                            note.id
+                        );
 
-              /*
+                    /*
                 Preserve the Notes modal behavior:
                 an archived existing link can still
                 appear in a direct search.
               */
-              if (
-                note.archived
+                    if (
+                        note.archived
                 && !showArchived
                 && !alreadyLinked
-              ) {
-                return false;
-              }
+                    )
+                    {
+                        return false;
+                    }
 
-              if (normalized) {
-                return noteSearchText(
-                  note
-                ).includes(
-                  normalized
-                );
-              }
+                    if (normalized)
+                    {
+                        return noteSearchText(
+                            note
+                        ).includes(
+                            normalized
+                        );
+                    }
 
-              /*
+                    /*
                 Existing links do not occupy the
                 default suggestion list.
               */
-              return !alreadyLinked;
-            })
-            .map(note => ({
-              note,
+                    return !alreadyLinked;
+                })
+                .map(note => ({
+                    note,
 
-              score:
+                    score:
                 Number(
-                  getSuggestionScore(
-                    note
-                  )
+                    getSuggestionScore(
+                        note
+                    )
                 )
                 || 0
-            }))
-            .sort(
-              (
-                first,
-                second
-              ) =>
-                /*
+                }))
+                .sort(
+                    (
+                        first,
+                        second
+                    ) =>
+                    /*
                   Active Notes appear before archived
                   Notes even when the archived Note
                   has a higher relevance score.
                 */
-                Number(
-                  Boolean(
-                    first.note.archived
-                  )
-                )
+                        Number(
+                            Boolean(
+                                first.note.archived
+                            )
+                        )
                 - Number(
                     Boolean(
-                      second.note.archived
+                        second.note.archived
                     )
-                  )
+                )
                 || second.score
                   - first.score
                 || (
                     Date.parse(
-                      second.note.updatedAt
+                        second.note.updatedAt
                       || ''
                     )
                     || 0
-                  )
+                )
                   - (
                       Date.parse(
-                        first.note.updatedAt
+                          first.note.updatedAt
                         || ''
                       )
                       || 0
-                    )
+                  )
                 || String(
                     first.note.title
                     || ''
-                  ).localeCompare(
+                ).localeCompare(
                     String(
-                      second.note.title
+                        second.note.title
                       || ''
                     )
-                  )
-            );
+                )
+                );
         };
 
-      const renderResult =
+    const renderResult =
         ({
-          note
-        }) => {
-          const noteTitle =
-            note.title
+            note
+        }) =>
+        {
+            const noteTitle =
+                note.title
             || 'Untitled note';
 
-          const alreadyLinked =
-            existingIds.has(
-              note.id
-            );
+            const alreadyLinked =
+                existingIds.has(
+                    note.id
+                );
 
-          return `
+            return `
             <label
               class="
                 notes-related-choice
                 ${
-                  alreadyLinked
-                    ? 'already-related'
-                    : ''
+                    alreadyLinked
+                        ? 'already-related'
+                        : ''
                 }
                 ${
-                  note.archived
-                    ? 'archived'
-                    : ''
+                    note.archived
+                        ? 'archived'
+                        : ''
                 }
               ">
 
               ${renderRelatedNoteIcon(
-                'notes-related-choice-icon'
-              )}
+                    'notes-related-choice-icon'
+                )}
 
               <span
                 class="
@@ -11067,13 +11494,13 @@
 
                   <strong>
                     ${escapeHtml(
-                      noteTitle
+                        noteTitle
                     )}
                   </strong>
 
                   ${
-                    note.archived
-                      ? `
+                        note.archived
+                            ? `
                         <span
                           class="
                             notes-related-archived-badge
@@ -11081,8 +11508,8 @@
                           Archived
                         </span>
                       `
-                      : ''
-                  }
+                            : ''
+                    }
                 </span>
 
                 <span
@@ -11090,72 +11517,74 @@
                     notes-related-choice-excerpt
                   ">
                   ${escapeHtml(
-                    noteExcerpt(
-                      note,
-                      150
-                    )
+                        noteExcerpt(
+                            note,
+                            150
+                        )
                     || 'No note content'
-                  )}
+                    )}
                 </span>
 
                 ${renderRelatedNoteCollectionChips(
-                  note
+                    note
                 )}
               </span>
 
               ${
-                alreadyLinked
-                  ? `
+                    alreadyLinked
+                        ? `
                     <span
                       class="
                         notes-related-choice-status
                       ">
                       ${escapeHtml(
-                        existingStatus
-                      )}
+                            existingStatus
+                        )}
                     </span>
                   `
-                  : ''
-              }
+                        : ''
+                }
 
               <input
                 type="checkbox"
                 value="${escapeHtml(
-                  note.id
+                    note.id
                 )}"
                 data-note-picker-choice
                 ${
-                  alreadyLinked
-                    ? 'checked disabled'
-                    : ''
+                    alreadyLinked
+                        ? 'checked disabled'
+                        : ''
                 }
                 aria-label="${
-                  alreadyLinked
-                    ? `${escapeHtml(
-                        existingStatus
-                      )}: ${escapeHtml(
-                        noteTitle
-                      )}`
-                    : `Select ${escapeHtml(
-                        noteTitle
-                      )}`
+                    alreadyLinked
+                        ? `${escapeHtml(
+                            existingStatus
+                        )}: ${escapeHtml(
+                            noteTitle
+                        )}`
+                        : `Select ${escapeHtml(
+                            noteTitle
+                        )}`
                 }">
             </label>
           `;
         };
 
-      const renderEmptyState =
-        () => {
-          const normalized =
-            normalizeQuery(
-              query
-            );
+    const renderEmptyState =
+        () =>
+        {
+            const normalized =
+                normalizeQuery(
+                    query
+                );
 
-          const candidates =
-            allCandidates();
+            const candidates =
+                allCandidates();
 
-          if (!candidates.length) {
-            return `
+            if (!candidates.length)
+            {
+                return `
               <div
                 class="
                   notes-related-empty
@@ -11171,10 +11600,11 @@
                 </span>
               </div>
             `;
-          }
+            }
 
-          if (normalized) {
-            return `
+            if (normalized)
+            {
+                return `
               <div
                 class="
                   notes-related-empty
@@ -11197,19 +11627,20 @@
                 </button>
               </div>
             `;
-          }
+            }
 
-          const unlinkedCandidates =
-            candidates.filter(note =>
-              !existingIds.has(
-                note.id
-              )
-            );
+            const unlinkedCandidates =
+                candidates.filter(note =>
+                    !existingIds.has(
+                        note.id
+                    )
+                );
 
-          if (
-            !unlinkedCandidates.length
-          ) {
-            return `
+            if (
+                !unlinkedCandidates.length
+            )
+            {
+                return `
               <div
                 class="
                   notes-related-empty
@@ -11225,17 +11656,18 @@
                 </span>
               </div>
             `;
-          }
+            }
 
-          if (
-            includeArchived
+            if (
+                includeArchived
             && !showArchived
             && unlinkedCandidates.every(
-              note =>
-                note.archived
+                note =>
+                    note.archived
             )
-          ) {
-            return `
+            )
+            {
+                return `
               <div
                 class="
                   notes-related-empty
@@ -11251,9 +11683,9 @@
                 </span>
               </div>
             `;
-          }
+            }
 
-          return `
+            return `
             <div
               class="
                 notes-related-empty
@@ -11266,54 +11698,57 @@
           `;
         };
 
-      const renderSelectedNotes =
-        () => {
-          const notes =
-            [...selectedIds]
-              .map(noteId =>
-                getNote(
-                  noteId,
-                  {
-                    projectId,
-                    includeArchived:
+    const renderSelectedNotes =
+        () =>
+        {
+            const notes =
+                [...selectedIds]
+                    .map(noteId =>
+                        getNote(
+                            noteId,
+                            {
+                                projectId,
+                                includeArchived:
                       true
-                  }
-                )
-              )
-              .filter(Boolean)
-              .sort(
-                (
-                  first,
-                  second
-                ) =>
-                  String(
-                    first.title
-                    || ''
-                  ).localeCompare(
-                    String(
-                      second.title
-                      || ''
+                            }
+                        )
                     )
-                  )
-              );
+                    .filter(Boolean)
+                    .sort(
+                        (
+                            first,
+                            second
+                        ) =>
+                            String(
+                                first.title
+                    || ''
+                            ).localeCompare(
+                                String(
+                                    second.title
+                      || ''
+                                )
+                            )
+                    );
 
-          if (!notes.length) {
-            return '';
-          }
+            if (!notes.length)
+            {
+                return '';
+            }
 
-          return `
+            return `
             <div
               class="
                 notes-related-selected-list
               ">
 
               ${notes
-                .map(note => {
-                  const noteTitle =
-                    note.title
+                    .map(note =>
+                    {
+                        const noteTitle =
+                            note.title
                     || 'Untitled note';
 
-                  return `
+                        return `
                     <div
                       class="
                         notes-related-selected-row
@@ -11321,7 +11756,7 @@
 
                       <span>
                         ${escapeHtml(
-                          noteTitle
+                            noteTitle
                         )}
                       </span>
 
@@ -11331,10 +11766,10 @@
                         "
                         type="button"
                         data-note-picker-remove="${escapeHtml(
-                          note.id
+                            note.id
                         )}"
                         aria-label="Remove ${escapeHtml(
-                          noteTitle
+                            noteTitle
                         )} from selection"
                         title="Remove from selection">
 
@@ -11342,13 +11777,13 @@
                       </button>
                     </div>
                   `;
-                })
-                .join('')}
+                    })
+                    .join('')}
             </div>
           `;
         };
 
-      modalOpener(`
+    modalOpener(`
         <div
           class="
             modal
@@ -11363,30 +11798,30 @@
             <div>
               <h2 id="noteLinkPickerTitle">
                 ${escapeHtml(
-                  title
+                    title
                 )}
               </h2>
 
               <p>
                 ${escapeHtml(
-                  description
+                    description
                 )}
               </p>
 
               ${
-                helperText
-                  ? `
+                    helperText
+                        ? `
                     <p
                       class="
                         notes-related-reciprocal-note
                       ">
                       ${escapeHtml(
-                        helperText
-                      )}
+                            helperText
+                        )}
                     </p>
                   `
-                  : ''
-              }
+                        : ''
+                }
             </div>
 
             <button
@@ -11426,23 +11861,23 @@
                     autocomplete="off"
                     data-note-picker-search
                     placeholder="${escapeHtml(
-                      searchPlaceholder
+                        searchPlaceholder
                     )}">
                 </label>
 
                 ${
-                  includeArchived
+                    includeArchived
                   || typeof onCreate
                     === 'function'
-                    ? `
+                        ? `
                       <div
                         class="
                           note-link-picker-toolbar-actions
                         ">
 
                         ${
-                          includeArchived
-                            ? `
+                            includeArchived
+                                ? `
                               <label
                                 class="
                                   notes-related-archived-toggle
@@ -11457,13 +11892,13 @@
                                 </span>
                               </label>
                             `
-                            : ''
+                                : ''
                         }
 
                         ${
-                          typeof onCreate
+                            typeof onCreate
                             === 'function'
-                            ? `
+                                ? `
                               <button
                                 class="button secondary"
                                 type="button"
@@ -11472,15 +11907,15 @@
                                 ${icon.plus}
 
                                 ${escapeHtml(
-                                  createLabel
+                                    createLabel
                                 )}
                               </button>
                             `
-                            : ''
+                                : ''
                         }
                       </div>
                     `
-                    : ''
+                        : ''
                 }
               </div>
 
@@ -11563,340 +11998,364 @@
         </div>
       `);
 
-      const modal =
+    const modal =
         modalBackdrop.querySelector(
-          '.note-link-picker-modal'
+            '.note-link-picker-modal'
         );
 
-      if (!modal) {
+    if (!modal)
+    {
         return;
-      }
+    }
 
-      const searchInput =
+    const searchInput =
         modal.querySelector(
-          '[data-note-picker-search]'
+            '[data-note-picker-search]'
         );
 
-      const resultsHost =
+    const resultsHost =
         modal.querySelector(
-          '[data-note-picker-results]'
+            '[data-note-picker-results]'
         );
 
-      const selectedHost =
+    const selectedHost =
         modal.querySelector(
-          '[data-note-picker-selected]'
+            '[data-note-picker-selected]'
         );
 
-      const resultsTitle =
+    const resultsTitle =
         modal.querySelector(
-          '[data-note-picker-results-title]'
+            '[data-note-picker-results-title]'
         );
 
-      const resultsMeta =
+    const resultsMeta =
         modal.querySelector(
-          '[data-note-picker-results-meta]'
+            '[data-note-picker-results-meta]'
         );
 
-      const countElement =
+    const countElement =
         modal.querySelector(
-          '[data-note-picker-count]'
+            '[data-note-picker-count]'
         );
 
-      const saveButton =
+    const saveButton =
         modal.querySelector(
-          '[data-note-picker-save]'
+            '[data-note-picker-save]'
         );
 
-      const refresh =
-        () => {
-          const visible =
-            visibleCandidates();
+    const refresh =
+        () =>
+        {
+            const visible =
+                visibleCandidates();
 
-          const normalized =
-            normalizeQuery(
-              query
+            const normalized =
+                normalizeQuery(
+                    query
+                );
+
+            resultsTitle.textContent = translateText(
+                normalized ? 'Search results' : 'Suggested notes'
             );
 
-          resultsTitle.textContent = translateText(
-            normalized ? 'Search results' : 'Suggested notes'
-          );
+            if (state.language === 'ru')
+            {
+                const availability = normalized
+                    ? `Найдено заметок: ${visible.length}`
+                    : `Доступно заметок: ${visible.length}`;
 
-          if (state.language === 'ru') {
-            const availability = normalized
-              ? `Найдено заметок: ${visible.length}`
-              : `Доступно заметок: ${visible.length}`;
+                const connectionStatus =
+                    existingMetaLabel === 'already related'
+                        ? 'Уже связанных'
+                        : 'Уже добавленных';
 
-            const connectionStatus =
-              existingMetaLabel === 'already related'
-                ? 'Уже связанных'
-                : 'Уже добавленных';
+                resultsMeta.textContent =
+                    `${availability} · ${connectionStatus}: ${existingIds.size}`;
+            }
+            else
+            {
+                const availability = normalized
+                    ? `${visible.length} ${
+                        visible.length === 1 ? 'match' : 'matches'
+                    }`
+                    : `${visible.length} ${
+                        visible.length === 1 ? 'note' : 'notes'
+                    } available`;
 
-            resultsMeta.textContent =
-              `${availability} · ${connectionStatus}: ${existingIds.size}`;
-          } else {
-            const availability = normalized
-              ? `${visible.length} ${
-                  visible.length === 1 ? 'match' : 'matches'
-                }`
-              : `${visible.length} ${
-                  visible.length === 1 ? 'note' : 'notes'
-                } available`;
+                resultsMeta.textContent =
+                    `${availability} · ${existingIds.size} ${existingMetaLabel}`;
+            }
 
-            resultsMeta.textContent =
-              `${availability} · ${existingIds.size} ${existingMetaLabel}`;
-          }
+            resultsHost.innerHTML =
+                visible.length
+                    ? visible
+                        .map(renderResult)
+                        .join('')
+                    : renderEmptyState();
 
-          resultsHost.innerHTML =
-            visible.length
-              ? visible
-                  .map(renderResult)
-                  .join('')
-              : renderEmptyState();
+            const selectedHtml =
+                renderSelectedNotes();
 
-          const selectedHtml =
-            renderSelectedNotes();
+            selectedHost.hidden =
+                !selectedHtml;
 
-          selectedHost.hidden =
-            !selectedHtml;
+            selectedHost.innerHTML =
+                selectedHtml;
 
-          selectedHost.innerHTML =
-            selectedHtml;
+            const count =
+                selectedIds.size;
 
-          const count =
-            selectedIds.size;
+            countElement.textContent =
+                `${count} ${
+                    count === 1
+                        ? 'note'
+                        : 'notes'
+                } selected`;
 
-          countElement.textContent =
-            `${count} ${
-              count === 1
-                ? 'note'
-                : 'notes'
-            } selected`;
+            saveButton.disabled =
+                count === 0;
 
-          saveButton.disabled =
-            count === 0;
+            saveButton.textContent =
+                count === 1
+                    ? 'Add note'
+                    : count > 1
+                        ? `Add ${count} notes`
+                        : 'Add notes';
 
-          saveButton.textContent =
-            count === 1
-              ? 'Add note'
-              : count > 1
-                ? `Add ${count} notes`
-                : 'Add notes';
-
-          localizeUI(
-            modal
-          );
+            localizeUI(
+                modal
+            );
         };
 
-      searchInput
+    searchInput
         ?.addEventListener(
-          'input',
-          event => {
-            query =
-              event.currentTarget
-                .value;
+            'input',
+            event =>
+            {
+                query =
+                    event.currentTarget
+                        .value;
 
-            refresh();
-          }
+                refresh();
+            }
         );
 
-      modal
+    modal
         .querySelector(
-          '[data-note-picker-show-archived]'
+            '[data-note-picker-show-archived]'
         )
         ?.addEventListener(
-          'change',
-          event => {
-            showArchived =
-              event.currentTarget
-                .checked;
+            'change',
+            event =>
+            {
+                showArchived =
+                    event.currentTarget
+                        .checked;
 
-            refresh();
-          }
+                refresh();
+            }
         );
 
-      modal.addEventListener(
+    modal.addEventListener(
         'change',
-        event => {
-          const input =
-            event.target.closest(
-              '[data-note-picker-choice]'
-            );
+        event =>
+        {
+            const input =
+                event.target.closest(
+                    '[data-note-picker-choice]'
+                );
 
-          if (
-            !input
+            if (
+                !input
             || input.disabled
-          ) {
-            return;
-          }
-
-          const choiceIndex = [
-            ...modal.querySelectorAll(
-              '[data-note-picker-choice]'
             )
-          ].indexOf(input);
+            {
+                return;
+            }
 
-          if (input.checked) {
-            selectedIds.add(
-              input.value
-            );
-          } else {
-            selectedIds.delete(
-              input.value
-            );
-          }
+            const choiceIndex = [
+                ...modal.querySelectorAll(
+                    '[data-note-picker-choice]'
+                )
+            ].indexOf(input);
 
-          refresh();
+            if (input.checked)
+            {
+                selectedIds.add(
+                    input.value
+                );
+            }
+            else
+            {
+                selectedIds.delete(
+                    input.value
+                );
+            }
 
-          restoreModalChoiceFocus({
-            modal,
-            selector:
+            refresh();
+
+            restoreModalChoiceFocus({
+                modal,
+                selector:
               '[data-note-picker-choice]',
-            value:
+                value:
               input.value,
-            index:
+                index:
               choiceIndex,
-            fallbackSelector:
+                fallbackSelector:
               '[data-note-picker-search]'
-          });
+            });
         }
-      );
+    );
 
-      modal.addEventListener(
+    modal.addEventListener(
         'click',
-        event => {
-          const removeButton =
-            event.target.closest(
-              '[data-note-picker-remove]'
-            );
+        event =>
+        {
+            const removeButton =
+                event.target.closest(
+                    '[data-note-picker-remove]'
+                );
 
-          if (removeButton) {
-            selectedIds.delete(
-              removeButton.dataset
-                .notePickerRemove
-            );
+            if (removeButton)
+            {
+                selectedIds.delete(
+                    removeButton.dataset
+                        .notePickerRemove
+                );
 
-            refresh();
-            return;
-          }
-
-          if (
-            event.target.closest(
-              '[data-note-picker-clear-search]'
-            )
-          ) {
-            query = '';
-
-            if (searchInput) {
-              searchInput.value = '';
-              searchInput.focus();
+                refresh();
+                return;
             }
 
-            refresh();
-            return;
-          }
-
-          if (
-            event.target.closest(
-              '[data-note-picker-create]'
+            if (
+                event.target.closest(
+                    '[data-note-picker-clear-search]'
+                )
             )
-          ) {
-            closeModal();
-            onCreate?.();
-            return;
-          }
+            {
+                query = '';
 
-          if (
-            event.target.closest(
-              '[data-note-picker-save]'
-            )
-          ) {
-            if (!selectedIds.size) {
-              return;
+                if (searchInput)
+                {
+                    searchInput.value = '';
+                    searchInput.focus();
+                }
+
+                refresh();
+                return;
             }
 
-            const noteIds =
-              [...selectedIds];
+            if (
+                event.target.closest(
+                    '[data-note-picker-create]'
+                )
+            )
+            {
+                closeModal();
+                onCreate?.();
+                return;
+            }
 
-            const saved =
-              onSave(
-                noteIds
-              );
+            if (
+                event.target.closest(
+                    '[data-note-picker-save]'
+                )
+            )
+            {
+                if (!selectedIds.size)
+                {
+                    return;
+                }
 
-            /*
+                const noteIds =
+                    [...selectedIds];
+
+                const saved =
+                    onSave(
+                        noteIds
+                    );
+
+                /*
               A wrapper may return false when its
               context was removed while the modal
               was open.
             */
-            if (saved === false) {
-              closeModal();
-              return;
-            }
+                if (saved === false)
+                {
+                    closeModal();
+                    return;
+                }
 
-            closeModal();
+                closeModal();
 
-            afterSave?.();
+                afterSave?.();
 
-            const message =
-              typeof successMessage
+                const message =
+                    typeof successMessage
                 === 'function'
-                  ? successMessage(
-                    Number.isFinite(
-                      saved?.addedLinkCount
-                    )
-                      ? saved.addedLinkCount
-                      : noteIds.length
-                  )
-                : successMessage;
+                        ? successMessage(
+                            Number.isFinite(
+                                saved?.addedLinkCount
+                            )
+                                ? saved.addedLinkCount
+                                : noteIds.length
+                        )
+                        : successMessage;
 
-            if (message) {
-              showToast(
-                message
-              );
+                if (message)
+                {
+                    showToast(
+                        message
+                    );
+                }
             }
-          }
         }
-      );
+    );
 
-      refresh();
+    refresh();
 
-      requestAnimationFrame(
-        () => {
-          searchInput?.focus({
-            preventScroll:
+    requestAnimationFrame(
+        () =>
+        {
+            searchInput?.focus({
+                preventScroll:
               true
-          });
+            });
         }
-      );
-    }
+    );
+}
 
-    function openNotesRelatedModal() {
-      const note =
+function openNotesRelatedModal()
+{
+    const note =
         selectedNote();
 
-      if (!note) {
+    if (!note)
+    {
         return;
-      }
+    }
 
-      const existingNoteIds =
+    const existingNoteIds =
         (
-          note.relatedNoteIds
+            note.relatedNoteIds
           || []
         ).filter(noteId =>
-          Boolean(
-            getNote(
-              noteId,
-              {
-                projectId:
+            Boolean(
+                getNote(
+                    noteId,
+                    {
+                        projectId:
                   note.projectId,
 
-                includeArchived:
+                        includeArchived:
                   true
-              }
+                    }
+                )
             )
-          )
         );
 
-      openNoteLinkPickerModal({
+    openNoteLinkPickerModal({
         projectId:
           note.projectId,
 
@@ -11905,12 +12364,12 @@
 
         description:
           state.language === 'ru'
-            ? `Добавьте связанные заметки к «${
-                localizedDataFieldValue(note.title)
+              ? `Добавьте связанные заметки к «${
+                  localizedDataFieldValue(note.title)
                 || 'Заметка без названия'
               }».`
-            : `Link notes to “${
-                note.title || 'Untitled note'
+              : `Link notes to “${
+                  note.title || 'Untitled note'
               }”.`,
 
         helperText:
@@ -11923,7 +12382,7 @@
           relating to itself.
         */
         excludeNoteIds: [
-          note.id
+            note.id
         ],
 
         includeArchived:
@@ -11937,43 +12396,45 @@
 
         getSuggestionScore:
           candidate =>
-            relatedNotePickerSuggestionScore(
-              note,
-              candidate
-            ),
+              relatedNotePickerSuggestionScore(
+                  note,
+                  candidate
+              ),
 
         onSave:
-          selectedNoteIds => {
-            const currentNote =
-              getNote(
-                note.id,
-                {
-                  projectId:
+          selectedNoteIds =>
+          {
+              const currentNote =
+                  getNote(
+                      note.id,
+                      {
+                          projectId:
                     note.projectId,
 
-                  includeArchived:
+                          includeArchived:
                     true
-                }
+                      }
+                  );
+
+              if (!currentNote)
+              {
+                  return false;
+              }
+
+              updateRelatedNoteLinks(
+                  currentNote.id,
+                  normalizeCentralNoteIdArray([
+                      ...(
+                          currentNote
+                              .relatedNoteIds
+                  || []
+                      ),
+
+                      ...selectedNoteIds
+                  ])
               );
 
-            if (!currentNote) {
-              return false;
-            }
-
-            updateRelatedNoteLinks(
-              currentNote.id,
-              normalizeCentralNoteIdArray([
-                ...(
-                  currentNote
-                    .relatedNoteIds
-                  || []
-                ),
-
-                ...selectedNoteIds
-              ])
-            );
-
-            return true;
+              return true;
           },
 
         afterSave:
@@ -11981,441 +12442,468 @@
 
         successMessage:
           count =>
-            `${count} ${
-              count === 1
-                ? 'note was'
-                : 'notes were'
-            } related in both notes.`
-      });
-    }
+              `${count} ${
+                  count === 1
+                      ? 'note was'
+                      : 'notes were'
+              } related in both notes.`
+    });
+}
 
-    function openCentralNoteInEditor(
-      noteId
-    ) {
-      openCentralNoteFromContext(
+function openCentralNoteInEditor(
+    noteId
+)
+{
+    openCentralNoteFromContext(
         noteId
-      );
-    }
+    );
+}
 
-    function openNoteLinkedEntity(
-      type,
-      id
-    ) {
-      const note =
+function openNoteLinkedEntity(
+    type,
+    id
+)
+{
+    const note =
         selectedNote();
 
-      if (!note) {
+    if (!note)
+    {
         return;
-      }
+    }
 
-      const record =
+    const record =
         noteEntityById(
-          type,
-          id,
-          note.projectId
+            type,
+            id,
+            note.projectId
         );
 
-      if (!record) {
+    if (!record)
+    {
         return;
-      }
+    }
 
-      openNoteEntity(
+    openNoteEntity(
         type,
         record
-      );
-    }
+    );
+}
 
-    function bindNotesSidebarControls(
-      root
-    ) {
-      root
+function bindNotesSidebarControls(
+    root
+)
+{
+    root
         .querySelector(
-          '#notesAddCollection'
+            '#notesAddCollection'
         )
         ?.addEventListener(
-          'click',
-          openNewCollectionModal
+            'click',
+            openNewCollectionModal
         );
 
-      root
+    root
         .querySelectorAll(
-          '[data-notes-view]'
+            '[data-notes-view]'
         )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              clearNotesContext();
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
+                {
+                    clearNotesContext();
 
-              state.notesView =
-                button.dataset.notesView;
+                    state.notesView =
+                        button.dataset.notesView;
 
-              state.notesActiveCollectionId =
-                null;
+                    state.notesActiveCollectionId =
+                        null;
 
-              state.selectedNoteId =
-                null;
+                    state.selectedNoteId =
+                        null;
 
-              state.notesRightCollapsed =
-                true;
+                    state.notesRightCollapsed =
+                        true;
 
-              state.notesMobilePane =
-                'browser';
+                    state.notesMobilePane =
+                        'browser';
 
-              renderNotes();
-            }
-          );
+                    renderNotes();
+                }
+            );
         });
 
-      root
+    root
         .querySelectorAll(
-          '[data-notes-collection]'
+            '[data-notes-collection]'
         )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              clearNotesContext();
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
+                {
+                    clearNotesContext();
 
-              state.notesView =
-                'collection';
+                    state.notesView =
+                        'collection';
 
-              state.notesActiveCollectionId =
-                button.dataset
-                  .notesCollection;
+                    state.notesActiveCollectionId =
+                        button.dataset
+                            .notesCollection;
 
-              state.selectedNoteId =
-                null;
+                    state.selectedNoteId =
+                        null;
 
-              state.notesRightCollapsed =
-                true;
+                    state.notesRightCollapsed =
+                        true;
 
-              state.notesMobilePane =
-                'browser';
+                    state.notesMobilePane =
+                        'browser';
 
-              renderNotes();
-            }
-          );
+                    renderNotes();
+                }
+            );
         });
 
-      root
+    root
         .querySelectorAll(
-          '[data-notes-collection-menu]'
+            '[data-notes-collection-menu]'
         )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            event => {
-              event.stopPropagation();
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                event =>
+                {
+                    event.stopPropagation();
 
-              openNotesCollectionMenu(
-                button.dataset
-                  .notesCollectionMenu,
-                button
-              );
-            }
-          );
+                    openNotesCollectionMenu(
+                        button.dataset
+                            .notesCollectionMenu,
+                        button
+                    );
+                }
+            );
         });
-    
-      root
+
+    root
         .querySelector(
-          '[data-notes-tip]'
+            '[data-notes-tip]'
         )
         ?.addEventListener(
-          'click',
-          () =>
-            showToast(
-              'Notes can link directly to people, places, events, photos, sources and files.'
-            )
+            'click',
+            () =>
+                showToast(
+                    'Notes can link directly to people, places, events, photos, sources and files.'
+                )
         );
-    }
+}
 
-    function touchNote(
-      note,
-      {
+function touchNote(
+    note,
+    {
         refreshPreview = true
-      } = {}
-    ) {
-      if (!note) {
+    } = {}
+)
+{
+    if (!note)
+    {
         return null;
-      }
+    }
 
-      note.updatedAt =
+    note.updatedAt =
         new Date().toISOString();
 
-      setNotesSaveStatus(
+    setNotesSaveStatus(
         'Saving'
-      );
+    );
 
-      if (refreshPreview) {
+    if (refreshPreview)
+    {
         refreshNoteBrowserRow(
-          note
+            note
         );
-      }
-
-      clearTimeout(
-        touchNote.savedTimer
-      );
-
-      touchNote.savedTimer =
-        setTimeout(
-          () =>
-            setNotesSaveStatus(
-              'Saved'
-            ),
-          450
-        );
-
-      return note;
     }
 
+    clearTimeout(
+        touchNote.savedTimer
+    );
 
-    function setNotesSaveStatus(
-      status
-    ) {
-      state.notesSaveStatus =
-        status;
-
-      const element =
-        main.querySelector(
-          '#notesSaveStatus'
+    touchNote.savedTimer =
+        setTimeout(
+            () =>
+                setNotesSaveStatus(
+                    'Saved'
+                ),
+            450
         );
 
-      if (!element) {
-        return;
-      }
+    return note;
+}
 
-      element.textContent =
+
+function setNotesSaveStatus(
+    status
+)
+{
+    state.notesSaveStatus =
         status;
 
-      element.classList.toggle(
+    const element =
+        main.querySelector(
+            '#notesSaveStatus'
+        );
+
+    if (!element)
+    {
+        return;
+    }
+
+    element.textContent =
+        status;
+
+    element.classList.toggle(
         'saving',
         status === 'Saving'
-      );
+    );
 
-      element.classList.toggle(
+    element.classList.toggle(
         'error',
         status === 'Error'
-      );
+    );
+}
+
+function autoSizeNoteBody(
+    textarea
+)
+{
+    if (!textarea)
+    {
+        return;
     }
 
-    function autoSizeNoteBody(
-      textarea
-    ) {
-      if (!textarea) {
-        return;
-      }
-
-      textarea.style.height =
+    textarea.style.height =
         'auto';
 
-      const minimumHeight =
+    const minimumHeight =
         Number.parseFloat(
-          getComputedStyle(
-            textarea
-          ).minHeight
+            getComputedStyle(
+                textarea
+            ).minHeight
         ) || 160;
 
-      textarea.style.height =
+    textarea.style.height =
         `${Math.max(
-          minimumHeight,
-          textarea.scrollHeight
+            minimumHeight,
+            textarea.scrollHeight
         )}px`;
+}
+
+function refreshNoteBrowserRow(
+    note
+)
+{
+    const row =
+        main.querySelector(
+            `[data-note-id="${
+                CSS.escape(note.id)
+            }"]`
+        );
+
+    if (!row)
+    {
+        return;
     }
 
-    function refreshNoteBrowserRow(
-      note
-    ) {
-      const row =
-        main.querySelector(
-          `[data-note-id="${
-            CSS.escape(note.id)
-          }"]`
-        );
-
-      if (!row) {
-        return;
-      }
-
-      const title =
+    const title =
         row.querySelector(
-          '.notes-row-title'
+            '.notes-row-title'
         );
 
-      const excerpt =
+    const excerpt =
         row.querySelector(
-          '.notes-row-excerpt'
+            '.notes-row-excerpt'
         );
 
-      const collections =
+    const collections =
         row.querySelector(
-          '.notes-row-collections'
+            '.notes-row-collections'
         );
 
-      const metadata =
+    const metadata =
         row.querySelector(
-          '.notes-row-metadata'
+            '.notes-row-metadata'
         );
 
-      const favorite =
+    const favorite =
         row.querySelector(
-          '[data-note-favorite]'
+            '[data-note-favorite]'
         );
 
-      const menu =
+    const menu =
         row.querySelector(
-          '[data-note-menu]'
+            '[data-note-menu]'
         );
 
-      if (title) {
+    if (title)
+    {
         title.textContent =
-          note.title;
+            note.title;
 
         title.title =
-          note.title;
-      }
-
-      if (excerpt) {
-        excerpt.textContent =
-          noteExcerpt(
-            note,
-            180
-          )
-          || 'No note content';
-      }
-
-      if (collections) {
-        collections.innerHTML =
-          renderNoteBrowserCollectionChips(
-            note
-          );
-      }
-
-      if (metadata) {
-        const value =
-          noteBrowserMetadata(
-            note
-          );
-
-        metadata.textContent =
-          value;
-
-        metadata.title =
-          value;
-      }
-
-      if (favorite) {
-        favorite.classList.toggle(
-          'active',
-          note.favorite
-        );
-
-        favorite.setAttribute(
-          'aria-pressed',
-          String(note.favorite)
-        );
-
-        favorite.setAttribute(
-          'aria-label',
-          note.favorite
-            ? `Remove ${note.title} from favourites`
-            : `Add ${note.title} to favourites`
-        );
-      }
-
-      if (menu) {
-        menu.setAttribute(
-          'aria-label',
-          `More actions for ${note.title}`
-        );
-      }
+            note.title;
     }
 
-    function captureNotesInteractionState() {
-      const editor =
-        main.querySelector(
-          '.notes-right-pane'
+    if (excerpt)
+    {
+        excerpt.textContent =
+            noteExcerpt(
+                note,
+                180
+            )
+          || 'No note content';
+    }
+
+    if (collections)
+    {
+        collections.innerHTML =
+            renderNoteBrowserCollectionChips(
+                note
+            );
+    }
+
+    if (metadata)
+    {
+        const value =
+            noteBrowserMetadata(
+                note
+            );
+
+        metadata.textContent =
+            value;
+
+        metadata.title =
+            value;
+    }
+
+    if (favorite)
+    {
+        favorite.classList.toggle(
+            'active',
+            note.favorite
         );
 
-      const browser =
-        main.querySelector(
-          '.notes-browser-scroll'
+        favorite.setAttribute(
+            'aria-pressed',
+            String(note.favorite)
         );
 
-      const richTextInstance =
+        favorite.setAttribute(
+            'aria-label',
+            note.favorite
+                ? `Remove ${note.title} from favourites`
+                : `Add ${note.title} to favourites`
+        );
+    }
+
+    if (menu)
+    {
+        menu.setAttribute(
+            'aria-label',
+            `More actions for ${note.title}`
+        );
+    }
+}
+
+function captureNotesInteractionState()
+{
+    const editor =
+        main.querySelector(
+            '.notes-right-pane'
+        );
+
+    const browser =
+        main.querySelector(
+            '.notes-browser-scroll'
+        );
+
+    const richTextInstance =
         notesRichTextRuntime
-          .instance;
+            .instance;
 
-      const richTextRange =
+    const richTextRange =
         richTextInstance
         && notesRichTextRuntime
-          .noteId
+            .noteId
         && richTextInstance.hasFocus()
-          ? richTextInstance
-              .getSelection()
-          : null;
+            ? richTextInstance
+                .getSelection()
+            : null;
 
-      const richText =
+    const richText =
         richTextRange
-          ? {
-              noteId:
+            ? {
+                noteId:
                 notesRichTextRuntime
-                  .noteId,
+                    .noteId,
 
-              index:
+                index:
                 richTextRange.index,
 
-              length:
+                length:
                 richTextRange.length,
 
-              hadFocus:
+                hadFocus:
                 true
             }
-          : null;
+            : null;
 
-      const active =
+    const active =
         document.activeElement;
 
-      const activeIsRichText =
+    const activeIsRichText =
         Boolean(
-          richTextInstance
+            richTextInstance
           && active
           && (
-            active
+              active
               === richTextInstance.root
             || richTextInstance.root
-              .contains(active)
+                .contains(active)
           )
         );
 
-      const focus =
+    const focus =
         !activeIsRichText
         && active
         && main.contains(active)
-          ? {
-              id:
+            ? {
+                id:
                 active.id || '',
 
-              checklistText:
+                checklistText:
                 active.dataset
-                  ?.noteChecklistText
+                    ?.noteChecklistText
                 || '',
 
-              selectionStart:
+                selectionStart:
                 typeof active.selectionStart
                   === 'number'
-                  ? active.selectionStart
-                  : null,
+                    ? active.selectionStart
+                    : null,
 
-              selectionEnd:
+                selectionEnd:
                 typeof active.selectionEnd
                   === 'number'
-                  ? active.selectionEnd
-                  : null
+                    ? active.selectionEnd
+                    : null
             }
-          : null;
+            : null;
 
-      return {
+    return {
         editorScrollTop:
           editor?.scrollTop || 0,
 
@@ -12424,1207 +12912,1291 @@
 
         richText,
         focus
-      };
-    }
+    };
+}
 
-    function restoreNotesInteractionState(
-      snapshot,
-      {
+function restoreNotesInteractionState(
+    snapshot,
+    {
         focusSelector = '',
         select = false
-      } = {}
-    ) {
-      const editor =
+    } = {}
+)
+{
+    const editor =
         main.querySelector(
-          '.notes-right-pane'
+            '.notes-right-pane'
         );
 
-      const browser =
+    const browser =
         main.querySelector(
-          '.notes-browser-scroll'
+            '.notes-browser-scroll'
         );
 
-      const editorScrollTop =
+    const editorScrollTop =
         snapshot?.editorScrollTop
         || 0;
 
-      if (editor) {
+    if (editor)
+    {
         editor.scrollTop =
-          editorScrollTop;
-      }
+            editorScrollTop;
+    }
 
-      if (browser) {
+    if (browser)
+    {
         browser.scrollTop =
-          snapshot?.browserScrollTop
+            snapshot?.browserScrollTop
           || 0;
-      }
+    }
 
-      const explicitTarget =
+    const explicitTarget =
         focusSelector
-          ? main.querySelector(
-              focusSelector
+            ? main.querySelector(
+                focusSelector
             )
-          : null;
+            : null;
 
-      if (explicitTarget) {
+    if (explicitTarget)
+    {
         explicitTarget.focus({
-          preventScroll: true
+            preventScroll: true
         });
 
         if (
-          select
+            select
           && typeof explicitTarget.select
             === 'function'
-        ) {
-          explicitTarget.select();
+        )
+        {
+            explicitTarget.select();
         }
 
-        if (editor) {
-          editor.scrollTop =
-            editorScrollTop;
+        if (editor)
+        {
+            editor.scrollTop =
+                editorScrollTop;
         }
 
         return;
-      }
+    }
 
-      const richText =
+    const richText =
         snapshot?.richText;
 
-      const richTextInstance =
+    const richTextInstance =
         notesRichTextRuntime
-          .instance;
+            .instance;
 
-      if (
+    if (
         richText?.hadFocus
         && richTextInstance
         && richText.noteId
           === notesRichTextRuntime
-            .noteId
-      ) {
+              .noteId
+    )
+    {
         const documentLength =
-          Math.max(
-            1,
-            richTextInstance
-              .getLength()
-          );
+            Math.max(
+                1,
+                richTextInstance
+                    .getLength()
+            );
 
         const maximumIndex =
-          Math.max(
-            0,
-            documentLength - 1
-          );
+            Math.max(
+                0,
+                documentLength - 1
+            );
 
         const index =
-          Math.max(
-            0,
-            Math.min(
-              Number(
-                richText.index
-              ) || 0,
-              maximumIndex
-            )
-          );
+            Math.max(
+                0,
+                Math.min(
+                    Number(
+                        richText.index
+                    ) || 0,
+                    maximumIndex
+                )
+            );
 
         const length =
-          Math.max(
-            0,
-            Math.min(
-              Number(
-                richText.length
-              ) || 0,
-              maximumIndex - index
-            )
-          );
+            Math.max(
+                0,
+                Math.min(
+                    Number(
+                        richText.length
+                    ) || 0,
+                    maximumIndex - index
+                )
+            );
 
         richTextInstance.focus({
-          preventScroll: true
+            preventScroll: true
         });
 
         richTextInstance.setSelection(
-          index,
-          length,
-          'silent'
+            index,
+            length,
+            'silent'
         );
 
-        if (editor) {
-          editor.scrollTop =
-            editorScrollTop;
+        if (editor)
+        {
+            editor.scrollTop =
+                editorScrollTop;
         }
 
         return;
-      }
+    }
 
-      let target =
+    let target =
         null;
 
-      if (snapshot?.focus) {
-        if (snapshot.focus.id) {
-          target =
-            main.querySelector(
-              `#${CSS.escape(
-                snapshot.focus.id
-              )}`
-            );
-        } else if (
-          snapshot.focus
-            .checklistText
-        ) {
-          target =
-            main.querySelector(
-              `[data-note-checklist-text="${
-                CSS.escape(
-                  snapshot.focus
-                    .checklistText
-                )
-              }"]`
-            );
+    if (snapshot?.focus)
+    {
+        if (snapshot.focus.id)
+        {
+            target =
+                main.querySelector(
+                    `#${CSS.escape(
+                        snapshot.focus.id
+                    )}`
+                );
         }
-      }
+        else if (
+            snapshot.focus
+                .checklistText
+        )
+        {
+            target =
+                main.querySelector(
+                    `[data-note-checklist-text="${
+                        CSS.escape(
+                            snapshot.focus
+                                .checklistText
+                        )
+                    }"]`
+                );
+        }
+    }
 
-      if (!target) {
+    if (!target)
+    {
         return;
-      }
+    }
 
-      target.focus({
+    target.focus({
         preventScroll: true
-      });
+    });
 
-      if (
+    if (
         select
         && typeof target.select
           === 'function'
-      ) {
+    )
+    {
         target.select();
-      } else if (
+    }
+    else if (
         snapshot?.focus
         && typeof target.setSelectionRange
           === 'function'
         && snapshot.focus
-          .selectionStart !== null
-      ) {
+            .selectionStart !== null
+    )
+    {
         target.setSelectionRange(
-          snapshot.focus.selectionStart,
-          snapshot.focus.selectionEnd
+            snapshot.focus.selectionStart,
+            snapshot.focus.selectionEnd
         );
-      }
-
-      if (editor) {
-        editor.scrollTop =
-          editorScrollTop;
-      }
     }
 
-    function renderNotesPreservingInteraction(
-      options = {}
-    ) {
-      const snapshot =
+    if (editor)
+    {
+        editor.scrollTop =
+            editorScrollTop;
+    }
+}
+
+function renderNotesPreservingInteraction(
+    options = {}
+)
+{
+    const snapshot =
         captureNotesInteractionState();
 
-      renderNotes();
+    renderNotes();
 
-      requestAnimationFrame(
+    requestAnimationFrame(
         () =>
-          restoreNotesInteractionState(
-            snapshot,
-            options
-          )
-      );
-    }
+            restoreNotesInteractionState(
+                snapshot,
+                options
+            )
+    );
+}
 
-    function updateRelatedNoteLinks(
-      noteId,
-      relatedIds
-    ) {
-      const note =
+function updateRelatedNoteLinks(
+    noteId,
+    relatedIds
+)
+{
+    const note =
         getNote(
-          noteId,
-          {
-            includeArchived:
+            noteId,
+            {
+                includeArchived:
               true
-          }
+            }
         );
 
-      if (!note) {
+    if (!note)
+    {
         return null;
-      }
+    }
 
-      const validIds =
+    const validIds =
         normalizeCentralNoteIdArray(
-          relatedIds
-        ).filter(id => {
-          const related =
-            getNote(
-              id,
-              {
-                projectId:
+            relatedIds
+        ).filter(id =>
+        {
+            const related =
+                getNote(
+                    id,
+                    {
+                        projectId:
                   note.projectId,
 
-                includeArchived:
+                        includeArchived:
                   true
-              }
-            );
+                    }
+                );
 
-          return Boolean(
-            related
+            return Boolean(
+                related
             && related.id !== note.id
-          );
+            );
         });
 
-      const previous =
+    const previous =
         new Set(
-          note.relatedNoteIds || []
+            note.relatedNoteIds || []
         );
 
-      const next =
+    const next =
         new Set(validIds);
 
-      previous.forEach(id => {
-        if (next.has(id)) {
-          return;
+    previous.forEach(id =>
+    {
+        if (next.has(id))
+        {
+            return;
         }
 
         const related =
-          getNote(
-            id,
-            {
-              projectId:
+            getNote(
+                id,
+                {
+                    projectId:
                 note.projectId,
 
-              includeArchived:
+                    includeArchived:
                 true
-            }
-          );
-
-        if (related) {
-          related.relatedNoteIds =
-            related.relatedNoteIds
-              .filter(
-                itemId =>
-                  itemId !== note.id
-              );
-
-          touchNote(
-            related,
-            {
-              refreshPreview: false
-            }
-          );
-        }
-      });
-
-      next.forEach(id => {
-        const related =
-          getNote(
-            id,
-            {
-              projectId:
-                note.projectId,
-
-              includeArchived:
-                true
-            }
-          );
-
-        if (
-          related
-          && !related.relatedNoteIds
-            .includes(note.id)
-        ) {
-          related.relatedNoteIds.push(
-            note.id
-          );
-
-          related.relatedNoteIds =
-            normalizeCentralNoteIdArray(
-              related.relatedNoteIds
+                }
             );
 
-          touchNote(
-            related,
-            {
-              refreshPreview: false
-            }
-          );
-        }
-      });
+        if (related)
+        {
+            related.relatedNoteIds =
+                related.relatedNoteIds
+                    .filter(
+                        itemId =>
+                            itemId !== note.id
+                    );
 
-      note.relatedNoteIds =
+            touchNote(
+                related,
+                {
+                    refreshPreview: false
+                }
+            );
+        }
+    });
+
+    next.forEach(id =>
+    {
+        const related =
+            getNote(
+                id,
+                {
+                    projectId:
+                note.projectId,
+
+                    includeArchived:
+                true
+                }
+            );
+
+        if (
+            related
+          && !related.relatedNoteIds
+              .includes(note.id)
+        )
+        {
+            related.relatedNoteIds.push(
+                note.id
+            );
+
+            related.relatedNoteIds =
+                normalizeCentralNoteIdArray(
+                    related.relatedNoteIds
+                );
+
+            touchNote(
+                related,
+                {
+                    refreshPreview: false
+                }
+            );
+        }
+    });
+
+    note.relatedNoteIds =
         validIds;
 
-      touchNote(note);
+    touchNote(note);
 
-      return note;
+    return note;
+}
+
+function duplicateCentralNote(
+    noteId
+)
+{
+    const note =
+        getNote(
+            noteId,
+            {
+                includeArchived:
+              true
+            }
+        );
+
+    if (!note)
+    {
+        return null;
     }
 
-    function duplicateCentralNote(
-      noteId
-    ) {
-      const note =
-        getNote(
-          noteId,
-          {
-            includeArchived:
-              true
-          }
-        );
-
-      if (!note) {
-        return null;
-      }
-
-      const now =
+    const now =
         new Date().toISOString();
 
-      const copiedSourceIds =
+    const copiedSourceIds =
         noteEntityLinkedIds(
-          note,
-          'source'
+            note,
+            'source'
         );
 
-      const copy =
+    const copy =
         normalizeCentralNoteRecord({
-          ...note,
+            ...note,
 
-          id:
+            id:
             createRuntimeId(
-              'note'
+                'note'
             ),
 
-          title:
+            title:
             `${note.title} copy`,
 
-          bodyDelta:
+            bodyDelta:
             cloneRichTextDelta(
-              note.bodyDelta
+                note.bodyDelta
             ),
 
-          bodyFormat:
+            bodyFormat:
             note.bodyDelta
-              ? 'quill-delta-v1'
-              : '',
+                ? 'quill-delta-v1'
+                : '',
 
-          collectionIds: [
-            ...note.collectionIds
-          ],
+            collectionIds: [
+                ...note.collectionIds
+            ],
 
-          favorite:
+            favorite:
             false,
 
-          archived:
+            archived:
             false,
 
-          checklist:
+            checklist:
             note.checklist.map(
-              item => ({
-                ...item,
+                item => ({
+                    ...item,
 
-                id:
+                    id:
                   createRuntimeId(
-                    'note-check'
+                      'note-check'
                   )
-              })
+                })
             ),
 
-          linkedPersonIds: [
-            ...note.linkedPersonIds
-          ],
+            linkedPersonIds: [
+                ...note.linkedPersonIds
+            ],
 
-          linkedPlaceIds: [
-            ...note.linkedPlaceIds
-          ],
+            linkedPlaceIds: [
+                ...note.linkedPlaceIds
+            ],
 
-          linkedEventIds: [
-            ...note.linkedEventIds
-          ],
+            linkedEventIds: [
+                ...note.linkedEventIds
+            ],
 
-          linkedPhotoIds: [
-            ...note.linkedPhotoIds
-          ],
+            linkedPhotoIds: [
+                ...note.linkedPhotoIds
+            ],
 
-          linkedArchiveFileIds: [
-            ...note.linkedArchiveFileIds
-          ],
+            linkedArchiveFileIds: [
+                ...note.linkedArchiveFileIds
+            ],
 
-          relatedNoteIds:
+            relatedNoteIds:
             [],
 
-          createdAt:
+            createdAt:
             now,
 
-          updatedAt:
+            updatedAt:
             now
         });
 
-      sampleData.notes.unshift(
+    sampleData.notes.unshift(
         copy
-      );
+    );
 
-      setNoteEntityLinks(
+    setNoteEntityLinks(
         copy.id,
         'source',
         copiedSourceIds,
         {
-          projectId:
+            projectId:
             copy.projectId,
 
-          touchUpdatedAt:
+            touchUpdatedAt:
             false
         }
-      );
+    );
 
-      state.notesView =
+    state.notesView =
         'all';
 
-      state.notesActiveCollectionId =
+    state.notesActiveCollectionId =
         null;
 
-      state.selectedNoteId =
+    state.selectedNoteId =
         copy.id;
 
-      state.notesRightCollapsed =
+    state.notesRightCollapsed =
         false;
 
-      state.notesMobilePane =
+    state.notesMobilePane =
         'editor';
 
-      state.notesSaveStatus =
+    state.notesSaveStatus =
         'Saved';
 
-      return copy;
-    }
+    return copy;
+}
 
-    function bindNotesBrowserControls() {
-      bindSearchInput(
+function bindNotesBrowserControls()
+{
+    bindSearchInput(
         main,
         '#notesSearch',
         'notesSearch',
         renderNotes
-      );
+    );
 
-      main
+    main
         .querySelector(
-          '[data-clear-notes-context-filter]'
+            '[data-clear-notes-context-filter]'
         )
         ?.addEventListener(
-          'click',
-          () => {
-            clearNotesContext();
-            state.selectedNoteId =
-              null;
-            state.notesRightCollapsed =
-              true;
-            state.notesMobilePane =
-              'browser';
-            renderNotes();
-          }
+            'click',
+            () =>
+            {
+                clearNotesContext();
+                state.selectedNoteId =
+                    null;
+                state.notesRightCollapsed =
+                    true;
+                state.notesMobilePane =
+                    'browser';
+                renderNotes();
+            }
         );
 
-      main
+    main
         .querySelector(
-          '#notesFilterButton'
+            '#notesFilterButton'
         )
         ?.addEventListener(
-          'click',
-          event => {
-            event.stopPropagation();
-            openNotesFilterMenu(
-              event.currentTarget
-            );
-          }
+            'click',
+            event =>
+            {
+                event.stopPropagation();
+                openNotesFilterMenu(
+                    event.currentTarget
+                );
+            }
         );
-      bindAppSortControl(main, {
+    bindAppSortControl(main, {
         id: 'notesSort',
         options: APP_SORT_OPTIONS.notes,
         getField: () => state.notesSort,
         getDirection: () =>
-          state.notesSortDirection,
+            state.notesSortDirection,
 
         onChange: ({
-          field,
-          direction
-        }) => {
-          state.notesSort = field;
-          state.notesSortDirection =
-            direction;
+            field,
+            direction
+        }) =>
+        {
+            state.notesSort = field;
+            state.notesSortDirection =
+                direction;
 
-          renderNotes();
+            renderNotes();
         }
-      });
-      main
+    });
+    main
         .querySelectorAll(
-          '[data-clear-notes-filter]'
+            '[data-clear-notes-filter]'
         )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              const key =
-                button.dataset
-                  .clearNotesFilter;
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
+                {
+                    const key =
+                        button.dataset
+                            .clearNotesFilter;
 
-              if (
-                !state.notesFilters
+                    if (
+                        !state.notesFilters
                 || !(key in state.notesFilters)
-              ) {
-                return;
-              }
+                    )
+                    {
+                        return;
+                    }
 
-              state.notesFilters[key] =
-                'any';
+                    state.notesFilters[key] =
+                        'any';
 
-              renderNotes();
-            }
-          );
+                    renderNotes();
+                }
+            );
         });
 
-      main
+    main
         .querySelector(
-          '#notesClearSearch'
+            '#notesClearSearch'
         )
         ?.addEventListener(
-          'click',
-          () => {
-            state.notesSearch =
-              '';
-            renderNotes();
-          }
-        );
-
-      main
-        .querySelector(
-          '#notesNewNoteButton'
-        )
-        ?.addEventListener(
-          'click',
-          () =>
-            createCentralNote()
+            'click',
+            () =>
+            {
+                state.notesSearch =
+                    '';
+                renderNotes();
+            }
         );
 
     main
-      .querySelectorAll(
-        '[data-note-row]'
-      )
-      .forEach(button => {
-        button.addEventListener(
-          'click',
-          () => {
-            state.selectedNoteId =
-              button.dataset.noteRow;
-
-            state.notesRightCollapsed =
-              false;
-
-            state.notesMobilePane =
-              'editor';
-
-            state.notesSaveStatus =
-              'Saved';
-
-            renderNotesPreservingInteraction();
-          }
+        .querySelector(
+            '#notesNewNoteButton'
+        )
+        ?.addEventListener(
+            'click',
+            () =>
+                createCentralNote()
         );
-      });
 
-      main
+    main
         .querySelectorAll(
-          '[data-note-favorite]'
+            '[data-note-row]'
         )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            event => {
-              event.stopPropagation();
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
+                {
+                    state.selectedNoteId =
+                        button.dataset.noteRow;
 
-              const note =
-                getNote(
-                  button.dataset
-                    .noteFavorite,
-                  {
-                    includeArchived:
+                    state.notesRightCollapsed =
+                        false;
+
+                    state.notesMobilePane =
+                        'editor';
+
+                    state.notesSaveStatus =
+                        'Saved';
+
+                    renderNotesPreservingInteraction();
+                }
+            );
+        });
+
+    main
+        .querySelectorAll(
+            '[data-note-favorite]'
+        )
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                event =>
+                {
+                    event.stopPropagation();
+
+                    const note =
+                        getNote(
+                            button.dataset
+                                .noteFavorite,
+                            {
+                                includeArchived:
                       true
-                  }
-                );
+                            }
+                        );
 
-              if (!note) {
-                return;
-              }
+                    if (!note)
+                    {
+                        return;
+                    }
 
-              note.favorite =
-                !note.favorite;
-              touchNote(note);
-              renderNotesPreservingInteraction();
+                    note.favorite =
+                        !note.favorite;
+                    touchNote(note);
+                    renderNotesPreservingInteraction();
 
-              showToast(
-                note.favorite
-                  ? 'Added to favourites.'
-                  : 'Removed from favourites.'
-              );
-            }
-          );
+                    showToast(
+                        note.favorite
+                            ? 'Added to favourites.'
+                            : 'Removed from favourites.'
+                    );
+                }
+            );
         });
 
-      main
+    main
         .querySelectorAll(
-          '[data-note-menu]'
+            '[data-note-menu]'
         )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            event => {
-              event.stopPropagation();
-              openNotesMenu(
-                button.dataset.noteMenu,
-                button
-              );
-            }
-          );
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                event =>
+                {
+                    event.stopPropagation();
+                    openNotesMenu(
+                        button.dataset.noteMenu,
+                        button
+                    );
+                }
+            );
         });
+}
+
+function bindNotesSplitPaneControls()
+{
+    main
+        .querySelector(
+            '#notesBackToBrowser'
+        )
+        ?.addEventListener(
+            'click',
+            () =>
+            {
+                state.notesMobilePane =
+                    'browser';
+
+                renderNotesPreservingInteraction();
+            }
+        );
+
+    main
+        .querySelector(
+            '#notesToggleRight'
+        )
+        ?.addEventListener(
+            'click',
+            () =>
+            {
+                state.notesRightCollapsed =
+                    !state.notesRightCollapsed;
+
+                if (
+                    !state.notesRightCollapsed
+                )
+                {
+                    state.notesMobilePane =
+                        'editor';
+                }
+
+                renderNotesPreservingInteraction();
+            }
+        );
+
+    const resizer =
+        main.querySelector(
+            '#notesResizer'
+        );
+
+    if (!resizer)
+    {
+        return;
     }
 
-    function bindNotesSplitPaneControls() {
-      main
-        .querySelector(
-          '#notesBackToBrowser'
-        )
-        ?.addEventListener(
-          'click',
-          () => {
-            state.notesMobilePane =
-              'browser';
+    let startX = 0;
+    let startWidth = 0;
 
-            renderNotesPreservingInteraction();
-          }
-        );
+    const setBrowserWidth =
+        value =>
+        {
+            const next =
+                Math.max(
+                    360,
+                    Math.min(
+                        600,
+                        value
+                    )
+                );
 
-      main
-        .querySelector(
-          '#notesToggleRight'
-        )
-        ?.addEventListener(
-          'click',
-          () => {
-            state.notesRightCollapsed =
-              !state.notesRightCollapsed;
+            state.notesBrowserWidth =
+                next;
 
-            if (
-              !state.notesRightCollapsed
-            ) {
-              state.notesMobilePane =
-                'editor';
-            }
+            main
+                .querySelector(
+                    '.notes-shell'
+                )
+                ?.style.setProperty(
+                    '--notes-browser-width',
+                    `${next}px`
+                );
 
-            renderNotesPreservingInteraction();
-          }
-        );
-
-      const resizer =
-        main.querySelector(
-          '#notesResizer'
-        );
-
-      if (!resizer) {
-        return;
-      }
-
-      let startX = 0;
-      let startWidth = 0;
-
-      const setBrowserWidth =
-        value => {
-          const next =
-            Math.max(
-              360,
-              Math.min(
-                600,
-                value
-              )
+            resizer.setAttribute(
+                'aria-valuenow',
+                String(
+                    Math.round(next)
+                )
             );
-
-          state.notesBrowserWidth =
-            next;
-
-          main
-            .querySelector(
-              '.notes-shell'
-            )
-            ?.style.setProperty(
-              '--notes-browser-width',
-              `${next}px`
-            );
-
-          resizer.setAttribute(
-            'aria-valuenow',
-            String(
-              Math.round(next)
-            )
-          );
         };
 
-      const move = event => {
+    const move = event =>
+    {
         setBrowserWidth(
-          startWidth
+            startWidth
           + event.clientX
           - startX
         );
-      };
+    };
 
-      const stop = event => {
+    const stop = event =>
+    {
         resizer.classList.remove(
-          'dragging'
+            'dragging'
         );
         resizer
-          .releasePointerCapture
-          ?.(
-            event.pointerId
-          );
-        resizer.removeEventListener(
-          'pointermove',
-          move
-        );
-        resizer.removeEventListener(
-          'pointerup',
-          stop
-        );
-        resizer.removeEventListener(
-          'pointercancel',
-          stop
-        );
-      };
-
-      resizer.addEventListener(
-        'pointerdown',
-        event => {
-          event.preventDefault();
-          startX = event.clientX;
-          startWidth =
-            Math.max(
-              320,
-              Math.min(
-                520,
-                Number(
-                  state.notesBrowserWidth
-                ) || 360
-              )
-            );
-          resizer.classList.add(
-            'dragging'
-          );
-          resizer
-            .setPointerCapture
+            .releasePointerCapture
             ?.(
-              event.pointerId
+                event.pointerId
             );
-          resizer.addEventListener(
+        resizer.removeEventListener(
             'pointermove',
             move
-          );
-          resizer.addEventListener(
+        );
+        resizer.removeEventListener(
             'pointerup',
             stop
-          );
-          resizer.addEventListener(
+        );
+        resizer.removeEventListener(
             'pointercancel',
             stop
-          );
+        );
+    };
+
+    resizer.addEventListener(
+        'pointerdown',
+        event =>
+        {
+            event.preventDefault();
+            startX = event.clientX;
+            startWidth =
+                Math.max(
+                    320,
+                    Math.min(
+                        520,
+                        Number(
+                            state.notesBrowserWidth
+                        ) || 360
+                    )
+                );
+            resizer.classList.add(
+                'dragging'
+            );
+            resizer
+                .setPointerCapture
+                ?.(
+                    event.pointerId
+                );
+            resizer.addEventListener(
+                'pointermove',
+                move
+            );
+            resizer.addEventListener(
+                'pointerup',
+                stop
+            );
+            resizer.addEventListener(
+                'pointercancel',
+                stop
+            );
         }
-      );
+    );
 
-      resizer.addEventListener(
+    resizer.addEventListener(
         'keydown',
-        event => {
-          if (
-            ![
-              'ArrowLeft',
-              'ArrowRight'
-            ].includes(event.key)
-          ) {
-            return;
-          }
-
-          event.preventDefault();
-
-          setBrowserWidth(
-            (
-              Number(
-                state.notesBrowserWidth
-              ) || 440
+        event =>
+        {
+            if (
+                ![
+                    'ArrowLeft',
+                    'ArrowRight'
+                ].includes(event.key)
             )
+            {
+                return;
+            }
+
+            event.preventDefault();
+
+            setBrowserWidth(
+                (
+                    Number(
+                        state.notesBrowserWidth
+                    ) || 440
+                )
             + (
                 event.key
                   === 'ArrowRight'
-                  ? 24
-                  : -24
-              )
-          );
+                    ? 24
+                    : -24
+            )
+            );
         }
-      );
-    }
-    
-    
-    function bindNoteEditorControls() {
-      const note =
+    );
+}
+
+
+function bindNoteEditorControls()
+{
+    const note =
         selectedNote();
 
-      if (!note) {
+    if (!note)
+    {
         return;
-      }
+    }
 
-      bindConnectedFileLinks(
+    bindConnectedFileLinks(
         main,
         {
-          onUnlinked:
+            onUnlinked:
             ({
-              contextType
-            }) => {
-              if (
                 contextType
+            }) =>
+            {
+                if (
+                    contextType
                 !== 'note'
-              ) {
-                return;
-              }
+                )
+                {
+                    return;
+                }
 
-              renderNotesPreservingInteraction();
+                renderNotesPreservingInteraction();
             }
         }
-      );
-      bindConnectedSourceLinks(
+    );
+    bindConnectedSourceLinks(
         main,
         {
-          onUnlinked:
+            onUnlinked:
             ({
-              targetType,
-              targetId
-            }) => {
-              if (
-                targetType !== 'note'
+                targetType,
+                targetId
+            }) =>
+            {
+                if (
+                    targetType !== 'note'
                 || targetId !== note.id
-              ) {
-                return;
-              }
+                )
+                {
+                    return;
+                }
 
-              renderNotesPreservingInteraction();
+                renderNotesPreservingInteraction();
             }
         }
-      );
-      const titleInput =
+    );
+    const titleInput =
         main.querySelector(
-          '#notesTitleInput'
+            '#notesTitleInput'
         );
 
-      titleInput
+    titleInput
         ?.addEventListener(
-          'input',
-          event => {
-            note.title =
-              event.target.value;
-            touchNote(note);
-          }
+            'input',
+            event =>
+            {
+                note.title =
+                    event.target.value;
+                touchNote(note);
+            }
         );
 
-      titleInput
+    titleInput
         ?.addEventListener(
-          'blur',
-          event => {
-            const title =
-              collectLocalizedDataFieldValue(
-                event.target,
-                event.target.dataset.sourceValue
+            'blur',
+            event =>
+            {
+                const title =
+                    collectLocalizedDataFieldValue(
+                        event.target,
+                        event.target.dataset.sourceValue
                   || ''
-              ).trim()
+                    ).trim()
               || 'Untitled note';
 
-            note.title = title;
-            event.target.value =
-              localizedDataFieldValue(
-                title
-              );
-            event.target.dataset.sourceValue =
-              title;
-            touchNote(note);
-          }
+                note.title = title;
+                event.target.value =
+                    localizedDataFieldValue(
+                        title
+                    );
+                event.target.dataset.sourceValue =
+                    title;
+                touchNote(note);
+            }
         );
 
-      main
+    main
         .querySelector(
-          '#notesFavoriteButton'
+            '#notesFavoriteButton'
         )
         ?.addEventListener(
-          'click',
-          () => {
-            note.favorite =
-              !note.favorite;
-            touchNote(note);
-            renderNotesPreservingInteraction();
-            showToast(
-              note.favorite
-                ? 'Added to favourites.'
-                : 'Removed from favourites.'
-            );
-          }
-        );
-
-      main
-        .querySelector(
-          '#notesEditorMenuButton'
-        )
-        ?.addEventListener(
-          'click',
-          event => {
-            event.stopPropagation();
-            openNotesMenu(
-              note.id,
-              event.currentTarget
-            );
-          }
-        );
-
-      main
-        .querySelector(
-          '#notesManageCollections'
-        )
-        ?.addEventListener(
-          'click',
-          () =>
-            openNoteCollectionsModal(
-              note.id
-            )
-        );
-
-      main
-        .querySelectorAll(
-          '[data-note-remove-collection]'
-        )
-        .forEach(button => {
-          button.addEventListener(
             'click',
-            () => {
-              removeNoteFromCollection(
-                note.id,
-                button.dataset
-                  .noteRemoveCollection,
-                {
-                  projectId:
-                    note.projectId
-                }
-              );
-              renderNotesPreservingInteraction();
-              showToast(
-                'Removed from collection.'
-              );
+            () =>
+            {
+                note.favorite =
+                    !note.favorite;
+                touchNote(note);
+                renderNotesPreservingInteraction();
+                showToast(
+                    note.favorite
+                        ? 'Added to favourites.'
+                        : 'Removed from favourites.'
+                );
             }
-          );
-        });
-
-      main
-        .querySelector(
-          '#notesAddChecklistItem'
-        )
-        ?.addEventListener(
-          'click',
-          () => {
-            const itemId =
-              createRuntimeId(
-                'note-check'
-              );
-
-            note.checklist.push({
-              id:
-                itemId,
-              text:
-                'New checklist item',
-              done:
-                false
-            });
-
-            touchNote(note);
-            renderNotesPreservingInteraction({
-              focusSelector:
-                `[data-note-checklist-text="${
-                  CSS.escape(itemId)
-                }"]`,
-              select:
-                true
-            });
-          }
         );
 
-      main
-        .querySelectorAll(
-          '[data-note-checklist-toggle]'
+    main
+        .querySelector(
+            '#notesEditorMenuButton'
         )
-        .forEach(input => {
-          input.addEventListener(
-            'change',
-            () => {
-              const item =
-                note.checklist.find(
-                  checklistItem =>
-                    checklistItem.id
-                    === input.dataset
-                      .noteChecklistToggle
-                );
-
-              if (!item) {
-                return;
-              }
-
-              item.done =
-                input.checked;
-              touchNote(note);
-              renderNotesPreservingInteraction();
-            }
-          );
-        });
-
-      main
-        .querySelectorAll(
-          '[data-note-checklist-text]'
-        )
-        .forEach(input => {
-          const originalText =
-            input.value;
-
-          input.addEventListener(
-            'change',
-            () => {
-              const item =
-                note.checklist.find(
-                  checklistItem =>
-                    checklistItem.id
-                    === input.dataset
-                      .noteChecklistText
-                );
-
-              if (!item) {
-                return;
-              }
-
-              const text =
-                collectLocalizedDataFieldValue(
-                  input,
-                  input.dataset.sourceValue
-                    || ''
-                ).trim();
-
-              if (!text) {
-                input.value =
-                  item.text
-                  || originalText;
-                return;
-              }
-
-              item.text = text;
-              input.value =
-                localizedDataFieldValue(
-                  text
-                );
-              input.dataset.sourceValue =
-                text;
-              touchNote(note);
-            }
-          );
-
-          input.addEventListener(
-            'keydown',
-            event => {
-              if (event.key === 'Enter') {
-                event.preventDefault();
-                input.blur();
-              }
-
-              if (event.key === 'Escape') {
-                input.value =
-                  originalText;
-                input.blur();
-              }
-            }
-          );
-        });
-
-      main
-        .querySelectorAll(
-          '[data-note-checklist-delete]'
-        )
-        .forEach(button => {
-          button.addEventListener(
+        ?.addEventListener(
             'click',
-            () => {
-              note.checklist =
-                note.checklist.filter(
-                  item =>
-                    item.id
-                    !== button.dataset
-                      .noteChecklistDelete
+            event =>
+            {
+                event.stopPropagation();
+                openNotesMenu(
+                    note.id,
+                    event.currentTarget
                 );
-              touchNote(note);
-              renderNotesPreservingInteraction();
             }
-          );
-        });
+        );
 
-      main
-        .querySelectorAll(
-          '[data-note-editor-section-toggle]'
+    main
+        .querySelector(
+            '#notesManageCollections'
         )
-        .forEach(button => {
-          button.addEventListener(
+        ?.addEventListener(
             'click',
-            () => {
-              const sectionKey =
-                button.dataset
-                  .noteEditorSectionToggle;
+            () =>
+                openNoteCollectionsModal(
+                    note.id
+                )
+        );
 
-              state.notesEditorSections[
-                sectionKey
-              ] =
-                !noteEditorSectionIsOpen(
-                  sectionKey
-                );
-
-              renderNotesPreservingInteraction({
-                focusSelector:
-                  `[data-note-editor-section-toggle="${
-                    CSS.escape(
-                      sectionKey
-                    )
-                  }"]`
-              });
-            }
-          );
-        });
-
-        main
-          .querySelectorAll(
-            '[data-note-summary-section]'
-          )
-          .forEach(button => {
+    main
+        .querySelectorAll(
+            '[data-note-remove-collection]'
+        )
+        .forEach(button =>
+        {
             button.addEventListener(
-              'click',
-              () => {
-                const sectionKey =
-                  button.dataset
-                    .noteSummarySection;
-
-                if (!sectionKey) {
-                  return;
+                'click',
+                () =>
+                {
+                    removeNoteFromCollection(
+                        note.id,
+                        button.dataset
+                            .noteRemoveCollection,
+                        {
+                            projectId:
+                    note.projectId
+                        }
+                    );
+                    renderNotesPreservingInteraction();
+                    showToast(
+                        'Removed from collection.'
+                    );
                 }
+            );
+        });
 
-                state.notesEditorSections[
-                  sectionKey
-                ] =
-                  true;
+    main
+        .querySelector(
+            '#notesAddChecklistItem'
+        )
+        ?.addEventListener(
+            'click',
+            () =>
+            {
+                const itemId =
+                    createRuntimeId(
+                        'note-check'
+                    );
 
-                const escapedSectionKey =
-                  CSS.escape(
-                    sectionKey
-                  );
-
-                renderNotesPreservingInteraction({
-                  focusSelector:
-                    `[data-note-editor-section-toggle="${escapedSectionKey}"]`
+                note.checklist.push({
+                    id:
+                itemId,
+                    text:
+                'New checklist item',
+                    done:
+                false
                 });
 
-                /*
+                touchNote(note);
+                renderNotesPreservingInteraction({
+                    focusSelector:
+                `[data-note-checklist-text="${
+                    CSS.escape(itemId)
+                }"]`,
+                    select:
+                true
+                });
+            }
+        );
+
+    main
+        .querySelectorAll(
+            '[data-note-checklist-toggle]'
+        )
+        .forEach(input =>
+        {
+            input.addEventListener(
+                'change',
+                () =>
+                {
+                    const item =
+                        note.checklist.find(
+                            checklistItem =>
+                                checklistItem.id
+                    === input.dataset
+                        .noteChecklistToggle
+                        );
+
+                    if (!item)
+                    {
+                        return;
+                    }
+
+                    item.done =
+                        input.checked;
+                    touchNote(note);
+                    renderNotesPreservingInteraction();
+                }
+            );
+        });
+
+    main
+        .querySelectorAll(
+            '[data-note-checklist-text]'
+        )
+        .forEach(input =>
+        {
+            const originalText =
+                input.value;
+
+            input.addEventListener(
+                'change',
+                () =>
+                {
+                    const item =
+                        note.checklist.find(
+                            checklistItem =>
+                                checklistItem.id
+                    === input.dataset
+                        .noteChecklistText
+                        );
+
+                    if (!item)
+                    {
+                        return;
+                    }
+
+                    const text =
+                        collectLocalizedDataFieldValue(
+                            input,
+                            input.dataset.sourceValue
+                    || ''
+                        ).trim();
+
+                    if (!text)
+                    {
+                        input.value =
+                            item.text
+                  || originalText;
+                        return;
+                    }
+
+                    item.text = text;
+                    input.value =
+                        localizedDataFieldValue(
+                            text
+                        );
+                    input.dataset.sourceValue =
+                        text;
+                    touchNote(note);
+                }
+            );
+
+            input.addEventListener(
+                'keydown',
+                event =>
+                {
+                    if (event.key === 'Enter')
+                    {
+                        event.preventDefault();
+                        input.blur();
+                    }
+
+                    if (event.key === 'Escape')
+                    {
+                        input.value =
+                            originalText;
+                        input.blur();
+                    }
+                }
+            );
+        });
+
+    main
+        .querySelectorAll(
+            '[data-note-checklist-delete]'
+        )
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
+                {
+                    note.checklist =
+                        note.checklist.filter(
+                            item =>
+                                item.id
+                    !== button.dataset
+                        .noteChecklistDelete
+                        );
+                    touchNote(note);
+                    renderNotesPreservingInteraction();
+                }
+            );
+        });
+
+    main
+        .querySelectorAll(
+            '[data-note-editor-section-toggle]'
+        )
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
+                {
+                    const sectionKey =
+                        button.dataset
+                            .noteEditorSectionToggle;
+
+                    state.notesEditorSections[
+                        sectionKey
+                    ] =
+                        !noteEditorSectionIsOpen(
+                            sectionKey
+                        );
+
+                    renderNotesPreservingInteraction({
+                        focusSelector:
+                  `[data-note-editor-section-toggle="${
+                      CSS.escape(
+                          sectionKey
+                      )
+                  }"]`
+                    });
+                }
+            );
+        });
+
+    main
+        .querySelectorAll(
+            '[data-note-summary-section]'
+        )
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
+                {
+                    const sectionKey =
+                        button.dataset
+                            .noteSummarySection;
+
+                    if (!sectionKey)
+                    {
+                        return;
+                    }
+
+                    state.notesEditorSections[
+                        sectionKey
+                    ] =
+                        true;
+
+                    const escapedSectionKey =
+                        CSS.escape(
+                            sectionKey
+                        );
+
+                    renderNotesPreservingInteraction({
+                        focusSelector:
+                    `[data-note-editor-section-toggle="${escapedSectionKey}"]`
+                    });
+
+                    /*
                   renderNotesPreservingInteraction()
                   registers its restoration callback
                   first. This callback is registered
@@ -13632,274 +14204,287 @@
                   previous scroll position and focus
                   have been restored.
                 */
-                requestAnimationFrame(
-                  () => {
-                    const editorPane =
-                      main.querySelector(
-                        '.notes-right-pane'
-                      );
+                    requestAnimationFrame(
+                        () =>
+                        {
+                            const editorPane =
+                                main.querySelector(
+                                    '.notes-right-pane'
+                                );
 
-                    const section =
-                      editorPane
-                        ?.querySelector(
-                          `[data-note-editor-section="${escapedSectionKey}"]`
-                        );
+                            const section =
+                                editorPane
+                                    ?.querySelector(
+                                        `[data-note-editor-section="${escapedSectionKey}"]`
+                                    );
 
-                    if (
-                      !editorPane
+                            if (
+                                !editorPane
                       || !section
-                    ) {
-                      return;
-                    }
+                            )
+                            {
+                                return;
+                            }
 
-                    const stickyHeader =
-                      editorPane.querySelector(
-                        '.notes-editor-header'
-                      );
+                            const stickyHeader =
+                                editorPane.querySelector(
+                                    '.notes-editor-header'
+                                );
 
-                    const headerHeight =
-                      stickyHeader
-                        ?.getBoundingClientRect()
-                        .height
+                            const headerHeight =
+                                stickyHeader
+                                    ?.getBoundingClientRect()
+                                    .height
                       || 0;
 
-                    /*
+                            /*
                       Leave a small visible gap below
                       the sticky Note header.
                     */
-                    const scrollOffset =
-                      Math.ceil(
-                        headerHeight
-                      )
+                            const scrollOffset =
+                                Math.ceil(
+                                    headerHeight
+                                )
                       + 12;
 
-                    section.style
-                      .scrollMarginTop =
-                        `${scrollOffset}px`;
+                            section.style
+                                .scrollMarginTop =
+                                    `${scrollOffset}px`;
 
-                    section.scrollIntoView({
-                      block:
+                            section.scrollIntoView({
+                                block:
                         'start',
 
-                      inline:
+                                inline:
                         'nearest',
 
-                      behavior:
+                                behavior:
                         'smooth'
-                    });
-                  }
-                );
-              }
+                            });
+                        }
+                    );
+                }
             );
-          });
-
-      main
-        .querySelectorAll(
-          '[data-note-manage-links]'
-        )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () =>
-              openNotesLinkEntityModal(
-                button.dataset
-                  .noteManageLinks
-              )
-          );
         });
 
-      main
+    main
         .querySelectorAll(
-          '[data-note-linked-open]'
+            '[data-note-manage-links]'
         )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () =>
-              openNoteLinkedEntity(
-                button.dataset
-                  .noteLinkedType,
-                button.dataset
-                  .noteLinkedId
-              )
-          );
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
+                    openNotesLinkEntityModal(
+                        button.dataset
+                            .noteManageLinks
+                    )
+            );
         });
 
-      main
+    main
+        .querySelectorAll(
+            '[data-note-linked-open]'
+        )
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
+                    openNoteLinkedEntity(
+                        button.dataset
+                            .noteLinkedType,
+                        button.dataset
+                            .noteLinkedId
+                    )
+            );
+        });
+
+    main
         .querySelectorAll('[data-note-linked-remove]')
-        .forEach(button => {
-          button.addEventListener('click', event => {
-            event.preventDefault();
-            event.stopPropagation();
+        .forEach(button =>
+        {
+            button.addEventListener('click', event =>
+            {
+                event.preventDefault();
+                event.stopPropagation();
 
-            const type = button.dataset.noteLinkedType;
-            const id = button.dataset.noteLinkedId;
-            const config = getNoteEntityConfig(type);
+                const type = button.dataset.noteLinkedType;
+                const id = button.dataset.noteLinkedId;
+                const config = getNoteEntityConfig(type);
 
-            if (!config) return;
+                if (!config) return;
 
-            const unlink = () => {
-              setNoteEntityLinks(
-                note.id,
-                type,
-                noteEntityLinkedIds(note, type).filter(
-                  linkedId => linkedId !== id
-                ),
-                { projectId: note.projectId }
-              );
+                const unlink = () =>
+                {
+                    setNoteEntityLinks(
+                        note.id,
+                        type,
+                        noteEntityLinkedIds(note, type).filter(
+                            linkedId => linkedId !== id
+                        ),
+                        { projectId: note.projectId }
+                    );
 
-              renderNotesPreservingInteraction();
-              showToast('Link removed.');
-            };
+                    renderNotesPreservingInteraction();
+                    showToast('Link removed.');
+                };
 
-            if (type === 'photo') {
-              const photo = getPhoto(id);
-              if (!photo) return;
+                if (type === 'photo')
+                {
+                    const photo = getPhoto(id);
+                    if (!photo) return;
 
-              openPhotoUnlinkConfirm({
-                photo,
-                contextLabel:
+                    openPhotoUnlinkConfirm({
+                        photo,
+                        contextLabel:
                   note.title
                   || (state.language === 'ru'
-                    ? 'Заметка без названия'
-                    : 'Untitled note'),
-                onConfirm: unlink
-              });
+                      ? 'Заметка без названия'
+                      : 'Untitled note'),
+                        onConfirm: unlink
+                    });
 
-              return;
-            }
+                    return;
+                }
 
-            unlink();
-          });
+                unlink();
+            });
         });
 
-      main
+    main
         .querySelector(
-          '#notesManageRelated'
+            '#notesManageRelated'
         )
         ?.addEventListener(
-          'click',
-          openNotesRelatedModal
+            'click',
+            openNotesRelatedModal
         );
 
-      main
+    main
         .querySelectorAll(
-          '[data-note-related-open]'
+            '[data-note-related-open]'
         )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () =>
-              openCentralNoteInEditor(
-                button.dataset
-                  .noteRelatedOpen
-              )
-          );
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
+                    openCentralNoteInEditor(
+                        button.dataset
+                            .noteRelatedOpen
+                    )
+            );
         });
 
-      main
+    main
         .querySelectorAll(
-          '[data-note-related-remove]'
+            '[data-note-related-remove]'
         )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              updateRelatedNoteLinks(
-                note.id,
-                note.relatedNoteIds
-                  .filter(
-                    relatedId =>
-                      relatedId
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
+                {
+                    updateRelatedNoteLinks(
+                        note.id,
+                        note.relatedNoteIds
+                            .filter(
+                                relatedId =>
+                                    relatedId
                       !== button.dataset
-                        .noteRelatedRemove
-                  )
-              );
+                          .noteRelatedRemove
+                            )
+                    );
 
-              renderNotesPreservingInteraction();
+                    renderNotesPreservingInteraction();
 
-              showToast(
-                'Relationship removed from both notes.'
-              );
-            }
-          );
+                    showToast(
+                        'Relationship removed from both notes.'
+                    );
+                }
+            );
         });
-    }
+}
 
-    function bindNotesControls() {
-      bindToasts(main);
-      bindNotesBrowserControls();
-      bindNotesSplitPaneControls();
-      bindNoteEditorControls();
-    }
+function bindNotesControls()
+{
+    bindToasts(main);
+    bindNotesBrowserControls();
+    bindNotesSplitPaneControls();
+    bindNoteEditorControls();
+}
 
 
-    function noteSearchText(
-      note
-    ) {
-      const collectionText =
+function noteSearchText(
+    note
+)
+{
+    const collectionText =
         getCollectionsForNote(
-          note.id,
-          {
-            projectId:
+            note.id,
+            {
+                projectId:
               note.projectId
-          }
+            }
         )
-          .map(
-            collection =>
-              collection.name
-          )
-          .join(' ');
+            .map(
+                collection =>
+                    collection.name
+            )
+            .join(' ');
 
-      const checklistText =
+    const checklistText =
         (note.checklist || [])
-          .map(item => item.text)
-          .join(' ');
+            .map(item => item.text)
+            .join(' ');
 
-      const tagText =
+    const tagText =
         (note.tags || [])
-          .join(' ');
+            .join(' ');
 
-      const linkedText =
+    const linkedText =
         Object.keys(
-          NOTE_ENTITY_TYPES
+            NOTE_ENTITY_TYPES
         )
-          .flatMap(type =>
-            noteEntityRecordsForNote(
-              note,
-              type
-            ).flatMap(record => [
-              noteEntityLabel(
-                type,
-                record
-              ),
+            .flatMap(type =>
+                noteEntityRecordsForNote(
+                    note,
+                    type
+                ).flatMap(record => [
+                    noteEntityLabel(
+                        type,
+                        record
+                    ),
 
-              noteEntityMeta(
-                type,
-                record
-              )
-            ])
-          )
-          .filter(Boolean)
-          .join(' ');
+                    noteEntityMeta(
+                        type,
+                        record
+                    )
+                ])
+            )
+            .filter(Boolean)
+            .join(' ');
 
-      const relatedText =
+    const relatedText =
         getRelatedNotes(
-          note.id,
-          {
-            projectId:
+            note.id,
+            {
+                projectId:
               note.projectId,
 
-            includeArchived:
+                includeArchived:
               true
-          }
+            }
         )
-          .map(related =>
-            related.title
-          )
-          .join(' ');
+            .map(related =>
+                related.title
+            )
+            .join(' ');
 
-      return [
+    return [
         note.title,
         note.body,
         tagText,
@@ -13907,227 +14492,247 @@
         checklistText,
         linkedText,
         relatedText
-      ]
+    ]
         .filter(Boolean)
         .join(' ')
         .toLowerCase();
-    }
+}
 
-    function filteredNotes() {
-      const projectId =
+function filteredNotes()
+{
+    const projectId =
         currentProjectId();
 
-      let list;
+    let list;
 
-      if (
+    if (
         state.notesView === 'archived'
-      ) {
+    )
+    {
         list =
-          getProjectNotes(
-            projectId,
-            {
-              includeArchived: true
-            }
-          ).filter(
-            note => note.archived
-          );
-      } else if (
+            getProjectNotes(
+                projectId,
+                {
+                    includeArchived: true
+                }
+            ).filter(
+                note => note.archived
+            );
+    }
+    else if (
         state.notesView === 'collection'
-      ) {
+    )
+    {
         list =
-          getNotesForCollection(
-            state.notesActiveCollectionId,
-            {
-              projectId,
-              includeArchived: false
-            }
-          );
-      } else {
+            getNotesForCollection(
+                state.notesActiveCollectionId,
+                {
+                    projectId,
+                    includeArchived: false
+                }
+            );
+    }
+    else
+    {
         list =
-          getProjectNotes(
-            projectId
-          );
+            getProjectNotes(
+                projectId
+            );
 
         if (
-          state.notesView === 'favorites'
-        ) {
-          list =
-            list.filter(
-              note => note.favorite
-            );
+            state.notesView === 'favorites'
+        )
+        {
+            list =
+                list.filter(
+                    note => note.favorite
+                );
         }
-      }
+    }
 
-      const context =
+    const context =
         activeNotesContext();
 
-      if (context) {
+    if (context)
+    {
         const linkedNoteIds =
-          new Set(
-            getNotesForContext(
-              context.type,
-              context.id,
-              {
-                projectId,
+            new Set(
+                getNotesForContext(
+                    context.type,
+                    context.id,
+                    {
+                        projectId,
 
-                includeArchived:
+                        includeArchived:
                   state.notesView
                     === 'archived'
-              }
-            ).map(
-              note => note.id
-            )
-          );
+                    }
+                ).map(
+                    note => note.id
+                )
+            );
 
         list =
-          list.filter(note =>
-            linkedNoteIds.has(
-              note.id
-            )
-          );
-      }
+            list.filter(note =>
+                linkedNoteIds.has(
+                    note.id
+                )
+            );
+    }
 
-      const filters =
+    const filters =
         state.notesFilters || {};
 
-      if (
+    if (
         filters.linkedRecords
         && filters.linkedRecords
           !== 'any'
-      ) {
+    )
+    {
         list =
-          list.filter(note => {
-            const hasLinks =
-              noteExternalEntityCount(
-                note
-              ) > 0;
+            list.filter(note =>
+            {
+                const hasLinks =
+                    noteExternalEntityCount(
+                        note
+                    ) > 0;
 
-            return filters
-              .linkedRecords
+                return filters
+                    .linkedRecords
               === 'with'
-                ? hasLinks
-                : !hasLinks;
-          });
-      }
+                    ? hasLinks
+                    : !hasLinks;
+            });
+    }
 
-      if (
+    if (
         filters.relatedNotes
         && filters.relatedNotes
           !== 'any'
-      ) {
+    )
+    {
         list =
-          list.filter(note => {
-            const hasRelated =
-              (
-                note.relatedNoteIds || []
-              ).length > 0;
+            list.filter(note =>
+            {
+                const hasRelated =
+                    (
+                        note.relatedNoteIds || []
+                    ).length > 0;
 
-            return filters
-              .relatedNotes
+                return filters
+                    .relatedNotes
               === 'with'
-                ? hasRelated
-                : !hasRelated;
-          });
-      }
+                    ? hasRelated
+                    : !hasRelated;
+            });
+    }
 
-      if (
+    if (
         filters.collections
         && filters.collections
           !== 'any'
-      ) {
+    )
+    {
         list =
-          list.filter(note => {
-            const hasCollections =
-              (
-                note.collectionIds || []
-              ).length > 0;
+            list.filter(note =>
+            {
+                const hasCollections =
+                    (
+                        note.collectionIds || []
+                    ).length > 0;
 
-            return filters
-              .collections
+                return filters
+                    .collections
               === 'with'
-                ? hasCollections
-                : !hasCollections;
-          });
-      }
+                    ? hasCollections
+                    : !hasCollections;
+            });
+    }
 
-      const query =
+    const query =
         String(
-          state.notesSearch || ''
+            state.notesSearch || ''
         )
-          .trim()
-          .toLowerCase();
+            .trim()
+            .toLowerCase();
 
-      if (query) {
+    if (query)
+    {
         list =
-          list.filter(note =>
-            noteSearchText(note)
-              .includes(query)
-          );
-      }
-      list =
+            list.filter(note =>
+                noteSearchText(note)
+                    .includes(query)
+            );
+    }
+    list =
         appSortRecords(list, {
-          field:
+            field:
             state.notesSort,
 
-          direction:
+            direction:
             state.notesSortDirection,
 
-          extractors: {
-            name: {
-              type: 'text',
-              get: note =>
-                note.title
+            extractors: {
+                name: {
+                    type: 'text',
+                    get: note =>
+                        note.title
+                },
+
+                updated: {
+                    type: 'number',
+                    get: note =>
+                        appSortTimestamp(
+                            note.updatedAt
+                        )
+                },
+
+                created: {
+                    type: 'number',
+                    get: note =>
+                        appSortTimestamp(
+                            note.createdAt
+                        )
+                }
             },
 
-            updated: {
-              type: 'number',
-              get: note =>
-                appSortTimestamp(
-                  note.updatedAt
-                )
-            },
-
-            created: {
-              type: 'number',
-              get: note =>
-                appSortTimestamp(
-                  note.createdAt
-                )
-            }
-          },
-
-          getFallback:
+            getFallback:
             note => note.title
         });
 
-      return list;
-    }
+    return list;
+}
 
-    function ensureNotesSelection(list) {
-      if (!list.some(n => n.id === state.selectedNoteId)) {
+function ensureNotesSelection(list)
+{
+    if (!list.some(n => n.id === state.selectedNoteId))
+    {
         state.selectedNoteId = null;
         state.notesRightCollapsed = true;
-      }
     }
-    function selectedNote() {
-      return getNote(
+}
+function selectedNote()
+{
+    return getNote(
         state.selectedNoteId,
         {
-          includeArchived: true
+            includeArchived: true
         }
-      );
+    );
+}
+
+function notesTitle()
+{
+    if (
+        state.notesView === 'collection'
+    )
+    {
+        return collectionName(
+            state.notesActiveCollectionId
+        );
     }
 
-    function notesTitle() {
-      if (
-        state.notesView === 'collection'
-      ) {
-        return collectionName(
-          state.notesActiveCollectionId
-        );
-      }
-
-      return {
+    return {
         all:
           'All notes',
 
@@ -14136,184 +14741,200 @@
 
         archived:
           'Archived notes'
-      }[state.notesView]
+    }[state.notesView]
       || 'Notes';
-    }
+}
 
-    function collectionName(
-      collectionId
-    ) {
-      return (
+function collectionName(
+    collectionId
+)
+{
+    return (
         getNoteCollection(
-          collectionId
+            collectionId
         )?.name
         || 'No collection'
-      );
-    }
+    );
+}
 
-    function removeBoardObjectsForEntity(
-      entityType,
-      entityId
-    ) {
-      const affectedNodeIds =
+function removeBoardObjectsForEntity(
+    entityType,
+    entityId
+)
+{
+    const affectedNodeIds =
         new Set();
 
-      (sampleData.boards || [])
-        .forEach(board => {
-          const diagram =
-            board.diagram;
+    (sampleData.boards || [])
+        .forEach(board =>
+        {
+            const diagram =
+                board.diagram;
 
-          if (!diagram) {
-            return;
-          }
+            if (!diagram)
+            {
+                return;
+            }
 
-          if (entityType === 'person') {
-            diagram.people
-              .filter(person =>
-                person.treePersonId
+            if (entityType === 'person')
+            {
+                diagram.people
+                    .filter(person =>
+                        person.treePersonId
                   === entityId
-              )
-              .forEach(person => {
-                person.treePersonId = null;
-                person.syncState = 'local';
-              });
-          }
+                    )
+                    .forEach(person =>
+                    {
+                        person.treePersonId = null;
+                        person.syncState = 'local';
+                    });
+            }
 
-          if (
-            entityType === 'media'
+            if (
+                entityType === 'media'
             || entityType === 'photo'
-          ) {
-            diagram.people
-              .filter(person =>
-                person.photoId
+            )
+            {
+                diagram.people
+                    .filter(person =>
+                        person.photoId
                   === entityId
-              )
-              .forEach(person => {
-                person.photoId = null;
-              });
+                    )
+                    .forEach(person =>
+                    {
+                        person.photoId = null;
+                    });
 
-            diagram.nodes
-              .filter(node =>
-                node.type === 'image'
+                diagram.nodes
+                    .filter(node =>
+                        node.type === 'image'
                 && node.imageRef?.scope === 'project'
                 && node.imageRef.id === entityId
-              )
-              .forEach(node => {
-                node.imageRef = null;
-                affectedNodeIds.add(node.id);
-              });
-          }
+                    )
+                    .forEach(node =>
+                    {
+                        node.imageRef = null;
+                        affectedNodeIds.add(node.id);
+                    });
+            }
         });
 
-      return affectedNodeIds;
-    }
+    return affectedNodeIds;
+}
 
-    function deleteNotePermanently(
-      noteId
-    ) {
-      const index =
+function deleteNotePermanently(
+    noteId
+)
+{
+    const index =
         sampleData.notes.findIndex(
-          note =>
-            note.id === noteId
+            note =>
+                note.id === noteId
         );
 
-      if (index < 0) {
+    if (index < 0)
+    {
         return;
-      }
+    }
 
-      removeSourceLinksForTarget(
+    removeSourceLinksForTarget(
         'note',
         noteId
-      );
-      sampleData.notes.splice(
+    );
+    sampleData.notes.splice(
         index,
         1
-      );
+    );
 
-      sampleData.notes.forEach(
-        note => {
-          note.relatedNoteIds =
-            (
-              note.relatedNoteIds || []
-            ).filter(
-              relatedId =>
-                relatedId !== noteId
-            );
+    sampleData.notes.forEach(
+        note =>
+        {
+            note.relatedNoteIds =
+                (
+                    note.relatedNoteIds || []
+                ).filter(
+                    relatedId =>
+                        relatedId !== noteId
+                );
         }
-      );
+    );
 
-      sampleData.links =
+    sampleData.links =
         (
-          sampleData.links || []
-        ).filter(link => {
-          const noteIsSource =
-            (
-              link.sourceType === 'note'
+            sampleData.links || []
+        ).filter(link =>
+        {
+            const noteIsSource =
+                (
+                    link.sourceType === 'note'
               && link.sourceId === noteId
-            )
+                )
             || (
-              link.fromType === 'note'
+                link.fromType === 'note'
               && link.fromId === noteId
             );
 
-          const noteIsTarget =
-            (
-              link.targetType === 'note'
+            const noteIsTarget =
+                (
+                    link.targetType === 'note'
               && link.targetId === noteId
-            )
+                )
             || (
-              link.toType === 'note'
+                link.toType === 'note'
               && link.toId === noteId
             );
 
-          return (
-            !noteIsSource
+            return (
+                !noteIsSource
             && !noteIsTarget
-          );
+            );
         });
 
-      if (
+    if (
         state.selectedNoteId === noteId
-      ) {
+    )
+    {
         state.selectedNoteId =
-          null;
+            null;
 
         state.notesRightCollapsed =
-          true;
+            true;
 
         state.notesMobilePane =
-          'browser';
-      }
-
-      removeBoardObjectsForEntity(
-        'note',
-        noteId
-      );
-
-      closeModal();
-      renderNotes();
-
-      showToast(
-        'Note deleted.'
-      );
+            'browser';
     }
 
-    function openDeleteNoteModal(
-      noteId
-    ) {
-      const note =
+    removeBoardObjectsForEntity(
+        'note',
+        noteId
+    );
+
+    closeModal();
+    renderNotes();
+
+    showToast(
+        'Note deleted.'
+    );
+}
+
+function openDeleteNoteModal(
+    noteId
+)
+{
+    const note =
         getNote(
-          noteId,
-          {
-            includeArchived: true
-          }
+            noteId,
+            {
+                includeArchived: true
+            }
         );
 
-      if (!note) {
+    if (!note)
+    {
         return;
-      }
+    }
 
-      openModal(`
+    openModal(`
         <div
           class="modal"
           role="dialog"
@@ -14348,7 +14969,7 @@
 
               <strong>
                 ${escapeHtml(
-                  note.title
+                    note.title
                 )}
               </strong>
 
@@ -14378,70 +14999,72 @@
         </div>
       `);
 
-      modalBackdrop
+    modalBackdrop
         .querySelector(
-          '#notesConfirmDelete'
+            '#notesConfirmDelete'
         )
         ?.addEventListener(
-          'click',
-          () =>
-            deleteNotePermanently(
-              noteId
-            )
+            'click',
+            () =>
+                deleteNotePermanently(
+                    noteId
+                )
         );
+}
+
+function openNotesMenu(
+    noteId,
+    anchor
+)
+{
+    closeMenu();
+
+    const note =
+        getNote(
+            noteId,
+            {
+                includeArchived:
+              true
+            }
+        );
+
+    if (!note)
+    {
+        return;
     }
 
-    function openNotesMenu(
-      noteId,
-      anchor
-    ) {
-      closeMenu();
-
-      const note =
-        getNote(
-          noteId,
-          {
-            includeArchived:
-              true
-          }
-        );
-
-      if (!note) {
-        return;
-      }
-
-      const rect =
+    const rect =
         anchor.getBoundingClientRect();
 
-      const menu =
+    const menu =
         document.createElement(
-          'div'
+            'div'
         );
 
-      menu.className =
+    menu.className =
         'menu-popover';
 
-      menu.id =
+    menu.id =
         'projectMenu';
 
-      menu.style.top =
+    menu.style.top =
         `${rect.bottom + 6}px`;
 
-      menu.style.left =
+    menu.style.left =
         `${Math.max(
-          12,
-          rect.right - 200
+            12,
+            rect.right - 200
         )}px`;
 
-      menu.innerHTML = `
+    menu.innerHTML = `
         <button
           type="button"
           data-action="favorite">
           ${
-            note.favorite
-              ? 'Remove from favourites'
-              : 'Add to favourites'
-          }
+                note.favorite
+                    ? 'Remove from favourites'
+                    : 'Add to favourites'
+            }
         </button>
 
         <button
@@ -14460,10 +15083,10 @@
           type="button"
           data-action="archive">
           ${
-            note.archived
-              ? 'Unarchive'
-              : 'Archive'
-          }
+                note.archived
+                    ? 'Unarchive'
+                    : 'Archive'
+            }
         </button>
 
         <button
@@ -14474,146 +15097,155 @@
         </button>
       `;
 
-      document.body.appendChild(
+    document.body.appendChild(
         menu
-      );
+    );
 
-      menu.addEventListener(
+    menu.addEventListener(
         'click',
-        event => {
-          const action =
-            event.target
-              .closest(
-                '[data-action]'
-              )
-              ?.dataset.action;
+        event =>
+        {
+            const action =
+                event.target
+                    .closest(
+                        '[data-action]'
+                    )
+                    ?.dataset.action;
 
-          if (!action) {
-            return;
-          }
+            if (!action)
+            {
+                return;
+            }
 
-          if (
-            action === 'add-to-collection'
-          ) {
-            closeMenu();
+            if (
+                action === 'add-to-collection'
+            )
+            {
+                closeMenu();
 
-            /*
+                /*
             * Restore focus to the persistent menu trigger
             * before opening the modal. openModal() can then
             * preserve the correct focus-return target instead
             * of capturing a menu item that has been removed.
             */
-            anchor?.focus({
-              preventScroll: true
-            });
+                anchor?.focus({
+                    preventScroll: true
+                });
 
-            openNoteCollectionsModal(
-              note.id
-            );
+                openNoteCollectionsModal(
+                    note.id
+                );
 
-            return;
-          }
+                return;
+            }
 
-          if (action === 'delete') {
-            openDeleteNoteModal(
-              note.id
-            );
-            return;
-          }
+            if (action === 'delete')
+            {
+                openDeleteNoteModal(
+                    note.id
+                );
+                return;
+            }
 
-          if (action === 'favorite') {
-            note.favorite =
-              !note.favorite;
+            if (action === 'favorite')
+            {
+                note.favorite =
+                    !note.favorite;
 
-            touchNote(note);
+                touchNote(note);
 
-            showToast(
-              note.favorite
-                ? 'Added to favourites.'
-                : 'Removed from favourites.'
-            );
-          }
+                showToast(
+                    note.favorite
+                        ? 'Added to favourites.'
+                        : 'Removed from favourites.'
+                );
+            }
 
-          if (action === 'archive') {
-            note.archived =
-              !note.archived;
+            if (action === 'archive')
+            {
+                note.archived =
+                    !note.archived;
 
-            touchNote(note);
+                touchNote(note);
 
-            state.notesView =
-              note.archived
-                ? 'archived'
-                : 'all';
+                state.notesView =
+                    note.archived
+                        ? 'archived'
+                        : 'all';
 
-            state.notesActiveCollectionId =
-              null;
+                state.notesActiveCollectionId =
+                    null;
 
-            showToast(
-              note.archived
-                ? 'Archived.'
-                : 'Unarchived.'
-            );
-          }
+                showToast(
+                    note.archived
+                        ? 'Archived.'
+                        : 'Unarchived.'
+                );
+            }
 
-          if (action === 'duplicate') {
-            duplicateCentralNote(
-              note.id
-            );
+            if (action === 'duplicate')
+            {
+                duplicateCentralNote(
+                    note.id
+                );
 
-            showToast(
-              'Note duplicated.'
-            );
-          }
+                showToast(
+                    'Note duplicated.'
+                );
+            }
 
-          closeMenu();
-          renderNotesPreservingInteraction();
+            closeMenu();
+            renderNotesPreservingInteraction();
         }
-      );
+    );
 
-      bindMenuLifecycle(
+    bindMenuLifecycle(
         anchor
-      );
-    }
+    );
+}
 
-    function openNotesCollectionMenu(
-      collectionId,
-      anchor
-    ) {
-      closeMenu();
+function openNotesCollectionMenu(
+    collectionId,
+    anchor
+)
+{
+    closeMenu();
 
-      const collection =
+    const collection =
         getNoteCollection(
-          collectionId
+            collectionId
         );
 
-      if (!collection) {
+    if (!collection)
+    {
         return;
-      }
+    }
 
-      const rect =
+    const rect =
         anchor.getBoundingClientRect();
 
-      const menu =
+    const menu =
         document.createElement('div');
 
-      menu.className =
+    menu.className =
         'menu-popover';
 
-      menu.id =
+    menu.id =
         'projectMenu';
 
-      menu.style.top =
+    menu.style.top =
         `${rect.bottom + 6}px`;
 
-      menu.style.left =
+    menu.style.left =
         `${
-          Math.max(
-            12,
-            rect.right - 200
-          )
+            Math.max(
+                12,
+                rect.right - 200
+            )
         }px`;
 
-      menu.innerHTML = `
+    menu.innerHTML = `
         <button
           type="button"
           data-action="edit">
@@ -14628,55 +15260,60 @@
         </button>
       `;
 
-      document.body.appendChild(
+    document.body.appendChild(
         menu
-      );
+    );
 
-      menu.addEventListener(
+    menu.addEventListener(
         'click',
-        event => {
-          const action =
-            event.target
-              .closest(
-                '[data-action]'
-              )
-              ?.dataset.action;
+        event =>
+        {
+            const action =
+                event.target
+                    .closest(
+                        '[data-action]'
+                    )
+                    ?.dataset.action;
 
-          if (!action) {
-            return;
-          }
+            if (!action)
+            {
+                return;
+            }
 
-          if (action === 'edit') {
-            openEditCollectionModal(
-              collectionId
-            );
+            if (action === 'edit')
+            {
+                openEditCollectionModal(
+                    collectionId
+                );
 
-            return;
-          }
+                return;
+            }
 
-          if (action === 'delete') {
-            openDeleteCollectionModal(
-              collectionId
-            );
-          }
+            if (action === 'delete')
+            {
+                openDeleteCollectionModal(
+                    collectionId
+                );
+            }
         }
-      );
+    );
 
-      bindMenuLifecycle(anchor);
-    }
+    bindMenuLifecycle(anchor);
+}
 
-    function renderNotesCollectionModal({
-      titleId,
-      title,
-      intro,
-      formId,
-      nameId,
-      descriptionId,
-      name = '',
-      description = '',
-      submitLabel
-    }) {
-      return `
+function renderNotesCollectionModal({
+    titleId,
+    title,
+    intro,
+    formId,
+    nameId,
+    descriptionId,
+    name = '',
+    description = '',
+    submitLabel
+})
+{
+    return `
         <div
           class="modal notes-collection-modal"
           role="dialog"
@@ -14733,8 +15370,8 @@
                   rows="4"
                   maxlength="500"
                   placeholder="Optional description">${escapeHtml(
-                    description
-                  )}</textarea>
+                        description
+                    )}</textarea>
               </div>
             </div>
 
@@ -14755,138 +15392,145 @@
           </form>
         </div>
       `;
-    }
+}
 
-    function openEditCollectionModal(
-      collectionId
-    ) {
-      const collection =
+function openEditCollectionModal(
+    collectionId
+)
+{
+    const collection =
         getNoteCollection(
-          collectionId
+            collectionId
         );
 
-      if (!collection) {
+    if (!collection)
+    {
         return;
-      }
+    }
 
-      openModal(
+    openModal(
         renderNotesCollectionModal({
-          titleId:
+            titleId:
             'editCollectionTitle',
 
-          title:
+            title:
             'Edit collection',
 
-          intro:
+            intro:
             'Update the collection name and description. Notes inside stay in this collection.',
 
-          formId:
+            formId:
             'notesEditCollectionForm',
 
-          nameId:
+            nameId:
             'notesEditCollectionName',
 
-          descriptionId:
+            descriptionId:
             'notesEditCollectionDescription',
 
-          name:
+            name:
             collection.name || '',
 
-          description:
+            description:
             collection.description || '',
 
-          submitLabel:
+            submitLabel:
             'Save changes'
         })
-      );
+    );
 
-      const form =
+    const form =
         modalBackdrop.querySelector(
-          '#notesEditCollectionForm'
+            '#notesEditCollectionForm'
         );
 
-      const nameInput =
+    const nameInput =
         modalBackdrop.querySelector(
-          '#notesEditCollectionName'
+            '#notesEditCollectionName'
         );
 
-      const descriptionInput =
+    const descriptionInput =
         modalBackdrop.querySelector(
-          '#notesEditCollectionDescription'
+            '#notesEditCollectionDescription'
         );
 
-      form?.addEventListener(
+    form?.addEventListener(
         'submit',
-        event => {
-          event.preventDefault();
+        event =>
+        {
+            event.preventDefault();
 
-          const name =
-            nameInput?.value.trim()
+            const name =
+                nameInput?.value.trim()
             || '';
 
-          const description =
-            descriptionInput?.value.trim()
+            const description =
+                descriptionInput?.value.trim()
             || '';
 
-          if (!name) {
-            nameInput?.focus();
+            if (!name)
+            {
+                nameInput?.focus();
+
+                showToast(
+                    'Enter a collection name.'
+                );
+
+                return;
+            }
+
+            collection.name = name;
+            collection.description =
+                description;
+
+            closeModal();
+            renderNotes();
 
             showToast(
-              'Enter a collection name.'
+                'Collection updated.'
             );
-
-            return;
-          }
-
-          collection.name = name;
-          collection.description =
-            description;
-
-          closeModal();
-          renderNotes();
-
-          showToast(
-            'Collection updated.'
-          );
         }
-      );
+    );
 
-      requestAnimationFrame(() => {
+    requestAnimationFrame(() =>
+    {
         nameInput?.focus();
         nameInput?.select();
-      });
+    });
+}
+
+function openDeleteCollectionModal(
+    collectionId
+)
+{
+    const collection =
+        getNoteCollection(
+            collectionId
+        );
+
+    if (!collection)
+    {
+        return;
     }
 
-    function openDeleteCollectionModal(
-      collectionId
-    ) {
-      const collection =
-        getNoteCollection(
-          collectionId
-        );
-
-      if (!collection) {
-        return;
-      }
-
-      const affectedNotes =
+    const affectedNotes =
         getNotesForCollection(
-          collection.id,
-          {
-            projectId:
+            collection.id,
+            {
+                projectId:
               collection.projectId,
 
-            includeArchived:
+                includeArchived:
               true
-          }
+            }
         );
 
-      const noteLabel =
+    const noteLabel =
         affectedNotes.length === 1
-          ? 'note'
-          : 'notes';
+            ? 'note'
+            : 'notes';
 
-      openModal(`
+    openModal(`
         <div
           class="modal"
           role="dialog"
@@ -14919,7 +15563,7 @@
             <div class="notes-evidence-card">
               <strong>
                 ${escapeHtml(
-                  collection.name
+                    collection.name
                 )}
               </strong>
 
@@ -14949,106 +15593,112 @@
         </div>
       `);
 
-      modalBackdrop
+    modalBackdrop
         .querySelector(
-          '#notesConfirmDeleteCollection'
+            '#notesConfirmDeleteCollection'
         )
         ?.addEventListener(
-          'click',
-          () => {
-            affectedNotes.forEach(note => {
-              removeNoteFromCollection(
-                note.id,
-                collection.id,
+            'click',
+            () =>
+            {
+                affectedNotes.forEach(note =>
                 {
-                  projectId:
+                    removeNoteFromCollection(
+                        note.id,
+                        collection.id,
+                        {
+                            projectId:
                     collection.projectId,
 
-                  touchUpdatedAt:
+                            touchUpdatedAt:
                     false
-                }
-              );
-            });
+                        }
+                    );
+                });
 
-            const index =
-              sampleData.noteCollections
-                .findIndex(
-                  item =>
-                    item.id
+                const index =
+                    sampleData.noteCollections
+                        .findIndex(
+                            item =>
+                                item.id
                       === collection.id
-                );
+                        );
 
-            if (index >= 0) {
-              sampleData.noteCollections
-                .splice(index, 1);
-            }
+                if (index >= 0)
+                {
+                    sampleData.noteCollections
+                        .splice(index, 1);
+                }
 
-            if (
-              state.notesActiveCollectionId
+                if (
+                    state.notesActiveCollectionId
                 === collection.id
-            ) {
-              state.notesView =
-                'all';
+                )
+                {
+                    state.notesView =
+                        'all';
 
-              state.notesActiveCollectionId =
-                null;
+                    state.notesActiveCollectionId =
+                        null;
+                }
+
+                closeModal();
+                renderNotes();
+
+                showToast(
+                    'Collection deleted. Notes kept.'
+                );
             }
-
-            closeModal();
-            renderNotes();
-
-            showToast(
-              'Collection deleted. Notes kept.'
-            );
-          }
         );
-    }
+}
 
-    function resolveNoteCreationContext(
-      {
+function resolveNoteCreationContext(
+    {
         contextType = '',
         contextId = '',
         allowActiveContext = true,
         projectId = currentProjectId()
-      } = {}
-    ) {
-      const explicit =
+    } = {}
+)
+{
+    const explicit =
         contextType && contextId
-          ? {
-              type: contextType,
-              id: contextId
+            ? {
+                type: contextType,
+                id: contextId
             }
-          : null;
+            : null;
 
-      const requested =
+    const requested =
         explicit
         || (
-          allowActiveContext
-            ? activeNotesContext()
-            : null
+            allowActiveContext
+                ? activeNotesContext()
+                : null
         );
 
-      if (!requested) {
+    if (!requested)
+    {
         return null;
-      }
+    }
 
-      const record =
+    const record =
         noteEntityById(
-          requested.type,
-          requested.id,
-          projectId
+            requested.type,
+            requested.id,
+            projectId
         );
 
-      return record
+    return record
         ? {
             type: requested.type,
             id: record.id
-          }
+        }
         : null;
-    }
+}
 
-    function createCentralNote(
-      {
+function createCentralNote(
+    {
         contextType = '',
         contextId = '',
         collectionIds = null,
@@ -15060,51 +15710,53 @@
         renderAfterCreate = true,
         focusTitleAfterCreate = true,
         showCreatedToast = true
-      } = {}
-    ) {
-      const ownerProjectId = validProjectById(projectId)?.id || '';
-      if (!ownerProjectId) {
+    } = {}
+)
+{
+    const ownerProjectId = validProjectById(projectId)?.id || '';
+    if (!ownerProjectId)
+    {
         showToast('Open a project before creating records.');
         return null;
-      }
-      const previousActiveModule =
+    }
+    const previousActiveModule =
         state.activeModule;
-      const creationContext =
+    const creationContext =
         resolveNoteCreationContext({
-          contextType,
-          contextId,
-          allowActiveContext:
+            contextType,
+            contextId,
+            allowActiveContext:
             inheritActiveContext,
-          projectId: ownerProjectId
+            projectId: ownerProjectId
         });
 
-      const inheritedCollectionId =
+    const inheritedCollectionId =
         inheritActiveCollection
         && !Array.isArray(collectionIds)
         && !contextType
         && state.activeModule === 'Notes'
         && state.notesView === 'collection'
         && Boolean(
-          getNoteCollection(
-            state.notesActiveCollectionId
-          )
+            getNoteCollection(
+                state.notesActiveCollectionId
+            )
         )
-          ? state.notesActiveCollectionId
-          : null;
+            ? state.notesActiveCollectionId
+            : null;
 
-      const initialCollectionIds =
+    const initialCollectionIds =
         Array.isArray(collectionIds)
-          ? collectionIds
-          : (
-              inheritedCollectionId
-                ? [inheritedCollectionId]
-                : []
+            ? collectionIds
+            : (
+                inheritedCollectionId
+                    ? [inheritedCollectionId]
+                    : []
             );
 
-      const now =
+    const now =
         new Date().toISOString();
 
-      const record = {
+    const record = {
         id:
           createRuntimeId('note'),
 
@@ -15161,84 +15813,88 @@
 
         updatedAt:
           now
-      };
+    };
 
-      const newNote =
+    const newNote =
         normalizeCentralNoteRecord(
-          record
+            record
         );
 
-      sampleData.notes.unshift(
+    sampleData.notes.unshift(
         newNote
-      );
+    );
 
-      if (creationContext) {
+    if (creationContext)
+    {
         setNoteEntityLinks(
-          newNote.id,
-          creationContext.type,
-          [
-            creationContext.id
-          ],
-          {
-            projectId:
+            newNote.id,
+            creationContext.type,
+            [
+                creationContext.id
+            ],
+            {
+                projectId:
               newNote.projectId,
 
-            touchUpdatedAt:
+                touchUpdatedAt:
               false
-          }
+            }
         );
-      }
+    }
 
-      if (activate) {
+    if (activate)
+    {
         state.activeModule =
-          'Notes';
+            'Notes';
 
         clearNotesContext();
 
-        if (creationContext) {
-          setNotesContext(
-            creationContext.type,
-            creationContext.id,
-            {
-              projectId:
+        if (creationContext)
+        {
+            setNotesContext(
+                creationContext.type,
+                creationContext.id,
+                {
+                    projectId:
                 newNote.projectId
-            }
-          );
+                }
+            );
         }
 
         state.notesView =
-          inheritedCollectionId
-            ? 'collection'
-            : 'all';
+            inheritedCollectionId
+                ? 'collection'
+                : 'all';
 
         state.notesActiveCollectionId =
-          inheritedCollectionId;
+            inheritedCollectionId;
 
         state.selectedNoteId =
-          newNote.id;
+            newNote.id;
 
         state.notesRightCollapsed =
-          false;
+            false;
 
         state.notesMobilePane =
-          'editor';
+            'editor';
 
         state.notesSaveStatus =
-          'Saved';
+            'Saved';
 
         state.notesFilters = {
-          linkedRecords:
+            linkedRecords:
             'any',
 
-          relatedNotes:
+            relatedNotes:
             'any',
 
-          collections:
+            collections:
             'any'
         };
-      }
+    }
 
-      if (renderAfterCreate) {
+    if (renderAfterCreate)
+    {
         /*
           Entering Notes from another module requires
           a full render so the global module navigation
@@ -15248,229 +15904,253 @@
           use the smaller module-only render.
         */
         if (
-          activate
+            activate
           && previousActiveModule
             !== 'Notes'
-        ) {
-          render();
-        } else if (
-          state.activeModule
+        )
+        {
+            render();
+        }
+        else if (
+            state.activeModule
             === 'Notes'
-        ) {
-          renderNotes();
+        )
+        {
+            renderNotes();
         }
 
         if (
-          activate
+            activate
           && focusTitleAfterCreate
-        ) {
-          requestAnimationFrame(() => {
-            const titleInput =
-              main.querySelector(
-                '#notesTitleInput'
-              );
+        )
+        {
+            requestAnimationFrame(() =>
+            {
+                const titleInput =
+                    main.querySelector(
+                        '#notesTitleInput'
+                    );
 
-            titleInput?.focus();
-            titleInput?.select();
-          });
+                titleInput?.focus();
+                titleInput?.select();
+            });
         }
 
         if (
-          activate
+            activate
           && showCreatedToast
-        ) {
-          showToast(
-            'Note created.'
-          );
+        )
+        {
+            showToast(
+                'Note created.'
+            );
         }
-      }
-
-      return newNote;
     }
- 
-    function openNewCollectionModal() {
-      openModal(
+
+    return newNote;
+}
+
+function openNewCollectionModal()
+{
+    openModal(
         renderNotesCollectionModal({
-          titleId:
+            titleId:
             'newCollectionTitle',
 
-          title:
+            title:
             'Create collection',
 
-          intro:
+            intro:
             'Collections keep related notes together.',
 
-          formId:
+            formId:
             'notesCollectionForm',
 
-          nameId:
+            nameId:
             'notesCollectionName',
 
-          descriptionId:
+            descriptionId:
             'notesCollectionDescription',
 
-          submitLabel:
+            submitLabel:
             'Create collection'
         })
-      );
+    );
 
-      const form =
+    const form =
         modalBackdrop.querySelector(
-          '#notesCollectionForm'
+            '#notesCollectionForm'
         );
 
-      const nameInput =
+    const nameInput =
         modalBackdrop.querySelector(
-          '#notesCollectionName'
+            '#notesCollectionName'
         );
 
-      const descriptionInput =
+    const descriptionInput =
         modalBackdrop.querySelector(
-          '#notesCollectionDescription'
+            '#notesCollectionDescription'
         );
 
-      form?.addEventListener(
+    form?.addEventListener(
         'submit',
-        event => {
-          event.preventDefault();
+        event =>
+        {
+            event.preventDefault();
 
-          const name =
-            nameInput?.value.trim()
+            const name =
+                nameInput?.value.trim()
             || '';
 
-          const description =
-            descriptionInput?.value.trim()
+            const description =
+                descriptionInput?.value.trim()
             || '';
 
-          if (!name) {
-            nameInput?.focus();
+            if (!name)
+            {
+                nameInput?.focus();
 
-            showToast(
-              'Enter a collection name.'
-            );
+                showToast(
+                    'Enter a collection name.'
+                );
 
-            return;
-          }
+                return;
+            }
 
-          const id =
-            createRuntimeId('note-col');
+            const id =
+                createRuntimeId('note-col');
 
-          sampleData.noteCollections.push({
-            id,
+            sampleData.noteCollections.push({
+                id,
 
-            projectId:
+                projectId:
               currentProjectId(),
 
-            name,
-            description
-          });
+                name,
+                description
+            });
 
-          state.notesView =
-            'collection';
+            state.notesView =
+                'collection';
 
-          state.notesActiveCollectionId =
-            id;
+            state.notesActiveCollectionId =
+                id;
 
-          closeModal();
-          renderNotes();
+            closeModal();
+            renderNotes();
 
-          showToast(
-            'Collection created.'
-          );
+            showToast(
+                'Collection created.'
+            );
         }
-      );
+    );
 
-      requestAnimationFrame(() => {
+    requestAnimationFrame(() =>
+    {
         nameInput?.focus();
-      });
-    }
+    });
+}
 
- 
-    function placesMaptilerKey() {
-      return window.GENEOGRAPH_CONFIG?.maptilerKey || PLACES_MAP_CONFIG.maptilerKey || '';
-    }
 
-    function placesMapDataKey(places) {
-      return (places || []).map(place => {
+function placesMaptilerKey()
+{
+    return window.GENEOGRAPH_CONFIG?.maptilerKey || PLACES_MAP_CONFIG.maptilerKey || '';
+}
+
+function placesMapDataKey(places)
+{
+    return (places || []).map(place =>
+    {
         const coordinates = normalizePlaceCoordinates(place);
         return [place.id, coordinates?.lat ?? '', coordinates?.lng ?? '', place.deleted].join(':');
-      }).join('|');
-    }
+    }).join('|');
+}
 
-    function selectedPlaceFromList(list) {
-      return (list || []).find(place => place.id === state.selectedPlaceId)
+function selectedPlaceFromList(list)
+{
+    return (list || []).find(place => place.id === state.selectedPlaceId)
         || (list || [])[0]
         || null;
-    }
+}
 
-    function setPlacesMapStatus(title = '', message = '', { retry = false } = {}) {
-      const status = document.querySelector('[data-places-map-status]');
-      if (!status) return;
-      if (!title && !message) {
+function setPlacesMapStatus(title = '', message = '', { retry = false } = {})
+{
+    const status = document.querySelector('[data-places-map-status]');
+    if (!status) return;
+    if (!title && !message)
+    {
         status.hidden = true;
         status.innerHTML = '';
         return;
-      }
-      status.hidden = false;
-      status.innerHTML = `<strong>${escapeHtml(title)}</strong><span>${escapeHtml(message)}</span>${retry ? '<button class="button secondary" type="button" data-places-map-retry>Retry</button>' : ''}`;
-      status.querySelector('[data-places-map-retry]')?.addEventListener('click', () => {
+    }
+    status.hidden = false;
+    status.innerHTML = `<strong>${escapeHtml(title)}</strong><span>${escapeHtml(message)}</span>${retry ? '<button class="button secondary" type="button" data-places-map-retry>Retry</button>' : ''}`;
+    status.querySelector('[data-places-map-retry]')?.addEventListener('click', () =>
+    {
         const places = [...(placesMapRuntime.currentPlaces || [])];
         destroyPlacesMap();
         requestAnimationFrame(() => mountPlacesMap(places));
-      });
-    }
+    });
+}
 
-    function createPlacesTileLayer() {
-      const key = placesMaptilerKey();
-      if (!placesMapRuntime.map || !key || !window.L) {
+function createPlacesTileLayer()
+{
+    const key = placesMaptilerKey();
+    if (!placesMapRuntime.map || !key || !window.L)
+    {
         placesMapRuntime.tilesAvailable = false;
         return null;
-      }
-      const layer = L.tileLayer(PLACES_MAP_CONFIG.tileUrl, {
+    }
+    const layer = L.tileLayer(PLACES_MAP_CONFIG.tileUrl, {
         key,
         minZoom: PLACES_MAP_CONFIG.minZoom,
         maxZoom: PLACES_MAP_CONFIG.maxZoom,
         attribution: PLACES_MAP_CONFIG.attribution,
         crossOrigin: true
-      });
-      layer.on('tileerror', handlePlacesTileError);
-      layer.on('tileload', handlePlacesTileLoad);
-      layer.on('loading', () => {
-        if (placesMapRuntime.tileErrorCount >= PLACES_MAP_CONFIG.tileErrorThreshold) {
-          setPlacesMapStatus('Loading map tiles', 'Retrying the hosted map connection.');
+    });
+    layer.on('tileerror', handlePlacesTileError);
+    layer.on('tileload', handlePlacesTileLoad);
+    layer.on('loading', () =>
+    {
+        if (placesMapRuntime.tileErrorCount >= PLACES_MAP_CONFIG.tileErrorThreshold)
+        {
+            setPlacesMapStatus('Loading map tiles', 'Retrying the hosted map connection.');
         }
-      });
-      layer.on('load', handlePlacesTileLoad);
-      return layer;
-    }
+    });
+    layer.on('load', handlePlacesTileLoad);
+    return layer;
+}
 
-    function handlePlacesTileError() {
-      placesMapRuntime.tileErrorCount += 1;
-      if (placesMapRuntime.tileErrorCount < PLACES_MAP_CONFIG.tileErrorThreshold) return;
-      placesMapRuntime.tilesAvailable = false;
-      updatePlacesMapToolControls();
-      setPlacesMapStatus('Map tiles could not be loaded', 'Markers and routes remain available. Check the MapTiler key or network connection.', { retry: true });
-    }
+function handlePlacesTileError()
+{
+    placesMapRuntime.tileErrorCount += 1;
+    if (placesMapRuntime.tileErrorCount < PLACES_MAP_CONFIG.tileErrorThreshold) return;
+    placesMapRuntime.tilesAvailable = false;
+    updatePlacesMapToolControls();
+    setPlacesMapStatus('Map tiles could not be loaded', 'Markers and routes remain available. Check the MapTiler key or network connection.', { retry: true });
+}
 
-    function handlePlacesTileLoad() {
-      const hadErrors = placesMapRuntime.tileErrorCount >= PLACES_MAP_CONFIG.tileErrorThreshold;
-      placesMapRuntime.tileErrorCount = 0;
-      placesMapRuntime.tilesAvailable = true;
-      updatePlacesMapToolControls();
-      if (hadErrors) showToast('Map connection restored');
-      setPlacesMapStatus();
-    }
+function handlePlacesTileLoad()
+{
+    const hadErrors = placesMapRuntime.tileErrorCount >= PLACES_MAP_CONFIG.tileErrorThreshold;
+    placesMapRuntime.tileErrorCount = 0;
+    placesMapRuntime.tilesAvailable = true;
+    updatePlacesMapToolControls();
+    if (hadErrors) showToast('Map connection restored');
+    setPlacesMapStatus();
+}
 
-    function createPlaceMarkerIcon(
-      place,
-      selected = false
-    ) {
-      const size =
+function createPlaceMarkerIcon(
+    place,
+    selected = false
+)
+{
+    const size =
         selected
-          ? 30
-          : 24;
+            ? 30
+            : 24;
 
-      return L.divIcon({
+    return L.divIcon({
         className:
           'places-leaflet-marker-icon',
 
@@ -15485,26 +16165,27 @@
         `,
 
         iconSize: [
-          size,
-          size
+            size,
+            size
         ],
 
         iconAnchor: [
-          size / 2,
-          size
+            size / 2,
+            size
         ],
 
         tooltipAnchor: [
-          0,
-          -size + 3
+            0,
+            -size + 3
         ]
-      });
-    }
+    });
+}
 
-    function createPlaceDraftMarkerIcon() {
-      const size = 30;
+function createPlaceDraftMarkerIcon()
+{
+    const size = 30;
 
-      return L.divIcon({
+    return L.divIcon({
         className:
           'places-leaflet-marker-icon draft',
 
@@ -15516,318 +16197,349 @@
         `,
 
         iconSize: [
-          size,
-          size
+            size,
+            size
         ],
 
         iconAnchor: [
-          size / 2,
-          size
+            size / 2,
+            size
         ],
 
         tooltipAnchor: [
-          0,
-          -size + 3
+            0,
+            -size + 3
         ]
-      });
-    }
+    });
+}
 
-    function formatMapCoordinatePair(latLng) {
-      return latLng && validLatitude(latLng.lat) && validLongitude(latLng.lng)
+function formatMapCoordinatePair(latLng)
+{
+    return latLng && validLatitude(latLng.lat) && validLongitude(latLng.lng)
         ? `${Number(latLng.lat).toFixed(5)}, ${Number(latLng.lng).toFixed(5)}`
         : 'No point selected';
-    }
+}
 
-    function removePlacesDraftMarker() {
-      if (placesMapRuntime.draftMarker) placesMapRuntime.draftMarker.remove();
-      placesMapRuntime.draftMarker = null;
-      placesMapRuntime.pendingLatLng = null;
-    }
+function removePlacesDraftMarker()
+{
+    if (placesMapRuntime.draftMarker) placesMapRuntime.draftMarker.remove();
+    placesMapRuntime.draftMarker = null;
+    placesMapRuntime.pendingLatLng = null;
+}
 
-    function createPlacesDraftMarker(latLng) {
-      if (!placesMapRuntime.map || !window.L || !latLng) return null;
-      removePlacesDraftMarker();
-      const marker = L.marker(latLng, {
+function createPlacesDraftMarker(latLng)
+{
+    if (!placesMapRuntime.map || !window.L || !latLng) return null;
+    removePlacesDraftMarker();
+    const marker = L.marker(latLng, {
         draggable: true,
         autoPan: true,
         keyboard: true,
         icon: createPlaceDraftMarkerIcon(),
         title: 'Draft place position'
-      }).addTo(placesMapRuntime.map);
-      marker.on('drag', event => updatePlacesDraftCoordinates(event.target.getLatLng(), { moveMarker: false }));
-      marker.on('dragend', event => updatePlacesDraftCoordinates(event.target.getLatLng(), { moveMarker: false }));
-      placesMapRuntime.draftMarker = marker;
-      placesMapRuntime.pendingLatLng = marker.getLatLng();
-      return marker;
-    }
+    }).addTo(placesMapRuntime.map);
+    marker.on('drag', event => updatePlacesDraftCoordinates(event.target.getLatLng(), { moveMarker: false }));
+    marker.on('dragend', event => updatePlacesDraftCoordinates(event.target.getLatLng(), { moveMarker: false }));
+    placesMapRuntime.draftMarker = marker;
+    placesMapRuntime.pendingLatLng = marker.getLatLng();
+    return marker;
+}
 
-    function updatePlacesDraftCoordinates(latLng, { moveMarker = true } = {}) {
-      if (!latLng || !validLatitude(latLng.lat) || !validLongitude(latLng.lng)) return;
-      const normalized = L.latLng(Number(latLng.lat), Number(latLng.lng));
-      if (!placesMapRuntime.draftMarker) createPlacesDraftMarker(normalized);
-      else if (moveMarker) placesMapRuntime.draftMarker.setLatLng(normalized);
-      placesMapRuntime.pendingLatLng = normalized;
-      const output = document.querySelector('[data-places-coordinate-output]');
-      if (output) output.textContent = formatMapCoordinatePair(normalized);
-      updatePlacesMapToolControls();
-    }
+function updatePlacesDraftCoordinates(latLng, { moveMarker = true } = {})
+{
+    if (!latLng || !validLatitude(latLng.lat) || !validLongitude(latLng.lng)) return;
+    const normalized = L.latLng(Number(latLng.lat), Number(latLng.lng));
+    if (!placesMapRuntime.draftMarker) createPlacesDraftMarker(normalized);
+    else if (moveMarker) placesMapRuntime.draftMarker.setLatLng(normalized);
+    placesMapRuntime.pendingLatLng = normalized;
+    const output = document.querySelector('[data-places-coordinate-output]');
+    if (output) output.textContent = formatMapCoordinatePair(normalized);
+    updatePlacesMapToolControls();
+}
 
-    function placesPendingCoordinatesValid() {
-      const pending = placesMapRuntime.pendingLatLng;
-      return Boolean(pending && validLatitude(pending.lat) && validLongitude(pending.lng));
-    }
+function placesPendingCoordinatesValid()
+{
+    const pending = placesMapRuntime.pendingLatLng;
+    return Boolean(pending && validLatitude(pending.lat) && validLongitude(pending.lng));
+}
 
-    function updatePlacesMapModeUi() {
-      const mode = placesMapRuntime.mode;
-      const editing = mode !== 'browse';
-      const shell = main.querySelector('.places-map');
-      const content = main.querySelector('.places-content');
-      shell?.classList.toggle('is-browsing', !editing);
-      shell?.classList.toggle('is-editing', editing);
-      shell?.classList.toggle('is-adding-position', mode === 'add');
-      shell?.classList.toggle('is-moving-position', mode === 'move');
-      content?.classList.toggle('is-editing', editing);
-      if (editing) {
+function updatePlacesMapModeUi()
+{
+    const mode = placesMapRuntime.mode;
+    const editing = mode !== 'browse';
+    const shell = main.querySelector('.places-map');
+    const content = main.querySelector('.places-content');
+    shell?.classList.toggle('is-browsing', !editing);
+    shell?.classList.toggle('is-editing', editing);
+    shell?.classList.toggle('is-adding-position', mode === 'add');
+    shell?.classList.toggle('is-moving-position', mode === 'move');
+    content?.classList.toggle('is-editing', editing);
+    if (editing)
+    {
         state.placesMapInfoExpanded =
-          false;
+            false;
 
         const infoPanel =
-          main.querySelector(
-            '#placesMapInfoPanel'
-          );
+            main.querySelector(
+                '#placesMapInfoPanel'
+            );
 
-        if (infoPanel) {
-          infoPanel.hidden = true;
+        if (infoPanel)
+        {
+            infoPanel.hidden = true;
         }
 
         const infoButton =
-          main.querySelector(
-            '#placesMapInfoToggle'
-          );
+            main.querySelector(
+                '#placesMapInfoToggle'
+            );
 
         infoButton
-          ?.setAttribute(
-            'aria-expanded',
-            'false'
-          );
+            ?.setAttribute(
+                'aria-expanded',
+                'false'
+            );
 
         infoButton
-          ?.classList
-          .remove('active');
+            ?.classList
+            .remove('active');
 
         closeMenu();
-      }
     }
+}
 
-    function setPlacesMapPickingState(active) {
-      const panel =
+function setPlacesMapPickingState(active)
+{
+    const panel =
         placesMapRuntime
-          .host
-          ?.closest(
-            '.places-map-panel'
-          );
+            .host
+            ?.closest(
+                '.places-map-panel'
+            );
 
-      panel
+    panel
         ?.classList
         .toggle(
-          'is-picking',
-          active
+            'is-picking',
+            active
         );
-    }
+}
 
-    function updatePlacesMapInstruction(message = '') {
-      const instruction = document.querySelector(
+function updatePlacesMapInstruction(message = '')
+{
+    const instruction = document.querySelector(
         '[data-places-map-instruction]'
-      );
+    );
 
-      if (!instruction) return;
+    if (!instruction) return;
 
-      instruction.hidden = !message;
-      instruction.textContent = translateText(message);
-    }
+    instruction.hidden = !message;
+    instruction.textContent = translateText(message);
+}
 
-    function updatePlacesMapToolControls() {
-      const pendingValid =
+function updatePlacesMapToolControls()
+{
+    const pendingValid =
         placesPendingCoordinatesValid();
 
-      const copyButton =
+    const copyButton =
         main.querySelector(
-          '#placesCopyCoordinates'
+            '#placesCopyCoordinates'
         );
 
-      if (copyButton) {
+    if (copyButton)
+    {
         copyButton.disabled =
-          !pendingValid;
-      }
+            !pendingValid;
+    }
 
-      const confirmButton =
+    const confirmButton =
         main.querySelector(
-          '#placesConfirmMapEdit'
+            '#placesConfirmMapEdit'
         );
 
-      if (confirmButton) {
+    if (confirmButton)
+    {
         confirmButton.disabled =
-          !pendingValid;
+            !pendingValid;
 
         confirmButton.textContent = 'Use position';
-      }
-
-      updatePlacesMapModeUi();
     }
 
-    function showPlacesCoordinateBar(show) {
-      const bar = document.querySelector('[data-places-coordinate-bar]');
-      if (bar) bar.hidden = !show;
-    }
+    updatePlacesMapModeUi();
+}
 
-    function resetPlacesMapEditingUi() {
-      removePlacesDraftMarker();
-      placesMapRuntime.mode = 'browse';
-      placesMapRuntime.editingPlaceId = null;
-      setPlacesMapPickingState(false);
-      showPlacesCoordinateBar(false);
-      updatePlacesMapInstruction();
-      const output = document.querySelector('[data-places-coordinate-output]');
-      if (output) output.textContent = 'No point selected';
-      updatePlacesMapToolControls();
-    }
+function showPlacesCoordinateBar(show)
+{
+    const bar = document.querySelector('[data-places-coordinate-bar]');
+    if (bar) bar.hidden = !show;
+}
 
-    function cancelPlacesMapEditing({ reopenEditor = true } = {}) {
-      const draft = placeEditorDraft;
-      const session = draft?.mapSession;
-      resetPlacesMapEditingUi();
-      if (!draft) return;
-      if (session) {
+function resetPlacesMapEditingUi()
+{
+    removePlacesDraftMarker();
+    placesMapRuntime.mode = 'browse';
+    placesMapRuntime.editingPlaceId = null;
+    setPlacesMapPickingState(false);
+    showPlacesCoordinateBar(false);
+    updatePlacesMapInstruction();
+    const output = document.querySelector('[data-places-coordinate-output]');
+    if (output) output.textContent = 'No point selected';
+    updatePlacesMapToolControls();
+}
+
+function cancelPlacesMapEditing({ reopenEditor = true } = {})
+{
+    const draft = placeEditorDraft;
+    const session = draft?.mapSession;
+    resetPlacesMapEditingUi();
+    if (!draft) return;
+    if (session)
+    {
         draft.coordinates = clonePlaceEditorCoordinates(session.coordinates);
         draft.coordinateText = { ...session.coordinateText };
         draft.mapSession = null;
-      }
-      if (session?.returnToModal && reopenEditor) {
-        requestAnimationFrame(() => openPlaceModal(draft.placeId, { draft }));
-      } else if (!session?.returnToModal) {
-        resetPlaceEditorDraft();
-      }
     }
+    if (session?.returnToModal && reopenEditor)
+    {
+        requestAnimationFrame(() => openPlaceModal(draft.placeId, { draft }));
+    }
+    else if (!session?.returnToModal)
+    {
+        resetPlaceEditorDraft();
+    }
+}
 
-    function enterPlacesMapAddMode() {
-      if (!placesMapRuntime.map) {
+function enterPlacesMapAddMode()
+{
+    if (!placesMapRuntime.map)
+    {
         showToast(
-          'The map is not ready yet.'
+            'The map is not ready yet.'
         );
 
         return;
-      }
+    }
 
-      if (!placeEditorDraft || placeEditorDraft.mode !== 'add') {
+    if (!placeEditorDraft || placeEditorDraft.mode !== 'add')
+    {
         resetPlaceEditorDraft();
         placeEditorDraft = createPlaceEditorDraft();
         placeEditorDraft.mapSession = {
-          returnToModal: false,
-          coordinates: null,
-          coordinateText: placeEditorCoordinateText(null)
+            returnToModal: false,
+            coordinates: null,
+            coordinateText: placeEditorCoordinateText(null)
         };
-      }
-      resetPlacesMapEditingUi();
+    }
+    resetPlacesMapEditingUi();
 
-      placesMapRuntime.mode =
+    placesMapRuntime.mode =
         'add';
 
-      state.placesMapInfoExpanded =
+    state.placesMapInfoExpanded =
         false;
 
-      setPlacesMapPickingState(true);
-      showPlacesCoordinateBar(true);
+    setPlacesMapPickingState(true);
+    showPlacesCoordinateBar(true);
 
-      updatePlacesMapInstruction(
+    updatePlacesMapInstruction(
         'Click the map to place a new location, or use the map centre.'
-      );
+    );
 
-      if (placeEditorDraft.coordinates) {
+    if (placeEditorDraft.coordinates)
+    {
         updatePlacesDraftCoordinates(placeEditorDraft.coordinates);
-      }
-
-      updatePlacesMapToolControls();
     }
 
-    function enterPlacesMapMoveMode(
-      placeId =
+    updatePlacesMapToolControls();
+}
+
+function enterPlacesMapMoveMode(
+    placeId =
         state.selectedPlaceId
-    ) {
-      const place =
+)
+{
+    const place =
         getPlace(placeId);
 
-      if (
+    if (
         !placesMapRuntime.map
         || !place
-      ) {
+    )
+    {
         showToast(
-          'The map is not ready yet.'
+            'The map is not ready yet.'
         );
 
         return;
-      }
+    }
 
-      if (!placeEditorDraft || placeEditorDraft.mode !== 'edit' || placeEditorDraft.placeId !== place.id) {
+    if (!placeEditorDraft || placeEditorDraft.mode !== 'edit' || placeEditorDraft.placeId !== place.id)
+    {
         resetPlaceEditorDraft();
         placeEditorDraft = createPlaceEditorDraft(place.id);
         placeEditorDraft.mapSession = {
-          returnToModal: false,
-          coordinates: clonePlaceEditorCoordinates(placeEditorDraft.coordinates),
-          coordinateText: { ...placeEditorDraft.coordinateText }
+            returnToModal: false,
+            coordinates: clonePlaceEditorCoordinates(placeEditorDraft.coordinates),
+            coordinateText: { ...placeEditorDraft.coordinateText }
         };
-      }
-      resetPlacesMapEditingUi();
+    }
+    resetPlacesMapEditingUi();
 
-      placesMapRuntime.mode =
+    placesMapRuntime.mode =
         'move';
 
-      state.placesMapInfoExpanded =
+    state.placesMapInfoExpanded =
         false;
 
-      placesMapRuntime.editingPlaceId =
+    placesMapRuntime.editingPlaceId =
         place.id;
 
-      setPlacesMapPickingState(true);
-      showPlacesCoordinateBar(true);
+    setPlacesMapPickingState(true);
+    showPlacesCoordinateBar(true);
 
-      updatePlacesMapInstruction(
+    updatePlacesMapInstruction(
         placeEditorDraft.coordinates
-          ? `Drag the draft marker or click the map to reposition ${place.name}.`
-          : `Click the map to position ${place.name}, or use the map centre.`
-      );
+            ? `Drag the draft marker or click the map to reposition ${place.name}.`
+            : `Click the map to position ${place.name}, or use the map centre.`
+    );
 
-      if (placeEditorDraft.coordinates) {
+    if (placeEditorDraft.coordinates)
+    {
         updatePlacesDraftCoordinates(
-          placeEditorDraft.coordinates
+            placeEditorDraft.coordinates
         );
-      }
-
-      updatePlacesMapToolControls();
     }
 
-    function completePlaceEditorMapSelection() {
-      const latLng = placesMapRuntime.pendingLatLng;
-      if (!placesPendingCoordinatesValid()) return;
-      let draft = placeEditorDraft;
-      if (!draft) {
+    updatePlacesMapToolControls();
+}
+
+function completePlaceEditorMapSelection()
+{
+    const latLng = placesMapRuntime.pendingLatLng;
+    if (!placesPendingCoordinatesValid()) return;
+    let draft = placeEditorDraft;
+    if (!draft)
+    {
         draft = placesMapRuntime.mode === 'move'
-          ? createPlaceEditorDraft(placesMapRuntime.editingPlaceId)
-          : createPlaceEditorDraft();
+            ? createPlaceEditorDraft(placesMapRuntime.editingPlaceId)
+            : createPlaceEditorDraft();
         placeEditorDraft = draft;
-      }
-      draft.coordinates = { lat: Number(latLng.lat), lng: Number(latLng.lng) };
-      draft.coordinateText = placeEditorCoordinateText(draft.coordinates);
-      draft.mapSession = null;
-      draft.duplicateOverride = false;
-      draft.dismissedDuplicateId = null;
-      draft.disclosures.coordinates = true;
-      updatePlaceEditorDraftDirty(draft);
-      resetPlacesMapEditingUi();
-      openPlaceModal(draft.placeId, { draft });
     }
+    draft.coordinates = { lat: Number(latLng.lat), lng: Number(latLng.lng) };
+    draft.coordinateText = placeEditorCoordinateText(draft.coordinates);
+    draft.mapSession = null;
+    draft.duplicateOverride = false;
+    draft.dismissedDuplicateId = null;
+    draft.disclosures.coordinates = true;
+    updatePlaceEditorDraftDirty(draft);
+    resetPlacesMapEditingUi();
+    openPlaceModal(draft.placeId, { draft });
+}
 
-    function handlePlacesMapClick(event) {
-      if (!['add', 'move'].includes(placesMapRuntime.mode)) return;
-      updatePlacesDraftCoordinates(event.latlng);
-    }
+function handlePlacesMapClick(event)
+{
+    if (!['add', 'move'].includes(placesMapRuntime.mode)) return;
+    updatePlacesDraftCoordinates(event.latlng);
+}
 

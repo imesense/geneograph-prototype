@@ -1,2 +1,2 @@
-    normalizeSampleGenealogyDates();
-    rebuildSampleEventsAndPruneSourceLinks();
+normalizeSampleGenealogyDates();
+rebuildSampleEventsAndPruneSourceLinks();

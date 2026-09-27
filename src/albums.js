@@ -1,499 +1,518 @@
-    // ---------- Canonical Albums module ----------
+// ---------- Canonical Albums module ----------
 
-    const defaultAlbumFilters =
-      Object.freeze({
+const defaultAlbumFilters =
+    Object.freeze({
         personId: '',
         placeId: '',
         dateRange: '',
         sourceId: '',
         favouriteOnly:
           false
-      });
+    });
 
-    function albumsPersonFilterOptions() {
-      const projectId =
+function albumsPersonFilterOptions()
+{
+    const projectId =
         currentProjectId();
 
-      const photos =
+    const photos =
         getProjectPhotos(projectId);
 
-      const counts =
+    const counts =
         new Map();
 
-      let untaggedCount = 0;
+    let untaggedCount = 0;
 
-      photos.forEach(photo => {
+    photos.forEach(photo =>
+    {
         const personIds =
-          Array.isArray(
-            photo.personIds
-          )
-            ? [
-                ...new Set(
-                  photo.personIds
-                )
-              ]
-            : [];
+            Array.isArray(
+                photo.personIds
+            )
+                ? [
+                    ...new Set(
+                        photo.personIds
+                    )
+                ]
+                : [];
 
-        if (!personIds.length) {
-          untaggedCount += 1;
+        if (!personIds.length)
+        {
+            untaggedCount += 1;
         }
 
-        personIds.forEach(personId => {
-          const person =
-            getPerson(personId);
+        personIds.forEach(personId =>
+        {
+            const person =
+                getPerson(personId);
 
-          if (
-            !person
+            if (
+                !person
             || person.projectId
               !== projectId
-          ) {
-            return;
-          }
+            )
+            {
+                return;
+            }
 
-          counts.set(
-            personId,
-            (
-              counts.get(personId)
+            counts.set(
+                personId,
+                (
+                    counts.get(personId)
               || 0
-            ) + 1
-          );
+                ) + 1
+            );
         });
-      });
+    });
 
-      const collator =
+    const collator =
         new Intl.Collator(
-          state.language === 'ru'
-            ? 'ru'
-            : 'en',
-          {
-            sensitivity:
+            state.language === 'ru'
+                ? 'ru'
+                : 'en',
+            {
+                sensitivity:
               'base'
-          }
+            }
         );
 
-      const people =
+    const people =
         getPeople(projectId)
-          .filter(person =>
-            counts.has(person.id)
-          )
-          .map(person => ({
-            value:
+            .filter(person =>
+                counts.has(person.id)
+            )
+            .map(person => ({
+                value:
               person.id,
 
-            label:
+                label:
               person.names?.display
               || 'Unnamed person',
 
-            count:
+                count:
               counts.get(person.id)
               || 0
-          }))
-          .sort(
-            (left, right) =>
-              collator.compare(
-                left.label,
-                right.label
-              )
-          );
+            }))
+            .sort(
+                (left, right) =>
+                    collator.compare(
+                        left.label,
+                        right.label
+                    )
+            );
 
-      return [
+    return [
         {
-          value:
+            value:
             'none',
 
-          label:
+            label:
             'No people tagged',
 
-          count:
+            count:
             untaggedCount
         },
 
         ...people
-      ];
-    }
+    ];
+}
 
-    function albumsPlaceFilterOptions() {
-      const photos =
+function albumsPlaceFilterOptions()
+{
+    const photos =
         getProjectPhotos(
-          currentProjectId()
+            currentProjectId()
         );
 
-      const counts =
+    const counts =
         new Map();
 
-      let unknownCount = 0;
+    let unknownCount = 0;
 
-      photos.forEach(photo => {
+    photos.forEach(photo =>
+    {
         const placeId =
-          String(
-            photo.placeId || ''
-          ).trim();
+            String(
+                photo.placeId || ''
+            ).trim();
 
-        if (!placeId) {
-          if (
-            !String(
-              photo.placeText || ''
-            ).trim()
-          ) {
-            unknownCount += 1;
-          }
+        if (!placeId)
+        {
+            if (
+                !String(
+                    photo.placeText || ''
+                ).trim()
+            )
+            {
+                unknownCount += 1;
+            }
 
-          return;
+            return;
         }
 
         counts.set(
-          placeId,
-          (
-            counts.get(placeId)
+            placeId,
+            (
+                counts.get(placeId)
             || 0
-          ) + 1
+            ) + 1
         );
-      });
+    });
 
-      const collator =
+    const collator =
         new Intl.Collator(
-          state.language === 'ru'
-            ? 'ru'
-            : 'en',
-          {
-            sensitivity:
+            state.language === 'ru'
+                ? 'ru'
+                : 'en',
+            {
+                sensitivity:
               'base'
-          }
+            }
         );
 
-      const places = [
+    const places = [
         ...counts.entries()
-      ]
+    ]
         .map(([
-          placeId,
-          count
-        ]) => {
-          const place =
-            sampleData.places.find(
-              item =>
-                item.id === placeId
-            );
+            placeId,
+            count
+        ]) =>
+        {
+            const place =
+                sampleData.places.find(
+                    item =>
+                        item.id === placeId
+                );
 
-          return {
-            value:
+            return {
+                value:
               placeId,
 
-            label:
+                label:
               getPlaceDisplay(
-                placeId
+                  placeId
               ),
 
-            /*
+                /*
             * Alternative names improve searching,
             * but are not displayed or localized.
             */
-            keywords:
+                keywords:
               place?.alternativeNames
               || [],
 
-            count
-          };
+                count
+            };
         })
         .sort(
-          (left, right) =>
-            collator.compare(
-              left.label,
-              right.label
-            )
+            (left, right) =>
+                collator.compare(
+                    left.label,
+                    right.label
+                )
         );
 
-      return [
+    return [
         {
-          value:
+            value:
             'none',
 
-          label:
+            label:
             'No known place',
 
-          count:
+            count:
             unknownCount
         },
 
         ...places
-      ];
-    }
+    ];
+}
 
-    const albumsFilterSchema =
-      Object.freeze([
+const albumsFilterSchema =
+    Object.freeze([
         Object.freeze({
-          key: 'sourceId',
-          label: 'Source',
-          control: 'combobox',
-          multiple: false,
-          layout: 'full',
-          placeholder: 'Search sources...',
-          defaultValue: '',
-          getOptions: connectedSourceFilterOptions
+            key: 'sourceId',
+            label: 'Source',
+            control: 'combobox',
+            multiple: false,
+            layout: 'full',
+            placeholder: 'Search sources...',
+            defaultValue: '',
+            getOptions: connectedSourceFilterOptions
         }),
         Object.freeze({
-          key:
+            key:
             'personId',
 
-          label:
+            label:
             'Person',
 
-          control:
+            control:
             'combobox',
 
-          multiple:
+            multiple:
             false,
 
-          layout:
+            layout:
             'full',
 
-          placeholder:
+            placeholder:
             'Search people',
 
-          defaultValue:
+            defaultValue:
             '',
 
-          getOptions:
+            getOptions:
             albumsPersonFilterOptions
         }),
 
         Object.freeze({
-          key:
+            key:
             'placeId',
 
-          label:
+            label:
             'Place',
 
-          control:
+            control:
             'combobox',
 
-          multiple:
+            multiple:
             false,
 
-          layout:
+            layout:
             'full',
 
-          placeholder:
+            placeholder:
             'Search places',
 
-          defaultValue:
+            defaultValue:
             '',
 
-          getOptions:
+            getOptions:
             albumsPlaceFilterOptions
         }),
 
         Object.freeze({
-          key:
+            key:
             'dateRange',
 
-          label:
+            label:
             'Date',
 
-          control:
+            control:
             'select',
 
-          defaultValue:
+            defaultValue:
             '',
 
-          options:
+            options:
             Object.freeze([
-              Object.freeze({
-                value:
+                Object.freeze({
+                    value:
                   '',
 
-                label:
+                    label:
                   'Any date'
-              }),
+                }),
 
-              Object.freeze({
-                value:
+                Object.freeze({
+                    value:
                   'dated',
 
-                label:
+                    label:
                   'Known date'
-              }),
+                }),
 
-              Object.freeze({
-                value:
+                Object.freeze({
+                    value:
                   'unknown',
 
-                label:
+                    label:
                   'Unknown date'
-              })
+                })
             ])
         }),
 
         Object.freeze({
-          key:
+            key:
             'favouriteOnly',
 
-          label:
+            label:
             'Favourites',
 
-          control:
+            control:
             'boolean',
 
-          defaultValue:
+            defaultValue:
             false,
 
-          checkboxLabel:
+            checkboxLabel:
             'Favourites only'
         })
-      ]);
+    ]);
 
-    function albumsFiltersWithDefaults(
-      filters = state.albumsFilters
-    ) {
-      return cloneSharedFilterValues(
+function albumsFiltersWithDefaults(
+    filters = state.albumsFilters
+)
+{
+    return cloneSharedFilterValues(
         albumsFilterSchema,
         {
-          ...defaultAlbumFilters,
-          ...(filters || {})
+            ...defaultAlbumFilters,
+            ...(filters || {})
         }
-      );
-    }
+    );
+}
 
-    function renderAlbumsFilterFields(
-      filters = defaultAlbumFilters,
-      prefix = 'albums-filter'
-    ) {
-      return renderSharedFilterFields({
+function renderAlbumsFilterFields(
+    filters = defaultAlbumFilters,
+    prefix = 'albums-filter'
+)
+{
+    return renderSharedFilterFields({
         schema:
           albumsFilterSchema,
 
         values:
           albumsFiltersWithDefaults(
-            filters
+              filters
           ),
 
         prefix
-      });
-    }
+    });
+}
 
-    function bindAlbumsFilterFields(
-      root,
-      filters,
-      prefix,
-      onChange =
-        () => {}
-    ) {
-      return bindSharedFilterFields(
+function bindAlbumsFilterFields(
+    root,
+    filters,
+    prefix,
+    onChange =
+        () =>
+        {}
+)
+{
+    return bindSharedFilterFields(
         root,
         {
-          schema:
+            schema:
             albumsFilterSchema,
 
-          values:
+            values:
             albumsFiltersWithDefaults(
-              filters
+                filters
             ),
 
-          prefix,
-          onChange
+            prefix,
+            onChange
         }
-      );
-    }
+    );
+}
 
-    function personPrimaryPhotoId(person) {
-      const centralPerson = getPerson(person?.id) || person;
-      const photo = getPhoto(centralPerson?.primaryPhotoId, {
+function personPrimaryPhotoId(person)
+{
+    const centralPerson = getPerson(person?.id) || person;
+    const photo = getPhoto(centralPerson?.primaryPhotoId, {
         projectId: centralPerson?.projectId || ''
-      });
-      return photo?.id || '';
-    }
+    });
+    return photo?.id || '';
+}
 
-    function personAvatarInitials(person) {
-      return person?.names?.initials || person?.initials || person?.short || '??';
-    }
+function personAvatarInitials(person)
+{
+    return person?.names?.initials || person?.initials || person?.short || '??';
+}
 
-    function personAvatarClass(person) {
-      return person?.avatarClass || person?.avatar || '';
-    }
+function personAvatarClass(person)
+{
+    return person?.avatarClass || person?.avatar || '';
+}
 
-    function personPhotoCropStyle(
-      cropValue
-    ) {
-      const crop =
+function personPhotoCropStyle(
+    cropValue
+)
+{
+    const crop =
         normalizePersonPhotoCrop(
-          cropValue
+            cropValue
         );
 
-      return [
+    return [
         `--person-photo-shift-x:${
-          (0.5 - crop.centerX) * 100
+            (0.5 - crop.centerX) * 100
         }%`,
         `--person-photo-shift-y:${
-          (0.5 - crop.centerY) * 100
+            (0.5 - crop.centerY) * 100
         }%`,
         `--person-photo-zoom:${
-          crop.zoom
+            crop.zoom
         }`,
         `--person-photo-rotation:${
-          crop.rotation
+            crop.rotation
         }deg`
-      ].join(';');
-    }
+    ].join(';');
+}
 
-    function renderPersonAvatar(
-      person,
-      className,
-      {
+function renderPersonAvatar(
+    person,
+    className,
+    {
         element = 'div',
         attrs = ''
-      } = {}
-    ) {
-      const centralPerson =
+    } = {}
+)
+{
+    const centralPerson =
         getPerson(person?.id)
         || person;
 
-      const primaryPhoto =
+    const primaryPhoto =
         getPhoto(
-          personPrimaryPhotoId(
-            centralPerson
-          ),
-          {
-            projectId:
+            personPrimaryPhotoId(
+                centralPerson
+            ),
+            {
+                projectId:
               centralPerson?.projectId
               || ''
-          }
+            }
         );
 
-      const label =
+    const label =
         centralPerson?.names?.display
         || person?.name
         || 'Person';
 
-      const classes = [
+    const classes = [
         'person-avatar',
         className,
         personAvatarClass(person),
         primaryPhoto
-          ? 'has-photo'
-          : ''
-      ]
+            ? 'has-photo'
+            : ''
+    ]
         .filter(Boolean)
         .join(' ');
 
-      const content = primaryPhoto
+    const content = primaryPhoto
         ? `
           <span
             class="person-avatar-viewport">
             <span
               class="person-avatar-media"
               style="${escapeHtml(
-                personPhotoCropStyle(
-                  centralPerson
-                    ?.primaryPhotoCrop
-                )
-              )}">
+                    personPhotoCropStyle(
+                        centralPerson
+                            ?.primaryPhotoCrop
+                    )
+                )}">
               ${renderPhotoThumbnail(
-                primaryPhoto,
-                {
-                  className:
+                    primaryPhoto,
+                    {
+                        className:
                     'person-avatar-photo',
-                  label
-                }
-              )}
+                        label
+                    }
+                )}
             </span>
           </span>
         `
@@ -502,54 +521,56 @@
             class="person-avatar-initials"
             aria-hidden="true">
             ${escapeHtml(
-              personAvatarInitials(person)
+                personAvatarInitials(person)
             )}
           </span>
         `;
 
-      return `
+    return `
         <${element}
           class="${escapeHtml(classes)}"
           ${attrs}>
           ${content}
         </${element}>
       `;
-    }
+}
 
-    function renderEditablePersonAvatar(person, className, options = {}) {
-      const centralPerson = getPerson(person?.id) || person;
-      if (!centralPerson?.id) return renderPersonAvatar(person, className, options);
-      const name = centralPerson.names?.display || person?.name || 'Person';
-      const hasPrimaryPhoto = Boolean(getPhoto(centralPerson.primaryPhotoId, {
+function renderEditablePersonAvatar(person, className, options = {})
+{
+    const centralPerson = getPerson(person?.id) || person;
+    if (!centralPerson?.id) return renderPersonAvatar(person, className, options);
+    const name = centralPerson.names?.display || person?.name || 'Person';
+    const hasPrimaryPhoto = Boolean(getPhoto(centralPerson.primaryPhotoId, {
         projectId: centralPerson.projectId
-      }));
-      const actionLabel = hasPrimaryPhoto ? 'Change photo' : 'Add photo';
-      return `<div class="person-photo-control">
+    }));
+    const actionLabel = hasPrimaryPhoto ? 'Change photo' : 'Add photo';
+    return `<div class="person-photo-control">
         ${renderPersonAvatar(person, className, options)}
         <button
           class="person-photo-edit-button"
           type="button"
           data-person-photo-edit="${escapeHtml(
-            centralPerson.id
-          )}"
+                centralPerson.id
+            )}"
           aria-label="${escapeHtml(
-            `${actionLabel} for ${name}`
-          )}"
+                `${actionLabel} for ${name}`
+            )}"
           title="${escapeHtml(actionLabel)}">
           ${icon.camera}
         </button>
       </div>`;
-    }
+}
 
-    const PHOTO_UPLOAD_MAX_BYTES = 20 * 1024 * 1024;
-    const PHOTO_UPLOAD_ALLOWED_TYPES = Object.freeze([
-      'image/jpeg',
-      'image/png',
-      'image/webp'
-    ]);
+const PHOTO_UPLOAD_MAX_BYTES = 20 * 1024 * 1024;
+const PHOTO_UPLOAD_ALLOWED_TYPES = Object.freeze([
+    'image/jpeg',
+    'image/png',
+    'image/webp'
+]);
 
-    function resetPersonPhotoPickerState() {
-      state.personPhotoPicker = {
+function resetPersonPhotoPickerState()
+{
+    state.personPhotoPicker = {
         open: false,
         personId: null,
         step: 'choose',
@@ -562,16 +583,18 @@
         uploadError: '',
         crop: null,
         dirty: false
-      };
-    }
+    };
+}
 
-    function personPhotoPickerPerson() {
-      return getPerson(state.personPhotoPicker?.personId) || null;
-    }
+function personPhotoPickerPerson()
+{
+    return getPerson(state.personPhotoPicker?.personId) || null;
+}
 
-    function personPhotoUploadDraftAsPhoto(draft = state.personPhotoPicker?.uploadDraft) {
-      if (!draft) return null;
-      return {
+function personPhotoUploadDraftAsPhoto(draft = state.personPhotoPicker?.uploadDraft)
+{
+    if (!draft) return null;
+    return {
         id: 'person-photo-upload-draft',
         projectId: personPhotoPickerPerson()?.projectId || '',
         kind: 'photo',
@@ -586,76 +609,84 @@
         personIds: [],
         albumIds: [],
         date: emptyGenealogyDate('Exact date'),
-          placeId: null,
-          placeText: '',
-          address: '',
+        placeId: null,
+        placeText: '',
+        address: '',
         caption: '',
         favorite: false,
         createdAt: '',
         updatedAt: ''
-      };
-    }
+    };
+}
 
-    function personPhotoPickerSourcePhoto() {
-      if (state.personPhotoPicker.sourceTab === 'upload') {
+function personPhotoPickerSourcePhoto()
+{
+    if (state.personPhotoPicker.sourceTab === 'upload')
+    {
         return personPhotoUploadDraftAsPhoto();
-      }
-      const person = personPhotoPickerPerson();
-      return getPhoto(state.personPhotoPicker.selectedPhotoId, {
-        projectId: person?.projectId || ''
-      });
     }
+    const person = personPhotoPickerPerson();
+    return getPhoto(state.personPhotoPicker.selectedPhotoId, {
+        projectId: person?.projectId || ''
+    });
+}
 
-    function personPhotoPickerProjectPhotos() {
-      const person =
+function personPhotoPickerProjectPhotos()
+{
+    const person =
         personPhotoPickerPerson();
 
-      if (!person) {
+    if (!person)
+    {
         return [];
-      }
+    }
 
-      const query =
+    const query =
         state.personPhotoPicker
-          .search
-          .trim()
-          .toLowerCase();
+            .search
+            .trim()
+            .toLowerCase();
 
-      return getProjectPhotos(
+    return getProjectPhotos(
         person.projectId
-      ).filter(photo => {
+    ).filter(photo =>
+    {
         if (
-          state.personPhotoPicker
-            .projectScope === 'tagged'
+            state.personPhotoPicker
+                .projectScope === 'tagged'
           && !photoIsTaggedWithPerson(
-            photo,
-            person
+              photo,
+              person
           )
-        ) {
-          return false;
+        )
+        {
+            return false;
         }
 
         return (
-          !query
+            !query
           || photoSearchText(
-            photo
+              photo
           ).includes(query)
         );
-      });
-    }
+    });
+}
 
-    function personPhotoPickerHasSource() {
-      return Boolean(personPhotoPickerSourcePhoto());
-    }
+function personPhotoPickerHasSource()
+{
+    return Boolean(personPhotoPickerSourcePhoto());
+}
 
-    function renderPersonPhotoCandidate(photo, person) {
-      const selected = photo.id === state.personPhotoPicker.selectedPhotoId;
-      const current = photo.id === person.primaryPhotoId;
-      const tagged =
+function renderPersonPhotoCandidate(photo, person)
+{
+    const selected = photo.id === state.personPhotoPicker.selectedPhotoId;
+    const current = photo.id === person.primaryPhotoId;
+    const tagged =
         photoIsTaggedWithPerson(
-          photo,
-          person
+            photo,
+            person
         );
-      return `<button class="person-photo-candidate" type="button" data-person-photo-candidate="${escapeHtml(photo.id)}" aria-pressed="${selected}">
+    return `<button class="person-photo-candidate" type="button" data-person-photo-candidate="${escapeHtml(photo.id)}" aria-pressed="${selected}">
         <span class="person-photo-candidate-preview">
           ${renderPhotoThumbnail(photo, { label: photo.title || photo.filename })}
           ${current ? '<span class="person-photo-current-badge">Current photo</span>' : ''}
@@ -666,32 +697,35 @@
           <span>${escapeHtml(formatPhotoDate(photo) || 'Unknown date')}</span>
         </span>
       </button>`;
-    }
+}
 
-    function renderPersonPhotoProjectResults() {
-      const person = personPhotoPickerPerson();
-      if (!person) return '';
-      const allProjectPhotos = getProjectPhotos(person.projectId);
-      const photos = personPhotoPickerProjectPhotos();
-      const selectedPhoto = getPhoto(state.personPhotoPicker.selectedPhotoId, {
+function renderPersonPhotoProjectResults()
+{
+    const person = personPhotoPickerPerson();
+    if (!person) return '';
+    const allProjectPhotos = getProjectPhotos(person.projectId);
+    const photos = personPhotoPickerProjectPhotos();
+    const selectedPhoto = getPhoto(state.personPhotoPicker.selectedPhotoId, {
         projectId: person.projectId
-      });
-      const selectedIsUntagged = selectedPhoto
+    });
+    const selectedIsUntagged = selectedPhoto
         && !(selectedPhoto.personIds || []).includes(person.id);
 
-      if (!allProjectPhotos.length) {
+    if (!allProjectPhotos.length)
+    {
         return `<div class="person-photo-empty"><div>
           <strong>Upload the first photo for this project.</strong>
           <button class="button primary" type="button" data-person-photo-show-upload>Upload new photo</button>
         </div></div>`;
-      }
+    }
 
-      if (!photos.length) {
+    if (!photos.length)
+    {
         const hasSearch = Boolean(state.personPhotoPicker.search.trim());
         const taggedScope = state.personPhotoPicker.projectScope === 'tagged';
         const message = hasSearch
-          ? 'No matching project photos.'
-          : `No photos are tagged with ${person.names?.display || 'this person'}.`;
+            ? 'No matching project photos.'
+            : `No photos are tagged with ${person.names?.display || 'this person'}.`;
         return `<div class="person-photo-empty"><div>
           <strong>${escapeHtml(message)}</strong>
           <div class="person-photo-empty-actions">
@@ -700,14 +734,15 @@
             <button class="button primary" type="button" data-person-photo-show-upload>Upload new photo</button>
           </div>
         </div></div>`;
-      }
-
-      return `${selectedIsUntagged ? `<div class="person-photo-picker-notice">${escapeHtml(person.names?.display || 'This person')} will also be tagged in this photo.</div>` : ''}
-        <div class="person-photo-candidate-grid">${photos.map(photo => renderPersonPhotoCandidate(photo, person)).join('')}</div>`;
     }
 
-    function renderPersonPhotoProjectPanel() {
-      return `
+    return `${selectedIsUntagged ? `<div class="person-photo-picker-notice">${escapeHtml(person.names?.display || 'This person')} will also be tagged in this photo.</div>` : ''}
+        <div class="person-photo-candidate-grid">${photos.map(photo => renderPersonPhotoCandidate(photo, person)).join('')}</div>`;
+}
+
+function renderPersonPhotoProjectPanel()
+{
+    return `
         <div class="person-photo-project-panel">
           <div class="person-photo-project-controls">
             <label
@@ -719,7 +754,7 @@
                 data-person-photo-search
                 type="search"
                 value="${escapeHtml(
-                  state.personPhotoPicker.search
+                    state.personPhotoPicker.search
                 )}"
                 placeholder="Search project photos">
             </label>
@@ -733,8 +768,8 @@
                 type="button"
                 data-person-photo-scope="tagged"
                 aria-pressed="${
-                  state.personPhotoPicker
-                    .projectScope === 'tagged'
+                    state.personPhotoPicker
+                        .projectScope === 'tagged'
                 }">
                 Tagged with this person
               </button>
@@ -744,8 +779,8 @@
                 type="button"
                 data-person-photo-scope="all"
                 aria-pressed="${
-                  state.personPhotoPicker
-                    .projectScope === 'all'
+                    state.personPhotoPicker
+                        .projectScope === 'all'
                 }">
                 All photos
               </button>
@@ -759,12 +794,13 @@
           </div>
         </div>
       `;
-    }
+}
 
-    function renderPersonPhotoUploadPanel() {
-      const draftPhoto = personPhotoUploadDraftAsPhoto();
-      const maxMegabytes = Math.round(PHOTO_UPLOAD_MAX_BYTES / (1024 * 1024));
-      return `<div class="person-photo-upload-dropzone" data-person-photo-dropzone>
+function renderPersonPhotoUploadPanel()
+{
+    const draftPhoto = personPhotoUploadDraftAsPhoto();
+    const maxMegabytes = Math.round(PHOTO_UPLOAD_MAX_BYTES / (1024 * 1024));
+    return `<div class="person-photo-upload-dropzone" data-person-photo-dropzone>
         <input type="file" accept="${PHOTO_UPLOAD_ALLOWED_TYPES.join(',')}" data-person-photo-file hidden>
         ${draftPhoto ? `<div class="person-photo-upload-preview">
           <div class="person-photo-upload-thumb">${renderPhotoThumbnail(draftPhoto, { label: draftPhoto.filename })}</div>
@@ -781,18 +817,19 @@
         </div>`}
       </div>
       ${state.personPhotoPicker.uploadError ? `<div class="person-photo-upload-error" role="alert">${escapeHtml(state.personPhotoPicker.uploadError)}</div>` : ''}`;
-    }
+}
 
-    function renderPersonPhotoChooseStage() {
-      const person =
+function renderPersonPhotoChooseStage()
+{
+    const person =
         personPhotoPickerPerson();
 
-      const hasStoredPrimaryReference =
+    const hasStoredPrimaryReference =
         Boolean(
-          person?.primaryPhotoId
+            person?.primaryPhotoId
         );
 
-      return `
+    return `
         <div
           class="person-photo-picker-tabs"
           role="tablist"
@@ -804,8 +841,8 @@
             role="tab"
             data-person-photo-tab="project"
             aria-selected="${
-              state.personPhotoPicker
-                .sourceTab === 'project'
+                state.personPhotoPicker
+                    .sourceTab === 'project'
             }">
             Project photos
           </button>
@@ -816,8 +853,8 @@
             role="tab"
             data-person-photo-tab="upload"
             aria-selected="${
-              state.personPhotoPicker
-                .sourceTab === 'upload'
+                state.personPhotoPicker
+                    .sourceTab === 'upload'
             }">
             Upload new
           </button>
@@ -825,18 +862,18 @@
 
         <div role="tabpanel">
           ${
-            state.personPhotoPicker
-              .sourceTab === 'project'
-                ? renderPersonPhotoProjectPanel()
-                : renderPersonPhotoUploadPanel()
-          }
+                state.personPhotoPicker
+                    .sourceTab === 'project'
+                    ? renderPersonPhotoProjectPanel()
+                    : renderPersonPhotoUploadPanel()
+            }
         </div>
 
         <div class="modal-footer">
           <div>
             ${
-              hasStoredPrimaryReference
-                ? `
+                hasStoredPrimaryReference
+                    ? `
                   <button
                     class="button secondary"
                     type="button"
@@ -844,7 +881,7 @@
                     Remove current photo
                   </button>
                 `
-                : ''
+                    : ''
             }
           </div>
 
@@ -861,47 +898,49 @@
               type="button"
               data-person-photo-continue
               ${
-                personPhotoPickerHasSource()
-                  ? ''
-                  : 'disabled'
-              }>
+                    personPhotoPickerHasSource()
+                        ? ''
+                        : 'disabled'
+                }>
               Continue
             </button>
           </div>
         </div>
       `;
-    }
+}
 
-    function renderPersonPhotoCropMedia(
-      photo,
-      crop,
-      className = ''
-    ) {
-      return `
+function renderPersonPhotoCropMedia(
+    photo,
+    crop,
+    className = ''
+)
+{
+    return `
         <span
           class="person-photo-crop-media ${
-            escapeHtml(className)
-          }"
+                escapeHtml(className)
+            }"
           style="${escapeHtml(
-            personPhotoCropStyle(crop)
-          )}">
+                personPhotoCropStyle(crop)
+            )}">
           ${renderPhotoThumbnail(
-            photo,
-            {
-              label:
+                photo,
+                {
+                    label:
                 photo.title
                 || photo.filename
-            }
-          )}
+                }
+            )}
         </span>
       `;
-    }
+}
 
-    function renderPersonPhotoAdjustStage() {
-      const photo = personPhotoPickerSourcePhoto();
-      if (!photo) return '<div class="panel-muted">The selected photo is no longer available.</div>';
-      const crop = normalizePersonPhotoCrop(state.personPhotoPicker.crop);
-      return `<div class="person-photo-adjust-layout">
+function renderPersonPhotoAdjustStage()
+{
+    const photo = personPhotoPickerSourcePhoto();
+    if (!photo) return '<div class="panel-muted">The selected photo is no longer available.</div>';
+    const crop = normalizePersonPhotoCrop(state.personPhotoPicker.crop);
+    return `<div class="person-photo-adjust-layout">
         <div class="person-photo-crop-column">
           <div class="person-photo-crop-stage" data-person-photo-crop-stage tabindex="0" aria-label="Drag to reposition photo">
             ${renderPersonPhotoCropMedia(photo, crop)}
@@ -933,19 +972,20 @@
           <button class="button primary" type="button" data-person-photo-use>Use photo</button>
         </div>
       </div>`;
-    }
+}
 
-    function renderPersonPhotoPickerModal() {
-      const person =
+function renderPersonPhotoPickerModal()
+{
+    const person =
         personPhotoPickerPerson();
 
-      if (!person) return;
+    if (!person) return;
 
-      const adjust =
+    const adjust =
         state.personPhotoPicker.step
         === 'adjust';
 
-      openModal(`
+    openModal(`
         <div
           class="
             modal
@@ -960,10 +1000,10 @@
             <div>
               <h2 id="personPhotoPickerTitle">
                 Change photo for ${
-                  escapeHtml(
-                    person.names?.display
+                    escapeHtml(
+                        person.names?.display
                     || 'Person'
-                  )
+                    )
                 }
               </h2>
 
@@ -990,267 +1030,297 @@
             <div
               class="person-photo-picker-step"
               aria-label="${
-                adjust
-                  ? 'Adjust photo'
-                  : 'Choose photo'
-              }">
+                    adjust
+                        ? 'Adjust photo'
+                        : 'Choose photo'
+                }">
               ${
-                adjust
-                  ? 'Adjust photo'
-                  : 'Choose photo'
-              }
+                    adjust
+                        ? 'Adjust photo'
+                        : 'Choose photo'
+                }
             </div>
 
             ${
-              adjust
-                ? renderPersonPhotoAdjustStage()
-                : renderPersonPhotoChooseStage()
+                adjust
+                    ? renderPersonPhotoAdjustStage()
+                    : renderPersonPhotoChooseStage()
             }
           </div>
         </div>
       `);
 
-      bindPersonPhotoPickerModal();
-    }
+    bindPersonPhotoPickerModal();
+}
 
-    function bindPersonPhotoProjectResultActions(root = modalBackdrop) {
-      root.querySelectorAll('[data-person-photo-candidate]').forEach(button => button.addEventListener('click', () => {
+function bindPersonPhotoProjectResultActions(root = modalBackdrop)
+{
+    root.querySelectorAll('[data-person-photo-candidate]').forEach(button => button.addEventListener('click', () =>
+    {
         const nextId = button.dataset.personPhotoCandidate;
-        if (nextId !== state.personPhotoPicker.selectedPhotoId) {
-          state.personPhotoPicker.selectedPhotoId = nextId;
-          if (nextId !== state.personPhotoPicker.initialPhotoId) state.personPhotoPicker.dirty = true;
+        if (nextId !== state.personPhotoPicker.selectedPhotoId)
+        {
+            state.personPhotoPicker.selectedPhotoId = nextId;
+            if (nextId !== state.personPhotoPicker.initialPhotoId) state.personPhotoPicker.dirty = true;
         }
         renderPersonPhotoPickerModal();
-      }));
-      root.querySelector('[data-person-photo-clear-search]')?.addEventListener('click', () => {
+    }));
+    root.querySelector('[data-person-photo-clear-search]')?.addEventListener('click', () =>
+    {
         state.personPhotoPicker.search = '';
         renderPersonPhotoPickerModal();
-      });
-      root.querySelectorAll('[data-person-photo-browse-all]').forEach(button => button.addEventListener('click', () => {
+    });
+    root.querySelectorAll('[data-person-photo-browse-all]').forEach(button => button.addEventListener('click', () =>
+    {
         state.personPhotoPicker.sourceTab = 'project';
         state.personPhotoPicker.projectScope = 'all';
         state.personPhotoPicker.search = '';
         renderPersonPhotoPickerModal();
-      }));
-      root.querySelectorAll('[data-person-photo-show-upload]').forEach(button => button.addEventListener('click', () => {
+    }));
+    root.querySelectorAll('[data-person-photo-show-upload]').forEach(button => button.addEventListener('click', () =>
+    {
         state.personPhotoPicker.sourceTab = 'upload';
         renderPersonPhotoPickerModal();
-      }));
-    }
+    }));
+}
 
-    function updatePersonPhotoProjectResults() {
-      const host = modalBackdrop.querySelector('[data-person-photo-project-results]');
-      if (!host) return;
-      host.innerHTML = renderPersonPhotoProjectResults();
-      bindPersonPhotoProjectResultActions(host);
-    }
+function updatePersonPhotoProjectResults()
+{
+    const host = modalBackdrop.querySelector('[data-person-photo-project-results]');
+    if (!host) return;
+    host.innerHTML = renderPersonPhotoProjectResults();
+    bindPersonPhotoProjectResultActions(host);
+}
 
-    function readPersonPhotoFile(file) {
-      return new Promise((resolve, reject) => {
+function readPersonPhotoFile(file)
+{
+    return new Promise((resolve, reject) =>
+    {
         const reader = new FileReader();
         reader.addEventListener('load', () => resolve(String(reader.result || '')));
         reader.addEventListener('error', () => reject(new Error('File cannot be read.')));
         reader.readAsDataURL(file);
-      });
-    }
+    });
+}
 
-    function loadPersonPhotoDimensions(src) {
-      return new Promise((resolve, reject) => {
+function loadPersonPhotoDimensions(src)
+{
+    return new Promise((resolve, reject) =>
+    {
         const image = new Image();
         image.addEventListener('load', () => resolve({ width: image.naturalWidth, height: image.naturalHeight }));
         image.addEventListener('error', () => reject(new Error('File cannot be read as an image.')));
         image.src = src;
-      });
-    }
+    });
+}
 
-    async function processPersonPhotoUpload(file) {
-      if (!state.personPhotoPicker.open || !file) return;
-      state.personPhotoPicker.uploadError = '';
-      if (!PHOTO_UPLOAD_ALLOWED_TYPES.includes(file.type)) {
+async function processPersonPhotoUpload(file)
+{
+    if (!state.personPhotoPicker.open || !file) return;
+    state.personPhotoPicker.uploadError = '';
+    if (!PHOTO_UPLOAD_ALLOWED_TYPES.includes(file.type))
+    {
         state.personPhotoPicker.uploadError = 'Unsupported file type. Choose a JPEG, PNG, or WebP image.';
         renderPersonPhotoPickerModal();
         return;
-      }
-      if (file.size > PHOTO_UPLOAD_MAX_BYTES) {
+    }
+    if (file.size > PHOTO_UPLOAD_MAX_BYTES)
+    {
         state.personPhotoPicker.uploadError = `Photo is too large. Choose a file smaller than ${Math.round(PHOTO_UPLOAD_MAX_BYTES / (1024 * 1024))} MB.`;
         renderPersonPhotoPickerModal();
         return;
-      }
-      const pickerPersonId = state.personPhotoPicker.personId;
-      try {
+    }
+    const pickerPersonId = state.personPhotoPicker.personId;
+    try
+    {
         const src = await readPersonPhotoFile(file);
         const dimensions = await loadPersonPhotoDimensions(src);
         if (!dimensions.width || !dimensions.height) throw new Error('Photo has invalid or missing image dimensions.');
         if (!state.personPhotoPicker.open || state.personPhotoPicker.personId !== pickerPersonId) return;
         state.personPhotoPicker.uploadDraft = {
-          file,
-          src,
-          filename: file.name || 'Uploaded photo',
-          mimeType: file.type,
-          width: dimensions.width,
-          height: dimensions.height,
-          sizeBytes: file.size
+            file,
+            src,
+            filename: file.name || 'Uploaded photo',
+            mimeType: file.type,
+            width: dimensions.width,
+            height: dimensions.height,
+            sizeBytes: file.size
         };
         state.personPhotoPicker.selectedPhotoId = null;
         state.personPhotoPicker.uploadError = '';
         state.personPhotoPicker.dirty = true;
-      } catch (error) {
+    }
+    catch (error)
+    {
         state.personPhotoPicker.uploadDraft = null;
         state.personPhotoPicker.uploadError = error?.message || 'File cannot be read.';
-      }
-      renderPersonPhotoPickerModal();
     }
+    renderPersonPhotoPickerModal();
+}
 
-    function updatePersonPhotoCropDom() {
-      const crop = normalizePersonPhotoCrop(state.personPhotoPicker.crop);
-      state.personPhotoPicker.crop = crop;
-      modalBackdrop
+function updatePersonPhotoCropDom()
+{
+    const crop = normalizePersonPhotoCrop(state.personPhotoPicker.crop);
+    state.personPhotoPicker.crop = crop;
+    modalBackdrop
         .querySelectorAll(
-          '.person-photo-crop-media'
+            '.person-photo-crop-media'
         )
-        .forEach(media => {
-          media.setAttribute(
-            'style',
-            personPhotoCropStyle(crop)
-          );
+        .forEach(media =>
+        {
+            media.setAttribute(
+                'style',
+                personPhotoCropStyle(crop)
+            );
         });
-      const slider = modalBackdrop.querySelector('[data-person-photo-zoom-slider]');
-      if (slider) slider.value = String(crop.zoom);
-    }
+    const slider = modalBackdrop.querySelector('[data-person-photo-zoom-slider]');
+    if (slider) slider.value = String(crop.zoom);
+}
 
-    function setPersonPhotoCrop(nextCrop, { dirty = true } = {}) {
-      state.personPhotoPicker.crop = normalizePersonPhotoCrop(nextCrop);
-      if (dirty) state.personPhotoPicker.dirty = true;
-      updatePersonPhotoCropDom();
-    }
+function setPersonPhotoCrop(nextCrop, { dirty = true } = {})
+{
+    state.personPhotoPicker.crop = normalizePersonPhotoCrop(nextCrop);
+    if (dirty) state.personPhotoPicker.dirty = true;
+    updatePersonPhotoCropDom();
+}
 
-    function bindPersonPhotoCropDrag() {
-      const stage = modalBackdrop.querySelector('[data-person-photo-crop-stage]');
-      if (!stage) return;
-      let drag = null;
-      stage.addEventListener('pointerdown', event => {
+function bindPersonPhotoCropDrag()
+{
+    const stage = modalBackdrop.querySelector('[data-person-photo-crop-stage]');
+    if (!stage) return;
+    let drag = null;
+    stage.addEventListener('pointerdown', event =>
+    {
         if (event.button !== 0) return;
         const crop = normalizePersonPhotoCrop(state.personPhotoPicker.crop);
         drag = { x: event.clientX, y: event.clientY, crop };
         stage.classList.add('is-dragging');
         stage.setPointerCapture(event.pointerId);
-      });
-      stage.addEventListener('pointermove', event => {
+    });
+    stage.addEventListener('pointermove', event =>
+    {
         if (!drag) return;
         const rect = stage.getBoundingClientRect();
         const zoom = Math.max(PERSON_PHOTO_ZOOM_MIN, drag.crop.zoom);
         setPersonPhotoCrop({
-          ...drag.crop,
-          centerX: drag.crop.centerX - (event.clientX - drag.x) / (rect.width * zoom),
-          centerY: drag.crop.centerY - (event.clientY - drag.y) / (rect.height * zoom)
+            ...drag.crop,
+            centerX: drag.crop.centerX - (event.clientX - drag.x) / (rect.width * zoom),
+            centerY: drag.crop.centerY - (event.clientY - drag.y) / (rect.height * zoom)
         });
-      });
-      const finish = event => {
+    });
+    const finish = event =>
+    {
         if (!drag) return;
         drag = null;
         stage.classList.remove('is-dragging');
         if (stage.hasPointerCapture(event.pointerId)) stage.releasePointerCapture(event.pointerId);
-      };
-      stage.addEventListener('pointerup', finish);
-      stage.addEventListener('pointercancel', finish);
-    }
+    };
+    stage.addEventListener('pointerup', finish);
+    stage.addEventListener('pointercancel', finish);
+}
 
-    function initializePersonPhotoCrop() {
-      const person = personPhotoPickerPerson();
-      const source = personPhotoPickerSourcePhoto();
-      if (!person || !source) return false;
-      state.personPhotoPicker.crop = normalizePersonPhotoCrop(
+function initializePersonPhotoCrop()
+{
+    const person = personPhotoPickerPerson();
+    const source = personPhotoPickerSourcePhoto();
+    if (!person || !source) return false;
+    state.personPhotoPicker.crop = normalizePersonPhotoCrop(
         source.id === person.primaryPhotoId ? person.primaryPhotoCrop : null
-      );
-      state.personPhotoPicker.step = 'adjust';
-      return true;
-    }
+    );
+    state.personPhotoPicker.step = 'adjust';
+    return true;
+}
 
-    function photoUploadFileSignature(
-      file
-    ) {
-      return [
+function photoUploadFileSignature(
+    file
+)
+{
+    return [
         file?.name || '',
         file?.size || 0,
         file?.type || '',
         file?.lastModified || 0
-      ].join(':');
+    ].join(':');
+}
+
+async function createPhotoUploadDraft(
+    file,
+    {
+        idPrefix =
+            'photo-upload-draft'
+    } = {}
+)
+{
+    if (
+        !PHOTO_UPLOAD_ALLOWED_TYPES
+            .includes(file.type)
+    )
+    {
+        throw new Error(
+            `${
+                file.name || 'File'
+            } — unsupported file type`
+        );
     }
 
-    async function createPhotoUploadDraft(
-      file,
-      {
-        idPrefix =
-          'photo-upload-draft'
-      } = {}
-    ) {
-      if (
-        !PHOTO_UPLOAD_ALLOWED_TYPES
-          .includes(file.type)
-      ) {
-        throw new Error(
-          `${
-            file.name || 'File'
-          } — unsupported file type`
-        );
-      }
-
-      if (
+    if (
         file.size
           > PHOTO_UPLOAD_MAX_BYTES
-      ) {
+    )
+    {
         throw new Error(
-          `${
-            file.name || 'File'
-          } — larger than ${
-            Math.round(
-              PHOTO_UPLOAD_MAX_BYTES
+            `${
+                file.name || 'File'
+            } — larger than ${
+                Math.round(
+                    PHOTO_UPLOAD_MAX_BYTES
               / (1024 * 1024)
-            )
-          } MB`
+                )
+            } MB`
         );
-      }
+    }
 
-      const src =
+    const src =
         await readPersonPhotoFile(
-          file
+            file
         );
 
-      const dimensions =
+    const dimensions =
         await loadPersonPhotoDimensions(
-          src
+            src
         );
 
-      if (
+    if (
         !dimensions.width
         || !dimensions.height
-      ) {
+    )
+    {
         throw new Error(
-          `${
-            file.name || 'File'
-          } — invalid image dimensions`
+            `${
+                file.name || 'File'
+            } — invalid image dimensions`
         );
-      }
+    }
 
-      return {
+    return {
         id:
           `${idPrefix}-${
-            Date.now()
+              Date.now()
           }-${
-            Math.random()
-              .toString(36)
-              .slice(2, 9)
+              Math.random()
+                  .toString(36)
+                  .slice(2, 9)
           }`,
 
         signature:
           photoUploadFileSignature(
-            file
+              file
           ),
 
         seed:
           Math.max(
-            1,
-            Date.now() % 100000
+              1,
+              Date.now() % 100000
           ),
 
         file,
@@ -1271,93 +1341,98 @@
 
         sizeBytes:
           file.size
-      };
-    }
+    };
+}
 
-    function photoUploadDraftIsValid(
-      draft
-    ) {
-      return Boolean(
+function photoUploadDraftIsValid(
+    draft
+)
+{
+    return Boolean(
         draft
         && PHOTO_UPLOAD_ALLOWED_TYPES
-          .includes(
-            draft.mimeType
-          )
+            .includes(
+                draft.mimeType
+            )
         && Number(
-          draft.sizeBytes
+            draft.sizeBytes
         ) <= PHOTO_UPLOAD_MAX_BYTES
         && Number(
-          draft.width
+            draft.width
         ) > 0
         && Number(
-          draft.height
+            draft.height
         ) > 0
         && draft.src
-      );
-    }
+    );
+}
 
-    function uniquePhotoUploadId(
-      prefix =
+function uniquePhotoUploadId(
+    prefix =
         'photo-upload'
-    ) {
-      const safePrefix =
+)
+{
+    const safePrefix =
         String(prefix)
-          .replace(
-            /[^a-z0-9_-]+/gi,
-            '-'
-          );
+            .replace(
+                /[^a-z0-9_-]+/gi,
+                '-'
+            );
 
-      const base =
+    const base =
         `${safePrefix}-${Date.now()}`;
 
-      let id = base;
-      let suffix = 2;
+    let id = base;
+    let suffix = 2;
 
-      while (getPhoto(id)) {
+    while (getPhoto(id))
+    {
         id =
-          `${base}-${suffix}`;
+            `${base}-${suffix}`;
 
         suffix += 1;
-      }
-
-      return id;
     }
 
-    function createMediaFromPhotoUpload({
-      projectId,
-      draft,
-      personIds = [],
-      idPrefix =
+    return id;
+}
+
+function createMediaFromPhotoUpload({
+    projectId,
+    draft,
+    personIds = [],
+    idPrefix =
         'photo-upload'
-    }) {
-      if (
+})
+{
+    if (
         !projectId
         || !photoUploadDraftIsValid(
-          draft
+            draft
         )
-      ) {
+    )
+    {
         return null;
-      }
+    }
 
-      const now =
+    const now =
         new Date()
-          .toISOString();
+            .toISOString();
 
-      const title =
+    const title =
         String(
-          draft.filename
+            draft.filename
           || 'Uploaded photo'
         )
-          .replace(
-            /\.[^.]+$/,
-            ''
-          )
+            .replace(
+                /\.[^.]+$/,
+                ''
+            )
         || 'Uploaded photo';
 
-      const photo = {
+    const photo = {
         id:
           uniquePhotoUploadId(
-            idPrefix
+              idPrefix
           ),
 
         projectId,
@@ -1385,41 +1460,41 @@
           draft.sizeBytes,
 
         placeholder: {
-          pattern:
+            pattern:
             PHOTO_ABSTRACT_PATTERNS[
-              (
-                sampleData.media.length
+                (
+                    sampleData.media.length
                 + 1
-              )
+                )
               % PHOTO_ABSTRACT_PATTERNS
                   .length
             ],
 
-          palette:
+            palette:
             PHOTO_ABSTRACT_PALETTES[
-              (
-                sampleData.media.length
+                (
+                    sampleData.media.length
                 + 2
-              )
+                )
               % PHOTO_ABSTRACT_PALETTES
                   .length
             ],
 
-          seed:
+            seed:
             Math.max(
-              1,
-              Date.now() % 100000
+                1,
+                Date.now() % 100000
             )
         },
 
         personIds:
           [
-            ...new Set(
-              personIds
-            )
+              ...new Set(
+                  personIds
+              )
           ].filter(personId =>
-            getPerson(personId)
-              ?.projectId
+              getPerson(personId)
+                  ?.projectId
               === projectId
           ),
 
@@ -1428,7 +1503,7 @@
 
         date:
           emptyGenealogyDate(
-            'Exact date'
+              'Exact date'
           ),
 
         placeId:
@@ -1448,23 +1523,25 @@
 
         updatedAt:
           now
-      };
+    };
 
-      sampleData.media.push(
+    sampleData.media.push(
         photo
-      );
+    );
 
-      return photo;
-    }
+    return photo;
+}
 
-    function ensurePhotoPersonTag(photo, person) {
-      photo.personIds = [...new Set([...(photo.personIds || []), person.id])]
+function ensurePhotoPersonTag(photo, person)
+{
+    photo.personIds = [...new Set([...(photo.personIds || []), person.id])]
         .filter(personId => getPerson(personId)?.projectId === photo.projectId);
-      photo.updatedAt = new Date().toISOString();
-    }
+    photo.updatedAt = new Date().toISOString();
+}
 
-    function resetPersonPhotosAdderState() {
-      state.personPhotosAdder = {
+function resetPersonPhotosAdderState()
+{
+    state.personPhotosAdder = {
         open: false,
         personId: null,
         sourceTab: 'project',
@@ -1474,150 +1551,162 @@
         uploadErrors: [],
         nested: false,
         draftTarget: null
-      };
-    }
+    };
+}
 
-    function personPhotosAdderPerson() {
-      if (state.personPhotosAdder?.draftTarget?.person) {
+function personPhotosAdderPerson()
+{
+    if (state.personPhotosAdder?.draftTarget?.person)
+    {
         return state.personPhotosAdder.draftTarget.person;
-      }
-
-      return getPerson(
-        state.personPhotosAdder?.personId
-      ) || null;
     }
 
-    function personPhotosAdderPhotoAlreadyAdded(
-      photo
-    ) {
-      const draftTarget =
-        state.personPhotosAdder
-          ?.draftTarget;
+    return getPerson(
+        state.personPhotosAdder?.personId
+    ) || null;
+}
 
-      if (draftTarget) {
+function personPhotosAdderPhotoAlreadyAdded(
+    photo
+)
+{
+    const draftTarget =
+        state.personPhotosAdder
+            ?.draftTarget;
+
+    if (draftTarget)
+    {
         return (
-          draftTarget
-            .existingPhotoIds
+            draftTarget
+                .existingPhotoIds
           || []
         ).includes(
-          photo?.id
+            photo?.id
         );
-      }
+    }
 
-      const person =
+    const person =
         personPhotosAdderPerson();
 
-      return photoIsTaggedWithPerson(
+    return photoIsTaggedWithPerson(
         photo,
         person
-      );
-    }
+    );
+}
 
-    function personPhotosAdderSelectedIds() {
-      return new Set(
+function personPhotosAdderSelectedIds()
+{
+    return new Set(
         state.personPhotosAdder
-          ?.selectedProjectPhotoIds
+            ?.selectedProjectPhotoIds
           || []
-      );
-    }
+    );
+}
 
-    function personPhotosAdderPendingCount() {
-      return (
+function personPhotosAdderPendingCount()
+{
+    return (
         personPhotosAdderSelectedIds().size
         + (
-          state.personPhotosAdder
-            ?.uploadDrafts?.length
+            state.personPhotosAdder
+                ?.uploadDrafts?.length
           || 0
         )
-      );
-    }
+    );
+}
 
-    function personPhotosAdderCountLabel(
-      count = personPhotosAdderPendingCount()
-    ) {
-      return `${count} ${
+function personPhotosAdderCountLabel(
+    count = personPhotosAdderPendingCount()
+)
+{
+    return `${count} ${
         count === 1
-          ? 'photo'
-          : 'photos'
-      } selected`;
-    }
+            ? 'photo'
+            : 'photos'
+    } selected`;
+}
 
-    function personPhotosAdderActionLabel(
-      count = personPhotosAdderPendingCount()
-    ) {
-      if (!count) {
+function personPhotosAdderActionLabel(
+    count = personPhotosAdderPendingCount()
+)
+{
+    if (!count)
+    {
         return 'Add photos';
-      }
-
-      return `Add ${count} ${
-        count === 1
-          ? 'photo'
-          : 'photos'
-      }`;
     }
 
-    function personPhotosAdderProjectPhotos() {
-      const person =
+    return `Add ${count} ${
+        count === 1
+            ? 'photo'
+            : 'photos'
+    }`;
+}
+
+function personPhotosAdderProjectPhotos()
+{
+    const person =
         personPhotosAdderPerson();
 
-      if (!person) {
+    if (!person)
+    {
         return [];
-      }
+    }
 
-      const query = String(
+    const query = String(
         state.personPhotosAdder.search || ''
-      )
+    )
         .trim()
         .toLowerCase();
 
-      return getProjectPhotos(
+    return getProjectPhotos(
         person.projectId
-      )
+    )
         .filter(photo =>
-          !query
+            !query
           || photoSearchText(photo)
-            .includes(query)
+              .includes(query)
         )
         .map((photo, index) => ({
-          photo,
-          index,
-          alreadyTagged:
+            photo,
+            index,
+            alreadyTagged:
             (
-              photo.personIds || []
+                photo.personIds || []
             ).includes(person.id)
         }))
         .sort((a, b) =>
-          Number(a.alreadyTagged)
+            Number(a.alreadyTagged)
           - Number(b.alreadyTagged)
           || a.index - b.index
         )
         .map(item => item.photo);
-    }
+}
 
-    function renderPersonPhotosAdderCandidate(
-      photo,
-      person
-    ) {
-      const alreadyTagged =
+function renderPersonPhotosAdderCandidate(
+    photo,
+    person
+)
+{
+    const alreadyTagged =
         (
-          photo.personIds || []
+            photo.personIds || []
         ).includes(person.id);
 
-      const selected =
+    const selected =
         !alreadyTagged
         && personPhotosAdderSelectedIds()
-          .has(photo.id);
+            .has(photo.id);
 
-      const title =
+    const title =
         photo.title
         || photo.filename
         || 'Untitled photo';
 
-      const date =
+    const date =
         formatPhotoDate(photo)
         || 'Unknown date';
 
-      return `
+    return `
         <button
           class="
             person-photo-candidate
@@ -1625,38 +1714,38 @@
           "
           type="button"
           data-person-photos-adder-candidate="${
-            escapeHtml(photo.id)
-          }"
+                escapeHtml(photo.id)
+            }"
           aria-pressed="${selected}"
           aria-label="${escapeHtml(
-            alreadyTagged
-              ? `${title} is already tagged with this person`
-              : `${
-                  selected
-                    ? 'Deselect'
-                    : 'Select'
-                } ${title}`
-          )}"
+                alreadyTagged
+                    ? `${title} is already tagged with this person`
+                    : `${
+                        selected
+                            ? 'Deselect'
+                            : 'Select'
+                    } ${title}`
+            )}"
           ${
-            alreadyTagged
-              ? 'disabled aria-disabled="true"'
-              : ''
-          }>
+                alreadyTagged
+                    ? 'disabled aria-disabled="true"'
+                    : ''
+            }>
 
           <span
             class="
               person-photo-candidate-preview
             ">
             ${renderPhotoThumbnail(
-              photo,
-              {
-                label: title
-              }
+                photo,
+                {
+                    label: title
+                }
             )}
 
             ${
-              alreadyTagged
-                ? `
+                alreadyTagged
+                    ? `
                   <span
                     class="
                       person-photos-adder-status-badge
@@ -1664,7 +1753,7 @@
                     Already added
                   </span>
                 `
-                : ''
+                    : ''
             }
 
             <span
@@ -1692,25 +1781,28 @@
           </span>
         </button>
       `;
-    }
+}
 
-    function renderPersonPhotosAdderProjectResults() {
-      const person =
+function renderPersonPhotosAdderProjectResults()
+{
+    const person =
         personPhotosAdderPerson();
 
-      if (!person) {
+    if (!person)
+    {
         return '';
-      }
+    }
 
-      const allProjectPhotos =
+    const allProjectPhotos =
         getProjectPhotos(
-          person.projectId
+            person.projectId
         );
 
-      const photos =
+    const photos =
         personPhotosAdderProjectPhotos();
 
-      if (!allProjectPhotos.length) {
+    if (!allProjectPhotos.length)
+    {
         return `
           <div class="person-photo-empty">
             <div>
@@ -1727,9 +1819,10 @@
             </div>
           </div>
         `;
-      }
+    }
 
-      if (!photos.length) {
+    if (!photos.length)
+    {
         return `
           <div class="person-photo-empty">
             <div>
@@ -1758,28 +1851,29 @@
             </div>
           </div>
         `;
-      }
+    }
 
-      return `
+    return `
         <div
           class="
             person-photo-candidate-grid
             person-photos-adder-grid
           ">
           ${photos
-            .map(photo =>
-              renderPersonPhotosAdderCandidate(
-                photo,
-                person
-              )
-            )
-            .join('')}
+                .map(photo =>
+                    renderPersonPhotosAdderCandidate(
+                        photo,
+                        person
+                    )
+                )
+                .join('')}
         </div>
       `;
-    }
+}
 
-    function renderPersonPhotosAdderProjectPanel() {
-      return `
+function renderPersonPhotosAdderProjectPanel()
+{
+    return `
         <div
           class="
             person-photo-project-panel
@@ -1800,8 +1894,8 @@
                 data-person-photos-adder-search
                 type="search"
                 value="${escapeHtml(
-                  state.personPhotosAdder
-                    .search
+                    state.personPhotosAdder
+                        .search
                 )}"
                 placeholder="Search project photos"
                 autocomplete="off">
@@ -1817,15 +1911,16 @@
           </div>
         </div>
       `;
-    }
+}
 
-    function personPhotosAdderDraftAsPhoto(
-      draft
-    ) {
-      const person =
+function personPhotosAdderDraftAsPhoto(
+    draft
+)
+{
+    const person =
         personPhotosAdderPerson();
 
-      return {
+    return {
         id: draft.id,
         projectId:
           person?.projectId || '',
@@ -1843,21 +1938,21 @@
         sizeBytes: draft.sizeBytes,
 
         placeholder: {
-          pattern: 'orbit',
-          palette: 'moss',
-          seed: draft.seed || 97
+            pattern: 'orbit',
+            palette: 'moss',
+            seed: draft.seed || 97
         },
 
         personIds:
           person?.id
-            ? [person.id]
-            : [],
+              ? [person.id]
+              : [],
 
         albumIds: [],
 
         date:
           emptyGenealogyDate(
-            'Exact date'
+              'Exact date'
           ),
 
         placeId: null,
@@ -1866,23 +1961,24 @@
         favorite: false,
         createdAt: '',
         updatedAt: ''
-      };
-    }
+    };
+}
 
 
-    function renderPersonPhotosAdderUploadDraft(
-      draft
-    ) {
-      const photo =
+function renderPersonPhotosAdderUploadDraft(
+    draft
+)
+{
+    const photo =
         personPhotosAdderDraftAsPhoto(
-          draft
+            draft
         );
 
-      const title =
+    const title =
         draft.filename
         || 'Uploaded photo';
 
-      return `
+    return `
         <article
           class="
             person-photo-candidate
@@ -1894,10 +1990,10 @@
               person-photo-candidate-preview
             ">
             ${renderPhotoThumbnail(
-              photo,
-              {
-                label: title
-              }
+                photo,
+                {
+                    label: title
+                }
             )}
 
             <button
@@ -1906,11 +2002,11 @@
               "
               type="button"
               data-person-photos-adder-remove-upload="${
-                escapeHtml(draft.id)
-              }"
+                    escapeHtml(draft.id)
+                }"
               aria-label="${escapeHtml(
-                `Remove ${title}`
-              )}"
+                    `Remove ${title}`
+                )}"
               title="Remove upload">
               ${icon.close}
             </button>
@@ -1926,32 +2022,34 @@
 
             <span>
               ${escapeHtml(
-                `${
-                  draft.width
-                } × ${
-                  draft.height
-                } · ${
-                  formatMediaBytes(
-                    draft.sizeBytes
-                  )
-                }`
-              )}
+                    `${
+                        draft.width
+                    } × ${
+                        draft.height
+                    } · ${
+                        formatMediaBytes(
+                            draft.sizeBytes
+                        )
+                    }`
+                )}
             </span>
           </span>
         </article>
       `;
+}
+
+function renderPersonPhotosAdderUploadErrors()
+{
+    const errors =
+        state.personPhotosAdder
+            .uploadErrors || [];
+
+    if (!errors.length)
+    {
+        return '';
     }
 
-    function renderPersonPhotosAdderUploadErrors() {
-      const errors =
-        state.personPhotosAdder
-          .uploadErrors || [];
-
-      if (!errors.length) {
-        return '';
-      }
-
-      return `
+    return `
         <div
           class="
             person-photos-adder-upload-errors
@@ -1959,39 +2057,40 @@
           role="alert">
           <strong>
             ${
-              errors.length === 1
-                ? 'One file could not be added:'
-                : `${errors.length} files could not be added:`
+                errors.length === 1
+                    ? 'One file could not be added:'
+                    : `${errors.length} files could not be added:`
             }
           </strong>
 
           <ul>
             ${errors
-              .map(error => `
+                .map(error => `
                 <li>
                   ${escapeHtml(error)}
                 </li>
               `)
-              .join('')}
+                .join('')}
           </ul>
         </div>
       `;
-    }
+}
 
-    function renderPersonPhotosAdderUploadPanel() {
-      const drafts =
+function renderPersonPhotosAdderUploadPanel()
+{
+    const drafts =
         state.personPhotosAdder
-          .uploadDrafts || [];
+            .uploadDrafts || [];
 
-      const maxMegabytes =
+    const maxMegabytes =
         Math.round(
-          PHOTO_UPLOAD_MAX_BYTES
+            PHOTO_UPLOAD_MAX_BYTES
           / (
-            1024 * 1024
+              1024 * 1024
           )
         );
 
-      return `
+    return `
         <div
           class="
             person-photos-adder-upload-panel
@@ -2002,17 +2101,17 @@
               person-photo-upload-dropzone
               person-photos-adder-upload-dropzone
               ${drafts.length
-                ? 'has-drafts'
-                : ''}
+                    ? 'has-drafts'
+                    : ''}
             "
             data-person-photos-adder-dropzone>
 
             <input
               type="file"
               accept="${
-                PHOTO_UPLOAD_ALLOWED_TYPES
-                  .join(',')
-              }"
+                    PHOTO_UPLOAD_ALLOWED_TYPES
+                        .join(',')
+                }"
               multiple
               data-person-photos-adder-file
               hidden>
@@ -2025,9 +2124,9 @@
 
               <strong>
                 ${
-                  drafts.length
-                    ? 'Add more photos'
-                    : 'Drop photos here'
+                    drafts.length
+                        ? 'Add more photos'
+                        : 'Drop photos here'
                 }
               </strong>
 
@@ -2048,31 +2147,32 @@
           ${renderPersonPhotosAdderUploadErrors()}
 
           ${
-            drafts.length
-              ? `
+                drafts.length
+                    ? `
                 <div
                   class="
                     person-photo-candidate-grid
                     person-photos-adder-upload-grid
                   ">
                   ${drafts
-                    .map(
-                      renderPersonPhotosAdderUploadDraft
-                    )
-                    .join('')}
+                        .map(
+                            renderPersonPhotosAdderUploadDraft
+                        )
+                        .join('')}
                 </div>
               `
-              : ''
-          }
+                    : ''
+            }
         </div>
       `;
-    }
+}
 
-    function renderPersonPhotosAdderFooter() {
-      const count =
+function renderPersonPhotosAdderFooter()
+{
+    const count =
         personPhotosAdderPendingCount();
 
-      return `
+    return `
         <div
           class="
             modal-footer
@@ -2084,9 +2184,9 @@
             "
             data-person-photos-adder-count>
             ${escapeHtml(
-              personPhotosAdderCountLabel(
-                count
-              )
+                personPhotosAdderCountLabel(
+                    count
+                )
             )}
           </span>
 
@@ -2107,47 +2207,49 @@
               data-person-photos-adder-save
               ${count ? '' : 'disabled'}>
               ${escapeHtml(
-                personPhotosAdderActionLabel(
-                  count
-                )
-              )}
+                    personPhotosAdderActionLabel(
+                        count
+                    )
+                )}
             </button>
           </div>
         </div>
       `;
-    }
+}
 
-    function renderPersonPhotosAdderModal() {
-      const person =
+function renderPersonPhotosAdderModal()
+{
+    const person =
         personPhotosAdderPerson();
 
-      if (!person) {
+    if (!person)
+    {
         resetPersonPhotosAdderState();
         return;
-      }
+    }
 
-      const sourceTab =
+    const sourceTab =
         state.personPhotosAdder
-          .sourceTab === 'upload'
-          ? 'upload'
-          : 'project';
+            .sourceTab === 'upload'
+            ? 'upload'
+            : 'project';
 
-      state.personPhotosAdder
+    state.personPhotosAdder
         .sourceTab = sourceTab;
 
-      const name =
+    const name =
         person.names?.display
         || 'Person';
 
-      const presentModal =
+    const presentModal =
         state.personPhotosAdder.nested
         && !modalBackdrop.querySelector(
-          '[data-person-photos-adder]'
+            '[data-person-photos-adder]'
         )
-          ? openNestedModal
-          : openModal;
+            ? openNestedModal
+            : openModal;
 
-      presentModal(`
+    presentModal(`
         <div
           class="
             modal
@@ -2204,7 +2306,7 @@
                 role="tab"
                 data-person-photos-adder-tab="project"
                 aria-selected="${
-                  sourceTab === 'project'
+                    sourceTab === 'project'
                 }">
                 Project photos
               </button>
@@ -2214,7 +2316,7 @@
                 role="tab"
                 data-person-photos-adder-tab="upload"
                 aria-selected="${
-                  sourceTab === 'upload'
+                    sourceTab === 'upload'
                 }">
                 Upload new
               </button>
@@ -2223,15 +2325,15 @@
             <div
               role="tabpanel"
               aria-label="${
-                sourceTab === 'project'
-                  ? 'Project photos'
-                  : 'Upload new photos'
-              }">
+                    sourceTab === 'project'
+                        ? 'Project photos'
+                        : 'Upload new photos'
+                }">
               ${
-                sourceTab === 'project'
-                  ? renderPersonPhotosAdderProjectPanel()
-                  : renderPersonPhotosAdderUploadPanel()
-              }
+                    sourceTab === 'project'
+                        ? renderPersonPhotosAdderProjectPanel()
+                        : renderPersonPhotosAdderUploadPanel()
+                }
             </div>
           </div>
 
@@ -2239,266 +2341,289 @@
         </div>
       `);
 
-      bindPersonPhotosAdderModal();
-    }
+    bindPersonPhotosAdderModal();
+}
 
-    function updatePersonPhotosAdderProjectResults() {
-      const host =
+function updatePersonPhotosAdderProjectResults()
+{
+    const host =
         modalBackdrop.querySelector(
-          '[data-person-photos-adder-project-results]'
+            '[data-person-photos-adder-project-results]'
         );
 
-      if (!host) {
+    if (!host)
+    {
         return;
-      }
+    }
 
-      host.innerHTML =
+    host.innerHTML =
         renderPersonPhotosAdderProjectResults();
 
-      localizeUI(host);
-    }
+    localizeUI(host);
+}
 
-    function refreshPersonPhotosAdderSelectionUi() {
-      const modal =
+function refreshPersonPhotosAdderSelectionUi()
+{
+    const modal =
         modalBackdrop.querySelector(
-          '[data-person-photos-adder]'
+            '[data-person-photos-adder]'
         );
 
-      if (!modal) {
+    if (!modal)
+    {
         return;
-      }
+    }
 
-      const selectedIds =
+    const selectedIds =
         personPhotosAdderSelectedIds();
 
-      modal
+    modal
         .querySelectorAll(
-          '[data-person-photos-adder-candidate]'
+            '[data-person-photos-adder-candidate]'
         )
-        .forEach(card => {
-          const selected =
-            selectedIds.has(
-              card.dataset
-                .personPhotosAdderCandidate
+        .forEach(card =>
+        {
+            const selected =
+                selectedIds.has(
+                    card.dataset
+                        .personPhotosAdderCandidate
+                );
+
+            card.setAttribute(
+                'aria-pressed',
+                String(selected)
             );
 
-          card.setAttribute(
-            'aria-pressed',
-            String(selected)
-          );
-
-          const title =
-            card.querySelector(
-              '.person-photo-candidate-copy strong'
-            )?.textContent
+            const title =
+                card.querySelector(
+                    '.person-photo-candidate-copy strong'
+                )?.textContent
             || 'photo';
 
-          card.setAttribute(
-            'aria-label',
-            `${
-              selected
-                ? 'Deselect'
-                : 'Select'
-            } ${title}`
-          );
-
-          const check =
-            card.querySelector(
-              '[data-person-photos-adder-check]'
+            card.setAttribute(
+                'aria-label',
+                `${
+                    selected
+                        ? 'Deselect'
+                        : 'Select'
+                } ${title}`
             );
 
-          if (check) {
-            check.hidden = !selected;
-          }
+            const check =
+                card.querySelector(
+                    '[data-person-photos-adder-check]'
+                );
+
+            if (check)
+            {
+                check.hidden = !selected;
+            }
         });
 
-      const count =
+    const count =
         personPhotosAdderPendingCount();
 
-      const countElement =
+    const countElement =
         modal.querySelector(
-          '[data-person-photos-adder-count]'
+            '[data-person-photos-adder-count]'
         );
 
-      if (countElement) {
+    if (countElement)
+    {
         countElement.textContent =
-          translateText(
-            personPhotosAdderCountLabel(
-              count
-            )
-          );
-      }
+            translateText(
+                personPhotosAdderCountLabel(
+                    count
+                )
+            );
+    }
 
-      const saveButton =
+    const saveButton =
         modal.querySelector(
-          '[data-person-photos-adder-save]'
+            '[data-person-photos-adder-save]'
         );
 
-      if (saveButton) {
+    if (saveButton)
+    {
         saveButton.disabled =
-          count === 0;
+            count === 0;
 
         saveButton.textContent =
-          translateText(
-            personPhotosAdderActionLabel(
-              count
-            )
-          );
-      }
+            translateText(
+                personPhotosAdderActionLabel(
+                    count
+                )
+            );
+    }
+}
+
+async function processPersonPhotosAdderFiles(
+    fileList
+)
+{
+    if (
+        !state.personPhotosAdder.open
+    )
+    {
+        return;
     }
 
-    async function processPersonPhotosAdderFiles(
-      fileList
-    ) {
-      if (
-        !state.personPhotosAdder.open
-      ) {
-        return;
-      }
-
-      const personId =
+    const personId =
         state.personPhotosAdder.personId;
 
-      const knownSignatures =
+    const knownSignatures =
         new Set(
-          (
-            state.personPhotosAdder
-              .uploadDrafts || []
-          ).map(draft =>
-            draft.signature
-          )
+            (
+                state.personPhotosAdder
+                    .uploadDrafts || []
+            ).map(draft =>
+                draft.signature
+            )
         );
 
-      const files =
+    const files =
         Array.from(
-          fileList || []
-        ).filter(file => {
-          const signature =
-            photoUploadFileSignature(
-              file
+            fileList || []
+        ).filter(file =>
+        {
+            const signature =
+                photoUploadFileSignature(
+                    file
+                );
+
+            if (
+                knownSignatures.has(
+                    signature
+                )
+            )
+            {
+                return false;
+            }
+
+            knownSignatures.add(
+                signature
             );
 
-          if (
-            knownSignatures.has(
-              signature
-            )
-          ) {
-            return false;
-          }
-
-          knownSignatures.add(
-            signature
-          );
-
-          return true;
+            return true;
         });
 
-      if (!files.length) {
+    if (!files.length)
+    {
         return;
-      }
-
-      const results =
-        await Promise.all(
-          files.map(async file => {
-            try {
-              return {
-                draft:
-                  await createPhotoUploadDraft(
-                    file,
-                    {
-                      idPrefix:
-                        'person-photo-upload-draft'
-                    }
-                  ),
-                error: ''
-              };
-            } catch (error) {
-              return {
-                draft: null,
-
-                error:
-                  error?.message
-                  || `${
-                    file.name || 'File'
-                  } — could not be read`
-              };
-            }
-          })
-        );
-
-      if (
-        !state.personPhotosAdder.open
-        || state.personPhotosAdder
-          .personId !== personId
-      ) {
-        return;
-      }
-
-      const drafts =
-        results
-          .map(result =>
-            result.draft
-          )
-          .filter(Boolean);
-
-      state.personPhotosAdder
-        .uploadDrafts = [
-          ...state.personPhotosAdder
-            .uploadDrafts,
-          ...drafts
-        ];
-
-      state.personPhotosAdder
-        .uploadErrors = results
-          .map(result =>
-            result.error
-          )
-          .filter(Boolean);
-
-      renderPersonPhotosAdderModal();
     }
 
-    function renderAfterPersonConnectedResourcesChanged() {
-      if (
+    const results =
+        await Promise.all(
+            files.map(async file =>
+            {
+                try
+                {
+                    return {
+                        draft:
+                  await createPhotoUploadDraft(
+                      file,
+                      {
+                          idPrefix:
+                        'person-photo-upload-draft'
+                      }
+                  ),
+                        error: ''
+                    };
+                }
+                catch (error)
+                {
+                    return {
+                        draft: null,
+
+                        error:
+                  error?.message
+                  || `${
+                      file.name || 'File'
+                  } — could not be read`
+                    };
+                }
+            })
+        );
+
+    if (
+        !state.personPhotosAdder.open
+        || state.personPhotosAdder
+            .personId !== personId
+    )
+    {
+        return;
+    }
+
+    const drafts =
+        results
+            .map(result =>
+                result.draft
+            )
+            .filter(Boolean);
+
+    state.personPhotosAdder
+        .uploadDrafts = [
+            ...state.personPhotosAdder
+                .uploadDrafts,
+            ...drafts
+        ];
+
+    state.personPhotosAdder
+        .uploadErrors = results
+            .map(result =>
+                result.error
+            )
+            .filter(Boolean);
+
+    renderPersonPhotosAdderModal();
+}
+
+function renderAfterPersonConnectedResourcesChanged()
+{
+    if (
         state.activeModule
         === 'Family Tree'
-      ) {
+    )
+    {
         /*
         * Only the person inspector changed.
         * Preserve the tree canvas and its
         * current viewport.
         */
         rerenderPersonSidebarContext(
-          'tree'
+            'tree'
         );
 
         return;
-      }
+    }
 
-      if (
+    if (
         state.activeModule
         === 'People'
-      ) {
+    )
+    {
         if (
-          state.peopleView
+            state.peopleView
           === 'profile'
-        ) {
-          /*
+        )
+        {
+            /*
           * Profile needs its Photos card and
           * count rebuilt, but its page scroll
           * should remain stable.
           */
-          const scrollTop =
-            main.scrollTop;
+            const scrollTop =
+                main.scrollTop;
 
-          renderPeople();
+            renderPeople();
 
-          requestAnimationFrame(() => {
-            main.scrollTop =
-              scrollTop;
-          });
+            requestAnimationFrame(() =>
+            {
+                main.scrollTop =
+                    scrollTop;
+            });
 
-          return;
+            return;
         }
 
         /*
@@ -2508,796 +2633,866 @@
         * preserves table scroll and focus.
         */
         rerenderPersonSidebarContext(
-          'people'
+            'people'
         );
 
         return;
-      }
-
-      render();
     }
-    function commitPersonPhotosAdder() {
-      const person =
+
+    render();
+}
+function commitPersonPhotosAdder()
+{
+    const person =
         personPhotosAdderPerson();
 
-      if (!person) return;
+    if (!person) return;
 
-      const draftTarget =
+    const draftTarget =
         state.personPhotosAdder.draftTarget;
 
-      const selectedProjectPhotos = [
+    const selectedProjectPhotos = [
         ...personPhotosAdderSelectedIds()
-      ]
+    ]
         .map(photoId =>
-          getPhoto(photoId, {
-            projectId: person.projectId
-          })
+            getPhoto(photoId, {
+                projectId: person.projectId
+            })
         )
         .filter(photo =>
-          photo
+            photo
           && !personPhotosAdderPhotoAlreadyAdded(photo)
         );
 
-      const uploadDrafts = [
+    const uploadDrafts = [
         ...(state.personPhotosAdder.uploadDrafts || [])
-      ];
+    ];
 
-      if (
+    if (
         uploadDrafts.some(
-          draft =>
-            !photoUploadDraftIsValid(draft)
+            draft =>
+                !photoUploadDraftIsValid(draft)
         )
-      ) {
+    )
+    {
         state.personPhotosAdder.uploadErrors = [
-          'One or more uploaded photos are no longer valid. Remove them and choose the files again.'
+            'One or more uploaded photos are no longer valid. Remove them and choose the files again.'
         ];
 
         state.personPhotosAdder.sourceTab =
-          'upload';
+            'upload';
 
         renderPersonPhotosAdderModal();
         return;
-      }
+    }
 
-      const totalAdded =
+    const totalAdded =
         selectedProjectPhotos.length
         + uploadDrafts.length;
 
-      if (!totalAdded) return;
+    if (!totalAdded) return;
 
-      if (draftTarget) {
+    if (draftTarget)
+    {
         const uploadedPhotos =
-          uploadDrafts
-            .map(draft =>
-              createMediaFromPhotoUpload({
-                projectId:
+            uploadDrafts
+                .map(draft =>
+                    createMediaFromPhotoUpload({
+                        projectId:
                   person.projectId,
 
-                draft,
+                        draft,
 
-                personIds: [],
+                        personIds: [],
 
-                idPrefix:
+                        idPrefix:
                   'photo-person-draft'
-              })
-            )
-            .filter(Boolean);
+                    })
+                )
+                .filter(Boolean);
 
         const nextPhotoIds = [
-          ...new Set([
-            ...(draftTarget.existingPhotoIds || []),
+            ...new Set([
+                ...(draftTarget.existingPhotoIds || []),
 
-            ...selectedProjectPhotos.map(
-              photo => photo.id
-            ),
+                ...selectedProjectPhotos.map(
+                    photo => photo.id
+                ),
 
-            ...uploadedPhotos.map(
-              photo => photo.id
-            )
-          ])
+                ...uploadedPhotos.map(
+                    photo => photo.id
+                )
+            ])
         ];
 
         const onSave =
-          draftTarget.onSave;
+            draftTarget.onSave;
 
         closeModal({
-          force: true
+            force: true
         });
 
         onSave?.(nextPhotoIds);
         return;
-      }
+    }
 
-      selectedProjectPhotos.forEach(photo => {
+    selectedProjectPhotos.forEach(photo =>
+    {
         ensurePhotoPersonTag(
-          photo,
-          person
+            photo,
+            person
         );
-      });
+    });
 
-      uploadDrafts.forEach(draft => {
+    uploadDrafts.forEach(draft =>
+    {
         createMediaFromPhotoUpload({
-          projectId:
+            projectId:
             person.projectId,
 
-          draft,
+            draft,
 
-          personIds: [
-            person.id
-          ],
+            personIds: [
+                person.id
+            ],
 
-          idPrefix:
+            idPrefix:
             `photo-${person.id}`
         });
-      });
+    });
 
-      markPersonUpdated(person);
+    markPersonUpdated(person);
 
-      const name =
+    const name =
         person.names?.display
         || 'Person';
 
-      closeModal({
+    closeModal({
         force: true
-      });
+    });
 
-      renderAfterPersonConnectedResourcesChanged();
+    renderAfterPersonConnectedResourcesChanged();
 
-      showToast(
+    showToast(
         `${totalAdded} ${
-          totalAdded === 1
-            ? 'photo'
-            : 'photos'
+            totalAdded === 1
+                ? 'photo'
+                : 'photos'
         } added to ${name}.`
-      );
+    );
+}
+
+function bindPersonPhotosAdderModal()
+{
+    const modal =
+        modalBackdrop.querySelector(
+            '[data-person-photos-adder]'
+        );
+
+    if (!modal)
+    {
+        return;
     }
 
-    function bindPersonPhotosAdderModal() {
-      const modal =
-        modalBackdrop.querySelector(
-          '[data-person-photos-adder]'
-        );
-
-      if (!modal) {
-        return;
-      }
-
-      const tabs = [
+    const tabs = [
         ...modal.querySelectorAll(
-          '[data-person-photos-adder-tab]'
+            '[data-person-photos-adder-tab]'
         )
-      ];
+    ];
 
-      tabs.forEach(
-        (tab, index) => {
-          tab.addEventListener(
-            'click',
-            () => {
-              const nextTab =
-                String(
-                  tab.dataset
-                    .personPhotosAdderTab
+    tabs.forEach(
+        (tab, index) =>
+        {
+            tab.addEventListener(
+                'click',
+                () =>
+                {
+                    const nextTab =
+                        String(
+                            tab.dataset
+                                .personPhotosAdderTab
                   || ''
-                ).trim();
+                        ).trim();
 
-              if (
-                ![
-                  'project',
-                  'upload'
-                ].includes(nextTab)
+                    if (
+                        ![
+                            'project',
+                            'upload'
+                        ].includes(nextTab)
                 || nextTab
                   === state
-                    .personPhotosAdder
-                    .sourceTab
-              ) {
-                return;
-              }
+                      .personPhotosAdder
+                      .sourceTab
+                    )
+                    {
+                        return;
+                    }
 
-              state.personPhotosAdder
-                .sourceTab = nextTab;
+                    state.personPhotosAdder
+                        .sourceTab = nextTab;
 
-              renderPersonPhotosAdderModal();
-            }
-          );
+                    renderPersonPhotosAdderModal();
+                }
+            );
 
-          tab.addEventListener(
-            'keydown',
-            event => {
-              if (
-                ![
-                  'ArrowLeft',
-                  'ArrowRight'
-                ].includes(event.key)
-              ) {
-                return;
-              }
+            tab.addEventListener(
+                'keydown',
+                event =>
+                {
+                    if (
+                        ![
+                            'ArrowLeft',
+                            'ArrowRight'
+                        ].includes(event.key)
+                    )
+                    {
+                        return;
+                    }
 
-              event.preventDefault();
+                    event.preventDefault();
 
-              const direction =
-                event.key
+                    const direction =
+                        event.key
                   === 'ArrowRight'
-                  ? 1
-                  : -1;
+                            ? 1
+                            : -1;
 
-              const nextIndex =
-                (
-                  index
+                    const nextIndex =
+                        (
+                            index
                   + direction
                   + tabs.length
-                )
+                        )
                 % tabs.length;
 
-              const nextTab =
-                String(
-                  tabs[nextIndex]
-                    .dataset
-                    .personPhotosAdderTab
+                    const nextTab =
+                        String(
+                            tabs[nextIndex]
+                                .dataset
+                                .personPhotosAdderTab
                   || ''
-                ).trim();
+                        ).trim();
 
-              if (
-                ![
-                  'project',
-                  'upload'
-                ].includes(nextTab)
-              ) {
-                return;
-              }
-
-              state.personPhotosAdder
-                .sourceTab = nextTab;
-
-              renderPersonPhotosAdderModal();
-
-              requestAnimationFrame(
-                () => {
-                  modalBackdrop
-                    .querySelector(
-                      `[data-person-photos-adder-tab="${
-                        CSS.escape(
-                          nextTab
-                        )
-                      }"]`
+                    if (
+                        ![
+                            'project',
+                            'upload'
+                        ].includes(nextTab)
                     )
-                    ?.focus();
-                }
-              );
-            }
-          );
-        }
-      );
+                    {
+                        return;
+                    }
 
-      modal
+                    state.personPhotosAdder
+                        .sourceTab = nextTab;
+
+                    renderPersonPhotosAdderModal();
+
+                    requestAnimationFrame(
+                        () =>
+                        {
+                            modalBackdrop
+                                .querySelector(
+                                    `[data-person-photos-adder-tab="${
+                                        CSS.escape(
+                                            nextTab
+                                        )
+                                    }"]`
+                                )
+                                ?.focus();
+                        }
+                    );
+                }
+            );
+        }
+    );
+
+    modal
         .querySelector(
-          '[data-person-photos-adder-search]'
+            '[data-person-photos-adder-search]'
         )
         ?.addEventListener(
-          'input',
-          event => {
-            state.personPhotosAdder
-              .search =
-              event.currentTarget.value;
+            'input',
+            event =>
+            {
+                state.personPhotosAdder
+                    .search =
+                        event.currentTarget.value;
 
-            updatePersonPhotosAdderProjectResults();
-          }
+                updatePersonPhotosAdderProjectResults();
+            }
         );
 
-      const fileInput =
+    const fileInput =
         modal.querySelector(
-          '[data-person-photos-adder-file]'
+            '[data-person-photos-adder-file]'
         );
 
-      modal
+    modal
         .querySelectorAll(
-          '[data-person-photos-adder-choose-files]'
+            '[data-person-photos-adder-choose-files]'
         )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              fileInput?.click();
-            }
-          );
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
+                {
+                    fileInput?.click();
+                }
+            );
         });
 
-      fileInput?.addEventListener(
+    fileInput?.addEventListener(
         'change',
-        () => {
-          processPersonPhotosAdderFiles(
-            fileInput.files
-          );
+        () =>
+        {
+            processPersonPhotosAdderFiles(
+                fileInput.files
+            );
         }
-      );
+    );
 
-      const dropzone =
+    const dropzone =
         modal.querySelector(
-          '[data-person-photos-adder-dropzone]'
+            '[data-person-photos-adder-dropzone]'
         );
 
-      if (dropzone) {
+    if (dropzone)
+    {
         [
-          'dragenter',
-          'dragover'
-        ].forEach(type => {
-          dropzone.addEventListener(
-            type,
-            event => {
-              event.preventDefault();
+            'dragenter',
+            'dragover'
+        ].forEach(type =>
+        {
+            dropzone.addEventListener(
+                type,
+                event =>
+                {
+                    event.preventDefault();
 
-              dropzone.classList.add(
-                'is-dragging'
-              );
-            }
-          );
+                    dropzone.classList.add(
+                        'is-dragging'
+                    );
+                }
+            );
         });
 
         [
-          'dragleave',
-          'drop'
-        ].forEach(type => {
-          dropzone.addEventListener(
-            type,
-            event => {
-              event.preventDefault();
+            'dragleave',
+            'drop'
+        ].forEach(type =>
+        {
+            dropzone.addEventListener(
+                type,
+                event =>
+                {
+                    event.preventDefault();
 
-              dropzone.classList.remove(
-                'is-dragging'
-              );
-            }
-          );
+                    dropzone.classList.remove(
+                        'is-dragging'
+                    );
+                }
+            );
         });
 
         dropzone.addEventListener(
-          'drop',
-          event => {
-            processPersonPhotosAdderFiles(
-              event.dataTransfer?.files
-            );
-          }
+            'drop',
+            event =>
+            {
+                processPersonPhotosAdderFiles(
+                    event.dataTransfer?.files
+                );
+            }
         );
-      }
+    }
 
-      modal.addEventListener(
+    modal.addEventListener(
         'click',
-        event => {
-          const candidate =
-            event.target.closest(
-              '[data-person-photos-adder-candidate]'
-            );
-
-          if (candidate) {
-            const photoId =
-              candidate.dataset
-                .personPhotosAdderCandidate;
-
-            const photo =
-              getPhoto(
-                photoId,
-                {
-                  projectId:
-                    personPhotosAdderPerson()
-                      ?.projectId
-                    || ''
-                }
-              );
-
-            const person =
-              personPhotosAdderPerson();
-
-            if (
-              !photo
-              || !person
-              || (
-                photo.personIds || []
-              ).includes(person.id)
-            ) {
-              return;
-            }
-
-            const selectedIds =
-              personPhotosAdderSelectedIds();
-
-            if (
-              selectedIds.has(photoId)
-            ) {
-              selectedIds.delete(
-                photoId
-              );
-            } else {
-              selectedIds.add(
-                photoId
-              );
-            }
-
-            state.personPhotosAdder
-              .selectedProjectPhotoIds = [
-                ...selectedIds
-              ];
-
-            refreshPersonPhotosAdderSelectionUi();
-            return;
-          }
-
-          const removeUpload =
-            event.target.closest(
-              '[data-person-photos-adder-remove-upload]'
-            );
-
-          if (removeUpload) {
-            const draftId =
-              removeUpload.dataset
-                .personPhotosAdderRemoveUpload;
-
-            state.personPhotosAdder
-              .uploadDrafts =
-              state.personPhotosAdder
-                .uploadDrafts
-                .filter(
-                  draft =>
-                    draft.id
-                    !== draftId
+        event =>
+        {
+            const candidate =
+                event.target.closest(
+                    '[data-person-photos-adder-candidate]'
                 );
 
-            state.personPhotosAdder
-              .uploadErrors = [];
+            if (candidate)
+            {
+                const photoId =
+                    candidate.dataset
+                        .personPhotosAdderCandidate;
 
-            renderPersonPhotosAdderModal();
-            return;
-          }
+                const photo =
+                    getPhoto(
+                        photoId,
+                        {
+                            projectId:
+                    personPhotosAdderPerson()
+                        ?.projectId
+                    || ''
+                        }
+                    );
 
-          if (
-            event.target.closest(
-              '[data-person-photos-adder-clear-search]'
-            )
-          ) {
-            state.personPhotosAdder
-              .search = '';
+                const person =
+                    personPhotosAdderPerson();
 
-            const searchInput =
-              modal.querySelector(
-                '[data-person-photos-adder-search]'
-              );
+                if (
+                    !photo
+              || !person
+              || (
+                  photo.personIds || []
+              ).includes(person.id)
+                )
+                {
+                    return;
+                }
 
-            if (searchInput) {
-              searchInput.value = '';
+                const selectedIds =
+                    personPhotosAdderSelectedIds();
+
+                if (
+                    selectedIds.has(photoId)
+                )
+                {
+                    selectedIds.delete(
+                        photoId
+                    );
+                }
+                else
+                {
+                    selectedIds.add(
+                        photoId
+                    );
+                }
+
+                state.personPhotosAdder
+                    .selectedProjectPhotoIds = [
+                        ...selectedIds
+                    ];
+
+                refreshPersonPhotosAdderSelectionUi();
+                return;
             }
 
-            updatePersonPhotosAdderProjectResults();
+            const removeUpload =
+                event.target.closest(
+                    '[data-person-photos-adder-remove-upload]'
+                );
 
-            searchInput?.focus({
-              preventScroll: true
-            });
+            if (removeUpload)
+            {
+                const draftId =
+                    removeUpload.dataset
+                        .personPhotosAdderRemoveUpload;
 
-            return;
-          }
+                state.personPhotosAdder
+                    .uploadDrafts =
+                        state.personPhotosAdder
+                            .uploadDrafts
+                            .filter(
+                                draft =>
+                                    draft.id
+                    !== draftId
+                            );
 
-          if (
-            event.target.closest(
-              '[data-person-photos-adder-show-upload]'
+                state.personPhotosAdder
+                    .uploadErrors = [];
+
+                renderPersonPhotosAdderModal();
+                return;
+            }
+
+            if (
+                event.target.closest(
+                    '[data-person-photos-adder-clear-search]'
+                )
             )
-          ) {
-            state.personPhotosAdder
-              .sourceTab = 'upload';
+            {
+                state.personPhotosAdder
+                    .search = '';
 
-            renderPersonPhotosAdderModal();
-            return;
-          }
+                const searchInput =
+                    modal.querySelector(
+                        '[data-person-photos-adder-search]'
+                    );
 
-          if (
-            event.target.closest(
-              '[data-person-photos-adder-save]'
+                if (searchInput)
+                {
+                    searchInput.value = '';
+                }
+
+                updatePersonPhotosAdderProjectResults();
+
+                searchInput?.focus({
+                    preventScroll: true
+                });
+
+                return;
+            }
+
+            if (
+                event.target.closest(
+                    '[data-person-photos-adder-show-upload]'
+                )
             )
-          ) {
-            commitPersonPhotosAdder();
-          }
+            {
+                state.personPhotosAdder
+                    .sourceTab = 'upload';
+
+                renderPersonPhotosAdderModal();
+                return;
+            }
+
+            if (
+                event.target.closest(
+                    '[data-person-photos-adder-save]'
+                )
+            )
+            {
+                commitPersonPhotosAdder();
+            }
         }
-      );
+    );
+}
+
+function openAddPhotosForPersonDraftModal({
+    projectId = currentProjectId(),
+    subjectLabel = 'New person',
+    existingPhotoIds = [],
+    onSave = null
+} = {})
+{
+    if (!projectId || typeof onSave !== 'function')
+    {
+        return;
     }
 
-    function openAddPhotosForPersonDraftModal({
-      projectId = currentProjectId(),
-      subjectLabel = 'New person',
-      existingPhotoIds = [],
-      onSave = null
-    } = {}) {
-      if (!projectId || typeof onSave !== 'function') {
-        return;
-      }
-
-      const validExistingIds = [
+    const validExistingIds = [
         ...new Set(existingPhotoIds || [])
-      ].filter(photoId =>
+    ].filter(photoId =>
         Boolean(
-          getPhoto(photoId, {
-            projectId
-          })
+            getPhoto(photoId, {
+                projectId
+            })
         )
-      );
+    );
 
-      resetPersonPhotosAdderState();
+    resetPersonPhotosAdderState();
 
-      Object.assign(
+    Object.assign(
         state.personPhotosAdder,
         {
-          open: true,
-          nested: true,
-          personId: null,
-          sourceTab:
+            open: true,
+            nested: true,
+            personId: null,
+            sourceTab:
             getProjectPhotos(projectId).length
-              ? 'project'
-              : 'upload',
+                ? 'project'
+                : 'upload',
 
-          draftTarget: {
-            existingPhotoIds:
+            draftTarget: {
+                existingPhotoIds:
               validExistingIds,
 
-            onSave,
+                onSave,
 
-            person: {
-              id: '',
-              projectId,
-              names: {
-                display: subjectLabel
-              }
+                person: {
+                    id: '',
+                    projectId,
+                    names: {
+                        display: subjectLabel
+                    }
+                }
             }
-          }
         }
-      );
+    );
 
-      renderPersonPhotosAdderModal();
-    }
+    renderPersonPhotosAdderModal();
+}
 
-    function openAddPhotosToPersonModal(
-      personId
-    ) {
-      const person =
+function openAddPhotosToPersonModal(
+    personId
+)
+{
+    const person =
         getPerson(personId);
 
-      if (!person) {
+    if (!person)
+    {
         return;
-      }
-
-      resetPersonPhotosAdderState();
-
-      Object.assign(
-        state.personPhotosAdder,
-        {
-          open: true,
-          personId: person.id,
-
-          sourceTab:
-            getProjectPhotos(
-              person.projectId
-            ).length
-              ? 'project'
-              : 'upload'
-        }
-      );
-
-      renderPersonPhotosAdderModal();
     }
 
-    function renderAfterPersonPrimaryPhotoChange() {
-      if (state.activeModule === 'Family Tree') {
+    resetPersonPhotosAdderState();
+
+    Object.assign(
+        state.personPhotosAdder,
+        {
+            open: true,
+            personId: person.id,
+
+            sourceTab:
+            getProjectPhotos(
+                person.projectId
+            ).length
+                ? 'project'
+                : 'upload'
+        }
+    );
+
+    renderPersonPhotosAdderModal();
+}
+
+function renderAfterPersonPrimaryPhotoChange()
+{
+    if (state.activeModule === 'Family Tree')
+    {
         renderFamilyTreePreserveScroll();
         return;
-      }
-      if (state.activeModule === 'People') {
+    }
+    if (state.activeModule === 'People')
+    {
         const mainScrollTop = main.scrollTop;
         const tableWrap = main.querySelector('.people-table-wrap');
         const tableScrollTop = tableWrap?.scrollTop || 0;
         const tableScrollLeft = tableWrap?.scrollLeft || 0;
         renderPeople();
-        requestAnimationFrame(() => {
-          main.scrollTop = mainScrollTop;
-          const nextTableWrap = main.querySelector('.people-table-wrap');
-          if (nextTableWrap) {
-            nextTableWrap.scrollTop = tableScrollTop;
-            nextTableWrap.scrollLeft = tableScrollLeft;
-          }
+        requestAnimationFrame(() =>
+        {
+            main.scrollTop = mainScrollTop;
+            const nextTableWrap = main.querySelector('.people-table-wrap');
+            if (nextTableWrap)
+            {
+                nextTableWrap.scrollTop = tableScrollTop;
+                nextTableWrap.scrollLeft = tableScrollLeft;
+            }
         });
         return;
-      }
-      if (state.activeModule === 'Albums') {
+    }
+    if (state.activeModule === 'Albums')
+    {
         const mainScrollTop =
-          main.scrollTop;
+            main.scrollTop;
 
         const detailPane =
-          main.querySelector(
-            '.albums-detail'
-          );
+            main.querySelector(
+                '.albums-detail'
+            );
 
         const detailScrollTop =
-          detailPane?.scrollTop
+            detailPane?.scrollTop
           || 0;
 
         renderAlbums();
 
-        requestAnimationFrame(() => {
-          main.scrollTop =
-            mainScrollTop;
+        requestAnimationFrame(() =>
+        {
+            main.scrollTop =
+                mainScrollTop;
 
-          const nextDetailPane =
-            main.querySelector(
-              '.albums-detail'
-            );
+            const nextDetailPane =
+                main.querySelector(
+                    '.albums-detail'
+                );
 
-          if (nextDetailPane) {
-            nextDetailPane.scrollTop =
-              detailScrollTop;
-          }
+            if (nextDetailPane)
+            {
+                nextDetailPane.scrollTop =
+                    detailScrollTop;
+            }
         });
 
         return;
-      }
-      render();
     }
+    render();
+}
 
-    function applyPersonPrimaryPhoto({ personId, existingPhotoId = '', uploadDraft = null, crop = null } = {}) {
-      const person = getPerson(personId);
-      if (!person) return false;
-      let photo = null;
-      if (uploadDraft) {
+function applyPersonPrimaryPhoto({ personId, existingPhotoId = '', uploadDraft = null, crop = null } = {})
+{
+    const person = getPerson(personId);
+    if (!person) return false;
+    let photo = null;
+    if (uploadDraft)
+    {
         if (
-          !photoUploadDraftIsValid(
-            uploadDraft
-          )
-        ) {
-          state.personPhotoPicker
-            .uploadError =
-              'The uploaded photo is no longer valid. Choose it again.';
+            !photoUploadDraftIsValid(
+                uploadDraft
+            )
+        )
+        {
+            state.personPhotoPicker
+                .uploadError =
+                    'The uploaded photo is no longer valid. Choose it again.';
 
-          state.personPhotoPicker.step =
-            'choose';
+            state.personPhotoPicker.step =
+                'choose';
 
-          state.personPhotoPicker
-            .sourceTab =
-              'upload';
+            state.personPhotoPicker
+                .sourceTab =
+                    'upload';
 
-          renderPersonPhotoPickerModal();
+            renderPersonPhotoPickerModal();
 
-          return false;
+            return false;
         }
 
         photo =
-          createMediaFromPhotoUpload({
-            projectId:
+            createMediaFromPhotoUpload({
+                projectId:
               person.projectId,
 
-            draft:
+                draft:
               uploadDraft,
 
-            personIds: [
-              person.id
-            ],
+                personIds: [
+                    person.id
+                ],
 
-            idPrefix:
+                idPrefix:
               `photo-${person.id}`
-          });
-      } else {
+            });
+    }
+    else
+    {
         photo =
-          getPhoto(
-            existingPhotoId,
-            {
-              projectId:
+            getPhoto(
+                existingPhotoId,
+                {
+                    projectId:
                 person.projectId
-            }
-          );
-      }
-      if (!photo) return false;
-      ensurePhotoPersonTag(photo, person);
-      setPersonPrimaryPhoto(person.id, photo.id, crop, { rerender: false, notify: false });
-      const name = person.names?.display || 'Person';
-      resetPersonPhotoPickerState();
-      closeModal({ force: true });
-      renderAfterPersonPrimaryPhotoChange();
-      showToast(`Profile photo updated for ${name}.`);
-      return true;
+                }
+            );
     }
+    if (!photo) return false;
+    ensurePhotoPersonTag(photo, person);
+    setPersonPrimaryPhoto(person.id, photo.id, crop, { rerender: false, notify: false });
+    const name = person.names?.display || 'Person';
+    resetPersonPhotoPickerState();
+    closeModal({ force: true });
+    renderAfterPersonPrimaryPhotoChange();
+    showToast(`Profile photo updated for ${name}.`);
+    return true;
+}
 
-    function removeCurrentPersonPhoto() {
-      const person = personPhotoPickerPerson();
-      if (!person?.primaryPhotoId) return;
-      const name = person.names?.display || 'Person';
-      person.primaryPhotoId = '';
-      person.primaryPhotoCrop = null;
-      markPersonUpdated(person);
-      resetPersonPhotoPickerState();
-      closeModal({ force: true });
-      renderAfterPersonPrimaryPhotoChange();
-      showToast(`Profile photo removed for ${name}.`);
-    }
+function removeCurrentPersonPhoto()
+{
+    const person = personPhotoPickerPerson();
+    if (!person?.primaryPhotoId) return;
+    const name = person.names?.display || 'Person';
+    person.primaryPhotoId = '';
+    person.primaryPhotoCrop = null;
+    markPersonUpdated(person);
+    resetPersonPhotoPickerState();
+    closeModal({ force: true });
+    renderAfterPersonPrimaryPhotoChange();
+    showToast(`Profile photo removed for ${name}.`);
+}
 
-    function bindPersonPhotoPickerModal() {
-      modalBackdrop.querySelectorAll('[data-person-photo-tab]').forEach(button => {
-        button.addEventListener('click', () => {
-          state.personPhotoPicker.sourceTab = button.dataset.personPhotoTab;
-          state.personPhotoPicker.uploadError = '';
-          renderPersonPhotoPickerModal();
+function bindPersonPhotoPickerModal()
+{
+    modalBackdrop.querySelectorAll('[data-person-photo-tab]').forEach(button =>
+    {
+        button.addEventListener('click', () =>
+        {
+            state.personPhotoPicker.sourceTab = button.dataset.personPhotoTab;
+            state.personPhotoPicker.uploadError = '';
+            renderPersonPhotoPickerModal();
         });
-        button.addEventListener('keydown', event => {
-          if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
-          event.preventDefault();
-          state.personPhotoPicker.sourceTab = state.personPhotoPicker.sourceTab === 'project' ? 'upload' : 'project';
-          renderPersonPhotoPickerModal();
-          modalBackdrop.querySelector(`[data-person-photo-tab="${state.personPhotoPicker.sourceTab}"]`)?.focus();
+        button.addEventListener('keydown', event =>
+        {
+            if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
+            event.preventDefault();
+            state.personPhotoPicker.sourceTab = state.personPhotoPicker.sourceTab === 'project' ? 'upload' : 'project';
+            renderPersonPhotoPickerModal();
+            modalBackdrop.querySelector(`[data-person-photo-tab="${state.personPhotoPicker.sourceTab}"]`)?.focus();
         });
-      });
-      modalBackdrop.querySelectorAll('[data-person-photo-scope]').forEach(button => button.addEventListener('click', () => {
+    });
+    modalBackdrop.querySelectorAll('[data-person-photo-scope]').forEach(button => button.addEventListener('click', () =>
+    {
         state.personPhotoPicker.projectScope = button.dataset.personPhotoScope;
         renderPersonPhotoPickerModal();
-      }));
-      modalBackdrop.querySelector('[data-person-photo-search]')?.addEventListener('input', event => {
+    }));
+    modalBackdrop.querySelector('[data-person-photo-search]')?.addEventListener('input', event =>
+    {
         state.personPhotoPicker.search = event.target.value;
         updatePersonPhotoProjectResults();
-      });
-      bindPersonPhotoProjectResultActions(modalBackdrop);
-      const fileInput = modalBackdrop.querySelector('[data-person-photo-file]');
-      modalBackdrop.querySelector('[data-person-photo-choose-file]')?.addEventListener('click', () => fileInput?.click());
-      fileInput?.addEventListener('change', () => processPersonPhotoUpload(fileInput.files?.[0]));
-      const dropzone = modalBackdrop.querySelector('[data-person-photo-dropzone]');
-      if (dropzone) {
-        ['dragenter', 'dragover'].forEach(type => dropzone.addEventListener(type, event => {
-          event.preventDefault();
-          dropzone.classList.add('is-dragging');
+    });
+    bindPersonPhotoProjectResultActions(modalBackdrop);
+    const fileInput = modalBackdrop.querySelector('[data-person-photo-file]');
+    modalBackdrop.querySelector('[data-person-photo-choose-file]')?.addEventListener('click', () => fileInput?.click());
+    fileInput?.addEventListener('change', () => processPersonPhotoUpload(fileInput.files?.[0]));
+    const dropzone = modalBackdrop.querySelector('[data-person-photo-dropzone]');
+    if (dropzone)
+    {
+        ['dragenter', 'dragover'].forEach(type => dropzone.addEventListener(type, event =>
+        {
+            event.preventDefault();
+            dropzone.classList.add('is-dragging');
         }));
-        ['dragleave', 'drop'].forEach(type => dropzone.addEventListener(type, event => {
-          event.preventDefault();
-          dropzone.classList.remove('is-dragging');
+        ['dragleave', 'drop'].forEach(type => dropzone.addEventListener(type, event =>
+        {
+            event.preventDefault();
+            dropzone.classList.remove('is-dragging');
         }));
         dropzone.addEventListener('drop', event => processPersonPhotoUpload(event.dataTransfer?.files?.[0]));
-      }
-      modalBackdrop.querySelector('[data-person-photo-continue]')?.addEventListener('click', () => {
+    }
+    modalBackdrop.querySelector('[data-person-photo-continue]')?.addEventListener('click', () =>
+    {
         if (!initializePersonPhotoCrop()) return;
         renderPersonPhotoPickerModal();
-      });
-      modalBackdrop.querySelector('[data-person-photo-back]')?.addEventListener('click', () => {
+    });
+    modalBackdrop.querySelector('[data-person-photo-back]')?.addEventListener('click', () =>
+    {
         state.personPhotoPicker.step = 'choose';
         renderPersonPhotoPickerModal();
-      });
-      modalBackdrop.querySelectorAll('[data-person-photo-zoom]').forEach(button => button.addEventListener('click', () => {
+    });
+    modalBackdrop.querySelectorAll('[data-person-photo-zoom]').forEach(button => button.addEventListener('click', () =>
+    {
         const crop = normalizePersonPhotoCrop(state.personPhotoPicker.crop);
         setPersonPhotoCrop({ ...crop, zoom: crop.zoom + Number(button.dataset.personPhotoZoom) });
-      }));
-      modalBackdrop.querySelector('[data-person-photo-zoom-slider]')?.addEventListener('input', event => {
+    }));
+    modalBackdrop.querySelector('[data-person-photo-zoom-slider]')?.addEventListener('input', event =>
+    {
         setPersonPhotoCrop({
-          ...normalizePersonPhotoCrop(state.personPhotoPicker.crop),
-          zoom: Number(event.target.value)
+            ...normalizePersonPhotoCrop(state.personPhotoPicker.crop),
+            zoom: Number(event.target.value)
         });
-      });
-      modalBackdrop.querySelectorAll('[data-person-photo-rotate]').forEach(button => button.addEventListener('click', () => {
+    });
+    modalBackdrop.querySelectorAll('[data-person-photo-rotate]').forEach(button => button.addEventListener('click', () =>
+    {
         const crop = normalizePersonPhotoCrop(state.personPhotoPicker.crop);
         const rotation = (crop.rotation + Number(button.dataset.personPhotoRotate) + 360) % 360;
         setPersonPhotoCrop({ ...crop, rotation });
-      }));
-      modalBackdrop.querySelector('[data-person-photo-reset]')?.addEventListener('click', () => {
+    }));
+    modalBackdrop.querySelector('[data-person-photo-reset]')?.addEventListener('click', () =>
+    {
         const current = normalizePersonPhotoCrop(state.personPhotoPicker.crop);
         const next = normalizePersonPhotoCrop(null);
         setPersonPhotoCrop(next, { dirty: JSON.stringify(current) !== JSON.stringify(next) });
-      });
-      modalBackdrop.querySelector('[data-person-photo-use]')?.addEventListener('click', () => {
+    });
+    modalBackdrop.querySelector('[data-person-photo-use]')?.addEventListener('click', () =>
+    {
         const uploadDraft = state.personPhotoPicker.sourceTab === 'upload'
-          ? state.personPhotoPicker.uploadDraft
-          : null;
+            ? state.personPhotoPicker.uploadDraft
+            : null;
         applyPersonPrimaryPhoto({
-          personId: state.personPhotoPicker.personId,
-          existingPhotoId: uploadDraft ? '' : state.personPhotoPicker.selectedPhotoId,
-          uploadDraft,
-          crop: state.personPhotoPicker.crop
+            personId: state.personPhotoPicker.personId,
+            existingPhotoId: uploadDraft ? '' : state.personPhotoPicker.selectedPhotoId,
+            uploadDraft,
+            crop: state.personPhotoPicker.crop
         });
-      });
-      modalBackdrop.querySelector('[data-person-photo-remove-current]')?.addEventListener('click', removeCurrentPersonPhoto);
-      bindPersonPhotoCropDrag();
-    }
+    });
+    modalBackdrop.querySelector('[data-person-photo-remove-current]')?.addEventListener('click', removeCurrentPersonPhoto);
+    bindPersonPhotoCropDrag();
+}
 
-    function openPersonPhotoPicker(personId) {
-      const person = getPerson(personId);
-      if (!person) return;
-      const projectPhotos = getProjectPhotos(person.projectId);
-      const activePrimary = getPhoto(person.primaryPhotoId, { projectId: person.projectId });
-      resetPersonPhotoPickerState();
-      Object.assign(state.personPhotoPicker, {
+function openPersonPhotoPicker(personId)
+{
+    const person = getPerson(personId);
+    if (!person) return;
+    const projectPhotos = getProjectPhotos(person.projectId);
+    const activePrimary = getPhoto(person.primaryPhotoId, { projectId: person.projectId });
+    resetPersonPhotoPickerState();
+    Object.assign(state.personPhotoPicker, {
         open: true,
         personId: person.id,
         sourceTab: projectPhotos.length ? 'project' : 'upload',
@@ -3305,150 +3500,156 @@
         selectedPhotoId: activePrimary?.id || null,
         initialPhotoId: person.primaryPhotoId || null,
         crop: normalizePersonPhotoCrop(person.primaryPhotoCrop)
-      });
-      renderPersonPhotoPickerModal();
-    }
+    });
+    renderPersonPhotoPickerModal();
+}
 
-    function openPersonPhotoAdjuster(
-      personId,
-      photoId
-    ) {
-      const person =
+function openPersonPhotoAdjuster(
+    personId,
+    photoId
+)
+{
+    const person =
         getPerson(personId);
 
-      const photo = getPhoto(
+    const photo = getPhoto(
         photoId,
         {
-          projectId:
+            projectId:
             person?.projectId || ''
         }
-      );
+    );
 
-      const isValidRelationship =
+    const isValidRelationship =
         Boolean(
-          person
+            person
           && photo
           && photo.projectId
             === person.projectId
           && (
-            photo.personIds || []
+              photo.personIds || []
           ).includes(person.id)
         );
 
-      if (!isValidRelationship) {
+    if (!isValidRelationship)
+    {
         showToast(
-          'The photo is no longer available for this person.'
+            'The photo is no longer available for this person.'
         );
 
         return false;
-      }
+    }
 
-      resetPersonPhotoPickerState();
+    resetPersonPhotoPickerState();
 
-      Object.assign(
+    Object.assign(
         state.personPhotoPicker,
         {
-          open: true,
-          personId: person.id,
-          step: 'choose',
-          sourceTab: 'project',
-          projectScope: 'tagged',
-          search: '',
-          selectedPhotoId: photo.id,
-          initialPhotoId:
+            open: true,
+            personId: person.id,
+            step: 'choose',
+            sourceTab: 'project',
+            projectScope: 'tagged',
+            search: '',
+            selectedPhotoId: photo.id,
+            initialPhotoId:
             person.primaryPhotoId
             || null,
-          uploadDraft: null,
-          uploadError: '',
-          crop: null,
-          dirty:
+            uploadDraft: null,
+            uploadError: '',
+            crop: null,
+            dirty:
             photo.id
             !== person.primaryPhotoId
         }
-      );
+    );
 
-      if (!initializePersonPhotoCrop()) {
+    if (!initializePersonPhotoCrop())
+    {
         resetPersonPhotoPickerState();
 
         showToast(
-          'The photo could not be prepared for adjustment.'
+            'The photo could not be prepared for adjustment.'
         );
 
         return false;
-      }
-
-      renderPersonPhotoPickerModal();
-
-      return true;
     }
 
-    function albumContext() {
-      if (
+    renderPersonPhotoPickerModal();
+
+    return true;
+}
+
+function albumContext()
+{
+    if (
         state.albumsView === 'album'
-      ) {
+    )
+    {
         const album =
-          getProjectAlbums()
-            .find(
-              item =>
-                item.id
+            getProjectAlbums()
+                .find(
+                    item =>
+                        item.id
                   === state.activeAlbumId
-            );
+                );
 
         return {
-          title:
+            title:
             album?.name
             || 'Album',
 
-          subtitle:
+            subtitle:
             album?.description
             || 'Album photos',
 
-          empty:
+            empty:
             'This album has no photos yet.'
         };
-      }
+    }
 
-      const contexts = {
+    const contexts = {
         favorites: {
-          title:
+            title:
             'Favourites',
 
-          subtitle:
+            subtitle:
             'Photos marked as favourites.',
 
-          empty:
+            empty:
             'No favorite photos yet.'
         },
 
         unassigned: {
-          title:
+            title:
             'Not in an album',
 
-          subtitle:
+            subtitle:
             'Photos waiting to be organized.',
 
-          empty:
+            empty:
             'Every active photo belongs to an album.'
         }
-      };
+    };
 
-      return (
+    return (
         contexts[state.albumsView]
         || {
-          title:
+            title:
             'All photos',
 
-          subtitle:
+            subtitle:
             'Your photos and visual memories.',
 
-          empty:
+            empty:
             'No photos match this view.'
         }
-      );
-    }
+    );
+}
 
-    function photoSearchText(photo) {
-      return [
+function photoSearchText(photo)
+{
+    return [
         photo.title,
         photo.filename,
         photo.caption,
@@ -3456,161 +3657,178 @@
         getPlaceDisplay(photo.placeId),
         ...getPhotoPeople(photo).map(person => person.names?.display || ''),
         ...(photo.albumIds || []).map(getAlbumName)
-      ].join(' ').toLowerCase();
-    }
+    ].join(' ').toLowerCase();
+}
 
-    function filteredAlbumPhotos() {
-      let photos =
+function filteredAlbumPhotos()
+{
+    let photos =
         getProjectPhotos(
-          currentProjectId()
+            currentProjectId()
         );
 
-      if (
+    if (
         state.albumsView === 'album'
-      ) {
+    )
+    {
         photos =
-          photos.filter(
-            photo =>
-              (
-                photo.albumIds || []
-              ).includes(
-                state.activeAlbumId
-              )
-          );
-      } else if (
+            photos.filter(
+                photo =>
+                    (
+                        photo.albumIds || []
+                    ).includes(
+                        state.activeAlbumId
+                    )
+            );
+    }
+    else if (
         state.albumsView
           === 'favorites'
-      ) {
+    )
+    {
         photos =
-          photos.filter(
-            photo =>
-              photo.favorite
-          );
-      } else if (
+            photos.filter(
+                photo =>
+                    photo.favorite
+            );
+    }
+    else if (
         state.albumsView
           === 'unassigned'
-      ) {
+    )
+    {
         photos =
-          photos.filter(
-            photo =>
-              !(
-                photo.albumIds || []
-              ).length
-          );
-      }
+            photos.filter(
+                photo =>
+                    !(
+                        photo.albumIds || []
+                    ).length
+            );
+    }
 
-      const query =
+    const query =
         String(
-          state.albumsSearch || ''
+            state.albumsSearch || ''
         )
-          .trim()
-          .toLowerCase();
+            .trim()
+            .toLowerCase();
 
-      if (query) {
+    if (query)
+    {
         photos =
-          photos.filter(
-            photo =>
-              photoSearchText(
-                photo
-              ).includes(query)
-          );
-      }
+            photos.filter(
+                photo =>
+                    photoSearchText(
+                        photo
+                    ).includes(query)
+            );
+    }
 
-      const filters =
+    const filters =
         state.albumsFilters
         || defaultAlbumFilters;
-      if (filters.sourceId) {
+    if (filters.sourceId)
+    {
         const linkedPhotoIds = new Set(
-          archiveSourceConnectionRecords(
-            archiveSourceById(filters.sourceId),
-            'photo'
-          ).map(photo => photo.id)
+            archiveSourceConnectionRecords(
+                archiveSourceById(filters.sourceId),
+                'photo'
+            ).map(photo => photo.id)
         );
 
         photos = photos.filter(photo =>
-          linkedPhotoIds.has(photo.id)
+            linkedPhotoIds.has(photo.id)
         );
-      }
-      if (
+    }
+    if (
         filters.personId === 'none'
-      ) {
+    )
+    {
         photos =
-          photos.filter(
-            photo =>
-              !(
-                photo.personIds || []
-              ).length
-          );
-      } else if (
+            photos.filter(
+                photo =>
+                    !(
+                        photo.personIds || []
+                    ).length
+            );
+    }
+    else if (
         filters.personId
-      ) {
+    )
+    {
         photos =
-          photos.filter(
-            photo =>
-              (
-                photo.personIds || []
-              ).includes(
-                filters.personId
-              )
-          );
-      }
+            photos.filter(
+                photo =>
+                    (
+                        photo.personIds || []
+                    ).includes(
+                        filters.personId
+                    )
+            );
+    }
 
-      if (
+    if (
         filters.placeId === 'none'
-      ) {
+    )
+    {
         photos =
-          photos.filter(
-            photo =>
-              !photo.placeId
+            photos.filter(
+                photo =>
+                    !photo.placeId
               && !photo.placeText
-          );
-      } else if (
+            );
+    }
+    else if (
         filters.placeId
-      ) {
+    )
+    {
         photos =
-          photos.filter(
-            photo =>
-              photo.placeId
+            photos.filter(
+                photo =>
+                    photo.placeId
                 === filters.placeId
-          );
-      }
+            );
+    }
 
-      if (
+    if (
         filters.favouriteOnly
-      ) {
+    )
+    {
         photos =
-          photos.filter(
-            photo =>
-              photo.favorite
-          );
-      }
+            photos.filter(
+                photo =>
+                    photo.favorite
+            );
+    }
 
-      if (
+    if (
         filters.dateRange
           === 'dated'
-      ) {
+    )
+    {
         photos =
-          photos.filter(
-            photo =>
-              formatPhotoDate(
-                photo
-              ) !== 'Unknown date'
-          );
-      }
+            photos.filter(
+                photo =>
+                    formatPhotoDate(
+                        photo
+                    ) !== 'Unknown date'
+            );
+    }
 
-      if (
+    if (
         filters.dateRange
           === 'unknown'
-      ) {
+    )
+    {
         photos =
-          photos.filter(
-            photo =>
-              formatPhotoDate(
-                photo
-              ) === 'Unknown date'
-          );
-      }
-      return appSortRecords(photos, {
+            photos.filter(
+                photo =>
+                    formatPhotoDate(
+                        photo
+                    ) === 'Unknown date'
+            );
+    }
+    return appSortRecords(photos, {
         field:
           state.albumsSort,
 
@@ -3618,116 +3836,119 @@
           state.albumsSortDirection,
 
         extractors: {
-          photoName: {
-            type: 'text',
-            get: photo =>
-              photo.title
-          },
+            photoName: {
+                type: 'text',
+                get: photo =>
+                    photo.title
+            },
 
-          updated: {
-            type: 'number',
-            get: photo =>
-              appSortTimestamp(
-                photo.updatedAt
-              )
-          },
+            updated: {
+                type: 'number',
+                get: photo =>
+                    appSortTimestamp(
+                        photo.updatedAt
+                    )
+            },
 
-          added: {
-            type: 'number',
-            get: photo =>
-              appSortTimestamp(
-                photo.createdAt
-              )
-          }
+            added: {
+                type: 'number',
+                get: photo =>
+                    appSortTimestamp(
+                        photo.createdAt
+                    )
+            }
         },
 
         getFallback:
           photo =>
-            photo.title
+              photo.title
             || photo.filename
-      });
-    }
+    });
+}
 
-    const ALBUMS_ROWS_PER_PAGE_OPTIONS =
-      Object.freeze([
+const ALBUMS_ROWS_PER_PAGE_OPTIONS =
+    Object.freeze([
         10,
         25,
         50,
         100
-      ]);
+    ]);
 
-    function normalizeAlbumsRowsPerPage(
-      value = state.albumsRowsPerPage
-    ) {
-      const parsedValue =
+function normalizeAlbumsRowsPerPage(
+    value = state.albumsRowsPerPage
+)
+{
+    const parsedValue =
         Number(value);
 
-      return ALBUMS_ROWS_PER_PAGE_OPTIONS
+    return ALBUMS_ROWS_PER_PAGE_OPTIONS
         .includes(parsedValue)
-          ? parsedValue
-          : 25;
-    }
+        ? parsedValue
+        : 25;
+}
 
-    function resetAlbumsPage() {
-      state.albumsPage = 1;
-    }
+function resetAlbumsPage()
+{
+    state.albumsPage = 1;
+}
 
-    function getAlbumsPagination(
-      totalCount
-    ) {
-      const total =
+function getAlbumsPagination(
+    totalCount
+)
+{
+    const total =
         Math.max(
-          0,
-          Number(totalCount) || 0
+            0,
+            Number(totalCount) || 0
         );
 
-      const rowsPerPage =
+    const rowsPerPage =
         normalizeAlbumsRowsPerPage();
 
-      state.albumsRowsPerPage =
+    state.albumsRowsPerPage =
         rowsPerPage;
 
-      const totalPages =
+    const totalPages =
         Math.max(
-          1,
-          Math.ceil(
-            total / rowsPerPage
-          )
-        );
-
-      const currentPage =
-        Math.min(
-          totalPages,
-          Math.max(
             1,
-            Math.trunc(
-              Number(state.albumsPage)
-              || 1
+            Math.ceil(
+                total / rowsPerPage
             )
-          )
         );
 
-      /*
+    const currentPage =
+        Math.min(
+            totalPages,
+            Math.max(
+                1,
+                Math.trunc(
+                    Number(state.albumsPage)
+              || 1
+                )
+            )
+        );
+
+    /*
       * Clamp the stored page when deletions or filters
       * reduce the number of available pages.
       */
-      state.albumsPage =
+    state.albumsPage =
         currentPage;
 
-      const startIndex =
+    const startIndex =
         total
-          ? (
-              currentPage - 1
+            ? (
+                currentPage - 1
             ) * rowsPerPage
-          : 0;
+            : 0;
 
-      const endIndex =
+    const endIndex =
         Math.min(
-          startIndex + rowsPerPage,
-          total
+            startIndex + rowsPerPage,
+            total
         );
 
-      return {
+    return {
         totalCount:
           total,
 
@@ -3743,112 +3964,121 @@
 
         firstVisible:
           total
-            ? startIndex + 1
-            : 0,
+              ? startIndex + 1
+              : 0,
 
         lastVisible:
           total
-            ? endIndex
-            : 0
-      };
-    }
+              ? endIndex
+              : 0
+    };
+}
 
-    function getAlbumsListPage(
-      photos = filteredAlbumPhotos()
-    ) {
-      const source =
+function getAlbumsListPage(
+    photos = filteredAlbumPhotos()
+)
+{
+    const source =
         Array.isArray(photos)
-          ? photos
-          : [];
+            ? photos
+            : [];
 
-      const pagination =
+    const pagination =
         getAlbumsPagination(
-          source.length
+            source.length
         );
 
-      return {
+    return {
         pagination,
 
         photos:
           source.slice(
-            pagination.startIndex,
-            pagination.endIndex
+              pagination.startIndex,
+              pagination.endIndex
           )
-      };
-    }
+    };
+}
 
-    function currentAlbumsPagePhotos() {
-      const photos =
+function currentAlbumsPagePhotos()
+{
+    const photos =
         filteredAlbumPhotos();
 
-      /*
+    /*
       * Grid view remains unpaginated.
       */
-      if (
+    if (
         state.albumsViewMode !== 'list'
-      ) {
+    )
+    {
         return photos;
-      }
-
-      return getAlbumsListPage(
-        photos
-      ).photos;
     }
 
-    function ensureSelectedAlbumPhotoOnListPage() {
-      if (
-        state.albumsViewMode !== 'list'
-      ) {
-        return;
-      }
+    return getAlbumsListPage(
+        photos
+    ).photos;
+}
 
-      const pagePhotos =
+function ensureSelectedAlbumPhotoOnListPage()
+{
+    if (
+        state.albumsViewMode !== 'list'
+    )
+    {
+        return;
+    }
+
+    const pagePhotos =
         currentAlbumsPagePhotos();
 
-      const selectedIsOnPage =
+    const selectedIsOnPage =
         pagePhotos.some(photo =>
-          photo.id === state.selectedPhotoId
+            photo.id === state.selectedPhotoId
         );
 
-      if (selectedIsOnPage) {
+    if (selectedIsOnPage)
+    {
         return;
-      }
+    }
 
-      const nextPhotoId =
+    const nextPhotoId =
         pagePhotos[0]?.id
         || null;
 
-      if (
+    if (
         nextPhotoId
           !== state.selectedPhotoId
-      ) {
+    )
+    {
         resetAlbumsPhotoEditState();
-      }
-
-      state.selectedPhotoId =
-        nextPhotoId;
     }
 
-    function renderAlbumsPagination(
-      pagination
-    ) {
-      if (
-        pagination.totalPages <= 1
-      ) {
-        return '';
-      }
+    state.selectedPhotoId =
+        nextPhotoId;
+}
 
-      /*
+function renderAlbumsPagination(
+    pagination
+)
+{
+    if (
+        pagination.totalPages <= 1
+    )
+    {
+        return '';
+    }
+
+    /*
       * Reuse the existing pure page-token helper.
       * Do not rename or modify the People implementation.
       */
-      const tokens =
+    const tokens =
         peoplePaginationTokens(
-          pagination.currentPage,
-          pagination.totalPages
+            pagination.currentPage,
+            pagination.totalPages
         );
 
-      return `
+    return `
         <nav
           class="pagination"
           aria-label="Photo pages">
@@ -3860,39 +4090,41 @@
             "
             type="button"
             data-albums-page="${
-              pagination.currentPage - 1
+                pagination.currentPage - 1
             }"
             aria-label="Previous page"
             ${
-              pagination.currentPage === 1
-                ? 'disabled'
-                : ''
+                pagination.currentPage === 1
+                    ? 'disabled'
+                    : ''
             }>
             ${icon.chevron}
           </button>
 
           ${tokens.map(
-            (token, index) => {
-              if (
-                token === 'ellipsis'
-              ) {
-                return `
+                (token, index) =>
+                {
+                    if (
+                        token === 'ellipsis'
+                    )
+                    {
+                        return `
                   <span
                     class="pagination-ellipsis"
                     aria-hidden="true"
                     data-pagination-gap="${
-                      index
+                        index
                     }">
                     …
                   </span>
                 `;
-              }
+                    }
 
-              const active =
-                token
+                    const active =
+                        token
                   === pagination.currentPage;
 
-              return `
+                    return `
                 <button
                   class="
                     page-button
@@ -3902,53 +4134,54 @@
                   data-albums-page="${token}"
                   aria-label="Go to page ${token}"
                   ${
-                    active
-                      ? 'aria-current="page"'
-                      : ''
-                  }>
+                        active
+                            ? 'aria-current="page"'
+                            : ''
+                    }>
                   ${token}
                 </button>
               `;
-            }
-          ).join('')}
+                }
+            ).join('')}
 
           <button
             class="page-button"
             type="button"
             data-albums-page="${
-              pagination.currentPage + 1
+                pagination.currentPage + 1
             }"
             aria-label="Next page"
             ${
-              pagination.currentPage
+                pagination.currentPage
                 === pagination.totalPages
-                  ? 'disabled'
-                  : ''
+                    ? 'disabled'
+                    : ''
             }>
             ${icon.chevron}
           </button>
         </nav>
       `;
-    }
+}
 
-    function renderAlbumsListFooter(
-      pagination
-    ) {
-      const rangeLabel =
+function renderAlbumsListFooter(
+    pagination
+)
+{
+    const rangeLabel =
         pagination.totalCount
-          ? `${
-              pagination.firstVisible
+            ? `${
+                pagination.firstVisible
             }–${
-              pagination.lastVisible
+                pagination.lastVisible
             }`
-          : '0';
+            : '0';
 
-      const noun =
+    const noun =
         pagination.totalCount === 1
-          ? 'photo'
-          : 'photos';
+            ? 'photo'
+            : 'photos';
 
-      return `
+    return `
         <div
           class="
             table-footer
@@ -3965,8 +4198,8 @@
           </span>
 
           ${renderAlbumsPagination(
-            pagination
-          )}
+                pagination
+            )}
 
           <label
             class="people-rows-per-page"
@@ -3992,19 +4225,19 @@
                 aria-label="Rows per page">
 
                 ${ALBUMS_ROWS_PER_PAGE_OPTIONS
-                  .map(option => `
+                    .map(option => `
                     <option
                       value="${option}"
                       ${
-                        pagination.rowsPerPage
+                            pagination.rowsPerPage
                           === option
-                            ? 'selected'
-                            : ''
-                      }>
+                                ? 'selected'
+                                : ''
+                        }>
                       ${option}
                     </option>
                   `)
-                  .join('')}
+                    .join('')}
               </select>
 
               <span
@@ -4019,305 +4252,324 @@
           </label>
         </div>
       `;
-    }
+}
 
-    function ensureSelectedAlbumPhoto() {
-      const visible =
+function ensureSelectedAlbumPhoto()
+{
+    const visible =
         filteredAlbumPhotos();
 
-      const currentIsVisible =
+    const currentIsVisible =
         visible.some(
-          photo =>
-            photo.id === state.selectedPhotoId
+            photo =>
+                photo.id === state.selectedPhotoId
         );
 
-      if (!currentIsVisible) {
+    if (!currentIsVisible)
+    {
         const nextPhotoId =
-          visible[0]?.id
+            visible[0]?.id
           || null;
 
         if (
-          nextPhotoId
+            nextPhotoId
           !== state.selectedPhotoId
-        ) {
-          resetAlbumsPhotoEditState();
+        )
+        {
+            resetAlbumsPhotoEditState();
         }
 
         state.selectedPhotoId =
-          nextPhotoId;
-      }
-
-      const visibleIds =
-        new Set(
-          visible.map(photo => photo.id)
-        );
-
-      state.selectedPhotoIds =
-        (state.selectedPhotoIds || [])
-          .filter(
-            id => visibleIds.has(id)
-          );
+            nextPhotoId;
     }
 
-    function albumFilterCount(
-      filters = state.albumsFilters
-    ) {
-      const normalized =
-        albumsFiltersWithDefaults(
-          filters
+    const visibleIds =
+        new Set(
+            visible.map(photo => photo.id)
         );
 
-      return albumsFilterSchema
+    state.selectedPhotoIds =
+        (state.selectedPhotoIds || [])
+            .filter(
+                id => visibleIds.has(id)
+            );
+}
+
+function albumFilterCount(
+    filters = state.albumsFilters
+)
+{
+    const normalized =
+        albumsFiltersWithDefaults(
+            filters
+        );
+
+    return albumsFilterSchema
         .filter(definition =>
-          sharedFilterValueIsActive(
-            definition,
-            normalized[
-              definition.key
-            ]
-          )
+            sharedFilterValueIsActive(
+                definition,
+                normalized[
+                    definition.key
+                ]
+            )
         )
         .length;
-    }
+}
 
-    function albumsHaveActiveQuery() {
-      return Boolean(String(state.albumsSearch || '').trim() || albumFilterCount());
-    }
+function albumsHaveActiveQuery()
+{
+    return Boolean(String(state.albumsSearch || '').trim() || albumFilterCount());
+}
 
-    let albumsGridResizeObserver = null;
-    let albumsGridResizeFrame = null;
+let albumsGridResizeObserver = null;
+let albumsGridResizeFrame = null;
 
-    function disconnectAlbumsGridResizeObserver() {
-      albumsGridResizeObserver?.disconnect();
-      albumsGridResizeObserver = null;
-      if (albumsGridResizeFrame !== null) {
+function disconnectAlbumsGridResizeObserver()
+{
+    albumsGridResizeObserver?.disconnect();
+    albumsGridResizeObserver = null;
+    if (albumsGridResizeFrame !== null)
+    {
         cancelAnimationFrame(albumsGridResizeFrame);
         albumsGridResizeFrame = null;
-      }
     }
+}
 
-    function updateAlbumsGridLayout() {
-      if (state.activeModule !== 'Albums' || state.albumsViewMode !== 'grid') return;
-      const content = main.querySelector('.albums-content');
-      if (!content?.querySelector('[data-albums-justified-grid]')) return;
-      const photos = filteredAlbumPhotos();
-      if (!photos.length) return;
-      content.innerHTML = renderAlbumsGrid(photos);
-      bindAlbumsCardControls(content);
-    }
+function updateAlbumsGridLayout()
+{
+    if (state.activeModule !== 'Albums' || state.albumsViewMode !== 'grid') return;
+    const content = main.querySelector('.albums-content');
+    if (!content?.querySelector('[data-albums-justified-grid]')) return;
+    const photos = filteredAlbumPhotos();
+    if (!photos.length) return;
+    content.innerHTML = renderAlbumsGrid(photos);
+    bindAlbumsCardControls(content);
+}
 
-    function bindAlbumsGridResizeObserver() {
-      disconnectAlbumsGridResizeObserver();
-      if (state.activeModule !== 'Albums' || state.albumsViewMode !== 'grid') return;
-      const content = main.querySelector('.albums-content');
-      if (!content?.querySelector('[data-albums-justified-grid]')) return;
+function bindAlbumsGridResizeObserver()
+{
+    disconnectAlbumsGridResizeObserver();
+    if (state.activeModule !== 'Albums' || state.albumsViewMode !== 'grid') return;
+    const content = main.querySelector('.albums-content');
+    if (!content?.querySelector('[data-albums-justified-grid]')) return;
 
-      albumsGridResizeObserver = new ResizeObserver(entries => {
+    albumsGridResizeObserver = new ResizeObserver(entries =>
+    {
         const width = entries[0]?.contentRect?.width;
         if (!Number.isFinite(width) || width <= 0) return;
         if (Math.abs(width - Number(state.albumsGridWidth || 0)) < 1.5) return;
         if (albumsGridResizeFrame !== null) cancelAnimationFrame(albumsGridResizeFrame);
-        albumsGridResizeFrame = requestAnimationFrame(() => {
-          albumsGridResizeFrame = null;
-          state.albumsGridWidth = width;
-          updateAlbumsGridLayout();
+        albumsGridResizeFrame = requestAnimationFrame(() =>
+        {
+            albumsGridResizeFrame = null;
+            state.albumsGridWidth = width;
+            updateAlbumsGridLayout();
         });
-      });
+    });
 
-      albumsGridResizeObserver.observe(content);
-    }
+    albumsGridResizeObserver.observe(content);
+}
 
-    function renderAlbumsPreserveViewport({
-      focusPhotoId = '',
-      focusTarget = ''
-    } = {}) {
-      const content =
+function renderAlbumsPreserveViewport({
+    focusPhotoId = '',
+    focusTarget = ''
+} = {})
+{
+    const content =
         main.querySelector(
-          '.albums-content'
+            '.albums-content'
         );
 
-      const detail =
+    const detail =
         main.querySelector(
-          '.albums-detail'
+            '.albums-detail'
         );
 
-      const detailScrollTop =
+    const detailScrollTop =
         detail?.scrollTop || 0;
 
-      const scrollTop =
+    const scrollTop =
         content?.scrollTop || 0;
 
-      const scrollLeft =
+    const scrollLeft =
         content?.scrollLeft || 0;
 
-      renderAlbums();
+    renderAlbums();
 
-      requestAnimationFrame(() => {
+    requestAnimationFrame(() =>
+    {
         const nextContent =
-          main.querySelector(
-            '.albums-content'
-          );
+            main.querySelector(
+                '.albums-content'
+            );
 
-        if (nextContent) {
-          const maximumTop =
-            Math.max(
-              0,
-              nextContent.scrollHeight
+        if (nextContent)
+        {
+            const maximumTop =
+                Math.max(
+                    0,
+                    nextContent.scrollHeight
               - nextContent.clientHeight
-            );
+                );
 
-        const nextDetail =
-          main.querySelector(
-            '.albums-detail'
-          );
+            const nextDetail =
+                main.querySelector(
+                    '.albums-detail'
+                );
 
-        if (nextDetail) {
-          const maximumDetailTop =
-            Math.max(
-              0,
-              nextDetail.scrollHeight
+            if (nextDetail)
+            {
+                const maximumDetailTop =
+                    Math.max(
+                        0,
+                        nextDetail.scrollHeight
               - nextDetail.clientHeight
-            );
+                    );
 
-          nextDetail.scrollTop =
-            Math.min(
-              detailScrollTop,
-              maximumDetailTop
-            );
-        }
+                nextDetail.scrollTop =
+                    Math.min(
+                        detailScrollTop,
+                        maximumDetailTop
+                    );
+            }
 
-          const maximumLeft =
-            Math.max(
-              0,
-              nextContent.scrollWidth
+            const maximumLeft =
+                Math.max(
+                    0,
+                    nextContent.scrollWidth
               - nextContent.clientWidth
-            );
+                );
 
-          nextContent.scrollTop =
-            Math.min(
-              scrollTop,
-              maximumTop
-            );
+            nextContent.scrollTop =
+                Math.min(
+                    scrollTop,
+                    maximumTop
+                );
 
-          nextContent.scrollLeft =
-            Math.min(
-              scrollLeft,
-              maximumLeft
-            );
+            nextContent.scrollLeft =
+                Math.min(
+                    scrollLeft,
+                    maximumLeft
+                );
         }
 
-        if (!focusPhotoId) {
-          return;
+        if (!focusPhotoId)
+        {
+            return;
         }
 
         const escapedPhotoId =
-          CSS.escape(focusPhotoId);
+            CSS.escape(focusPhotoId);
 
         const focusSelectors = {
-          card:
+            card:
             `[data-photo-id="${escapedPhotoId}"]`,
 
-          selection:
+            selection:
             `[data-photo-check="${escapedPhotoId}"]`,
 
-          favorite:
+            favorite:
             `.albums-main [data-photo-fav="${escapedPhotoId}"]`,
 
-          favoriteDetail:
+            favoriteDetail:
             `.albums-detail [data-photo-fav="${escapedPhotoId}"]`
         };
 
         const selector =
-          focusSelectors[focusTarget]
+            focusSelectors[focusTarget]
           || focusSelectors.card;
 
         main
-          .querySelector(selector)
-          ?.focus({
-            preventScroll: true
-          });
-      });
-    }
+            .querySelector(selector)
+            ?.focus({
+                preventScroll: true
+            });
+    });
+}
 
-    function renderAlbums() {
-      disconnectAlbumsGridResizeObserver();
+function renderAlbums()
+{
+    disconnectAlbumsGridResizeObserver();
 
-      ensureSelectedAlbumPhoto();
-      ensureSelectedAlbumPhotoOnListPage();
+    ensureSelectedAlbumPhoto();
+    ensureSelectedAlbumPhotoOnListPage();
 
-      const selectedPhoto =
+    const selectedPhoto =
         getPhoto(
-          state.selectedPhotoId,
-          {
-            projectId:
+            state.selectedPhotoId,
+            {
+                projectId:
               currentProjectId()
-          }
+            }
         );
 
-      if (!selectedPhoto) {
+    if (!selectedPhoto)
+    {
         resetAlbumsPhotoEditState();
-      }
+    }
 
-      const shellClasses = [
+    const shellClasses = [
         'albums-shell',
 
         selectedPhoto
         && state.albumsDetailCollapsed
-          ? 'detail-collapsed'
-          : '',
+            ? 'detail-collapsed'
+            : '',
 
         !selectedPhoto
-          ? 'no-detail'
-          : '',
+            ? 'no-detail'
+            : '',
 
         state.albumsDetailEditing
-          ? 'photo-editing'
-          : ''
-      ]
+            ? 'photo-editing'
+            : ''
+    ]
         .filter(Boolean)
         .join(' ');
 
-      /*
+    /*
         Generate both panes before modifying the DOM.
 
         If a rendering function throws, the existing
         workspace stays intact instead of showing a
         new sidebar beside stale module content.
       */
-      const nextSidebarMarkup =
+    const nextSidebarMarkup =
         renderAlbumsSidebar();
 
-      const nextMainMarkup = `
+    const nextMainMarkup = `
         <div class="${shellClasses}">
           <section class="albums-main">
             ${renderAlbumsMainMarkup()}
           </section>
 
           ${
-            !selectedPhoto
-              ? ''
-              : state.albumsDetailCollapsed
-                ? renderAlbumsDetailCollapsed()
-                : renderAlbumsDetailPane()
-          }
+                !selectedPhoto
+                    ? ''
+                    : state.albumsDetailCollapsed
+                        ? renderAlbumsDetailCollapsed()
+                        : renderAlbumsDetailPane()
+            }
         </div>
       `;
 
-      sidebar.innerHTML =
+    sidebar.innerHTML =
         nextSidebarMarkup;
 
-      main.innerHTML =
+    main.innerHTML =
         nextMainMarkup;
 
-      bindAlbumsSidebar();
-      bindAlbumsControls();
-      bindAlbumsGridResizeObserver();
-    }
+    bindAlbumsSidebar();
+    bindAlbumsControls();
+    bindAlbumsGridResizeObserver();
+}
 
-    function renderAlbumsSidebar() {
-      const projectAlbums =
+function renderAlbumsSidebar()
+{
+    const projectAlbums =
         getProjectAlbums();
 
-      return `
+    return `
         <nav
           class="albums-sidebar"
           aria-label="Albums navigation">
@@ -4330,9 +4582,9 @@
             <div class="side-nav">
               <button
                 class="side-link ${
-                  state.albumsView === 'all'
-                    ? 'active'
-                    : ''
+                    state.albumsView === 'all'
+                        ? 'active'
+                        : ''
                 }"
                 type="button"
                 data-albums-view="all">
@@ -4343,9 +4595,9 @@
 
               <button
                 class="side-link ${
-                  state.albumsView === 'favorites'
-                    ? 'active'
-                    : ''
+                    state.albumsView === 'favorites'
+                        ? 'active'
+                        : ''
                 }"
                 type="button"
                 data-albums-view="favorites">
@@ -4356,9 +4608,9 @@
 
               <button
                 class="side-link ${
-                  state.albumsView === 'unassigned'
-                    ? 'active'
-                    : ''
+                    state.albumsView === 'unassigned'
+                        ? 'active'
+                        : ''
                 }"
                 type="button"
                 data-albums-view="unassigned">
@@ -4391,21 +4643,22 @@
 
             <div class="side-nav">
               ${projectAlbums
-                .map(album => {
-                  const isActive =
-                    state.albumsView
+                    .map(album =>
+                    {
+                        const isActive =
+                            state.albumsView
                       === 'album'
                     && state.activeAlbumId
                       === album.id;
 
-                  return `
+                        return `
                     <div
                       class="
                         sidebar-entity-row
                         ${
-                          isActive
-                            ? 'active'
-                            : ''
+                            isActive
+                                ? 'active'
+                                : ''
                         }
                       ">
 
@@ -4415,10 +4668,10 @@
                         "
                         type="button"
                         data-album-open="${escapeHtml(
-                          album.id
+                            album.id
                         )}"
                         title="${escapeHtml(
-                          album.name
+                            album.name
                         )}">
 
                         ${icon.folder}
@@ -4428,8 +4681,8 @@
                             sidebar-entity-name
                           ">
                           ${escapeHtml(
-                            album.name
-                          )}
+                                album.name
+                            )}
                         </span>
                       </button>
 
@@ -4440,10 +4693,10 @@
                         "
                         type="button"
                         data-album-menu="${escapeHtml(
-                          album.id
+                            album.id
                         )}"
                         aria-label="Actions for ${escapeHtml(
-                          album.name
+                            album.name
                         )}"
                         aria-haspopup="menu">
 
@@ -4451,8 +4704,8 @@
                       </button>
                     </div>
                   `;
-                })
-                .join('')}
+                    })
+                    .join('')}
             </div>
           </div>
 
@@ -4488,22 +4741,23 @@
           </div>
         </nav>
       `;
-    }
+}
 
-    function renderAlbumsMainMarkup() {
-      const photos = filteredAlbumPhotos();
-      const context = albumContext();
-      const activeFilterCount = albumFilterCount();
-      const activeFilters = renderAlbumsActiveFilterbar();
-      const listPage =
+function renderAlbumsMainMarkup()
+{
+    const photos = filteredAlbumPhotos();
+    const context = albumContext();
+    const activeFilterCount = albumFilterCount();
+    const activeFilters = renderAlbumsActiveFilterbar();
+    const listPage =
         state.albumsViewMode === 'list'
-          ? getAlbumsListPage(photos)
-          : null;
-      const visiblePhotos =
+            ? getAlbumsListPage(photos)
+            : null;
+    const visiblePhotos =
         listPage
-          ? listPage.photos
-          : photos;
-      return `<header class="albums-header">
+            ? listPage.photos
+            : photos;
+    return `<header class="albums-header">
         <div class="albums-title"><h1 class="app-page-title">${escapeHtml(context.title)}</h1><p>${escapeHtml(context.subtitle)}</p></div>
         <div class="albums-header-actions">
           <button
@@ -4537,43 +4791,43 @@
         <div class="albums-toolbar-right">
           <button
             class="albums-filter-button ${
-              activeFilterCount ? 'active' : ''
+                activeFilterCount ? 'active' : ''
             }"
             type="button"
             id="albumsFilterButton"
             aria-label="${
-              activeFilterCount
-                ? `Filters, ${activeFilterCount} active`
-                : 'Open photo filters'
+                activeFilterCount
+                    ? `Filters, ${activeFilterCount} active`
+                    : 'Open photo filters'
             }"
             aria-expanded="false">
             <span
               class="albums-filter-icon"
               aria-hidden="true">
               ${
-                activeFilterCount
-                  ? icon.filterclear
-                  : icon.filter
-              }
+                    activeFilterCount
+                        ? icon.filterclear
+                        : icon.filter
+                }
             </span>
 
             <span>Filters</span>
 
             ${
-              activeFilterCount
-                ? `<span class="albums-filter-count">
+                activeFilterCount
+                    ? `<span class="albums-filter-count">
                     ${activeFilterCount}
                   </span>`
-                : ''
+                    : ''
             }
           </button>
           ${renderAppSortControl({
-            id: 'albumsSort',
-            field: state.albumsSort,
-            direction: state.albumsSortDirection,
-            ariaLabel: 'Sort photos',
-            options: APP_SORT_OPTIONS.albums
-          })}
+                id: 'albumsSort',
+                field: state.albumsSort,
+                direction: state.albumsSortDirection,
+                ariaLabel: 'Sort photos',
+                options: APP_SORT_OPTIONS.albums
+            })}
           <div
             class="albums-view-switch"
             role="group"
@@ -4581,31 +4835,31 @@
 
             <button
               class="toolbar-button albums-view-button ${
-                state.albumsViewMode === 'grid'
-                  ? 'active'
-                  : ''
-              }"
+                    state.albumsViewMode === 'grid'
+                        ? 'active'
+                        : ''
+                }"
               type="button"
               data-albums-mode="grid"
               aria-label="Grid view"
               aria-pressed="${
-                state.albumsViewMode === 'grid'
-              }">
+                    state.albumsViewMode === 'grid'
+                }">
               ${icon.grid}
             </button>
 
             <button
               class="toolbar-button albums-view-button ${
-                state.albumsViewMode === 'list'
-                  ? 'active'
-                  : ''
-              }"
+                    state.albumsViewMode === 'list'
+                        ? 'active'
+                        : ''
+                }"
               type="button"
               data-albums-mode="list"
               aria-label="List view"
               aria-pressed="${
-                state.albumsViewMode === 'list'
-              }">
+                    state.albumsViewMode === 'list'
+                }">
               ${icon.list}
             </button>
           </div>
@@ -4613,41 +4867,42 @@
       </div>
       ${activeFilters}
       ${
-        state.selectedPhotoIds.length
-          ? renderAlbumsSelectionBar()
-          : ''
-      }
+            state.selectedPhotoIds.length
+                ? renderAlbumsSelectionBar()
+                : ''
+        }
       <div class="albums-content">
         ${
-          photos.length
-            ? state.albumsViewMode === 'list'
-              ? renderAlbumsList(
-                  visiblePhotos
+            photos.length
+                ? state.albumsViewMode === 'list'
+                    ? renderAlbumsList(
+                        visiblePhotos
+                    )
+                    : renderAlbumsGrid(
+                        photos
+                    )
+                : renderAlbumsEmpty(
+                    context
                 )
-              : renderAlbumsGrid(
-                  photos
-                )
-            : renderAlbumsEmpty(
-                context
-              )
         }
 
         ${
-          listPage
+            listPage
           && photos.length
-            ? renderAlbumsListFooter(
-                listPage.pagination
-              )
-            : ''
+                ? renderAlbumsListFooter(
+                    listPage.pagination
+                )
+                : ''
         }
       </div>`;
-      }
+}
 
-    function renderAlbumsSelectionBar() {
-      const count =
+function renderAlbumsSelectionBar()
+{
+    const count =
         state.selectedPhotoIds.length;
 
-      const selectAllAction =
+    const selectAllAction =
         state.albumsViewMode
           === 'list'
             ? ''
@@ -4660,7 +4915,7 @@
               </button>
             `;
 
-      return `
+    return `
         <div class="albums-selection-bar">
           <span class="albums-selection-copy">
             ${count} selected
@@ -4677,8 +4932,8 @@
             </button>
 
             ${
-              state.albumsView === 'album'
-                ? `
+                state.albumsView === 'album'
+                    ? `
                   <button
                     class="button secondary"
                     type="button"
@@ -4686,7 +4941,7 @@
                     Remove from album
                   </button>
                 `
-                : ''
+                    : ''
             }
 
             <button
@@ -4705,46 +4960,47 @@
           </div>
         </div>
       `;
-    }
+}
 
-    function renderAlbumsPhotoCard(photo, selectedIds, width = 0) {
-      const names = getPhotoPeople(photo)
+function renderAlbumsPhotoCard(photo, selectedIds, width = 0)
+{
+    const names = getPhotoPeople(photo)
         .map(person => person.names?.display)
         .filter(Boolean);
-      const selected = selectedIds.has(photo.id);
-      const widthStyle = width > 0
+    const selected = selectedIds.has(photo.id);
+    const widthStyle = width > 0
         ? ` style="--albums-card-width:${width}px"`
         : '';
 
-      return `<article class="album-photo-card ${state.selectedPhotoId === photo.id ? 'selected-detail' : ''} ${selected ? 'is-checked' : ''}"${widthStyle} tabindex="0" data-photo-id="${escapeHtml(photo.id)}" aria-selected="${selected}">
+    return `<article class="album-photo-card ${state.selectedPhotoId === photo.id ? 'selected-detail' : ''} ${selected ? 'is-checked' : ''}"${widthStyle} tabindex="0" data-photo-id="${escapeHtml(photo.id)}" aria-selected="${selected}">
         <div class="albums-thumb">
           ${renderPhotoThumbnail(
-            photo,
-            {
-              label:
+                photo,
+                {
+                    label:
                 photo.title
-            }
-          )}
+                }
+            )}
 
           <button
             class="albums-check"
             type="button"
             data-photo-check="${escapeHtml(
-              photo.id
+                photo.id
             )}"
             aria-pressed="${selected}"
             aria-label="${
-              selected
-                ? 'Deselect'
-                : 'Select'
+                selected
+                    ? 'Deselect'
+                    : 'Select'
             } ${escapeHtml(
-              photo.title
+                photo.title
             )}">
 
             ${
-              selected
-                ? icon.check
-                : ''
+                selected
+                    ? icon.check
+                    : ''
             }
           </button>
 
@@ -4752,20 +5008,20 @@
             class="
               albums-fav-button
               ${
-                photo.favorite
-                  ? 'active'
-                  : ''
-              }
+                    photo.favorite
+                        ? 'active'
+                        : ''
+                }
             "
             type="button"
             data-photo-fav="${escapeHtml(
-              photo.id
+                photo.id
             )}"
             aria-pressed="${photo.favorite}"
             aria-label="${
-              photo.favorite
-                ? 'Remove from favourites'
-                : 'Mark as favorite'
+                photo.favorite
+                    ? 'Remove from favourites'
+                    : 'Mark as favorite'
             }">
 
             ${icon.star}
@@ -4775,16 +5031,16 @@
           <strong
             class="albums-card-title"
             title="${escapeHtml(
-              photo.title || photo.filename
+                photo.title || photo.filename
             )}">
             ${escapeHtml(
-              photo.title || photo.filename
+                photo.title || photo.filename
             )}
           </strong>
 
           <span class="albums-card-people">
             ${escapeHtml(
-              names.join(', ')
+                names.join(', ')
               || 'No people tagged'
             )}
           </span>
@@ -4792,44 +5048,47 @@
           <div class="albums-card-footer">
             <span>
               ${escapeHtml(
-                formatPhotoDate(photo)
-              )}
+                    formatPhotoDate(photo)
+                )}
             </span>
 
             <button
               class="albums-card-more"
               type="button"
               data-photo-more="${escapeHtml(
-                photo.id
-              )}"
+                    photo.id
+                )}"
               aria-label="Photo actions">
               ${icon.more}
             </button>
           </div>
         </div>
       </article>`;
-    }
+}
 
-    function renderAlbumsGrid(photos) {
-      const selectedIds = new Set(state.selectedPhotoIds || []);
-      const measuredWidth = Number(state.albumsGridWidth);
-      const hasMeasuredWidth = Number.isFinite(measuredWidth) && measuredWidth > 0;
+function renderAlbumsGrid(photos)
+{
+    const selectedIds = new Set(state.selectedPhotoIds || []);
+    const measuredWidth = Number(state.albumsGridWidth);
+    const hasMeasuredWidth = Number.isFinite(measuredWidth) && measuredWidth > 0;
 
-      if (!hasMeasuredWidth) {
+    if (!hasMeasuredWidth)
+    {
         return `<div class="albums-justified-grid is-measuring" data-albums-justified-grid><div class="albums-justified-row">${photos.map(photo => renderAlbumsPhotoCard(photo, selectedIds)).join('')}</div></div>`;
-      }
-
-      const rows = buildJustifiedPhotoRows(photos, measuredWidth);
-      return `<div class="albums-justified-grid" data-albums-justified-grid>${rows.map(row => `<div class="albums-justified-row ${row.justified ? 'is-justified' : 'is-incomplete'}" style="--albums-row-preview-height:${row.height}px">${row.items.map(item => renderAlbumsPhotoCard(item.photo, selectedIds, item.width)).join('')}</div>`).join('')}</div>`;
     }
 
-    function renderAlbumsList(photos) {
-      const selectedIds =
+    const rows = buildJustifiedPhotoRows(photos, measuredWidth);
+    return `<div class="albums-justified-grid" data-albums-justified-grid>${rows.map(row => `<div class="albums-justified-row ${row.justified ? 'is-justified' : 'is-incomplete'}" style="--albums-row-preview-height:${row.height}px">${row.items.map(item => renderAlbumsPhotoCard(item.photo, selectedIds, item.width)).join('')}</div>`).join('')}</div>`;
+}
+
+function renderAlbumsList(photos)
+{
+    const selectedIds =
         new Set(
-          state.selectedPhotoIds || []
+            state.selectedPhotoIds || []
         );
 
-      const header = `
+    const header = `
         <div
           class="
             albums-list-row
@@ -4871,91 +5130,92 @@
         </div>
       `;
 
-      const rows =
-        photos.map(photo => {
-          const selected =
-            selectedIds.has(
-              photo.id
-            );
+    const rows =
+        photos.map(photo =>
+        {
+            const selected =
+                selectedIds.has(
+                    photo.id
+                );
 
-          const title =
-            photo.title
+            const title =
+                photo.title
             || photo.filename
             || 'Untitled photo';
 
-          const people =
-            getPhotoPeople(photo)
-              .map(person =>
-                person.names?.display
-              )
-              .filter(Boolean)
-              .join(', ')
+            const people =
+                getPhotoPeople(photo)
+                    .map(person =>
+                        person.names?.display
+                    )
+                    .filter(Boolean)
+                    .join(', ')
             || 'No people';
 
-          const favoriteLabel =
-            photo.favorite
-              ? 'Remove from favourites'
-              : 'Mark as favourite';
+            const favoriteLabel =
+                photo.favorite
+                    ? 'Remove from favourites'
+                    : 'Mark as favourite';
 
-          const favoriteControl = `
+            const favoriteControl = `
             <button
               class="
                 albums-list-favourite
                 ${
-                  photo.favorite
-                    ? 'active'
-                    : ''
+                    photo.favorite
+                        ? 'active'
+                        : ''
                 }
               "
               type="button"
               data-photo-fav="${
-                escapeHtml(photo.id)
-              }"
+                    escapeHtml(photo.id)
+                }"
               aria-pressed="${
-                photo.favorite
-                  ? 'true'
-                  : 'false'
-              }"
+                    photo.favorite
+                        ? 'true'
+                        : 'false'
+                }"
               aria-label="${
-                escapeHtml(
-                  favoriteLabel
-                )
-              }"
+                    escapeHtml(
+                        favoriteLabel
+                    )
+                }"
               title="${
-                escapeHtml(
-                  favoriteLabel
-                )
-              }">
+                    escapeHtml(
+                        favoriteLabel
+                    )
+                }">
               ${icon.star}
             </button>
           `;
 
-          return `
+            return `
             <div
               class="
                 albums-list-row
                 ${
-                  state.selectedPhotoId
+                    state.selectedPhotoId
                     === photo.id
-                    ? 'selected-detail'
-                    : ''
+                        ? 'selected-detail'
+                        : ''
                 }
                 ${
-                  selected
-                    ? 'is-checked'
-                    : ''
+                    selected
+                        ? 'is-checked'
+                        : ''
                 }
               "
               role="row"
               tabindex="0"
               data-photo-id="${
-                escapeHtml(photo.id)
-              }"
+                    escapeHtml(photo.id)
+                }"
               aria-selected="${
-                selected
-                  ? 'true'
-                  : 'false'
-              }">
+                    selected
+                        ? 'true'
+                        : 'false'
+                }">
 
               <input
                 class="
@@ -4963,21 +5223,21 @@
                 "
                 type="checkbox"
                 data-photo-check="${
-                  escapeHtml(photo.id)
+                    escapeHtml(photo.id)
                 }"
                 aria-label="${
-                  escapeHtml(
-                    `${
-                      selected
-                        ? 'Deselect'
-                        : 'Select'
-                    } ${title}`
-                  )
+                    escapeHtml(
+                        `${
+                            selected
+                                ? 'Deselect'
+                                : 'Select'
+                        } ${title}`
+                    )
                 }"
                 ${
-                  selected
-                    ? 'checked'
-                    : ''
+                    selected
+                        ? 'checked'
+                        : ''
                 }>
 
               <span
@@ -4985,10 +5245,10 @@
                   albums-list-thumb
                 ">
                 ${renderPhotoThumbnail(
-                  photo,
-                  {
-                    label: title
-                  }
+                    photo,
+                    {
+                        label: title
+                    }
                 )}
               </span>
 
@@ -5002,10 +5262,10 @@
 
                 <span>
                   ${escapeHtml(
-                    formatMediaBytes(
-                      photo.sizeBytes
-                    )
-                  )}
+                        formatMediaBytes(
+                            photo.sizeBytes
+                        )
+                    )}
                 </span>
               </span>
 
@@ -5015,15 +5275,15 @@
 
               <span>
                 ${escapeHtml(
-                  formatPhotoDate(photo)
+                    formatPhotoDate(photo)
                 )}
               </span>
 
               <span>
                 ${escapeHtml(
-                  getPlaceDisplay(
-                    photo.placeId
-                  )
+                    getPlaceDisplay(
+                        photo.placeId
+                    )
                   || photo.placeText
                   || 'Unknown'
                 )}
@@ -5035,12 +5295,12 @@
                 class="albums-row-more"
                 type="button"
                 data-photo-more="${
-                  escapeHtml(photo.id)
+                    escapeHtml(photo.id)
                 }"
                 aria-label="${
-                  escapeHtml(
-                    `Actions for ${title}`
-                  )
+                    escapeHtml(
+                        `Actions for ${title}`
+                    )
                 }"
                 aria-haspopup="menu">
                 ${icon.more}
@@ -5049,7 +5309,7 @@
           `;
         }).join('');
 
-      return `
+    return `
         <div
           class="albums-list"
           role="table"
@@ -5058,22 +5318,23 @@
           ${rows}
         </div>
       `;
-    }
+}
 
-    function renderAlbumsEmpty(
-      context
-    ) {
-      const filtered =
+function renderAlbumsEmpty(
+    context
+)
+{
+    const filtered =
         albumsHaveActiveQuery();
 
-      const copy =
+    const copy =
         filtered
-          ? 'Try a different search or clear the active filters.'
-          : 'Add a prototype photo to begin organizing this collection.';
+            ? 'Try a different search or clear the active filters.'
+            : 'Add a prototype photo to begin organizing this collection.';
 
-      const action =
+    const action =
         filtered
-          ? `
+            ? `
             <button
               class="button secondary"
               type="button"
@@ -5081,7 +5342,7 @@
               Clear search and filters
             </button>
           `
-          : `
+            : `
             <button
               class="button primary"
               type="button"
@@ -5090,15 +5351,15 @@
             </button>
           `;
 
-      return `
+    return `
         <div class="albums-empty">
           <div class="albums-empty-card">
             ${icon.image}
 
             <h2>
               ${escapeHtml(
-                context.empty
-              )}
+                    context.empty
+                )}
             </h2>
 
             <p>
@@ -5109,48 +5370,51 @@
           </div>
         </div>
       `;
-    }
+}
 
-    function albumsDetailSectionIsOpen(id) {
-      return state.albumsDetailSections?.[id] !== false;
-    }
+function albumsDetailSectionIsOpen(id)
+{
+    return state.albumsDetailSections?.[id] !== false;
+}
 
-    function renderAlbumsDetailSection(
-      id,
-      title,
-      content,
-      actionHtml = '',
-      meta = ''
-    ) {
-      return renderInspectorSection(
+function renderAlbumsDetailSection(
+    id,
+    title,
+    content,
+    actionHtml = '',
+    meta = ''
+)
+{
+    return renderInspectorSection(
         id,
         title,
         meta,
         content,
         actionHtml,
         {
-          inlineAction:
+            inlineAction:
             Boolean(actionHtml),
 
-          alwaysShowAction:
+            alwaysShowAction:
             true,
 
-          open:
+            open:
             albumsDetailSectionIsOpen(
-              id
+                id
             ),
 
-          toggleAttribute:
+            toggleAttribute:
             'data-albums-section-toggle',
 
-          sectionId:
+            sectionId:
             `albums-detail-section-${id}`
         }
-      );
-    }
+    );
+}
 
-    function albumPhotoEditDraftFromPhoto(photo) {
-      return {
+function albumPhotoEditDraftFromPhoto(photo)
+{
+    return {
         photoId: photo.id,
 
         title:
@@ -5159,7 +5423,7 @@
           || '',
 
         date: {
-          ...photoDateModel(photo)
+            ...photoDateModel(photo)
         },
 
         placeId:
@@ -5173,18 +5437,19 @@
         caption:
           photo.caption
           || ''
-      };
-    }
+    };
+}
 
-    function normalizedAlbumPhotoEditDraft(draft) {
-      return {
+function normalizedAlbumPhotoEditDraft(draft)
+{
+    return {
         title:
           String(draft?.title || '')
-            .trim(),
+              .trim(),
 
         date:
           mediaDateFromGenealogyModel(
-            draft?.date || {}
+              draft?.date || {}
           ),
 
         placeId:
@@ -5192,49 +5457,52 @@
 
         placeText:
           String(draft?.placeText || '')
-            .trim(),
+              .trim(),
 
         caption:
           String(draft?.caption || '')
-            .trim()
-      };
+              .trim()
+    };
+}
+
+function collectAlbumsPhotoEditDraft()
+{
+    if (!state.albumsDetailEditing)
+    {
+        return null;
     }
 
-    function collectAlbumsPhotoEditDraft() {
-      if (!state.albumsDetailEditing) {
-        return null;
-      }
-
-      const date =
+    const date =
         collectGenealogyDateField(
-          'albumPhotoDate'
+            'albumPhotoDate'
         );
 
-      if (!date) {
+    if (!date)
+    {
         return null;
-      }
+    }
 
-      const place =
+    const place =
         resolvePlaceInputSelector(
-          '#albumPhotoPlace',
-          main
+            '#albumPhotoPlace',
+            main
         ) || {
-          placeId: '',
-          placeText: ''
+            placeId: '',
+            placeText: ''
         };
 
-      return {
+    return {
         photoId:
           state.selectedPhotoId,
 
         title:
           collectLocalizedDataFieldValue(
-            main.querySelector(
-              '#albumPhotoTitle'
-            ),
-            main.querySelector(
-              '#albumPhotoTitle'
-            )?.dataset.sourceValue
+              main.querySelector(
+                  '#albumPhotoTitle'
+              ),
+              main.querySelector(
+                  '#albumPhotoTitle'
+              )?.dataset.sourceValue
               || ''
           ).trim(),
 
@@ -5250,172 +5518,188 @@
 
         caption:
           collectLocalizedDataFieldValue(
-            main.querySelector(
-              '#albumPhotoCaption'
-            ),
-            main.querySelector(
-              '#albumPhotoCaption'
-            )?.dataset.sourceValue
+              main.querySelector(
+                  '#albumPhotoCaption'
+              ),
+              main.querySelector(
+                  '#albumPhotoCaption'
+              )?.dataset.sourceValue
               || ''
           ).trim()
-      };
-    }
+    };
+}
 
-    function syncAlbumsPhotoEditDraftFromPane() {
-      const draft =
+function syncAlbumsPhotoEditDraftFromPane()
+{
+    const draft =
         collectAlbumsPhotoEditDraft();
 
-      if (draft) {
+    if (draft)
+    {
         state.albumsDetailDraft = draft;
-      }
     }
+}
 
-    function albumsPhotoEditIsDirty() {
-      if (
+function albumsPhotoEditIsDirty()
+{
+    if (
         !state.albumsDetailEditing
         || !state.albumsDetailEditOriginal
-      ) {
+    )
+    {
         return false;
-      }
+    }
 
-      const current =
+    const current =
         collectAlbumsPhotoEditDraft()
         || state.albumsDetailDraft;
 
-      if (!current) {
+    if (!current)
+    {
         return true;
-      }
+    }
 
-      return JSON.stringify(
+    return JSON.stringify(
         normalizedAlbumPhotoEditDraft(current)
-      ) !== JSON.stringify(
+    ) !== JSON.stringify(
         normalizedAlbumPhotoEditDraft(
-          state.albumsDetailEditOriginal
+            state.albumsDetailEditOriginal
         )
-      );
-    }
+    );
+}
 
-    function resetAlbumsPhotoEditState() {
-      state.albumsDetailEditing = false;
-      state.albumsDetailEditOriginal = null;
-      state.albumsDetailDraft = null;
-    }
+function resetAlbumsPhotoEditState()
+{
+    state.albumsDetailEditing = false;
+    state.albumsDetailEditOriginal = null;
+    state.albumsDetailDraft = null;
+}
 
-    function beginAlbumsPhotoEdit() {
-      const photo = getPhoto(
+function beginAlbumsPhotoEdit()
+{
+    const photo = getPhoto(
         state.selectedPhotoId,
         {
-          projectId: currentProjectId()
+            projectId: currentProjectId()
         }
-      );
+    );
 
-      if (!photo) {
+    if (!photo)
+    {
         return;
-      }
+    }
 
-      const draft =
+    const draft =
         albumPhotoEditDraftFromPhoto(photo);
 
-      state.albumsDetailEditing = true;
-      state.albumsDetailEditOriginal = {
+    state.albumsDetailEditing = true;
+    state.albumsDetailEditOriginal = {
         ...draft,
         date: { ...draft.date }
-      };
-      state.albumsDetailDraft = {
+    };
+    state.albumsDetailDraft = {
         ...draft,
         date: { ...draft.date }
-      };
+    };
 
-      state.albumsDetailSections.details =
+    state.albumsDetailSections.details =
         true;
 
-      renderAlbums();
-    }
+    renderAlbums();
+}
 
-    function cancelAlbumsPhotoEdit() {
-      resetAlbumsPhotoEditState();
-      renderAlbums();
-    }
+function cancelAlbumsPhotoEdit()
+{
+    resetAlbumsPhotoEditState();
+    renderAlbums();
+}
 
-    function saveAlbumsPhotoEdit() {
-      const photo = getPhoto(
+function saveAlbumsPhotoEdit()
+{
+    const photo = getPhoto(
         state.selectedPhotoId,
         {
-          projectId: currentProjectId()
+            projectId: currentProjectId()
         }
-      );
+    );
 
-      if (!photo) {
+    if (!photo)
+    {
         resetAlbumsPhotoEditState();
         renderAlbums();
         return;
-      }
+    }
 
-      const draft =
+    const draft =
         collectAlbumsPhotoEditDraft();
 
-      if (!draft) {
+    if (!draft)
+    {
         showToast(
-          'Check the historical date before saving.'
+            'Check the historical date before saving.'
         );
         return;
-      }
+    }
 
-      if (!draft.title.trim()) {
+    if (!draft.title.trim())
+    {
         showToast(
-          'Enter a photo name before saving.'
+            'Enter a photo name before saving.'
         );
 
         main
-          .querySelector('#albumPhotoTitle')
-          ?.focus();
+            .querySelector('#albumPhotoTitle')
+            ?.focus();
 
         return;
-      }
+    }
 
-      photo.title =
+    photo.title =
         draft.title.trim();
 
-      photo.date =
+    photo.date =
         mediaDateFromGenealogyModel(
-          draft.date
+            draft.date
         );
 
-      photo.placeId =
+    photo.placeId =
         draft.placeId
         || null;
 
-      photo.placeText =
+    photo.placeText =
         draft.placeText
         || '';
 
-      photo.caption =
+    photo.caption =
         draft.caption
         || '';
 
-      photo.updatedAt =
+    photo.updatedAt =
         new Date().toISOString();
 
-      resetAlbumsPhotoEditState();
-      renderAlbums();
-      showToast('Photo updated.');
-    }
+    resetAlbumsPhotoEditState();
+    renderAlbums();
+    showToast('Photo updated.');
+}
 
-    function runAfterAlbumsPhotoEditGuard(
-      action
-    ) {
-      if (!state.albumsDetailEditing) {
+function runAfterAlbumsPhotoEditGuard(
+    action
+)
+{
+    if (!state.albumsDetailEditing)
+    {
         action();
         return;
-      }
+    }
 
-      if (!albumsPhotoEditIsDirty()) {
+    if (!albumsPhotoEditIsDirty())
+    {
         resetAlbumsPhotoEditState();
         action();
         return;
-      }
+    }
 
-      openModal(`
+    openModal(`
         <div
           class="modal"
           role="dialog"
@@ -5460,81 +5744,90 @@
         </div>
       `);
 
-      modalBackdrop
+    modalBackdrop
         .querySelector(
-          '[data-discard-photo-edit]'
+            '[data-discard-photo-edit]'
         )
         ?.addEventListener(
-          'click',
-          () => {
-            closeModal();
-            resetAlbumsPhotoEditState();
-            action();
-          }
+            'click',
+            () =>
+            {
+                closeModal();
+                resetAlbumsPhotoEditState();
+                action();
+            }
         );
-    }
+}
 
-    function knownPersonDateLabel(value) {
-      const label =
+function knownPersonDateLabel(value)
+{
+    const label =
         cleanGenealogyDateText(
-          formatGenealogyDateLabel(value)
+            formatGenealogyDateLabel(value)
         );
 
-      if (
+    if (
         !label
         || /^unknown/i.test(label)
-      ) {
+    )
+    {
         return '';
-      }
-
-      return label;
     }
 
-    function albumPhotoPersonDates(person) {
-      const birth =
+    return label;
+}
+
+function albumPhotoPersonDates(person)
+{
+    const birth =
         knownPersonDateLabel(person?.birth);
 
-      const death =
+    const death =
         knownPersonDateLabel(person?.death);
 
-      const status =
+    const status =
         normalizeLivingStatus(
-          person?.livingStatus
+            person?.livingStatus
         );
 
-      if (birth && death) {
+    if (birth && death)
+    {
         return `${birth} – ${death}`;
-      }
-
-      if (
-        birth
-        && status === 'Living'
-      ) {
-        return `${birth} – Living`;
-      }
-
-      if (birth) {
-        return `Born ${birth}`;
-      }
-
-      if (death) {
-        return `Died ${death}`;
-      }
-
-      return 'Dates unknown';
     }
 
-    function formatMediaFileType(photo) {
-      const mimeType =
+    if (
+        birth
+        && status === 'Living'
+    )
+    {
+        return `${birth} – Living`;
+    }
+
+    if (birth)
+    {
+        return `Born ${birth}`;
+    }
+
+    if (death)
+    {
+        return `Died ${death}`;
+    }
+
+    return 'Dates unknown';
+}
+
+function formatMediaFileType(photo)
+{
+    const mimeType =
         String(photo?.mimeType || '');
 
-      const subtype =
+    const subtype =
         mimeType
-          .split('/')
-          .pop()
-          .toLowerCase();
+            .split('/')
+            .pop()
+            .toLowerCase();
 
-      const labels = {
+    const labels = {
         jpeg: 'JPEG',
         jpg: 'JPEG',
         png: 'PNG',
@@ -5542,18 +5835,19 @@
         webp: 'WebP',
         tiff: 'TIFF',
         heic: 'HEIC'
-      };
+    };
 
-      return labels[subtype]
+    return labels[subtype]
         || subtype.toUpperCase()
         || 'Unknown';
-    }
+}
 
-    function renderAlbumsPhotoToolbar(
-      photo,
-      editing
-    ) {
-      const collapseButton = `
+function renderAlbumsPhotoToolbar(
+    photo,
+    editing
+)
+{
+    const collapseButton = `
         <button
           class="
             people-collapse-button
@@ -5568,7 +5862,8 @@
         </button>
       `;
 
-      if (editing) {
+    if (editing)
+    {
         return `
           <div class="albums-detail-toolbar">
             ${collapseButton}
@@ -5596,9 +5891,9 @@
             </div>
           </div>
         `;
-      }
+    }
 
-      return `
+    return `
         <div class="albums-detail-toolbar">
           ${collapseButton}
 
@@ -5622,25 +5917,25 @@
             class="
               albums-detail-action
               ${
-                photo.favorite
-                  ? 'active'
-                  : ''
-              }
+                    photo.favorite
+                        ? 'active'
+                        : ''
+                }
             "
             type="button"
             data-photo-fav="${escapeHtml(
-              photo.id
+                photo.id
             )}"
             aria-label="${
-              photo.favorite
-                ? 'Remove from favourites'
-                : 'Mark as favorite'
+                photo.favorite
+                    ? 'Remove from favourites'
+                    : 'Mark as favorite'
             }"
             aria-pressed="${photo.favorite}"
             title="${
-              photo.favorite
-                ? 'Remove from favourites'
-                : 'Mark as favorite'
+                photo.favorite
+                    ? 'Remove from favourites'
+                    : 'Mark as favorite'
             }">
 
             ${icon.star}
@@ -5657,19 +5952,20 @@
           </button>
         </div>
       `;
-    }
+}
 
-    function renderAlbumsPhotoHero(
-      photo,
-      editing
-    ) {
-      const draft =
+function renderAlbumsPhotoHero(
+    photo,
+    editing
+)
+{
+    const draft =
         state.albumsDetailDraft
         || albumPhotoEditDraftFromPhoto(
-          photo
+            photo
         );
 
-      return `
+    return `
         <div class="albums-detail-hero">
           <button
             class="
@@ -5677,27 +5973,27 @@
             "
             type="button"
             data-photo-open="${escapeHtml(
-              photo.id
+                photo.id
             )}"
             aria-label="Open full-size preview of ${escapeHtml(
-              photo.title
+                photo.title
               || photo.filename
               || 'photo'
             )}">
 
             ${renderPhotoThumbnail(
-              photo,
-              {
-                className:
+                photo,
+                {
+                    className:
                   'albums-detail-preview',
 
-                label:
+                    label:
                   photo.title
                   || photo.filename,
 
-                backdrop:
+                    backdrop:
                   true
-              }
+                }
             )}
           </button>
 
@@ -5709,15 +6005,15 @@
             "
             type="button"
             data-photo-open="${escapeHtml(
-              photo.id
+                photo.id
             )}">
             Open preview
           </button>
 
           <div class="albums-detail-identity">
             ${
-              editing
-                ? `
+                editing
+                    ? `
                   <label
                     class="
                       albums-detail-title-field
@@ -5730,14 +6026,14 @@
                       maxlength="180"
                       data-source-value="${escapeHtml(draft.title || '')}"
                       value="${escapeHtml(
-                        localizedDataFieldValue(draft.title || '')
-                      )}">
+                            localizedDataFieldValue(draft.title || '')
+                        )}">
                   </label>
                 `
-                : `
+                    : `
                   <h2>
                     ${escapeHtml(
-                      photo.title
+                        photo.title
                       || photo.filename
                       || 'Untitled photo'
                     )}
@@ -5747,63 +6043,65 @@
 
             <p class="albums-detail-summary">
               ${escapeHtml(
-                `${
-                  photo.width || 0
-                } × ${
-                  photo.height || 0
-                } · ${
-                  formatMediaBytes(
-                    photo.sizeBytes
-                  )
-                }`
-              )}
+                    `${
+                        photo.width || 0
+                    } × ${
+                        photo.height || 0
+                    } · ${
+                        formatMediaBytes(
+                            photo.sizeBytes
+                        )
+                    }`
+                )}
             </p>
           </div>
         </div>
       `;
-    }
-        
-    function renderAlbumsPhotoDetails(
-      photo,
-      editing
-    ) {
-      if (editing) {
+}
+
+function renderAlbumsPhotoDetails(
+    photo,
+    editing
+)
+{
+    if (editing)
+    {
         const draft =
-          state.albumsDetailDraft
+            state.albumsDetailDraft
           || albumPhotoEditDraftFromPhoto(photo);
 
         return `
           <div class="albums-form-grid">
             ${renderGenealogyDateField(
-              'albumPhotoDate',
-              'Historical date',
-              draft.date,
-              {
-                inputId:
+                'albumPhotoDate',
+                'Historical date',
+                draft.date,
+                {
+                    inputId:
                   'albumPhotoDateInput',
-                typeId:
+                    typeId:
                   'albumPhotoDateType',
-                defaultDateType:
+                    defaultDateType:
                   'Exact date',
-                className:
+                    className:
                   'genealogy-date-inline-range'
-              }
+                }
             )}
 
             ${renderPlaceCombobox({
-              id: 'albumPhotoPlace',
-              label: 'Place',
-              value:
+                id: 'albumPhotoPlace',
+                label: 'Place',
+                value:
                 getPlaceDisplay(
-                  draft.placeId
+                    draft.placeId
                 )
                 || draft.placeText
                 || '',
-              selectedPlaceId:
+                selectedPlaceId:
                 draft.placeId
                 || '',
-              showAddress: false,
-              className: 'full'
+                showAddress: false,
+                className: 'full'
             })}
 
             <div class="albums-field">
@@ -5816,28 +6114,28 @@
                 maxlength="500"
                 data-source-value="${escapeHtml(draft.caption || '')}"
                 placeholder="Add a description of this photo">${escapeHtml(
-                  localizedDataFieldValue(
-                    draft.caption || ''
-                  )
+                    localizedDataFieldValue(
+                        draft.caption || ''
+                    )
                 )}</textarea>
             </div>
           </div>
         `;
-      }
+    }
 
-      const caption =
+    const caption =
         String(photo.caption || '').trim()
         || 'No caption added.';
 
-      return `
+    return `
         <dl class="albums-detail-read-list">
           <div class="albums-detail-read-row">
             <dt>Date</dt>
 
             <dd>
               ${escapeHtml(
-                formatPhotoDate(photo)
-              )}
+                    formatPhotoDate(photo)
+                )}
             </dd>
           </div>
 
@@ -5846,10 +6144,10 @@
 
             <dd>
               ${escapeHtml(
-                getPlaceDisplay(photo.placeId)
+                    getPlaceDisplay(photo.placeId)
                 || photo.placeText
                 || 'Unknown place'
-              )}
+                )}
             </dd>
           </div>
 
@@ -5860,36 +6158,39 @@
           </div>
         </dl>
       `;
-    }
+}
 
-    function renderAlbumsPhotoPeople(
-      photo,
-      readOnly
-    ) {
-      const people =
+function renderAlbumsPhotoPeople(
+    photo,
+    readOnly
+)
+{
+    const people =
         getPhotoPeople(photo);
 
-      if (!people.length) {
+    if (!people.length)
+    {
         return renderInspectorSectionEmpty(
-          'No people tagged on this photo.'
+            'No people tagged on this photo.'
         );
-      }
+    }
 
-      return `
+    return `
         <div class="relationship-list">
-          ${people.map(person => {
-            const name =
-              person.names?.display
+          ${people.map(person =>
+            {
+                const name =
+                    person.names?.display
               || 'Unnamed person';
 
-            const mainContent = `
+                const mainContent = `
               ${renderPersonAvatar(
-                person,
-                'small-avatar',
-                {
-                  element: 'span'
-                }
-              )}
+                    person,
+                    'small-avatar',
+                    {
+                        element: 'span'
+                    }
+                )}
 
               <span class="relation-row-copy">
                 <strong>
@@ -5898,24 +6199,24 @@
 
                 <span>
                   ${escapeHtml(
-                    albumPhotoPersonDates(
-                      person
-                    )
-                  )}
+                        albumPhotoPersonDates(
+                            person
+                        )
+                    )}
                 </span>
               </span>
             `;
 
-            return `
+                return `
               <div class="relation-row">
                 ${
-                  readOnly
-                    ? `
+                    readOnly
+                        ? `
                       <div class="relation-row-main">
                         ${mainContent}
                       </div>
                     `
-                    : `
+                        : `
                       <button
                         class="relation-row-main"
                         type="button"
@@ -5927,9 +6228,9 @@
                 }
 
                 ${
-                  readOnly
-                    ? ''
-                    : `
+                    readOnly
+                        ? ''
+                        : `
                       <div class="relation-actions">
                         <button
                           class="relation-action-button"
@@ -5944,36 +6245,38 @@
                 }
               </div>
             `;
-          }).join('')}
+            }).join('')}
         </div>
       `;
+}
+
+function renderAlbumsPhotoAlbums(
+    photo,
+    readOnly
+)
+{
+    const albums =
+        (photo.albumIds || [])
+            .map(id => ({
+                id,
+                name: getAlbumName(id)
+            }))
+            .filter(album => album.name);
+
+    if (!albums.length)
+    {
+        return renderInspectorSectionEmpty(
+            'This photo is not in an album.'
+        );
     }
 
-    function renderAlbumsPhotoAlbums(
-      photo,
-      readOnly
-    ) {
-      const albums =
-        (photo.albumIds || [])
-          .map(id => ({
-            id,
-            name: getAlbumName(id)
-          }))
-          .filter(album => album.name);
-
-      if (!albums.length) {
-        return renderInspectorSectionEmpty(
-          'This photo is not in an album.'
-        );
-      }
-
-      return `
+    return `
         <div class="albums-inspector-list">
           ${albums.map(album => `
             <div class="albums-inspector-row">
               ${
-                readOnly
-                  ? `
+                    readOnly
+                        ? `
                     <div class="albums-inspector-row-main">
                       ${icon.folder}
 
@@ -5982,7 +6285,7 @@
                       </span>
                     </div>
                   `
-                  : `
+                        : `
                     <button
                       class="albums-inspector-row-main"
                       type="button"
@@ -6004,25 +6307,26 @@
                       ${icon.close}
                     </button>
                   `
-              }
+                }
             </div>
           `).join('')}
         </div>
       `;
-    }
+}
 
-    function renderConnectedNotesFooter({
-      contextType,
-      contextId,
-      count
-    }) {
-      if (!contextId || !count) return '';
+function renderConnectedNotesFooter({
+    contextType,
+    contextId,
+    count
+})
+{
+    if (!contextId || !count) return '';
 
-      const label = translateText(
+    const label = translateText(
         `View all ${count} ${count === 1 ? 'note' : 'notes'}`
-      );
+    );
 
-      return `
+    return `
         <div class="panel-section-footer">
           <button
             class="panel-section-view-all"
@@ -6041,98 +6345,105 @@
           </button>
         </div>
       `;
-    }
+}
 
-    function bindConnectedNotesFooters(root) {
-      root?.querySelectorAll('[data-connected-notes-view-all]')
-        .forEach(button => {
-          button.onclick = event => {
-            event.preventDefault();
-            event.stopPropagation();
+function bindConnectedNotesFooters(root)
+{
+    root?.querySelectorAll('[data-connected-notes-view-all]')
+        .forEach(button =>
+        {
+            button.onclick = event =>
+            {
+                event.preventDefault();
+                event.stopPropagation();
 
-            openNotesForContext(
-              button.dataset.notesContextType,
-              button.dataset.notesContextId
-            );
-          };
+                openNotesForContext(
+                    button.dataset.notesContextType,
+                    button.dataset.notesContextId
+                );
+            };
         });
-    }
+}
 
-    function renderAlbumsPhotoNotes(
-      photo,
-      notes = getNotesForPhoto(photo.id, {
+function renderAlbumsPhotoNotes(
+    photo,
+    notes = getNotesForPhoto(photo.id, {
         projectId: photo.projectId,
         includeArchived: false
-      })
-    ) {
-      if (!notes.length) {
+    })
+)
+{
+    if (!notes.length)
+    {
         return renderInspectorSectionEmpty(
-          'No notes linked to this photo.'
+            'No notes linked to this photo.'
         );
-      }
+    }
 
-      const items = renderConnectedNoteList({
+    const items = renderConnectedNoteList({
         notes,
         contextType: 'photo',
         contextId: photo.id,
         emptyText: 'No notes linked to this photo.',
         allowUnlink: true
-      });
+    });
 
-      return `
+    return `
         ${items}
 
         ${renderConnectedNotesFooter({
-          contextType: 'photo',
-          contextId: photo.id,
-          count: notes.length
+            contextType: 'photo',
+            contextId: photo.id,
+            count: notes.length
         })}
       `;
-    }
+}
 
-    function openAlbumsPhotoNotesModal(
-      photoId =
+function openAlbumsPhotoNotesModal(
+    photoId =
         state.selectedPhotoId
-    ) {
-      const photo =
+)
+{
+    const photo =
         getPhoto(
-          photoId,
-          {
-            projectId:
+            photoId,
+            {
+                projectId:
               currentProjectId()
-          }
+            }
         );
 
-      if (!photo) {
+    if (!photo)
+    {
         return;
-      }
+    }
 
-      /*
+    /*
         Albums currently exposes only active Notes
         for normal linking. Archived Note links are
         preserved because this modal is additive and
         never removes existing relationships.
       */
-      const existingNoteIds =
+    const existingNoteIds =
         getNotesForPhoto(
-          photo.id,
-          {
-            projectId:
+            photo.id,
+            {
+                projectId:
               photo.projectId,
 
-            includeArchived:
+                includeArchived:
               false
-          }
+            }
         ).map(note =>
-          note.id
+            note.id
         );
 
-      const photoLabel =
+    const photoLabel =
         photo.title
         || photo.filename
         || 'this photo';
 
-      openNoteLinkPickerModal({
+    openNoteLinkPickerModal({
         projectId:
           photo.projectId,
 
@@ -6168,65 +6479,69 @@
         */
         onCreate:
           () =>
-            openNewNoteForContext(
-              'photo',
-              photo.id
-            ),
+              openNewNoteForContext(
+                  'photo',
+                  photo.id
+              ),
 
         onSave:
-          selectedNoteIds => {
-            const currentPhoto =
-              getPhoto(
-                photo.id,
-                {
-                  projectId:
+          selectedNoteIds =>
+          {
+              const currentPhoto =
+                  getPhoto(
+                      photo.id,
+                      {
+                          projectId:
                     photo.projectId
-                }
-              );
-
-            if (!currentPhoto) {
-              return false;
-            }
-
-            selectedNoteIds.forEach(
-              noteId => {
-                const note =
-                  getNote(
-                    noteId,
-                    {
-                      projectId:
-                        photo.projectId,
-
-                      includeArchived:
-                        false
-                    }
+                      }
                   );
 
-                if (!note) {
-                  return;
-                }
-
-                setNotePhotoLinks(
-                  note.id,
-                  [
-                    ...new Set([
-                      ...(
-                        note.linkedPhotoIds
-                        || []
-                      ),
-
-                      photo.id
-                    ])
-                  ],
-                  {
-                    projectId:
-                      photo.projectId
-                  }
-                );
+              if (!currentPhoto)
+              {
+                  return false;
               }
-            );
 
-            return true;
+              selectedNoteIds.forEach(
+                  noteId =>
+                  {
+                      const note =
+                          getNote(
+                              noteId,
+                              {
+                                  projectId:
+                        photo.projectId,
+
+                                  includeArchived:
+                        false
+                              }
+                          );
+
+                      if (!note)
+                      {
+                          return;
+                      }
+
+                      setNotePhotoLinks(
+                          note.id,
+                          [
+                              ...new Set([
+                                  ...(
+                                      note.linkedPhotoIds
+                        || []
+                                  ),
+
+                                  photo.id
+                              ])
+                          ],
+                          {
+                              projectId:
+                      photo.projectId
+                          }
+                      );
+                  }
+              );
+
+              return true;
           },
 
         afterSave:
@@ -6234,18 +6549,19 @@
 
         successMessage:
           count =>
-            `${count} ${
-              count === 1
-                ? 'note was'
-                : 'notes were'
-            } linked to the photo.`
-      });
-    }
+              `${count} ${
+                  count === 1
+                      ? 'note was'
+                      : 'notes were'
+              } linked to the photo.`
+    });
+}
 
-    function renderAlbumsPhotoSources(
-      photo
-    ) {
-      return renderConnectedSourceList({
+function renderAlbumsPhotoSources(
+    photo
+)
+{
+    return renderConnectedSourceList({
         targetType:
           'photo',
 
@@ -6257,47 +6573,48 @@
 
         emptyText:
           'No sources linked to this photo.'
-      });
-    }
+    });
+}
 
-    function renderAlbumsPhotoMetadata(photo) {
-      const rows = [
+function renderAlbumsPhotoMetadata(photo)
+{
+    const rows = [
         [
-          'File name',
-          photo.filename
+            'File name',
+            photo.filename
           || 'Unknown'
         ],
         [
-          'File format',
-          formatMediaFileType(photo)
+            'File format',
+            formatMediaFileType(photo)
         ],
         [
-          'Dimensions',
-          `${photo.width || 0} × ${
-            photo.height || 0
-          }`
+            'Dimensions',
+            `${photo.width || 0} × ${
+                photo.height || 0
+            }`
         ],
         [
-          'File size',
-          formatMediaBytes(
-            photo.sizeBytes
-          )
+            'File size',
+            formatMediaBytes(
+                photo.sizeBytes
+            )
         ],
         [
-          'Added',
-          formatMediaTimestamp(
-            photo.createdAt
-          )
+            'Added',
+            formatMediaTimestamp(
+                photo.createdAt
+            )
         ],
         [
-          'Last modified',
-          formatMediaTimestamp(
-            photo.updatedAt
-          )
+            'Last modified',
+            formatMediaTimestamp(
+                photo.updatedAt
+            )
         ]
-      ];
+    ];
 
-      return `
+    return `
         <div class="albums-metadata-list">
           ${rows.map(([label, value]) => `
             <div class="albums-metadata-row">
@@ -6307,10 +6624,11 @@
           `).join('')}
         </div>
       `;
-    }
+}
 
-    function renderAlbumsDetailCollapsed() {
-      return `
+function renderAlbumsDetailCollapsed()
+{
+    return `
         <aside
           class="albums-detail collapsed"
           aria-label="Collapsed photo inspector">
@@ -6328,122 +6646,125 @@
           </button>
         </aside>
       `;
+}
+
+function renderAlbumsDetailPane()
+{
+    const photo =
+        getPhoto(
+            state.selectedPhotoId,
+            {
+                projectId:
+              currentProjectId()
+            }
+        );
+
+    if (!photo)
+    {
+        return '';
     }
 
-    function renderAlbumsDetailPane() {
-      const photo =
-        getPhoto(
-          state.selectedPhotoId,
-          {
-            projectId:
-              currentProjectId()
-          }
-        );
-
-      if (!photo) {
-        return '';
-      }
-
-      if (
+    if (
         state.albumsDetailEditing
         && state.albumsDetailDraft
-          ?.photoId !== photo.id
-      ) {
+            ?.photoId !== photo.id
+    )
+    {
         resetAlbumsPhotoEditState();
-      }
+    }
 
-      const editing =
+    const editing =
         state.albumsDetailEditing
         && state.albumsDetailDraft
-          ?.photoId === photo.id;
+            ?.photoId === photo.id;
 
-      const actionsLocked =
+    const actionsLocked =
         editing;
 
-      const photoNotes =
+    const photoNotes =
         getNotesForPhoto(
-          photo.id,
-          {
-            projectId:
+            photo.id,
+            {
+                projectId:
               photo.projectId,
 
-            includeArchived:
+                includeArchived:
               false
-          }
+            }
         );
 
-      const photoSources =
+    const photoSources =
         sourcesForTarget(
-          'photo',
-          photo.id,
-          photo.projectId
+            'photo',
+            photo.id,
+            photo.projectId
         );
 
-      const peopleAction =
+    const peopleAction =
         actionsLocked
-          ? ''
-          : `
+            ? ''
+            : `
             <button
               class="link"
               type="button"
               id="albumsTagPeople">
 
               ${renderPanelButtonLabel(
-                icon.plus,
-                'Tag person'
-              )}
+                    icon.plus,
+                    'Tag person'
+                )}
             </button>
           `;
 
-      const albumAction =
+    const albumAction =
         actionsLocked
-          ? ''
-          : `
+            ? ''
+            : `
             <button
               class="link"
               type="button"
               id="albumsLinkAlbum">
 
               ${renderPanelButtonLabel(
-                icon.plus,
-                'Add to album'
-              )}
+                    icon.plus,
+                    'Add to album'
+                )}
             </button>
           `;
 
-      const notesAction =
+    const notesAction =
         actionsLocked
-          ? ''
-          : `
+            ? ''
+            : `
             <button
               class="link"
               type="button"
               id="albumsManagePhotoNotes">
 
               ${renderPanelButtonLabel(
-                icon.plus,
-                'Add note'
-              )}
+                    icon.plus,
+                    'Add note'
+                )}
             </button>
           `;
 
-      const sourceAction =
+    const sourceAction =
         actionsLocked
-          ? ''
-          : `
+            ? ''
+            : `
             <button
               class="link"
               type="button"
               id="albumsManagePhotoSources">
 
               ${renderPanelButtonLabel(
-                icon.plus,
-                'Add source'
-              )}
+                    icon.plus,
+                    'Add source'
+                )}
             </button>
           `;
 
-      return `
+    return `
         <aside
           class="
             albums-detail
@@ -6451,146 +6772,153 @@
           "
           aria-label="Photo inspector"
           ${
-            editing
-              ? 'data-albums-photo-edit-root'
-              : ''
-          }>
+                editing
+                    ? 'data-albums-photo-edit-root'
+                    : ''
+            }>
 
           ${renderAlbumsPhotoToolbar(
-            photo,
-            editing
-          )}
+                photo,
+                editing
+            )}
 
           ${renderAlbumsPhotoHero(
-            photo,
-            editing
-          )}
+                photo,
+                editing
+            )}
 
           ${renderAlbumsDetailSection(
-            'details',
-            'Details',
-            renderAlbumsPhotoDetails(
-              photo,
-              editing
-            )
-          )}
+                'details',
+                'Details',
+                renderAlbumsPhotoDetails(
+                    photo,
+                    editing
+                )
+            )}
 
           ${renderAlbumsDetailSection(
-            'people',
-            'People',
-            renderAlbumsPhotoPeople(
-              photo,
-              actionsLocked
-            ),
-            peopleAction
-          )}
+                'people',
+                'People',
+                renderAlbumsPhotoPeople(
+                    photo,
+                    actionsLocked
+                ),
+                peopleAction
+            )}
 
           ${renderAlbumsDetailSection(
-            'albums',
-            'Albums',
-            renderAlbumsPhotoAlbums(
-              photo,
-              actionsLocked
-            ),
-            albumAction
-          )}
+                'albums',
+                'Albums',
+                renderAlbumsPhotoAlbums(
+                    photo,
+                    actionsLocked
+                ),
+                albumAction
+            )}
 
           ${renderAlbumsDetailSection(
-            'notes',
-            'Notes',
-            renderAlbumsPhotoNotes(
-              photo,
-              photoNotes
-            ),
-            notesAction,
-            `${photoNotes.length} ${
-              photoNotes.length === 1
-                ? 'note'
-                : 'notes'
-            }`
-          )}
+                'notes',
+                'Notes',
+                renderAlbumsPhotoNotes(
+                    photo,
+                    photoNotes
+                ),
+                notesAction,
+                `${photoNotes.length} ${
+                    photoNotes.length === 1
+                        ? 'note'
+                        : 'notes'
+                }`
+            )}
 
           ${renderAlbumsDetailSection(
-            'sources',
-            'Sources',
-            renderAlbumsPhotoSources(
-              photo
-            ),
-            sourceAction,
-            `${photoSources.length} ${
-              photoSources.length === 1
-                ? 'source'
-                : 'sources'
-            }`
-          )}
+                'sources',
+                'Sources',
+                renderAlbumsPhotoSources(
+                    photo
+                ),
+                sourceAction,
+                `${photoSources.length} ${
+                    photoSources.length === 1
+                        ? 'source'
+                        : 'sources'
+                }`
+            )}
 
           ${renderAlbumsDetailSection(
-            'metadata',
-            'Metadata',
-            renderAlbumsPhotoMetadata(
-              photo
-            )
-          )}
+                'metadata',
+                'Metadata',
+                renderAlbumsPhotoMetadata(
+                    photo
+                )
+            )}
         </aside>
       `;
-    }
+}
 
-    function renderAlbumsActiveFilterbar() {
-      const filters =
+function renderAlbumsActiveFilterbar()
+{
+    const filters =
         state.albumsFilters
         || defaultAlbumFilters;
 
-      const chips = [];
-      if (filters.sourceId) {
+    const chips = [];
+    if (filters.sourceId)
+    {
         chips.push([
-          'sourceId',
-          archiveSourceById(filters.sourceId)?.title
+            'sourceId',
+            archiveSourceById(filters.sourceId)?.title
             || translateText('Source')
         ]);
-      }
-      if (filters.personId) {
+    }
+    if (filters.personId)
+    {
         chips.push([
-          'personId',
-          filters.personId === 'none'
-            ? 'No people tagged'
-            : getPersonDisplayName(
-                filters.personId
-              )
+            'personId',
+            filters.personId === 'none'
+                ? 'No people tagged'
+                : getPersonDisplayName(
+                    filters.personId
+                )
         ]);
-      }
+    }
 
-      if (filters.placeId) {
+    if (filters.placeId)
+    {
         chips.push([
-          'placeId',
-          filters.placeId === 'none'
-            ? 'No known place'
-            : getPlaceDisplay(
-                filters.placeId
-              )
+            'placeId',
+            filters.placeId === 'none'
+                ? 'No known place'
+                : getPlaceDisplay(
+                    filters.placeId
+                )
         ]);
-      }
+    }
 
-      if (filters.dateRange) {
+    if (filters.dateRange)
+    {
         chips.push([
-          'dateRange',
-          filters.dateRange === 'dated'
-            ? 'Known date'
-            : 'Unknown date'
+            'dateRange',
+            filters.dateRange === 'dated'
+                ? 'Known date'
+                : 'Unknown date'
         ]);
-      }
+    }
 
-      if (filters.favouriteOnly) {
+    if (filters.favouriteOnly)
+    {
         chips.push([
-          'favouriteOnly',
-          'Favourites only'
+            'favouriteOnly',
+            'Favourites only'
         ]);
-      }
+    }
 
-      if (!chips.length) {
+    if (!chips.length)
+    {
         return '';
-      }
+    }
 
-      const chipMarkup = chips
+    const chipMarkup = chips
         .map(([key, label]) => `
           <span
             class="filter-chip active-filter-chip">
@@ -6611,7 +6939,7 @@
         `)
         .join('');
 
-      return `
+    return `
         <div
           class="albums-active-filterbar"
           aria-label="Active Albums filters">
@@ -6628,150 +6956,158 @@
           </span>
         </div>
       `;
-    }
+}
 
-    let albumsFilterReturnFocus =
-      null;
+let albumsFilterReturnFocus =
+    null;
 
-    function closeAlbumsFilterPopover({
-      restoreFocus = false
-    } = {}) {
-      document
+function closeAlbumsFilterPopover({
+    restoreFocus = false
+} = {})
+{
+    document
         .getElementById(
-          'albumsFilterPopover'
+            'albumsFilterPopover'
         )
         ?.remove();
 
-      document.removeEventListener(
+    document.removeEventListener(
         'click',
         closeAlbumsFilterOnOutside
-      );
+    );
 
-      document.removeEventListener(
+    document.removeEventListener(
         'keydown',
         closeAlbumsFilterOnEscape
-      );
+    );
 
-      if (
+    if (
         restoreFocus
         && albumsFilterReturnFocus
-          ?.isConnected
-      ) {
+            ?.isConnected
+    )
+    {
         albumsFilterReturnFocus.focus({
-          preventScroll:
+            preventScroll:
             true
         });
-      }
-
-      albumsFilterReturnFocus =
-        null;
     }
 
-    function closeAlbumsFilterOnOutside(
-      event
-    ) {
-      const popover =
+    albumsFilterReturnFocus =
+        null;
+}
+
+function closeAlbumsFilterOnOutside(
+    event
+)
+{
+    const popover =
         document.getElementById(
-          'albumsFilterPopover'
+            'albumsFilterPopover'
         );
 
-      const trigger =
+    const trigger =
         document.getElementById(
-          'albumsFilterButton'
+            'albumsFilterButton'
         );
 
-      if (!popover) {
+    if (!popover)
+    {
         return;
-      }
+    }
 
-      const eventPath =
+    const eventPath =
         typeof event.composedPath
           === 'function'
             ? event.composedPath()
             : [];
 
-      const insidePopover =
+    const insidePopover =
         eventPath.length
-          ? eventPath.includes(
-              popover
+            ? eventPath.includes(
+                popover
             )
-          : popover.contains(
-              event.target
+            : popover.contains(
+                event.target
             );
 
-      const insideTrigger =
+    const insideTrigger =
         eventPath.length
-          ? eventPath.includes(
-              trigger
+            ? eventPath.includes(
+                trigger
             )
-          : trigger?.contains(
-              event.target
+            : trigger?.contains(
+                event.target
             );
 
-      if (
+    if (
         insidePopover
         || insideTrigger
-      ) {
+    )
+    {
         return;
-      }
-
-      closeAlbumsFilterPopover();
     }
 
-    function closeAlbumsFilterOnEscape(
-      event
-    ) {
-      if (
+    closeAlbumsFilterPopover();
+}
+
+function closeAlbumsFilterOnEscape(
+    event
+)
+{
+    if (
         event.key !== 'Escape'
-      ) {
+    )
+    {
         return;
-      }
+    }
 
-      event.preventDefault();
+    event.preventDefault();
 
-      closeAlbumsFilterPopover({
+    closeAlbumsFilterPopover({
         restoreFocus:
           true
-      });
-    }
+    });
+}
 
-    function openAlbumsFilterPopover(
-      anchor
-    ) {
-      closeAlbumsFilterPopover();
-      closePeopleFilterPopover();
-      closeMenu();
+function openAlbumsFilterPopover(
+    anchor
+)
+{
+    closeAlbumsFilterPopover();
+    closePeopleFilterPopover();
+    closeMenu();
 
-      albumsFilterReturnFocus =
+    albumsFilterReturnFocus =
         anchor;
 
-      const filters =
+    const filters =
         albumsFiltersWithDefaults();
 
-      const popover =
+    const popover =
         document.createElement(
-          'div'
+            'div'
         );
 
-      popover.className =
+    popover.className =
         'shared-filter-panel albums-shared-filter-popover';
 
-      popover.id =
+    popover.id =
         'albumsFilterPopover';
 
-      popover.setAttribute(
+    popover.setAttribute(
         'role',
         'dialog'
-      );
+    );
 
-      popover.setAttribute(
+    popover.setAttribute(
         'aria-label',
         translateText(
-          'Filter photos'
+            'Filter photos'
         )
-      );
+    );
 
-      popover.innerHTML = `
+    popover.innerHTML = `
         <div
           class="
             shared-filter-panel-header
@@ -6806,9 +7142,9 @@
           ">
 
           ${renderAlbumsFilterFields(
-            filters,
-            'albums-popover-filter'
-          )}
+                filters,
+                'albums-popover-filter'
+            )}
         </div>
 
         <div
@@ -6845,217 +7181,228 @@
         </div>
       `;
 
-      document.body.appendChild(
+    document.body.appendChild(
         popover
-      );
+    );
 
-      localizeUI(popover);
+    localizeUI(popover);
 
-      const controller =
+    const controller =
         bindAlbumsFilterFields(
-          popover,
-          filters,
-          'albums-popover-filter'
+            popover,
+            filters,
+            'albums-popover-filter'
         );
 
-      popover
+    popover
         .querySelector(
-          '[data-albums-filter-reset]'
+            '[data-albums-filter-reset]'
         )
         ?.addEventListener(
-          'click',
-          () => {
-            controller?.reset();
-          }
+            'click',
+            () =>
+            {
+                controller?.reset();
+            }
         );
 
-      popover
+    popover
         .querySelector(
-          '[data-albums-filter-close]'
+            '[data-albums-filter-close]'
         )
         ?.addEventListener(
-          'click',
-          () => {
-            closeAlbumsFilterPopover({
-              restoreFocus:
+            'click',
+            () =>
+            {
+                closeAlbumsFilterPopover({
+                    restoreFocus:
                 true
-            });
-          }
+                });
+            }
         );
 
-      popover
+    popover
         .querySelector(
-          '[data-albums-filter-cancel]'
+            '[data-albums-filter-cancel]'
         )
         ?.addEventListener(
-          'click',
-          () => {
-            closeAlbumsFilterPopover({
-              restoreFocus:
+            'click',
+            () =>
+            {
+                closeAlbumsFilterPopover({
+                    restoreFocus:
                 true
-            });
-          }
+                });
+            }
         );
 
-      popover
+    popover
         .querySelector(
-          '[data-albums-filter-apply]'
+            '[data-albums-filter-apply]'
         )
         ?.addEventListener(
-          'click',
-          () => {
-            state.albumsFilters =
-              controller?.getValues()
+            'click',
+            () =>
+            {
+                state.albumsFilters =
+                    controller?.getValues()
               || albumsFiltersWithDefaults();
 
-            resetAlbumsPage();
+                resetAlbumsPage();
 
-            closeAlbumsFilterPopover();
+                closeAlbumsFilterPopover();
 
-            renderAlbums();
-          }
+                renderAlbums();
+            }
         );
 
-      positionSharedFilterPanel(
+    positionSharedFilterPanel(
         popover,
         anchor
-      );
+    );
 
-      requestAnimationFrame(
-        () => {
-          popover
-            .querySelector(
-              '[data-albums-filter-close]'
-            )
-            ?.focus({
-              preventScroll:
+    requestAnimationFrame(
+        () =>
+        {
+            popover
+                .querySelector(
+                    '[data-albums-filter-close]'
+                )
+                ?.focus({
+                    preventScroll:
                 true
-            });
+                });
         }
-      );
+    );
 
-      setTimeout(
-        () => {
-          document.addEventListener(
-            'click',
-            closeAlbumsFilterOnOutside
-          );
+    setTimeout(
+        () =>
+        {
+            document.addEventListener(
+                'click',
+                closeAlbumsFilterOnOutside
+            );
 
-          document.addEventListener(
-            'keydown',
-            closeAlbumsFilterOnEscape
-          );
+            document.addEventListener(
+                'keydown',
+                closeAlbumsFilterOnEscape
+            );
         },
         0
-      );
-    }
+    );
+}
 
-    function removeAlbumFilter(
-      key
-    ) {
-      const definition =
+function removeAlbumFilter(
+    key
+)
+{
+    const definition =
         sharedFilterDefinitionByKey(
-          albumsFilterSchema,
-          key
+            albumsFilterSchema,
+            key
         );
 
-      if (!definition) {
+    if (!definition)
+    {
         return;
-      }
+    }
 
-      const filters =
+    const filters =
         albumsFiltersWithDefaults();
 
-      filters[key] =
+    filters[key] =
         definition.control
           === 'boolean'
             ? false
             : definition.defaultValue
               ?? '';
 
-      state.albumsFilters =
+    state.albumsFilters =
         filters;
 
-      resetAlbumsPage();
-      renderAlbums();
-    }
+    resetAlbumsPage();
+    renderAlbums();
+}
 
-    function clearAlbumFilters() {
-      state.albumsFilters =
+function clearAlbumFilters()
+{
+    state.albumsFilters =
         albumsFiltersWithDefaults(
-          defaultAlbumFilters
+            defaultAlbumFilters
         );
 
-      resetAlbumsPage();
-      renderAlbums();
-    }
+    resetAlbumsPage();
+    renderAlbums();
+}
 
-    function openPhotoLightbox(photoId) {
-      const photo = getPhoto(photoId, { projectId: currentProjectId() });
-      if (!photo) return;
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="photoLightboxTitle"><div class="modal-header"><div><h2 id="photoLightboxTitle">${escapeHtml(photo.title || photo.filename)}</h2><p>${escapeHtml(formatPhotoDate(photo))}</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body">
+function openPhotoLightbox(photoId)
+{
+    const photo = getPhoto(photoId, { projectId: currentProjectId() });
+    if (!photo) return;
+    openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="photoLightboxTitle"><div class="modal-header"><div><h2 id="photoLightboxTitle">${escapeHtml(photo.title || photo.filename)}</h2><p>${escapeHtml(formatPhotoDate(photo))}</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body">
         ${
-        renderPhotoThumbnail(
-          photo,
-          {
-            className:
+            renderPhotoThumbnail(
+                photo,
+                {
+                    className:
               'albums-lightbox-photo',
 
-            label:
+                    label:
               photo.title
               || photo.filename,
 
-            backdrop:
+                    backdrop:
               true
-          }
-        )
+                }
+            )
         }<p>${escapeHtml(photo.caption || 'No caption.')}</p></div></div>`);
-    }
+}
 
-    function openPhotoPeopleModal(photoId) {
-      const photo = getPhoto(
+function openPhotoPeopleModal(photoId)
+{
+    const photo = getPhoto(
         photoId,
         {
-          projectId: currentProjectId()
+            projectId: currentProjectId()
         }
-      );
+    );
 
-      if (!photo) return;
+    if (!photo) return;
 
-      const initialSelectedIds = new Set(
+    const initialSelectedIds = new Set(
         [
-          ...new Set(
-            photo.personIds || []
-          )
+            ...new Set(
+                photo.personIds || []
+            )
         ].filter(personId =>
-          getPerson(personId)?.projectId
+            getPerson(personId)?.projectId
             === photo.projectId
         )
-      );
+    );
 
-      const selectedIds =
+    const selectedIds =
         new Set(initialSelectedIds);
 
-      let query = '';
+    let query = '';
 
-      const personName = person =>
+    const personName = person =>
         connectPersonName(person);
 
-      const personContext = person =>
+    const personContext = person =>
         getPlaceEventDisplay(person?.birth)
         || getPlaceEventDisplay(person?.death)
         || '';
 
-      const personMeta = person =>
+    const personMeta = person =>
         [
-          albumPhotoPersonDates(person),
-          personContext(person)
+            albumPhotoPersonDates(person),
+            personContext(person)
         ]
-          .filter(Boolean)
-          .join(' · ')
+            .filter(Boolean)
+            .join(' · ')
         || 'Dates unknown';
 
-      const personSearchText = person => [
+    const personSearchText = person => [
         personName(person),
         person?.names?.first,
         person?.names?.middle,
@@ -7063,240 +7410,260 @@
         person?.names?.maiden,
         albumPhotoPersonDates(person),
         getPlaceEventDisplay(
-          person?.birth
+            person?.birth
         ),
         getPlaceEventDisplay(
-          person?.death
+            person?.death
         )
-      ]
+    ]
         .filter(Boolean)
         .join(' ')
         .toLowerCase();
 
-      const selectionChanged = () =>
+    const selectionChanged = () =>
         initialSelectedIds.size
           !== selectedIds.size
         || [
-          ...initialSelectedIds
+            ...initialSelectedIds
         ].some(personId =>
-          !selectedIds.has(personId)
+            !selectedIds.has(personId)
         );
 
-      const getCandidates = () => {
+    const getCandidates = () =>
+    {
         const normalizedQuery =
-          query.trim().toLowerCase();
+            query.trim().toLowerCase();
 
         const photoAlbumIds =
-          new Set(photo.albumIds || []);
+            new Set(photo.albumIds || []);
 
         const photoPlace = String(
-          getPlaceDisplay(
-            photo.placeId
-          )
+            getPlaceDisplay(
+                photo.placeId
+            )
           || photo.placeText
           || ''
         ).toLowerCase();
 
         const projectPhotos =
-          getProjectPhotos(
-            photo.projectId
-          ).filter(item =>
-            item.id !== photo.id
-          );
-
-        const ranked =
-          getPeople(photo.projectId)
-            .filter(person =>
-              person?.id
-              && !person.deleted
-            )
-            .filter(person =>
-              !selectedIds.has(
-                person.id
-              )
-            )
-            .filter(person =>
-              !normalizedQuery
-              || personSearchText(
-                person
-              ).includes(
-                normalizedQuery
-              )
-            )
-            .map(person => {
-              const displayName =
-                personName(
-                  person
-                ).toLowerCase();
-
-              const nameParts = [
-                person?.names?.first,
-                person?.names?.middle,
-                person?.names?.last,
-                person?.names?.maiden
-              ]
-                .filter(Boolean)
-                .map(value =>
-                  String(
-                    value
-                  ).toLowerCase()
-                );
-
-              let score = 0;
-
-              if (normalizedQuery) {
-                if (
-                  displayName
-                    === normalizedQuery
-                ) {
-                  score = 500;
-                } else if (
-                  displayName.startsWith(
-                    normalizedQuery
-                  )
-                ) {
-                  score = 400;
-                } else if (
-                  nameParts.some(value =>
-                    value.startsWith(
-                      normalizedQuery
-                    )
-                  )
-                ) {
-                  score = 300;
-                } else if (
-                  displayName.includes(
-                    normalizedQuery
-                  )
-                ) {
-                  score = 200;
-                } else {
-                  score = 100;
-                }
-
-                score += Math.min(
-                  getPersonPhotoCount(
-                    person.id
-                  ),
-                  50
-                );
-              } else {
-                let taggedPhotos = 0;
-                let sharedAlbums = 0;
-                let coTaggedPhotos = 0;
-
-                projectPhotos.forEach(
-                  item => {
-                    const personIds =
-                      item.personIds || [];
-
-                    if (
-                      !personIds.includes(
-                        person.id
-                      )
-                    ) {
-                      return;
-                    }
-
-                    taggedPhotos += 1;
-
-                    if (
-                      photoAlbumIds.size
-                      && (
-                        item.albumIds || []
-                      ).some(albumId =>
-                        photoAlbumIds.has(
-                          albumId
-                        )
-                      )
-                    ) {
-                      sharedAlbums += 1;
-                    }
-
-                    if (
-                      selectedIds.size
-                      && personIds.some(
-                        personId =>
-                          selectedIds.has(
-                            personId
-                          )
-                      )
-                    ) {
-                      coTaggedPhotos += 1;
-                    }
-                  }
-                );
-
-                const personPlaces = [
-                  getPlaceEventDisplay(
-                    person?.birth
-                  ),
-                  getPlaceEventDisplay(
-                    person?.death
-                  )
-                ]
-                  .filter(Boolean)
-                  .map(value =>
-                    String(
-                      value
-                    ).toLowerCase()
-                  );
-
-                score =
-                  coTaggedPhotos * 1000
-                  + sharedAlbums * 100
-                  + (
-                    photoPlace
-                    && personPlaces
-                      .includes(
-                        photoPlace
-                      )
-                      ? 50
-                      : 0
-                  )
-                  + taggedPhotos;
-              }
-
-              return {
-                person,
-                score
-              };
-            })
-            .sort((a, b) =>
-              b.score - a.score
-              || personName(
-                a.person
-              ).localeCompare(
-                personName(
-                  b.person
-                )
-              )
+            getProjectPhotos(
+                photo.projectId
+            ).filter(item =>
+                item.id !== photo.id
             );
 
+        const ranked =
+            getPeople(photo.projectId)
+                .filter(person =>
+                    person?.id
+              && !person.deleted
+                )
+                .filter(person =>
+                    !selectedIds.has(
+                        person.id
+                    )
+                )
+                .filter(person =>
+                    !normalizedQuery
+              || personSearchText(
+                  person
+              ).includes(
+                  normalizedQuery
+              )
+                )
+                .map(person =>
+                {
+                    const displayName =
+                        personName(
+                            person
+                        ).toLowerCase();
+
+                    const nameParts = [
+                        person?.names?.first,
+                        person?.names?.middle,
+                        person?.names?.last,
+                        person?.names?.maiden
+                    ]
+                        .filter(Boolean)
+                        .map(value =>
+                            String(
+                                value
+                            ).toLowerCase()
+                        );
+
+                    let score = 0;
+
+                    if (normalizedQuery)
+                    {
+                        if (
+                            displayName
+                    === normalizedQuery
+                        )
+                        {
+                            score = 500;
+                        }
+                        else if (
+                            displayName.startsWith(
+                                normalizedQuery
+                            )
+                        )
+                        {
+                            score = 400;
+                        }
+                        else if (
+                            nameParts.some(value =>
+                                value.startsWith(
+                                    normalizedQuery
+                                )
+                            )
+                        )
+                        {
+                            score = 300;
+                        }
+                        else if (
+                            displayName.includes(
+                                normalizedQuery
+                            )
+                        )
+                        {
+                            score = 200;
+                        }
+                        else
+                        {
+                            score = 100;
+                        }
+
+                        score += Math.min(
+                            getPersonPhotoCount(
+                                person.id
+                            ),
+                            50
+                        );
+                    }
+                    else
+                    {
+                        let taggedPhotos = 0;
+                        let sharedAlbums = 0;
+                        let coTaggedPhotos = 0;
+
+                        projectPhotos.forEach(
+                            item =>
+                            {
+                                const personIds =
+                                    item.personIds || [];
+
+                                if (
+                                    !personIds.includes(
+                                        person.id
+                                    )
+                                )
+                                {
+                                    return;
+                                }
+
+                                taggedPhotos += 1;
+
+                                if (
+                                    photoAlbumIds.size
+                      && (
+                          item.albumIds || []
+                      ).some(albumId =>
+                          photoAlbumIds.has(
+                              albumId
+                          )
+                      )
+                                )
+                                {
+                                    sharedAlbums += 1;
+                                }
+
+                                if (
+                                    selectedIds.size
+                      && personIds.some(
+                          personId =>
+                              selectedIds.has(
+                                  personId
+                              )
+                      )
+                                )
+                                {
+                                    coTaggedPhotos += 1;
+                                }
+                            }
+                        );
+
+                        const personPlaces = [
+                            getPlaceEventDisplay(
+                                person?.birth
+                            ),
+                            getPlaceEventDisplay(
+                                person?.death
+                            )
+                        ]
+                            .filter(Boolean)
+                            .map(value =>
+                                String(
+                                    value
+                                ).toLowerCase()
+                            );
+
+                        score =
+                            coTaggedPhotos * 1000
+                  + sharedAlbums * 100
+                  + (
+                      photoPlace
+                    && personPlaces
+                        .includes(
+                            photoPlace
+                        )
+                          ? 50
+                          : 0
+                  )
+                  + taggedPhotos;
+                    }
+
+                    return {
+                        person,
+                        score
+                    };
+                })
+                .sort((a, b) =>
+                    b.score - a.score
+              || personName(
+                  a.person
+              ).localeCompare(
+                  personName(
+                      b.person
+                  )
+              )
+                );
+
         return {
-          total: ranked.length,
+            total: ranked.length,
 
-          people: ranked
-            .slice(0, 5)
-            .map(item =>
-              item.person
-            )
+            people: ranked
+                .slice(0, 5)
+                .map(item =>
+                    item.person
+                )
         };
-      };
+    };
 
-      const renderSelected = () => {
+    const renderSelected = () =>
+    {
         const people = [
-          ...selectedIds
+            ...selectedIds
         ]
-          .map(getPerson)
-          .filter(person =>
-            person
+            .map(getPerson)
+            .filter(person =>
+                person
             && person.projectId
               === photo.projectId
-          );
+            );
 
-        if (!people.length) {
-          return '';
+        if (!people.length)
+        {
+            return '';
         }
 
         return `
@@ -7317,34 +7684,35 @@
             class="
               photo-people-selected-list
             ">
-            ${people.map(person => {
-              const name =
-                personName(person);
+            ${people.map(person =>
+            {
+                const name =
+                    personName(person);
 
-              return `
+                return `
                 <button
                   class="
                     photo-people-selected-chip
                   "
                   type="button"
                   data-photo-people-remove="${
-                    escapeHtml(
-                      person.id
-                    )
-                  }"
+                        escapeHtml(
+                            person.id
+                        )
+                    }"
                   aria-label="${
-                    escapeHtml(
-                      `Remove tag for ${name}`
-                    )
-                  }">
+                        escapeHtml(
+                            `Remove tag for ${name}`
+                        )
+                    }">
 
                   ${renderPersonAvatar(
-                    person,
-                    'photo-people-chip-avatar',
-                    {
-                      element: 'span'
-                    }
-                  )}
+                        person,
+                        'photo-people-chip-avatar',
+                        {
+                            element: 'span'
+                        }
+                    )}
 
                   <span
                     class="
@@ -7365,61 +7733,64 @@
             }).join('')}
           </div>
         `;
-      };
+    };
 
-      const renderResults =
-        candidates => {
-          if (
-            !candidates.people.length
-          ) {
-            return `
+    const renderResults =
+        candidates =>
+        {
+            if (
+                !candidates.people.length
+            )
+            {
+                return `
               <div
                 class="
                   photo-people-empty
                 ">
                 ${
-                  query.trim()
-                    ? `
+                    query.trim()
+                        ? `
                       No matching people
                       found. Try another
                       name, date, place
                     `
-                    : `
+                        : `
                       No additional people
                       to suggest.
                     `
                 }
               </div>
             `;
-          }
+            }
 
-          return candidates.people
-            .map(person => {
-              const name =
-                personName(person);
+            return candidates.people
+                .map(person =>
+                {
+                    const name =
+                        personName(person);
 
-              const dates =
-                albumPhotoPersonDates(
-                  person
-                )
+                    const dates =
+                        albumPhotoPersonDates(
+                            person
+                        )
                 || 'Dates unknown';
 
-              const context =
-                personContext(person);
+                    const context =
+                        personContext(person);
 
-              return `
+                    return `
                 <label
                   class="
                     photo-people-result
                   ">
 
                   ${renderPersonAvatar(
-                    person,
-                    'photo-people-result-avatar',
-                    {
-                      element: 'span'
-                    }
-                  )}
+                        person,
+                        'photo-people-result-avatar',
+                        {
+                            element: 'span'
+                        }
+                    )}
 
                   <span
                     class="
@@ -7434,40 +7805,40 @@
                     </span>
 
                     ${
-                      context
-                        ? `
+                        context
+                            ? `
                           <span>
                             ${
-                              escapeHtml(
-                                context
-                              )
+                                escapeHtml(
+                                    context
+                                )
                             }
                           </span>
                         `
-                        : ''
+                            : ''
                     }
                   </span>
 
                   <input
                     type="checkbox"
                     value="${
-                      escapeHtml(
-                        person.id
-                      )
+                        escapeHtml(
+                            person.id
+                        )
                     }"
                     data-photo-people-choice
                     aria-label="${
-                      escapeHtml(
-                        `Tag ${name}`
-                      )
+                        escapeHtml(
+                            `Tag ${name}`
+                        )
                     }">
                 </label>
               `;
-            })
-            .join('');
+                })
+                .join('');
         };
 
-      openModal(`
+    openModal(`
         <div
           class="
             modal
@@ -7487,7 +7858,7 @@
 
               <p>
                 ${escapeHtml(
-                  photo.title
+                    photo.title
                   || photo.filename
                   || 'Untitled photo'
                 )}
@@ -7609,173 +7980,179 @@
         </div>
       `);
 
-      const modal =
+    const modal =
         modalBackdrop.querySelector(
-          '.photo-people-modal'
+            '.photo-people-modal'
         );
 
-      if (!modal) return;
+    if (!modal) return;
 
-      const refresh = () => {
+    const refresh = () =>
+    {
         const selectedHtml =
-          renderSelected();
+            renderSelected();
 
         const selectedPanel =
-          modal.querySelector(
-            '[data-photo-people-selected-panel]'
-          );
+            modal.querySelector(
+                '[data-photo-people-selected-panel]'
+            );
 
         const candidates =
-          getCandidates();
+            getCandidates();
 
         const queryActive =
-          Boolean(query.trim());
+            Boolean(query.trim());
 
         selectedPanel.hidden =
-          !selectedHtml;
+            !selectedHtml;
 
         selectedPanel.innerHTML =
-          selectedHtml;
+            selectedHtml;
 
         modal
-          .querySelector(
-            '[data-photo-people-results-title]'
-          )
-          .textContent =
-            queryActive
-              ? 'Search results'
-              : 'Suggested people';
+            .querySelector(
+                '[data-photo-people-results-title]'
+            )
+            .textContent =
+                queryActive
+                    ? 'Search results'
+                    : 'Suggested people';
 
         modal
-          .querySelector(
-            '[data-photo-people-results-meta]'
-          )
-          .textContent =
-            candidates.total
+            .querySelector(
+                '[data-photo-people-results-meta]'
+            )
+            .textContent =
+                candidates.total
               > candidates.people.length
-              ? `
+                    ? `
                 Showing
                 ${candidates.people.length}
                 of ${candidates.total}
               `.replace(
-                /\s+/g,
-                ' '
-              ).trim()
-              : candidates.total
-                ? `
+                        /\s+/g,
+                        ' '
+                    ).trim()
+                    : candidates.total
+                        ? `
                   ${candidates.total}
                   ${
-                    queryActive
-                      ? 'match'
-                      : 'suggestion'
-                  }${
-                    candidates.total
+                        queryActive
+                            ? 'match'
+                            : 'suggestion'
+                    }${
+                        candidates.total
                       === 1
-                        ? ''
-                        : 's'
-                  }
+                            ? ''
+                            : 's'
+                    }
                 `.replace(
-                  /\s+/g,
-                  ' '
-                ).trim()
-                : '';
+                            /\s+/g,
+                            ' '
+                        ).trim()
+                        : '';
 
         modal
-          .querySelector(
-            '[data-photo-people-choices]'
-          )
-          .innerHTML =
-            renderResults(
-              candidates
-            );
+            .querySelector(
+                '[data-photo-people-choices]'
+            )
+            .innerHTML =
+                renderResults(
+                    candidates
+                );
 
         modal
-          .querySelector(
-            '[data-photo-people-selection-count]'
-          )
-          .textContent = `
+            .querySelector(
+                '[data-photo-people-selection-count]'
+            )
+            .textContent = `
             ${selectedIds.size}
             ${
-              selectedIds.size === 1
-                ? 'person'
-                : 'people'
+                selectedIds.size === 1
+                    ? 'person'
+                    : 'people'
             }
             selected
           `.replace(
-            /\s+/g,
-            ' '
-          ).trim();
+                    /\s+/g,
+                    ' '
+                ).trim();
 
         modal
-          .querySelector(
-            '[data-photo-people-save]'
-          )
-          .disabled =
-            !selectionChanged();
+            .querySelector(
+                '[data-photo-people-save]'
+            )
+            .disabled =
+                !selectionChanged();
 
         localizeUI(modal);
-      };
+    };
 
-      const applySelection = () => {
+    const applySelection = () =>
+    {
         closeModal();
 
         setPhotoPersonIds(
-          photo.id,
-          [
-            ...selectedIds
-          ]
+            photo.id,
+            [
+                ...selectedIds
+            ]
         );
 
         showToast(
-          'People tags updated.'
+            'People tags updated.'
         );
-      };
+    };
 
-      const saveSelection = () => {
-        if (!selectionChanged()) {
-          return;
+    const saveSelection = () =>
+    {
+        if (!selectionChanged())
+        {
+            return;
         }
 
         const primaryPhotoRemovals = [
-          ...initialSelectedIds
+            ...initialSelectedIds
         ]
-          .filter(personId =>
-            !selectedIds.has(
-              personId
+            .filter(personId =>
+                !selectedIds.has(
+                    personId
+                )
             )
-          )
-          .map(getPerson)
-          .filter(person =>
-            person?.primaryPhotoId
+            .map(getPerson)
+            .filter(person =>
+                person?.primaryPhotoId
               === photo.id
-          );
+            );
 
         if (
-          !primaryPhotoRemovals.length
-        ) {
-          applySelection();
-          return;
+            !primaryPhotoRemovals.length
+        )
+        {
+            applySelection();
+            return;
         }
 
         const existingOverlay =
-          document.getElementById(
-            'photoPeoplePrimaryRemovalOverlay'
-          );
+            document.getElementById(
+                'photoPeoplePrimaryRemovalOverlay'
+            );
 
-        if (existingOverlay) {
-          return;
+        if (existingOverlay)
+        {
+            return;
         }
 
         const overlay =
-          document.createElement(
-            'div'
-          );
+            document.createElement(
+                'div'
+            );
 
         overlay.className =
-          'add-person-mini-backdrop';
+            'add-person-mini-backdrop';
 
         overlay.id =
-          'photoPeoplePrimaryRemovalOverlay';
+            'photoPeoplePrimaryRemovalOverlay';
 
         overlay.innerHTML = `
           <div
@@ -7803,10 +8180,10 @@
 
                 <p>
                   ${escapeHtml(
-                    photo.title
+                        photo.title
                     || photo.filename
                     || 'Selected photo'
-                  )}
+                    )}
                 </p>
               </div>
             </div>
@@ -7830,19 +8207,19 @@
                   photo-people-primary-list
                 ">
                 ${
-                  primaryPhotoRemovals
-                    .map(person => `
+                    primaryPhotoRemovals
+                        .map(person => `
                       <li>
                         ${
-                          escapeHtml(
-                            personName(
-                              person
+                            escapeHtml(
+                                personName(
+                                    person
+                                )
                             )
-                          )
                         }
                       </li>
                     `)
-                    .join('')
+                        .join('')
                 }
               </ul>
             </div>
@@ -7874,203 +8251,214 @@
           </div>
         `;
 
-        const closeConfirm = () => {
-          overlay.remove();
+        const closeConfirm = () =>
+        {
+            overlay.remove();
 
-          modal
-            .querySelector(
-              '[data-photo-people-save]'
-            )
-            ?.focus({
-              preventScroll: true
-            });
+            modal
+                .querySelector(
+                    '[data-photo-people-save]'
+                )
+                ?.focus({
+                    preventScroll: true
+                });
         };
 
         document.body.appendChild(
-          overlay
+            overlay
         );
 
         overlay
-          .querySelector(
-            '[data-photo-people-keep-editing]'
-          )
-          ?.addEventListener(
-            'click',
-            closeConfirm
-          );
+            .querySelector(
+                '[data-photo-people-keep-editing]'
+            )
+            ?.addEventListener(
+                'click',
+                closeConfirm
+            );
 
         overlay
-          .querySelector(
-            '[data-photo-people-confirm-save]'
-          )
-          ?.addEventListener(
-            'click',
-            () => {
-              overlay.remove();
-              applySelection();
-            }
-          );
+            .querySelector(
+                '[data-photo-people-confirm-save]'
+            )
+            ?.addEventListener(
+                'click',
+                () =>
+                {
+                    overlay.remove();
+                    applySelection();
+                }
+            );
 
         overlay
-          .querySelector(
-            '[data-photo-people-keep-editing]'
-          )
-          ?.focus();
-      };
+            .querySelector(
+                '[data-photo-people-keep-editing]'
+            )
+            ?.focus();
+    };
 
-      modal
+    modal
         .querySelector(
-          '[data-photo-people-search]'
+            '[data-photo-people-search]'
         )
         ?.addEventListener(
-          'input',
-          event => {
-            query =
-              event.currentTarget.value;
+            'input',
+            event =>
+            {
+                query =
+                    event.currentTarget.value;
 
-            refresh();
-          }
+                refresh();
+            }
         );
 
-      modal.addEventListener(
+    modal.addEventListener(
         'change',
-        event => {
-          const input =
-            event.target.closest(
-              '[data-photo-people-choice]'
-            );
+        event =>
+        {
+            const input =
+                event.target.closest(
+                    '[data-photo-people-choice]'
+                );
 
-          if (!input) return;
+            if (!input) return;
 
-          selectedIds.add(
-            input.value
-          );
-
-          refresh();
-        }
-      );
-
-      modal.addEventListener(
-        'click',
-        event => {
-          const remove =
-            event.target.closest(
-              '[data-photo-people-remove]'
-            );
-
-          if (remove) {
-            selectedIds.delete(
-              remove.dataset
-                .photoPeopleRemove
+            selectedIds.add(
+                input.value
             );
 
             refresh();
-            return;
-          }
-
-          if (
-            event.target.closest(
-              '[data-photo-people-save]'
-            )
-          ) {
-            saveSelection();
-          }
         }
-      );
+    );
 
-      refresh();
+    modal.addEventListener(
+        'click',
+        event =>
+        {
+            const remove =
+                event.target.closest(
+                    '[data-photo-people-remove]'
+                );
 
-      modal
+            if (remove)
+            {
+                selectedIds.delete(
+                    remove.dataset
+                        .photoPeopleRemove
+                );
+
+                refresh();
+                return;
+            }
+
+            if (
+                event.target.closest(
+                    '[data-photo-people-save]'
+                )
+            )
+            {
+                saveSelection();
+            }
+        }
+    );
+
+    refresh();
+
+    modal
         .querySelector(
-          '[data-photo-people-search]'
+            '[data-photo-people-search]'
         )
         ?.focus({
-          preventScroll: true
+            preventScroll: true
         });
-    }
+}
 
-    function openAddPersonPhotoDraftModal({
-      projectId =
+function openAddPersonPhotoDraftModal({
+    projectId =
         currentProjectId(),
 
-      selectedPhotoIds = [],
+    selectedPhotoIds = [],
 
-      subjectLabel =
+    subjectLabel =
         'New person',
 
-      onSave = null
-    } = {}) {
-      if (!projectId) {
+    onSave = null
+} = {})
+{
+    if (!projectId)
+    {
         return;
-      }
+    }
 
-      const selectedIds =
+    const selectedIds =
         new Set(
-          [
-            ...new Set(
-              selectedPhotoIds || []
+            [
+                ...new Set(
+                    selectedPhotoIds || []
+                )
+            ].filter(photoId =>
+                Boolean(
+                    getPhoto(
+                        photoId,
+                        {
+                            projectId
+                        }
+                    )
+                )
             )
-          ].filter(photoId =>
-            Boolean(
-              getPhoto(
-                photoId,
-                {
-                  projectId
-                }
-              )
-            )
-          )
         );
 
-      let query = '';
+    let query = '';
 
-      document
+    document
         .getElementById(
-          'addPersonPhotoDraftOverlay'
+            'addPersonPhotoDraftOverlay'
         )
         ?.remove();
 
-      const overlay =
+    const overlay =
         document.createElement(
-          'div'
+            'div'
         );
 
-      overlay.id =
+    overlay.id =
         'addPersonPhotoDraftOverlay';
 
-      overlay.className =
+    overlay.className =
         'add-person-mini-backdrop';
 
-      const filteredPhotos = () => {
+    const filteredPhotos = () =>
+    {
         const normalizedQuery =
-          query
-            .trim()
-            .toLowerCase();
+            query
+                .trim()
+                .toLowerCase();
 
         return getProjectPhotos(
-          projectId
+            projectId
         ).filter(photo =>
-          !normalizedQuery
+            !normalizedQuery
           || photoSearchText(photo)
-            .includes(
-              normalizedQuery
-            )
+              .includes(
+                  normalizedQuery
+              )
         );
-      };
+    };
 
-      const renderCandidate =
-        photo => {
-          const selected =
-            selectedIds.has(
-              photo.id
-            );
+    const renderCandidate =
+        photo =>
+        {
+            const selected =
+                selectedIds.has(
+                    photo.id
+                );
 
-          const title =
-            photo.title
+            const title =
+                photo.title
             || photo.filename
             || 'Untitled photo';
 
-          return `
+            return `
             <button
               class="
                 person-photo-candidate
@@ -8078,32 +8466,32 @@
               "
               type="button"
               data-add-person-photo-draft-candidate="${
-                escapeHtml(
-                  photo.id
-                )
-              }"
+                    escapeHtml(
+                        photo.id
+                    )
+                }"
               aria-pressed="${
-                selected
-              }"
-              aria-label="${
-                escapeHtml(
-                  `${
                     selected
-                      ? 'Deselect'
-                      : 'Select'
-                  } ${title}`
-                )
-              }">
+                }"
+              aria-label="${
+                    escapeHtml(
+                        `${
+                            selected
+                                ? 'Deselect'
+                                : 'Select'
+                        } ${title}`
+                    )
+                }">
 
               <span
                 class="
                   person-photo-candidate-preview
                 ">
                 ${renderPhotoThumbnail(
-                  photo,
-                  {
-                    label: title
-                  }
+                    photo,
+                    {
+                        label: title
+                    }
                 )}
 
                 <span
@@ -8112,10 +8500,10 @@
                   "
                   data-add-person-photo-draft-check
                   ${
-                    selected
-                      ? ''
-                      : 'hidden'
-                  }
+                        selected
+                            ? ''
+                            : 'hidden'
+                    }
                   aria-hidden="true">
                   ${icon.check}
                 </span>
@@ -8131,41 +8519,43 @@
 
                 <span>
                   ${escapeHtml(
-                    formatPhotoDate(
-                      photo
-                    )
+                        formatPhotoDate(
+                            photo
+                        )
                     || 'Unknown date'
-                  )}
+                    )}
                 </span>
               </span>
             </button>
           `;
         };
 
-      const renderResults = () => {
+    const renderResults = () =>
+    {
         const photos =
-          filteredPhotos();
+            filteredPhotos();
 
-        if (photos.length) {
-          return `
+        if (photos.length)
+        {
+            return `
             <div
               class="
                 person-photo-candidate-grid
                 person-photos-adder-grid
               ">
               ${photos
-                .map(
-                  renderCandidate
-                )
-                .join('')}
+                    .map(
+                        renderCandidate
+                    )
+                    .join('')}
             </div>
           `;
         }
 
         const hasSearch =
-          Boolean(
-            query.trim()
-          );
+            Boolean(
+                query.trim()
+            );
 
         return `
           <div
@@ -8175,15 +8565,15 @@
             <div>
               <strong>
                 ${
-                  hasSearch
-                    ? 'No photos match this search.'
-                    : 'This project has no photos yet.'
+                    hasSearch
+                        ? 'No photos match this search.'
+                        : 'This project has no photos yet.'
                 }
               </strong>
 
               ${
-                hasSearch
-                  ? `
+                    hasSearch
+                        ? `
                     <button
                       class="
                         button
@@ -8194,25 +8584,26 @@
                       Clear search
                     </button>
                   `
-                  : ''
-              }
+                        : ''
+                }
             </div>
           </div>
         `;
-      };
+    };
 
-      const selectionLabel = () => {
+    const selectionLabel = () =>
+    {
         const count =
-          selectedIds.size;
+            selectedIds.size;
 
         return `${count} ${
-          count === 1
-            ? 'photo'
-            : 'photos'
+            count === 1
+                ? 'photo'
+                : 'photos'
         } selected`;
-      };
+    };
 
-      overlay.innerHTML = `
+    overlay.innerHTML = `
         <div
           class="
             modal
@@ -8236,7 +8627,7 @@
 
               <p>
                 ${escapeHtml(
-                  subjectLabel
+                    subjectLabel
                 )}
               </p>
             </div>
@@ -8315,7 +8706,7 @@
                 "
                 data-add-person-photo-draft-count>
                 ${escapeHtml(
-                  selectionLabel()
+                    selectionLabel()
                 )}
               </span>
 
@@ -8348,213 +8739,233 @@
         </div>
       `;
 
-      document.body.appendChild(
+    document.body.appendChild(
         overlay
-      );
+    );
 
-      let backdropDismissBinding = null;
+    let backdropDismissBinding = null;
 
-      const closeSelector = () => {
+    const closeSelector = () =>
+    {
         backdropDismissBinding?.destroy();
         backdropDismissBinding = null;
         overlay.remove();
-      };
+    };
 
-      backdropDismissBinding =
+    backdropDismissBinding =
         bindIntentionalBackdropDismiss(
-          overlay,
-          closeSelector
+            overlay,
+            closeSelector
         );
 
-      const resultsHost =
+    const resultsHost =
         overlay.querySelector(
-          '[data-add-person-photo-draft-results]'
+            '[data-add-person-photo-draft-results]'
         );
 
-      const countElement =
+    const countElement =
         overlay.querySelector(
-          '[data-add-person-photo-draft-count]'
+            '[data-add-person-photo-draft-count]'
         );
 
-      const searchInput =
+    const searchInput =
         overlay.querySelector(
-          '[data-add-person-photo-draft-search]'
+            '[data-add-person-photo-draft-search]'
         );
 
-      const refreshResults = () => {
-        if (resultsHost) {
-          resultsHost.innerHTML =
-            renderResults();
+    const refreshResults = () =>
+    {
+        if (resultsHost)
+        {
+            resultsHost.innerHTML =
+                renderResults();
 
-          localizeUI(
-            resultsHost
-          );
-        }
-
-        if (countElement) {
-          countElement.textContent =
-            selectionLabel();
-        }
-      };
-
-      overlay.addEventListener(
-        'click',
-        event => {
-          if (
-            event.target.closest(
-              '[data-add-person-photo-draft-close]'
-            )
-          ) {
-            closeSelector();
-            return;
-          }
-
-          const candidate =
-            event.target.closest(
-              '[data-add-person-photo-draft-candidate]'
+            localizeUI(
+                resultsHost
             );
-
-          if (candidate) {
-            const photoId =
-              candidate.dataset
-                .addPersonPhotoDraftCandidate;
-
-            if (
-              selectedIds.has(
-                photoId
-              )
-            ) {
-              selectedIds.delete(
-                photoId
-              );
-            } else {
-              selectedIds.add(
-                photoId
-              );
-            }
-
-            refreshResults();
-            return;
-          }
-
-          if (
-            event.target.closest(
-              '[data-add-person-photo-draft-clear-search]'
-            )
-          ) {
-            query = '';
-
-            if (searchInput) {
-              searchInput.value = '';
-            }
-
-            refreshResults();
-
-            searchInput?.focus({
-              preventScroll: true
-            });
-
-            return;
-          }
-
-          if (
-            event.target.closest(
-              '[data-add-person-photo-draft-save]'
-            )
-          ) {
-            const photoIds = [
-              ...selectedIds
-            ];
-
-            closeSelector();
-
-            if (
-              typeof onSave
-              === 'function'
-            ) {
-              onSave(photoIds);
-            }
-          }
         }
-      );
 
-      searchInput?.addEventListener(
-        'input',
-        event => {
-          query =
-            event.currentTarget
-              .value;
-
-          refreshResults();
+        if (countElement)
+        {
+            countElement.textContent =
+                selectionLabel();
         }
-      );
+    };
 
-      localizeUI(overlay);
-
-      searchInput?.focus({
-        preventScroll: true
-      });
-    }
-
-    function bindPersonPhotoUnlinkButtons(
-      root
-    ) {
-      root
-        ?.querySelectorAll(
-          '[data-person-photo-unlink]'
-        )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            event => {
-              event.preventDefault();
-              event.stopPropagation();
-
-              const photoId =
-                button.dataset
-                  .personPhotoUnlink;
-
-              const personId =
-                button.dataset
-                  .personPhotoUnlinkPerson;
-
-              if (!photoId || !personId) {
+    overlay.addEventListener(
+        'click',
+        event =>
+        {
+            if (
+                event.target.closest(
+                    '[data-add-person-photo-draft-close]'
+                )
+            )
+            {
+                closeSelector();
                 return;
-              }
-
-              removePhotoPersonTag(
-                photoId,
-                personId
-              );
             }
-          );
+
+            const candidate =
+                event.target.closest(
+                    '[data-add-person-photo-draft-candidate]'
+                );
+
+            if (candidate)
+            {
+                const photoId =
+                    candidate.dataset
+                        .addPersonPhotoDraftCandidate;
+
+                if (
+                    selectedIds.has(
+                        photoId
+                    )
+                )
+                {
+                    selectedIds.delete(
+                        photoId
+                    );
+                }
+                else
+                {
+                    selectedIds.add(
+                        photoId
+                    );
+                }
+
+                refreshResults();
+                return;
+            }
+
+            if (
+                event.target.closest(
+                    '[data-add-person-photo-draft-clear-search]'
+                )
+            )
+            {
+                query = '';
+
+                if (searchInput)
+                {
+                    searchInput.value = '';
+                }
+
+                refreshResults();
+
+                searchInput?.focus({
+                    preventScroll: true
+                });
+
+                return;
+            }
+
+            if (
+                event.target.closest(
+                    '[data-add-person-photo-draft-save]'
+                )
+            )
+            {
+                const photoIds = [
+                    ...selectedIds
+                ];
+
+                closeSelector();
+
+                if (
+                    typeof onSave
+              === 'function'
+                )
+                {
+                    onSave(photoIds);
+                }
+            }
+        }
+    );
+
+    searchInput?.addEventListener(
+        'input',
+        event =>
+        {
+            query =
+                event.currentTarget
+                    .value;
+
+            refreshResults();
+        }
+    );
+
+    localizeUI(overlay);
+
+    searchInput?.focus({
+        preventScroll: true
+    });
+}
+
+function bindPersonPhotoUnlinkButtons(
+    root
+)
+{
+    root
+        ?.querySelectorAll(
+            '[data-person-photo-unlink]'
+        )
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                event =>
+                {
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    const photoId =
+                        button.dataset
+                            .personPhotoUnlink;
+
+                    const personId =
+                        button.dataset
+                            .personPhotoUnlinkPerson;
+
+                    if (!photoId || !personId)
+                    {
+                        return;
+                    }
+
+                    removePhotoPersonTag(
+                        photoId,
+                        personId
+                    );
+                }
+            );
         });
-    }
+}
 
-    function openPhotoUnlinkConfirm({
-      photo,
-      contextLabel,
-      primaryPhoto = false,
-      onConfirm
-    }) {
-      if (!photo || typeof onConfirm !== 'function') return;
+function openPhotoUnlinkConfirm({
+    photo,
+    contextLabel,
+    primaryPhoto = false,
+    onConfirm
+})
+{
+    if (!photo || typeof onConfirm !== 'function') return;
 
-      const ru = state.language === 'ru';
-      const photoLabel =
+    const ru = state.language === 'ru';
+    const photoLabel =
         photo.title || photo.filename || photo.name
         || (ru ? 'Фото без названия' : 'Untitled photo');
 
-      const title = ru ? 'Отвязать фото?' : 'Unlink photo?';
+    const title = ru ? 'Отвязать фото?' : 'Unlink photo?';
 
-      const message = ru
+    const message = ru
         ? `Связь фото с «${contextLabel}» будет удалена. Фото останется в альбомах, а остальные связи сохранятся.`
         : `This photo will no longer be linked to “${contextLabel}”. It will remain in Albums and keep its other connections.`;
 
-      const primaryMessage = ru
+    const primaryMessage = ru
         ? 'Это фото также перестанет быть основным фото человека.'
         : 'This will also clear the person’s primary photo.';
 
-      openModal(`
+    openModal(`
         <div
           class="modal"
           role="dialog"
@@ -8579,8 +8990,8 @@
           <div class="modal-body">
             <p>${escapeHtml(message)}</p>
             ${primaryPhoto
-              ? `<p><strong>${escapeHtml(primaryMessage)}</strong></p>`
-              : ''}
+                ? `<p><strong>${escapeHtml(primaryMessage)}</strong></p>`
+                : ''}
           </div>
 
           <div class="modal-footer">
@@ -8598,22 +9009,24 @@
         </div>
       `);
 
-      modalBackdrop
+    modalBackdrop
         .querySelector('[data-confirm-photo-unlink]')
-        ?.addEventListener('click', event => {
-          event.currentTarget.disabled = true;
-          closeModal();
-          onConfirm();
+        ?.addEventListener('click', event =>
+        {
+            event.currentTarget.disabled = true;
+            closeModal();
+            onConfirm();
         }, { once: true });
-    }
+}
 
-    function removePhotoPersonTag(photoId, personId) {
-      const photo = getPhoto(photoId);
-      const person = getPerson(personId);
+function removePhotoPersonTag(photoId, personId)
+{
+    const photo = getPhoto(photoId);
+    const person = getPerson(personId);
 
-      if (!photo || !person) return;
+    if (!photo || !person) return;
 
-      openPhotoUnlinkConfirm({
+    openPhotoUnlinkConfirm({
         photo,
 
         contextLabel:
@@ -8623,417 +9036,450 @@
 
         primaryPhoto: person.primaryPhotoId === photo.id,
 
-        onConfirm: () => {
-          const currentPhoto = getPhoto(photoId);
-          const currentPerson = getPerson(personId);
+        onConfirm: () =>
+        {
+            const currentPhoto = getPhoto(photoId);
+            const currentPerson = getPerson(personId);
 
-          if (!currentPhoto || !currentPerson) return;
+            if (!currentPhoto || !currentPerson) return;
 
-          const removed = setPhotoPersonIds(
-            currentPhoto.id,
-            (currentPhoto.personIds || []).filter(
-              id => id !== personId
-            ),
-            { rerender: false }
-          );
+            const removed = setPhotoPersonIds(
+                currentPhoto.id,
+                (currentPhoto.personIds || []).filter(
+                    id => id !== personId
+                ),
+                { rerender: false }
+            );
 
-          if (!removed) return;
+            if (!removed) return;
 
-          renderAfterPersonConnectedResourcesChanged();
-          showToast('Person tag removed.');
+            renderAfterPersonConnectedResourcesChanged();
+            showToast('Person tag removed.');
         }
-      });
-    }
+    });
+}
 
-    function toggleAlbumPhotoFavourite(
-      photoId,
-      {
+function toggleAlbumPhotoFavourite(
+    photoId,
+    {
         focusTarget = 'favorite'
-      } = {}
-    ) {
-      const photo =
+    } = {}
+)
+{
+    const photo =
         getPhoto(
-          photoId,
-          {
-            projectId:
+            photoId,
+            {
+                projectId:
               currentProjectId()
-          }
+            }
         );
 
-      if (!photo) {
+    if (!photo)
+    {
         return;
-      }
+    }
 
-      photo.favorite =
+    photo.favorite =
         !photo.favorite;
-      photo.favoriteUpdatedAt =
+    photo.favoriteUpdatedAt =
         new Date().toISOString();
 
-      renderAlbumsPreserveViewport({
+    renderAlbumsPreserveViewport({
         focusPhotoId: photo.id,
         focusTarget
-      });
-    }
+    });
+}
 
-    function togglePhotoSelection(
-      photoId
-    ) {
-      const selected =
+function togglePhotoSelection(
+    photoId
+)
+{
+    const selected =
         new Set(
-          state.selectedPhotoIds || []
+            state.selectedPhotoIds || []
         );
 
-      selected.has(photoId)
+    selected.has(photoId)
         ? selected.delete(photoId)
         : selected.add(photoId);
 
-      state.selectedPhotoIds = [
+    state.selectedPhotoIds = [
         ...selected
-      ];
+    ];
 
-      state.selectedPhotoId =
+    state.selectedPhotoId =
         photoId;
 
-      renderAlbumsPreserveViewport({
+    renderAlbumsPreserveViewport({
         focusPhotoId: photoId,
         focusTarget: 'selection'
-      });
-    }
+    });
+}
 
-    function albumsVisibleSelectionState(photos = currentAlbumsPagePhotos()) {
-      const visibleIds = (Array.isArray(photos) ? photos : [])
+function albumsVisibleSelectionState(photos = currentAlbumsPagePhotos())
+{
+    const visibleIds = (Array.isArray(photos) ? photos : [])
         .map(photo => photo?.id)
         .filter(Boolean);
-      const selectedIds = new Set(state.selectedPhotoIds || []);
-      const selectedVisibleIds = visibleIds.filter(id => selectedIds.has(id));
+    const selectedIds = new Set(state.selectedPhotoIds || []);
+    const selectedVisibleIds = visibleIds.filter(id => selectedIds.has(id));
 
-      return {
+    return {
         visibleIds,
         selectedVisibleIds,
         allVisibleSelected: visibleIds.length > 0
           && selectedVisibleIds.length === visibleIds.length,
         someVisibleSelected: selectedVisibleIds.length > 0
-      };
-    }
+    };
+}
 
-    function toggleAllVisibleAlbumPhotos(photos = currentAlbumsPagePhotos()) {
-      const selection = albumsVisibleSelectionState(photos);
-      const selectedIds = new Set(state.selectedPhotoIds || []);
+function toggleAllVisibleAlbumPhotos(photos = currentAlbumsPagePhotos())
+{
+    const selection = albumsVisibleSelectionState(photos);
+    const selectedIds = new Set(state.selectedPhotoIds || []);
 
-      selection.visibleIds.forEach(id => {
-        if (selection.allVisibleSelected) {
-          selectedIds.delete(id);
-        } else {
-          selectedIds.add(id);
+    selection.visibleIds.forEach(id =>
+    {
+        if (selection.allVisibleSelected)
+        {
+            selectedIds.delete(id);
         }
-      });
+        else
+        {
+            selectedIds.add(id);
+        }
+    });
 
-      state.selectedPhotoIds = [...selectedIds];
-      renderAlbumsPreserveViewport();
-    }
+    state.selectedPhotoIds = [...selectedIds];
+    renderAlbumsPreserveViewport();
+}
 
-    function clearAlbumSelection(
-      rerender = true
-    ) {
-      state.selectedPhotoIds = [];
+function clearAlbumSelection(
+    rerender = true
+)
+{
+    state.selectedPhotoIds = [];
 
-      if (rerender) {
+    if (rerender)
+    {
         renderAlbumsPreserveViewport();
-      }
     }
+}
 
-    function getAlbumMutationPhotos(
-      photoIds
-    ) {
-      const ids =
+function getAlbumMutationPhotos(
+    photoIds
+)
+{
+    const ids =
         new Set(
-          (
-            Array.isArray(photoIds)
-              ? photoIds
-              : [photoIds]
-          ).filter(Boolean)
+            (
+                Array.isArray(photoIds)
+                    ? photoIds
+                    : [photoIds]
+            ).filter(Boolean)
         );
 
-      return sampleData.media.filter(
+    return sampleData.media.filter(
         photo =>
-          ids.has(photo.id)
+            ids.has(photo.id)
           && photo.projectId
             === currentProjectId()
-      );
+    );
+}
+
+function deletePhotosPermanently(
+    photoIds
+)
+{
+    const photos =
+        getAlbumMutationPhotos(
+            photoIds
+        );
+
+    if (!photos.length)
+    {
+        return;
     }
 
-    function deletePhotosPermanently(
-      photoIds
-    ) {
-      const photos =
-        getAlbumMutationPhotos(
-          photoIds
-        );
-
-      if (!photos.length) {
-        return;
-      }
-
-      const ids =
+    const ids =
         new Set(
-          photos.map(
-            photo =>
-              photo.id
-          )
+            photos.map(
+                photo =>
+                    photo.id
+            )
         );
 
-      sampleData.people.forEach(
-        person => {
-          if (
-            ids.has(
-              person.primaryPhotoId
+    sampleData.people.forEach(
+        person =>
+        {
+            if (
+                ids.has(
+                    person.primaryPhotoId
+                )
             )
-          ) {
-            person.primaryPhotoId =
-              '';
+            {
+                person.primaryPhotoId =
+                    '';
 
-            person.primaryPhotoCrop =
-              null;
-          }
+                person.primaryPhotoCrop =
+                    null;
+            }
 
-          (
-            person.events || []
-          ).forEach(event => {
-            event.mediaIds =
-              (
-                event.mediaIds || []
-              ).filter(
-                mediaId =>
-                  !ids.has(mediaId)
-              );
-          });
+            (
+                person.events || []
+            ).forEach(event =>
+            {
+                event.mediaIds =
+                    (
+                        event.mediaIds || []
+                    ).filter(
+                        mediaId =>
+                            !ids.has(mediaId)
+                    );
+            });
 
-          (
-            person.attributes || []
-          ).forEach(attribute => {
-            attribute.mediaIds =
-              (
-                attribute.mediaIds
+            (
+                person.attributes || []
+            ).forEach(attribute =>
+            {
+                attribute.mediaIds =
+                    (
+                        attribute.mediaIds
                 || []
-              ).filter(
-                mediaId =>
-                  !ids.has(mediaId)
-              );
-          });
+                    ).filter(
+                        mediaId =>
+                            !ids.has(mediaId)
+                    );
+            });
         }
-      );
+    );
 
-      removeSourceLinksForTargets(
+    removeSourceLinksForTargets(
         'photo',
         [...ids]
-      );
+    );
 
-      centralFamilyRecords()
-        .forEach(family => {
-          (
-            family.events || []
-          ).forEach(event => {
-            event.mediaIds =
-              (
-                event.mediaIds || []
-              ).filter(
-                mediaId =>
-                  !ids.has(mediaId)
-              );
-          });
+    centralFamilyRecords()
+        .forEach(family =>
+        {
+            (
+                family.events || []
+            ).forEach(event =>
+            {
+                event.mediaIds =
+                    (
+                        event.mediaIds || []
+                    ).filter(
+                        mediaId =>
+                            !ids.has(mediaId)
+                    );
+            });
 
-          (
-            family.attributes || []
-          ).forEach(attribute => {
-            attribute.mediaIds =
-              (
-                attribute.mediaIds
+            (
+                family.attributes || []
+            ).forEach(attribute =>
+            {
+                attribute.mediaIds =
+                    (
+                        attribute.mediaIds
                 || []
-              ).filter(
-                mediaId =>
-                  !ids.has(mediaId)
-              );
-          });
+                    ).filter(
+                        mediaId =>
+                            !ids.has(mediaId)
+                    );
+            });
         });
 
-      (
+    (
         sampleData.events || []
-      ).forEach(event => {
+    ).forEach(event =>
+    {
         event.mediaIds =
-          (
-            event.mediaIds || []
-          ).filter(
-            mediaId =>
-              !ids.has(mediaId)
-          );
-      });
+            (
+                event.mediaIds || []
+            ).filter(
+                mediaId =>
+                    !ids.has(mediaId)
+            );
+    });
 
-      sampleData.links =
+    sampleData.links =
         (
-          sampleData.links || []
-        ).filter(link => {
-          const mediaSource =
-            (
-              link.sourceType
+            sampleData.links || []
+        ).filter(link =>
+        {
+            const mediaSource =
+                (
+                    link.sourceType
                 === 'media'
               && ids.has(
-                link.sourceId
+                  link.sourceId
               )
-            )
+                )
             || (
-              link.fromType
+                link.fromType
                 === 'media'
               && ids.has(
-                link.fromId
+                  link.fromId
               )
             );
 
-          const mediaTarget =
-            (
-              link.targetType
+            const mediaTarget =
+                (
+                    link.targetType
                 === 'media'
               && ids.has(
-                link.targetId
+                  link.targetId
               )
-            )
+                )
             || (
-              link.toType
+                link.toType
                 === 'media'
               && ids.has(
-                link.toId
+                  link.toId
               )
             );
 
-          return (
-            !mediaSource
+            return (
+                !mediaSource
             && !mediaTarget
-          );
+            );
         });
 
-      removePhotosFromAllNotes(
+    removePhotosFromAllNotes(
         [...ids]
-      );
+    );
 
-      for (
+    for (
         let index =
-          sampleData.media.length - 1;
+            sampleData.media.length - 1;
         index >= 0;
         index -= 1
-      ) {
+    )
+    {
         if (
-          ids.has(
-            sampleData.media[index].id
-          )
-        ) {
-          sampleData.media.splice(
-            index,
-            1
-          );
-        }
-      }
-
-      state.selectedPhotoIds =
-        (
-          state.selectedPhotoIds || []
-        ).filter(
-          photoId =>
-            !ids.has(photoId)
-        );
-
-      if (
-        ids.has(
-          state.selectedPhotoId
+            ids.has(
+                sampleData.media[index].id
+            )
         )
-      ) {
-        state.selectedPhotoId =
-          null;
-
-        resetAlbumsPhotoEditState();
-      }
-
-      if (
-        state.personPhotoPicker
-      ) {
-        if (
-          ids.has(
-            state.personPhotoPicker
-              .selectedPhotoId
-          )
-        ) {
-          state.personPhotoPicker
-            .selectedPhotoId =
-            null;
+        {
+            sampleData.media.splice(
+                index,
+                1
+            );
         }
-
-        if (
-          ids.has(
-            state.personPhotoPicker
-              .initialPhotoId
-          )
-        ) {
-          state.personPhotoPicker
-            .initialPhotoId =
-            null;
-        }
-      }
-
-      if (
-        state.personPhotosAdder
-      ) {
-        state.personPhotosAdder
-          .selectedProjectPhotoIds =
-          (
-            state.personPhotosAdder
-              .selectedProjectPhotoIds
-            || []
-          ).filter(
-            photoId =>
-              !ids.has(photoId)
-          );
-      }
-
-      sampleData.events =
-        rebuildSampleEventsAndPruneSourceLinks();
-
-      ensureSelectedAlbumPhoto();
-      renderAlbums();
-
-      showToast(
-        `${photos.length} photo${
-          photos.length === 1
-            ? ''
-            : 's'
-        } permanently deleted.`
-      );
     }
 
-    function openDeletePhotoConfirm(
-      photoIds
-    ) {
-      const photos =
+    state.selectedPhotoIds =
+        (
+            state.selectedPhotoIds || []
+        ).filter(
+            photoId =>
+                !ids.has(photoId)
+        );
+
+    if (
+        ids.has(
+            state.selectedPhotoId
+        )
+    )
+    {
+        state.selectedPhotoId =
+            null;
+
+        resetAlbumsPhotoEditState();
+    }
+
+    if (
+        state.personPhotoPicker
+    )
+    {
+        if (
+            ids.has(
+                state.personPhotoPicker
+                    .selectedPhotoId
+            )
+        )
+        {
+            state.personPhotoPicker
+                .selectedPhotoId =
+                    null;
+        }
+
+        if (
+            ids.has(
+                state.personPhotoPicker
+                    .initialPhotoId
+            )
+        )
+        {
+            state.personPhotoPicker
+                .initialPhotoId =
+                    null;
+        }
+    }
+
+    if (
+        state.personPhotosAdder
+    )
+    {
+        state.personPhotosAdder
+            .selectedProjectPhotoIds =
+                (
+                    state.personPhotosAdder
+                        .selectedProjectPhotoIds
+            || []
+                ).filter(
+                    photoId =>
+                        !ids.has(photoId)
+                );
+    }
+
+    sampleData.events =
+        rebuildSampleEventsAndPruneSourceLinks();
+
+    ensureSelectedAlbumPhoto();
+    renderAlbums();
+
+    showToast(
+        `${photos.length} photo${
+            photos.length === 1
+                ? ''
+                : 's'
+        } permanently deleted.`
+    );
+}
+
+function openDeletePhotoConfirm(
+    photoIds
+)
+{
+    const photos =
         getAlbumMutationPhotos(
-          photoIds
+            photoIds
         );
 
-      if (!photos.length) {
+    if (!photos.length)
+    {
         return;
-      }
+    }
 
-      const ids =
+    const ids =
         photos.map(
-          photo =>
-            photo.id
+            photo =>
+                photo.id
         );
 
-      const count =
+    const count =
         photos.length;
 
-      const title =
+    const title =
         count === 1
-          ? 'Delete photo permanently?'
-          : `Delete ${count} photos permanently?`;
+            ? 'Delete photo permanently?'
+            : `Delete ${count} photos permanently?`;
 
-      openModal(`
+    openModal(`
         <div
           class="modal"
           role="dialog"
@@ -9064,28 +9510,28 @@
           <div class="modal-body">
             <div class="albums-delete-copy">
               ${
-                count === 1
-                  ? `
+                    count === 1
+                        ? `
                     <strong>
                       ${escapeHtml(
-                        photos[0].title
+                            photos[0].title
                         || photos[0].filename
                         || 'Untitled photo'
-                      )}
+                        )}
                     </strong>
                   `
-                  : `
+                        : `
                     <strong>
                       ${count} photos selected
                     </strong>
                   `
-              }
+                }
 
               <p>
                 The photo${
-                  count === 1
-                    ? ''
-                    : 's'
+                    count === 1
+                        ? ''
+                        : 's'
                 } will be removed from Albums and all other linked records.
               </p>
 
@@ -9114,72 +9560,75 @@
         </div>
       `);
 
-      modalBackdrop
+    modalBackdrop
         .querySelector(
-          '[data-confirm-photo-delete]'
+            '[data-confirm-photo-delete]'
         )
         ?.addEventListener(
-          'click',
-          () => {
-            closeModal();
+            'click',
+            () =>
+            {
+                closeModal();
 
-            deletePhotosPermanently(
-              ids
-            );
-          }
+                deletePhotosPermanently(
+                    ids
+                );
+            }
         );
+}
+
+function openAlbumPhotoMenu(
+    photoId,
+    anchor
+)
+{
+    const photo =
+        getPhoto(
+            photoId,
+            {
+                projectId:
+              currentProjectId()
+            }
+        );
+
+    if (!photo || !anchor)
+    {
+        return;
     }
 
-    function openAlbumPhotoMenu(
-      photoId,
-      anchor
-    ) {
-      const photo =
-        getPhoto(
-          photoId,
-          {
-            projectId:
-              currentProjectId()
-          }
-        );
+    closeMenu();
 
-      if (!photo || !anchor) {
-        return;
-      }
-
-      closeMenu();
-
-      const rect =
+    const rect =
         anchor.getBoundingClientRect();
 
-      const menu =
+    const menu =
         document.createElement(
-          'div'
+            'div'
         );
 
-      menu.className =
+    menu.className =
         'menu-popover';
 
-      menu.id =
+    menu.id =
         'projectMenu';
 
-      menu.style.top =
+    menu.style.top =
         `${rect.bottom + 6}px`;
 
-      menu.style.left =
+    menu.style.left =
         `${
-          Math.max(
-            12,
-            rect.right - 210
-          )
+            Math.max(
+                12,
+                rect.right - 210
+            )
         }px`;
 
-      const favoriteLabel =
+    const favoriteLabel =
         photo.favorite
-          ? 'Remove from favourites'
-          : 'Mark as favourite';
+            ? 'Remove from favourites'
+            : 'Mark as favourite';
 
-      menu.innerHTML = `
+    menu.innerHTML = `
         <button
           type="button"
           data-photo-action="open">
@@ -9190,8 +9639,8 @@
           type="button"
           data-photo-action="favorite">
           ${escapeHtml(
-            favoriteLabel
-          )}
+                favoriteLabel
+            )}
         </button>
 
         <button
@@ -9214,128 +9663,137 @@
         </button>
       `;
 
-      document.body.appendChild(
+    document.body.appendChild(
         menu
-      );
+    );
 
-      menu.addEventListener(
+    menu.addEventListener(
         'click',
-        event => {
-          const action =
-            event.target
-              .closest(
-                '[data-photo-action]'
-              )
-              ?.dataset.photoAction;
+        event =>
+        {
+            const action =
+                event.target
+                    .closest(
+                        '[data-photo-action]'
+                    )
+                    ?.dataset.photoAction;
 
-          if (!action) {
-            return;
-          }
+            if (!action)
+            {
+                return;
+            }
 
-          closeMenu();
+            closeMenu();
 
-          if (action === 'open') {
-            openPhotoLightbox(
-              photo.id
-            );
+            if (action === 'open')
+            {
+                openPhotoLightbox(
+                    photo.id
+                );
 
-            return;
-          }
+                return;
+            }
 
-          if (
-            action === 'favorite'
-          ) {
-            toggleAlbumPhotoFavourite(
-              photo.id
-            );
+            if (
+                action === 'favorite'
+            )
+            {
+                toggleAlbumPhotoFavourite(
+                    photo.id
+                );
 
-            return;
-          }
+                return;
+            }
 
-          if (action === 'people') {
-            openPhotoPeopleModal(
-              photo.id
-            );
+            if (action === 'people')
+            {
+                openPhotoPeopleModal(
+                    photo.id
+                );
 
-            return;
-          }
+                return;
+            }
 
-          if (action === 'album') {
-            state.selectedPhotoIds = [
-              photo.id
-            ];
+            if (action === 'album')
+            {
+                state.selectedPhotoIds = [
+                    photo.id
+                ];
 
-            openAddToAlbumModal();
+                openAddToAlbumModal();
 
-            return;
-          }
+                return;
+            }
 
-          if (action === 'delete') {
-            openDeletePhotoConfirm([
-              photo.id
-            ]);
-          }
+            if (action === 'delete')
+            {
+                openDeletePhotoConfirm([
+                    photo.id
+                ]);
+            }
         }
-      );
+    );
 
-      setTimeout(
-        () => {
-          document.addEventListener(
-            'click',
-            closeMenu
-          );
+    setTimeout(
+        () =>
+        {
+            document.addEventListener(
+                'click',
+                closeMenu
+            );
         },
         0
-      );
-    }
+    );
+}
 
-    function mountAlbumsActionMenu(
-      anchor,
-      markup,
-      attributeName,
-      onAction
-    ) {
-      closeMenu();
+function mountAlbumsActionMenu(
+    anchor,
+    markup,
+    attributeName,
+    onAction
+)
+{
+    closeMenu();
 
-      const rect =
+    const rect =
         anchor.getBoundingClientRect();
 
-      const menu =
+    const menu =
         document.createElement('div');
 
-      menu.className = 'menu-popover';
-      menu.id = 'projectMenu';
-      menu.setAttribute('role', 'menu');
+    menu.className = 'menu-popover';
+    menu.id = 'projectMenu';
+    menu.setAttribute('role', 'menu');
 
-      menu.style.visibility = 'hidden';
-      menu.style.top =
+    menu.style.visibility = 'hidden';
+    menu.style.top =
         `${rect.bottom + 6}px`;
-      menu.style.left = '0px';
+    menu.style.left = '0px';
 
-      menu.innerHTML = markup;
+    menu.innerHTML = markup;
 
-      document.body.appendChild(menu);
+    document.body.appendChild(menu);
 
-      const margin = 12;
-      const menuRect =
+    const margin = 12;
+    const menuRect =
         menu.getBoundingClientRect();
 
-      menu.style.left = `${
+    menu.style.left = `${
         Math.max(
-          margin,
-          Math.min(
-            rect.right - menuRect.width,
-            window.innerWidth
+            margin,
+            Math.min(
+                rect.right - menuRect.width,
+                window.innerWidth
               - menuRect.width
               - margin
-          )
+            )
         )
-      }px`;
+    }px`;
 
-      const below =
+    const below =
         rect.bottom + 6;
 
-      menu.style.top = `${
+    menu.style.top = `${
         below + menuRect.height
           <= window.innerHeight - margin
             ? below
@@ -9344,63 +9802,67 @@
                 rect.top
                   - menuRect.height
                   - 6
-              )
-      }px`;
+            )
+    }px`;
 
-      menu.style.visibility = 'visible';
+    menu.style.visibility = 'visible';
 
-      menu.addEventListener(
+    menu.addEventListener(
         'click',
-        event => {
-          const target =
-            event.target.closest(
-              `[${attributeName}]`
-            );
+        event =>
+        {
+            const target =
+                event.target.closest(
+                    `[${attributeName}]`
+                );
 
-          const action =
-            target?.getAttribute(
-              attributeName
-            );
+            const action =
+                target?.getAttribute(
+                    attributeName
+                );
 
-          if (!action) return;
+            if (!action) return;
 
-          closeMenu();
-          onAction(action);
+            closeMenu();
+            onAction(action);
         }
-      );
+    );
 
-      setTimeout(() => {
+    setTimeout(() =>
+    {
         document.addEventListener(
-          'click',
-          closeMenu
+            'click',
+            closeMenu
         );
 
         document.addEventListener(
-          'scroll',
-          closeMenu,
-          true
+            'scroll',
+            closeMenu,
+            true
         );
-      }, 0);
+    }, 0);
+}
+
+function openAlbumsInspectorMenu(
+    photoId,
+    anchor
+)
+{
+    const photo =
+        getPhoto(
+            photoId,
+            {
+                projectId:
+              currentProjectId()
+            }
+        );
+
+    if (!photo)
+    {
+        return;
     }
 
-    function openAlbumsInspectorMenu(
-      photoId,
-      anchor
-    ) {
-      const photo =
-        getPhoto(
-          photoId,
-          {
-            projectId:
-              currentProjectId()
-          }
-        );
-
-      if (!photo) {
-        return;
-      }
-
-      mountAlbumsActionMenu(
+    mountAlbumsActionMenu(
         anchor,
         `
           <button
@@ -9426,80 +9888,88 @@
           </button>
         `,
         'data-albums-inspector-action',
-        action => {
-          if (
-            action === 'save-copy'
-          ) {
-            showToast(
-              'Save copy will be available when real photo files are implemented.'
-            );
+        action =>
+        {
+            if (
+                action === 'save-copy'
+            )
+            {
+                showToast(
+                    'Save copy will be available when real photo files are implemented.'
+                );
 
-            return;
-          }
+                return;
+            }
 
-          if (action === 'album') {
-            state.selectedPhotoIds = [
-              photo.id
-            ];
+            if (action === 'album')
+            {
+                state.selectedPhotoIds = [
+                    photo.id
+                ];
 
-            openAddToAlbumModal();
+                openAddToAlbumModal();
 
-            return;
-          }
+                return;
+            }
 
-          if (action === 'delete') {
-            openDeletePhotoConfirm([
-              photo.id
-            ]);
-          }
+            if (action === 'delete')
+            {
+                openDeletePhotoConfirm([
+                    photo.id
+                ]);
+            }
         }
-      );
-    }
+    );
+}
 
-    function clearPersonPrimaryPhoto(
-      personId,
-      photoId
-    ) {
-      const person =
+function clearPersonPrimaryPhoto(
+    personId,
+    photoId
+)
+{
+    const person =
         getPerson(personId);
 
-      if (
+    if (
         !person
         || person.primaryPhotoId
           !== photoId
-      ) {
+    )
+    {
         return;
-      }
-
-      person.primaryPhotoId = '';
-      person.primaryPhotoCrop = null;
-
-      renderAlbums();
-      showToast(
-        'Primary photo removed.'
-      );
     }
 
-    function openAlbumsPhotoPersonMenu(
-      photoId,
-      personId,
-      anchor
-    ) {
-      const photo =
+    person.primaryPhotoId = '';
+    person.primaryPhotoCrop = null;
+
+    renderAlbums();
+    showToast(
+        'Primary photo removed.'
+    );
+}
+
+function openAlbumsPhotoPersonMenu(
+    photoId,
+    personId,
+    anchor
+)
+{
+    const photo =
         getPhoto(photoId);
 
-      const person =
+    const person =
         getPerson(personId);
 
-      if (!photo || !person) {
+    if (!photo || !person)
+    {
         return;
-      }
+    }
 
-      const isPrimary =
+    const isPrimary =
         person.primaryPhotoId
           === photo.id;
 
-      mountAlbumsActionMenu(
+    mountAlbumsActionMenu(
         anchor,
         `
           <button
@@ -9521,9 +9991,9 @@
             role="menuitem"
             data-albums-person-action="primary">
             ${
-              isPrimary
-                ? 'Remove as primary photo'
-                : 'Use as primary photo'
+                isPrimary
+                    ? 'Remove as primary photo'
+                    : 'Use as primary photo'
             }
           </button>
 
@@ -9536,45 +10006,54 @@
           </button>
         `,
         'data-albums-person-action',
-        action => {
-          if (action === 'tree') {
-            showPersonInFamilyTree(
-              person.id
-            );
-          }
-
-          if (action === 'profile') {
-            openPeopleProfileFromRow(
-              person.id
-            );
-          }
-
-          if (action === 'primary') {
-            if (isPrimary) {
-              clearPersonPrimaryPhoto(
-                person.id,
-                photo.id
-              );
-            } else {
-              openPersonPhotoAdjuster(
-                person.id,
-                photo.id
-              );
+        action =>
+        {
+            if (action === 'tree')
+            {
+                showPersonInFamilyTree(
+                    person.id
+                );
             }
-          }
 
-          if (action === 'remove') {
-            removePhotoPersonTag(
-              photo.id,
-              person.id
-            );
-          }
+            if (action === 'profile')
+            {
+                openPeopleProfileFromRow(
+                    person.id
+                );
+            }
+
+            if (action === 'primary')
+            {
+                if (isPrimary)
+                {
+                    clearPersonPrimaryPhoto(
+                        person.id,
+                        photo.id
+                    );
+                }
+                else
+                {
+                    openPersonPhotoAdjuster(
+                        person.id,
+                        photo.id
+                    );
+                }
+            }
+
+            if (action === 'remove')
+            {
+                removePhotoPersonTag(
+                    photo.id,
+                    person.id
+                );
+            }
         }
-      );
-    }
+    );
+}
 
-    function openNewAlbumModal() {
-      openModal(`
+function openNewAlbumModal()
+{
+    openModal(`
         <div
           class="modal"
           role="dialog"
@@ -9642,86 +10121,90 @@
         </div>
       `);
 
-      modalBackdrop
+    modalBackdrop
         .querySelector(
-          '#newAlbumForm'
+            '#newAlbumForm'
         )
         ?.addEventListener(
-          'submit',
-          event => {
-            event.preventDefault();
-            const projectId = requireActiveProjectId();
-            if (!projectId) return;
+            'submit',
+            event =>
+            {
+                event.preventDefault();
+                const projectId = requireActiveProjectId();
+                if (!projectId) return;
 
-            const album = {
-              id:
+                const album = {
+                    id:
                 `album-${Date.now()}`,
 
-              projectId,
+                    projectId,
 
-              name:
+                    name:
                 modalBackdrop
-                  .querySelector(
-                    '#albumName'
-                  )
-                  .value
-                  .trim(),
+                    .querySelector(
+                        '#albumName'
+                    )
+                    .value
+                    .trim(),
 
-              description:
+                    description:
                 modalBackdrop
-                  .querySelector(
-                    '#albumDescription'
-                  )
-                  .value
-                  .trim(),
+                    .querySelector(
+                        '#albumDescription'
+                    )
+                    .value
+                    .trim(),
 
-              createdAt:
+                    createdAt:
                 new Date()
-                  .toISOString()
-            };
+                    .toISOString()
+                };
 
-            if (!album.name) {
-              return;
+                if (!album.name)
+                {
+                    return;
+                }
+
+                sampleData.albums.push(
+                    album
+                );
+
+                state.albumsView =
+                    'album';
+
+                state.activeAlbumId =
+                    album.id;
+
+                closeModal();
+                renderAlbums();
+
+                showToast(
+                    'Album created.'
+                );
             }
-
-            sampleData.albums.push(
-              album
-            );
-
-            state.albumsView =
-              'album';
-
-            state.activeAlbumId =
-              album.id;
-
-            closeModal();
-            renderAlbums();
-
-            showToast(
-              'Album created.'
-            );
-          }
         );
+}
+
+function openEditAlbumModal()
+{
+    const album =
+        getProjectAlbums()
+            .find(item =>
+                item.id === state.activeAlbumId
+            );
+
+    if (!album)
+    {
+        return;
     }
 
-    function openEditAlbumModal() {
-      const album =
-        getProjectAlbums()
-          .find(item =>
-            item.id === state.activeAlbumId
-          );
-
-      if (!album) {
-        return;
-      }
-
-      const sourceName =
+    const sourceName =
         album.name || '';
 
-      const sourceDescription =
+    const sourceDescription =
         album.description || '';
 
-      openModal(`
+    openModal(`
         <div
           class="modal"
           role="dialog"
@@ -9736,7 +10219,7 @@
 
               <p>
                 ${escapeHtml(
-                  album.name
+                    album.name
                 )}
               </p>
             </div>
@@ -9760,13 +10243,13 @@
                   id="editAlbumName"
                   required
                   data-source-value="${escapeHtml(
-                    sourceName
-                  )}"
+                        sourceName
+                    )}"
                   value="${escapeHtml(
-                    localizedDataFieldValue(
-                      sourceName
-                    )
-                  )}">
+                        localizedDataFieldValue(
+                            sourceName
+                        )
+                    )}">
               </div>
 
               <div class="field">
@@ -9777,12 +10260,12 @@
                 <textarea
                   id="editAlbumDescription"
                   data-source-value="${escapeHtml(
-                    sourceDescription
-                  )}">${escapeHtml(
-                    localizedDataFieldValue(
-                      sourceDescription
-                    )
-                  )}</textarea>
+                        sourceDescription
+                    )}">${escapeHtml(
+                        localizedDataFieldValue(
+                            sourceDescription
+                        )
+                    )}</textarea>
               </div>
             </div>
 
@@ -9811,113 +10294,121 @@
         </div>
       `);
 
-      modalBackdrop
+    modalBackdrop
         .querySelector('#editAlbumForm')
         ?.addEventListener(
-          'submit',
-          event => {
-            event.preventDefault();
+            'submit',
+            event =>
+            {
+                event.preventDefault();
 
-            const nameInput =
-              modalBackdrop.querySelector(
-                '#editAlbumName'
-              );
+                const nameInput =
+                    modalBackdrop.querySelector(
+                        '#editAlbumName'
+                    );
 
-            const descriptionInput =
-              modalBackdrop.querySelector(
-                '#editAlbumDescription'
-              );
+                const descriptionInput =
+                    modalBackdrop.querySelector(
+                        '#editAlbumDescription'
+                    );
 
-            const nextName =
-              collectLocalizedDataFieldValue(
-                nameInput,
-                nameInput?.dataset.sourceValue
+                const nextName =
+                    collectLocalizedDataFieldValue(
+                        nameInput,
+                        nameInput?.dataset.sourceValue
                 ?? sourceName
-              ).trim();
+                    ).trim();
 
-            const nextDescription =
-              collectLocalizedDataFieldValue(
-                descriptionInput,
-                descriptionInput?.dataset.sourceValue
+                const nextDescription =
+                    collectLocalizedDataFieldValue(
+                        descriptionInput,
+                        descriptionInput?.dataset.sourceValue
                 ?? sourceDescription
-              ).trim();
+                    ).trim();
 
-            album.name =
-              nextName || sourceName;
+                album.name =
+                    nextName || sourceName;
 
-            album.description =
-              nextDescription;
+                album.description =
+                    nextDescription;
 
-            closeModal();
-            renderAlbums();
+                closeModal();
+                renderAlbums();
 
-            showToast(
-              'Album updated.'
-            );
-          }
+                showToast(
+                    'Album updated.'
+                );
+            }
         );
 
-      modalBackdrop
+    modalBackdrop
         .querySelector('#deleteAlbumButton')
         ?.addEventListener(
-          'click',
-          () =>
-            openDeleteAlbumConfirm(
-              album.id
-            )
+            'click',
+            () =>
+                openDeleteAlbumConfirm(
+                    album.id
+                )
         );
-    }
+}
 
-    function openDeleteAlbumConfirm(albumId) {
-      const album = getProjectAlbums().find(item => item.id === albumId);
-      if (!album) return;
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="deleteAlbumTitle"><div class="modal-header"><div><h2 id="deleteAlbumTitle">Delete album?</h2><p>${escapeHtml(album.name)}</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body"><p>Photos remain in All photos. Album membership will be removed.</p></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" data-confirm-album-delete>Delete album</button></div></div>`);
-      modalBackdrop.querySelector('[data-confirm-album-delete]')?.addEventListener('click', () => {
+function openDeleteAlbumConfirm(albumId)
+{
+    const album = getProjectAlbums().find(item => item.id === albumId);
+    if (!album) return;
+    openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="deleteAlbumTitle"><div class="modal-header"><div><h2 id="deleteAlbumTitle">Delete album?</h2><p>${escapeHtml(album.name)}</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body"><p>Photos remain in All photos. Album membership will be removed.</p></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" data-confirm-album-delete>Delete album</button></div></div>`);
+    modalBackdrop.querySelector('[data-confirm-album-delete]')?.addEventListener('click', () =>
+    {
         const albumIndex = sampleData.albums.findIndex(item => item.id === album.id);
         if (albumIndex >= 0) sampleData.albums.splice(albumIndex, 1);
         const now = new Date().toISOString();
-        sampleData.media.forEach(photo => {
-          if (!(photo.albumIds || []).includes(album.id)) return;
-          photo.albumIds = photo.albumIds.filter(id => id !== album.id);
-          photo.updatedAt = now;
+        sampleData.media.forEach(photo =>
+        {
+            if (!(photo.albumIds || []).includes(album.id)) return;
+            photo.albumIds = photo.albumIds.filter(id => id !== album.id);
+            photo.updatedAt = now;
         });
         state.albumsView = 'all'; state.activeAlbumId = null; closeModal(); renderAlbums(); showToast('Album deleted. Photos remain in All photos.');
-      });
-    }
+    });
+}
 
-    function openAddPhotosModal() {
-      const projectId =
+function openAddPhotosModal()
+{
+    const projectId =
         requireActiveProjectId();
 
-      if (!projectId) {
+    if (!projectId)
+    {
         return;
-      }
+    }
 
-      /*
+    /*
       * Capture the destination when the modal
       * opens. Switching state while files are
       * being read cannot redirect the upload.
       */
-      const targetAlbumId =
+    const targetAlbumId =
         state.albumsView === 'album'
         && state.activeAlbumId
         && getProjectAlbums(
-          projectId
+            projectId
         ).some(
-          album =>
-            album.id
+            album =>
+                album.id
             === state.activeAlbumId
         )
-          ? state.activeAlbumId
-          : '';
+            ? state.activeAlbumId
+            : '';
 
-      let uploadDrafts = [];
-      let uploadErrors = [];
-      let processing = false;
+    let uploadDrafts = [];
+    let uploadErrors = [];
+    let processing = false;
 
-      const renderUploadErrors = () => {
-        if (!uploadErrors.length) {
-          return '';
+    const renderUploadErrors = () =>
+    {
+        if (!uploadErrors.length)
+        {
+            return '';
         }
 
         return `
@@ -9929,356 +10420,386 @@
 
             <strong>
               ${
-                uploadErrors.length === 1
-                  ? 'One file could not be added:'
-                  : `${
-                      uploadErrors.length
-                    } files could not be added:`
-              }
+                    uploadErrors.length === 1
+                        ? 'One file could not be added:'
+                        : `${
+                            uploadErrors.length
+                        } files could not be added:`
+                }
             </strong>
 
             <ul>
               ${uploadErrors
-                .map(error => `
+                    .map(error => `
                   <li>
                     ${escapeHtml(error)}
                   </li>
                 `)
-                .join('')}
+                    .join('')}
             </ul>
           </div>
         `;
-      };
+    };
 
-      const processFiles =
-        async fileList => {
-          if (processing) {
-            return;
-          }
+    const processFiles =
+        async fileList =>
+        {
+            if (processing)
+            {
+                return;
+            }
 
-          const knownSignatures =
-            new Set(
-              uploadDrafts.map(
-                draft =>
-                  draft.signature
-              )
-            );
-
-          const files =
-            Array.from(
-              fileList || []
-            ).filter(file => {
-              const signature =
-                photoUploadFileSignature(
-                  file
+            const knownSignatures =
+                new Set(
+                    uploadDrafts.map(
+                        draft =>
+                            draft.signature
+                    )
                 );
 
-              if (
-                knownSignatures.has(
-                  signature
+            const files =
+                Array.from(
+                    fileList || []
+                ).filter(file =>
+                {
+                    const signature =
+                        photoUploadFileSignature(
+                            file
+                        );
+
+                    if (
+                        knownSignatures.has(
+                            signature
+                        )
+                    )
+                    {
+                        return false;
+                    }
+
+                    knownSignatures.add(
+                        signature
+                    );
+
+                    return true;
+                });
+
+            if (!files.length)
+            {
+                return;
+            }
+
+            processing = true;
+
+            const modal =
+                modalBackdrop.querySelector(
+                    '[data-albums-photo-upload]'
+                );
+
+            modal
+                ?.querySelectorAll(
+                    'button'
                 )
-              ) {
-                return false;
-              }
+                .forEach(button =>
+                {
+                    button.disabled = true;
+                });
 
-              knownSignatures.add(
-                signature
-              );
-
-              return true;
-            });
-
-          if (!files.length) {
-            return;
-          }
-
-          processing = true;
-
-          const modal =
-            modalBackdrop.querySelector(
-              '[data-albums-photo-upload]'
-            );
-
-          modal
-            ?.querySelectorAll(
-              'button'
-            )
-            .forEach(button => {
-              button.disabled = true;
-            });
-
-          const results =
-            await Promise.all(
-              files.map(async file => {
-                try {
-                  return {
-                    draft:
-                      await createPhotoUploadDraft(
-                        file,
+            const results =
+                await Promise.all(
+                    files.map(async file =>
+                    {
+                        try
                         {
-                          idPrefix:
+                            return {
+                                draft:
+                      await createPhotoUploadDraft(
+                          file,
+                          {
+                              idPrefix:
                             'albums-photo-upload-draft'
-                        }
+                          }
                       ),
 
-                    error:
+                                error:
                       ''
-                  };
-                } catch (error) {
-                  return {
-                    draft:
+                            };
+                        }
+                        catch (error)
+                        {
+                            return {
+                                draft:
                       null,
 
-                    error:
+                                error:
                       error?.message
                       || `${
-                        file.name
+                          file.name
                         || 'File'
                       } — could not be read`
-                  };
-                }
-              })
-            );
+                            };
+                        }
+                    })
+                );
 
-          processing = false;
+            processing = false;
 
-          uploadDrafts = [
-            ...uploadDrafts,
+            uploadDrafts = [
+                ...uploadDrafts,
 
-            ...results
-              .map(result =>
-                result.draft
-              )
-              .filter(Boolean)
-          ];
+                ...results
+                    .map(result =>
+                        result.draft
+                    )
+                    .filter(Boolean)
+            ];
 
-          uploadErrors =
-            results
-              .map(result =>
-                result.error
-              )
-              .filter(Boolean);
+            uploadErrors =
+                results
+                    .map(result =>
+                        result.error
+                    )
+                    .filter(Boolean);
 
-          renderDialog();
+            renderDialog();
         };
 
-      const commitUploads = () => {
+    const commitUploads = () =>
+    {
         if (
-          processing
+            processing
           || !uploadDrafts.length
-        ) {
-          return;
+        )
+        {
+            return;
         }
 
         if (
-          uploadDrafts.some(
-            draft =>
-              !photoUploadDraftIsValid(
-                draft
-              )
-          )
-        ) {
-          uploadErrors = [
-            'One or more uploaded photos are no longer valid. Remove them and choose the files again.'
-          ];
+            uploadDrafts.some(
+                draft =>
+                    !photoUploadDraftIsValid(
+                        draft
+                    )
+            )
+        )
+        {
+            uploadErrors = [
+                'One or more uploaded photos are no longer valid. Remove them and choose the files again.'
+            ];
 
-          renderDialog();
-          return;
+            renderDialog();
+            return;
         }
 
         const createdPhotos =
-          uploadDrafts
-            .map(draft =>
-              createMediaFromPhotoUpload({
-                projectId,
+            uploadDrafts
+                .map(draft =>
+                    createMediaFromPhotoUpload({
+                        projectId,
 
-                draft,
+                        draft,
 
-                personIds:
+                        personIds:
                   [],
 
-                idPrefix:
+                        idPrefix:
                   'photo-albums'
-              })
-            )
-            .filter(Boolean);
+                    })
+                )
+                .filter(Boolean);
 
-        if (!createdPhotos.length) {
-          uploadErrors = [
-            'No valid photos were added.'
-          ];
+        if (!createdPhotos.length)
+        {
+            uploadErrors = [
+                'No valid photos were added.'
+            ];
 
-          renderDialog();
-          return;
+            renderDialog();
+            return;
         }
 
-        if (targetAlbumId) {
-          createdPhotos.forEach(photo => {
-            photo.albumIds = [
-              ...new Set([
-                ...(photo.albumIds || []),
-                targetAlbumId
-              ])
-            ];
-          });
+        if (targetAlbumId)
+        {
+            createdPhotos.forEach(photo =>
+            {
+                photo.albumIds = [
+                    ...new Set([
+                        ...(photo.albumIds || []),
+                        targetAlbumId
+                    ])
+                ];
+            });
         }
 
         const project =
-          sampleData.projects.find(
-            item =>
-              item.id === projectId
-          );
+            sampleData.projects.find(
+                item =>
+                    item.id === projectId
+            );
 
         touchProjectModified(
-          project
+            project
         );
 
         state.selectedPhotoIds = [];
 
         state.selectedPhotoId =
-          createdPhotos[0].id;
+            createdPhotos[0].id;
 
         closeModal({
-          force: true
+            force: true
         });
 
         renderAlbums();
 
         showToast(
-          'Photos added'
+            'Photos added'
         );
-      };
+    };
 
-      const bindDialog = () => {
+    const bindDialog = () =>
+    {
         const modal =
-          modalBackdrop.querySelector(
-            '[data-albums-photo-upload]'
-          );
+            modalBackdrop.querySelector(
+                '[data-albums-photo-upload]'
+            );
 
-        if (!modal) {
-          return;
+        if (!modal)
+        {
+            return;
         }
 
         const fileInput =
-          modal.querySelector(
-            '[data-albums-photo-upload-file]'
-          );
+            modal.querySelector(
+                '[data-albums-photo-upload-file]'
+            );
 
         modal
-          .querySelector(
-            '[data-albums-photo-upload-choose]'
-          )
-          ?.addEventListener(
-            'click',
-            () => {
-              fileInput?.click();
-            }
-          );
+            .querySelector(
+                '[data-albums-photo-upload-choose]'
+            )
+            ?.addEventListener(
+                'click',
+                () =>
+                {
+                    fileInput?.click();
+                }
+            );
 
         fileInput?.addEventListener(
-          'change',
-          () => {
-            processFiles(
-              fileInput.files
-            );
-          }
+            'change',
+            () =>
+            {
+                processFiles(
+                    fileInput.files
+                );
+            }
         );
 
         const dropzone =
-          modal.querySelector(
-            '[data-albums-photo-upload-dropzone]'
-          );
-
-        if (dropzone) {
-          [
-            'dragenter',
-            'dragover'
-          ].forEach(type => {
-            dropzone.addEventListener(
-              type,
-              event => {
-                event.preventDefault();
-
-                dropzone.classList.add(
-                  'is-dragging'
-                );
-              }
+            modal.querySelector(
+                '[data-albums-photo-upload-dropzone]'
             );
-          });
 
-          [
-            'dragleave',
-            'drop'
-          ].forEach(type => {
-            dropzone.addEventListener(
-              type,
-              event => {
-                event.preventDefault();
+        if (dropzone)
+        {
+            [
+                'dragenter',
+                'dragover'
+            ].forEach(type =>
+            {
+                dropzone.addEventListener(
+                    type,
+                    event =>
+                    {
+                        event.preventDefault();
 
-                dropzone.classList.remove(
-                  'is-dragging'
+                        dropzone.classList.add(
+                            'is-dragging'
+                        );
+                    }
                 );
-              }
-            );
-          });
+            });
 
-          dropzone.addEventListener(
-            'drop',
-            event => {
-              processFiles(
-                event.dataTransfer?.files
-              );
-            }
-          );
+            [
+                'dragleave',
+                'drop'
+            ].forEach(type =>
+            {
+                dropzone.addEventListener(
+                    type,
+                    event =>
+                    {
+                        event.preventDefault();
+
+                        dropzone.classList.remove(
+                            'is-dragging'
+                        );
+                    }
+                );
+            });
+
+            dropzone.addEventListener(
+                'drop',
+                event =>
+                {
+                    processFiles(
+                        event.dataTransfer?.files
+                    );
+                }
+            );
         }
 
         modal.addEventListener(
-          'click',
-          event => {
-            const removeButton =
-              event.target.closest(
-                '[data-person-photos-adder-remove-upload]'
-              );
+            'click',
+            event =>
+            {
+                const removeButton =
+                    event.target.closest(
+                        '[data-person-photos-adder-remove-upload]'
+                    );
 
-            if (removeButton) {
-              const draftId =
-                removeButton.dataset
-                  .personPhotosAdderRemoveUpload;
+                if (removeButton)
+                {
+                    const draftId =
+                        removeButton.dataset
+                            .personPhotosAdderRemoveUpload;
 
-              uploadDrafts =
-                uploadDrafts.filter(
-                  draft =>
-                    draft.id !== draftId
-                );
+                    uploadDrafts =
+                        uploadDrafts.filter(
+                            draft =>
+                                draft.id !== draftId
+                        );
 
-              uploadErrors = [];
+                    uploadErrors = [];
 
-              renderDialog();
-              return;
+                    renderDialog();
+                    return;
+                }
+
+                if (
+                    event.target.closest(
+                        '[data-albums-photo-upload-save]'
+                    )
+                )
+                {
+                    commitUploads();
+                }
             }
-
-            if (
-              event.target.closest(
-                '[data-albums-photo-upload-save]'
-              )
-            ) {
-              commitUploads();
-            }
-          }
         );
-      };
+    };
 
-      const renderDialog = () => {
+    const renderDialog = () =>
+    {
         const maxMegabytes =
-          Math.round(
-            PHOTO_UPLOAD_MAX_BYTES
+            Math.round(
+                PHOTO_UPLOAD_MAX_BYTES
             / (
-              1024 * 1024
+                1024 * 1024
             )
-          );
+            );
 
         const photoCount =
-          uploadDrafts.length;
+            uploadDrafts.length;
 
         openModal(`
           <div
@@ -10306,10 +10827,10 @@
                 <p>
                   New photos will be added
                   ${
-                    targetAlbumId
-                      ? 'to the current album.'
-                      : 'to the current project.'
-                  }
+                        targetAlbumId
+                            ? 'to the current album.'
+                            : 'to the current project.'
+                    }
                 </p>
               </div>
 
@@ -10341,9 +10862,9 @@
                     person-photo-upload-dropzone
                     person-photos-adder-upload-dropzone
                     ${
-                      photoCount
-                        ? 'has-drafts'
-                        : ''
+                        photoCount
+                            ? 'has-drafts'
+                            : ''
                     }
                   "
                   data-albums-photo-upload-dropzone>
@@ -10351,8 +10872,8 @@
                   <input
                     type="file"
                     accept="${
-                      PHOTO_UPLOAD_ALLOWED_TYPES
-                        .join(',')
+                        PHOTO_UPLOAD_ALLOWED_TYPES
+                            .join(',')
                     }"
                     multiple
                     data-albums-photo-upload-file
@@ -10367,10 +10888,10 @@
 
                     <strong>
                       ${
-                        photoCount
-                          ? 'Add more photos'
-                          : 'Drop photos here'
-                      }
+                            photoCount
+                                ? 'Add more photos'
+                                : 'Drop photos here'
+                        }
                     </strong>
 
                     <p>
@@ -10390,21 +10911,21 @@
                 ${renderUploadErrors()}
 
                 ${
-                  photoCount
-                    ? `
+                    photoCount
+                        ? `
                       <div
                         class="
                           person-photo-candidate-grid
                           person-photos-adder-upload-grid
                         ">
                         ${uploadDrafts
-                          .map(
-                            renderPersonPhotosAdderUploadDraft
-                          )
-                          .join('')}
+                            .map(
+                                renderPersonPhotosAdderUploadDraft
+                            )
+                            .join('')}
                       </div>
                     `
-                    : ''
+                        : ''
                 }
               </div>
             </div>
@@ -10432,15 +10953,15 @@
                   type="button"
                   data-albums-photo-upload-save
                   ${
-                    photoCount
-                      ? ''
-                      : 'disabled'
-                  }>
+                        photoCount
+                            ? ''
+                            : 'disabled'
+                    }>
                   ${
-                    photoCount === 1
-                      ? 'Add photo'
-                      : 'Add photos'
-                  }
+                        photoCount === 1
+                            ? 'Add photo'
+                            : 'Add photos'
+                    }
                 </button>
               </div>
             </div>
@@ -10448,181 +10969,191 @@
         `);
 
         bindDialog();
-      };
+    };
 
-      renderDialog();
-    }
+    renderDialog();
+}
 
-    function openAddToAlbumModal() {
-      const projectId =
+function openAddToAlbumModal()
+{
+    const projectId =
         currentProjectId();
 
-      const photoIds = [
+    const photoIds = [
         ...new Set(
-          state.selectedPhotoIds || []
+            state.selectedPhotoIds || []
         )
-      ].filter(photoId =>
+    ].filter(photoId =>
         Boolean(
-          getPhoto(
-            photoId,
-            {
-              projectId
-            }
-          )
+            getPhoto(
+                photoId,
+                {
+                    projectId
+                }
+            )
         )
-      );
+    );
 
-      if (!photoIds.length) {
+    if (!photoIds.length)
+    {
         return;
-      }
+    }
 
-      let query = '';
-      let createMode = false;
+    let query = '';
+    let createMode = false;
 
-      const selectedAlbumIds =
+    const selectedAlbumIds =
         new Set();
 
-      const createDraft = {
+    const createDraft = {
         name: '',
         description: ''
-      };
+    };
 
-      const allAlbums = () =>
+    const allAlbums = () =>
         getProjectAlbums(
-          projectId
+            projectId
         );
 
-      const visibleAlbums = () => {
+    const visibleAlbums = () =>
+    {
         const normalizedQuery =
-          query
-            .trim()
-            .toLowerCase();
+            query
+                .trim()
+                .toLowerCase();
 
-        if (!normalizedQuery) {
-          return allAlbums();
+        if (!normalizedQuery)
+        {
+            return allAlbums();
         }
 
         return allAlbums().filter(
-          album =>
-            albumPickerSearchText(
-              album
-            ).includes(
-              normalizedQuery
-            )
+            album =>
+                albumPickerSearchText(
+                    album
+                ).includes(
+                    normalizedQuery
+                )
         );
-      };
+    };
 
-      const photoCountLabel = () =>
+    const photoCountLabel = () =>
         translateText(
-          `${photoIds.length} selected ${
-            photoIds.length === 1
-              ? 'photo'
-              : 'photos'
-          }`
+            `${photoIds.length} selected ${
+                photoIds.length === 1
+                    ? 'photo'
+                    : 'photos'
+            }`
         );
 
-      const selectionLabel = () => {
+    const selectionLabel = () =>
+    {
         const albumCount =
-          selectedAlbumIds.size;
+            selectedAlbumIds.size;
 
         return translateText(
-          `${albumCount} ${
-            albumCount === 1
-              ? 'album'
-              : 'albums'
-          } selected`
+            `${albumCount} ${
+                albumCount === 1
+                    ? 'album'
+                    : 'albums'
+            } selected`
         );
-      };
+    };
 
-      const saveLabel = () => {
+    const saveLabel = () =>
+    {
         const count =
-          selectedAlbumIds.size;
+            selectedAlbumIds.size;
 
         return translateText(
-          count
-            ? `Add to ${count} ${
-                count === 1
-                  ? 'album'
-                  : 'albums'
-              }`
-            : 'Add to albums'
+            count
+                ? `Add to ${count} ${
+                    count === 1
+                        ? 'album'
+                        : 'albums'
+                }`
+                : 'Add to albums'
         );
-      };
+    };
 
-      const renderAlbumRow =
-        album => {
-          const membership =
-            getAlbumSelectedPhotoMembership(
-              album.id,
-              photoIds
-            );
+    const renderAlbumRow =
+        album =>
+        {
+            const membership =
+                getAlbumSelectedPhotoMembership(
+                    album.id,
+                    photoIds
+                );
 
-          const selected =
-            selectedAlbumIds.has(
-              album.id
-            );
+            const selected =
+                selectedAlbumIds.has(
+                    album.id
+                );
 
-          const previewPhoto =
-            getAlbumPreviewPhoto(
-              album.id
-            );
+            const previewPhoto =
+                getAlbumPreviewPhoto(
+                    album.id
+                );
 
-          const albumPhotoCount =
-            getAlbumPhotoCount(
-              album.id
-            );
+            const albumPhotoCount =
+                getAlbumPhotoCount(
+                    album.id
+                );
 
-          let membershipLabel = '';
+            let membershipLabel = '';
 
-          if (membership.complete) {
-            membershipLabel =
-              translateText(
-                'Already contains all selected photos'
-              );
-          } else if (
-            membership.existingCount
-          ) {
-            membershipLabel =
-              translateText(
-                `${membership.existingCount} of ${
-                  membership.selectedPhotoCount
-                } already added`
-              );
-          }
+            if (membership.complete)
+            {
+                membershipLabel =
+                    translateText(
+                        'Already contains all selected photos'
+                    );
+            }
+            else if (
+                membership.existingCount
+            )
+            {
+                membershipLabel =
+                    translateText(
+                        `${membership.existingCount} of ${
+                            membership.selectedPhotoCount
+                        } already added`
+                    );
+            }
 
-          return `
+            return `
             <label
               class="
                 album-picker-result
                 ${
-                  selected
-                    ? 'is-selected'
-                    : ''
+                    selected
+                        ? 'is-selected'
+                        : ''
                 }
                 ${
-                  membership.complete
-                    ? 'is-complete'
-                    : ''
+                    membership.complete
+                        ? 'is-complete'
+                        : ''
                 }
               "
               data-album-picker-row="${
-                escapeHtml(album.id)
-              }">
+                    escapeHtml(album.id)
+                }">
 
               <span
                 class="
                   album-picker-cover
                 ">
                 ${
-                  previewPhoto
-                    ? renderPhotoThumbnail(
-                        previewPhoto,
-                        {
-                          label:
+                    previewPhoto
+                        ? renderPhotoThumbnail(
+                            previewPhoto,
+                            {
+                                label:
                             album.name
-                        }
-                      )
-                    : icon.folder
+                            }
+                        )
+                        : icon.folder
                 }
               </span>
 
@@ -10632,9 +11163,9 @@
                 ">
                 <strong>
                   ${escapeHtml(
-                    album.name
+                        album.name
                     || 'Untitled album'
-                  )}
+                    )}
                 </strong>
 
                 <span
@@ -10642,9 +11173,9 @@
                     album-picker-description
                   ">
                   ${escapeHtml(
-                    album.description
+                        album.description
                     || 'No description'
-                  )}
+                    )}
                 </span>
 
                 <span
@@ -10654,15 +11185,15 @@
                   <span>
                     ${albumPhotoCount}
                     ${
-                      albumPhotoCount === 1
-                        ? 'photo'
-                        : 'photos'
+                        albumPhotoCount === 1
+                            ? 'photo'
+                            : 'photos'
                     }
                   </span>
 
                   ${
-                    membershipLabel
-                      ? `
+                        membershipLabel
+                            ? `
                         <span
                           aria-hidden="true">
                           ·
@@ -10672,69 +11203,72 @@
                           class="
                             album-picker-membership
                             ${
-                              membership.complete
-                                ? 'complete'
-                                : ''
+                                membership.complete
+                                    ? 'complete'
+                                    : ''
                             }
                           ">
                           ${escapeHtml(
-                            membershipLabel
-                          )}
+                                membershipLabel
+                            )}
                         </span>
                       `
-                      : ''
-                  }
+                            : ''
+                    }
                 </span>
               </span>
 
               <input
                 type="checkbox"
                 value="${
-                  escapeHtml(album.id)
+                    escapeHtml(album.id)
                 }"
                 data-album-picker-choice
                 ${
-                  selected
+                    selected
                   || membership.complete
-                    ? 'checked'
-                    : ''
+                        ? 'checked'
+                        : ''
                 }
                 ${
-                  membership.complete
-                    ? 'disabled'
-                    : ''
+                    membership.complete
+                        ? 'disabled'
+                        : ''
                 }
                 aria-label="${
-                  escapeHtml(
-                    membership.complete
-                      ? `${
-                          album.name
-                        } already contains all selected photos`
-                      : `${
-                          selected
-                            ? 'Remove'
-                            : 'Add'
-                        } ${
-                          album.name
-                        }`
-                  )
+                    escapeHtml(
+                        membership.complete
+                            ? `${
+                                album.name
+                            } already contains all selected photos`
+                            : `${
+                                selected
+                                    ? 'Remove'
+                                    : 'Add'
+                            } ${
+                                album.name
+                            }`
+                    )
                 }">
             </label>
           `;
         };
 
-      const renderResults = () => {
+    const renderResults = () =>
+    {
         const albums =
-          visibleAlbums();
+            visibleAlbums();
 
-        if (albums.length) {
-          return albums
-            .map(renderAlbumRow)
-            .join('');
+        if (albums.length)
+        {
+            return albums
+                .map(renderAlbumRow)
+                .join('');
         }
 
-        if (query.trim()) {
-          return `
+        if (query.trim())
+        {
+            return `
             <div
               class="
                 album-picker-empty
@@ -10812,9 +11346,9 @@
             </div>
           </div>
         `;
-      };
+    };
 
-      openModal(`
+    openModal(`
         <div
           class="
             modal
@@ -10835,7 +11369,7 @@
 
               <p>
                 ${escapeHtml(
-                  photoCountLabel()
+                    photoCountLabel()
                 )}
               </p>
             </div>
@@ -11015,83 +11549,86 @@
         </div>
       `);
 
-      const modal =
+    const modal =
         modalBackdrop.querySelector(
-          '.album-picker-modal'
+            '.album-picker-modal'
         );
 
-      if (!modal) return;
+    if (!modal) return;
 
-      const browsePanel =
+    const browsePanel =
         modal.querySelector(
-          '[data-album-picker-browse]'
+            '[data-album-picker-browse]'
         );
 
-      const createPanel =
+    const createPanel =
         modal.querySelector(
-          '[data-album-picker-create-form]'
+            '[data-album-picker-create-form]'
         );
 
-      const resultsHost =
+    const resultsHost =
         modal.querySelector(
-          '[data-album-picker-results]'
+            '[data-album-picker-results]'
         );
 
-      const resultsTitle =
+    const resultsTitle =
         modal.querySelector(
-          '[data-album-picker-results-title]'
+            '[data-album-picker-results-title]'
         );
 
-      const resultsMeta =
+    const resultsMeta =
         modal.querySelector(
-          '[data-album-picker-results-meta]'
+            '[data-album-picker-results-meta]'
         );
 
-      const countElement =
+    const countElement =
         modal.querySelector(
-          '[data-album-picker-count]'
+            '[data-album-picker-count]'
         );
 
-      const footerActions =
+    const footerActions =
         modal.querySelector(
-          '[data-album-picker-footer-actions]'
+            '[data-album-picker-footer-actions]'
         );
 
-      const searchInput =
+    const searchInput =
         modal.querySelector(
-          '[data-album-picker-search]'
+            '[data-album-picker-search]'
         );
 
-      const nameInput =
+    const nameInput =
         modal.querySelector(
-          '[data-album-picker-name]'
+            '[data-album-picker-name]'
         );
 
-      const descriptionInput =
+    const descriptionInput =
         modal.querySelector(
-          '[data-album-picker-description]'
+            '[data-album-picker-description]'
         );
 
-      const refreshFooter = () => {
+    const refreshFooter = () =>
+    {
         if (
-          !countElement
+            !countElement
           || !footerActions
-        ) {
-          return;
+        )
+        {
+            return;
         }
 
-        if (createMode) {
-          countElement.textContent =
-            t('Create a new album');
+        if (createMode)
+        {
+            countElement.textContent =
+                t('Create a new album');
 
-          footerActions.innerHTML = `
+            footerActions.innerHTML = `
             <button
               class="button secondary"
               type="button"
               data-album-picker-back>
               ${escapeHtml(
-                t('Back')
-              )}
+                    t('Back')
+                )}
             </button>
 
             <button
@@ -11104,21 +11641,21 @@
               form="albumPickerCreateForm"
               data-album-picker-create-save
               ${
-                createDraft.name.trim()
-                  ? ''
-                  : 'disabled'
-              }>
+                    createDraft.name.trim()
+                        ? ''
+                        : 'disabled'
+                }>
               ${escapeHtml(
-                t('Create and select')
-              )}
+                    t('Create and select')
+                )}
             </button>
           `;
 
-          return;
+            return;
         }
 
         countElement.textContent =
-          selectionLabel();
+            selectionLabel();
 
         footerActions.innerHTML = `
           <button
@@ -11126,7 +11663,7 @@
             type="button"
             data-album-picker-cancel>
             ${escapeHtml(
-              t('Cancel')
+                t('Cancel')
             )}
           </button>
 
@@ -11139,65 +11676,70 @@
             type="button"
             data-album-picker-save
             ${
-              selectedAlbumIds.size
-                ? ''
-                : 'disabled'
+                selectedAlbumIds.size
+                    ? ''
+                    : 'disabled'
             }>
             ${escapeHtml(
-              saveLabel()
+                saveLabel()
             )}
           </button>
         `;
-      };
+    };
 
-      const refreshResults = () => {
+    const refreshResults = () =>
+    {
         const albums =
-          visibleAlbums();
+            visibleAlbums();
 
         const total =
-          allAlbums().length;
+            allAlbums().length;
 
         const hasQuery =
-          Boolean(
-            query.trim()
-          );
+            Boolean(
+                query.trim()
+            );
 
-        if (resultsTitle) {
-          resultsTitle.textContent =
-            t(
-              hasQuery
-                ? 'Search results'
-                : 'All albums'
+        if (resultsTitle)
+        {
+            resultsTitle.textContent =
+                t(
+                    hasQuery
+                        ? 'Search results'
+                        : 'All albums'
+                );
+        }
+
+        if (resultsMeta)
+        {
+            const source =
+                hasQuery
+                    ? `${albums.length} of ${total} albums`
+                    : `${total} ${
+                        total === 1
+                            ? 'album'
+                            : 'albums'
+                    }`;
+
+            resultsMeta.textContent =
+                translateText(source);
+        }
+
+        if (resultsHost)
+        {
+            resultsHost.innerHTML =
+                renderResults();
+
+            localizeUI(
+                resultsHost
             );
         }
 
-        if (resultsMeta) {
-          const source =
-            hasQuery
-              ? `${albums.length} of ${total} albums`
-              : `${total} ${
-                  total === 1
-                    ? 'album'
-                    : 'albums'
-                }`;
-
-          resultsMeta.textContent =
-            translateText(source);
-        }
-
-        if (resultsHost) {
-          resultsHost.innerHTML =
-            renderResults();
-
-          localizeUI(
-            resultsHost
-          );
-        }
-
         refreshFooter();
-      };
+    };
 
-      const showBrowse = () => {
+    const showBrowse = () =>
+    {
         createMode = false;
 
         browsePanel.hidden = false;
@@ -11206,307 +11748,335 @@
         refreshResults();
 
         requestAnimationFrame(
-          () => {
-            searchInput?.focus({
-              preventScroll: true
-            });
-          }
+            () =>
+            {
+                searchInput?.focus({
+                    preventScroll: true
+                });
+            }
         );
-      };
+    };
 
-      const showCreate = () => {
+    const showCreate = () =>
+    {
         createMode = true;
 
         browsePanel.hidden = true;
         createPanel.hidden = false;
 
-        if (nameInput) {
-          nameInput.value =
-            createDraft.name;
+        if (nameInput)
+        {
+            nameInput.value =
+                createDraft.name;
         }
 
-        if (descriptionInput) {
-          descriptionInput.value =
-            createDraft.description;
+        if (descriptionInput)
+        {
+            descriptionInput.value =
+                createDraft.description;
         }
 
         refreshFooter();
 
         requestAnimationFrame(
-          () => {
-            nameInput?.focus({
-              preventScroll: true
-            });
-          }
-        );
-      };
-
-      searchInput?.addEventListener(
-        'input',
-        event => {
-          query =
-            event.currentTarget.value;
-
-          refreshResults();
-        }
-      );
-
-      nameInput?.addEventListener(
-        'input',
-        event => {
-          createDraft.name =
-            event.currentTarget.value;
-
-          refreshFooter();
-        }
-      );
-
-      descriptionInput
-        ?.addEventListener(
-          'input',
-          event => {
-            createDraft.description =
-              event.currentTarget.value;
-          }
-        );
-
-      createPanel.addEventListener(
-        'submit',
-        event => {
-          event.preventDefault();
-
-          const name =
-            createDraft.name.trim();
-
-          if (!name) {
-            nameInput?.focus();
-            return;
-          }
-
-          const album = {
-            id:
-              `album-${Date.now()}`,
-
-            projectId,
-
-            name,
-
-            description:
-              createDraft.description
-                .trim(),
-
-            createdAt:
-              new Date()
-                .toISOString()
-          };
-
-          sampleData.albums.push(
-            album
-          );
-
-          selectedAlbumIds.add(
-            album.id
-          );
-
-          createDraft.name = '';
-          createDraft.description = '';
-          query = '';
-
-          if (searchInput) {
-            searchInput.value = '';
-          }
-
-          showBrowse();
-
-          requestAnimationFrame(
-            () => {
-              modal
-                .querySelector(
-                  `[data-album-picker-row="${
-                    CSS.escape(album.id)
-                  }"]`
-                )
-                ?.scrollIntoView({
-                  block: 'nearest'
+            () =>
+            {
+                nameInput?.focus({
+                    preventScroll: true
                 });
             }
-          );
-        }
-      );
+        );
+    };
 
-      modal.addEventListener(
-        'change',
-        event => {
-          const checkbox =
-            event.target.closest(
-              '[data-album-picker-choice]'
+    searchInput?.addEventListener(
+        'input',
+        event =>
+        {
+            query =
+                event.currentTarget.value;
+
+            refreshResults();
+        }
+    );
+
+    nameInput?.addEventListener(
+        'input',
+        event =>
+        {
+            createDraft.name =
+                event.currentTarget.value;
+
+            refreshFooter();
+        }
+    );
+
+    descriptionInput
+        ?.addEventListener(
+            'input',
+            event =>
+            {
+                createDraft.description =
+                    event.currentTarget.value;
+            }
+        );
+
+    createPanel.addEventListener(
+        'submit',
+        event =>
+        {
+            event.preventDefault();
+
+            const name =
+                createDraft.name.trim();
+
+            if (!name)
+            {
+                nameInput?.focus();
+                return;
+            }
+
+            const album = {
+                id:
+              `album-${Date.now()}`,
+
+                projectId,
+
+                name,
+
+                description:
+              createDraft.description
+                  .trim(),
+
+                createdAt:
+              new Date()
+                  .toISOString()
+            };
+
+            sampleData.albums.push(
+                album
             );
 
-          if (!checkbox) return;
-
-          const albumId =
-            checkbox.value;
-
-          if (checkbox.checked) {
             selectedAlbumIds.add(
-              albumId
+                album.id
             );
-          } else {
-            selectedAlbumIds.delete(
-              albumId
-            );
-          }
 
-          refreshResults();
-        }
-      );
-
-      modal.addEventListener(
-        'click',
-        event => {
-          if (
-            event.target.closest(
-              '[data-album-picker-cancel]'
-            )
-          ) {
-            closeModal();
-            return;
-          }
-          if (
-            event.target.closest(
-              '[data-album-picker-create]'
-            )
-          ) {
-            showCreate();
-            return;
-          }
-
-          if (
-            event.target.closest(
-              '[data-album-picker-back]'
-            )
-          ) {
-            showBrowse();
-            return;
-          }
-
-          if (
-            event.target.closest(
-              '[data-album-picker-clear-search]'
-            )
-          ) {
+            createDraft.name = '';
+            createDraft.description = '';
             query = '';
 
-            if (searchInput) {
-              searchInput.value = '';
+            if (searchInput)
+            {
+                searchInput.value = '';
+            }
+
+            showBrowse();
+
+            requestAnimationFrame(
+                () =>
+                {
+                    modal
+                        .querySelector(
+                            `[data-album-picker-row="${
+                                CSS.escape(album.id)
+                            }"]`
+                        )
+                        ?.scrollIntoView({
+                            block: 'nearest'
+                        });
+                }
+            );
+        }
+    );
+
+    modal.addEventListener(
+        'change',
+        event =>
+        {
+            const checkbox =
+                event.target.closest(
+                    '[data-album-picker-choice]'
+                );
+
+            if (!checkbox) return;
+
+            const albumId =
+                checkbox.value;
+
+            if (checkbox.checked)
+            {
+                selectedAlbumIds.add(
+                    albumId
+                );
+            }
+            else
+            {
+                selectedAlbumIds.delete(
+                    albumId
+                );
             }
 
             refreshResults();
+        }
+    );
 
-            searchInput?.focus({
-              preventScroll: true
-            });
-
-            return;
-          }
-
-          if (
-            event.target.closest(
-              '[data-album-picker-save]'
-            )
-          ) {
-            const result =
-              addPhotosToAlbums(
-                photoIds,
-                [
-                  ...selectedAlbumIds
-                ]
-              );
-
+    modal.addEventListener(
+        'click',
+        event =>
+        {
             if (
-              !result.membershipCount
-            ) {
-              refreshResults();
-              return;
+                event.target.closest(
+                    '[data-album-picker-cancel]'
+                )
+            )
+            {
+                closeModal();
+                return;
+            }
+            if (
+                event.target.closest(
+                    '[data-album-picker-create]'
+                )
+            )
+            {
+                showCreate();
+                return;
             }
 
-            state.selectedPhotoIds = [];
+            if (
+                event.target.closest(
+                    '[data-album-picker-back]'
+                )
+            )
+            {
+                showBrowse();
+                return;
+            }
 
-            closeModal();
-            renderAlbums();
+            if (
+                event.target.closest(
+                    '[data-album-picker-clear-search]'
+                )
+            )
+            {
+                query = '';
 
-            showToast(
-              `${result.changedPhotoCount} ${
-                result.changedPhotoCount
+                if (searchInput)
+                {
+                    searchInput.value = '';
+                }
+
+                refreshResults();
+
+                searchInput?.focus({
+                    preventScroll: true
+                });
+
+                return;
+            }
+
+            if (
+                event.target.closest(
+                    '[data-album-picker-save]'
+                )
+            )
+            {
+                const result =
+                    addPhotosToAlbums(
+                        photoIds,
+                        [
+                            ...selectedAlbumIds
+                        ]
+                    );
+
+                if (
+                    !result.membershipCount
+                )
+                {
+                    refreshResults();
+                    return;
+                }
+
+                state.selectedPhotoIds = [];
+
+                closeModal();
+                renderAlbums();
+
+                showToast(
+                    `${result.changedPhotoCount} ${
+                        result.changedPhotoCount
                   === 1
-                  ? 'photo'
-                  : 'photos'
-              } added to ${
-                result.changedAlbumCount
-              } ${
-                result.changedAlbumCount
+                            ? 'photo'
+                            : 'photos'
+                    } added to ${
+                        result.changedAlbumCount
+                    } ${
+                        result.changedAlbumCount
                   === 1
-                  ? 'album'
-                  : 'albums'
-              }.`
-            );
-          }
+                            ? 'album'
+                            : 'albums'
+                    }.`
+                );
+            }
         }
-      );
+    );
 
-      refreshResults();
-    }
+    refreshResults();
+}
 
-    function removePhotoFromAlbum(
-      photoId,
-      albumId
-    ) {
-      const photo = getPhoto(
+function removePhotoFromAlbum(
+    photoId,
+    albumId
+)
+{
+    const photo = getPhoto(
         photoId,
         {
-          projectId: currentProjectId()
+            projectId: currentProjectId()
         }
-      );
+    );
 
-      if (
+    if (
         !photo
         || !(photo.albumIds || [])
-          .includes(albumId)
-      ) {
+            .includes(albumId)
+    )
+    {
         return false;
-      }
-
-      photo.albumIds =
-        photo.albumIds.filter(
-          id => id !== albumId
-        );
-
-      photo.updatedAt =
-        new Date().toISOString();
-
-      return true;
     }
 
-    function openRemovePhotoFromAlbumConfirm(
-      photoId,
-      albumId
-    ) {
-      const photo =
+    photo.albumIds =
+        photo.albumIds.filter(
+            id => id !== albumId
+        );
+
+    photo.updatedAt =
+        new Date().toISOString();
+
+    return true;
+}
+
+function openRemovePhotoFromAlbumConfirm(
+    photoId,
+    albumId
+)
+{
+    const photo =
         getPhoto(photoId);
 
-      const album =
+    const album =
         getProjectAlbums()
-          .find(item => item.id === albumId);
+            .find(item => item.id === albumId);
 
-      if (!photo || !album) {
+    if (!photo || !album)
+    {
         return;
-      }
+    }
 
-      const leavesCurrentView =
+    const leavesCurrentView =
         state.albumsView === 'album'
         && state.activeAlbumId === album.id;
 
-      openModal(`
+    openModal(`
         <div
           class="modal"
           role="dialog"
@@ -11544,14 +12114,14 @@
             </p>
 
             ${
-              leavesCurrentView
-                ? `
+                leavesCurrentView
+                    ? `
                   <p>
                     It will disappear from the
                     current album after removal.
                   </p>
                 `
-                : ''
+                    : ''
             }
           </div>
 
@@ -11573,361 +12143,409 @@
         </div>
       `);
 
-      modalBackdrop
+    modalBackdrop
         .querySelector(
-          '[data-confirm-photo-album-remove]'
+            '[data-confirm-photo-album-remove]'
         )
         ?.addEventListener(
-          'click',
-          () => {
-            closeModal();
+            'click',
+            () =>
+            {
+                closeModal();
 
-            if (
-              removePhotoFromAlbum(
-                photo.id,
-                album.id
-              )
-            ) {
-              ensureSelectedAlbumPhoto();
-              renderAlbums();
+                if (
+                    removePhotoFromAlbum(
+                        photo.id,
+                        album.id
+                    )
+                )
+                {
+                    ensureSelectedAlbumPhoto();
+                    renderAlbums();
 
-              showToast(
-                `Removed from ${album.name}.`
-              );
+                    showToast(
+                        `Removed from ${album.name}.`
+                    );
+                }
             }
-          }
         );
-    }
+}
 
-    function removeSelectedFromCurrentAlbum() {
-      const ids = new Set(state.selectedPhotoIds || []);
-      if (!state.activeAlbumId || !ids.size) return;
-      const now = new Date().toISOString();
-      let changed = 0;
-      sampleData.media.forEach(photo => {
+function removeSelectedFromCurrentAlbum()
+{
+    const ids = new Set(state.selectedPhotoIds || []);
+    if (!state.activeAlbumId || !ids.size) return;
+    const now = new Date().toISOString();
+    let changed = 0;
+    sampleData.media.forEach(photo =>
+    {
         if (!ids.has(photo.id) || !(photo.albumIds || []).includes(state.activeAlbumId)) return;
         photo.albumIds = photo.albumIds.filter(id => id !== state.activeAlbumId);
         photo.updatedAt = now;
         changed += 1;
-      });
-      state.selectedPhotoIds = [];
-      ensureSelectedAlbumPhoto();
-      renderAlbums();
-      showToast(`${changed} photo${changed === 1 ? '' : 's'} removed from this album.`);
-    }
+    });
+    state.selectedPhotoIds = [];
+    ensureSelectedAlbumPhoto();
+    renderAlbums();
+    showToast(`${changed} photo${changed === 1 ? '' : 's'} removed from this album.`);
+}
 
-    function openAlbumSidebarMenu(albumId, anchor) {
-      closeMenu();
-      const rect = anchor.getBoundingClientRect();
-      const menu = document.createElement('div');
-      menu.className = 'menu-popover'; menu.id = 'projectMenu'; menu.style.top = `${rect.bottom + 6}px`; menu.style.left = `${Math.max(12, rect.right - 190)}px`;
-      menu.innerHTML = `<button type="button" data-album-action="open">Open album</button><button type="button" data-album-action="edit">Edit album</button><button class="danger" type="button" data-album-action="delete">Delete album</button>`;
-      document.body.appendChild(menu);
-      menu.addEventListener('click', event => { const action = event.target.closest('[data-album-action]')?.dataset.albumAction; if (!action) return; closeMenu(); state.albumsView = 'album'; state.activeAlbumId = albumId; if (action === 'edit') openEditAlbumModal(); else if (action === 'delete') openDeleteAlbumConfirm(albumId); else renderAlbums(); });
-      bindMenuLifecycle(anchor);
-    }
+function openAlbumSidebarMenu(albumId, anchor)
+{
+    closeMenu();
+    const rect = anchor.getBoundingClientRect();
+    const menu = document.createElement('div');
+    menu.className = 'menu-popover'; menu.id = 'projectMenu'; menu.style.top = `${rect.bottom + 6}px`; menu.style.left = `${Math.max(12, rect.right - 190)}px`;
+    menu.innerHTML = `<button type="button" data-album-action="open">Open album</button><button type="button" data-album-action="edit">Edit album</button><button class="danger" type="button" data-album-action="delete">Delete album</button>`;
+    document.body.appendChild(menu);
+    menu.addEventListener('click', event =>
+    {
+        const action = event.target.closest('[data-album-action]')?.dataset.albumAction; if (!action) return; closeMenu(); state.albumsView = 'album'; state.activeAlbumId = albumId; if (action === 'edit') openEditAlbumModal(); else if (action === 'delete') openDeleteAlbumConfirm(albumId); else renderAlbums();
+    });
+    bindMenuLifecycle(anchor);
+}
 
-    function bindAlbumsSidebar() {
-      sidebar
+function bindAlbumsSidebar()
+{
+    sidebar
         .querySelectorAll(
-          '[data-albums-view]'
+            '[data-albums-view]'
         )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              runAfterAlbumsPhotoEditGuard(
-                () => {
-                  state.albumsView =
-                    button.dataset.albumsView;
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
+                {
+                    runAfterAlbumsPhotoEditGuard(
+                        () =>
+                        {
+                            state.albumsView =
+                                button.dataset.albumsView;
 
-                  state.activeAlbumId = null;
-                  state.selectedPhotoIds = [];
-                  resetAlbumsPage();
-                  renderAlbums();
+                            state.activeAlbumId = null;
+                            state.selectedPhotoIds = [];
+                            resetAlbumsPage();
+                            renderAlbums();
+                        }
+                    );
                 }
-              );
-            }
-          );
+            );
         });
 
-      sidebar
+    sidebar
         .querySelectorAll(
-          '[data-album-open]'
+            '[data-album-open]'
         )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              runAfterAlbumsPhotoEditGuard(
-                () => {
-                  state.albumsView =
-                    'album';
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
+                {
+                    runAfterAlbumsPhotoEditGuard(
+                        () =>
+                        {
+                            state.albumsView =
+                                'album';
 
-                  state.activeAlbumId =
-                    button.dataset.albumOpen;
+                            state.activeAlbumId =
+                                button.dataset.albumOpen;
 
-                  state.selectedPhotoIds = [];
+                            state.selectedPhotoIds = [];
 
-                  resetAlbumsPage();
-                  renderAlbums();
+                            resetAlbumsPage();
+                            renderAlbums();
+                        }
+                    );
                 }
-              );
-            }
-          );
+            );
         });
 
-      sidebar
+    sidebar
         .querySelectorAll(
-          '[data-album-menu]'
+            '[data-album-menu]'
         )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            event => {
-              event.stopPropagation();
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                event =>
+                {
+                    event.stopPropagation();
 
-              runAfterAlbumsPhotoEditGuard(
-                () => {
-                  openAlbumSidebarMenu(
-                    button.dataset.albumMenu,
-                    button
-                  );
+                    runAfterAlbumsPhotoEditGuard(
+                        () =>
+                        {
+                            openAlbumSidebarMenu(
+                                button.dataset.albumMenu,
+                                button
+                            );
+                        }
+                    );
                 }
-              );
-            }
-          );
+            );
         });
 
-      sidebar
+    sidebar
         .querySelector('#albumsNewAlbum')
         ?.addEventListener(
-          'click',
-          () => {
-            runAfterAlbumsPhotoEditGuard(
-              openNewAlbumModal
-            );
-          }
+            'click',
+            () =>
+            {
+                runAfterAlbumsPhotoEditGuard(
+                    openNewAlbumModal
+                );
+            }
         );
 
-      bindToasts(sidebar);
-    }
+    bindToasts(sidebar);
+}
 
-    function bindAlbumsCardControls(root = main) {
-      root
+function bindAlbumsCardControls(root = main)
+{
+    root
         .querySelectorAll('[data-photo-id]')
-        .forEach(card => {
-          const selectPhoto = () => {
-            runAfterAlbumsPhotoEditGuard(
-              () => {
-                const photoId =
-                  card.dataset.photoId;
-
-                state.selectedPhotoId =
-                  photoId;
-
-                renderAlbumsPreserveViewport({
-                  focusPhotoId: photoId,
-                  focusTarget: 'card'
-                });
-              }
-            );
-          };
-
-          card.addEventListener('click', event => {
-            if (event.target.closest('button,input,a,select')) return;
-            selectPhoto();
-          });
-
-          card.addEventListener('keydown', event => {
-            if (event.key !== 'Enter' && event.key !== ' ') return;
-            if (event.target.closest('button,input,a,select')) return;
-            event.preventDefault();
-            selectPhoto();
-          });
-        });
-
-      root
-        .querySelectorAll('[data-photo-check]')
-        .forEach(control => {
-          const toggleSelection = () => {
-            runAfterAlbumsPhotoEditGuard(() => {
-              togglePhotoSelection(control.dataset.photoCheck);
-            });
-          };
-
-          if (control.matches('input[type="checkbox"]')) {
-            control.addEventListener('click', event => event.stopPropagation());
-            control.addEventListener('change', toggleSelection);
-            return;
-          }
-
-          control.addEventListener('click', event => {
-            event.stopPropagation();
-            toggleSelection();
-          });
-        });
-
-      root
-        .querySelectorAll(
-          '[data-photo-fav]'
-        )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            event => {
-              event.stopPropagation();
-
-              const focusTarget =
-                button.closest(
-                  '.albums-detail'
-                )
-                  ? 'favoriteDetail'
-                  : 'favorite';
-
-              runAfterAlbumsPhotoEditGuard(
-                () => {
-                  toggleAlbumPhotoFavourite(
-                    button.dataset.photoFav,
+        .forEach(card =>
+        {
+            const selectPhoto = () =>
+            {
+                runAfterAlbumsPhotoEditGuard(
+                    () =>
                     {
-                      focusTarget
+                        const photoId =
+                            card.dataset.photoId;
+
+                        state.selectedPhotoId =
+                            photoId;
+
+                        renderAlbumsPreserveViewport({
+                            focusPhotoId: photoId,
+                            focusTarget: 'card'
+                        });
                     }
-                  );
-                }
-              );
-            }
-          );
-        });
-
-      root
-        .querySelectorAll('[data-photo-more]')
-        .forEach(button => {
-          button.addEventListener('click', event => {
-            event.stopPropagation();
-            runAfterAlbumsPhotoEditGuard(() => {
-              openAlbumPhotoMenu(button.dataset.photoMore, button);
-            });
-          });
-        });
-    }
-
-    function bindAlbumsPaginationControls() {
-      main
-        .querySelectorAll(
-          '[data-albums-page]'
-        )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              if (button.disabled) {
-                return;
-              }
-
-              const nextPage =
-                Number(
-                  button.dataset
-                    .albumsPage
                 );
+            };
 
-              if (
-                !Number.isInteger(
-                  nextPage
-                )
-                || nextPage < 1
-              ) {
-                return;
-              }
+            card.addEventListener('click', event =>
+            {
+                if (event.target.closest('button,input,a,select')) return;
+                selectPhoto();
+            });
 
-              state.albumsPage =
-                nextPage;
-
-              renderAlbums();
-            }
-          );
+            card.addEventListener('keydown', event =>
+            {
+                if (event.key !== 'Enter' && event.key !== ' ') return;
+                if (event.target.closest('button,input,a,select')) return;
+                event.preventDefault();
+                selectPhoto();
+            });
         });
 
-      main
+    root
+        .querySelectorAll('[data-photo-check]')
+        .forEach(control =>
+        {
+            const toggleSelection = () =>
+            {
+                runAfterAlbumsPhotoEditGuard(() =>
+                {
+                    togglePhotoSelection(control.dataset.photoCheck);
+                });
+            };
+
+            if (control.matches('input[type="checkbox"]'))
+            {
+                control.addEventListener('click', event => event.stopPropagation());
+                control.addEventListener('change', toggleSelection);
+                return;
+            }
+
+            control.addEventListener('click', event =>
+            {
+                event.stopPropagation();
+                toggleSelection();
+            });
+        });
+
+    root
+        .querySelectorAll(
+            '[data-photo-fav]'
+        )
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                event =>
+                {
+                    event.stopPropagation();
+
+                    const focusTarget =
+                        button.closest(
+                            '.albums-detail'
+                        )
+                            ? 'favoriteDetail'
+                            : 'favorite';
+
+                    runAfterAlbumsPhotoEditGuard(
+                        () =>
+                        {
+                            toggleAlbumPhotoFavourite(
+                                button.dataset.photoFav,
+                                {
+                                    focusTarget
+                                }
+                            );
+                        }
+                    );
+                }
+            );
+        });
+
+    root
+        .querySelectorAll('[data-photo-more]')
+        .forEach(button =>
+        {
+            button.addEventListener('click', event =>
+            {
+                event.stopPropagation();
+                runAfterAlbumsPhotoEditGuard(() =>
+                {
+                    openAlbumPhotoMenu(button.dataset.photoMore, button);
+                });
+            });
+        });
+}
+
+function bindAlbumsPaginationControls()
+{
+    main
+        .querySelectorAll(
+            '[data-albums-page]'
+        )
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
+                {
+                    if (button.disabled)
+                    {
+                        return;
+                    }
+
+                    const nextPage =
+                        Number(
+                            button.dataset
+                                .albumsPage
+                        );
+
+                    if (
+                        !Number.isInteger(
+                            nextPage
+                        )
+                || nextPage < 1
+                    )
+                    {
+                        return;
+                    }
+
+                    state.albumsPage =
+                        nextPage;
+
+                    renderAlbums();
+                }
+            );
+        });
+
+    main
         .querySelector(
-          '#albumsRowsPerPage'
+            '#albumsRowsPerPage'
         )
         ?.addEventListener(
-          'change',
-          event => {
-            state.albumsRowsPerPage =
-              normalizeAlbumsRowsPerPage(
-                event.currentTarget.value
-              );
+            'change',
+            event =>
+            {
+                state.albumsRowsPerPage =
+                    normalizeAlbumsRowsPerPage(
+                        event.currentTarget.value
+                    );
 
-            resetAlbumsPage();
-            renderAlbums();
-          }
+                resetAlbumsPage();
+                renderAlbums();
+            }
         );
-    }
+}
 
-    function bindAlbumsControls() {
-      bindConnectedNotesFooters(main);
-      bindToasts(main);
-      bindGenealogyDateFields(main);
-      bindPlaceComboboxes(main);
-      bindConnectedNoteLinks(
+function bindAlbumsControls()
+{
+    bindConnectedNotesFooters(main);
+    bindToasts(main);
+    bindGenealogyDateFields(main);
+    bindPlaceComboboxes(main);
+    bindConnectedNoteLinks(
         main,
         {
-          onUnlinked:
+            onUnlinked:
             ({
-              contextType
-            }) => {
-              if (
                 contextType
+            }) =>
+            {
+                if (
+                    contextType
                 !== 'photo'
-              ) {
-                return;
-              }
+                )
+                {
+                    return;
+                }
 
-              renderAlbumsPreserveViewport();
+                renderAlbumsPreserveViewport();
 
-              /*
+                /*
                 The removed row no longer exists.
                 Return keyboard focus to the stable
                 Add note action.
               */
-              requestAnimationFrame(
-                () => {
-                  main
-                    .querySelector(
-                      '#albumsManagePhotoNotes'
-                    )
-                    ?.focus({
-                      preventScroll:
+                requestAnimationFrame(
+                    () =>
+                    {
+                        main
+                            .querySelector(
+                                '#albumsManagePhotoNotes'
+                            )
+                            ?.focus({
+                                preventScroll:
                         true
-                    });
-                }
-              );
+                            });
+                    }
+                );
             }
         }
-      );
-      bindConnectedSourceLinks(
+    );
+    bindConnectedSourceLinks(
         main,
         {
-          onUnlinked:
+            onUnlinked:
             ({
-              targetType
-            }) => {
-              if (
-                targetType !== 'photo'
-              ) {
-                return;
-              }
+                targetType
+            }) =>
+            {
+                if (
+                    targetType !== 'photo'
+                )
+                {
+                    return;
+                }
 
-              renderAlbumsPreserveViewport();
+                renderAlbumsPreserveViewport();
             }
         }
-      );
+    );
 
-      const browsingLocked =
+    const browsingLocked =
         state.albumsDetailEditing;
 
-      const lockableControls =
+    const lockableControls =
         main.querySelectorAll(`
           #albumsSearch,
           #albumsFilterButton,
@@ -11939,523 +12557,565 @@
           [data-albums-page],
           #albumsRowsPerPage
         `);
-        
-      if (browsingLocked) {
+
+    if (browsingLocked)
+    {
         lockableControls.forEach(
-          control => {
-            if (
-              'disabled' in control
-            ) {
-              control.disabled = true;
-            } else {
-              control.setAttribute(
-                'aria-disabled',
-                'true'
-              );
+            control =>
+            {
+                if (
+                    'disabled' in control
+                )
+                {
+                    control.disabled = true;
+                }
+                else
+                {
+                    control.setAttribute(
+                        'aria-disabled',
+                        'true'
+                    );
+                }
             }
-          }
         );
-      } else {
+    }
+    else
+    {
         bindSearchInput(
-          main,
-          '#albumsSearch',
-          'albumsSearch',
-          () => {
-            resetAlbumsPage();
-            renderAlbums();
-          }
+            main,
+            '#albumsSearch',
+            'albumsSearch',
+            () =>
+            {
+                resetAlbumsPage();
+                renderAlbums();
+            }
         );
 
         bindAppSortControl(main, {
-          id: 'albumsSort',
-          options: APP_SORT_OPTIONS.albums,
-          getField: () => state.albumsSort,
-          getDirection: () =>
-            state.albumsSortDirection,
+            id: 'albumsSort',
+            options: APP_SORT_OPTIONS.albums,
+            getField: () => state.albumsSort,
+            getDirection: () =>
+                state.albumsSortDirection,
 
-          onChange: ({
-            field,
-            direction
-          }) => {
-            state.albumsSort = field;
-            state.albumsSortDirection =
-              direction;
+            onChange: ({
+                field,
+                direction
+            }) =>
+            {
+                state.albumsSort = field;
+                state.albumsSortDirection =
+                    direction;
 
-            resetAlbumsPage();
-            renderAlbums();
-          }
+                resetAlbumsPage();
+                renderAlbums();
+            }
         });
 
         main
-          .querySelector(
-            '#albumsFilterButton'
-          )
-          ?.addEventListener(
-            'click',
-            event => {
-              openAlbumsFilterPopover(
-                event.currentTarget
-              );
-            }
-          );
+            .querySelector(
+                '#albumsFilterButton'
+            )
+            ?.addEventListener(
+                'click',
+                event =>
+                {
+                    openAlbumsFilterPopover(
+                        event.currentTarget
+                    );
+                }
+            );
 
         main
-          .querySelector(
-            '#albumsClearFilters'
-          )
-          ?.addEventListener(
-            'click',
-            clearAlbumFilters
-          );
+            .querySelector(
+                '#albumsClearFilters'
+            )
+            ?.addEventListener(
+                'click',
+                clearAlbumFilters
+            );
 
         main
-          .querySelectorAll(
-            '[data-albums-remove-filter]'
-          )
-          .forEach(button => {
-            button.addEventListener(
-              'click',
-              () => {
-                removeAlbumFilter(
-                  button.dataset
-                    .albumsRemoveFilter
+            .querySelectorAll(
+                '[data-albums-remove-filter]'
+            )
+            .forEach(button =>
+            {
+                button.addEventListener(
+                    'click',
+                    () =>
+                    {
+                        removeAlbumFilter(
+                            button.dataset
+                                .albumsRemoveFilter
+                        );
+                    }
                 );
-              }
-            );
-          });
+            });
 
         main
-          .querySelectorAll(
-            '[data-albums-mode]'
-          )
-          .forEach(button => {
-            button.addEventListener(
-              'click',
-              () => {
-                state.albumsViewMode =
-                  button.dataset.albumsMode;
+            .querySelectorAll(
+                '[data-albums-mode]'
+            )
+            .forEach(button =>
+            {
+                button.addEventListener(
+                    'click',
+                    () =>
+                    {
+                        state.albumsViewMode =
+                            button.dataset.albumsMode;
 
-                renderAlbums();
-              }
-            );
-          });
+                        renderAlbums();
+                    }
+                );
+            });
         bindAlbumsPaginationControls();
         main
-          .querySelector('#albumsAddPhotos')
-          ?.addEventListener(
-            'click',
-            openAddPhotosModal
-          );
+            .querySelector('#albumsAddPhotos')
+            ?.addEventListener(
+                'click',
+                openAddPhotosModal
+            );
 
         main
-          .querySelector('#albumsEmptyAction')
-          ?.addEventListener(
-            'click',
-            openAddPhotosModal
-          );
-      }
+            .querySelector('#albumsEmptyAction')
+            ?.addEventListener(
+                'click',
+                openAddPhotosModal
+            );
+    }
 
-      main
+    main
         .querySelector('#albumsEmptyClear')
         ?.addEventListener(
-          'click',
-          () => {
-            state.albumsSearch = '';
+            'click',
+            () =>
+            {
+                state.albumsSearch = '';
 
-            state.albumsFilters = {
-              ...defaultAlbumFilters
-            };
-            resetAlbumsPage();
-            renderAlbums();
-          }
+                state.albumsFilters = {
+                    ...defaultAlbumFilters
+                };
+                resetAlbumsPage();
+                renderAlbums();
+            }
         );
 
-      bindAlbumsCardControls(main);
+    bindAlbumsCardControls(main);
 
-      const visibleSelection = albumsVisibleSelectionState();
-      const selectVisibleCheckbox = main.querySelector(
+    const visibleSelection = albumsVisibleSelectionState();
+    const selectVisibleCheckbox = main.querySelector(
         '[data-albums-select-visible]'
-      );
+    );
 
-      if (selectVisibleCheckbox) {
+    if (selectVisibleCheckbox)
+    {
         selectVisibleCheckbox.checked = visibleSelection.allVisibleSelected;
         selectVisibleCheckbox.indeterminate = visibleSelection.someVisibleSelected
           && !visibleSelection.allVisibleSelected;
         selectVisibleCheckbox.disabled = visibleSelection.visibleIds.length === 0;
-        selectVisibleCheckbox.addEventListener('click', event => {
-          event.stopPropagation();
-          toggleAllVisibleAlbumPhotos();
+        selectVisibleCheckbox.addEventListener('click', event =>
+        {
+            event.stopPropagation();
+            toggleAllVisibleAlbumPhotos();
         });
-      }
+    }
 
-      main
+    main
         .querySelectorAll(
-          '[data-photo-open]'
+            '[data-photo-open]'
         )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              openPhotoLightbox(
-                button.dataset.photoOpen
-              );
-            }
-          );
-        });
-
-      main
-        .querySelectorAll(
-          '[data-photo-person-open]'
-        )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              openPeopleProfileFromRow(
-                button.dataset.photoPersonOpen
-              );
-            }
-          );
-        });
-
-      main
-        .querySelectorAll(
-          '[data-albums-photo-person-menu]'
-        )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            event => {
-              event.stopPropagation();
-
-              openAlbumsPhotoPersonMenu(
-                state.selectedPhotoId,
-                button.dataset
-                  .albumsPhotoPersonMenu,
-                button
-              );
-            }
-          );
-        });
-
-      main
-        .querySelectorAll(
-          '[data-photo-album-open]'
-        )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              state.albumsView = 'album';
-
-              state.activeAlbumId =
-                button.dataset.photoAlbumOpen;
-
-              state.selectedPhotoIds = [];
-
-              resetAlbumsPage();
-              renderAlbums();
-            }
-          );
-        });
-
-      main
-        .querySelectorAll(
-          '[data-photo-remove-album]'
-        )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              openRemovePhotoFromAlbumConfirm(
-                state.selectedPhotoId,
-                button.dataset.photoRemoveAlbum
-              );
-            }
-          );
-        });
-
-      main
-        .querySelectorAll(
-          '[data-albums-detail-toggle]'
-        )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              if (
-                state.albumsDetailCollapsed
-              ) {
-                state.albumsDetailCollapsed =
-                  false;
-
-                renderAlbums();
-                return;
-              }
-
-              runAfterAlbumsPhotoEditGuard(
-                () => {
-                  state.albumsDetailCollapsed =
-                    true;
-
-                  renderAlbums();
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
+                {
+                    openPhotoLightbox(
+                        button.dataset.photoOpen
+                    );
                 }
-              );
-            }
-          );
+            );
         });
 
-      main
+    main
         .querySelectorAll(
-          '[data-albums-section-toggle]'
+            '[data-photo-person-open]'
         )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            event => {
-              if (
-                event.target.closest(
-                  '.link'
-                )
-              ) {
-                return;
-              }
-
-              const sectionId =
-                button.dataset
-                  .albumsSectionToggle;
-
-              const open =
-                !albumsDetailSectionIsOpen(
-                  sectionId
-                );
-
-              state.albumsDetailSections[
-                sectionId
-              ] = open;
-
-              const section =
-                button.closest(
-                  '.panel-section'
-                );
-
-              const body =
-                section?.querySelector(
-                  '.panel-section-body'
-                );
-
-              section
-                ?.classList
-                .toggle(
-                  'is-open',
-                  open
-                );
-
-              button.setAttribute(
-                'aria-expanded',
-                String(open)
-              );
-
-              if (body) {
-                body.hidden = !open;
-              }
-            }
-          );
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
+                {
+                    openPeopleProfileFromRow(
+                        button.dataset.photoPersonOpen
+                    );
+                }
+            );
         });
 
-      main
+    main
+        .querySelectorAll(
+            '[data-albums-photo-person-menu]'
+        )
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                event =>
+                {
+                    event.stopPropagation();
+
+                    openAlbumsPhotoPersonMenu(
+                        state.selectedPhotoId,
+                        button.dataset
+                            .albumsPhotoPersonMenu,
+                        button
+                    );
+                }
+            );
+        });
+
+    main
+        .querySelectorAll(
+            '[data-photo-album-open]'
+        )
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
+                {
+                    state.albumsView = 'album';
+
+                    state.activeAlbumId =
+                        button.dataset.photoAlbumOpen;
+
+                    state.selectedPhotoIds = [];
+
+                    resetAlbumsPage();
+                    renderAlbums();
+                }
+            );
+        });
+
+    main
+        .querySelectorAll(
+            '[data-photo-remove-album]'
+        )
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
+                {
+                    openRemovePhotoFromAlbumConfirm(
+                        state.selectedPhotoId,
+                        button.dataset.photoRemoveAlbum
+                    );
+                }
+            );
+        });
+
+    main
+        .querySelectorAll(
+            '[data-albums-detail-toggle]'
+        )
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
+                {
+                    if (
+                        state.albumsDetailCollapsed
+                    )
+                    {
+                        state.albumsDetailCollapsed =
+                            false;
+
+                        renderAlbums();
+                        return;
+                    }
+
+                    runAfterAlbumsPhotoEditGuard(
+                        () =>
+                        {
+                            state.albumsDetailCollapsed =
+                                true;
+
+                            renderAlbums();
+                        }
+                    );
+                }
+            );
+        });
+
+    main
+        .querySelectorAll(
+            '[data-albums-section-toggle]'
+        )
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                event =>
+                {
+                    if (
+                        event.target.closest(
+                            '.link'
+                        )
+                    )
+                    {
+                        return;
+                    }
+
+                    const sectionId =
+                        button.dataset
+                            .albumsSectionToggle;
+
+                    const open =
+                        !albumsDetailSectionIsOpen(
+                            sectionId
+                        );
+
+                    state.albumsDetailSections[
+                        sectionId
+                    ] = open;
+
+                    const section =
+                        button.closest(
+                            '.panel-section'
+                        );
+
+                    const body =
+                        section?.querySelector(
+                            '.panel-section-body'
+                        );
+
+                    section
+                        ?.classList
+                        .toggle(
+                            'is-open',
+                            open
+                        );
+
+                    button.setAttribute(
+                        'aria-expanded',
+                        String(open)
+                    );
+
+                    if (body)
+                    {
+                        body.hidden = !open;
+                    }
+                }
+            );
+        });
+
+    main
         .querySelector('#albumsEditPhoto')
         ?.addEventListener(
-          'click',
-          beginAlbumsPhotoEdit
+            'click',
+            beginAlbumsPhotoEdit
         );
 
-      main
+    main
         .querySelector(
-          '#albumsCancelPhotoEdit'
+            '#albumsCancelPhotoEdit'
         )
         ?.addEventListener(
-          'click',
-          cancelAlbumsPhotoEdit
+            'click',
+            cancelAlbumsPhotoEdit
         );
 
-      main
+    main
         .querySelector(
-          '#albumsSavePhotoEdit'
+            '#albumsSavePhotoEdit'
         )
         ?.addEventListener(
-          'click',
-          saveAlbumsPhotoEdit
+            'click',
+            saveAlbumsPhotoEdit
         );
 
-      main
+    main
         .querySelector(
-          '#albumsInspectorMore'
+            '#albumsInspectorMore'
         )
         ?.addEventListener(
-          'click',
-          event => {
-            openAlbumsInspectorMenu(
-              state.selectedPhotoId,
-              event.currentTarget
-            );
-          }
+            'click',
+            event =>
+            {
+                openAlbumsInspectorMenu(
+                    state.selectedPhotoId,
+                    event.currentTarget
+                );
+            }
         );
 
-      main
+    main
         .querySelector('#albumsTagPeople')
         ?.addEventListener(
-          'click',
-          () => {
-            openPhotoPeopleModal(
-              state.selectedPhotoId
-            );
-          }
+            'click',
+            () =>
+            {
+                openPhotoPeopleModal(
+                    state.selectedPhotoId
+                );
+            }
         );
 
-      main
+    main
         .querySelector('#albumsLinkAlbum')
         ?.addEventListener(
-          'click',
-          () => {
-            state.selectedPhotoIds = [
-              state.selectedPhotoId
-            ];
+            'click',
+            () =>
+            {
+                state.selectedPhotoIds = [
+                    state.selectedPhotoId
+                ];
 
-            openAddToAlbumModal();
-          }
-        );
-
-      main
-        .querySelector(
-          '#albumsManagePhotoNotes'
-        )
-        ?.addEventListener(
-          'click',
-          () =>
-            openAlbumsPhotoNotesModal(
-              state.selectedPhotoId
-            )
-        );
-
-      main
-        .querySelector(
-          '#albumsManagePhotoSources'
-        )
-        ?.addEventListener(
-          'click',
-          () => {
-            const photo =
-              getPhoto(
-                state.selectedPhotoId,
-                {
-                  projectId:
-                    currentProjectId()
-                }
-              );
-
-            if (!photo) {
-              return;
+                openAddToAlbumModal();
             }
+        );
 
-            openSourcesForTargetModal({
-              targetType:
+    main
+        .querySelector(
+            '#albumsManagePhotoNotes'
+        )
+        ?.addEventListener(
+            'click',
+            () =>
+                openAlbumsPhotoNotesModal(
+                    state.selectedPhotoId
+                )
+        );
+
+    main
+        .querySelector(
+            '#albumsManagePhotoSources'
+        )
+        ?.addEventListener(
+            'click',
+            () =>
+            {
+                const photo =
+                    getPhoto(
+                        state.selectedPhotoId,
+                        {
+                            projectId:
+                    currentProjectId()
+                        }
+                    );
+
+                if (!photo)
+                {
+                    return;
+                }
+
+                openSourcesForTargetModal({
+                    targetType:
                 'photo',
 
-              targetId:
+                    targetId:
                 photo.id,
 
-              projectId:
+                    projectId:
                 photo.projectId,
 
-              title:
+                    title:
                 'Add sources',
 
-              subtitle:
+                    subtitle:
                 `Connect existing sources to ${
-                  photo.title
+                    photo.title
                   || photo.filename
                   || 'this photo'
                 }.`,
 
-              afterSave:
+                    afterSave:
                 renderAlbumsPreserveViewport
-            });
-          }
+                });
+            }
         );
 
-      const editRoot =
+    const editRoot =
         main.querySelector(
-          '[data-albums-photo-edit-root]'
+            '[data-albums-photo-edit-root]'
         );
 
-      editRoot
+    editRoot
         ?.addEventListener(
-          'input',
-          syncAlbumsPhotoEditDraftFromPane
+            'input',
+            syncAlbumsPhotoEditDraftFromPane
         );
 
-      editRoot
+    editRoot
         ?.addEventListener(
-          'change',
-          syncAlbumsPhotoEditDraftFromPane
+            'change',
+            syncAlbumsPhotoEditDraftFromPane
         );
 
-      main
+    main
         .querySelector(
-          '#albumsDeleteSelected'
+            '#albumsDeleteSelected'
         )
         ?.addEventListener(
-          'click',
-          () => {
-            openDeletePhotoConfirm(
-              state.selectedPhotoIds
-            );
-          }
+            'click',
+            () =>
+            {
+                openDeletePhotoConfirm(
+                    state.selectedPhotoIds
+                );
+            }
         );
 
-      main
+    main
         .querySelector(
-          '#albumsCancelSelection'
+            '#albumsCancelSelection'
         )
         ?.addEventListener(
-          'click',
-          () => clearAlbumSelection()
+            'click',
+            () => clearAlbumSelection()
         );
 
-      main
+    main
         .querySelector('#albumsSelectAll')
         ?.addEventListener(
-          'click',
-          () => toggleAllVisibleAlbumPhotos()
+            'click',
+            () => toggleAllVisibleAlbumPhotos()
         );
 
-      main
+    main
         .querySelector(
-          '#albumsAddSelectedToAlbum'
+            '#albumsAddSelectedToAlbum'
         )
         ?.addEventListener(
-          'click',
-          openAddToAlbumModal
+            'click',
+            openAddToAlbumModal
         );
 
-      main
+    main
         .querySelector(
-          '#albumsRemoveFromCurrent'
+            '#albumsRemoveFromCurrent'
         )
         ?.addEventListener(
-          'click',
-          removeSelectedFromCurrentAlbum
+            'click',
+            removeSelectedFromCurrentAlbum
         );
-    }
+}
 
-    const GENEO_WORLD_LIMIT = 1000000;
-    const GENEO_CANVAS_MARGIN = 900;
-    const GENEO_CANVAS_EDGE_THRESHOLD = 160;
-    const GENEO_CANVAS_EXPANSION = 1200;
+const GENEO_WORLD_LIMIT = 1000000;
+const GENEO_CANVAS_MARGIN = 900;
+const GENEO_CANVAS_EDGE_THRESHOLD = 160;
+const GENEO_CANVAS_EXPANSION = 1200;
 
-    function createGeneoCanvasRuntime(boardId = '') {
-      return {
+function createGeneoCanvasRuntime(boardId = '')
+{
+    return {
         boardId,
         bounds: null,
         connectionClick: null,
@@ -12475,11 +13135,12 @@
         suppressNodeClick: false,
         autoPersonHeightSignatures:
           new Map()
-      };
-    }
+    };
+}
 
-    function createGeneoPaintRuntime() {
-      return {
+function createGeneoPaintRuntime()
+{
+    return {
         target: null,
         opener: null,
         popover: null,
@@ -12487,11 +13148,11 @@
         interaction: null,
         hsv: null,
         invalidHex: false
-      };
-    }
+    };
+}
 
-    sampleData.boardCollections = [
-      {
+sampleData.boardCollections = [
+    {
         id:
           'board-col-research-theory',
 
@@ -12503,9 +13164,9 @@
 
         description:
           'Boards for hypotheses, theories and unresolved research questions.'
-      },
+    },
 
-      {
+    {
         id:
           'board-col-tree-design',
 
@@ -12517,9 +13178,9 @@
 
         description:
           'Visual family-tree layouts and structural explorations.'
-      },
+    },
 
-      {
+    {
         id:
           'board-col-evidence-map',
 
@@ -12531,9 +13192,9 @@
 
         description:
           'Boards connecting sources, evidence and research conclusions.'
-      },
+    },
 
-      {
+    {
         id:
           'board-col-dna',
 
@@ -12545,9 +13206,9 @@
 
         description:
           'DNA research, matches and relationship hypotheses.'
-      },
+    },
 
-      {
+    {
         id:
           'board-col-publication',
 
@@ -12559,6 +13220,6 @@
 
         description:
           'Layouts and visual material prepared for publication.'
-      }
-    ];
+    }
+];
 

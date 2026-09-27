@@ -1,85 +1,96 @@
-    function renderFamilyTreePreserveScroll() {
-      const scroll = getTreeCanvasScroll();
+function renderFamilyTreePreserveScroll()
+{
+    const scroll = getTreeCanvasScroll();
 
-      // If another action intentionally wants to center on a person,
-      // let that behavior win instead of restoring old scroll.
-      const hasPendingCenter = Boolean(state.treeCenterTargetId);
+    // If another action intentionally wants to center on a person,
+    // let that behavior win instead of restoring old scroll.
+    const hasPendingCenter = Boolean(state.treeCenterTargetId);
 
-      renderFamilyTree();
+    renderFamilyTree();
 
-      if (!hasPendingCenter) {
+    if (!hasPendingCenter)
+    {
         restoreTreeCanvasScroll(scroll);
-      }
     }
+}
 
-    const treeZoomRuntime = {
-      frame: null,
-      delta: 0,
-      clientX: 0,
-      clientY: 0
-    };
+const treeZoomRuntime = {
+    frame: null,
+    delta: 0,
+    clientX: 0,
+    clientY: 0
+};
 
-    function treeViewportPointAtClient(clientX, clientY) {
-      const canvas = main.querySelector('.tree-canvas');
-      if (!canvas) return null;
-      const rect = canvas.getBoundingClientRect();
-      const zoom = state.treeZoom / 100;
-      return {
+function treeViewportPointAtClient(clientX, clientY)
+{
+    const canvas = main.querySelector('.tree-canvas');
+    if (!canvas) return null;
+    const rect = canvas.getBoundingClientRect();
+    const zoom = state.treeZoom / 100;
+    return {
         x: (canvas.scrollLeft + clientX - rect.left) / zoom,
         y: (canvas.scrollTop + clientY - rect.top) / zoom
-      };
-    }
+    };
+}
 
-    function restoreTreeViewportAnchor(point, clientX, clientY) {
-      const canvas = main.querySelector('.tree-canvas');
-      if (!canvas || !point) return;
-      const rect = canvas.getBoundingClientRect();
-      const zoom = state.treeZoom / 100;
-      canvas.scrollLeft = point.x * zoom - (clientX - rect.left);
-      canvas.scrollTop = point.y * zoom - (clientY - rect.top);
-    }
+function restoreTreeViewportAnchor(point, clientX, clientY)
+{
+    const canvas = main.querySelector('.tree-canvas');
+    if (!canvas || !point) return;
+    const rect = canvas.getBoundingClientRect();
+    const zoom = state.treeZoom / 100;
+    canvas.scrollLeft = point.x * zoom - (clientX - rect.left);
+    canvas.scrollTop = point.y * zoom - (clientY - rect.top);
+}
 
-    function applyTreeZoomToDom(options = {}) {
-      const canvas = main.querySelector('.tree-canvas');
-      const stageSpace = canvas?.querySelector('.tree-stage-space');
-      const stage = stageSpace?.querySelector('.tree-stage');
-      if (!canvas || !stageSpace || !stage) return false;
-      const scale = state.treeZoom / 100;
-      const stageWidth = Number.parseFloat(stage.style.width) || stage.offsetWidth;
-      const stageHeight = Number.parseFloat(stage.style.height) || stage.offsetHeight;
-      stageSpace.style.width = `${stageWidth * scale}px`;
-      stageSpace.style.height = `${stageHeight * scale}px`;
-      stage.style.transform = `scale(${scale})`;
-      const value = canvas.querySelector('.tree-zoom .zoom-value');
-      if (value) value.textContent = `${state.treeZoom}%`;
-      if (options.anchor) {
+function applyTreeZoomToDom(options = {})
+{
+    const canvas = main.querySelector('.tree-canvas');
+    const stageSpace = canvas?.querySelector('.tree-stage-space');
+    const stage = stageSpace?.querySelector('.tree-stage');
+    if (!canvas || !stageSpace || !stage) return false;
+    const scale = state.treeZoom / 100;
+    const stageWidth = Number.parseFloat(stage.style.width) || stage.offsetWidth;
+    const stageHeight = Number.parseFloat(stage.style.height) || stage.offsetHeight;
+    stageSpace.style.width = `${stageWidth * scale}px`;
+    stageSpace.style.height = `${stageHeight * scale}px`;
+    stage.style.transform = `scale(${scale})`;
+    const value = canvas.querySelector('.tree-zoom .zoom-value');
+    if (value) value.textContent = `${state.treeZoom}%`;
+    if (options.anchor)
+    {
         restoreTreeViewportAnchor(options.anchor, options.clientX, options.clientY);
-      } else if (options.center) {
+    }
+    else if (options.center)
+    {
         canvas.scrollLeft = options.center.x * scale - canvas.clientWidth / 2;
         canvas.scrollTop = options.center.y * scale - canvas.clientHeight / 2;
-      }
-      return true;
     }
+    return true;
+}
 
-    function setTreeZoom(nextZoom, options = {}) {
-      const zoom = Math.max(70, Math.min(130, Math.round(nextZoom)));
-      if (zoom === state.treeZoom) return false;
-      const canvas = main.querySelector('.tree-canvas');
-      const center = options.anchor ? null : canvas ? {
+function setTreeZoom(nextZoom, options = {})
+{
+    const zoom = Math.max(70, Math.min(130, Math.round(nextZoom)));
+    if (zoom === state.treeZoom) return false;
+    const canvas = main.querySelector('.tree-canvas');
+    const center = options.anchor ? null : canvas ? {
         x: (canvas.scrollLeft + canvas.clientWidth / 2) / (state.treeZoom / 100),
         y: (canvas.scrollTop + canvas.clientHeight / 2) / (state.treeZoom / 100)
-      } : null;
-      state.treeZoom = zoom;
-      return applyTreeZoomToDom({ ...options, center });
-    }
+    } : null;
+    state.treeZoom = zoom;
+    return applyTreeZoomToDom({ ...options, center });
+}
 
-    function queueTreeWheelZoom(event) {
-      event.preventDefault();
-      treeZoomRuntime.delta += event.deltaY;
-      treeZoomRuntime.clientX = event.clientX;
-      treeZoomRuntime.clientY = event.clientY;
-      if (treeZoomRuntime.frame) return;
-      treeZoomRuntime.frame = requestAnimationFrame(() => {
+function queueTreeWheelZoom(event)
+{
+    event.preventDefault();
+    treeZoomRuntime.delta += event.deltaY;
+    treeZoomRuntime.clientX = event.clientX;
+    treeZoomRuntime.clientY = event.clientY;
+    if (treeZoomRuntime.frame) return;
+    treeZoomRuntime.frame = requestAnimationFrame(() =>
+    {
         treeZoomRuntime.frame = null;
         const delta = treeZoomRuntime.delta;
         treeZoomRuntime.delta = 0;
@@ -88,22 +99,23 @@
         const clientY = treeZoomRuntime.clientY;
         const anchor = treeViewportPointAtClient(clientX, clientY);
         setTreeZoom(state.treeZoom + (delta < 0 ? 10 : -10), { anchor, clientX, clientY });
-      });
-    }
+    });
+}
 
-    function bindTreeCanvasPan() {
-      const canvas = main.querySelector('.tree-canvas');
+function bindTreeCanvasPan()
+{
+    const canvas = main.querySelector('.tree-canvas');
 
-      if (!canvas) return;
+    if (!canvas) return;
 
-      const DRAG_THRESHOLD = 4;
+    const DRAG_THRESHOLD = 4;
 
-      /*
+    /*
       * Person cards are intentionally omitted. Their non-control
       * surfaces can initiate panning, while clicking without
       * moving continues to activate the card.
       */
-      const interactiveSelector = [
+    const interactiveSelector = [
         '.add-parent-card',
         '.tree-zoom',
         'button',
@@ -112,19 +124,21 @@
         'textarea',
         'a',
         '[contenteditable="true"]'
-      ].join(', ');
+    ].join(', ');
 
-      let gesture = null;
-      let suppressNextClick = false;
+    let gesture = null;
+    let suppressNextClick = false;
 
-      const finishGesture = event => {
+    const finishGesture = event =>
+    {
         if (!gesture) return;
 
         if (
-          event?.pointerId !== undefined &&
+            event?.pointerId !== undefined &&
           event.pointerId !== gesture.pointerId
-        ) {
-          return;
+        )
+        {
+            return;
         }
 
         const pointerId = gesture.pointerId;
@@ -136,132 +150,147 @@
         /*
         * A stationary press must remain a normal browser click.
         */
-        if (!didPan) {
-          suppressNextClick = false;
+        if (!didPan)
+        {
+            suppressNextClick = false;
         }
 
-        if (canvas.hasPointerCapture?.(pointerId)) {
-          try {
-            canvas.releasePointerCapture(pointerId);
-          } catch {
+        if (canvas.hasPointerCapture?.(pointerId))
+        {
+            try
+            {
+                canvas.releasePointerCapture(pointerId);
+            }
+            catch
+            {
             /*
             * The browser may already have released capture.
             */
-          }
+            }
         }
-      };
+    };
 
-      canvas.addEventListener('pointerdown', event => {
+    canvas.addEventListener('pointerdown', event =>
+    {
         if (
-          event.button !== 0 ||
+            event.button !== 0 ||
           event.isPrimary === false ||
           event.pointerType === 'touch'
-        ) {
-          return;
+        )
+        {
+            return;
         }
 
         const target =
-          event.target instanceof Element
-            ? event.target
-            : null;
+            event.target instanceof Element
+                ? event.target
+                : null;
 
-        if (target?.closest(interactiveSelector)) {
-          return;
+        if (target?.closest(interactiveSelector))
+        {
+            return;
         }
 
         suppressNextClick = false;
 
         gesture = {
-          pointerId: event.pointerId,
-          startX: event.clientX,
-          startY: event.clientY,
-          startScrollLeft: canvas.scrollLeft,
-          startScrollTop: canvas.scrollTop,
-          didPan: false
+            pointerId: event.pointerId,
+            startX: event.clientX,
+            startY: event.clientY,
+            startScrollLeft: canvas.scrollLeft,
+            startScrollTop: canvas.scrollTop,
+            didPan: false
         };
 
         /*
         * Do not call setPointerCapture here. Keeping the original
         * pointer target is what allows stationary card clicks.
         */
-      });
+    });
 
-      canvas.addEventListener('pointermove', event => {
+    canvas.addEventListener('pointermove', event =>
+    {
         if (
-          !gesture ||
+            !gesture ||
           event.pointerId !== gesture.pointerId
-        ) {
-          return;
+        )
+        {
+            return;
         }
 
         const deltaX = event.clientX - gesture.startX;
         const deltaY = event.clientY - gesture.startY;
 
-        if (!gesture.didPan) {
-          const distance = Math.hypot(deltaX, deltaY);
+        if (!gesture.didPan)
+        {
+            const distance = Math.hypot(deltaX, deltaY);
 
-          if (distance < DRAG_THRESHOLD) {
-            return;
-          }
+            if (distance < DRAG_THRESHOLD)
+            {
+                return;
+            }
 
-          gesture.didPan = true;
-          suppressNextClick = true;
-          canvas.classList.add('is-panning');
+            gesture.didPan = true;
+            suppressNextClick = true;
+            canvas.classList.add('is-panning');
 
-          /*
+            /*
           * Capture only after this gesture has become a pan.
           */
-          canvas.setPointerCapture?.(event.pointerId);
+            canvas.setPointerCapture?.(event.pointerId);
 
-          window.getSelection()?.removeAllRanges();
+            window.getSelection()?.removeAllRanges();
         }
 
         event.preventDefault();
 
         canvas.scrollLeft =
-          gesture.startScrollLeft - deltaX;
+            gesture.startScrollLeft - deltaX;
 
         canvas.scrollTop =
-          gesture.startScrollTop - deltaY;
-      });
+            gesture.startScrollTop - deltaY;
+    });
 
-      /*
+    /*
       * Dragging from a card can still produce a synthetic click
       * after pointerup. Consume that click only when a real pan
       * crossed the drag threshold.
       */
-      canvas.addEventListener(
+    canvas.addEventListener(
         'click',
-        event => {
-          if (!suppressNextClick) return;
+        event =>
+        {
+            if (!suppressNextClick) return;
 
-          suppressNextClick = false;
-          event.preventDefault();
-          event.stopImmediatePropagation();
+            suppressNextClick = false;
+            event.preventDefault();
+            event.stopImmediatePropagation();
         },
         true
-      );
+    );
 
-      canvas.addEventListener('pointerup', finishGesture);
-      canvas.addEventListener('pointercancel', finishGesture);
-      canvas.addEventListener('lostpointercapture', finishGesture);
-    }
+    canvas.addEventListener('pointerup', finishGesture);
+    canvas.addEventListener('pointercancel', finishGesture);
+    canvas.addEventListener('lostpointercapture', finishGesture);
+}
 
-    function renderFamilyTree() {
-      sidebar.innerHTML = '';
-      const treeProjectId =
+function renderFamilyTree()
+{
+    sidebar.innerHTML = '';
+    const treeProjectId =
         currentFamilyTreeProjectId();
-      const treePeopleSource = currentTreePeople();
-      const treeFamiliesSource = currentTreeFamilies();
+    const treePeopleSource = currentTreePeople();
+    const treeFamiliesSource = currentTreeFamilies();
 
-      if (!treeProjectId || !treePeopleSource.length) {
+    if (!treeProjectId || !treePeopleSource.length)
+    {
         main.innerHTML = `
           <div class="tree-shell">
             <section class="tree-empty-state" aria-labelledby="treeEmptyTitle">
               <div class="tree-empty-state-card">
                 <div class="tree-empty-state-icon" aria-hidden="true">${icon.tree}</div>
                 <h1 id="treeEmptyTitle">${escapeHtml(t('Start your family tree'))}</h1>
-                <p>${escapeHtml(t("Add the first person to begin building this project's family tree."))}</p>
+                <p>${escapeHtml(t('Add the first person to begin building this project\'s family tree.'))}</p>
                 <button class="button primary" type="button" data-tree-add-first-person>
                   ${icon.plus}
                   ${escapeHtml(t('Add first person'))}
@@ -270,51 +299,54 @@
             </section>
           </div>
         `;
-        main.querySelector('[data-tree-add-first-person]')?.addEventListener('click', () => {
-          openAddPersonModal('Add person', 'Create a new person in this project');
+        main.querySelector('[data-tree-add-first-person]')?.addEventListener('click', () =>
+        {
+            openAddPersonModal('Add person', 'Create a new person in this project');
         });
         return;
-      }
+    }
 
-      const treeViewState = treeProjectViewState(treeProjectId);
-      const focusPersonId = resolveTreeFocusPersonId(treePeopleSource, treeProjectId);
-      const projection = buildFamilyTreeProjection(treePeopleSource, treeFamiliesSource, {
+    const treeViewState = treeProjectViewState(treeProjectId);
+    const focusPersonId = resolveTreeFocusPersonId(treePeopleSource, treeProjectId);
+    const projection = buildFamilyTreeProjection(treePeopleSource, treeFamiliesSource, {
         focusPersonId,
         ancestorGenerations: treeViewState.ancestorGenerations,
         descendantGenerations: treeViewState.descendantGenerations,
         showCousins: treeViewState.showCousins
-      });
-      const familyPeopleCountLabel =
+    });
+    const familyPeopleCountLabel =
         formatProjectPeopleCount(
-          treeProjectId
+            treeProjectId
         );
-      
-      if (!projection.people.some(person => person.id === state.selectedPersonId)) {
+
+    if (!projection.people.some(person => person.id === state.selectedPersonId))
+    {
         state.selectedPersonId = projection.focusPersonId;
-      }
-      const selected = projection.people.find(person => person.id === state.selectedPersonId)
+    }
+    const selected = projection.people.find(person => person.id === state.selectedPersonId)
         || projection.people.find(person => person.id === projection.focusPersonId)
         || projection.people[0];
-      if (selected?.id) {
+    if (selected?.id)
+    {
         rememberTreeSelectedPerson(
-          selected.id,
-          treeProjectId
+            selected.id,
+            treeProjectId
         );
-      }
+    }
 
-      const canNavigateTreeBack =
+    const canNavigateTreeBack =
         treeNavigationCanGo('back', treeProjectId);
 
-      const canNavigateTreeForward =
+    const canNavigateTreeForward =
         treeNavigationCanGo('forward', treeProjectId);
 
-      const treeLayout = calculateTreeLayout(
+    const treeLayout = calculateTreeLayout(
         projection.people,
         projection.families,
         projection.focusPersonId,
         { branchRoles: projection.branchRoles }
-      );
-      main.innerHTML = `
+    );
+    main.innerHTML = `
         <div
           class="tree-shell"
           style="
@@ -379,16 +411,16 @@
             <span
               class="people-count"
               aria-label="${
-                escapeHtml(
-                  familyPeopleCountLabel
-                )
-              }">
+                    escapeHtml(
+                        familyPeopleCountLabel
+                    )
+                }">
 
               ${icon.peoplegroup}
 
               <span>
                 ${escapeHtml(
-                  familyPeopleCountLabel
+                    familyPeopleCountLabel
                 )}
               </span>
             </span>
@@ -422,431 +454,470 @@
           </div>
         </div>
       `;
-      bindTreeCanvasPan();
-      main.querySelector('.tree-canvas')?.addEventListener('wheel', queueTreeWheelZoom, { passive: false });
-      main
+    bindTreeCanvasPan();
+    main.querySelector('.tree-canvas')?.addEventListener('wheel', queueTreeWheelZoom, { passive: false });
+    main
         .querySelectorAll('[data-tree-navigation]')
-        .forEach(button => {
-          button.addEventListener('click', () => {
-            navigateTreeHistory(
-              button.dataset.treeNavigation
-            );
-          });
+        .forEach(button =>
+        {
+            button.addEventListener('click', () =>
+            {
+                navigateTreeHistory(
+                    button.dataset.treeNavigation
+                );
+            });
         });
-      main
+    main
         .querySelectorAll('.tree-person-card[data-person-id]')
-        .forEach(card => {
-          const selectCard = () => {
-            navigateFamilyTreeToPerson(
-              card.dataset.personId,
-              {
-                focusBranch: false,
-                center: false
-              }
-            );
-          };
+        .forEach(card =>
+        {
+            const selectCard = () =>
+            {
+                navigateFamilyTreeToPerson(
+                    card.dataset.personId,
+                    {
+                        focusBranch: false,
+                        center: false
+                    }
+                );
+            };
 
-          card.addEventListener('click', event => {
-            if (event.target.closest('button')) return;
-            selectCard();
-          });
+            card.addEventListener('click', event =>
+            {
+                if (event.target.closest('button')) return;
+                selectCard();
+            });
 
-          card.addEventListener('keydown', event => {
-            if (
-              event.target !== card ||
+            card.addEventListener('keydown', event =>
+            {
+                if (
+                    event.target !== card ||
               !['Enter', ' '].includes(event.key)
-            ) {
-              return;
-            }
+                )
+                {
+                    return;
+                }
 
-            event.preventDefault();
-            selectCard();
-          });
+                event.preventDefault();
+                selectCard();
+            });
         });
-      main
+    main
         .querySelectorAll('[data-card-add]')
         .forEach(button =>
-          button.addEventListener(
-            'click',
-            event => {
-              event.stopPropagation();
+            button.addEventListener(
+                'click',
+                event =>
+                {
+                    event.stopPropagation();
 
-              const card =
-                button.closest(
-                  '[data-person-id]'
-                );
+                    const card =
+                        button.closest(
+                            '[data-person-id]'
+                        );
 
-              const anchorPersonId =
-                card?.dataset.personId
+                    const anchorPersonId =
+                        card?.dataset.personId
                 || state.selectedPersonId;
 
-              if (!anchorPersonId) return;
+                    if (!anchorPersonId) return;
 
-              const currentFocusId = treeProjectViewState().focusPersonId;
-              if (currentFocusId !== anchorPersonId) {
-                focusTreeBranchForRelative(anchorPersonId);
-                requestAnimationFrame(() => {
-                  requestAnimationFrame(() => {
-                    const refreshedButton = main.querySelector(
-                      `.tree-person-card[data-person-id="${CSS.escape(anchorPersonId)}"] [data-card-add="relative"]`
+                    const currentFocusId = treeProjectViewState().focusPersonId;
+                    if (currentFocusId !== anchorPersonId)
+                    {
+                        focusTreeBranchForRelative(anchorPersonId);
+                        requestAnimationFrame(() =>
+                        {
+                            requestAnimationFrame(() =>
+                            {
+                                const refreshedButton = main.querySelector(
+                                    `.tree-person-card[data-person-id="${CSS.escape(anchorPersonId)}"] [data-card-add="relative"]`
+                                );
+                                openRelativePopover(refreshedButton || button, anchorPersonId);
+                            });
+                        });
+                        return;
+                    }
+
+                    state.selectedPersonId = anchorPersonId;
+
+                    openRelativePopover(
+                        button,
+                        anchorPersonId
                     );
-                    openRelativePopover(refreshedButton || button, anchorPersonId);
-                  });
-                });
-                return;
-              }
-
-              state.selectedPersonId = anchorPersonId;
-
-              openRelativePopover(
-                button,
-                anchorPersonId
-              );
-            }
-          )
+                }
+            )
         );
-      main.querySelectorAll('[data-card-edit]').forEach(button => button.addEventListener('click', e => {
+    main.querySelectorAll('[data-card-edit]').forEach(button => button.addEventListener('click', e =>
+    {
         e.stopPropagation();
         openEditPersonModal(button.dataset.cardEdit);
-      }));
-      main.querySelectorAll('[data-tree-card-focus]').forEach(button => button.addEventListener('click', event => {
+    }));
+    main.querySelectorAll('[data-tree-card-focus]').forEach(button => button.addEventListener('click', event =>
+    {
         event.stopPropagation();
         const personId = button.dataset.treeCardFocus;
         if (personId) setTreeFocusPerson(personId);
-      }));
-      main.querySelectorAll('[data-add-relative]').forEach(button => button.addEventListener('click', () => {
+    }));
+    main.querySelectorAll('[data-add-relative]').forEach(button => button.addEventListener('click', () =>
+    {
         const target = personById(button.dataset.personId || state.selectedPersonId);
         if (target?.id) focusTreeBranchForRelative(target.id);
         openAddPersonModal(`Add ${button.dataset.addRelative}`, `Create a new person and add as ${target.name.split(' ')[0]}'s ${button.dataset.addRelative}`, { relativeType: button.dataset.addRelative, personId: target.id });
-      }));
-      main.querySelectorAll('[data-tree-view]').forEach(button => button.addEventListener('click', () => {
-        if (button.dataset.treeView !== 'Classic') {
-          showToast(`${button.dataset.treeView} view will be added later.`);
-          return;
+    }));
+    main.querySelectorAll('[data-tree-view]').forEach(button => button.addEventListener('click', () =>
+    {
+        if (button.dataset.treeView !== 'Classic')
+        {
+            showToast(`${button.dataset.treeView} view will be added later.`);
+            return;
         }
         state.treeView = 'Classic';
         renderFamilyTree();
-      }));
-      main.querySelectorAll('[data-zoom]').forEach(button => button.addEventListener('click', () => {
-        if (button.dataset.zoom === 'fit') {
-          setTreeZoom(100);
-          centerTreeOnPerson(treeProjectViewState().focusPersonId);
-          return;
+    }));
+    main.querySelectorAll('[data-zoom]').forEach(button => button.addEventListener('click', () =>
+    {
+        if (button.dataset.zoom === 'fit')
+        {
+            setTreeZoom(100);
+            centerTreeOnPerson(treeProjectViewState().focusPersonId);
+            return;
         }
         setTreeZoom(state.treeZoom + (button.dataset.zoom === 'in' ? 10 : -10));
-      }));
-      main.querySelector('[data-tree-recent-toggle]')?.addEventListener('click', event => {
+    }));
+    main.querySelector('[data-tree-recent-toggle]')?.addEventListener('click', event =>
+    {
         event.stopPropagation();
         openTreeRecentPeopleMenu(event.currentTarget);
-      });
-      main.querySelector('[data-tree-settings]')?.addEventListener('click', openTreeSettingsModal);
-      bindPersonSidebar(main, 'tree');
-      if (state.treeCenterTargetId) {
+    });
+    main.querySelector('[data-tree-settings]')?.addEventListener('click', openTreeSettingsModal);
+    bindPersonSidebar(main, 'tree');
+    if (state.treeCenterTargetId)
+    {
         const targetId = state.treeCenterTargetId;
         state.treeCenterTargetId = '';
         requestAnimationFrame(() => centerTreeOnPerson(targetId));
-      }
-      const centerTargetId =
+    }
+    const centerTargetId =
         state.treeCenterTargetId;
 
-      state.treeCenterTargetId = '';
+    state.treeCenterTargetId = '';
 
-      if (centerTargetId) {
+    if (centerTargetId)
+    {
         requestAnimationFrame(
-          () =>
-            centerTreeOnPerson(
-              centerTargetId
-            )
+            () =>
+                centerTreeOnPerson(
+                    centerTargetId
+                )
         );
-      } else if (
+    }
+    else if (
         treeViewState.canvasScroll
-      ) {
+    )
+    {
         restoreTreeCanvasScroll(
-          treeViewState.canvasScroll
+            treeViewState.canvasScroll
         );
-      }
     }
+}
 
-    function treeLayoutNode(layout, id) {
-      return id ? layout?.peopleById?.[id] || null : null;
-    }
+function treeLayoutNode(layout, id)
+{
+    return id ? layout?.peopleById?.[id] || null : null;
+}
 
-    function treeConnectorPath(points) {
-      const normalized = (points || [])
+function treeConnectorPath(points)
+{
+    const normalized = (points || [])
         .map(point => ({ x: Math.round(Number(point.x)), y: Math.round(Number(point.y)) }))
         .filter(point => Number.isFinite(point.x) && Number.isFinite(point.y))
         .filter((point, index, list) => !index || point.x !== list[index - 1].x || point.y !== list[index - 1].y);
-      if (normalized.length < 2) return '';
-      return normalized.slice(1).reduce((path, point, index) => {
+    if (normalized.length < 2) return '';
+    return normalized.slice(1).reduce((path, point, index) =>
+    {
         const previous = normalized[index];
         if (point.y === previous.y) return `${path} H${point.x}`;
         if (point.x === previous.x) return `${path} V${point.y}`;
         return `${path} L${point.x} ${point.y}`;
-      }, `M${normalized[0].x} ${normalized[0].y}`);
-    }
+    }, `M${normalized[0].x} ${normalized[0].y}`);
+}
 
-    function buildTreeConnectorDescriptors(
-      layout,
-      { arrangeBands = false } = {}
-    ) {
-      const descriptors = [];
-      const drafts = [];
-      const partnerKeys = new Set();
-      const partnerGroups = [];
+function buildTreeConnectorDescriptors(
+    layout,
+    { arrangeBands = false } = {}
+)
+{
+    const descriptors = [];
+    const drafts = [];
+    const partnerKeys = new Set();
+    const partnerGroups = [];
 
-      function normalizePoints(points) {
+    function normalizePoints(points)
+    {
         return (points || [])
-          .map(point => ({
-            x: Math.round(
-              Number(point.x)
-            ),
-            y: Math.round(
-              Number(point.y)
-            )
-          }))
-          .filter(point =>
-            Number.isFinite(point.x)
+            .map(point => ({
+                x: Math.round(
+                    Number(point.x)
+                ),
+                y: Math.round(
+                    Number(point.y)
+                )
+            }))
+            .filter(point =>
+                Number.isFinite(point.x)
             && Number.isFinite(point.y)
-          )
-          .filter((point, index, list) =>
-            !index
+            )
+            .filter((point, index, list) =>
+                !index
             || point.x
               !== list[index - 1].x
             || point.y
               !== list[index - 1].y
-          );
-      }
+            );
+    }
 
-      function addDescriptor(descriptor) {
+    function addDescriptor(descriptor)
+    {
         const points =
-          normalizePoints(
-            descriptor.points
-          );
+            normalizePoints(
+                descriptor.points
+            );
 
         const d =
-          treeConnectorPath(points);
+            treeConnectorPath(points);
 
         if (!d) return;
 
         const key =
-          `${descriptor.familyId}|`
+            `${descriptor.familyId}|`
           + `${descriptor.role}|`
           + `${descriptor.childId || ''}|`
           + d;
 
         if (
-          descriptors.some(item =>
-            item.key === key
-          )
-        ) {
-          return;
+            descriptors.some(item =>
+                item.key === key
+            )
+        )
+        {
+            return;
         }
 
         descriptors.push({
-          ...descriptor,
-          points,
-          d,
-          key
+            ...descriptor,
+            points,
+            d,
+            key
         });
-      }
+    }
 
-      function addPartnerConnector(
+    function addPartnerConnector(
         familyId,
         parentNodes
-      ) {
+    )
+    {
         if (
-          parentNodes.length < 2
+            parentNodes.length < 2
           || partnerKeys.has(familyId)
-        ) {
-          return;
+        )
+        {
+            return;
         }
 
         partnerKeys.add(familyId);
         partnerGroups.push({ familyId, parentNodes });
-      }
+    }
 
-      function renderPartnerConnector({ familyId, parentNodes }) {
+    function renderPartnerConnector({ familyId, parentNodes })
+    {
         const ordered =
-          [...parentNodes]
-            .sort((left, right) =>
-              left.leftX - right.leftX
-            );
+            [...parentNodes]
+                .sort((left, right) =>
+                    left.leftX - right.leftX
+                );
 
         const first = ordered[0];
         const last =
-          ordered[ordered.length - 1];
+            ordered[ordered.length - 1];
 
         const partnerY = Math.round(
-          (
-            first.centerY
+            (
+                first.centerY
             + last.centerY
-          ) / 2
+            ) / 2
         );
 
         addDescriptor({
-          familyId,
-          role: 'partner',
-          className: 'tree-line partner',
-          points: [
-            {
-              x: first.rightX,
-              y: first.centerY
-            },
-            {
-              x: first.rightX,
-              y: partnerY
-            },
-            {
-              x: last.leftX,
-              y: partnerY
-            },
-            {
-              x: last.leftX,
-              y: last.centerY
-            }
-          ]
+            familyId,
+            role: 'partner',
+            className: 'tree-line partner',
+            points: [
+                {
+                    x: first.rightX,
+                    y: first.centerY
+                },
+                {
+                    x: first.rightX,
+                    y: partnerY
+                },
+                {
+                    x: last.leftX,
+                    y: partnerY
+                },
+                {
+                    x: last.leftX,
+                    y: last.centerY
+                }
+            ]
         });
-      }
+    }
 
-      function addDraft({
+    function addDraft({
         familyId,
         role,
         parentNodes,
         children
-      }) {
+    })
+    {
         if (
-          !parentNodes.length
+            !parentNodes.length
           || !children.length
-        ) {
-          return;
+        )
+        {
+            return;
         }
 
         const orderedParents =
-          [...parentNodes]
-            .sort((left, right) =>
-              left.leftX - right.leftX
-            );
+            [...parentNodes]
+                .sort((left, right) =>
+                    left.leftX - right.leftX
+                );
 
         const orderedChildren =
-          [...children]
-            .sort((left, right) =>
-              left.centerX - right.centerX
-            );
+            [...children]
+                .sort((left, right) =>
+                    left.centerX - right.centerX
+                );
 
         addPartnerConnector(
-          familyId,
-          orderedParents
+            familyId,
+            orderedParents
         );
 
         const firstParent =
-          orderedParents[0];
+            orderedParents[0];
 
         const lastParent =
-          orderedParents[
-            orderedParents.length - 1
-          ];
+            orderedParents[
+                orderedParents.length - 1
+            ];
 
         const sourceX =
-          orderedParents.length > 1
-            ? Math.round(
-                (
-                  firstParent.rightX
+            orderedParents.length > 1
+                ? Math.round(
+                    (
+                        firstParent.rightX
                   + lastParent.leftX
-                ) / 2
-              )
-            : Math.round(
-                firstParent.centerX
-              );
+                    ) / 2
+                )
+                : Math.round(
+                    firstParent.centerX
+                );
 
         const sourceY =
-          orderedParents.length > 1
-            ? Math.round(
-                (
-                  firstParent.centerY
+            orderedParents.length > 1
+                ? Math.round(
+                    (
+                        firstParent.centerY
                   + lastParent.centerY
-                ) / 2
-              )
-            : Math.round(
-                firstParent.bottomY
-              );
+                    ) / 2
+                )
+                : Math.round(
+                    firstParent.bottomY
+                );
 
         const childCenters =
-          orderedChildren.map(child =>
-            Math.round(child.centerX)
-          );
+            orderedChildren.map(child =>
+                Math.round(child.centerX)
+            );
 
         drafts.push({
-          familyId,
-          role,
-          parentNodes: orderedParents,
-          children: orderedChildren,
-          sourceX,
-          sourceY,
-          parentBottomY:
+            familyId,
+            role,
+            parentNodes: orderedParents,
+            children: orderedChildren,
+            sourceX,
+            sourceY,
+            parentBottomY:
             Math.max(
-              ...orderedParents.map(parent =>
-                parent.bottomY
-              )
+                ...orderedParents.map(parent =>
+                    parent.bottomY
+                )
             ),
-          childTopY:
+            childTopY:
             Math.min(
-              ...orderedChildren.map(child =>
-                child.topY
-              )
+                ...orderedChildren.map(child =>
+                    child.topY
+                )
             ),
-          childGeneration:
+            childGeneration:
             Math.min(
-              ...orderedChildren.map(child =>
-                Number(child.generation)
-              )
+                ...orderedChildren.map(child =>
+                    Number(child.generation)
+                )
             ),
-          minX:
+            minX:
             Math.min(
-              sourceX,
-              ...childCenters
+                sourceX,
+                ...childCenters
             ),
-          maxX:
+            maxX:
             Math.max(
-              sourceX,
-              ...childCenters
+                sourceX,
+                ...childCenters
             ),
-          laneIndex: 0,
-          railY: 0
+            laneIndex: 0,
+            railY: 0
         });
-      }
+    }
 
-      const parentFamilyByChild = new Map();
+    const parentFamilyByChild = new Map();
 
-      (layout.families || []).forEach(family => {
-        (family.children || []).forEach(childId => {
-          if (!parentFamilyByChild.has(childId)) {
-            parentFamilyByChild.set(childId, family);
-          }
+    (layout.families || []).forEach(family =>
+    {
+        (family.children || []).forEach(childId =>
+        {
+            if (!parentFamilyByChild.has(childId))
+            {
+                parentFamilyByChild.set(childId, family);
+            }
         });
-      });
+    });
 
-      (layout.families || []).forEach(family => {
+    (layout.families || []).forEach(family =>
+    {
         const children = (family.children || [])
-          .map(id => treeLayoutNode(layout, id))
-          .filter(Boolean);
+            .map(id => treeLayoutNode(layout, id))
+            .filter(Boolean);
 
         const knownParents = [family.left, family.right]
-          .map(id => treeLayoutNode(layout, id))
-          .filter(Boolean);
+            .map(id => treeLayoutNode(layout, id))
+            .filter(Boolean);
 
         const placeholders = (family.children || []).flatMap(childId =>
-          parentFamilyByChild.get(childId)?.id === family.id
-            ? layout.parentPlaceholdersByPerson?.[childId] || []
-            : []
+            parentFamilyByChild.get(childId)?.id === family.id
+                ? layout.parentPlaceholdersByPerson?.[childId] || []
+                : []
         );
 
         const parentNodes = [
-          ...new Map(
-            [...knownParents, ...placeholders].map(node => [
-              node.id,
-              node
-            ])
-          ).values()
+            ...new Map(
+                [...knownParents, ...placeholders].map(node => [
+                    node.id,
+                    node
+                ])
+            ).values()
         ];
 
         if (!parentNodes.length) return;
@@ -858,307 +929,327 @@
 
         // Use the same family grouping as the horizontal layout.
         addDraft({
-          familyId: family.id,
-          role: placeholders.length
-            ? 'placeholder-descendant'
-            : 'descendant',
-          parentNodes,
-          children
+            familyId: family.id,
+            role: placeholders.length
+                ? 'placeholder-descendant'
+                : 'descendant',
+            parentNodes,
+            children
         });
-      });
+    });
 
-      // Preserve Add parents controls when no saved parent family exists.
-      Object.entries(
+    // Preserve Add parents controls when no saved parent family exists.
+    Object.entries(
         layout.parentPlaceholdersByPerson || {}
-      ).forEach(([personId, placeholders]) => {
+    ).forEach(([personId, placeholders]) =>
+    {
         if (parentFamilyByChild.has(personId)) return;
 
         const child = treeLayoutNode(layout, personId);
         if (!child || !placeholders.length) return;
 
         addDraft({
-          familyId: `missing-parents:${personId}`,
-          role: 'placeholder-descendant',
-          parentNodes: placeholders,
-          children: [child]
+            familyId: `missing-parents:${personId}`,
+            role: 'placeholder-descendant',
+            parentNodes: placeholders,
+            children: [child]
         });
-      });
+    });
 
-      /*
+    /*
       * Allocate lanes per complete generation band. Placeholder
       * and normal families now compete for the same lanes.
       */
-      const draftsByBand = new Map();
+    const draftsByBand = new Map();
 
-      drafts.forEach(draft => {
+    drafts.forEach(draft =>
+    {
         const bandKey =
-          Number.isFinite(
-            draft.childGeneration
-          )
-            ? `generation:${draft.childGeneration}`
-            : `coordinates:`
+            Number.isFinite(
+                draft.childGeneration
+            )
+                ? `generation:${draft.childGeneration}`
+                : `coordinates:`
               + `${draft.parentBottomY}:`
               + `${draft.childTopY}`;
 
-        if (!draftsByBand.has(bandKey)) {
-          draftsByBand.set(
-            bandKey,
-            []
-          );
+        if (!draftsByBand.has(bandKey))
+        {
+            draftsByBand.set(
+                bandKey,
+                []
+            );
         }
 
         draftsByBand
-          .get(bandKey)
-          .push(draft);
-      });
+            .get(bandKey)
+            .push(draft);
+    });
 
-      draftsByBand.forEach(group => {
+    draftsByBand.forEach(group =>
+    {
         group.sort((left, right) =>
-          left.minX - right.minX
+            left.minX - right.minX
           || left.sourceX - right.sourceX
           || String(left.familyId)
-            .localeCompare(
-              String(right.familyId)
-            )
+              .localeCompare(
+                  String(right.familyId)
+              )
         );
 
         const predecessors = new Map(group.map(draft => [draft, new Set()]));
         const insideRail = (draft, x) => x >= draft.minX && x <= draft.maxX;
-        group.forEach(rail => group.forEach(other => {
-          if (rail === other) return;
-          // A trunk must finish above a rail it would cross; a child drop starts below it.
-          if (insideRail(rail, other.sourceX)) predecessors.get(rail).add(other);
-          if (other.children.some(child => insideRail(rail, child.centerX))) predecessors.get(other).add(rail);
+        group.forEach(rail => group.forEach(other =>
+        {
+            if (rail === other) return;
+            // A trunk must finish above a rail it would cross; a child drop starts below it.
+            if (insideRail(rail, other.sourceX)) predecessors.get(rail).add(other);
+            if (other.children.some(child => insideRail(rail, child.centerX))) predecessors.get(other).add(rail);
         }));
 
         const pending = new Set(group);
         const assigned = new Set();
         const lanes = [];
-        while (pending.size) {
-          const draft = [...pending].find(item => [...predecessors.get(item)].every(parent => assigned.has(parent)))
+        while (pending.size)
+        {
+            const draft = [...pending].find(item => [...predecessors.get(item)].every(parent => assigned.has(parent)))
             || [...pending][0];
-          draft.laneConflict = [...predecessors.get(draft)].some(parent => !assigned.has(parent));
-          let lane = Math.max(0, ...[...predecessors.get(draft)].filter(parent => assigned.has(parent)).map(parent => parent.laneIndex + 1));
-          while ((lanes[lane] || []).some(other => draft.minX <= other.maxX + 8 && draft.maxX + 8 >= other.minX)) lane += 1;
-          if (!lanes[lane]) lanes[lane] = [];
-          lanes[lane].push(draft);
-          draft.laneIndex = lane;
-          assigned.add(draft);
-          pending.delete(draft);
+            draft.laneConflict = [...predecessors.get(draft)].some(parent => !assigned.has(parent));
+            let lane = Math.max(0, ...[...predecessors.get(draft)].filter(parent => assigned.has(parent)).map(parent => parent.laneIndex + 1));
+            while ((lanes[lane] || []).some(other => draft.minX <= other.maxX + 8 && draft.maxX + 8 >= other.minX)) lane += 1;
+            if (!lanes[lane]) lanes[lane] = [];
+            lanes[lane].push(draft);
+            draft.laneIndex = lane;
+            assigned.add(draft);
+            pending.delete(draft);
         }
         group.laneCount = Math.max(1, lanes.length);
-      });
+    });
 
-      const rows = new Map();
-      [...(layout.positionedPeople || []), ...(layout.parentPlaceholders || [])].forEach(node => {
+    const rows = new Map();
+    [...(layout.positionedPeople || []), ...(layout.parentPlaceholders || [])].forEach(node =>
+    {
         if (!rows.has(node.generation)) rows.set(node.generation, []);
         rows.get(node.generation).push(node);
-      });
-      if (arrangeBands && rows.size) {
+    });
+    if (arrangeBands && rows.size)
+    {
         const generations = [...rows.keys()].sort((left, right) => left - right);
         let nextTop = Math.min(...rows.get(generations[0]).map(node => node.y));
-        generations.forEach((generation, index) => {
-          const row = rows.get(generation);
-          row.forEach(node => {
-            node.y = nextTop;
-            node.topY = nextTop;
-            node.bottomY = nextTop + (node.height || node.h);
-            node.centerY = nextTop + (node.height || node.h) / 2;
-            if (node.layoutY !== undefined) node.layoutY = nextTop;
-          });
-          const nextGeneration = generations[index + 1];
-          const laneCount = draftsByBand.get(`generation:${nextGeneration}`)?.laneCount || 1;
-          nextTop += Math.max(...row.map(node => node.height || node.h))
+        generations.forEach((generation, index) =>
+        {
+            const row = rows.get(generation);
+            row.forEach(node =>
+            {
+                node.y = nextTop;
+                node.topY = nextTop;
+                node.bottomY = nextTop + (node.height || node.h);
+                node.centerY = nextTop + (node.height || node.h) / 2;
+                if (node.layoutY !== undefined) node.layoutY = nextTop;
+            });
+            const nextGeneration = generations[index + 1];
+            const laneCount = draftsByBand.get(`generation:${nextGeneration}`)?.laneCount || 1;
+            nextTop += Math.max(...row.map(node => node.height || node.h))
             + TREE_CONNECTOR_RAIL_OFFSET * 2
             + (laneCount - 1) * TREE_GEOMETRY.connectorLaneGap;
         });
-        (layout.focusControls || []).forEach(control => {
-          const person = treeLayoutNode(layout, control.personId);
-          if (person) control.y = person.topY - TREE_FOCUS_CONTROL_H - TREE_FOCUS_CONTROL_GAP;
+        (layout.focusControls || []).forEach(control =>
+        {
+            const person = treeLayoutNode(layout, control.personId);
+            if (person) control.y = person.topY - TREE_FOCUS_CONTROL_H - TREE_FOCUS_CONTROL_GAP;
         });
-      }
+    }
 
-      layout.connectorBands = [];
-      draftsByBand.forEach(group => {
+    layout.connectorBands = [];
+    draftsByBand.forEach(group =>
+    {
         const generation = group[0].childGeneration;
         const parentRow = rows.get(generation - 1) || group.flatMap(draft => draft.parentNodes);
         const childRow = rows.get(generation) || group.flatMap(draft => draft.children);
         const parentBottomY = Math.max(...parentRow.map(node => node.bottomY));
         const childTopY = Math.min(...childRow.map(node => node.topY));
-        group.forEach(draft => {
-          const first = draft.parentNodes[0];
-          const last = draft.parentNodes[draft.parentNodes.length - 1];
-          draft.sourceY = draft.parentNodes.length > 1
-            ? Math.round((first.centerY + last.centerY) / 2)
-            : Math.round(first.bottomY);
-          draft.railY = parentBottomY + TREE_CONNECTOR_RAIL_OFFSET
+        group.forEach(draft =>
+        {
+            const first = draft.parentNodes[0];
+            const last = draft.parentNodes[draft.parentNodes.length - 1];
+            draft.sourceY = draft.parentNodes.length > 1
+                ? Math.round((first.centerY + last.centerY) / 2)
+                : Math.round(first.bottomY);
+            draft.railY = parentBottomY + TREE_CONNECTOR_RAIL_OFFSET
             + draft.laneIndex * TREE_GEOMETRY.connectorLaneGap;
         });
         layout.connectorBands.push({
-          generation, parentBottomY, childTopY, laneCount: group.laneCount,
-          families: group.map(draft => ({
-            familyId: draft.familyId, sourceX: draft.sourceX,
-            childXs: draft.children.map(child => child.centerX),
-            minX: draft.minX, maxX: draft.maxX,
-            laneIndex: draft.laneIndex, railY: draft.railY, laneConflict: draft.laneConflict
-          }))
+            generation, parentBottomY, childTopY, laneCount: group.laneCount,
+            families: group.map(draft => ({
+                familyId: draft.familyId, sourceX: draft.sourceX,
+                childXs: draft.children.map(child => child.centerX),
+                minX: draft.minX, maxX: draft.maxX,
+                laneIndex: draft.laneIndex, railY: draft.railY, laneConflict: draft.laneConflict
+            }))
         });
-      });
-      partnerGroups.forEach(renderPartnerConnector);
+    });
+    partnerGroups.forEach(renderPartnerConnector);
 
-      drafts.forEach(draft => {
+    drafts.forEach(draft =>
+    {
         const directChild =
-          draft.children.length === 1
-            ? draft.children[0]
-            : null;
+            draft.children.length === 1
+                ? draft.children[0]
+                : null;
 
         const hasDirectAlignment =
-          directChild
+            directChild
           && Math.abs(
-            Math.round(draft.sourceX)
+              Math.round(draft.sourceX)
             - Math.round(directChild.centerX)
           ) <= 1;
 
-        if (hasDirectAlignment) {
-          /*
+        if (hasDirectAlignment)
+        {
+            /*
           * Use one uninterrupted path. Do not split a direct
           * connection into trunk, zero-width rail and child drop.
           */
-          addDescriptor({
-            familyId:
+            addDescriptor({
+                familyId:
               draft.familyId,
 
-            role:
+                role:
               `${draft.role}-direct`,
 
-            childId:
+                childId:
               directChild.id,
 
-            className:
+                className:
               'tree-line descendant',
 
-            points: [
-              {
-                x: draft.sourceX,
-                y: draft.sourceY
-              },
-              {
-                x: draft.sourceX,
-                y: directChild.topY
-              }
-            ]
-          });
+                points: [
+                    {
+                        x: draft.sourceX,
+                        y: draft.sourceY
+                    },
+                    {
+                        x: draft.sourceX,
+                        y: directChild.topY
+                    }
+                ]
+            });
 
-          return;
+            return;
         }
         addDescriptor({
-          familyId: draft.familyId,
-          role:
+            familyId: draft.familyId,
+            role:
             `${draft.role}-trunk`,
-          className:
+            className:
             'tree-line descendant',
-          points: [
-            {
-              x: draft.sourceX,
-              y: draft.sourceY
-            },
-            {
-              x: draft.sourceX,
-              y: draft.railY
-            }
-          ]
+            points: [
+                {
+                    x: draft.sourceX,
+                    y: draft.sourceY
+                },
+                {
+                    x: draft.sourceX,
+                    y: draft.railY
+                }
+            ]
         });
 
         addDescriptor({
-          familyId: draft.familyId,
-          role:
-            `${draft.role}-rail`,
-          className:
-            'tree-line descendant',
-          points: [
-            {
-              x: draft.minX,
-              y: draft.railY
-            },
-            {
-              x: draft.maxX,
-              y: draft.railY
-            }
-          ]
-        });
-
-        draft.children.forEach(child => {
-          addDescriptor({
             familyId: draft.familyId,
             role:
-              `${draft.role}-child`,
-            childId: child.id,
+            `${draft.role}-rail`,
             className:
-              'tree-line descendant',
+            'tree-line descendant',
             points: [
-              {
-                x: child.centerX,
-                y: draft.railY
-              },
-              {
-                x: child.centerX,
-                y: child.topY
-              }
+                {
+                    x: draft.minX,
+                    y: draft.railY
+                },
+                {
+                    x: draft.maxX,
+                    y: draft.railY
+                }
             ]
-          });
         });
-      });
 
-      return descriptors.map(
+        draft.children.forEach(child =>
+        {
+            addDescriptor({
+                familyId: draft.familyId,
+                role:
+              `${draft.role}-child`,
+                childId: child.id,
+                className:
+              'tree-line descendant',
+                points: [
+                    {
+                        x: child.centerX,
+                        y: draft.railY
+                    },
+                    {
+                        x: child.centerX,
+                        y: child.topY
+                    }
+                ]
+            });
+        });
+    });
+
+    return descriptors.map(
         ({ key, ...descriptor }) =>
-          descriptor
-      );
-    }
+            descriptor
+    );
+}
 
-    function renderTreeLines(layout) {
-      const descriptors = layout.connectorDescriptors || buildTreeConnectorDescriptors(layout);
-      const paths = descriptors.map(descriptor => `<path class="${descriptor.className}" data-tree-family-id="${escapeHtml(String(descriptor.familyId || ''))}" data-tree-connection-role="${escapeHtml(descriptor.role)}" ${descriptor.childId ? `data-tree-child-id="${escapeHtml(descriptor.childId)}"` : ''} d="${descriptor.d}"/>`);
-      return `<svg class="tree-lines" viewBox="0 0 ${layout.stageWidth} ${layout.stageHeight}" width="${layout.stageWidth}" height="${layout.stageHeight}" aria-hidden="true">
+function renderTreeLines(layout)
+{
+    const descriptors = layout.connectorDescriptors || buildTreeConnectorDescriptors(layout);
+    const paths = descriptors.map(descriptor => `<path class="${descriptor.className}" data-tree-family-id="${escapeHtml(String(descriptor.familyId || ''))}" data-tree-connection-role="${escapeHtml(descriptor.role)}" ${descriptor.childId ? `data-tree-child-id="${escapeHtml(descriptor.childId)}"` : ''} d="${descriptor.d}"/>`);
+    return `<svg class="tree-lines" viewBox="0 0 ${layout.stageWidth} ${layout.stageHeight}" width="${layout.stageWidth}" height="${layout.stageHeight}" aria-hidden="true">
         ${paths.join('\n        ')}
       </svg>`;
-    }
+}
 
-    function renderTreeParentPlaceholder(placeholder) {
-      const target = personById(placeholder.personId);
-      const displayLabel = translateText(placeholder.label);
-      return `<button class="add-parent-card" type="button" style="left:${placeholder.x}px;top:${placeholder.y}px;--tree-placeholder-width:${placeholder.width}px" data-person-id="${placeholder.personId}" data-add-relative="${placeholder.rel}" aria-label="${escapeHtml(placeholder.label)} for ${escapeHtml(target.name)}"><span><span class="add-plus">${icon.plus}</span><span class="add-label">${escapeHtml(displayLabel).replace(' ', '<br>')}</span></span></button>`;
-    }
+function renderTreeParentPlaceholder(placeholder)
+{
+    const target = personById(placeholder.personId);
+    const displayLabel = translateText(placeholder.label);
+    return `<button class="add-parent-card" type="button" style="left:${placeholder.x}px;top:${placeholder.y}px;--tree-placeholder-width:${placeholder.width}px" data-person-id="${placeholder.personId}" data-add-relative="${placeholder.rel}" aria-label="${escapeHtml(placeholder.label)} for ${escapeHtml(target.name)}"><span><span class="add-plus">${icon.plus}</span><span class="add-label">${escapeHtml(displayLabel).replace(' ', '<br>')}</span></span></button>`;
+}
 
-    function renderTreeFocusControl(control) {
-      const person = personById(control.personId);
-      if (!person) return '';
-      const localizedName = translateText(person.name);
-      const accessibleLabel = state.language === 'ru'
+function renderTreeFocusControl(control)
+{
+    const person = personById(control.personId);
+    if (!person) return '';
+    const localizedName = translateText(person.name);
+    const accessibleLabel = state.language === 'ru'
         ? `Показать ветвь для ${localizedName}`
         : `Focus branch for ${localizedName}`;
-      const visibleLabel = state.language === 'ru' ? 'Фокус' : 'Focus';
-      return `<button class="tree-focus-control" type="button" style="left:${control.x}px;top:${control.y}px" data-tree-card-focus="${escapeHtml(person.id)}" data-i18n-skip aria-label="${escapeHtml(accessibleLabel)}">${icon.focus}<span>${visibleLabel}</span></button>`;
-    }
+    const visibleLabel = state.language === 'ru' ? 'Фокус' : 'Focus';
+    return `<button class="tree-focus-control" type="button" style="left:${control.x}px;top:${control.y}px" data-tree-card-focus="${escapeHtml(person.id)}" data-i18n-skip aria-label="${escapeHtml(accessibleLabel)}">${icon.focus}<span>${visibleLabel}</span></button>`;
+}
 
-    function renderTreePersonCard(
-      person
-    ) {
-      const selected =
+function renderTreePersonCard(
+    person
+)
+{
+    const selected =
         person.id
           === state.selectedPersonId;
 
-      const focused =
+    const focused =
         person.id
           === treeProjectViewState()
-            .focusPersonId;
+              .focusPersonId;
 
-      const displayName =
+    const displayName =
         String(
-          person.name
+            person.name
           || 'Unnamed person'
         );
 
-      return `
+    return `
         <article
           class="
             tree-person-card
@@ -1174,26 +1265,26 @@
           tabindex="0"
           aria-label="${escapeHtml(displayName)}"
           ${
-            focused
-              ? 'aria-current="true"'
-              : ''
-          }>
+                focused
+                    ? 'aria-current="true"'
+                    : ''
+            }>
 
           <div class="tree-card-avatar-stack">
             ${renderPersonAvatar(
-              person,
-              'tree-avatar'
+                person,
+                'tree-avatar'
             )}
 
             ${
-              focused
-                ? `
+                focused
+                    ? `
                   <span class="tree-focus-badge">
                     ${icon.focus}
                     <span>Focus</span>
                   </span>
                 `
-                : ''
+                    : ''
             }
           </div>
 
@@ -1206,7 +1297,7 @@
             </h3>
 
             ${renderTreeCardDateLines(
-              person
+                person
             )}
           </div>
 
@@ -1231,103 +1322,111 @@
           </div>
         </article>
       `;
-    }
+}
 
-    function treePersonGenderClass(person) {
-      const gender = String(person?.gender || '').toLowerCase();
+function treePersonGenderClass(person)
+{
+    const gender = String(person?.gender || '').toLowerCase();
 
-      if (gender === 'female') return 'female';
-      if (gender === 'male') return 'male';
+    if (gender === 'female') return 'female';
+    if (gender === 'male') return 'male';
 
-      return 'unknown-gender';
-    }
+    return 'unknown-gender';
+}
 
-    function renderTreeCardDateLines(person) {
-      const lines = [];
-      const status = normalizeLivingStatus(person.status);
-      const birthDate = String(person.birth || '').trim();
-      const deathDate = String(person.death || '').trim();
+function renderTreeCardDateLines(person)
+{
+    const lines = [];
+    const status = normalizeLivingStatus(person.status);
+    const birthDate = String(person.birth || '').trim();
+    const deathDate = String(person.death || '').trim();
 
-      if (birthDate) {
+    if (birthDate)
+    {
         lines.push(`<span>Born: ${escapeHtml(birthDate)}</span>`);
-      }
+    }
 
-      if (status === 'Deceased') {
+    if (status === 'Deceased')
+    {
         lines.push(
-          deathDate
-            ? `<span>Died: ${escapeHtml(deathDate)}</span>`
-            : '<span>Deceased</span>'
+            deathDate
+                ? `<span>Died: ${escapeHtml(deathDate)}</span>`
+                : '<span>Deceased</span>'
         );
-      } else if (status === 'Unknown') {
+    }
+    else if (status === 'Unknown')
+    {
         lines.push('<span>Unknown</span>');
-      }
+    }
 
-      return lines.length
+    return lines.length
         ? `<div class="tree-dates">${lines.join('')}</div>`
         : '';
-    }
-        function sectionIsOpen(id) {
-          return state.inspectorSections[id] !== false;
-        }
+}
+function sectionIsOpen(id)
+{
+    return state.inspectorSections[id] !== false;
+}
 
-        function renderInspectorSection(
-          id,
-          title,
-          meta,
-          content,
-          actionHtml = '',
-          options = {}
-        ) {
-          const open =
-            typeof options.open === 'boolean'
-              ? options.open
-              : sectionIsOpen(id);
+function renderInspectorSection(
+    id,
+    title,
+    meta,
+    content,
+    actionHtml = '',
+    options = {}
+)
+{
+    const open =
+        typeof options.open === 'boolean'
+            ? options.open
+            : sectionIsOpen(id);
 
-          const toggleAttribute =
-            options.toggleAttribute
+    const toggleAttribute =
+        options.toggleAttribute
             || 'data-toggle-section';
 
-          const sectionId =
-            options.sectionId
+    const sectionId =
+        options.sectionId
             || `section-${id}`;
 
-          const showAction =
-            open
+    const showAction =
+        open
             || options.alwaysShowAction;
 
-          const inlineAction =
-            showAction
+    const inlineAction =
+        showAction
             && actionHtml
             && options.inlineAction
-              ? `
+            ? `
                 <span class="panel-section-inline-action">
                   ${actionHtml}
                 </span>
               `
-              : '';
+            : '';
 
-          const bodyAction =
-            open
+    const bodyAction =
+        open
             && actionHtml
             && !options.inlineAction
-              ? `
+            ? `
                 <div class="panel-section-action">
                   ${actionHtml}
                 </div>
               `
-              : '';
+            : '';
 
-          const footerHtml =
-            open
+    const footerHtml =
+        open
             && options.footerHtml
-              ? `
+            ? `
                 <div class="panel-section-footer">
                   ${options.footerHtml}
                 </div>
               `
-              : '';
+            : '';
 
-          const header = `
+    const header = `
             <button
               class="panel-section-header"
               type="button"
@@ -1339,16 +1438,16 @@
                 <h3>${escapeHtml(title)}</h3>
 
                 ${
-                  meta
-                    ? `<span>${escapeHtml(meta)}</span>`
-                    : ''
+                    meta
+                        ? `<span>${escapeHtml(meta)}</span>`
+                        : ''
                 }
               </span>
 
               ${
-                inlineAction
-                  ? ''
-                  : `
+                    inlineAction
+                        ? ''
+                        : `
                     <span class="panel-section-extra">
                       <span
                         class="panel-section-arrow"
@@ -1356,12 +1455,12 @@
                       </span>
                     </span>
                   `
-              }
+                }
             </button>
           `;
 
-          const headerRow = inlineAction
-            ? `
+    const headerRow = inlineAction
+        ? `
               <div class="panel-section-header-row">
                 ${header}
 
@@ -1375,13 +1474,13 @@
                 </span>
               </div>
             `
-            : header;
+        : header;
 
-          return `
+    return `
             <section
               class="panel-section ${
-                open ? 'is-open' : ''
-              }">
+                    open ? 'is-open' : ''
+                }">
 
               ${headerRow}
 
@@ -1396,59 +1495,62 @@
               </div>
             </section>
           `;
-        }
+}
 
-      function renderInspectorSectionEmpty(
-        message
-      ) {
-        return `
+function renderInspectorSectionEmpty(
+    message
+)
+{
+    return `
           <div class="inspector-section-empty">
             ${escapeHtml(
-              translateText(message)
+                translateText(message)
             )}
           </div>
         `;
-      }
+}
 
-      function renderPersonPanelViewAll({
-        resource,
-        count,
-        personId
-      }) {
-        if (!count || !personId) {
-          return '';
-        }
+function renderPersonPanelViewAll({
+    resource,
+    count,
+    personId
+})
+{
+    if (!count || !personId)
+    {
+        return '';
+    }
 
-        const nouns = {
-          photos:
+    const nouns = {
+        photos:
             count === 1
-              ? 'photo'
-              : 'photos',
+                ? 'photo'
+                : 'photos',
 
-          archive:
+        archive:
             count === 1
-              ? 'file'
-              : 'files',
+                ? 'file'
+                : 'files',
 
-          notes:
+        notes:
             count === 1
-              ? 'note'
-              : 'notes'
-        };
+                ? 'note'
+                : 'notes'
+    };
 
-        const noun =
-          nouns[resource]
+    const noun =
+        nouns[resource]
           || 'items';
 
-        return `
+    return `
           <button
             class="panel-section-view-all"
             type="button"
             data-person-resource-view="${
-              escapeHtml(resource)
+                escapeHtml(resource)
             }"
             data-person-resource-person="${
-              escapeHtml(personId)
+                escapeHtml(personId)
             }">
 
             <span>
@@ -1465,253 +1567,270 @@
             </span>
           </button>
         `;
-      }
+}
 
-    function renderPanelButtonLabel(iconHtml, label) {
-      return `<span class="panel-button-label">
+function renderPanelButtonLabel(iconHtml, label)
+{
+    return `<span class="panel-button-label">
         <span class="panel-button-icon" aria-hidden="true">${iconHtml}</span>
         <span class="panel-button-text">${escapeHtml(label)}</span>
       </span>`;
-    }
+}
 
-    const APP_SORT_OPTIONS = Object.freeze({
-      projects: [
+const APP_SORT_OPTIONS = Object.freeze({
+    projects: [
         { value: 'name', label: 'Name' },
         { value: 'updated', label: 'Last updated' },
         { value: 'created', label: 'Date created' },
         { value: 'people', label: 'People count' }
-      ],
+    ],
 
-      people: [
+    people: [
         { value: 'first', label: 'First name' },
         { value: 'last', label: 'Last name' },
         { value: 'birth', label: 'Birth date' },
         { value: 'updated', label: 'Last updated' },
         { value: 'created', label: 'Date created' }
-      ],
+    ],
 
-      geneograph: [
+    geneograph: [
         { value: 'name', label: 'Name' },
         { value: 'updated', label: 'Last updated' },
         { value: 'created', label: 'Date created' }
-      ],
+    ],
 
-      albums: [
+    albums: [
         { value: 'photoName', label: 'Photo name' },
         { value: 'updated', label: 'Last updated' },
         { value: 'added', label: 'Date added' }
-      ],
+    ],
 
-      archiveFiles: [
+    archiveFiles: [
         { value: 'name', label: 'File name' },
         { value: 'updated', label: 'Last updated' },
         { value: 'added', label: 'Date added' },
         { value: 'type', label: 'Type' }
-      ],
+    ],
 
-      archiveSources: [
+    archiveSources: [
         { value: 'name', label: 'Name' },
         { value: 'updated', label: 'Last updated' },
         { value: 'created', label: 'Date created' }
-      ],
+    ],
 
-      notes: [
+    notes: [
         { value: 'name', label: 'Name' },
         { value: 'updated', label: 'Last updated' },
         { value: 'created', label: 'Date created' }
-      ],
+    ],
 
-      places: [
+    places: [
         { value: 'name', label: 'Name' },
         { value: 'updated', label: 'Last updated' },
         { value: 'created', label: 'Date created' }
-      ]
-    });
+    ]
+});
 
-    const appSortControlRegistry =
-      new Map();
+const appSortControlRegistry =
+    new Map();
 
-    function normalizeAppSortDirection(
-      direction
-    ) {
-      return direction === 'ascending'
+function normalizeAppSortDirection(
+    direction
+)
+{
+    return direction === 'ascending'
         ? 'ascending'
         : 'descending';
-    }
+}
 
-    function appSortTimestamp(value) {
-      const timestamp =
+function appSortTimestamp(value)
+{
+    const timestamp =
         Date.parse(value);
 
-      return Number.isFinite(timestamp)
+    return Number.isFinite(timestamp)
         ? timestamp
         : Number.NaN;
-    }
+}
 
-    function appSortCollator() {
-      return new Intl.Collator(
+function appSortCollator()
+{
+    return new Intl.Collator(
         state.language === 'ru'
-          ? 'ru'
-          : 'en',
+            ? 'ru'
+            : 'en',
         {
-          sensitivity: 'base',
-          numeric: true
+            sensitivity: 'base',
+            numeric: true
         }
-      );
-    }
+    );
+}
 
-    function compareAppSortValues(
-      first,
-      second,
-      {
+function compareAppSortValues(
+    first,
+    second,
+    {
         type = 'text',
         direction = 'ascending'
-      } = {}
-    ) {
-      const normalizedDirection =
+    } = {}
+)
+{
+    const normalizedDirection =
         normalizeAppSortDirection(
-          direction
+            direction
         );
 
-      const firstMissing =
+    const firstMissing =
         type === 'number'
-          ? !Number.isFinite(first)
-          : !String(first ?? '').trim();
+            ? !Number.isFinite(first)
+            : !String(first ?? '').trim();
 
-      const secondMissing =
+    const secondMissing =
         type === 'number'
-          ? !Number.isFinite(second)
-          : !String(second ?? '').trim();
+            ? !Number.isFinite(second)
+            : !String(second ?? '').trim();
 
-      /*
+    /*
       * Missing values are always last. Do this
       * before applying the direction multiplier.
       */
-      if (firstMissing && secondMissing) {
+    if (firstMissing && secondMissing)
+    {
         return 0;
-      }
-
-      if (firstMissing) {
-        return 1;
-      }
-
-      if (secondMissing) {
-        return -1;
-      }
-
-      let comparison;
-
-      if (type === 'number') {
-        comparison =
-          first - second;
-      } else {
-        comparison =
-          appSortCollator().compare(
-            String(first),
-            String(second)
-          );
-      }
-
-      return normalizedDirection
-        === 'descending'
-          ? -comparison
-          : comparison;
     }
 
-    function appSortRecords(
-      records,
-      {
+    if (firstMissing)
+    {
+        return 1;
+    }
+
+    if (secondMissing)
+    {
+        return -1;
+    }
+
+    let comparison;
+
+    if (type === 'number')
+    {
+        comparison =
+            first - second;
+    }
+    else
+    {
+        comparison =
+            appSortCollator().compare(
+                String(first),
+                String(second)
+            );
+    }
+
+    return normalizedDirection
+        === 'descending'
+        ? -comparison
+        : comparison;
+}
+
+function appSortRecords(
+    records,
+    {
         field,
         direction,
         extractors,
         getFallback = null
-      }
-    ) {
-      const extractor =
+    }
+)
+{
+    const extractor =
         extractors[field]
         || Object.values(extractors)[0];
 
-      return records
+    return records
         .map((record, index) => ({
-          record,
-          index
+            record,
+            index
         }))
-        .sort((firstItem, secondItem) => {
-          const first =
-            firstItem.record;
+        .sort((firstItem, secondItem) =>
+        {
+            const first =
+                firstItem.record;
 
-          const second =
-            secondItem.record;
+            const second =
+                secondItem.record;
 
-          const comparison =
-            compareAppSortValues(
-              extractor.get(first),
-              extractor.get(second),
-              {
-                type:
+            const comparison =
+                compareAppSortValues(
+                    extractor.get(first),
+                    extractor.get(second),
+                    {
+                        type:
                   extractor.type,
-                direction
-              }
-            );
+                        direction
+                    }
+                );
 
-          if (comparison) {
-            return comparison;
-          }
-
-          if (getFallback) {
-            const fallbackComparison =
-              compareAppSortValues(
-                getFallback(first),
-                getFallback(second),
-                {
-                  type: 'text',
-                  direction
-                }
-              );
-
-            if (fallbackComparison) {
-              return fallbackComparison;
+            if (comparison)
+            {
+                return comparison;
             }
-          }
 
-          /*
+            if (getFallback)
+            {
+                const fallbackComparison =
+                    compareAppSortValues(
+                        getFallback(first),
+                        getFallback(second),
+                        {
+                            type: 'text',
+                            direction
+                        }
+                    );
+
+                if (fallbackComparison)
+                {
+                    return fallbackComparison;
+                }
+            }
+
+            /*
           * Preserve source order for completely
           * equivalent records.
           */
-          return (
-            firstItem.index
+            return (
+                firstItem.index
             - secondItem.index
-          );
+            );
         })
         .map(item => item.record);
-    }
+}
 
-    function renderAppSortControl({
-      id,
-      field,
-      direction,
-      ariaLabel,
-      options,
-      className = ''
-    }) {
-      const normalizedDirection =
+function renderAppSortControl({
+    id,
+    field,
+    direction,
+    ariaLabel,
+    options,
+    className = ''
+})
+{
+    const normalizedDirection =
         normalizeAppSortDirection(
-          direction
+            direction
         );
 
-      const selectedOption =
+    const selectedOption =
         options.find(option =>
-          option.value === field
+            option.value === field
         )
         || options[0];
 
-      const directionLabel =
+    const directionLabel =
         normalizedDirection
           === 'ascending'
             ? 'Ascending'
             : 'Descending';
 
-      return `
+    return `
         <span
           class="
             app-sort-field
@@ -1725,9 +1844,9 @@
             id="${escapeHtml(id)}"
             data-app-sort-trigger
             aria-label="${escapeHtml(
-              `${ariaLabel}: ${
-                t(selectedOption.label)
-              }, ${t(directionLabel)}`
+                `${ariaLabel}: ${
+                    t(selectedOption.label)
+                }, ${t(directionLabel)}`
             )}"
             aria-haspopup="dialog"
             aria-expanded="false">
@@ -1736,10 +1855,10 @@
               class="
                 app-sort-icon
                 ${
-                  normalizedDirection
+                    normalizedDirection
                     === 'ascending'
-                      ? 'is-ascending'
-                      : 'is-descending'
+                        ? 'is-ascending'
+                        : 'is-descending'
                 }
               "
               aria-hidden="true">
@@ -1748,8 +1867,8 @@
 
             <span class="app-sort-current">
               ${escapeHtml(
-                t(selectedOption.label)
-              )}
+                    t(selectedOption.label)
+                )}
             </span>
 
             <span
@@ -1760,35 +1879,36 @@
           </button>
         </span>
       `;
-    }
+}
 
-    function renderAppSortOption({
-      value,
-      label,
-      selected,
-      attribute
-    }) {
-      return `
+function renderAppSortOption({
+    value,
+    label,
+    selected,
+    attribute
+})
+{
+    return `
         <button
           class="app-sort-option"
           type="button"
           role="radio"
           aria-checked="${
-            selected
-              ? 'true'
-              : 'false'
-          }"
+                selected
+                    ? 'true'
+                    : 'false'
+            }"
           ${attribute}="${escapeHtml(
-            value
-          )}">
+                value
+            )}">
 
           <span
             class="app-sort-option-check"
             aria-hidden="true">
             ${
-              selected
-                ? icon.check
-                : ''
+                selected
+                    ? icon.check
+                    : ''
             }
           </span>
 
@@ -1797,58 +1917,60 @@
           </span>
         </button>
       `;
-    }
+}
 
-    function openAppSortPopover(
-      id,
-      focusSection = ''
-    ) {
-      const config =
+function openAppSortPopover(
+    id,
+    focusSection = ''
+)
+{
+    const config =
         appSortControlRegistry.get(id);
 
-      const anchor =
+    const anchor =
         document.getElementById(id);
 
-      if (
+    if (
         !config
         || !anchor
-      ) {
+    )
+    {
         return;
-      }
+    }
 
-      closeMenu();
+    closeMenu();
 
-      const field =
+    const field =
         config.getField();
 
-      const direction =
+    const direction =
         normalizeAppSortDirection(
-          config.getDirection()
+            config.getDirection()
         );
 
-      const menu =
+    const menu =
         document.createElement('div');
 
-      menu.id =
+    menu.id =
         'projectMenu';
 
-      menu.className =
+    menu.className =
         'menu-popover app-sort-popover';
 
-      menu.dataset.appSortId =
+    menu.dataset.appSortId =
         id;
 
-      menu.setAttribute(
+    menu.setAttribute(
         'role',
         'dialog'
-      );
+    );
 
-      menu.setAttribute(
+    menu.setAttribute(
         'aria-label',
         t('Sort')
-      );
+    );
 
-      menu.innerHTML = `
+    menu.innerHTML = `
         <section class="app-sort-popover-section">
           <div class="app-sort-popover-title">
             ${escapeHtml(t('Sort by'))}
@@ -1858,27 +1980,27 @@
             class="app-sort-popover-group"
             role="radiogroup"
             aria-label="${escapeHtml(
-              t('Sort by')
+                t('Sort by')
             )}">
 
             ${config.options
-              .map(option =>
-                renderAppSortOption({
-                  value:
+                .map(option =>
+                    renderAppSortOption({
+                        value:
                     option.value,
 
-                  label:
+                        label:
                     option.label,
 
-                  selected:
+                        selected:
                     option.value
                       === field,
 
-                  attribute:
+                        attribute:
                     'data-app-sort-field'
-                })
-              )
-              .join('')}
+                    })
+                )
+                .join('')}
           </div>
         </section>
 
@@ -1891,106 +2013,108 @@
             class="app-sort-popover-group"
             role="radiogroup"
             aria-label="${escapeHtml(
-              t('Direction')
+                t('Direction')
             )}">
 
             ${renderAppSortOption({
-              value:
+                value:
                 'ascending',
 
-              label:
+                label:
                 'Ascending',
 
-              selected:
+                selected:
                 direction
                   === 'ascending',
 
-              attribute:
+                attribute:
                 'data-app-sort-direction'
             })}
 
             ${renderAppSortOption({
-              value:
+                value:
                 'descending',
 
-              label:
+                label:
                 'Descending',
 
-              selected:
+                selected:
                 direction
                   === 'descending',
 
-              attribute:
+                attribute:
                 'data-app-sort-direction'
             })}
           </div>
         </section>
       `;
 
-      document.body.appendChild(menu);
+    document.body.appendChild(menu);
 
-      const rect =
+    const rect =
         anchor.getBoundingClientRect();
 
-      const margin =
+    const margin =
         12;
 
-      const left =
+    const left =
         Math.min(
-          Math.max(
-            margin,
-            rect.right
+            Math.max(
+                margin,
+                rect.right
               - menu.offsetWidth
-          ),
-          Math.max(
-            margin,
-            window.innerWidth
+            ),
+            Math.max(
+                margin,
+                window.innerWidth
               - menu.offsetWidth
               - margin
-          )
+            )
         );
 
-      let top =
+    let top =
         rect.bottom + 6;
 
-      if (
+    if (
         top + menu.offsetHeight
           > window.innerHeight - margin
-      ) {
+    )
+    {
         top =
-          Math.max(
-            margin,
-            rect.top
+            Math.max(
+                margin,
+                rect.top
               - menu.offsetHeight
               - 6
-          );
-      }
+            );
+    }
 
-      menu.style.left =
+    menu.style.left =
         `${left}px`;
 
-      menu.style.top =
+    menu.style.top =
         `${top}px`;
 
-      anchor.setAttribute(
+    anchor.setAttribute(
         'aria-expanded',
         'true'
-      );
+    );
 
-      function applySelection(
+    function applySelection(
         nextField,
         nextDirection,
         section
-      ) {
+    )
+    {
         closeMenu();
 
         config.onChange({
-          field:
+            field:
             nextField,
 
-          direction:
+            direction:
             normalizeAppSortDirection(
-              nextDirection
+                nextDirection
             )
         });
 
@@ -2000,302 +2124,329 @@
         * select both the field and direction in
         * one interaction.
         */
-        requestAnimationFrame(() => {
-          openAppSortPopover(
-            id,
-            section
-          );
+        requestAnimationFrame(() =>
+        {
+            openAppSortPopover(
+                id,
+                section
+            );
         });
-      }
-
-      menu.addEventListener(
-        'click',
-        event => {
-          const fieldButton =
-            event.target.closest(
-              '[data-app-sort-field]'
-            );
-
-          if (fieldButton) {
-            applySelection(
-              fieldButton.dataset
-                .appSortField,
-              direction,
-              'field'
-            );
-
-            return;
-          }
-
-          const directionButton =
-            event.target.closest(
-              '[data-app-sort-direction]'
-            );
-
-          if (directionButton) {
-            applySelection(
-              field,
-              directionButton.dataset
-                .appSortDirection,
-              'direction'
-            );
-          }
-        }
-      );
-
-      menu.addEventListener(
-        'keydown',
-        event => {
-          if (event.key === 'Escape') {
-            event.preventDefault();
-            event.stopPropagation();
-
-            closeMenu();
-            anchor.focus({
-              preventScroll: true
-            });
-
-            return;
-          }
-
-          const current =
-            event.target.closest(
-              '.app-sort-option'
-            );
-
-          if (!current) {
-            return;
-          }
-
-          const group =
-            current.closest(
-              '[role="radiogroup"]'
-            );
-
-          const buttons = [
-            ...group.querySelectorAll(
-              '.app-sort-option'
-            )
-          ];
-
-          const index =
-            buttons.indexOf(current);
-
-          let nextIndex =
-            index;
-
-          if (
-            event.key === 'ArrowDown'
-            || event.key === 'ArrowRight'
-          ) {
-            nextIndex =
-              (index + 1)
-              % buttons.length;
-          } else if (
-            event.key === 'ArrowUp'
-            || event.key === 'ArrowLeft'
-          ) {
-            nextIndex =
-              (
-                index - 1
-                + buttons.length
-              )
-              % buttons.length;
-          } else if (
-            event.key === 'Home'
-          ) {
-            nextIndex = 0;
-          } else if (
-            event.key === 'End'
-          ) {
-            nextIndex =
-              buttons.length - 1;
-          } else {
-            return;
-          }
-
-          event.preventDefault();
-
-          buttons[nextIndex].focus();
-        }
-      );
-
-      bindMenuLifecycle(anchor);
-
-      const focusSelector =
-        focusSection === 'direction'
-          ? '[data-app-sort-direction][aria-checked="true"]'
-          : focusSection === 'field'
-            ? '[data-app-sort-field][aria-checked="true"]'
-            : '.app-sort-option[aria-checked="true"]';
-
-      menu.querySelector(
-        focusSelector
-      )?.focus({
-        preventScroll: true
-      });
     }
 
-    function bindAppSortControl(
-      root,
-      {
+    menu.addEventListener(
+        'click',
+        event =>
+        {
+            const fieldButton =
+                event.target.closest(
+                    '[data-app-sort-field]'
+                );
+
+            if (fieldButton)
+            {
+                applySelection(
+                    fieldButton.dataset
+                        .appSortField,
+                    direction,
+                    'field'
+                );
+
+                return;
+            }
+
+            const directionButton =
+                event.target.closest(
+                    '[data-app-sort-direction]'
+                );
+
+            if (directionButton)
+            {
+                applySelection(
+                    field,
+                    directionButton.dataset
+                        .appSortDirection,
+                    'direction'
+                );
+            }
+        }
+    );
+
+    menu.addEventListener(
+        'keydown',
+        event =>
+        {
+            if (event.key === 'Escape')
+            {
+                event.preventDefault();
+                event.stopPropagation();
+
+                closeMenu();
+                anchor.focus({
+                    preventScroll: true
+                });
+
+                return;
+            }
+
+            const current =
+                event.target.closest(
+                    '.app-sort-option'
+                );
+
+            if (!current)
+            {
+                return;
+            }
+
+            const group =
+                current.closest(
+                    '[role="radiogroup"]'
+                );
+
+            const buttons = [
+                ...group.querySelectorAll(
+                    '.app-sort-option'
+                )
+            ];
+
+            const index =
+                buttons.indexOf(current);
+
+            let nextIndex =
+                index;
+
+            if (
+                event.key === 'ArrowDown'
+            || event.key === 'ArrowRight'
+            )
+            {
+                nextIndex =
+                    (index + 1)
+              % buttons.length;
+            }
+            else if (
+                event.key === 'ArrowUp'
+            || event.key === 'ArrowLeft'
+            )
+            {
+                nextIndex =
+                    (
+                        index - 1
+                + buttons.length
+                    )
+              % buttons.length;
+            }
+            else if (
+                event.key === 'Home'
+            )
+            {
+                nextIndex = 0;
+            }
+            else if (
+                event.key === 'End'
+            )
+            {
+                nextIndex =
+                    buttons.length - 1;
+            }
+            else
+            {
+                return;
+            }
+
+            event.preventDefault();
+
+            buttons[nextIndex].focus();
+        }
+    );
+
+    bindMenuLifecycle(anchor);
+
+    const focusSelector =
+        focusSection === 'direction'
+            ? '[data-app-sort-direction][aria-checked="true"]'
+            : focusSection === 'field'
+                ? '[data-app-sort-field][aria-checked="true"]'
+                : '.app-sort-option[aria-checked="true"]';
+
+    menu.querySelector(
+        focusSelector
+    )?.focus({
+        preventScroll: true
+    });
+}
+
+function bindAppSortControl(
+    root,
+    {
         id,
         options,
         getField,
         getDirection,
         onChange
-      }
-    ) {
-      const trigger =
+    }
+)
+{
+    const trigger =
         document.getElementById(id);
 
-      if (
+    if (
         !trigger
         || !root?.contains(trigger)
-      ) {
+    )
+    {
         return;
-      }
+    }
 
-      appSortControlRegistry.set(
+    appSortControlRegistry.set(
         id,
         {
-          options,
-          getField,
-          getDirection,
-          onChange
+            options,
+            getField,
+            getDirection,
+            onChange
         }
-      );
+    );
 
-      trigger.addEventListener(
+    trigger.addEventListener(
         'click',
-        () => {
-          const existingMenu =
-            document.getElementById(
-              'projectMenu'
-            );
+        () =>
+        {
+            const existingMenu =
+                document.getElementById(
+                    'projectMenu'
+                );
 
-          if (
-            existingMenu?.dataset
-              .appSortId === id
-          ) {
-            closeMenu();
-            return;
-          }
+            if (
+                existingMenu?.dataset
+                    .appSortId === id
+            )
+            {
+                closeMenu();
+                return;
+            }
 
-          openAppSortPopover(id);
+            openAppSortPopover(id);
         }
-      );
-    }
+    );
+}
 
-    function treePersonToPeopleRecordId(person) {
-      return person && getPerson(person.id) ? person.id : null;
-    }
+function treePersonToPeopleRecordId(person)
+{
+    return person && getPerson(person.id) ? person.id : null;
+}
 
-    const CONNECTED_NOTES_PREVIEW_LIMIT = 3;
+const CONNECTED_NOTES_PREVIEW_LIMIT = 3;
 
-    const PERSON_PANEL_PREVIEW_LIMITS =
-      Object.freeze({
+const PERSON_PANEL_PREVIEW_LIMITS =
+    Object.freeze({
         photos: 3,
         archive: 3,
         notes: CONNECTED_NOTES_PREVIEW_LIMIT
-      });
+    });
 
-    function personResourceDisplayName(person) {
-      return (
+function personResourceDisplayName(person)
+{
+    return (
         person?.names?.display
         || person?.name
         || 'Person'
-      );
-    }
+    );
+}
 
-    function resourceLabelsIncludePerson(
-      labels,
-      person
-    ) {
-      const name =
+function resourceLabelsIncludePerson(
+    labels,
+    person
+)
+{
+    const name =
         personResourceDisplayName(person);
 
-      return (labels || []).some(
+    return (labels || []).some(
         label =>
-          String(label || '').trim()
+            String(label || '').trim()
           === name
-      );
-    }
+    );
+}
 
-    function getArchiveFilesForPerson(
-      personId,
-      {
+function getArchiveFilesForPerson(
+    personId,
+    {
         includeDeleted =
-          false
-      } = {}
-    ) {
-      const person =
+            false
+    } = {}
+)
+{
+    const person =
         getPerson(
-          personId
+            personId
         );
 
-      if (!person) {
+    if (!person)
+    {
         return [];
-      }
+    }
 
-      const projectId =
+    const projectId =
         person.projectId
         || currentProjectId();
 
-      return (
+    return (
         sampleData.archiveFiles
         || []
-      )
+    )
         .filter(file =>
-          (
-            includeDeleted
+            (
+                includeDeleted
             || !file.deleted
-          )
+            )
           && (
-            !file.projectId
+              !file.projectId
             || file.projectId
               === projectId
           )
         )
         .filter(file =>
-          (
-            file.linkedPersonIds
+            (
+                file.linkedPersonIds
             || []
-          ).includes(
-            person.id
-          )
+            ).includes(
+                person.id
+            )
         );
-    }
+}
 
-    function openPersonFilesModal(
-      personId
-    ) {
-      const person =
+function openPersonFilesModal(
+    personId
+)
+{
+    const person =
         getPerson(
-          personId
+            personId
         );
 
-      if (!person) {
+    if (!person)
+    {
         showToast(
-          'Person record not found.'
+            'Person record not found.'
         );
 
         return;
-      }
+    }
 
-      const name =
+    const name =
         person.names?.display
         || person.name
         || 'this person';
 
-      const existingFileIds =
+    const existingFileIds =
         getArchiveFilesForPerson(
-          person.id
+            person.id
         ).map(file =>
-          file.id
+            file.id
         );
 
-      openConnectedFilesModal({
+    openConnectedFilesModal({
         projectId:
           person.projectId
           || currentProjectId(),
@@ -2309,97 +2460,103 @@
         existingFileIds,
 
         onSave:
-          fileIds => {
-            const currentPerson =
-              getPerson(
-                person.id
-              );
+          fileIds =>
+          {
+              const currentPerson =
+                  getPerson(
+                      person.id
+                  );
 
-            if (!currentPerson) {
-              return {
-                ok:
+              if (!currentPerson)
+              {
+                  return {
+                      ok:
                   false
-              };
-            }
+                  };
+              }
 
-            const writes =
-              fileIds.map(fileId => ({
-                ownerType:
+              const writes =
+                  fileIds.map(fileId => ({
+                      ownerType:
                   'file',
 
-                ownerId:
+                      ownerId:
                   fileId,
 
-                entityType:
+                      entityType:
                   'person',
 
-                entityId:
+                      entityId:
                   currentPerson.id,
 
-                shouldLink:
+                      shouldLink:
                   true
-              }));
+                  }));
 
-            const committed =
-              archiveSetConnectionsAtomically(
-                writes
-              );
+              const committed =
+                  archiveSetConnectionsAtomically(
+                      writes
+                  );
 
-            return {
-              ...committed,
+              return {
+                  ...committed,
 
-              ok:
+                  ok:
                 committed.ok
                 && committed.changedCount
                   === writes.length
-            };
+              };
           },
 
         afterSave:
-          () => {
-            renderAfterPersonConnectedResourcesChanged();
+          () =>
+          {
+              renderAfterPersonConnectedResourcesChanged();
           },
 
         successMessage:
           count =>
-            `${count} ${
-              count === 1
-                ? 'file'
-                : 'files'
-            } added to ${name}.`
-      });
-    }
+              `${count} ${
+                  count === 1
+                      ? 'file'
+                      : 'files'
+              } added to ${name}.`
+    });
+}
 
-    function getNotesForPerson(
-      personId,
-      options = {}
-    ) {
-      return getNotesForEntity(
+function getNotesForPerson(
+    personId,
+    options = {}
+)
+{
+    return getNotesForEntity(
         'person',
         personId,
         options
-      );
+    );
+}
+
+function renderPersonPhotoUnlinkButton(
+    photo,
+    personId
+)
+{
+    if (!photo?.id || !personId)
+    {
+        return '';
     }
 
-    function renderPersonPhotoUnlinkButton(
-      photo,
-      personId
-    ) {
-      if (!photo?.id || !personId) {
-        return '';
-      }
-
-      const photoLabel =
+    const photoLabel =
         photo.title
         || photo.filename
         || 'Photo';
 
-      const personLabel =
+    const personLabel =
         getPerson(personId)
-          ?.names?.display
+            ?.names?.display
         || 'this person';
 
-      return `
+    return `
         <button
           class="
             connected-note-unlink
@@ -2407,51 +2564,54 @@
           "
           type="button"
           data-person-photo-unlink="${escapeHtml(
-            photo.id
-          )}"
+                photo.id
+            )}"
           data-person-photo-unlink-person="${escapeHtml(
-            personId
-          )}"
+                personId
+            )}"
           aria-label="Unlink ${escapeHtml(
-            photoLabel
-          )} from ${escapeHtml(
-            personLabel
-          )}"
+                photoLabel
+            )} from ${escapeHtml(
+                personLabel
+            )}"
           title="Unlink photo">
 
           ${icon.unlink}
         </button>
       `;
-    }
+}
 
-    function renderFamilyPhotos(person) {
-      const photos =
+function renderFamilyPhotos(person)
+{
+    const photos =
         getPhotosForPerson(
-          person?.id
+            person?.id
         ).slice(
-          0,
-          PERSON_PANEL_PREVIEW_LIMITS
-            .photos
+            0,
+            PERSON_PANEL_PREVIEW_LIMITS
+                .photos
         );
 
-      if (!photos.length) {
+    if (!photos.length)
+    {
         return `
           <div class="panel-muted">
             No photos linked to this person.
           </div>
         `;
-      }
+    }
 
-      return `
+    return `
         <div class="connected-photo-grid">
           ${photos
-            .map(photo => {
-              const label =
-                photo.title
+                .map(photo =>
+                {
+                    const label =
+                        photo.title
                 || photo.filename
                 || 'Photo';
 
-              return `
+                    return `
                 <div
                   class="
                     person-connected-photo-item
@@ -2462,54 +2622,56 @@
                     class="connected-photo-button"
                     type="button"
                     data-family-photo="${escapeHtml(
-                      photo.id
+                        photo.id
                     )}"
                     title="${escapeHtml(
-                      label
+                        label
                     )}"
                     aria-label="Open ${escapeHtml(
-                      label
+                        label
                     )}">
 
                     ${renderPhotoThumbnail(
-                      photo,
-                      { label }
+                        photo,
+                        { label }
                     )}
                   </button>
 
                   ${renderPersonPhotoUnlinkButton(
-                    photo,
-                    person.id
-                  )}
+                        photo,
+                        person.id
+                    )}
                 </div>
               `;
-            })
-            .join('')}
+                })
+                .join('')}
         </div>
       `;
-    }
+}
 
-    function renderFamilyArchiveItems(
-      person
-    ) {
-      const files =
+function renderFamilyArchiveItems(
+    person
+)
+{
+    const files =
         getArchiveFilesForPerson(
-          person?.id
+            person?.id
         ).slice(
-          0,
-          PERSON_PANEL_PREVIEW_LIMITS
-            .archive
+            0,
+            PERSON_PANEL_PREVIEW_LIMITS
+                .archive
         );
 
-      if (!files.length) {
+    if (!files.length)
+    {
         return `
           <div class="panel-muted">
             No archive files linked to this person.
           </div>
         `;
-      }
+    }
 
-      return renderConnectedFileList({
+    return renderConnectedFileList({
         files,
 
         contextType:
@@ -2521,26 +2683,28 @@
 
         emptyText:
           'No archive files linked to this person.'
-      });
-    }
+    });
+}
 
-    function renderFamilyNotes(
-      person
-    ) {
-      const notes =
+function renderFamilyNotes(
+    person
+)
+{
+    const notes =
         getNotesForPerson(
-          person?.id
+            person?.id
         );
 
-      if (!notes.length) {
+    if (!notes.length)
+    {
         return `
           <div class="panel-muted">
             No notes linked to this person.
           </div>
         `;
-      }
+    }
 
-      return renderConnectedNoteList({
+    return renderConnectedNoteList({
         notes,
 
         contextType:
@@ -2551,60 +2715,62 @@
 
         limit:
           PERSON_PANEL_PREVIEW_LIMITS
-            .notes,
+              .notes,
 
         emptyText:
           'No notes linked to this person.'
-      });
-    }
+    });
+}
 
-    function openPersonNotesModal(
-      personId,
-      context = 'tree'
-    ) {
-      const person =
+function openPersonNotesModal(
+    personId,
+    context = 'tree'
+)
+{
+    const person =
         getPerson(
-          personId
+            personId
         );
 
-      if (!person) {
+    if (!person)
+    {
         showToast(
-          'Person record not found.'
+            'Person record not found.'
         );
 
         return;
-      }
+    }
 
-      /*
+    /*
         The same sidebar renderer is used by:
         - Family Tree: "tree"
         - People preview: "people"
       */
-      const profileContext =
+    const profileContext =
         context === 'profile';
 
-      const sidebarContext =
+    const sidebarContext =
         context === 'people'
-          ? 'people'
-          : 'tree';
+            ? 'people'
+            : 'tree';
 
-      const personLabel =
+    const personLabel =
         noteEntityLabel(
-          'person',
-          person
+            'person',
+            person
         )
         || person.names?.display
         || person.name
         || 'this person';
 
-      const existingNoteIds =
+    const existingNoteIds =
         getNotesForPerson(
-          person.id
+            person.id
         ).map(note =>
-          note.id
+            note.id
         );
 
-      openNoteLinkPickerModal({
+    openNoteLinkPickerModal({
         projectId:
           person.projectId
           || currentProjectId(),
@@ -2639,255 +2805,271 @@
 
         onCreate:
           () =>
-            openNewNoteForContext(
-              'person',
-              person.id
-            ),
+              openNewNoteForContext(
+                  'person',
+                  person.id
+              ),
 
         onSave:
-          selectedNoteIds => {
-            const currentPerson =
-              getPerson(
-                person.id
-              );
+          selectedNoteIds =>
+          {
+              const currentPerson =
+                  getPerson(
+                      person.id
+                  );
 
-            if (!currentPerson) {
-              showToast(
-                'The person is no longer available.'
-              );
+              if (!currentPerson)
+              {
+                  showToast(
+                      'The person is no longer available.'
+                  );
 
-              return false;
-            }
+                  return false;
+              }
 
-            selectedNoteIds.forEach(
-              noteId => {
-                const note =
-                  getNote(
-                    noteId,
-                    {
-                      projectId:
+              selectedNoteIds.forEach(
+                  noteId =>
+                  {
+                      const note =
+                          getNote(
+                              noteId,
+                              {
+                                  projectId:
                         person.projectId
                         || currentProjectId(),
 
-                      includeArchived:
+                                  includeArchived:
                         false
-                    }
-                  );
+                              }
+                          );
 
-                if (!note) {
-                  return;
-                }
+                      if (!note)
+                      {
+                          return;
+                      }
 
-                const currentPersonIds =
-                  Array.isArray(
-                    note.linkedPersonIds
-                  )
-                    ? note.linkedPersonIds
-                    : [];
+                      const currentPersonIds =
+                          Array.isArray(
+                              note.linkedPersonIds
+                          )
+                              ? note.linkedPersonIds
+                              : [];
 
-                setNoteEntityLinks(
-                  note.id,
-                  'person',
-                  [
-                    ...new Set([
-                      ...currentPersonIds,
-                      currentPerson.id
-                    ])
-                  ],
-                  {
-                    projectId:
+                      setNoteEntityLinks(
+                          note.id,
+                          'person',
+                          [
+                              ...new Set([
+                                  ...currentPersonIds,
+                                  currentPerson.id
+                              ])
+                          ],
+                          {
+                              projectId:
                       note.projectId
+                          }
+                      );
                   }
-                );
-              }
-            );
+              );
 
-            return true;
+              return true;
           },
 
         afterSave:
-          () => {
-            if (profileContext) {
-              const profileScrollTop =
-                main.scrollTop;
+          () =>
+          {
+              if (profileContext)
+              {
+                  const profileScrollTop =
+                      main.scrollTop;
 
-              renderPeople();
+                  renderPeople();
 
-              requestAnimationFrame(
-                () => {
-                  main.scrollTop =
-                    profileScrollTop;
+                  requestAnimationFrame(
+                      () =>
+                      {
+                          main.scrollTop =
+                              profileScrollTop;
 
-                  main
-                    .querySelector(
-                      '[data-profile-resource-action="add-note"]'
-                    )
-                    ?.focus({
-                      preventScroll: true
-                    });
-                }
-              );
+                          main
+                              .querySelector(
+                                  '[data-profile-resource-action="add-note"]'
+                              )
+                              ?.focus({
+                                  preventScroll: true
+                              });
+                      }
+                  );
 
-              return;
-            }
+                  return;
+              }
 
-            /*
+              /*
               Keep the Notes accordion open and refresh
               only the sidebar that launched the modal.
             */
-            state.inspectorSections
-              .notes = true;
+              state.inspectorSections
+                  .notes = true;
 
-            rerenderPersonSidebarContext(
-              sidebarContext,
-              {
-                preserveScroll:
+              rerenderPersonSidebarContext(
+                  sidebarContext,
+                  {
+                      preserveScroll:
                   true,
 
-                scrollSectionId:
+                      scrollSectionId:
                   'notes',
 
-                focusSectionId:
+                      focusSectionId:
                   'notes'
-              }
-            );
+                  }
+              );
           },
 
         successMessage:
           count =>
-            `${count} ${
-              count === 1
-                ? 'note was'
-                : 'notes were'
-            } linked to ${personLabel}.`
-      });
-    }
+              `${count} ${
+                  count === 1
+                      ? 'note was'
+                      : 'notes were'
+              } linked to ${personLabel}.`
+    });
+}
 
-    function openFamilyPhoto(photoId) {
-      openAlbumsForPhoto(photoId);
-    }
+function openFamilyPhoto(photoId)
+{
+    openAlbumsForPhoto(photoId);
+}
 
-    function openFamilyArchiveItem(
-      fileId
-    ) {
-      if (!fileId) {
+function openFamilyArchiveItem(
+    fileId
+)
+{
+    if (!fileId)
+    {
         showToast(
-          'Archive item preview is simulated.'
+            'Archive item preview is simulated.'
         );
 
         return;
-      }
+    }
 
-      const file =
+    const file =
         archiveFileById(
-          fileId
+            fileId
         );
 
-      openArchiveLocation(
+    openArchiveLocation(
         {
-          view:
+            view:
             'files',
 
-          folderId:
+            folderId:
             archiveFileFolderId(
-              file
+                file
             ),
 
-          search:
+            search:
             '',
 
-          fileFilters:
+            fileFilters:
             archiveFileFiltersWithDefaults(
-              {}
+                {}
             ),
 
-          filterPresentation:
+            filterPresentation:
             'flat',
 
-          filterScopeFolderId:
+            filterScopeFolderId:
             null,
 
-          selectedFileId:
+            selectedFileId:
             file?.id
             || null,
 
-          inspectorCollapsed:
+            inspectorCollapsed:
             false
         },
         {
-          expandCurrent:
+            expandCurrent:
             true
         }
-      );
-    }
+    );
+}
 
 
-    function cleanFamilyTreeHeroDate(value) {
-      const clean = cleanGenealogyDateText(value);
-      return clean && !/placeholder/i.test(clean) ? clean : 'Unknown date';
-    }
+function cleanFamilyTreeHeroDate(value)
+{
+    const clean = cleanGenealogyDateText(value);
+    return clean && !/placeholder/i.test(clean) ? clean : 'Unknown date';
+}
 
-    function cleanFamilyTreeHeroPlace(value) {
-      const clean = String(value || '').trim();
-      if (!clean || /placeholder/i.test(clean)) return '';
-      return clean;
-    }
+function cleanFamilyTreeHeroPlace(value)
+{
+    const clean = String(value || '').trim();
+    if (!clean || /placeholder/i.test(clean)) return '';
+    return clean;
+}
 
-    function familyTreeHeroAgeSuffix(age) {
-      return age !== null && age !== undefined ? ` (${age} years)` : '';
-    }
+function familyTreeHeroAgeSuffix(age)
+{
+    return age !== null && age !== undefined ? ` (${age} years)` : '';
+}
 
-    function renderFamilyTreeHeroLifeDetails(person) {
-      const status = normalizeLivingStatus(person.status || person.living);
-      const birthDate = parsePeoplePrototypeDate(person.birth);
-      const deathDate = parsePeoplePrototypeDate(person.death);
-      const birthAge = status === 'Deceased' ? null : calculatePeopleAge(birthDate);
-      const deathAge = status === 'Deceased' && birthDate && deathDate ? calculatePeopleAge(birthDate, deathDate) : null;
-      const rows = [
+function renderFamilyTreeHeroLifeDetails(person)
+{
+    const status = normalizeLivingStatus(person.status || person.living);
+    const birthDate = parsePeoplePrototypeDate(person.birth);
+    const deathDate = parsePeoplePrototypeDate(person.death);
+    const birthAge = status === 'Deceased' ? null : calculatePeopleAge(birthDate);
+    const deathAge = status === 'Deceased' && birthDate && deathDate ? calculatePeopleAge(birthDate, deathDate) : null;
+    const rows = [
         {
-          label: 'Born',
-          date: `${cleanFamilyTreeHeroDate(person.birth)}${familyTreeHeroAgeSuffix(birthAge)}`,
-          place: cleanFamilyTreeHeroPlace(person.place)
+            label: 'Born',
+            date: `${cleanFamilyTreeHeroDate(person.birth)}${familyTreeHeroAgeSuffix(birthAge)}`,
+            place: cleanFamilyTreeHeroPlace(person.place)
         }
-      ];
+    ];
 
-      if (status === 'Deceased') {
+    if (status === 'Deceased')
+    {
         rows.push({
-          label: 'Deceased',
-          date: `${cleanFamilyTreeHeroDate(person.death)}${familyTreeHeroAgeSuffix(deathAge)}`,
-          place: cleanFamilyTreeHeroPlace(person.deathPlace)
+            label: 'Deceased',
+            date: `${cleanFamilyTreeHeroDate(person.death)}${familyTreeHeroAgeSuffix(deathAge)}`,
+            place: cleanFamilyTreeHeroPlace(person.deathPlace)
         });
-      }
-
-      return `<div class="tree-person-life">${rows.map(row => `<div class="tree-person-life-line"><div><strong>${escapeHtml(row.label)}:</strong> ${escapeHtml(row.date)}</div>${row.place ? `<div class="tree-person-life-place">${escapeHtml(row.place)}</div>` : ''}</div>`).join('')}</div>`;
     }
 
-    function renderFamilyTreePersonHero(
-      person
-    ) {
-      const status =
+    return `<div class="tree-person-life">${rows.map(row => `<div class="tree-person-life-line"><div><strong>${escapeHtml(row.label)}:</strong> ${escapeHtml(row.date)}</div>${row.place ? `<div class="tree-person-life-place">${escapeHtml(row.place)}</div>` : ''}</div>`).join('')}</div>`;
+}
+
+function renderFamilyTreePersonHero(
+    person
+)
+{
+    const status =
         person.status
         || person.living;
 
-      const photoCount =
+    const photoCount =
         getPersonPhotoCount(
-          person.id
+            person.id
         );
 
-      const fileCount =
+    const fileCount =
         getArchiveFilesForPerson(
-          person.id
+            person.id
         ).length;
 
-      const noteCount =
+    const noteCount =
         getNotesForPerson(
-          person.id
+            person.id
         ).length;
 
-      const viewState = treeProjectViewState();
-      const isFocusPerson = viewState.focusPersonId === person.id;
+    const viewState = treeProjectViewState();
+    const isFocusPerson = viewState.focusPersonId === person.id;
 
-      return `
+    return `
         <div
           class="
             people-hero
@@ -2910,8 +3092,8 @@
 
             <div class="tree-person-hero-actions">
               ${isFocusPerson
-                ? `<span class="tree-focus-status" aria-label="Current focus person">${icon.focus}<span>Current focus</span></span>`
-                : ''}
+                    ? `<span class="tree-focus-status" aria-label="Current focus person">${icon.focus}<span>Current focus</span></span>`
+                    : ''}
               <button
                 class="tree-person-hero-profile"
                 type="button"
@@ -2924,20 +3106,20 @@
 
           <div class="tree-person-hero-main">
             ${renderEditablePersonAvatar(
-              person,
-              'tree-person-hero-photo'
+                person,
+                'tree-person-hero-photo'
             )}
 
             <div class="tree-person-hero-copy">
               <h2>
                 ${escapeHtml(
-                  person.name
+                    person.name
                 )}
               </h2>
 
               ${renderFamilyTreeHeroLifeDetails(
-                person
-              )}
+                    person
+                )}
             </div>
           </div>
 
@@ -2949,7 +3131,7 @@
             ">
 
             ${renderLivingStatusChip(
-              status
+                status
             )}
 
             <button
@@ -2961,16 +3143,16 @@
               data-person-chip-section="photos"
               aria-controls="section-photos"
               aria-label="Show ${photoCount} ${
-                photoCount === 1
-                  ? 'photo'
-                  : 'photos'
-              }">
+                    photoCount === 1
+                        ? 'photo'
+                        : 'photos'
+                }">
 
               ${
-                state.language === 'ru'
-                  ? `${photoCount} фото`
-                  : `${photoCount} ${photoCount === 1 ? 'photo' : 'photos'}`
-              }
+                    state.language === 'ru'
+                        ? `${photoCount} фото`
+                        : `${photoCount} ${photoCount === 1 ? 'photo' : 'photos'}`
+                }
             </button>
 
             <button
@@ -2982,17 +3164,17 @@
               data-person-chip-section="archive"
               aria-controls="section-archive"
               aria-label="Show ${fileCount} ${
-                fileCount === 1
-                  ? 'file'
-                  : 'files'
-              }">
+                    fileCount === 1
+                        ? 'file'
+                        : 'files'
+                }">
 
               ${fileCount}
               ${
-                fileCount === 1
-                  ? 'file'
-                  : 'files'
-              }
+                    fileCount === 1
+                        ? 'file'
+                        : 'files'
+                }
             </button>
 
             <button
@@ -3004,38 +3186,41 @@
               data-person-chip-section="notes"
               aria-controls="section-notes"
               aria-label="Show ${noteCount} ${
-                noteCount === 1
-                  ? 'note'
-                  : 'notes'
-              }">
+                    noteCount === 1
+                        ? 'note'
+                        : 'notes'
+                }">
 
               ${noteCount}
               ${
-                noteCount === 1
-                  ? 'note'
-                  : 'notes'
-              }
+                    noteCount === 1
+                        ? 'note'
+                        : 'notes'
+                }
             </button>
           </div>
         </div>
       `;
-    }
+}
 
-    function personSidebarTreePerson(personOrId) {
-      const personId = typeof personOrId === 'string' ? personOrId : personOrId?.id;
-      return personById(personId) || currentTreePeople()[0] || null;
-    }
+function personSidebarTreePerson(personOrId)
+{
+    const personId = typeof personOrId === 'string' ? personOrId : personOrId?.id;
+    return personById(personId) || currentTreePeople()[0] || null;
+}
 
-    function personSidebarRecord(personId) {
-      const centralPerson = getPerson(personId);
-      if (centralPerson) return toPeopleRecord(centralPerson);
-      return currentPeopleRecords().find(person => person.id === personId) || null;
-    }
+function personSidebarRecord(personId)
+{
+    const centralPerson = getPerson(personId);
+    if (centralPerson) return toPeopleRecord(centralPerson);
+    return currentPeopleRecords().find(person => person.id === personId) || null;
+}
 
-    function renderPersonRecordInfo(personId) {
-      const record = personSidebarRecord(personId);
-      if (!record) return '<div class="panel-muted">No record information available.</div>';
-      return `<div class="record-info">
+function renderPersonRecordInfo(personId)
+{
+    const record = personSidebarRecord(personId);
+    if (!record) return '<div class="panel-muted">No record information available.</div>';
+    return `<div class="record-info">
         <div class="record-kv"><span>Added</span><span>1 May 2026</span></div>
         <div class="record-kv"><span>Updated</span><span>${escapeHtml(record.updated || '-')}</span></div>
         <div class="record-kv"><span>Parents</span><span>${escapeHtml(record.parents || 'Unknown parents')}</span></div>
@@ -3044,45 +3229,47 @@
 
           <span>
             ${escapeHtml(
-              getPeopleSourceStatus(
-                record
-              )
+                getPeopleSourceStatus(
+                    record
+                )
             )}
           </span>
         </div>
         <div class="record-kv"><span>Review status</span><span>${escapeHtml(getPeopleReviewStatus(record))}</span></div>
       </div>`;
-    }
+}
 
-    function renderPersonSidebar(
-      personOrId,
-      context = 'tree'
-    ) {
-      const isPeopleContext =
+function renderPersonSidebar(
+    personOrId,
+    context = 'tree'
+)
+{
+    const isPeopleContext =
         context === 'people';
 
-      const person =
+    const person =
         personSidebarTreePerson(
-          personOrId
+            personOrId
         );
 
-      const contextAttribute = `
+    const contextAttribute = `
         data-person-sidebar-context="${
-          escapeHtml(context)
+            escapeHtml(context)
         }"
       `;
 
-      if (!person) {
+    if (!person)
+    {
         return `
           <aside
             class="
               tree-inspector
               family-person-pane
               ${
-                isPeopleContext
-                  ? 'people-person-sidebar'
-                  : ''
-              }
+                    isPeopleContext
+                        ? 'people-person-sidebar'
+                        : ''
+                }
             "
             ${contextAttribute}
             aria-label="Selected person details">
@@ -3091,12 +3278,13 @@
             </div>
           </aside>
         `;
-      }
+    }
 
-      if (
+    if (
         isPeopleContext
         && state.peoplePreviewCollapsed
-      ) {
+    )
+    {
         return `
           <aside
             class="
@@ -3122,9 +3310,9 @@
             </button>
           </aside>
         `;
-      }
+    }
 
-      const actionsContent = `<div class="panel-actions">
+    const actionsContent = `<div class="panel-actions">
         <button class="button primary" type="button" id="quickEdit">
           ${renderPanelButtonLabel(icon.edit, 'Quick edit')}
         </button>
@@ -3139,62 +3327,62 @@
         </button>
       </div>`;
 
-      const timelineContent = renderFamilyTreeTimeline(person.id);
-      const relationshipsContent =
+    const timelineContent = renderFamilyTreeTimeline(person.id);
+    const relationshipsContent =
         renderRelationships(person.id);
 
-      const relationshipsCount =
+    const relationshipsCount =
         relationshipCount(person.id);
-      const photosContent = renderFamilyPhotos(person);
-      const archiveContent = renderFamilyArchiveItems(person);
-      const notesContent =
+    const photosContent = renderFamilyPhotos(person);
+    const archiveContent = renderFamilyArchiveItems(person);
+    const notesContent =
         renderFamilyNotes(
-          person
+            person
         );
-      const photoCount = getPersonPhotoCount(person.id);
-      const archiveCount = getArchiveFilesForPerson(person.id).length;
-      const noteCount = getNotesForPerson(person.id).length;
-      const centralPerson =
+    const photoCount = getPersonPhotoCount(person.id);
+    const archiveCount = getArchiveFilesForPerson(person.id).length;
+    const noteCount = getNotesForPerson(person.id).length;
+    const centralPerson =
         getPerson(
-          person.id
+            person.id
         );
 
-      const personSources =
+    const personSources =
         centralPerson
-          ? sourcesForTarget(
-              'person',
-              centralPerson.id,
-              centralPerson.projectId
+            ? sourcesForTarget(
+                'person',
+                centralPerson.id,
+                centralPerson.projectId
             )
-          : [];
+            : [];
 
-      const sourceCount =
+    const sourceCount =
         personSources.length;
 
-      const sourcesContent =
+    const sourcesContent =
         centralPerson
-          ? renderConnectedSourceList({
-              targetType:
+            ? renderConnectedSourceList({
+                targetType:
                 'person',
 
-              targetId:
+                targetId:
                 centralPerson.id,
 
-              projectId:
+                projectId:
                 centralPerson.projectId,
 
-              sources:
+                sources:
                 personSources,
 
-              emptyText:
+                emptyText:
                 'No sources linked to this person.'
             })
-          : renderInspectorSectionEmpty(
-              'No sources linked to this person.'
+            : renderInspectorSectionEmpty(
+                'No sources linked to this person.'
             );
-      const contextClass = isPeopleContext ? ' people-person-sidebar' : '';
+    const contextClass = isPeopleContext ? ' people-person-sidebar' : '';
 
-      return `
+    return `
         <aside
           class="tree-inspector family-person-pane${contextClass}"
           ${contextAttribute}
@@ -3203,245 +3391,258 @@
         <div class="family-person-actions">${actionsContent}</div>
         ${renderInspectorSection('insights', 'Insights', 'No insights found', '<div class="panel-muted">No insights found for this person.</div>')}
         ${renderInspectorSection(
-          'timeline',
-          'Timeline',
-          '',
-          timelineContent,
-          `<button
+            'timeline',
+            'Timeline',
+            '',
+            timelineContent,
+            `<button
             class="link"
             type="button"
             data-person-add-fact>
             ${renderPanelButtonLabel(
-              icon.plus,
-              'Add fact'
+                icon.plus,
+                'Add fact'
             )}
           </button>`,
-          { inlineAction: true }
+            { inlineAction: true }
         )}
         ${renderInspectorSection(
-          'relationships',
-          'Relationships',
-          `${relationshipsCount} ${
-            relationshipsCount === 1
-              ? 'relationship'
-              : 'relationships'
-          }`,
-          relationshipsContent
+            'relationships',
+            'Relationships',
+            `${relationshipsCount} ${
+                relationshipsCount === 1
+                    ? 'relationship'
+                    : 'relationships'
+            }`,
+            relationshipsContent
         )}
         ${renderInspectorSection(
-          'photos',
-          'Photos',
-          state.language === 'ru'
-            ? `${photoCount} фото`
-            : `${photoCount} ${photoCount === 1 ? 'photo' : 'photos'}`,
-          photosContent,
-          `
+            'photos',
+            'Photos',
+            state.language === 'ru'
+                ? `${photoCount} фото`
+                : `${photoCount} ${photoCount === 1 ? 'photo' : 'photos'}`,
+            photosContent,
+            `
             <button
               class="link"
               type="button"
               data-person-add-photos="${
-                escapeHtml(person.id)
-              }">
+                    escapeHtml(person.id)
+                }">
               ${renderPanelButtonLabel(
-                icon.plus,
-                'Add photos'
-              )}
+                    icon.plus,
+                    'Add photos'
+                )}
             </button>
           `,
-          {
-            inlineAction: true,
+            {
+                inlineAction: true,
 
-            footerHtml:
+                footerHtml:
               renderPersonPanelViewAll({
-                resource: 'photos',
-                count: photoCount,
-                personId: person.id
+                  resource: 'photos',
+                  count: photoCount,
+                  personId: person.id
               })
-          }
+            }
         )}
 
         ${renderInspectorSection(
-          'archive',
-          'Archive',
-          `${archiveCount} ${
-            archiveCount === 1
-              ? 'file'
-              : 'files'
-          }`,
-          archiveContent,
-          `
+            'archive',
+            'Archive',
+            `${archiveCount} ${
+                archiveCount === 1
+                    ? 'file'
+                    : 'files'
+            }`,
+            archiveContent,
+            `
             <button
               class="link"
               type="button"
               data-person-add-files="${escapeHtml(
-                person.id
-              )}">
+                    person.id
+                )}">
 
               ${renderPanelButtonLabel(
-                icon.plus,
-                'Add file'
-              )}
+                    icon.plus,
+                    'Add file'
+                )}
             </button>
           `,
-          {
-            inlineAction: true,
+            {
+                inlineAction: true,
 
-            footerHtml:
+                footerHtml:
               renderPersonPanelViewAll({
-                resource: 'archive',
-                count: archiveCount,
-                personId: person.id
+                  resource: 'archive',
+                  count: archiveCount,
+                  personId: person.id
               })
-          }
+            }
         )}
 
         ${renderInspectorSection(
-          'notes',
-          'Notes',
-          `${noteCount} ${
-            noteCount === 1
-              ? 'note'
-              : 'notes'
-          }`,
-          notesContent,
-          `
+            'notes',
+            'Notes',
+            `${noteCount} ${
+                noteCount === 1
+                    ? 'note'
+                    : 'notes'
+            }`,
+            notesContent,
+            `
             <button
               class="link"
               type="button"
               data-person-add-note="${escapeHtml(
-                person.id
-              )}">
+                    person.id
+                )}">
               ${renderPanelButtonLabel(
-                icon.plus,
-                'Add note'
-              )}
+                    icon.plus,
+                    'Add note'
+                )}
             </button>
           `,
-          {
-            inlineAction: true,
+            {
+                inlineAction: true,
 
-            footerHtml:
+                footerHtml:
               renderPersonPanelViewAll({
-                resource: 'notes',
-                count: noteCount,
-                personId: person.id
+                  resource: 'notes',
+                  count: noteCount,
+                  personId: person.id
               })
-          }
+            }
         )}
         ${renderInspectorSection(
-          'sources',
-          'Sources',
-          `${sourceCount} ${
-            sourceCount === 1
-              ? 'source'
-              : 'sources'
-          }`,
-          sourcesContent,
-          centralPerson
-            ? `
+            'sources',
+            'Sources',
+            `${sourceCount} ${
+                sourceCount === 1
+                    ? 'source'
+                    : 'sources'
+            }`,
+            sourcesContent,
+            centralPerson
+                ? `
               <button
                 class="link"
                 type="button"
                 data-person-manage-sources="${escapeHtml(
-                  centralPerson.id
+                    centralPerson.id
                 )}">
 
                 ${renderPanelButtonLabel(
-                  icon.plus,
-                  'Add source'
+                    icon.plus,
+                    'Add source'
                 )}
               </button>
             `
-            : '',
-          {
-            inlineAction:
+                : '',
+            {
+                inlineAction:
               true
-          }
+            }
         )}
         ${renderInspectorSection('record', 'Record Info', '', renderPersonRecordInfo(person.id))}
       </aside>`;
-    }
-    
-    function timelineEventBoundaryRank(event) {
-      if (event?.type === 'birth') return 0;
-      if (event?.type === 'death') return 2;
-      return 1;
-    }
+}
 
-    function compareTimelineEvents(a, b) {
-      const boundaryDiff = timelineEventBoundaryRank(a) - timelineEventBoundaryRank(b);
-      if (boundaryDiff) return boundaryDiff;
+function timelineEventBoundaryRank(event)
+{
+    if (event?.type === 'birth') return 0;
+    if (event?.type === 'death') return 2;
+    return 1;
+}
 
-      return parseTimelineSortValue(a) - parseTimelineSortValue(b);
-    }
+function compareTimelineEvents(a, b)
+{
+    const boundaryDiff = timelineEventBoundaryRank(a) - timelineEventBoundaryRank(b);
+    if (boundaryDiff) return boundaryDiff;
 
-    function getFamilyTreeTimelineEvents(personId) {
-      return getEventsForPerson(personId)
+    return parseTimelineSortValue(a) - parseTimelineSortValue(b);
+}
+
+function getFamilyTreeTimelineEvents(personId)
+{
+    return getEventsForPerson(personId)
         .slice()
         .sort(compareTimelineEvents);
+}
+
+function renderFamilyTreeTimeline(personId)
+{
+    const events = getFamilyTreeTimelineEvents(personId);
+
+    if (!events.length)
+    {
+        return `<div class="panel-muted">No timeline events recorded for this person.</div>`;
     }
 
-    function renderFamilyTreeTimeline(personId) {
-      const events = getFamilyTreeTimelineEvents(personId);
-
-      if (!events.length) {
-        return `<div class="panel-muted">No timeline events recorded for this person.</div>`;
-      }
-
-      return `<div class="timeline">
+    return `<div class="timeline">
         ${events.map(event => renderTimelineItem(event, personId)).join('')}
       </div>`;
-    }
+}
 
-    function parseTimelineSortValue(value) {
-      if (value && typeof value === 'object') {
+function parseTimelineSortValue(value)
+{
+    if (value && typeof value === 'object')
+    {
         if (value.sortDate) return Number(value.sortDate);
         value = value.date || value.dateLabel || value.originalText || '';
-      }
+    }
 
-      const text = String(value || '').trim();
-      if (!text) return Number.POSITIVE_INFINITY;
+    const text = String(value || '').trim();
+    if (!text) return Number.POSITIVE_INFINITY;
 
-      const fullDate = text.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
-      if (fullDate) {
+    const fullDate = text.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
+    if (fullDate)
+    {
         const [, dd, mm, yyyy] = fullDate;
         return Number(`${yyyy}${mm}${dd}`);
-      }
-
-      const yearOnly = text.match(/^(\d{4})$/);
-      if (yearOnly) return Number(`${yearOnly[1]}0000`);
-
-      const labelYear = text.match(/\b(\d{4})\b/);
-      if (labelYear) return Number(`${labelYear[1]}0000`);
-
-      return Number.POSITIVE_INFINITY;
     }
 
-    function timelineDateLabel(event) {
-      return formatGenealogyDateLabel(event);
-    }
+    const yearOnly = text.match(/^(\d{4})$/);
+    if (yearOnly) return Number(`${yearOnly[1]}0000`);
 
-    function timelineYearFromValue(value) {
-      if (!value) return '';
+    const labelYear = text.match(/\b(\d{4})\b/);
+    if (labelYear) return Number(`${labelYear[1]}0000`);
 
-      const label = formatGenealogyDateLabel(value)
+    return Number.POSITIVE_INFINITY;
+}
+
+function timelineDateLabel(event)
+{
+    return formatGenealogyDateLabel(event);
+}
+
+function timelineYearFromValue(value)
+{
+    if (!value) return '';
+
+    const label = formatGenealogyDateLabel(value)
         || String(value?.dateLabel || value?.date || value || '');
 
-      const match = String(label).match(/\b(\d{4})\b/);
-      return match ? match[1] : '';
-    }
+    const match = String(label).match(/\b(\d{4})\b/);
+    return match ? match[1] : '';
+}
 
-    function timelineYear(event) {
-      return timelineYearFromValue(event) || '—';
-    }
+function timelineYear(event)
+{
+    return timelineYearFromValue(event) || '—';
+}
 
-    function timelinePlaceLabel(event) {
-      return cleanEditFieldValue(getPlaceDisplay(event?.placeId))
+function timelinePlaceLabel(event)
+{
+    return cleanEditFieldValue(getPlaceDisplay(event?.placeId))
         || cleanEditFieldValue(event?.placeText);
-    }
+}
 
-    function timelineEventIcon(event) {
-      const map = {
+function timelineEventIcon(event)
+{
+    const map = {
         birth: icon.birth,
         childBirth: icon.birth,
         marriage: icon.marriage,
@@ -3451,13 +3652,14 @@
         burial: icon.mapPin,
         customFact: icon.info,
         death: icon.death
-      };
+    };
 
-      return map[event.type] || icon.clock;
-    }
+    return map[event.type] || icon.clock;
+}
 
-    function timelineEventColor(event) {
-      const map = {
+function timelineEventColor(event)
+{
+    const map = {
         marriage: 'amber',
         education: 'blue',
         occupation: 'blue',
@@ -3465,111 +3667,124 @@
         customFact: 'blue',
         burial: 'gray',
         death: 'gray'
-      };
+    };
 
-      return map[event.type] || '';
-    }
+    return map[event.type] || '';
+}
 
-    function timelineEventIsLasting(event) {
-      return event?.dateKind === 'span' || ['education', 'occupation'].includes(event?.type);
-    }
+function timelineEventIsLasting(event)
+{
+    return event?.dateKind === 'span' || ['education', 'occupation'].includes(event?.type);
+}
 
-    function timelineDateParts(value) {
-      if (!value) return null;
+function timelineDateParts(value)
+{
+    if (!value) return null;
 
-      if (value && typeof value === 'object') {
+    if (value && typeof value === 'object')
+    {
         const sortDate = String(value.sortDate || '').trim();
 
-        if (/^\d{8}$/.test(sortDate)) {
-          return {
-            year: Number(sortDate.slice(0, 4)),
-            month: Number(sortDate.slice(4, 6)),
-            day: Number(sortDate.slice(6, 8)),
-            precision: 'day'
-          };
+        if (/^\d{8}$/.test(sortDate))
+        {
+            return {
+                year: Number(sortDate.slice(0, 4)),
+                month: Number(sortDate.slice(4, 6)),
+                day: Number(sortDate.slice(6, 8)),
+                precision: 'day'
+            };
         }
 
         const label = value.date || value.dateLabel || value.originalText || '';
         return timelineDateParts(label);
-      }
-
-      const text = String(value || '').trim();
-      if (!text) return null;
-
-      const fullDate = text.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
-      if (fullDate) {
-        return {
-          year: Number(fullDate[3]),
-          month: Number(fullDate[2]),
-          day: Number(fullDate[1]),
-          precision: 'day'
-        };
-      }
-
-      const isoDate = text.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-      if (isoDate) {
-        return {
-          year: Number(isoDate[1]),
-          month: Number(isoDate[2]),
-          day: Number(isoDate[3]),
-          precision: 'day'
-        };
-      }
-
-      const yearMatch = text.match(/\b(\d{4})\b/);
-      if (yearMatch) {
-        return {
-          year: Number(yearMatch[1]),
-          month: 1,
-          day: 1,
-          precision: 'year'
-        };
-      }
-
-      return null;
     }
 
-    function timelineAgeAtEvent(event, personId) {
-      if (!event || event.type === 'birth' || timelineEventIsLasting(event)) return null;
+    const text = String(value || '').trim();
+    if (!text) return null;
 
-      const person = getPerson(personId);
-      if (!person?.birth) return null;
+    const fullDate = text.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
+    if (fullDate)
+    {
+        return {
+            year: Number(fullDate[3]),
+            month: Number(fullDate[2]),
+            day: Number(fullDate[1]),
+            precision: 'day'
+        };
+    }
 
-      const birth = timelineDateParts(person.birth);
-      const occurrence = timelineDateParts(event);
+    const isoDate = text.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (isoDate)
+    {
+        return {
+            year: Number(isoDate[1]),
+            month: Number(isoDate[2]),
+            day: Number(isoDate[3]),
+            precision: 'day'
+        };
+    }
 
-      if (!birth?.year || !occurrence?.year) return null;
+    const yearMatch = text.match(/\b(\d{4})\b/);
+    if (yearMatch)
+    {
+        return {
+            year: Number(yearMatch[1]),
+            month: 1,
+            day: 1,
+            precision: 'year'
+        };
+    }
 
-      let age = occurrence.year - birth.year;
+    return null;
+}
 
-      if (
+function timelineAgeAtEvent(event, personId)
+{
+    if (!event || event.type === 'birth' || timelineEventIsLasting(event)) return null;
+
+    const person = getPerson(personId);
+    if (!person?.birth) return null;
+
+    const birth = timelineDateParts(person.birth);
+    const occurrence = timelineDateParts(event);
+
+    if (!birth?.year || !occurrence?.year) return null;
+
+    let age = occurrence.year - birth.year;
+
+    if (
         birth.precision === 'day'
           && occurrence.precision === 'day'
           && (
-            occurrence.month < birth.month
+              occurrence.month < birth.month
               || (occurrence.month === birth.month && occurrence.day < birth.day)
           )
-      ) {
+    )
+    {
         age -= 1;
-      }
-
-      if (!Number.isFinite(age) || age < 0) return null;
-
-      return age;
     }
 
-    function timelineAgeLabel(event, personId) {
-      const age = timelineAgeAtEvent(event, personId);
-      return age === null ? '' : `Age: ${age}`;
-    }
+    if (!Number.isFinite(age) || age < 0) return null;
 
-    function timelineDateBlockHtml(event, personId) {
-      if (timelineEventIsLasting(event)) {
+    return age;
+}
+
+function timelineAgeLabel(event, personId)
+{
+    const age = timelineAgeAtEvent(event, personId);
+    return age === null ? '' : `Age: ${age}`;
+}
+
+function timelineDateBlockHtml(event, personId)
+{
+    if (timelineEventIsLasting(event))
+    {
         const fromYear = timelineYearFromValue(event.fromDate || event);
         const toYear = timelineYearFromValue(event.toDate);
 
-        if (fromYear && toYear) {
-          return `<span class="timeline-date-range">
+        if (fromYear && toYear)
+        {
+            return `<span class="timeline-date-range">
             <span>${escapeHtml(fromYear)}</span>
             <span class="timeline-date-separator">to</span>
             <span>${escapeHtml(toYear)}</span>
@@ -3580,111 +3795,123 @@
         if (toYear) return escapeHtml(toYear);
 
         return '—';
-      }
+    }
 
-      const year = timelineYear(event);
-      const hasYear = Boolean(
+    const year = timelineYear(event);
+    const hasYear = Boolean(
         timelineYearFromValue(event)
-      );
+    );
 
-      const age = hasYear
+    const age = hasYear
         ? timelineAgeLabel(event, personId)
         : '';
 
-      return `${escapeHtml(year)}${age ? `<span>${escapeHtml(age)}</span>` : ''}`;
-    }
+    return `${escapeHtml(year)}${age ? `<span>${escapeHtml(age)}</span>` : ''}`;
+}
 
-    function timelineEventDateLine(event) {
-      if (timelineEventIsLasting(event)) {
+function timelineEventDateLine(event)
+{
+    if (timelineEventIsLasting(event))
+    {
         return cleanEditFieldValue(event.dateRangeLabel)
           || timelineDateRangeLabel(event.fromDate, event.toDate)
           || '';
-      }
-
-      return timelineDateLabel(event) || '';
     }
 
-    function timelineEventDatePlaceLines(event) {
-      const date = timelineEventDateLine(event);
-      const place = timelinePlaceLabel(event);
+    return timelineDateLabel(event) || '';
+}
 
-      return [date, place].filter(Boolean);
-    }
+function timelineEventDatePlaceLines(event)
+{
+    const date = timelineEventDateLine(event);
+    const place = timelinePlaceLabel(event);
 
-    function timelineDetailLines(...values) {
-      return values
+    return [date, place].filter(Boolean);
+}
+
+function timelineDetailLines(...values)
+{
+    return values
         .flat()
         .map(value => cleanEditFieldValue(value))
         .filter(Boolean)
         .map(escapeHtml)
         .join('<br>');
-    }
+}
 
-    function timelineOtherPersonNames(event, personId) {
-      return (event.personIds || [])
+function timelineOtherPersonNames(event, personId)
+{
+    return (event.personIds || [])
         .filter(id => id && id !== personId)
         .map(getPersonDisplayName)
         .filter(Boolean);
+}
+
+function timelineEventDetail(event, personId)
+{
+    const datePlaceLines = timelineEventDatePlaceLines(event);
+
+    if (event.type === 'childBirth')
+    {
+        return timelineDetailLines(event.description, datePlaceLines);
     }
 
-    function timelineEventDetail(event, personId) {
-      const datePlaceLines = timelineEventDatePlaceLines(event);
-
-      if (event.type === 'childBirth') {
-        return timelineDetailLines(event.description, datePlaceLines);
-      }
-
-      if (event.type === 'marriage') {
+    if (event.type === 'marriage')
+    {
         const otherNames = timelineOtherPersonNames(event, personId);
         const withLine = otherNames.length
-          ? `With ${otherNames.join(' and ')}`
-          : event.description;
+            ? `With ${otherNames.join(' and ')}`
+            : event.description;
 
         return timelineDetailLines(withLine, datePlaceLines);
-      }
-
-      if (event.type === 'education') {
-        return timelineDetailLines(
-          event.institutionName || event.description,
-          datePlaceLines
-        );
-      }
-
-      if (event.type === 'occupation') {
-        return timelineDetailLines(
-          event.occupation || event.description,
-          event.company,
-          datePlaceLines
-        );
-      }
-      if (event.type === 'customFact') {
-        return timelineDetailLines(
-          event.description,
-          datePlaceLines,
-          event.notes
-        );
-      }
-
-      return timelineDetailLines(datePlaceLines);
     }
 
-    function renderTimelineItem(
-      event,
-      personId
-    ) {
-      const sourceCount =
+    if (event.type === 'education')
+    {
+        return timelineDetailLines(
+            event.institutionName || event.description,
+            datePlaceLines
+        );
+    }
+
+    if (event.type === 'occupation')
+    {
+        return timelineDetailLines(
+            event.occupation || event.description,
+            event.company,
+            datePlaceLines
+        );
+    }
+    if (event.type === 'customFact')
+    {
+        return timelineDetailLines(
+            event.description,
+            datePlaceLines,
+            event.notes
+        );
+    }
+
+    return timelineDetailLines(datePlaceLines);
+}
+
+function renderTimelineItem(
+    event,
+    personId
+)
+{
+    const sourceCount =
         sourcesForTarget(
-          'event',
-          event.id,
-          event.projectId
+            'event',
+            event.id,
+            event.projectId
         ).length;
 
-      return `
+    return `
         <div class="timeline-item">
           <div class="timeline-date">
             ${timelineDateBlockHtml(
-              event,
-              personId
+                event,
+                personId
             )}
           </div>
 
@@ -3692,36 +3919,36 @@
             class="
               timeline-dot
               ${escapeHtml(
-                timelineEventColor(
-                  event
-                )
-              )}
+                    timelineEventColor(
+                        event
+                    )
+                )}
             ">
 
             <span
               class="timeline-dot-icon"
               aria-hidden="true">
               ${timelineEventIcon(
-                event
-              )}
+                    event
+                )}
             </span>
           </div>
 
           <div class="timeline-copy">
             <strong>
               ${escapeHtml(
-                event.title
-              )}
+                    event.title
+                )}
             </strong>
 
             <span>
               ${String(
-                timelineEventDetail(
-                  event,
-                  personId
-                )
+                    timelineEventDetail(
+                        event,
+                        personId
+                    )
                 || ''
-              )}
+                )}
             </span>
 
             <button
@@ -3731,125 +3958,132 @@
               "
               type="button"
               data-event-manage-sources="${escapeHtml(
-                event.id
-              )}"
+                    event.id
+                )}"
               data-event-source-project="${escapeHtml(
-                event.projectId
+                    event.projectId
                 || currentProjectId()
-              )}">
+                )}">
 
               ${icon.archive}
 
               <span>
                 ${
-                  sourceCount
-                    ? `${sourceCount} ${
-                        sourceCount === 1
-                          ? 'source'
-                          : 'sources'
-                      }`
-                    : 'Add source'
+                    sourceCount
+                        ? `${sourceCount} ${
+                            sourceCount === 1
+                                ? 'source'
+                                : 'sources'
+                        }`
+                        : 'Add source'
                 }
               </span>
             </button>
           </div>
         </div>
       `;
-    }
+}
 
-    function bindTimelineSourceControls(
-      root,
-      {
+function bindTimelineSourceControls(
+    root,
+    {
         afterSave =
-          null
-      } = {}
-    ) {
-      root
+            null
+    } = {}
+)
+{
+    root
         ?.querySelectorAll(
-          '[data-event-manage-sources]'
+            '[data-event-manage-sources]'
         )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              const eventId =
-                button.dataset
-                  .eventManageSources;
+        .forEach(button =>
+        {
+            button.addEventListener(
+                'click',
+                () =>
+                {
+                    const eventId =
+                        button.dataset
+                            .eventManageSources;
 
-              const projectId =
-                button.dataset
-                  .eventSourceProject
+                    const projectId =
+                        button.dataset
+                            .eventSourceProject
                   || currentProjectId();
 
-              const event =
-                sourceTargetRecord(
+                    const event =
+                        sourceTargetRecord(
+                            'event',
+                            eventId,
+                            projectId
+                        );
+
+                    if (!event)
+                    {
+                        showToast(
+                            'The event is no longer available.'
+                        );
+
+                        return;
+                    }
+
+                    openSourcesForTargetModal({
+                        targetType:
                   'event',
-                  eventId,
-                  projectId
-                );
 
-              if (!event) {
-                showToast(
-                  'The event is no longer available.'
-                );
-
-                return;
-              }
-
-              openSourcesForTargetModal({
-                targetType:
-                  'event',
-
-                targetId:
+                        targetId:
                   event.id,
 
-                projectId,
+                        projectId,
 
-                title:
+                        title:
                   'Add sources',
 
-                subtitle:
+                        subtitle:
                   `Connect existing sources to ${
-                    event.title
+                      event.title
                     || 'this event'
                   }.`,
 
-                afterSave
-              });
-            }
-          );
+                        afterSave
+                    });
+                }
+            );
         });
-    }
+}
 
-    function parentChildRelationshipKey(
-      parentId,
-      childId
-    ) {
-      return `${parentId || ''}|${childId || ''}`;
-    }
+function parentChildRelationshipKey(
+    parentId,
+    childId
+)
+{
+    return `${parentId || ''}|${childId || ''}`;
+}
 
-    function parentChildRelationshipType(
-      family,
-      parentId,
-      childId
-    ) {
-      const key = parentChildRelationshipKey(
+function parentChildRelationshipType(
+    family,
+    parentId,
+    childId
+)
+{
+    const key = parentChildRelationshipKey(
         parentId,
         childId
-      );
+    );
 
-      return normalizeParentChildRelationshipType(
+    return normalizeParentChildRelationshipType(
         family?.parentChildTypes?.[key]
-      );
-    }
+    );
+}
 
-    function parentChildRelationshipTypeOptions(
-      selected = 'Biological'
-    ) {
-      const active =
+function parentChildRelationshipTypeOptions(
+    selected = 'Biological'
+)
+{
+    const active =
         normalizeParentChildRelationshipType(selected);
 
-      return PARENT_CHILD_RELATIONSHIP_TYPES
+    return PARENT_CHILD_RELATIONSHIP_TYPES
         .map(value => `
           <option
             value="${escapeHtml(value)}"
@@ -3858,282 +4092,303 @@
           </option>
         `)
         .join('');
-    }
+}
 
-    function setParentChildRelationshipType(
-      family,
-      parentId,
-      childId,
-      value = 'Biological'
-    ) {
-      if (!family || !parentId || !childId) return;
+function setParentChildRelationshipType(
+    family,
+    parentId,
+    childId,
+    value = 'Biological'
+)
+{
+    if (!family || !parentId || !childId) return;
 
-      const key = parentChildRelationshipKey(
+    const key = parentChildRelationshipKey(
         parentId,
         childId
-      );
+    );
 
-      family.parentChildTypes = {
+    family.parentChildTypes = {
         ...sanitizeParentChildTypes(
-          family.parentChildTypes
+            family.parentChildTypes
         ),
         [key]:
           normalizeParentChildRelationshipType(value)
-      };
-    }
+    };
+}
 
-    function removeParentChildRelationshipType(
-      family,
-      parentId,
-      childId
-    ) {
-      if (!family || !parentId || !childId) return;
+function removeParentChildRelationshipType(
+    family,
+    parentId,
+    childId
+)
+{
+    if (!family || !parentId || !childId) return;
 
-      const key = parentChildRelationshipKey(
+    const key = parentChildRelationshipKey(
         parentId,
         childId
-      );
+    );
 
-      const next = {
+    const next = {
         ...sanitizeParentChildTypes(
-          family.parentChildTypes
+            family.parentChildTypes
         )
-      };
+    };
 
-      delete next[key];
-      family.parentChildTypes = next;
-    }
+    delete next[key];
+    family.parentChildTypes = next;
+}
 
-    function relationBirthMeta(person) {
-      return person?.birth?.dateLabel
+function relationBirthMeta(person)
+{
+    return person?.birth?.dateLabel
         || person?.birth?.date
         || '';
-    }
+}
 
-    function relationGender(person) {
-      return String(person?.gender || '').toLowerCase();
-    }
+function relationGender(person)
+{
+    return String(person?.gender || '').toLowerCase();
+}
 
-    function parentRelationLabel(person) {
-      if (
+function parentRelationLabel(person)
+{
+    if (
         person.parentRole === 'father'
         || relationGender(person) === 'male'
-      ) {
+    )
+    {
         return 'Father';
-      }
+    }
 
-      if (
+    if (
         person.parentRole === 'mother'
         || relationGender(person) === 'female'
-      ) {
+    )
+    {
         return 'Mother';
-      }
-
-      return 'Parent';
     }
 
-    function siblingRelationLabel(person) {
-      if (relationGender(person) === 'male') {
+    return 'Parent';
+}
+
+function siblingRelationLabel(person)
+{
+    if (relationGender(person) === 'male')
+    {
         return 'Brother';
-      }
+    }
 
-      if (relationGender(person) === 'female') {
+    if (relationGender(person) === 'female')
+    {
         return 'Sister';
-      }
-
-      return 'Sibling';
     }
 
-    function childRelationLabel(person) {
-      if (relationGender(person) === 'male') {
+    return 'Sibling';
+}
+
+function childRelationLabel(person)
+{
+    if (relationGender(person) === 'male')
+    {
         return 'Son';
-      }
-
-      if (relationGender(person) === 'female') {
-        return 'Daughter';
-      }
-
-      return 'Child';
     }
 
-    function relationMeta(
-      label,
-      person,
-      qualifier = ''
-    ) {
-      const relationshipLabel = [
+    if (relationGender(person) === 'female')
+    {
+        return 'Daughter';
+    }
+
+    return 'Child';
+}
+
+function relationMeta(
+    label,
+    person,
+    qualifier = ''
+)
+{
+    const relationshipLabel = [
         label,
         qualifier
-      ].filter(Boolean).join(' · ');
+    ].filter(Boolean).join(' · ');
 
-      const birth = relationBirthMeta(person);
+    const birth = relationBirthMeta(person);
 
-      return [
+    return [
         relationshipLabel,
         birth
-      ].filter(Boolean).join(' - ');
-    }
+    ].filter(Boolean).join(' - ');
+}
 
-    function partnerRelationshipDateSummary(family) {
-      const type = relationshipTypeFromLegacy(family);
-      const definition = partnerRelationshipDefinition(type);
-      const startEvent = partnerRelationshipStartEvent(family, type);
-      const endEvent = partnerRelationshipEndEvent(family, type);
-      const startLabel = formatGenealogyDateLabel(startEvent?.date);
-      const endLabel = definition.hasEnd
+function partnerRelationshipDateSummary(family)
+{
+    const type = relationshipTypeFromLegacy(family);
+    const definition = partnerRelationshipDefinition(type);
+    const startEvent = partnerRelationshipStartEvent(family, type);
+    const endEvent = partnerRelationshipEndEvent(family, type);
+    const startLabel = formatGenealogyDateLabel(startEvent?.date);
+    const endLabel = definition.hasEnd
         ? formatGenealogyDateLabel(endEvent?.date)
         : '';
 
-      return {
+    return {
         startLabel,
         endLabel,
         rangeLabel: startLabel && endLabel
-          ? `${startLabel} – ${endLabel}`
-          : startLabel
-            ? (definition.hasEnd ? `From ${startLabel}` : startLabel)
-            : endLabel
-              ? `To ${endLabel}`
-              : ''
-      };
-    }
+            ? `${startLabel} – ${endLabel}`
+            : startLabel
+                ? (definition.hasEnd ? `From ${startLabel}` : startLabel)
+                : endLabel
+                    ? `To ${endLabel}`
+                    : ''
+    };
+}
 
-    function partnerRelationshipMeta(family) {
-      const type = relationshipTypeFromLegacy(family);
-      const displayType = type === 'Unknown relationship' ? 'Partner' : type;
-      const date = partnerRelationshipDateSummary(family).rangeLabel;
-      return [displayType, date].filter(Boolean).join(' · ');
-    }
+function partnerRelationshipMeta(family)
+{
+    const type = relationshipTypeFromLegacy(family);
+    const displayType = type === 'Unknown relationship' ? 'Partner' : type;
+    const date = partnerRelationshipDateSummary(family).rangeLabel;
+    return [displayType, date].filter(Boolean).join(' · ');
+}
 
-    function getRelationshipGroups(personId) {
-      const parents = getParents(personId);
-      const siblings = getSiblings(personId);
-      const partnerRelationships =
+function getRelationshipGroups(personId)
+{
+    const parents = getParents(personId);
+    const siblings = getSiblings(personId);
+    const partnerRelationships =
         getPartnerRelationships(personId);
-      const children = getChildren(personId);
+    const children = getChildren(personId);
 
-      return [
+    return [
         {
-          title: 'Parents',
-          items: parents.map(parent => {
-            const family =
-              unlinkFindCentralFamilyForParentChild(
-                parent.id,
-                personId
-              );
+            title: 'Parents',
+            items: parents.map(parent =>
+            {
+                const family =
+                    unlinkFindCentralFamilyForParentChild(
+                        parent.id,
+                        personId
+                    );
 
-            const type = parentChildRelationshipType(
-              family,
-              parent.id,
-              personId
-            );
+                const type = parentChildRelationshipType(
+                    family,
+                    parent.id,
+                    personId
+                );
 
-            return {
-              kind: 'parent',
-              person: parent,
-              personId,
-              relatedPersonId: parent.id,
-              familyId: family?.id || '',
-              meta: relationMeta(
-                parentRelationLabel(parent),
-                parent,
-                type === 'Biological' ? '' : type
-              ),
-              canEdit: true,
-              canUnlink: true
-            };
-          })
-        },
-        {
-          title: 'Siblings',
-          items: siblings.map(sibling => ({
-            kind: 'sibling',
-            person: sibling,
-            personId,
-            relatedPersonId: sibling.id,
-            familyId: '',
-            meta: relationMeta(
-              siblingRelationLabel(sibling),
-              sibling
-            ),
-            canEdit: false,
-            canUnlink: false
-          }))
-        },
-        {
-          title: 'Partners',
-          items: partnerRelationships
-            .map(relationship => {
-              const partner = getRelationshipPartner(
-                relationship,
-                personId
-              );
-
-              if (!partner) return null;
-
-              return {
-                kind: 'partner',
-                person: partner,
-                personId,
-                relatedPersonId: partner.id,
-                familyId: relationship.id || '',
-                meta: partnerRelationshipMeta(relationship),
-                canEdit: true,
-                canUnlink: true
-              };
+                return {
+                    kind: 'parent',
+                    person: parent,
+                    personId,
+                    relatedPersonId: parent.id,
+                    familyId: family?.id || '',
+                    meta: relationMeta(
+                        parentRelationLabel(parent),
+                        parent,
+                        type === 'Biological' ? '' : type
+                    ),
+                    canEdit: true,
+                    canUnlink: true
+                };
             })
-            .filter(Boolean)
         },
         {
-          title: 'Children',
-          items: children.map(child => {
-            const family =
-              unlinkFindCentralFamilyForParentChild(
+            title: 'Siblings',
+            items: siblings.map(sibling => ({
+                kind: 'sibling',
+                person: sibling,
                 personId,
-                child.id
-              );
+                relatedPersonId: sibling.id,
+                familyId: '',
+                meta: relationMeta(
+                    siblingRelationLabel(sibling),
+                    sibling
+                ),
+                canEdit: false,
+                canUnlink: false
+            }))
+        },
+        {
+            title: 'Partners',
+            items: partnerRelationships
+                .map(relationship =>
+                {
+                    const partner = getRelationshipPartner(
+                        relationship,
+                        personId
+                    );
 
-            const type = parentChildRelationshipType(
-              family,
-              personId,
-              child.id
-            );
+                    if (!partner) return null;
 
-            return {
-              kind: 'child',
-              person: child,
-              personId,
-              relatedPersonId: child.id,
-              familyId: family?.id || '',
-              meta: relationMeta(
-                childRelationLabel(child),
-                child,
-                type === 'Biological' ? '' : type
-              ),
-              canEdit: true,
-              canUnlink: true
-            };
-          })
+                    return {
+                        kind: 'partner',
+                        person: partner,
+                        personId,
+                        relatedPersonId: partner.id,
+                        familyId: relationship.id || '',
+                        meta: partnerRelationshipMeta(relationship),
+                        canEdit: true,
+                        canUnlink: true
+                    };
+                })
+                .filter(Boolean)
+        },
+        {
+            title: 'Children',
+            items: children.map(child =>
+            {
+                const family =
+                    unlinkFindCentralFamilyForParentChild(
+                        personId,
+                        child.id
+                    );
+
+                const type = parentChildRelationshipType(
+                    family,
+                    personId,
+                    child.id
+                );
+
+                return {
+                    kind: 'child',
+                    person: child,
+                    personId,
+                    relatedPersonId: child.id,
+                    familyId: family?.id || '',
+                    meta: relationMeta(
+                        childRelationLabel(child),
+                        child,
+                        type === 'Biological' ? '' : type
+                    ),
+                    canEdit: true,
+                    canUnlink: true
+                };
+            })
         }
-      ];
-    }
+    ];
+}
 
-    function renderRelation(item) {
-      const person = item?.person;
+function renderRelation(item)
+{
+    const person = item?.person;
 
-      if (!person) return '';
+    if (!person) return '';
 
-      const name =
+    const name =
         person.names?.display || 'Unnamed person';
 
-      const actions =
+    const actions =
         item.canEdit || item.canUnlink
-          ? `
+            ? `
             <div
               class="relation-actions"
               aria-label="Relationship actions">
 
               ${item.canEdit
-                ? `
+                    ? `
                   <button
                     class="relation-action-button"
                     type="button"
@@ -4142,10 +4397,10 @@
                     ${icon.edit}
                   </button>
                 `
-                : ''}
+                    : ''}
 
               ${item.canUnlink
-                ? `
+                    ? `
                   <button
                     class="relation-action-button danger"
                     type="button"
@@ -4154,12 +4409,12 @@
                     ${icon.unlink}
                   </button>
                 `
-                : ''}
+                    : ''}
             </div>
           `
-          : '';
+            : '';
 
-      return `
+    return `
         <div
           class="relation-row"
           data-relationship-row
@@ -4175,12 +4430,12 @@
             aria-label="Select ${escapeHtml(name)}">
 
             ${renderPersonAvatar(
-              person,
-              'small-avatar',
-              {
-                element: 'span',
-                decorative: true
-              }
+                person,
+                'small-avatar',
+                {
+                    element: 'span',
+                    decorative: true
+                }
             )}
 
             <span class="relation-row-copy">
@@ -4192,12 +4447,13 @@
           ${actions}
         </div>
       `;
-    }
+}
 
-    function renderRelationshipGroup(group) {
-      if (!group?.items?.length) return '';
+function renderRelationshipGroup(group)
+{
+    if (!group?.items?.length) return '';
 
-      return `
+    return `
         <section class="relationship-group">
           <div class="relation-group-title">
             ${escapeHtml(group.title)}
@@ -4208,39 +4464,43 @@
           </div>
         </section>
       `;
-    }
+}
 
-    function relationshipCount(personId) {
-      return getRelationshipGroups(personId)
+function relationshipCount(personId)
+{
+    return getRelationshipGroups(personId)
         .reduce(
-          (total, group) =>
-            total + group.items.length,
-          0
+            (total, group) =>
+                total + group.items.length,
+            0
         );
-    }
+}
 
-    function renderRelationships(personId) {
-      const groups = getRelationshipGroups(personId)
+function renderRelationships(personId)
+{
+    const groups = getRelationshipGroups(personId)
         .map(renderRelationshipGroup)
         .filter(Boolean);
 
-      if (!groups.length) {
+    if (!groups.length)
+    {
         return `
           <div class="panel-muted">
             No immediate relationships recorded for this person.
           </div>
         `;
-      }
+    }
 
-      return `
+    return `
         <div class="relationship-list">
           ${groups.join('')}
         </div>
       `;
-    }
- 
-    function getGenderForRelativeType(relativeType) {
-      const map = {
+}
+
+function getGenderForRelativeType(relativeType)
+{
+    const map = {
         father: 'Male',
         mother: 'Female',
         son: 'Male',
@@ -4250,60 +4510,66 @@
         parent: 'Unknown',
         child: 'Unknown',
         partner: 'Unknown'
-      };
+    };
 
-      return map[String(relativeType || '').toLowerCase()] || 'Unknown';
-    }
+    return map[String(relativeType || '').toLowerCase()] || 'Unknown';
+}
 
-    function statusDotClass(status) {
-      if (status === 'Deceased') return 'deceased';
-      if (status === 'Unknown') return 'unknown';
-      return 'living';
-    }
+function statusDotClass(status)
+{
+    if (status === 'Deceased') return 'deceased';
+    if (status === 'Unknown') return 'unknown';
+    return 'living';
+}
 
-    function normalizeLivingStatus(status) {
-      if (status === 'Deceased') return 'Deceased';
-      if (status === 'Unknown') return 'Unknown';
-      return 'Living';
-    }
+function normalizeLivingStatus(status)
+{
+    if (status === 'Deceased') return 'Deceased';
+    if (status === 'Unknown') return 'Unknown';
+    return 'Living';
+}
 
-    function livingStatusChipTone(
-      status
-    ) {
-      const safeStatus =
+function livingStatusChipTone(
+    status
+)
+{
+    const safeStatus =
         normalizeLivingStatus(
-          status
+            status
         );
 
-      if (
+    if (
         safeStatus === 'Deceased'
-      ) {
+    )
+    {
         return 'app-chip--deceased';
-      }
-
-      if (
-        safeStatus === 'Unknown'
-      ) {
-        return 'app-chip--unknown';
-      }
-
-      return 'app-chip--living';
     }
 
-    function renderLivingStatusChip(
-      status
-    ) {
-      const safeStatus =
+    if (
+        safeStatus === 'Unknown'
+    )
+    {
+        return 'app-chip--unknown';
+    }
+
+    return 'app-chip--living';
+}
+
+function renderLivingStatusChip(
+    status
+)
+{
+    const safeStatus =
         normalizeLivingStatus(
-          status
+            status
         );
 
-      return `
+    return `
         <span
           class="
             app-chip
             ${livingStatusChipTone(
-              safeStatus
+                safeStatus
             )}
             living-status-chip
           ">
@@ -4312,83 +4578,90 @@
             class="
               add-person-status-dot
               ${statusDotClass(
-                safeStatus
-              )}
+                    safeStatus
+                )}
             "
             aria-hidden="true">
           </span>
 
           <span>
             ${escapeHtml(
-              safeStatus
+                safeStatus
             )}
           </span>
         </span>
       `;
-    }
+}
 
-    function normalizeConnectRelationshipType(type) {
-      const value = String(type || '').toLowerCase();
+function normalizeConnectRelationshipType(type)
+{
+    const value = String(type || '').toLowerCase();
 
-      if (['father', 'mother', 'parent'].includes(value)) return 'parent';
-      if (['son', 'daughter', 'child'].includes(value)) return 'child';
-      if (['brother', 'sister', 'sibling'].includes(value)) return 'sibling';
-      if (['partner', 'spouse', 'husband', 'wife'].includes(value)) return 'partner';
+    if (['father', 'mother', 'parent'].includes(value)) return 'parent';
+    if (['son', 'daughter', 'child'].includes(value)) return 'child';
+    if (['brother', 'sister', 'sibling'].includes(value)) return 'sibling';
+    if (['partner', 'spouse', 'husband', 'wife'].includes(value)) return 'partner';
 
-      return 'parent';
-    }
+    return 'parent';
+}
 
-    function connectRelationshipLabel(type) {
-      const map = {
+function connectRelationshipLabel(type)
+{
+    const map = {
         parent: 'Parent',
         child: 'Child',
         sibling: 'Sibling',
         partner: 'Partner'
-      };
+    };
 
-      return map[normalizeConnectRelationshipType(type)] || 'Parent';
-    }
+    return map[normalizeConnectRelationshipType(type)] || 'Parent';
+}
 
-    function connectRelationshipSentence(type) {
-      const map = {
+function connectRelationshipSentence(type)
+{
+    const map = {
         parent: 'parent',
         child: 'child',
         sibling: 'sibling',
         partner: 'partner'
-      };
+    };
 
-      return map[normalizeConnectRelationshipType(type)] || 'parent';
-    }
+    return map[normalizeConnectRelationshipType(type)] || 'parent';
+}
 
-    function connectPersonName(person) {
-      return person?.names?.display || person?.name || 'Unknown person';
-    }
+function connectPersonName(person)
+{
+    return person?.names?.display || person?.name || 'Unknown person';
+}
 
-    function connectPersonLifeLine(person) {
-      const birth = formatGenealogyDateLabel(person?.birth);
-      const death = formatGenealogyDateLabel(person?.death);
+function connectPersonLifeLine(person)
+{
+    const birth = formatGenealogyDateLabel(person?.birth);
+    const death = formatGenealogyDateLabel(person?.death);
 
-      if (birth && death) return `${birth} - ${death}`;
-      if (birth) return birth;
-      if (death) return `Died ${death}`;
+    if (birth && death) return `${birth} - ${death}`;
+    if (birth) return birth;
+    if (death) return `Died ${death}`;
 
-      return 'Dates unknown';
-    }
+    return 'Dates unknown';
+}
 
-    function connectPersonPlaceLine(person) {
-      return (
+function connectPersonPlaceLine(person)
+{
+    return (
         getPlaceEventDisplay(
-          person?.birth
+            person?.birth
         )
         || getPlaceEventDisplay(
-          person?.death
+            person?.death
         )
         || ''
-      );
-    }
+    );
+}
 
-    function connectPersonSearchText(person) {
-      return [
+function connectPersonSearchText(person)
+{
+    return [
         connectPersonName(person),
         person?.names?.first,
         person?.names?.middle,
@@ -4396,168 +4669,186 @@
         person?.names?.maiden,
         connectPersonLifeLine(person),
         connectPersonPlaceLine(person)
-      ]
+    ]
         .filter(Boolean)
         .join(' ')
         .toLowerCase();
+}
+
+function connectPeopleAlreadyRelated(anchorPersonId, candidatePersonId, relationshipType)
+{
+    const type = normalizeConnectRelationshipType(relationshipType);
+
+    if (!anchorPersonId || !candidatePersonId || anchorPersonId === candidatePersonId)
+    {
+        return true;
     }
 
-    function connectPeopleAlreadyRelated(anchorPersonId, candidatePersonId, relationshipType) {
-      const type = normalizeConnectRelationshipType(relationshipType);
-
-      if (!anchorPersonId || !candidatePersonId || anchorPersonId === candidatePersonId) {
-        return true;
-      }
-
-      if (type === 'parent') {
+    if (type === 'parent')
+    {
         return getParents(anchorPersonId).some(parent => parent.id === candidatePersonId);
-      }
+    }
 
-      if (type === 'child') {
+    if (type === 'child')
+    {
         return getChildren(anchorPersonId).some(child => child.id === candidatePersonId);
-      }
+    }
 
-      if (type === 'sibling') {
+    if (type === 'sibling')
+    {
         const anchorFamilies = centralFamilyRecords().filter(family =>
-          unlinkFamilyChildrenIds(family).includes(anchorPersonId)
+            unlinkFamilyChildrenIds(family).includes(anchorPersonId)
         );
 
         return anchorFamilies.some(family =>
-          unlinkFamilyChildrenIds(family).includes(candidatePersonId)
+            unlinkFamilyChildrenIds(family).includes(candidatePersonId)
         );
-      }
-
-      return getPartnerRelationships(anchorPersonId)
-        .some(relationship => familyPartnerId(relationship, anchorPersonId) === candidatePersonId);
     }
 
-    function connectPersonCandidateScore(person, anchorPerson, relationshipType, query) {
-      let score = 0;
-      const type = normalizeConnectRelationshipType(relationshipType);
-      const search = connectPersonSearchText(person);
-      const q = String(query || '').trim().toLowerCase();
+    return getPartnerRelationships(anchorPersonId)
+        .some(relationship => familyPartnerId(relationship, anchorPersonId) === candidatePersonId);
+}
 
-      if (q && search.includes(q)) score += 80;
+function connectPersonCandidateScore(person, anchorPerson, relationshipType, query)
+{
+    let score = 0;
+    const type = normalizeConnectRelationshipType(relationshipType);
+    const search = connectPersonSearchText(person);
+    const q = String(query || '').trim().toLowerCase();
 
-      const anchorSurname = String(anchorPerson?.names?.last || '').toLowerCase();
-      const personSurname = String(person?.names?.last || '').toLowerCase();
+    if (q && search.includes(q)) score += 80;
 
-      if (anchorSurname && personSurname && anchorSurname === personSurname) score += 24;
+    const anchorSurname = String(anchorPerson?.names?.last || '').toLowerCase();
+    const personSurname = String(person?.names?.last || '').toLowerCase();
 
-      const anchorBirthPlace = getPlaceEventDisplay(anchorPerson?.birth).toLowerCase();
-      const personBirthPlace = getPlaceEventDisplay(person?.birth).toLowerCase();
+    if (anchorSurname && personSurname && anchorSurname === personSurname) score += 24;
 
-      if (anchorBirthPlace && personBirthPlace && anchorBirthPlace === personBirthPlace) score += 12;
+    const anchorBirthPlace = getPlaceEventDisplay(anchorPerson?.birth).toLowerCase();
+    const personBirthPlace = getPlaceEventDisplay(person?.birth).toLowerCase();
 
-      const gender = String(person?.gender || '').toLowerCase();
+    if (anchorBirthPlace && personBirthPlace && anchorBirthPlace === personBirthPlace) score += 12;
 
-      if (type === 'parent') {
+    const gender = String(person?.gender || '').toLowerCase();
+
+    if (type === 'parent')
+    {
         const anchorSort = Number(anchorPerson?.birth?.sortDate || 0);
         const candidateSort = Number(person?.birth?.sortDate || 0);
         if (anchorSort && candidateSort && candidateSort < anchorSort) score += 18;
-      }
+    }
 
-      if (type === 'child') {
+    if (type === 'child')
+    {
         const anchorSort = Number(anchorPerson?.birth?.sortDate || 0);
         const candidateSort = Number(person?.birth?.sortDate || 0);
         if (anchorSort && candidateSort && candidateSort > anchorSort) score += 18;
-      }
-
-      if (type === 'partner' && ['male', 'female', 'unknown'].includes(gender)) {
-        score += 4;
-      }
-
-      return score;
     }
 
-    function connectPersonCandidates() {
-      const anchor = getPerson(connectPersonModalState.anchorPersonId);
-      if (!anchor) return [];
+    if (type === 'partner' && ['male', 'female', 'unknown'].includes(gender))
+    {
+        score += 4;
+    }
 
-      const query = String(connectPersonModalState.query || '').trim().toLowerCase();
-      const relationshipType = normalizeConnectRelationshipType(connectPersonModalState.relationshipType);
+    return score;
+}
 
-      return getPeople(currentProjectId())
+function connectPersonCandidates()
+{
+    const anchor = getPerson(connectPersonModalState.anchorPersonId);
+    if (!anchor) return [];
+
+    const query = String(connectPersonModalState.query || '').trim().toLowerCase();
+    const relationshipType = normalizeConnectRelationshipType(connectPersonModalState.relationshipType);
+
+    return getPeople(currentProjectId())
         .filter(person => person?.id && person.id !== anchor.id)
         .filter(person => !person.deleted)
         .filter(person => !connectPeopleAlreadyRelated(anchor.id, person.id, relationshipType))
         .filter(person => !query || connectPersonSearchText(person).includes(query))
         .map(person => ({
-          person,
-          score: connectPersonCandidateScore(person, anchor, relationshipType, query)
+            person,
+            score: connectPersonCandidateScore(person, anchor, relationshipType, query)
         }))
         .sort((a, b) => b.score - a.score || connectPersonName(a.person).localeCompare(connectPersonName(b.person)))
         .slice(0, query ? 12 : 3)
         .map(item => item.person);
-    }
+}
 
-    function connectPersonSelectedValidation() {
-      if (!connectPersonModalState.selectedPersonId) return { ok: true };
+function connectPersonSelectedValidation()
+{
+    if (!connectPersonModalState.selectedPersonId) return { ok: true };
 
-      return validateRelationshipConnection({
+    return validateRelationshipConnection({
         anchorPersonId: connectPersonModalState.anchorPersonId,
         relativePersonId: connectPersonModalState.selectedPersonId,
         relationshipType: connectPersonModalState.relationshipType,
         parentFamilySelection: connectPersonModalState.parentFamilySelection
-      });
+    });
+}
+
+function connectPersonActiveWarning()
+{
+    const anchor = getPerson(connectPersonModalState.anchorPersonId);
+    const selected = getPerson(connectPersonModalState.selectedPersonId);
+    const type = normalizeConnectRelationshipType(connectPersonModalState.relationshipType);
+
+    if (!anchor) return null;
+
+    if (!selected && type === 'parent' && getParents(anchor.id).length > 0)
+    {
+        return {
+            severity: 'warning',
+            title: 'Warning!',
+            message: `${connectPersonName(anchor)} already has recorded parents. The selected person will be connected as an additional parent.`
+        };
     }
 
-    function connectPersonActiveWarning() {
-      const anchor = getPerson(connectPersonModalState.anchorPersonId);
-      const selected = getPerson(connectPersonModalState.selectedPersonId);
-      const type = normalizeConnectRelationshipType(connectPersonModalState.relationshipType);
+    if (!selected) return null;
 
-      if (!anchor) return null;
-
-      if (!selected && type === 'parent' && getParents(anchor.id).length > 0) {
-        return {
-          severity: 'warning',
-          title: 'Warning!',
-          message: `${connectPersonName(anchor)} already has recorded parents. The selected person will be connected as an additional parent.`
-        };
-      }
-
-      if (!selected) return null;
-
-      return relationshipWarningForConnection({
+    return relationshipWarningForConnection({
         anchorPersonId: anchor.id,
         relativePersonId: selected.id,
         relationshipType: type
-      });
+    });
+}
+
+function connectPersonNoticeHtml(notice)
+{
+    if (!notice)
+    {
+        return `<div class="connect-person-warning" data-connect-warning hidden></div>`;
     }
 
-    function connectPersonNoticeHtml(notice) {
-      if (!notice) {
-        return `<div class="connect-person-warning" data-connect-warning hidden></div>`;
-      }
+    const isBlocking = notice.severity === 'blocking';
 
-      const isBlocking = notice.severity === 'blocking';
-
-      return `<div class="connect-person-warning ${isBlocking ? 'is-blocking' : ''}" data-connect-warning>
+    return `<div class="connect-person-warning ${isBlocking ? 'is-blocking' : ''}" data-connect-warning>
         <div class="connect-person-warning-title">${icon.warning}<span>${escapeHtml(notice.title || 'Warning!')}</span></div>
         <p>${escapeHtml(notice.message || '')}</p>
       </div>`;
-    }
+}
 
-    function connectPersonWarningHtml() {
-      const validation = connectPersonSelectedValidation();
+function connectPersonWarningHtml()
+{
+    const validation = connectPersonSelectedValidation();
 
-      if (!validation.ok) {
+    if (!validation.ok)
+    {
         return connectPersonNoticeHtml({
-          severity: 'blocking',
-          title: validation.title || 'Cannot connect',
-          message: validation.message || 'This relationship cannot be created.'
+            severity: 'blocking',
+            title: validation.title || 'Cannot connect',
+            message: validation.message || 'This relationship cannot be created.'
         });
-      }
-
-      return connectPersonNoticeHtml(connectPersonActiveWarning());
     }
 
-    function renderConnectPersonResult(person) {
-      const selected = person.id === connectPersonModalState.selectedPersonId;
-      const place = connectPersonPlaceLine(person);
+    return connectPersonNoticeHtml(connectPersonActiveWarning());
+}
 
-      return `<button class="connect-person-result ${selected ? 'is-selected' : ''}" type="button" data-connect-person-result="${escapeHtml(person.id)}" aria-pressed="${selected ? 'true' : 'false'}">
+function renderConnectPersonResult(person)
+{
+    const selected = person.id === connectPersonModalState.selectedPersonId;
+    const place = connectPersonPlaceLine(person);
+
+    return `<button class="connect-person-result ${selected ? 'is-selected' : ''}" type="button" data-connect-person-result="${escapeHtml(person.id)}" aria-pressed="${selected ? 'true' : 'false'}">
         ${renderPersonAvatar(person, 'connect-person-avatar')}
         <span class="connect-person-result-copy">
           <strong>${escapeHtml(connectPersonName(person))}</strong>
@@ -4565,34 +4856,37 @@
           ${place ? `<span>${escapeHtml(place)}</span>` : ''}
         </span>
       </button>`;
-    }
+}
 
-    function renderConnectPersonResults() {
-      const candidates = connectPersonCandidates();
+function renderConnectPersonResults()
+{
+    const candidates = connectPersonCandidates();
 
-      if (!candidates.length) {
+    if (!candidates.length)
+    {
         return `<div class="connect-person-empty">
           No matching people found. Try another name or create a new person.
         </div>`;
-      }
-
-      return `<div class="connect-person-results">
-        ${candidates.map(renderConnectPersonResult).join('')}
-      </div>`;
     }
 
-    function renderConnectPersonModalHtml() {
-      const anchor = getPerson(connectPersonModalState.anchorPersonId);
-      const anchorName = connectPersonName(anchor);
-      const relationshipType = normalizeConnectRelationshipType(connectPersonModalState.relationshipType);
-      const relationshipLabel = connectRelationshipLabel(relationshipType);
-      const relationshipSentence = connectRelationshipSentence(relationshipType);
-      const selectedPerson = getPerson(connectPersonModalState.selectedPersonId);
-      const selectedValidation = connectPersonSelectedValidation();
-      const connectDisabled = !selectedPerson || !selectedValidation.ok;
-      const resultTitle = connectPersonModalState.query ? 'Search results' : 'Suggested matches';
+    return `<div class="connect-person-results">
+        ${candidates.map(renderConnectPersonResult).join('')}
+      </div>`;
+}
 
-      return `<div class="modal connect-person-modal" role="dialog" aria-modal="true" aria-labelledby="connectPersonTitle">
+function renderConnectPersonModalHtml()
+{
+    const anchor = getPerson(connectPersonModalState.anchorPersonId);
+    const anchorName = connectPersonName(anchor);
+    const relationshipType = normalizeConnectRelationshipType(connectPersonModalState.relationshipType);
+    const relationshipLabel = connectRelationshipLabel(relationshipType);
+    const relationshipSentence = connectRelationshipSentence(relationshipType);
+    const selectedPerson = getPerson(connectPersonModalState.selectedPersonId);
+    const selectedValidation = connectPersonSelectedValidation();
+    const connectDisabled = !selectedPerson || !selectedValidation.ok;
+    const resultTitle = connectPersonModalState.query ? 'Search results' : 'Suggested matches';
+
+    return `<div class="modal connect-person-modal" role="dialog" aria-modal="true" aria-labelledby="connectPersonTitle">
         <div class="modal-header connect-person-header">
           <div class="connect-person-header-icon" aria-hidden="true">${icon.link}</div>
           <div>
@@ -4613,23 +4907,23 @@
             </div>
 
             ${renderPartnerChildrenSelector({
-              anchorPersonId: anchor?.id || '',
-              relationshipType,
-              selectedPersonId: connectPersonModalState.selectedPersonId,
-              selectedValue: connectPersonModalState.partnerChildrenMode,
-              controlId: 'connectPersonPartnerChildrenMode'
+                anchorPersonId: anchor?.id || '',
+                relationshipType,
+                selectedPersonId: connectPersonModalState.selectedPersonId,
+                selectedValue: connectPersonModalState.partnerChildrenMode,
+                controlId: 'connectPersonPartnerChildrenMode'
             })}
 
 
             ${renderParentFamilySelector({
-              anchorPersonId: anchor?.id || '',
-              relationshipType,
-              selectedValue:
+                anchorPersonId: anchor?.id || '',
+                relationshipType,
+                selectedValue:
                 connectPersonModalState
-                  .parentFamilySelection,
-              controlId:
+                    .parentFamilySelection,
+                controlId:
                 'connectPersonParentFamily',
-              showSelectionLabel:
+                showSelectionLabel:
                 false
             })}
 
@@ -4666,65 +4960,75 @@
           <button class="button primary" type="button" id="connectPersonConfirm" ${connectDisabled ? 'disabled' : ''}>Connect</button>
         </div>
       </div>`;
-    }
+}
 
-    function refreshConnectPersonModal() {
-      modalBackdrop.innerHTML = renderConnectPersonModalHtml();
-      modalBackdrop.querySelectorAll('[data-close]').forEach(button => button.addEventListener('click', closeModal));
-      bindConnectPersonModalControls();
+function refreshConnectPersonModal()
+{
+    modalBackdrop.innerHTML = renderConnectPersonModalHtml();
+    modalBackdrop.querySelectorAll('[data-close]').forEach(button => button.addEventListener('click', closeModal));
+    bindConnectPersonModalControls();
 
-      const input = modalBackdrop.querySelector('[data-connect-search]');
-      if (input) {
+    const input = modalBackdrop.querySelector('[data-connect-search]');
+    if (input)
+    {
         const length = input.value.length;
         input.focus();
         input.setSelectionRange(length, length);
-      }
-
-      localizeUI(modalBackdrop);
     }
 
-    function bindConnectPersonModalControls() {
-      const modal = modalBackdrop.querySelector('.connect-person-modal');
-      if (!modal) return;
+    localizeUI(modalBackdrop);
+}
 
-      modal.querySelector('[data-connect-relationship]')?.addEventListener('change', event => {
+function bindConnectPersonModalControls()
+{
+    const modal = modalBackdrop.querySelector('.connect-person-modal');
+    if (!modal) return;
+
+    modal.querySelector('[data-connect-relationship]')?.addEventListener('change', event =>
+    {
         connectPersonModalState.relationshipType = normalizeConnectRelationshipType(event.currentTarget.value);
         connectPersonModalState.selectedPersonId = '';
         connectPersonModalState.partnerChildrenMode =
-          PARTNER_CHILDREN_ADD_PARENT;
+            PARTNER_CHILDREN_ADD_PARENT;
 
         connectPersonModalState.parentFamilySelection = defaultParentFamilySelection(
-          connectPersonModalState.anchorPersonId,
-          connectPersonModalState.relationshipType
+            connectPersonModalState.anchorPersonId,
+            connectPersonModalState.relationshipType
         );
         refreshConnectPersonModal();
-      });
+    });
 
-      modal.querySelector('#connectPersonParentFamily')?.addEventListener('change', event => {
+    modal.querySelector('#connectPersonParentFamily')?.addEventListener('change', event =>
+    {
         connectPersonModalState.parentFamilySelection = event.currentTarget.value;
         refreshConnectPersonModal();
-      });
+    });
 
-      modal.querySelector('#connectPersonPartnerChildrenMode')
-        ?.addEventListener('change', event => {
-          connectPersonModalState.partnerChildrenMode =
-            normalizePartnerChildrenMode(event.currentTarget.value);
+    modal.querySelector('#connectPersonPartnerChildrenMode')
+        ?.addEventListener('change', event =>
+        {
+            connectPersonModalState.partnerChildrenMode =
+                normalizePartnerChildrenMode(event.currentTarget.value);
         });
 
-      modal.querySelector('[data-connect-search]')?.addEventListener('input', event => {
+    modal.querySelector('[data-connect-search]')?.addEventListener('input', event =>
+    {
         connectPersonModalState.query = event.currentTarget.value;
         connectPersonModalState.selectedPersonId = '';
         refreshConnectPersonModal();
-      });
+    });
 
-      modal.querySelectorAll('[data-connect-person-result]').forEach(button => {
-        button.addEventListener('click', () => {
-          connectPersonModalState.selectedPersonId = button.dataset.connectPersonResult || '';
-          refreshConnectPersonModal();
+    modal.querySelectorAll('[data-connect-person-result]').forEach(button =>
+    {
+        button.addEventListener('click', () =>
+        {
+            connectPersonModalState.selectedPersonId = button.dataset.connectPersonResult || '';
+            refreshConnectPersonModal();
         });
-      });
+    });
 
-      modal.querySelector('[data-connect-create-new]')?.addEventListener('click', () => {
+    modal.querySelector('[data-connect-create-new]')?.addEventListener('click', () =>
+    {
         const anchor = getPerson(connectPersonModalState.anchorPersonId);
         const relationshipType = normalizeConnectRelationshipType(connectPersonModalState.relationshipType);
         const label = connectRelationshipSentence(relationshipType);
@@ -4732,21 +5036,22 @@
         closeModal();
 
         openAddPersonModal(
-          `Add ${label}`,
-          `Create a new person and connect as ${connectPersonName(anchor)}'s ${label}`,
-          {
-            relativeType: relationshipType,
-            connectRelationshipType: relationshipType,
-            connectAfterCreate: true,
-            personId: anchor?.id || connectPersonModalState.anchorPersonId,
-            connectToPersonId: anchor?.id || connectPersonModalState.anchorPersonId,
-            parentFamilySelection: connectPersonModalState.parentFamilySelection,
-            partnerChildrenMode: connectPersonModalState.partnerChildrenMode
-          }
+            `Add ${label}`,
+            `Create a new person and connect as ${connectPersonName(anchor)}'s ${label}`,
+            {
+                relativeType: relationshipType,
+                connectRelationshipType: relationshipType,
+                connectAfterCreate: true,
+                personId: anchor?.id || connectPersonModalState.anchorPersonId,
+                connectToPersonId: anchor?.id || connectPersonModalState.anchorPersonId,
+                parentFamilySelection: connectPersonModalState.parentFamilySelection,
+                partnerChildrenMode: connectPersonModalState.partnerChildrenMode
+            }
         );
-      });
+    });
 
-      modal.querySelector('#connectPersonConfirm')?.addEventListener('click', () => {
+    modal.querySelector('#connectPersonConfirm')?.addEventListener('click', () =>
+    {
         const anchor = getPerson(connectPersonModalState.anchorPersonId);
         const selected = getPerson(connectPersonModalState.selectedPersonId);
 
@@ -4754,24 +5059,26 @@
 
         const validation = connectPersonSelectedValidation();
 
-        if (!validation.ok) {
-          showToast(validation.message || 'This relationship cannot be created.');
-          refreshConnectPersonModal();
-          return;
+        if (!validation.ok)
+        {
+            showToast(validation.message || 'This relationship cannot be created.');
+            refreshConnectPersonModal();
+            return;
         }
 
         const result = connectPeopleByRelationship({
-          anchorPersonId: anchor.id,
-          relativePersonId: selected.id,
-          relationshipType: connectPersonModalState.relationshipType,
-          parentFamilySelection: connectPersonModalState.parentFamilySelection,
-          partnerChildrenMode: connectPersonModalState.partnerChildrenMode
+            anchorPersonId: anchor.id,
+            relativePersonId: selected.id,
+            relationshipType: connectPersonModalState.relationshipType,
+            parentFamilySelection: connectPersonModalState.parentFamilySelection,
+            partnerChildrenMode: connectPersonModalState.partnerChildrenMode
         });
 
-        if (!result.ok) {
-          showToast(result.message || 'Could not connect these people.');
-          refreshConnectPersonModal();
-          return;
+        if (!result.ok)
+        {
+            showToast(result.message || 'Could not connect these people.');
+            refreshConnectPersonModal();
+            return;
         }
 
         const relationshipLabel = connectRelationshipSentence(connectPersonModalState.relationshipType);
@@ -4782,235 +5089,261 @@
         state.selectedPeopleId = anchor.id;
         state.treeInspectorCollapsed = false;
 
-        if (state.activeModule === 'Family Tree') {
-          renderFamilyTreePreserveScroll();
-        } else {
-          render();
+        if (state.activeModule === 'Family Tree')
+        {
+            renderFamilyTreePreserveScroll();
+        }
+        else
+        {
+            render();
         }
 
-        if (result.warning?.message) {
-          showToast(`${connectPersonName(selected)} connected as ${relationshipLabel}. ${result.warning.message}`);
-        } else {
-          showToast(`${connectPersonName(selected)} connected as ${relationshipLabel}.`);
+        if (result.warning?.message)
+        {
+            showToast(`${connectPersonName(selected)} connected as ${relationshipLabel}. ${result.warning.message}`);
         }
-      });
-    }
+        else
+        {
+            showToast(`${connectPersonName(selected)} connected as ${relationshipLabel}.`);
+        }
+    });
+}
 
-    function openConnectRelativeModal(anchorPersonId, options = {}) {
-      const anchor = getPerson(anchorPersonId);
-      if (!anchor) return;
+function openConnectRelativeModal(anchorPersonId, options = {})
+{
+    const anchor = getPerson(anchorPersonId);
+    if (!anchor) return;
 
-      const relationshipType =
+    const relationshipType =
         normalizeConnectRelationshipType(
-          options.relationshipType || 'parent'
+            options.relationshipType || 'parent'
         );
 
-      connectPersonModalState = {
+    connectPersonModalState = {
         anchorPersonId: anchor.id,
         relationshipType,
         query: '',
         selectedPersonId: '',
         parentFamilySelection: defaultParentFamilySelection(
-          anchor.id,
-          relationshipType,
-          options.parentFamilyId
+            anchor.id,
+            relationshipType,
+            options.parentFamilyId
             || options.parentFamilySelection
             || ''
         ),
         partnerChildrenMode: normalizePartnerChildrenMode(
-          options.partnerChildrenMode
+            options.partnerChildrenMode
         )
-      };
+    };
 
-      openModal(renderConnectPersonModalHtml());
-      bindConnectPersonModalControls();
-      modalBackdrop.querySelector('[data-connect-search]')?.focus();
-    }
+    openModal(renderConnectPersonModalHtml());
+    bindConnectPersonModalControls();
+    modalBackdrop.querySelector('[data-connect-search]')?.focus();
+}
 
-    function openRelativePopover(
-      anchor,
-      anchorPersonId
-    ) {
-      closeMenu();
+function openRelativePopover(
+    anchor,
+    anchorPersonId
+)
+{
+    closeMenu();
 
-      const person =
+    const person =
         personById(anchorPersonId);
 
-      if (!person || !anchor) return;
+    if (!person || !anchor) return;
 
-      const popover = document.createElement('div');
-      popover.className = 'relative-popover';
-      popover.id = 'relativePopover';
+    const popover = document.createElement('div');
+    popover.className = 'relative-popover';
+    popover.id = 'relativePopover';
 
-      popover.innerHTML = `<div class="relative-popover-body"><h2>New relative</h2><p>to ${escapeHtml(person.name)}</p>
+    popover.innerHTML = `<div class="relative-popover-body"><h2>New relative</h2><p>to ${escapeHtml(person.name)}</p>
         <div class="relative-group">Parents</div><div class="relative-grid"><button class="relative-choice" data-rel="father"><span class="gender-icon">${icon.male}</span>Father</button><button class="relative-choice female" data-rel="mother"><span class="gender-icon">${icon.female}</span>Mother</button></div>
         <div class="relative-group">Partner</div><div class="relative-grid" style="grid-template-columns:1fr"><button class="relative-choice" data-rel="partner"><span class="relative-choice-icon marriage-icon">${icon.marriage}</span>Partner / Spouse</button></div>
         <div class="relative-group">Children</div><div class="relative-grid"><button class="relative-choice" data-rel="son"><span class="gender-icon">${icon.male}</span>Son</button><button class="relative-choice female" data-rel="daughter"><span class="gender-icon">${icon.female}</span>Daughter</button></div>
         <div class="relative-group">Siblings</div><div class="relative-grid"><button class="relative-choice" data-rel="brother"><span class="gender-icon">${icon.male}</span>Brother</button><button class="relative-choice female" data-rel="sister"><span class="gender-icon">${icon.female}</span>Sister</button></div>
         <button class="connect-choice" type="button" data-connect-existing><span class="connect-choice-main"><span class="connect-choice-icon">${icon.link}</span><span class="connect-choice-copy"><strong>Connect existing person</strong><span>Link someone already in this tree</span></span></span><span class="connect-choice-chevron" aria-hidden="true">${icon.chevron}</span></button></div>`;
 
-      document.body.appendChild(popover);
-      positionRelativePopover(popover, anchor);
+    document.body.appendChild(popover);
+    positionRelativePopover(popover, anchor);
 
-      popover.querySelectorAll('[data-rel]').forEach(button => {
-        button.addEventListener('click', () => {
-          const rel = button.dataset.rel;
-          closeMenu();
-          focusTreeBranchForRelative(person.id);
-          openAddPersonModal(`Add ${rel}`, `Create a new person and add as ${person.name.split(' ')[0]}'s ${rel}`, {
-            relativeType: rel,
-            connectRelationshipType: addPersonConnectionTypeFromRelativeType(rel),
-            connectAfterCreate: Boolean(addPersonConnectionTypeFromRelativeType(rel)),
-            personId: person.id,
-            connectToPersonId: person.id
-          });
+    popover.querySelectorAll('[data-rel]').forEach(button =>
+    {
+        button.addEventListener('click', () =>
+        {
+            const rel = button.dataset.rel;
+            closeMenu();
+            focusTreeBranchForRelative(person.id);
+            openAddPersonModal(`Add ${rel}`, `Create a new person and add as ${person.name.split(' ')[0]}'s ${rel}`, {
+                relativeType: rel,
+                connectRelationshipType: addPersonConnectionTypeFromRelativeType(rel),
+                connectAfterCreate: Boolean(addPersonConnectionTypeFromRelativeType(rel)),
+                personId: person.id,
+                connectToPersonId: person.id
+            });
         });
-      });
+    });
 
-      popover.querySelector('[data-connect-existing]')?.addEventListener('click', () => {
+    popover.querySelector('[data-connect-existing]')?.addEventListener('click', () =>
+    {
         closeMenu();
         focusTreeBranchForRelative(person.id);
         openConnectRelativeModal(person.id, { relationshipType: 'parent' });
-      });
+    });
 
-      bindMenuLifecycle(anchor);
-    }
-    function clampNumber(value, min, max) {
-      return Math.max(min, Math.min(value, max));
-    }
+    bindMenuLifecycle(anchor);
+}
+function clampNumber(value, min, max)
+{
+    return Math.max(min, Math.min(value, max));
+}
 
-    function positionRelativePopover(popover, anchor) {
-      const rect = anchor.getBoundingClientRect();
-      const margin = 12;
-      const gap = 14;
-      const arrowSize = 20;
-      const arrowCornerPadding = 24;
+function positionRelativePopover(popover, anchor)
+{
+    const rect = anchor.getBoundingClientRect();
+    const margin = 12;
+    const gap = 14;
+    const arrowSize = 20;
+    const arrowCornerPadding = 24;
 
-      const popoverWidth = popover.offsetWidth || 360;
-      const popoverHeight = popover.offsetHeight || 560;
+    const popoverWidth = popover.offsetWidth || 360;
+    const popoverHeight = popover.offsetHeight || 560;
 
-      const anchorCenterX = rect.left + rect.width / 2;
-      const anchorCenterY = rect.top + rect.height / 2;
+    const anchorCenterX = rect.left + rect.width / 2;
+    const anchorCenterY = rect.top + rect.height / 2;
 
-      const spaceRight = window.innerWidth - rect.right - margin;
-      const spaceLeft = rect.left - margin;
+    const spaceRight = window.innerWidth - rect.right - margin;
+    const spaceLeft = rect.left - margin;
 
-      let left;
-      let arrowSide;
+    let left;
+    let arrowSide;
 
-      if (spaceRight >= popoverWidth + gap) {
+    if (spaceRight >= popoverWidth + gap)
+    {
         left = rect.right + gap;
         arrowSide = 'left';
-      } else if (spaceLeft >= popoverWidth + gap) {
+    }
+    else if (spaceLeft >= popoverWidth + gap)
+    {
         left = rect.left - popoverWidth - gap;
         arrowSide = 'right';
-      } else if (spaceRight >= spaceLeft) {
+    }
+    else if (spaceRight >= spaceLeft)
+    {
         left = clampNumber(rect.right + gap, margin, window.innerWidth - popoverWidth - margin);
         arrowSide = 'left';
-      } else {
+    }
+    else
+    {
         left = clampNumber(rect.left - popoverWidth - gap, margin, window.innerWidth - popoverWidth - margin);
         arrowSide = 'right';
-      }
+    }
 
-      const preferredTop = anchorCenterY - popoverHeight / 2;
-      const maxTop = Math.max(margin, window.innerHeight - popoverHeight - margin);
-      const top = clampNumber(preferredTop, margin, maxTop);
+    const preferredTop = anchorCenterY - popoverHeight / 2;
+    const maxTop = Math.max(margin, window.innerHeight - popoverHeight - margin);
+    const top = clampNumber(preferredTop, margin, maxTop);
 
-      const minArrowTop = arrowCornerPadding;
-      const maxArrowTop = Math.max(
+    const minArrowTop = arrowCornerPadding;
+    const maxArrowTop = Math.max(
         minArrowTop,
         popoverHeight - arrowSize - arrowCornerPadding
-      );
+    );
 
-      const arrowTop = clampNumber(
+    const arrowTop = clampNumber(
         anchorCenterY - top - arrowSize / 2,
         minArrowTop,
         maxArrowTop
-      );
+    );
 
-      popover.style.left = `${left}px`;
-      popover.style.top = `${top}px`;
-      popover.dataset.arrowSide = arrowSide;
-      popover.style.setProperty('--relative-popover-arrow-top', `${arrowTop}px`);
-    }
+    popover.style.left = `${left}px`;
+    popover.style.top = `${top}px`;
+    popover.dataset.arrowSide = arrowSide;
+    popover.style.setProperty('--relative-popover-arrow-top', `${arrowTop}px`);
+}
 
-    function cleanEditFieldValue(value) {
-      const text = String(value || '').trim();
+function cleanEditFieldValue(value)
+{
+    const text = String(value || '').trim();
 
-      if (!text) return '';
-      if (text === '-' || text === '—') return '';
-      if (text.toLowerCase() === 'unknown') return '';
+    if (!text) return '';
+    if (text === '-' || text === '—') return '';
+    if (text.toLowerCase() === 'unknown') return '';
 
-      return text;
-    }
+    return text;
+}
 
-    const RELIGION_VALUES = Object.freeze([
-      'Unknown',
-      'Orthodox',
-      'Catholic',
-      'Jewish',
-      'Muslim',
-      'Other'
-    ]);
+const RELIGION_VALUES = Object.freeze([
+    'Unknown',
+    'Orthodox',
+    'Catholic',
+    'Jewish',
+    'Muslim',
+    'Other'
+]);
 
-    const DEFAULT_RELIGION = 'Unknown';
+const DEFAULT_RELIGION = 'Unknown';
 
-    function normalizeReligionValue(value) {
-      if (
+function normalizeReligionValue(value)
+{
+    if (
         typeof value !== 'string'
         && typeof value !== 'number'
-      ) {
+    )
+    {
         return DEFAULT_RELIGION;
-      }
+    }
 
-      const text = String(value).trim();
+    const text = String(value).trim();
 
-      if (
+    if (
         !text
         || text === '-'
         || text === '—'
-      ) {
+    )
+    {
         return DEFAULT_RELIGION;
-      }
+    }
 
-      const canonicalValue = RELIGION_VALUES.find(
+    const canonicalValue = RELIGION_VALUES.find(
         option =>
-          option.toLowerCase() === text.toLowerCase()
-      );
+            option.toLowerCase() === text.toLowerCase()
+    );
 
-      /*
+    /*
       * Preserve imported or legacy values that are not yet
       * part of the predefined option list.
       */
-      return canonicalValue || text;
-    }
+    return canonicalValue || text;
+}
 
-    function religionFieldOptions(selectedValue) {
-      const selected =
+function religionFieldOptions(selectedValue)
+{
+    const selected =
         normalizeReligionValue(selectedValue);
 
-      return RELIGION_VALUES.includes(selected)
+    return RELIGION_VALUES.includes(selected)
         ? [...RELIGION_VALUES]
         : [selected, ...RELIGION_VALUES];
-    }
+}
 
-    function renderReligionField({
-      id,
-      value = DEFAULT_RELIGION,
-      className = '',
-      label = 'Religion'
-    } = {}) {
-      if (!id) return '';
+function renderReligionField({
+    id,
+    value = DEFAULT_RELIGION,
+    className = '',
+    label = 'Religion'
+} = {})
+{
+    if (!id) return '';
 
-      const selected = normalizeReligionValue(value);
-      const options = religionFieldOptions(selected);
+    const selected = normalizeReligionValue(value);
+    const options = religionFieldOptions(selected);
 
-      const fieldClass = [
+    const fieldClass = [
         'field',
         className
-      ].filter(Boolean).join(' ');
+    ].filter(Boolean).join(' ');
 
-      return `
+    return `
         <div class="${escapeHtml(fieldClass)}">
           <label for="${escapeHtml(id)}">
             ${escapeHtml(label)}
@@ -5038,42 +5371,48 @@
           </div>
         </div>
       `;
-    }
+}
 
-    function readReligionField(
-      root,
-      fieldId
-    ) {
-      if (!root || !fieldId) {
+function readReligionField(
+    root,
+    fieldId
+)
+{
+    if (!root || !fieldId)
+    {
         return DEFAULT_RELIGION;
-      }
+    }
 
-      const field = root.querySelector(
+    const field = root.querySelector(
         `#${CSS.escape(fieldId)}`
-      );
+    );
 
-      return normalizeReligionValue(field?.value);
-    }
+    return normalizeReligionValue(field?.value);
+}
 
-    function genderLabelFromPerson(person) {
-      const gender = String(person?.gender || '').toLowerCase();
+function genderLabelFromPerson(person)
+{
+    const gender = String(person?.gender || '').toLowerCase();
 
-      if (gender === 'male') return 'Male';
-      if (gender === 'female') return 'Female';
+    if (gender === 'male') return 'Male';
+    if (gender === 'female') return 'Female';
 
-      return 'Unknown';
-    }
+    return 'Unknown';
+}
 
-    function editDateValue(event) {
-      return formatGenealogyDateLabel(event);
-    }
+function editDateValue(event)
+{
+    return formatGenealogyDateLabel(event);
+}
 
-    function editPlaceValue(placeId, fallbackText = '') {
-      return placeInputDisplayValue(placeId, fallbackText);
-    }
+function editPlaceValue(placeId, fallbackText = '')
+{
+    return placeInputDisplayValue(placeId, fallbackText);
+}
 
-    function editPersonFormValues(person) {
-      return {
+function editPersonFormValues(person)
+{
+    return {
         firstName: cleanEditFieldValue(person?.names?.first),
         lastName: cleanEditFieldValue(person?.names?.last),
         middleName: cleanEditFieldValue(person?.names?.middle),
@@ -5089,38 +5428,39 @@
         deathPlace: editPlaceValue(person?.death?.placeId, person?.death?.placeText),
         deathReason: cleanEditFieldValue(person?.death?.reason),
         burialPlace: editPlaceValue(person?.death?.burialPlaceId, person?.death?.burialPlaceText)
-      };
-    }
+    };
+}
 
-    function renderPlaceCombobox({
-      id,
-      label,
-      value = '',
-      selectedPlaceId = '',
-      addressValue = '',
-      showAddress = true,
-      placeholder = 'Search or type a place',
-      className = '',
-      inputAttrs = '',
-      createOptionLabel = 'Create new place'
-    } = {}) {
-      const listId =
+function renderPlaceCombobox({
+    id,
+    label,
+    value = '',
+    selectedPlaceId = '',
+    addressValue = '',
+    showAddress = true,
+    placeholder = 'Search or type a place',
+    className = '',
+    inputAttrs = '',
+    createOptionLabel = 'Create new place'
+} = {})
+{
+    const listId =
         `${id}PlaceList`;
 
-      const addressFieldsId =
+    const addressFieldsId =
         `${id}AddressFields`;
 
-      const hasAddress =
+    const hasAddress =
         Boolean(
-          String(addressValue || '').trim()
+            String(addressValue || '').trim()
         );
 
-      const addressAction =
+    const addressAction =
         hasAddress
-          ? '- Remove address'
-          : '+ Add address';
+            ? '- Remove address'
+            : '+ Add address';
 
-      return `<div class="field place-combobox-field ${escapeHtml(className)}" data-place-combobox data-place-create-label="${escapeHtml(createOptionLabel)}">
+    return `<div class="field place-combobox-field ${escapeHtml(className)}" data-place-combobox data-place-create-label="${escapeHtml(createOptionLabel)}">
         <label for="${escapeHtml(id)}">${escapeHtml(label)}</label>
 
         <div class="place-combobox-shell">
@@ -5183,10 +5523,11 @@
           </div>
         ` : ''}
       </div>`;
-    }
+}
 
-    function educationInstitutionTypeOptions(selected = '') {
-      const options = [
+function educationInstitutionTypeOptions(selected = '')
+{
+    const options = [
         'Unknown',
         'School',
         'University',
@@ -5198,63 +5539,70 @@
         'Religious instruction',
         'Home education',
         'Other'
-      ];
+    ];
 
-      const current = cleanEditFieldValue(selected || 'Unknown');
+    const current = cleanEditFieldValue(selected || 'Unknown');
 
-      return options
+    return options
         .map(value => `<option value="${escapeHtml(value)}" ${value === current ? 'selected' : ''}>${escapeHtml(value)}</option>`)
         .join('');
-    }
+}
 
-    function educationValueLabel(attribute) {
-      const value = cleanEditFieldValue(attribute?.value);
-      return value && value !== 'Education' ? value : '';
-    }
+function educationValueLabel(attribute)
+{
+    const value = cleanEditFieldValue(attribute?.value);
+    return value && value !== 'Education' ? value : '';
+}
 
-    function educationInstitutionLabel(attribute) {
-      return cleanEditFieldValue(attribute?.institutionName || attribute?.agency);
-    }
+function educationInstitutionLabel(attribute)
+{
+    return cleanEditFieldValue(attribute?.institutionName || attribute?.agency);
+}
 
-    function educationInstitutionTypeLabel(attribute) {
-      return cleanEditFieldValue(attribute?.institutionType || attribute?.type);
-    }
+function educationInstitutionTypeLabel(attribute)
+{
+    return cleanEditFieldValue(attribute?.institutionType || attribute?.type);
+}
 
-    function educationPrimaryLabel(attribute) {
-      return educationInstitutionLabel(attribute)
+function educationPrimaryLabel(attribute)
+{
+    return educationInstitutionLabel(attribute)
         || educationValueLabel(attribute)
         || 'Education';
-    }
+}
 
-    function educationTimelineDescription(attribute) {
-      const primary = educationPrimaryLabel(attribute);
-      const credential = educationValueLabel(attribute);
+function educationTimelineDescription(attribute)
+{
+    const primary = educationPrimaryLabel(attribute);
+    const credential = educationValueLabel(attribute);
 
-      if (credential && credential !== primary) {
+    if (credential && credential !== primary)
+    {
         return `${primary} - ${credential}`;
-      }
-
-      return primary;
     }
 
-    function renderCustomFactFields(
-      idPrefix,
-      fact = null
-    ) {
-      const type =
+    return primary;
+}
+
+function renderCustomFactFields(
+    idPrefix,
+    fact = null
+)
+{
+    const type =
         cleanEditFieldValue(fact?.type);
 
-      const value =
+    const value =
         cleanEditFieldValue(fact?.value);
 
-      const notes =
+    const notes =
         cleanEditFieldValue(fact?.notes);
 
-      const date =
+    const date =
         fact?.date
           || emptyGenealogyDate('Exact date');
 
-      return `
+    return `
         <div
           class="field full custom-fact-field"
           data-custom-fact-field="type">
@@ -5308,32 +5656,32 @@
         </div>
 
         ${renderGenealogyDateField(
-          `${idPrefix}Date`,
-          'Date or period',
-          date,
-          {
-            inputId: `${idPrefix}DateInput`,
-            typeId: `${idPrefix}DateType`,
-            defaultDateType: 'Exact date',
-            placeholder: 'e.g. 14 Feb 1915',
-            className:
+            `${idPrefix}Date`,
+            'Date or period',
+            date,
+            {
+                inputId: `${idPrefix}DateInput`,
+                typeId: `${idPrefix}DateType`,
+                defaultDateType: 'Exact date',
+                placeholder: 'e.g. 14 Feb 1915',
+                className:
               'full genealogy-date-inline-range'
-          }
+            }
         )}
 
         ${renderPlaceCombobox({
-          id: `${idPrefix}Place`,
-          label: 'Place',
-          value: editPlaceValue(
-            fact?.placeId,
-            fact?.placeText
-          ),
-          selectedPlaceId:
+            id: `${idPrefix}Place`,
+            label: 'Place',
+            value: editPlaceValue(
+                fact?.placeId,
+                fact?.placeText
+            ),
+            selectedPlaceId:
             fact?.placeId || '',
-          addressValue: fact?.address || '',
-          placeholder:
+            addressValue: fact?.address || '',
+            placeholder:
             'Search or type a place',
-          className: 'full'
+            className: 'full'
         })}
 
         <div class="field full">
@@ -5345,10 +5693,11 @@
             id="${escapeHtml(idPrefix)}Notes"
             placeholder="Research context or additional details">${escapeHtml(notes)}</textarea>
         </div>`;
-    }
+}
 
-    function addPersonFactDefinitions() {
-      return [
+function addPersonFactDefinitions()
+{
+    return [
         { id: 'prefix', label: 'Prefix', icon: icon.info || icon.plus },
         { id: 'suffix', label: 'Suffix', icon: icon.info || icon.plus },
         { id: 'causeOfDeath', label: 'Cause of death', icon: icon.death || icon.plus },
@@ -5359,76 +5708,88 @@
         { id: 'baptism', label: 'Baptism', icon: icon.baptism || icon.plus },
         { id: 'customFact', label: 'Custom fact', icon: icon.info || icon.plus },
         { id: 'alternativeNames', label: 'Alternative names', icon: icon.people || icon.plus }
-      ];
+    ];
+}
+
+function addPersonAddedFactsFromPerson(person)
+{
+    if (!person) return [];
+    ensurePersonCentralStructures(person);
+    const details = peopleProfileDetailsFor({ id: person.id });
+    const facts = [];
+    if (cleanEditFieldValue(person.names?.prefix || details.prefix)) facts.push('prefix');
+    if (cleanEditFieldValue(person.names?.suffix || details.suffix)) facts.push('suffix');
+    if (cleanEditFieldValue(person.death?.cause || person.death?.reason)) facts.push('causeOfDeath');
+    if (editPlaceValue(person.death?.burialPlaceId) || cleanEditFieldValue(person.death?.burialPlaceText)) facts.push('burialPlace');
+    if (cleanEditFieldValue(person.profile?.alternativeNames || details.alternativeNames)) facts.push('alternativeNames');
+    if (personHasEducationFact(person)) facts.push('education');
+    if (personHasOccupationFact(person)) facts.push('occupation');
+    if (personHasReligionFact(person)) facts.push('religion');
+    if (personHasBaptismFact(person)) facts.push('baptism');
+    if (personAttributeByTag(person, 'FACT'))
+    {
+        facts.push('customFact');
     }
 
-    function addPersonAddedFactsFromPerson(person) {
-      if (!person) return [];
-      ensurePersonCentralStructures(person);
-      const details = peopleProfileDetailsFor({ id: person.id });
-      const facts = [];
-      if (cleanEditFieldValue(person.names?.prefix || details.prefix)) facts.push('prefix');
-      if (cleanEditFieldValue(person.names?.suffix || details.suffix)) facts.push('suffix');
-      if (cleanEditFieldValue(person.death?.cause || person.death?.reason)) facts.push('causeOfDeath');
-      if (editPlaceValue(person.death?.burialPlaceId) || cleanEditFieldValue(person.death?.burialPlaceText)) facts.push('burialPlace');
-      if (cleanEditFieldValue(person.profile?.alternativeNames || details.alternativeNames)) facts.push('alternativeNames');
-      if (personHasEducationFact(person)) facts.push('education');
-      if (personHasOccupationFact(person)) facts.push('occupation');
-      if (personHasReligionFact(person)) facts.push('religion');
-      if (personHasBaptismFact(person)) facts.push('baptism');
-      if (personAttributeByTag(person, 'FACT')) {facts.push('customFact');}
+    const allowed = new Set(addPersonFactDefinitions().map(fact => fact.id));
+    return [...new Set(facts)].filter(factId => allowed.has(factId));
+}
 
-      const allowed = new Set(addPersonFactDefinitions().map(fact => fact.id));
-      return [...new Set(facts)].filter(factId => allowed.has(factId));
-    }
+function addPersonFactDefinition(factId)
+{
+    return addPersonFactDefinitions().find(fact => fact.id === factId) || addPersonFactDefinitions()[0];
+}
 
-    function addPersonFactDefinition(factId) {
-      return addPersonFactDefinitions().find(fact => fact.id === factId) || addPersonFactDefinitions()[0];
-    }
-
-    function addPersonFactCardHtml(factId, person = null) {
-      const definition = addPersonFactDefinition(factId) || {
+function addPersonFactCardHtml(factId, person = null)
+{
+    const definition = addPersonFactDefinition(factId) || {
         id: factId,
         label: 'Additional fact',
         icon: icon.info
-      };
-      const centralPerson = person ? ensurePersonCentralStructures(person) : null;
-      const details = centralPerson ? peopleProfileDetailsFor({ id: centralPerson.id }) : defaultPeopleProfileDetails();
-      const death = centralPerson?.death || {};
-      const education = centralPerson ? personAttributeByTag(centralPerson, 'EDUC') : null;
-      const baptism = centralPerson ? personEventByTag(centralPerson, 'BAPM') : null;
-      const customFact = centralPerson ? personAttributeByTag( centralPerson, 'FACT') : null;
-      const prefixValue = cleanEditFieldValue(centralPerson?.names?.prefix || details.prefix);
-      const suffixValue = cleanEditFieldValue(centralPerson?.names?.suffix || details.suffix);
-      const header = `<div class="add-person-fact-card-header"><div class="add-person-fact-card-title"><span class="fact-button-icon" aria-hidden="true">${definition.icon}</span><span>${escapeHtml(definition.label)}</span></div><button class="add-person-fact-remove" type="button" data-add-person-remove-fact="${escapeHtml(factId)}" aria-label="Remove ${escapeHtml(definition.label)}">${icon.close}</button></div>`;
-      const fieldWrap = content => `<div class="add-person-fact-card" data-add-person-fact-card="${escapeHtml(factId)}">${header}<div class="add-person-fact-grid">${content}</div></div>`;
-      if (factId === 'prefix') {
+    };
+    const centralPerson = person ? ensurePersonCentralStructures(person) : null;
+    const details = centralPerson ? peopleProfileDetailsFor({ id: centralPerson.id }) : defaultPeopleProfileDetails();
+    const death = centralPerson?.death || {};
+    const education = centralPerson ? personAttributeByTag(centralPerson, 'EDUC') : null;
+    const baptism = centralPerson ? personEventByTag(centralPerson, 'BAPM') : null;
+    const customFact = centralPerson ? personAttributeByTag( centralPerson, 'FACT') : null;
+    const prefixValue = cleanEditFieldValue(centralPerson?.names?.prefix || details.prefix);
+    const suffixValue = cleanEditFieldValue(centralPerson?.names?.suffix || details.suffix);
+    const header = `<div class="add-person-fact-card-header"><div class="add-person-fact-card-title"><span class="fact-button-icon" aria-hidden="true">${definition.icon}</span><span>${escapeHtml(definition.label)}</span></div><button class="add-person-fact-remove" type="button" data-add-person-remove-fact="${escapeHtml(factId)}" aria-label="Remove ${escapeHtml(definition.label)}">${icon.close}</button></div>`;
+    const fieldWrap = content => `<div class="add-person-fact-card" data-add-person-fact-card="${escapeHtml(factId)}">${header}<div class="add-person-fact-grid">${content}</div></div>`;
+    if (factId === 'prefix')
+    {
         return fieldWrap(renderNameAffixCombobox({ id: 'addPersonFactPrefix', label: 'Prefix', value: prefixValue, kind: 'prefix', className: 'full' }));
-      }
-      if (factId === 'suffix') {
+    }
+    if (factId === 'suffix')
+    {
         return fieldWrap(renderNameAffixCombobox({ id: 'addPersonFactSuffix', label: 'Suffix', value: suffixValue, kind: 'suffix', className: 'full' }));
-      }
-      if (factId === 'customFact') {
+    }
+    if (factId === 'customFact')
+    {
         return fieldWrap(
-          renderCustomFactFields(
-            'addPersonCustomFact',
-            customFact));
-      }
-      if (factId === 'causeOfDeath') {
+            renderCustomFactFields(
+                'addPersonCustomFact',
+                customFact));
+    }
+    if (factId === 'causeOfDeath')
+    {
         return fieldWrap(`<div class="field full"><label for="addPersonFactCauseOfDeath">Cause of death</label><input id="addPersonFactCauseOfDeath" value="${escapeHtml(cleanEditFieldValue(death.reason || death.cause))}" placeholder="Cause or reason"></div>`);
-      }
-      if (factId === 'burialPlace') {
+    }
+    if (factId === 'burialPlace')
+    {
         return fieldWrap(renderPlaceCombobox({
-          id: 'addPersonFactBurialPlace',
-          label: 'Burial place',
-          value: editPlaceValue(death.burialPlaceId, death.burialPlaceText),
-          selectedPlaceId: death.burialPlaceId || '',
-          addressValue: death.burialAddress || '',
-          placeholder: 'e.g. Old Cattery, England',
-          className: 'full'
+            id: 'addPersonFactBurialPlace',
+            label: 'Burial place',
+            value: editPlaceValue(death.burialPlaceId, death.burialPlaceText),
+            selectedPlaceId: death.burialPlaceId || '',
+            addressValue: death.burialAddress || '',
+            placeholder: 'e.g. Old Cattery, England',
+            className: 'full'
         }));
-      }
-      if (factId === 'education') {
+    }
+    if (factId === 'education')
+    {
         return fieldWrap(`<div class="field full">
             <label for="addPersonFactEducationInstitutionName">Institution name</label>
             <input id="addPersonFactEducationInstitutionName" data-source-value="${escapeHtml(details.educationInstitutionName || '')}" value="${escapeHtml(localizedDataFieldValue(details.educationInstitutionName || ''))}" placeholder="e.g. Pawford Grammar School">
@@ -5448,44 +5809,44 @@
           </div>
 
           ${renderPlaceCombobox({
-            id: 'addPersonFactEducationPlace',
-            label: 'Place',
-            value: editPlaceValue(education?.placeId, education?.placeText || details.educationPlace),
-            selectedPlaceId: education?.placeId || '',
-            addressValue: education?.address || '',
-            placeholder: 'e.g. Pawford, England',
-            className: 'full'
-          })}
+                id: 'addPersonFactEducationPlace',
+                label: 'Place',
+                value: editPlaceValue(education?.placeId, education?.placeText || details.educationPlace),
+                selectedPlaceId: education?.placeId || '',
+                addressValue: education?.address || '',
+                placeholder: 'e.g. Pawford, England',
+                className: 'full'
+            })}
 
           <div class="add-person-fact-date-row">
             <div class="profile-edit-date-cell">
               ${renderGenealogyDateField(
-                'addPersonFactEducationFrom',
-                'Start date',
-                details.educationFromDate,
-                {
-                  inputId: 'addPersonFactEducationFromDate',
-                  typeId: 'addPersonFactEducationFromDateType',
-                  defaultDateType: 'Year only',
-                  placeholder: 'e.g. 1915',
-                  className: 'genealogy-date-inline-range'
-                }
-              )}
+                    'addPersonFactEducationFrom',
+                    'Start date',
+                    details.educationFromDate,
+                    {
+                        inputId: 'addPersonFactEducationFromDate',
+                        typeId: 'addPersonFactEducationFromDateType',
+                        defaultDateType: 'Year only',
+                        placeholder: 'e.g. 1915',
+                        className: 'genealogy-date-inline-range'
+                    }
+                )}
             </div>
 
             <div class="profile-edit-date-cell">
               ${renderGenealogyDateField(
-                'addPersonFactEducationTo',
-                'End date',
-                details.educationToDate,
-                {
-                  inputId: 'addPersonFactEducationToDate',
-                  typeId: 'addPersonFactEducationToDateType',
-                  defaultDateType: 'Year only',
-                  placeholder: 'e.g. 1920',
-                  className: 'genealogy-date-inline-range'
-                }
-              )}
+                    'addPersonFactEducationTo',
+                    'End date',
+                    details.educationToDate,
+                    {
+                        inputId: 'addPersonFactEducationToDate',
+                        typeId: 'addPersonFactEducationToDateType',
+                        defaultDateType: 'Year only',
+                        placeholder: 'e.g. 1920',
+                        className: 'genealogy-date-inline-range'
+                    }
+                )}
             </div>
           </div>
 
@@ -5493,18 +5854,19 @@
             <label for="addPersonFactEducationNotes">Notes</label>
             <textarea id="addPersonFactEducationNotes" data-source-value="${escapeHtml(details.educationNotes || '')}" placeholder="Education notes">${escapeHtml(localizedDataFieldValue(details.educationNotes || ''))}</textarea>
           </div>`);
-      }
-      if (factId === 'occupation') {
+    }
+    if (factId === 'occupation')
+    {
         return fieldWrap(`<div class="field"><label for="addPersonFactWorkCompany">Company name</label>
           <input
             id="addPersonFactWorkCompany"
             data-source-value="${escapeHtml(
-              details.workCompany || ''
+                details.workCompany || ''
             )}"
             value="${escapeHtml(
-              localizedDataFieldValue(
-                details.workCompany || ''
-              )
+                localizedDataFieldValue(
+                    details.workCompany || ''
+                )
             )}"
             placeholder="e.g. Pawford School">
           </div>
@@ -5512,109 +5874,113 @@
             <input
               id="addPersonFactWorkOccupation"
               data-source-value="${escapeHtml(
-                details.workOccupation || ''
-              )}"
+                    details.workOccupation || ''
+                )}"
               value="${escapeHtml(
-                localizedDataFieldValue(
-                  details.workOccupation || ''
-                )
-              )}"
+                    localizedDataFieldValue(
+                        details.workOccupation || ''
+                    )
+                )}"
               placeholder="e.g. Teacher">
             </div>
           <div class="add-person-fact-date-row">
             <div class="profile-edit-date-cell">
               ${renderGenealogyDateField(
-                'addPersonFactWorkFrom',
-                'Start date',
-                details.workFromDate,
-                {
-                  inputId: 'addPersonFactWorkFromDate',
-                  typeId: 'addPersonFactWorkFromDateType',
-                  defaultDateType: 'Exact date',
-                  placeholder: 'e.g. 14 Feb 1915',
-                  className: 'genealogy-date-inline-range'
-                }
-              )}
+                    'addPersonFactWorkFrom',
+                    'Start date',
+                    details.workFromDate,
+                    {
+                        inputId: 'addPersonFactWorkFromDate',
+                        typeId: 'addPersonFactWorkFromDateType',
+                        defaultDateType: 'Exact date',
+                        placeholder: 'e.g. 14 Feb 1915',
+                        className: 'genealogy-date-inline-range'
+                    }
+                )}
             </div>
 
             <div class="profile-edit-date-cell">
               ${renderGenealogyDateField(
-                'addPersonFactWorkTo',
-                'End date',
-                details.workToDate,
-                {
-                  inputId: 'addPersonFactWorkToDate',
-                  typeId: 'addPersonFactWorkToDateType',
-                  defaultDateType: 'Exact date',
-                  placeholder: 'e.g. 14 Feb 1920',
-                  className: 'genealogy-date-inline-range'
-                }
-              )}
+                    'addPersonFactWorkTo',
+                    'End date',
+                    details.workToDate,
+                    {
+                        inputId: 'addPersonFactWorkToDate',
+                        typeId: 'addPersonFactWorkToDateType',
+                        defaultDateType: 'Exact date',
+                        placeholder: 'e.g. 14 Feb 1920',
+                        className: 'genealogy-date-inline-range'
+                    }
+                )}
             </div>
           </div>
           <div class="field full"><label for="addPersonFactWorkNotes">Notes</label>
             <textarea
               id="addPersonFactWorkNotes"
               data-source-value="${escapeHtml(
-                details.workNotes || ''
-              )}"
+                    details.workNotes || ''
+                )}"
               placeholder="Work notes">${escapeHtml(
-                localizedDataFieldValue(
-                  details.workNotes || ''
-                )
-              )}</textarea>
+                    localizedDataFieldValue(
+                        details.workNotes || ''
+                    )
+                )}</textarea>
             </div>`);
-      }
-      if (factId === 'religion') {
+    }
+    if (factId === 'religion')
+    {
         return fieldWrap(
-          renderReligionField({
-            id: 'addPersonFactReligion',
-            value: details.religion,
-            className: 'full'
-          })
+            renderReligionField({
+                id: 'addPersonFactReligion',
+                value: details.religion,
+                className: 'full'
+            })
         );
-      }
-      if (factId === 'baptism') {
+    }
+    if (factId === 'baptism')
+    {
         return fieldWrap(`${renderPlaceCombobox({
-          id: 'addPersonFactBaptismPlace',
-          label: 'Baptism place',
-          value: editPlaceValue(baptism?.placeId, baptism?.placeText || details.baptismPlace),
-          selectedPlaceId: baptism?.placeId || '',
-          addressValue: baptism?.address || '',
-          placeholder: 'Search or type a place',
-          className: 'full'
+            id: 'addPersonFactBaptismPlace',
+            label: 'Baptism place',
+            value: editPlaceValue(baptism?.placeId, baptism?.placeText || details.baptismPlace),
+            selectedPlaceId: baptism?.placeId || '',
+            addressValue: baptism?.address || '',
+            placeholder: 'Search or type a place',
+            className: 'full'
         })}
           ${renderGenealogyDateField('addPersonFactBaptism', 'Baptism date', details.baptismDate, {
-            inputId: 'addPersonFactBaptismDate',
-            typeId: 'addPersonFactBaptismDateType',
-            className: 'full genealogy-date-inline-range',
-            defaultDateType: 'Exact date',
-            placeholder: 'e.g. 14 Feb 1915'
-          })}`);
-      }
-      return fieldWrap(`<div class="field full"><label for="addPersonFactAlternativeNames">Alternative names</label><input id="addPersonFactAlternativeNames" value="${escapeHtml(details.alternativeNames || '')}" placeholder="Nickname, spelling variant, or former name"></div>`);
+                inputId: 'addPersonFactBaptismDate',
+                typeId: 'addPersonFactBaptismDateType',
+                className: 'full genealogy-date-inline-range',
+                defaultDateType: 'Exact date',
+                placeholder: 'e.g. 14 Feb 1915'
+            })}`);
     }
+    return fieldWrap(`<div class="field full"><label for="addPersonFactAlternativeNames">Alternative names</label><input id="addPersonFactAlternativeNames" value="${escapeHtml(details.alternativeNames || '')}" placeholder="Nickname, spelling variant, or former name"></div>`);
+}
 
-    function formatAddPersonFactSummary(count) {
-      const numericCount = Number(count);
+function formatAddPersonFactSummary(count)
+{
+    const numericCount = Number(count);
 
-      const normalizedCount =
+    const normalizedCount =
         Number.isFinite(numericCount)
-          ? Math.max(0, Math.trunc(numericCount))
-          : 0;
+            ? Math.max(0, Math.trunc(numericCount))
+            : 0;
 
-      return translateText(
+    return translateText(
         normalizedCount
-          ? `${normalizedCount} added`
-          : 'Optional'
-      );
-    }
+            ? `${normalizedCount} added`
+            : 'Optional'
+    );
+}
 
-    function renderAddPersonAdditionalFacts(person = null) {
-      const activeFacts = addPersonAddedFactsFromPerson(person);
-      const expanded = activeFacts.length > 0;
-      const definitions = addPersonFactDefinitions();
-      return `<section class="add-person-additional-section">
+function renderAddPersonAdditionalFacts(person = null)
+{
+    const activeFacts = addPersonAddedFactsFromPerson(person);
+    const expanded = activeFacts.length > 0;
+    const definitions = addPersonFactDefinitions();
+    return `<section class="add-person-additional-section">
         <div class="add-person-facts-section" data-add-person-facts>
           <button class="add-person-facts-header" type="button" data-add-person-facts-toggle aria-expanded="${expanded ? 'true' : 'false'}">
             <span class="add-person-facts-header-main"><span class="add-person-facts-chevron" aria-hidden="true">${icon.chevron}</span><span>Additional facts</span></span>
@@ -5628,139 +5994,151 @@
           </div>
         </div>
       </section>`;
-    }
+}
 
 
-    const PARTNER_RELATIONSHIP_DEFINITIONS = Object.freeze({
-      'Married': Object.freeze({ status: 'active', startTag: 'MARR', startEventType: 'Marriage', startTypeLabel: '', endTag: '', endEventType: '', endTypeLabel: '', hasEnd: false, startLabel: 'Marriage date', startPlaceLabel: 'Marriage place', showsMarriageType: true }),
-      'Partner': Object.freeze({ status: 'active', startTag: 'EVEN', startEventType: 'Partnership', startTypeLabel: 'Partnership began', endTag: '', endEventType: '', endTypeLabel: '', hasEnd: false, startLabel: 'Relationship date', startPlaceLabel: 'Relationship place', showsMarriageType: false }),
-      'Unmarried partner': Object.freeze({ status: 'active', startTag: 'EVEN', startEventType: 'Partnership', startTypeLabel: 'Partnership began', endTag: '', endEventType: '', endTypeLabel: '', hasEnd: false, startLabel: 'Relationship date', startPlaceLabel: 'Relationship place', showsMarriageType: false }),
-      'Former partner': Object.freeze({ status: 'ended', startTag: 'EVEN', startEventType: 'Partnership', startTypeLabel: 'Partnership began', endTag: 'EVEN', endEventType: 'Partnership', endTypeLabel: 'Partnership ended', hasEnd: true, startLabel: 'From', startPlaceLabel: 'From place', endLabel: 'To', endPlaceLabel: 'To place', showsMarriageType: false }),
-      'Separated': Object.freeze({ status: 'separated', startTag: 'MARR', startEventType: 'Marriage', startTypeLabel: '', endTag: 'EVEN', endEventType: 'Separation', endTypeLabel: 'Separation', hasEnd: true, startLabel: 'From', startPlaceLabel: 'From place', endLabel: 'To', endPlaceLabel: 'To place', showsMarriageType: true }),
-      'Divorced': Object.freeze({ status: 'divorced', startTag: 'MARR', startEventType: 'Marriage', startTypeLabel: '', endTag: 'DIV', endEventType: 'Divorce', endTypeLabel: '', hasEnd: true, startLabel: 'From', startPlaceLabel: 'From place', endLabel: 'To', endPlaceLabel: 'To place', showsMarriageType: true }),
-      'Annulled': Object.freeze({ status: 'annulled', startTag: 'MARR', startEventType: 'Marriage', startTypeLabel: '', endTag: 'ANUL', endEventType: 'Annulment', endTypeLabel: '', hasEnd: true, startLabel: 'From', startPlaceLabel: 'From place', endLabel: 'To', endPlaceLabel: 'To place', showsMarriageType: true }),
-      'Engaged': Object.freeze({ status: 'active', startTag: 'ENGA', startEventType: 'Engagement', startTypeLabel: '', endTag: '', endEventType: '', endTypeLabel: '', hasEnd: false, startLabel: 'Engagement date', startPlaceLabel: 'Engagement place', showsMarriageType: false }),
-      'Unknown relationship': Object.freeze({ status: 'unknown', startTag: 'EVEN', startEventType: 'Relationship', startTypeLabel: 'Relationship began', endTag: '', endEventType: '', endTypeLabel: '', hasEnd: false, startLabel: 'Relationship date', startPlaceLabel: 'Relationship place', showsMarriageType: false })
-    });
+const PARTNER_RELATIONSHIP_DEFINITIONS = Object.freeze({
+    'Married': Object.freeze({ status: 'active', startTag: 'MARR', startEventType: 'Marriage', startTypeLabel: '', endTag: '', endEventType: '', endTypeLabel: '', hasEnd: false, startLabel: 'Marriage date', startPlaceLabel: 'Marriage place', showsMarriageType: true }),
+    'Partner': Object.freeze({ status: 'active', startTag: 'EVEN', startEventType: 'Partnership', startTypeLabel: 'Partnership began', endTag: '', endEventType: '', endTypeLabel: '', hasEnd: false, startLabel: 'Relationship date', startPlaceLabel: 'Relationship place', showsMarriageType: false }),
+    'Unmarried partner': Object.freeze({ status: 'active', startTag: 'EVEN', startEventType: 'Partnership', startTypeLabel: 'Partnership began', endTag: '', endEventType: '', endTypeLabel: '', hasEnd: false, startLabel: 'Relationship date', startPlaceLabel: 'Relationship place', showsMarriageType: false }),
+    'Former partner': Object.freeze({ status: 'ended', startTag: 'EVEN', startEventType: 'Partnership', startTypeLabel: 'Partnership began', endTag: 'EVEN', endEventType: 'Partnership', endTypeLabel: 'Partnership ended', hasEnd: true, startLabel: 'From', startPlaceLabel: 'From place', endLabel: 'To', endPlaceLabel: 'To place', showsMarriageType: false }),
+    'Separated': Object.freeze({ status: 'separated', startTag: 'MARR', startEventType: 'Marriage', startTypeLabel: '', endTag: 'EVEN', endEventType: 'Separation', endTypeLabel: 'Separation', hasEnd: true, startLabel: 'From', startPlaceLabel: 'From place', endLabel: 'To', endPlaceLabel: 'To place', showsMarriageType: true }),
+    'Divorced': Object.freeze({ status: 'divorced', startTag: 'MARR', startEventType: 'Marriage', startTypeLabel: '', endTag: 'DIV', endEventType: 'Divorce', endTypeLabel: '', hasEnd: true, startLabel: 'From', startPlaceLabel: 'From place', endLabel: 'To', endPlaceLabel: 'To place', showsMarriageType: true }),
+    'Annulled': Object.freeze({ status: 'annulled', startTag: 'MARR', startEventType: 'Marriage', startTypeLabel: '', endTag: 'ANUL', endEventType: 'Annulment', endTypeLabel: '', hasEnd: true, startLabel: 'From', startPlaceLabel: 'From place', endLabel: 'To', endPlaceLabel: 'To place', showsMarriageType: true }),
+    'Engaged': Object.freeze({ status: 'active', startTag: 'ENGA', startEventType: 'Engagement', startTypeLabel: '', endTag: '', endEventType: '', endTypeLabel: '', hasEnd: false, startLabel: 'Engagement date', startPlaceLabel: 'Engagement place', showsMarriageType: false }),
+    'Unknown relationship': Object.freeze({ status: 'unknown', startTag: 'EVEN', startEventType: 'Relationship', startTypeLabel: 'Relationship began', endTag: '', endEventType: '', endTypeLabel: '', hasEnd: false, startLabel: 'Relationship date', startPlaceLabel: 'Relationship place', showsMarriageType: false })
+});
 
-    const ADD_PERSON_RELATIONSHIP_TYPES = Object.freeze(Object.keys(PARTNER_RELATIONSHIP_DEFINITIONS));
-    const ADD_PERSON_MARRIAGE_TYPES = ['Civil', 'Religious', 'Common law', 'Customary', 'Tribal custom', 'Unknown'];
+const ADD_PERSON_RELATIONSHIP_TYPES = Object.freeze(Object.keys(PARTNER_RELATIONSHIP_DEFINITIONS));
+const ADD_PERSON_MARRIAGE_TYPES = ['Civil', 'Religious', 'Common law', 'Customary', 'Tribal custom', 'Unknown'];
 
-    function addPersonRelationshipTypeOptions(selected = 'Married') {
-      const active = ADD_PERSON_RELATIONSHIP_TYPES.includes(selected) ? selected : 'Married';
-      return ADD_PERSON_RELATIONSHIP_TYPES.map(value => `<option value="${escapeHtml(value)}" ${value === active ? 'selected' : ''}>${escapeHtml(value)}</option>`).join('');
-    }
-    function partnerRelationshipDefinition(type) {
-      return PARTNER_RELATIONSHIP_DEFINITIONS[type] || PARTNER_RELATIONSHIP_DEFINITIONS['Unknown relationship'];
-    }
-    function addPersonRelationshipShowsMarriageType(type) {
-      return partnerRelationshipDefinition(String(type || '').trim()).showsMarriageType;
-    }
-    function addPersonMarriageTypeOptions(selected = 'Civil') {
-      const active = ADD_PERSON_MARRIAGE_TYPES.includes(selected) ? selected : 'Civil';
-      return ADD_PERSON_MARRIAGE_TYPES.map(value => `<option value="${escapeHtml(value)}" ${value === active ? 'selected' : ''}>${escapeHtml(value)}</option>`).join('');
-    }
+function addPersonRelationshipTypeOptions(selected = 'Married')
+{
+    const active = ADD_PERSON_RELATIONSHIP_TYPES.includes(selected) ? selected : 'Married';
+    return ADD_PERSON_RELATIONSHIP_TYPES.map(value => `<option value="${escapeHtml(value)}" ${value === active ? 'selected' : ''}>${escapeHtml(value)}</option>`).join('');
+}
+function partnerRelationshipDefinition(type)
+{
+    return PARTNER_RELATIONSHIP_DEFINITIONS[type] || PARTNER_RELATIONSHIP_DEFINITIONS['Unknown relationship'];
+}
+function addPersonRelationshipShowsMarriageType(type)
+{
+    return partnerRelationshipDefinition(String(type || '').trim()).showsMarriageType;
+}
+function addPersonMarriageTypeOptions(selected = 'Civil')
+{
+    const active = ADD_PERSON_MARRIAGE_TYPES.includes(selected) ? selected : 'Civil';
+    return ADD_PERSON_MARRIAGE_TYPES.map(value => `<option value="${escapeHtml(value)}" ${value === active ? 'selected' : ''}>${escapeHtml(value)}</option>`).join('');
+}
 
-    function relationshipEventMatches(event, tag, typeLabel = '') {
-      if (!event || String(event.gedcomTag || event.tag || '').toUpperCase() !== tag) return false;
-      if (tag !== 'EVEN') return true;
-      return cleanEditFieldValue(event.typeLabel).toLowerCase() === cleanEditFieldValue(typeLabel).toLowerCase();
-    }
+function relationshipEventMatches(event, tag, typeLabel = '')
+{
+    if (!event || String(event.gedcomTag || event.tag || '').toUpperCase() !== tag) return false;
+    if (tag !== 'EVEN') return true;
+    return cleanEditFieldValue(event.typeLabel).toLowerCase() === cleanEditFieldValue(typeLabel).toLowerCase();
+}
 
-    function partnerRelationshipManagedEvent(family, tag, typeLabel = '') {
-      return (family?.events || []).find(event => relationshipEventMatches(event, tag, typeLabel)) || null;
-    }
+function partnerRelationshipManagedEvent(family, tag, typeLabel = '')
+{
+    return (family?.events || []).find(event => relationshipEventMatches(event, tag, typeLabel)) || null;
+}
 
-    function legacyRelationshipDate(family, prefix = 'start') {
-      return normalizeGenealogyDateInput({
+function legacyRelationshipDate(family, prefix = 'start')
+{
+    return normalizeGenealogyDateInput({
         date: family?.[`${prefix}Date`] || '',
         dateLabel: family?.[`${prefix}DateLabel`] || '',
         dateType: family?.[`${prefix}DateType`] || 'Exact date',
         sortDate: family?.[`${prefix}SortDate`] || '',
         calendar: family?.[`${prefix}Calendar`] || 'Gregorian',
         originalText: family?.[`${prefix}OriginalText`] || ''
-      }, 'Exact date');
-    }
+    }, 'Exact date');
+}
 
-    function partnerRelationshipStartEvent(family, type = relationshipTypeFromLegacy(family)) {
-      const definition = partnerRelationshipDefinition(type);
-      const exact = partnerRelationshipManagedEvent(family, definition.startTag, definition.startTypeLabel);
-      if (exact) return exact;
-      const legacy = ['MARR', 'ENGA'].map(tag => relationshipEventByTag(family, tag)).find(Boolean);
-      if (legacy) return legacy;
-      return createRelationshipEvent(definition.startTag, definition.startEventType, {
+function partnerRelationshipStartEvent(family, type = relationshipTypeFromLegacy(family))
+{
+    const definition = partnerRelationshipDefinition(type);
+    const exact = partnerRelationshipManagedEvent(family, definition.startTag, definition.startTypeLabel);
+    if (exact) return exact;
+    const legacy = ['MARR', 'ENGA'].map(tag => relationshipEventByTag(family, tag)).find(Boolean);
+    if (legacy) return legacy;
+    return createRelationshipEvent(definition.startTag, definition.startEventType, {
         id: `${family?.id || 'new-relationship'}-start`,
         typeLabel: definition.startTypeLabel,
         date: legacyRelationshipDate(family, 'start'),
         placeId: family?.startPlaceId || null,
         placeText: family?.startPlaceText || ''
-      });
-    }
+    });
+}
 
-    function partnerRelationshipEndEvent(family, type = relationshipTypeFromLegacy(family)) {
-      const definition = partnerRelationshipDefinition(type);
-      if (!definition.hasEnd) return null;
-      const exact = partnerRelationshipManagedEvent(family, definition.endTag, definition.endTypeLabel);
-      if (exact) return exact;
-      const legacy = ['DIV', 'ANUL'].map(tag => relationshipEventByTag(family, tag)).find(Boolean);
-      if (legacy) return legacy;
-      return createRelationshipEvent(definition.endTag, definition.endEventType, {
+function partnerRelationshipEndEvent(family, type = relationshipTypeFromLegacy(family))
+{
+    const definition = partnerRelationshipDefinition(type);
+    if (!definition.hasEnd) return null;
+    const exact = partnerRelationshipManagedEvent(family, definition.endTag, definition.endTypeLabel);
+    if (exact) return exact;
+    const legacy = ['DIV', 'ANUL'].map(tag => relationshipEventByTag(family, tag)).find(Boolean);
+    if (legacy) return legacy;
+    return createRelationshipEvent(definition.endTag, definition.endEventType, {
         id: `${family?.id || 'new-relationship'}-end`,
         typeLabel: definition.endTypeLabel,
         date: legacyRelationshipDate(family, 'end'),
         placeId: family?.endPlaceId || null,
         placeText: family?.endPlaceText || ''
-      });
-    }
+    });
+}
 
-    function renderPartnerRelationshipDateFields({ prefix, relationshipType, family = null } = {}) {
-      const definition = partnerRelationshipDefinition(relationshipType);
-      const startEvent = partnerRelationshipStartEvent(family, relationshipType);
-      const endEvent = partnerRelationshipEndEvent(family, relationshipType);
-      const startPlace = editPlaceValue(startEvent?.placeId || family?.startPlaceId, startEvent?.placeText || family?.startPlaceText);
-      const endPlace = editPlaceValue(endEvent?.placeId || family?.endPlaceId, endEvent?.placeText || family?.endPlaceText);
+function renderPartnerRelationshipDateFields({ prefix, relationshipType, family = null } = {})
+{
+    const definition = partnerRelationshipDefinition(relationshipType);
+    const startEvent = partnerRelationshipStartEvent(family, relationshipType);
+    const endEvent = partnerRelationshipEndEvent(family, relationshipType);
+    const startPlace = editPlaceValue(startEvent?.placeId || family?.startPlaceId, startEvent?.placeText || family?.startPlaceText);
+    const endPlace = editPlaceValue(endEvent?.placeId || family?.endPlaceId, endEvent?.placeText || family?.endPlaceText);
 
-      return `<div class="partner-relationship-start" data-partner-relationship-start>
+    return `<div class="partner-relationship-start" data-partner-relationship-start>
         ${renderGenealogyDateField(`${prefix}StartDate`, definition.startLabel, startEvent?.date || emptyGenealogyDate('Exact date'), {
-          inputId: `${prefix}StartDateInput`, typeId: `${prefix}StartDateType`, placeholder: 'e.g. 14 Feb 1915', defaultDateType: 'Exact date', className: 'full genealogy-date-inline-range'
+            inputId: `${prefix}StartDateInput`, typeId: `${prefix}StartDateType`, placeholder: 'e.g. 14 Feb 1915', defaultDateType: 'Exact date', className: 'full genealogy-date-inline-range'
         })}
         ${renderPlaceCombobox({ id: `${prefix}StartPlace`, label: definition.startPlaceLabel, value: startPlace, selectedPlaceId: startEvent?.placeId || family?.startPlaceId || '', addressValue: startEvent?.address || family?.startAddress || '', placeholder: 'e.g. Meowbridge, England', className: 'full', inputAttrs: 'data-partner-relationship-start-place' })}
       </div>
       <div class="partner-relationship-end" data-partner-relationship-end ${definition.hasEnd ? '' : 'hidden'}>
         ${renderGenealogyDateField(`${prefix}EndDate`, definition.endLabel || 'To', endEvent?.date || emptyGenealogyDate('Exact date'), {
-          inputId: `${prefix}EndDateInput`, typeId: `${prefix}EndDateType`, placeholder: 'e.g. 12 Jun 2025', defaultDateType: 'Exact date', className: 'full genealogy-date-inline-range'
+            inputId: `${prefix}EndDateInput`, typeId: `${prefix}EndDateType`, placeholder: 'e.g. 12 Jun 2025', defaultDateType: 'Exact date', className: 'full genealogy-date-inline-range'
         })}
         ${renderPlaceCombobox({ id: `${prefix}EndPlace`, label: definition.endPlaceLabel || 'To place', value: endPlace, selectedPlaceId: endEvent?.placeId || family?.endPlaceId || '', addressValue: endEvent?.address || family?.endAddress || '', placeholder: 'e.g. Pawford, England', className: 'full', inputAttrs: 'data-partner-relationship-end-place' })}
       </div>`;
-    }
+}
 
-    function relationshipBlockShouldShow(options = {}, editPerson = null) {
-      if (options.relativeType === 'partner') return true;
-      if (options.mode === 'edit' && editPerson) return getPartnerRelationships(editPerson.id).length > 0;
-      return false;
-    }
+function relationshipBlockShouldShow(options = {}, editPerson = null)
+{
+    if (options.relativeType === 'partner') return true;
+    if (options.mode === 'edit' && editPerson) return getPartnerRelationships(editPerson.id).length > 0;
+    return false;
+}
 
-    function renderAddPersonRelationshipCard({
-      relationship = null,
-      personId = '',
-      partner = null,
-      index = 0,
-      mode = 'edit',
-      partnerChildrenMode = PARTNER_CHILDREN_ADD_PARENT
-    } = {}) {
-      const relationshipType = relationship
+function renderAddPersonRelationshipCard({
+    relationship = null,
+    personId = '',
+    partner = null,
+    index = 0,
+    mode = 'edit',
+    partnerChildrenMode = PARTNER_CHILDREN_ADD_PARENT
+} = {})
+{
+    const relationshipType = relationship
         ? relationshipTypeFromLegacy(relationship)
         : mode === 'addPartner'
-          ? 'Married'
-          : 'Partner';
-      const partnerName = partner?.names?.display || (mode === 'addPartner' ? 'Selected person' : 'Unknown person');
-      const fieldPrefix = `addPersonRelationship${index}`;
-      const startEvent = partnerRelationshipStartEvent(relationship, relationshipType);
-      const marriageType = startEvent?.typeLabel || relationship?.marriageType || 'Civil';
-      const showMarriageType = addPersonRelationshipShowsMarriageType(relationshipType);
-      const showPartnerUnlinkToast = Boolean(mode === 'edit' && relationship?.id && personId && partner?.id);
+            ? 'Married'
+            : 'Partner';
+    const partnerName = partner?.names?.display || (mode === 'addPartner' ? 'Selected person' : 'Unknown person');
+    const fieldPrefix = `addPersonRelationship${index}`;
+    const startEvent = partnerRelationshipStartEvent(relationship, relationshipType);
+    const marriageType = startEvent?.typeLabel || relationship?.marriageType || 'Civil';
+    const showMarriageType = addPersonRelationshipShowsMarriageType(relationshipType);
+    const showPartnerUnlinkToast = Boolean(mode === 'edit' && relationship?.id && personId && partner?.id);
 
-      return `<div class="add-person-relationship-card" data-add-person-relationship-card data-relationship-id="${escapeHtml(relationship?.id || '')}" data-partner-id="${escapeHtml(partner?.id || '')}" data-relationship-index="${index}">
+    return `<div class="add-person-relationship-card" data-add-person-relationship-card data-relationship-id="${escapeHtml(relationship?.id || '')}" data-partner-id="${escapeHtml(partner?.id || '')}" data-relationship-index="${index}">
         <div class="add-person-relationship-grid">
           <div class="field add-person-select-field add-person-relationship-type-field">
             <label for="${fieldPrefix}Type">Relationship type</label>
@@ -5775,8 +6153,8 @@
             <div class="add-person-relationship-partner-shell">
               <div class="add-person-relationship-partner">
                 ${renderPersonAvatar(
-                  partner,
-                  'small-avatar'
+                    partner,
+                    'small-avatar'
                 )}
                 <span>${escapeHtml(partnerName)}</span>
               </div>
@@ -5805,47 +6183,48 @@
             <span class="add-person-select-chevron" aria-hidden="true">${icon.chevron}</span>
           </div>
           ${mode === 'addPartner'
-            ? renderPartnerChildrenSelector({
-                anchorPersonId: partner?.id || '',
-                relationshipType: 'partner',
-                selectedPersonId: '',
-                selectedValue: partnerChildrenMode,
-                controlId: 'addPersonPartnerChildrenMode'
-              })
-            : ''}
+                ? renderPartnerChildrenSelector({
+                    anchorPersonId: partner?.id || '',
+                    relationshipType: 'partner',
+                    selectedPersonId: '',
+                    selectedValue: partnerChildrenMode,
+                    controlId: 'addPersonPartnerChildrenMode'
+                })
+                : ''}
         </div>
       </div>`;
-    }
+}
 
-    function renderAddPersonRelationshipBlock(options = {}, editPerson = null) {
-      const isPartnerMode = options.relativeType === 'partner';
-      const anchorPerson = isPartnerMode ? getPerson(options.personId || state.selectedPersonId) : null;
-      const relationships = editPerson ? getPartnerRelationships(editPerson.id) : [];
-      const cards = isPartnerMode
+function renderAddPersonRelationshipBlock(options = {}, editPerson = null)
+{
+    const isPartnerMode = options.relativeType === 'partner';
+    const anchorPerson = isPartnerMode ? getPerson(options.personId || state.selectedPersonId) : null;
+    const relationships = editPerson ? getPartnerRelationships(editPerson.id) : [];
+    const cards = isPartnerMode
         ? [
             renderAddPersonRelationshipCard({
-              relationship: null,
-              personId: '',
-              partner: anchorPerson,
-              index: 0,
-              mode: 'addPartner',
-              partnerChildrenMode:
+                relationship: null,
+                personId: '',
+                partner: anchorPerson,
+                index: 0,
+                mode: 'addPartner',
+                partnerChildrenMode:
                 normalizePartnerChildrenMode(
-                  options.partnerChildrenMode
+                    options.partnerChildrenMode
                 )
             })
-          ]
+        ]
         : relationships.map((relationship, index) => renderAddPersonRelationshipCard({
-          relationship,
-          personId: editPerson?.id || '',
-          partner: getRelationshipPartner(relationship, editPerson?.id),
-          index,
-          mode: 'edit'
+            relationship,
+            personId: editPerson?.id || '',
+            partner: getRelationshipPartner(relationship, editPerson?.id),
+            index,
+            mode: 'edit'
         }));
 
-      if (!cards.length) return '';
+    if (!cards.length) return '';
 
-      return `<section class="add-person-relationship-section" data-add-person-relationship-section>
+    return `<section class="add-person-relationship-section" data-add-person-relationship-section>
         <div class="add-person-relationship-panel">
           <button class="add-person-relationship-header" type="button" data-add-person-relationship-toggle aria-expanded="true">
             <span class="add-person-relationship-header-main">
@@ -5859,325 +6238,354 @@
           </div>
         </div>
       </section>`;
-    }
+}
 
-    function updatePartnerRelationshipFields(
-      card,
-      relationshipType
-    ) {
-      const definition =
+function updatePartnerRelationshipFields(
+    card,
+    relationshipType
+)
+{
+    const definition =
         partnerRelationshipDefinition(
-          relationshipType
+            relationshipType
         );
 
-      const start =
+    const start =
         card?.querySelector(
-          '[data-partner-relationship-start]'
+            '[data-partner-relationship-start]'
         );
 
-      const end =
+    const end =
         card?.querySelector(
-          '[data-partner-relationship-end]'
+            '[data-partner-relationship-end]'
         );
 
-      const marriageTypeField =
+    const marriageTypeField =
         card?.querySelector(
-          [
-            '[data-add-person-marriage-type-field]',
-            '[data-relationship-edit-marriage-type]'
-          ].join(', ')
+            [
+                '[data-add-person-marriage-type-field]',
+                '[data-relationship-edit-marriage-type]'
+            ].join(', ')
         );
 
-      const startDateLabel =
+    const startDateLabel =
         start?.querySelector(
-          '.genealogy-date-field > label'
+            '.genealogy-date-field > label'
         );
 
-      const startPlaceLabel =
+    const startPlaceLabel =
         start?.querySelector(
-          '.place-combobox-field > label'
+            '.place-combobox-field > label'
         );
 
-      const endDateLabel =
+    const endDateLabel =
         end?.querySelector(
-          '.genealogy-date-field > label'
+            '.genealogy-date-field > label'
         );
 
-      const endPlaceLabel =
+    const endPlaceLabel =
         end?.querySelector(
-          '.place-combobox-field > label'
+            '.place-combobox-field > label'
         );
 
-      if (startDateLabel) {
+    if (startDateLabel)
+    {
         startDateLabel.textContent =
-          t(definition.startLabel);
-      }
+            t(definition.startLabel);
+    }
 
-      if (startPlaceLabel) {
+    if (startPlaceLabel)
+    {
         startPlaceLabel.textContent =
-          t(definition.startPlaceLabel);
-      }
+            t(definition.startPlaceLabel);
+    }
 
-      if (endDateLabel) {
+    if (endDateLabel)
+    {
         endDateLabel.textContent =
-          t(
-            definition.endLabel
+            t(
+                definition.endLabel
             || 'To'
-          );
-      }
+            );
+    }
 
-      if (endPlaceLabel) {
+    if (endPlaceLabel)
+    {
         endPlaceLabel.textContent =
-          t(
-            definition.endPlaceLabel
+            t(
+                definition.endPlaceLabel
             || 'To place'
-          );
-      }
+            );
+    }
 
-      if (end) {
+    if (end)
+    {
         end.hidden =
-          !definition.hasEnd;
-      }
+            !definition.hasEnd;
+    }
 
-      if (marriageTypeField) {
+    if (marriageTypeField)
+    {
         marriageTypeField.hidden =
-          !definition.showsMarriageType;
-      }
+            !definition.showsMarriageType;
     }
+}
 
-    function partnerRelationshipDateOrderIsValid(startDate, endDate) {
-      const comparableTypes = new Set(['Exact date', 'Year only']);
-      const start = normalizeGenealogyDateInput(startDate || {}, 'Exact date');
-      const end = normalizeGenealogyDateInput(endDate || {}, 'Exact date');
+function partnerRelationshipDateOrderIsValid(startDate, endDate)
+{
+    const comparableTypes = new Set(['Exact date', 'Year only']);
+    const start = normalizeGenealogyDateInput(startDate || {}, 'Exact date');
+    const end = normalizeGenealogyDateInput(endDate || {}, 'Exact date');
 
-      if (!start.sortDate || !end.sortDate) return true;
-      if (!comparableTypes.has(start.dateType) || !comparableTypes.has(end.dateType)) return true;
+    if (!start.sortDate || !end.sortDate) return true;
+    if (!comparableTypes.has(start.dateType) || !comparableTypes.has(end.dateType)) return true;
 
-      return Number(end.sortDate) >= Number(start.sortDate);
-    }
+    return Number(end.sortDate) >= Number(start.sortDate);
+}
 
-    function updateAddPersonPartnerChildrenLabel() {
-      const selector =
+function updateAddPersonPartnerChildrenLabel()
+{
+    const selector =
         modalBackdrop?.querySelector(
-          '#addPersonPartnerChildrenMode'
+            '#addPersonPartnerChildrenMode'
         );
 
-      if (!selector) return;
+    if (!selector) return;
 
-      const addParentOption =
+    const addParentOption =
         selector.querySelector(
-          `option[value="${PARTNER_CHILDREN_ADD_PARENT}"]`
+            `option[value="${PARTNER_CHILDREN_ADD_PARENT}"]`
         );
 
-      if (!addParentOption) return;
+    if (!addParentOption) return;
 
-      const gender =
+    const gender =
         modalBackdrop?.querySelector('#addPersonGender')?.value
         || 'Unknown';
 
-      addParentOption.textContent = t(
+    addParentOption.textContent = t(
         partnerChildrenAddLabel('', gender)
-      );
-    }
+    );
+}
 
-    function bindAddPersonRelationshipBlock() {
-      modalBackdrop?.querySelectorAll('[data-add-person-relationship-toggle]').forEach(button => {
+function bindAddPersonRelationshipBlock()
+{
+    modalBackdrop?.querySelectorAll('[data-add-person-relationship-toggle]').forEach(button =>
+    {
         if (button.dataset.relationshipToggleBound === 'true') return;
         button.dataset.relationshipToggleBound = 'true';
 
         const section = button.closest('[data-add-person-relationship-section]');
         const body = section?.querySelector('[data-add-person-relationship-body]');
 
-        button.addEventListener('click', () => {
-          const isExpanded = button.getAttribute('aria-expanded') === 'true';
-          button.setAttribute('aria-expanded', isExpanded ? 'false' : 'true');
+        button.addEventListener('click', () =>
+        {
+            const isExpanded = button.getAttribute('aria-expanded') === 'true';
+            button.setAttribute('aria-expanded', isExpanded ? 'false' : 'true');
 
-          if (body) {
-            body.hidden = isExpanded;
-          }
+            if (body)
+            {
+                body.hidden = isExpanded;
+            }
         });
-      });
-      modalBackdrop?.querySelectorAll('[data-add-person-relationship-type]').forEach(select => {
+    });
+    modalBackdrop?.querySelectorAll('[data-add-person-relationship-type]').forEach(select =>
+    {
         const card = select.closest('[data-add-person-relationship-card]');
 
-        const updateRelationshipFields = () => {
-          updatePartnerRelationshipFields(card, select.value);
+        const updateRelationshipFields = () =>
+        {
+            updatePartnerRelationshipFields(card, select.value);
         };
 
         select.addEventListener('change', updateRelationshipFields);
         updateRelationshipFields();
-      });
+    });
 
-      const partnerChildrenSelector =
+    const partnerChildrenSelector =
         modalBackdrop?.querySelector(
-          '#addPersonPartnerChildrenMode'
+            '#addPersonPartnerChildrenMode'
         );
 
-      const addPersonGender =
+    const addPersonGender =
         modalBackdrop?.querySelector('#addPersonGender');
 
-      if (
+    if (
         partnerChildrenSelector
         && addPersonGender
         && addPersonGender.dataset.partnerChildrenLabelBound !== 'true'
-      ) {
+    )
+    {
         addPersonGender.dataset.partnerChildrenLabelBound = 'true';
 
         addPersonGender.addEventListener(
-          'change',
-          updateAddPersonPartnerChildrenLabel
+            'change',
+            updateAddPersonPartnerChildrenLabel
         );
-      }
-
-      updateAddPersonPartnerChildrenLabel();
-
-      modalBackdrop
-        ?.querySelectorAll(
-          '[data-add-person-unlink-partner]'
-        )
-        .forEach(button => {
-          if (
-            button.dataset
-              .unlinkPartnerBound === 'true'
-          ) {
-            return;
-          }
-
-          button.dataset
-            .unlinkPartnerBound = 'true';
-
-          button.addEventListener(
-            'click',
-            event => {
-              event.preventDefault();
-              event.stopPropagation();
-
-              const personId =
-                button.dataset.personId
-                || '';
-
-              const partnerId =
-                button.dataset.partnerId
-                || '';
-
-              const familyId =
-                button.dataset.relationshipId
-                || '';
-
-              if (
-                !personId
-                || !partnerId
-                || !familyId
-              ) {
-                showToast(
-                  'Relationship information is missing.'
-                );
-
-                return;
-              }
-
-              const sidebarContext =
-                state.activeModule === 'People'
-                  ? state.peopleView === 'profile'
-                    ? 'profile'
-                    : 'people'
-                  : 'tree';
-
-              openUnlinkRelationshipModal({
-                kind: 'partner',
-                personId,
-                relatedPersonId:
-                  partnerId,
-                familyId,
-                sidebarContext
-              });
-            }
-          );
-        });
     }
 
-    function collectAddPersonRelationshipBlock() {
-      const cards = Array.from(modalBackdrop?.querySelectorAll('[data-add-person-relationship-card]') || []);
-      const relationships = [];
+    updateAddPersonPartnerChildrenLabel();
 
-      for (const card of cards) {
+    modalBackdrop
+        ?.querySelectorAll(
+            '[data-add-person-unlink-partner]'
+        )
+        .forEach(button =>
+        {
+            if (
+                button.dataset
+                    .unlinkPartnerBound === 'true'
+            )
+            {
+                return;
+            }
+
+            button.dataset
+                .unlinkPartnerBound = 'true';
+
+            button.addEventListener(
+                'click',
+                event =>
+                {
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    const personId =
+                        button.dataset.personId
+                || '';
+
+                    const partnerId =
+                        button.dataset.partnerId
+                || '';
+
+                    const familyId =
+                        button.dataset.relationshipId
+                || '';
+
+                    if (
+                        !personId
+                || !partnerId
+                || !familyId
+                    )
+                    {
+                        showToast(
+                            'Relationship information is missing.'
+                        );
+
+                        return;
+                    }
+
+                    const sidebarContext =
+                        state.activeModule === 'People'
+                            ? state.peopleView === 'profile'
+                                ? 'profile'
+                                : 'people'
+                            : 'tree';
+
+                    openUnlinkRelationshipModal({
+                        kind: 'partner',
+                        personId,
+                        relatedPersonId:
+                  partnerId,
+                        familyId,
+                        sidebarContext
+                    });
+                }
+            );
+        });
+}
+
+function collectAddPersonRelationshipBlock()
+{
+    const cards = Array.from(modalBackdrop?.querySelectorAll('[data-add-person-relationship-card]') || []);
+    const relationships = [];
+
+    for (const card of cards)
+    {
         const index = card.dataset.relationshipIndex || '0';
         const relationshipType = card.querySelector('[data-add-person-relationship-type]')?.value || 'Married';
         const definition = partnerRelationshipDefinition(relationshipType);
         const marriageTypeSelect = card.querySelector('[data-add-person-marriage-type]');
         const marriageType = definition.showsMarriageType
-          ? marriageTypeSelect?.value || 'Civil'
-          : '';
+            ? marriageTypeSelect?.value || 'Civil'
+            : '';
 
         const prefix = `addPersonRelationship${index}`;
         const startDate = collectGenealogyDateField(`${prefix}StartDate`);
         const endDate = definition.hasEnd
-          ? collectGenealogyDateField(`${prefix}EndDate`)
-          : emptyGenealogyDate('Exact date');
+            ? collectGenealogyDateField(`${prefix}EndDate`)
+            : emptyGenealogyDate('Exact date');
 
-        if (!startDate || (definition.hasEnd && !endDate)) {
-          return {
-            invalid: true,
-            message: 'Check the relationship dates before saving.'
-          };
+        if (!startDate || (definition.hasEnd && !endDate))
+        {
+            return {
+                invalid: true,
+                message: 'Check the relationship dates before saving.'
+            };
         }
 
-        if (definition.hasEnd && !partnerRelationshipDateOrderIsValid(startDate, endDate)) {
-          return {
-            invalid: true,
-            message: 'The relationship end date must be after or equal to the start date.'
-          };
+        if (definition.hasEnd && !partnerRelationshipDateOrderIsValid(startDate, endDate))
+        {
+            return {
+                invalid: true,
+                message: 'The relationship end date must be after or equal to the start date.'
+            };
         }
 
         relationships.push({
-          relationshipId: card.dataset.relationshipId || '',
-          partnerId: card.dataset.partnerId || '',
-          relationshipType,
-          marriageType,
-          startDate,
-          startPlace: readPlaceInputValue('[data-partner-relationship-start-place]', card),
-          endDate,
-          endPlace: definition.hasEnd
-            ? readPlaceInputValue('[data-partner-relationship-end-place]', card)
-            : { text: '', selectedPlaceId: '' }
+            relationshipId: card.dataset.relationshipId || '',
+            partnerId: card.dataset.partnerId || '',
+            relationshipType,
+            marriageType,
+            startDate,
+            startPlace: readPlaceInputValue('[data-partner-relationship-start-place]', card),
+            endDate,
+            endPlace: definition.hasEnd
+                ? readPlaceInputValue('[data-partner-relationship-end-place]', card)
+                : { text: '', selectedPlaceId: '' }
         });
-      }
+    }
 
-      return {
+    return {
         invalid: false,
         relationships
-      };
-    }
+    };
+}
 
-    function relationshipIdForPartners(personAId, personBId) {
-      const left = String(personAId || 'person-a').replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '');
-      const right = String(personBId || 'person-b').replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '');
-      return `rel-${left}-${right}-family`;
-    }
+function relationshipIdForPartners(personAId, personBId)
+{
+    const left = String(personAId || 'person-a').replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '');
+    const right = String(personBId || 'person-b').replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '');
+    return `rel-${left}-${right}-family`;
+}
 
-    function upsertManagedRelationshipEvent(relationship, role, definition, dateInput, placeInput, marriageType = '') {
-      relationship.events = Array.isArray(relationship.events) ? relationship.events : [];
-      const isStart = role === 'start';
-      const tag = isStart ? definition.startTag : definition.endTag;
-      const eventType = isStart ? definition.startEventType : definition.endEventType;
-      const managedTypeLabel = isStart ? definition.startTypeLabel : definition.endTypeLabel;
-      const typeLabel = tag === 'MARR' ? marriageType : managedTypeLabel;
-      let event = partnerRelationshipManagedEvent(relationship, tag, managedTypeLabel);
-      const date = normalizeGenealogyDateInput(dateInput || {}, 'Exact date');
-      const resolvedPlace = resolvePlaceAssignment(placeInput, event?.placeId || relationship?.[`${role}PlaceId`] || '');
+function upsertManagedRelationshipEvent(relationship, role, definition, dateInput, placeInput, marriageType = '')
+{
+    relationship.events = Array.isArray(relationship.events) ? relationship.events : [];
+    const isStart = role === 'start';
+    const tag = isStart ? definition.startTag : definition.endTag;
+    const eventType = isStart ? definition.startEventType : definition.endEventType;
+    const managedTypeLabel = isStart ? definition.startTypeLabel : definition.endTypeLabel;
+    const typeLabel = tag === 'MARR' ? marriageType : managedTypeLabel;
+    let event = partnerRelationshipManagedEvent(relationship, tag, managedTypeLabel);
+    const date = normalizeGenealogyDateInput(dateInput || {}, 'Exact date');
+    const resolvedPlace = resolvePlaceAssignment(placeInput, event?.placeId || relationship?.[`${role}PlaceId`] || '');
 
-      if (!event) {
+    if (!event)
+    {
         event = createRelationshipEvent(tag, eventType, {
-          id: `${relationship.id}-${role}`,
-          typeLabel,
-          date,
-          placeId: resolvedPlace.placeId,
-          placeText: resolvedPlace.placeText,
-          address: resolvedPlace.address
+            id: `${relationship.id}-${role}`,
+            typeLabel,
+            date,
+            placeId: resolvedPlace.placeId,
+            placeText: resolvedPlace.placeText,
+            address: resolvedPlace.address
         });
         event.relationshipManagedRole = role;
         relationship.events.push(event);
-      } else {
+    }
+    else
+    {
         event.eventType = eventType;
         event.gedcomTag = tag;
         event.typeLabel = typeLabel;
@@ -6187,98 +6595,112 @@
         event.address = resolvedPlace.address;
         event.sortDate = date.sortDate || '';
         event.relationshipManagedRole = role;
-      }
-
-      relationship[`${role}Date`] = date.date;
-      relationship[`${role}DateLabel`] = date.dateLabel;
-      relationship[`${role}DateType`] = date.dateType;
-      relationship[`${role}SortDate`] = date.sortDate;
-      relationship[`${role}Calendar`] = date.calendar;
-      relationship[`${role}OriginalText`] = date.originalText;
-      relationship[`${role}PlaceId`] = resolvedPlace.placeId;
-      relationship[`${role}PlaceText`] = resolvedPlace.placeText;
-      relationship[`${role}Address`] = resolvedPlace.address;
-      return event;
     }
 
-    function removeManagedRelationshipEndEvents(relationship) {
-      relationship.events = (relationship.events || []).filter(event => {
+    relationship[`${role}Date`] = date.date;
+    relationship[`${role}DateLabel`] = date.dateLabel;
+    relationship[`${role}DateType`] = date.dateType;
+    relationship[`${role}SortDate`] = date.sortDate;
+    relationship[`${role}Calendar`] = date.calendar;
+    relationship[`${role}OriginalText`] = date.originalText;
+    relationship[`${role}PlaceId`] = resolvedPlace.placeId;
+    relationship[`${role}PlaceText`] = resolvedPlace.placeText;
+    relationship[`${role}Address`] = resolvedPlace.address;
+    return event;
+}
+
+function removeManagedRelationshipEndEvents(relationship)
+{
+    relationship.events = (relationship.events || []).filter(event =>
+    {
         if (event.relationshipManagedRole === 'end') return false;
         const tag = String(event.gedcomTag || event.tag || '').toUpperCase();
         const type = cleanEditFieldValue(event.typeLabel).toLowerCase();
         return !(['DIV', 'ANUL'].includes(tag) || (tag === 'EVEN' && ['partnership ended', 'separation'].includes(type)));
-      });
-      ['endDate', 'endDateLabel', 'endDateType', 'endSortDate', 'endCalendar', 'endOriginalText', 'endPlaceId', 'endPlaceText']
-        .forEach(key => { relationship[key] = key.endsWith('Id') ? null : ''; });
-    }
+    });
+    ['endDate', 'endDateLabel', 'endDateType', 'endSortDate', 'endCalendar', 'endOriginalText', 'endPlaceId', 'endPlaceText']
+        .forEach(key =>
+        {
+            relationship[key] = key.endsWith('Id') ? null : '';
+        });
+}
 
-    function upsertPartnerRelationshipEvents(relationship, values) {
-      const relationshipType = ADD_PERSON_RELATIONSHIP_TYPES.includes(values.relationshipType)
+function upsertPartnerRelationshipEvents(relationship, values)
+{
+    const relationshipType = ADD_PERSON_RELATIONSHIP_TYPES.includes(values.relationshipType)
         ? values.relationshipType
         : 'Unknown relationship';
-      const definition = partnerRelationshipDefinition(relationshipType);
-      const marriageType = definition.showsMarriageType
+    const definition = partnerRelationshipDefinition(relationshipType);
+    const marriageType = definition.showsMarriageType
         ? values.marriageType || relationship.marriageType || 'Civil'
         : '';
 
-      relationship.relationshipType = relationshipType;
-      relationship.relationshipStatus = definition.status;
-      relationship.marriageType = marriageType;
+    relationship.relationshipType = relationshipType;
+    relationship.relationshipStatus = definition.status;
+    relationship.marriageType = marriageType;
 
-      upsertManagedRelationshipEvent(relationship, 'start', definition, values.startDate, values.startPlace, marriageType);
+    upsertManagedRelationshipEvent(relationship, 'start', definition, values.startDate, values.startPlace, marriageType);
 
-      if (definition.hasEnd) {
+    if (definition.hasEnd)
+    {
         upsertManagedRelationshipEvent(relationship, 'end', definition, values.endDate, values.endPlace, marriageType);
-      } else {
-        removeManagedRelationshipEndEvents(relationship);
-      }
     }
+    else
+    {
+        removeManagedRelationshipEndEvents(relationship);
+    }
+}
 
-    function savePersonRelationshipBlock(personId, collected) {
-      if (!collected || collected.invalid || !collected.relationships?.length) return;
+function savePersonRelationshipBlock(personId, collected)
+{
+    if (!collected || collected.invalid || !collected.relationships?.length) return;
 
-      collected.relationships.forEach(values => {
+    collected.relationships.forEach(values =>
+    {
         const relationship = centralFamilyRecords().find(rel => rel.id === values.relationshipId && isFamilyRelationship(rel));
         if (!relationship) return;
 
         upsertPartnerRelationshipEvents(relationship, values);
         relationship.updatedAt = 'Just now';
-      });
-    }
+    });
+}
 
-    function createPersonIdFromName(firstName, lastName) {
-      const base = [firstName, lastName].filter(Boolean).join('-').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'person';
-      let id = base;
-      let counter = 2;
-      while (getPerson(id)) {
+function createPersonIdFromName(firstName, lastName)
+{
+    const base = [firstName, lastName].filter(Boolean).join('-').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'person';
+    let id = base;
+    let counter = 2;
+    while (getPerson(id))
+    {
         id = `${base}-${counter}`;
         counter += 1;
-      }
-      return id;
     }
+    return id;
+}
 
-    function createPersonFromAddPersonModal(options = {}, additionalFacts = {}) {
-      const projectId = requireActiveProjectId();
-      if (!projectId) return null;
-      const enteredFirstName = readAddPersonModalValue('#addPersonFirstName');
-      const firstName = enteredFirstName || 'Unknown';
-      const lastName = readAddPersonModalValue('#addPersonLastName');
-      const middleName = readAddPersonModalValue('#addPersonMiddleName');
-      const maidenName = readAddPersonModalValue('#addPersonMaidenName');
-      const id = createPersonIdFromName( firstName, lastName);
-      const genderValue = readAddPersonModalValue('#addPersonGender');
-      const livingStatus = normalizeLivingStatus(readAddPersonModalValue('#addPersonLivingStatus'));
-      const birthDate = collectGenealogyDateField('addPersonBirth') || emptyGenealogyDate('Exact date');
-      const deathDate = livingStatus === 'Deceased' ? collectGenealogyDateField('addPersonDeath') || emptyGenealogyDate('Exact date') : emptyGenealogyDate('Exact date');
-      const display = [firstName, middleName, lastName].filter(Boolean).join(' ');
-      const initials = `${firstName[0] || 'U'}${lastName[0] || ''}`.toUpperCase();
-      const birthPlace = resolvePlaceInputSelector('#addPersonBirthPlace');
-      const deathPlace = livingStatus === 'Deceased'
+function createPersonFromAddPersonModal(options = {}, additionalFacts = {})
+{
+    const projectId = requireActiveProjectId();
+    if (!projectId) return null;
+    const enteredFirstName = readAddPersonModalValue('#addPersonFirstName');
+    const firstName = enteredFirstName || 'Unknown';
+    const lastName = readAddPersonModalValue('#addPersonLastName');
+    const middleName = readAddPersonModalValue('#addPersonMiddleName');
+    const maidenName = readAddPersonModalValue('#addPersonMaidenName');
+    const id = createPersonIdFromName( firstName, lastName);
+    const genderValue = readAddPersonModalValue('#addPersonGender');
+    const livingStatus = normalizeLivingStatus(readAddPersonModalValue('#addPersonLivingStatus'));
+    const birthDate = collectGenealogyDateField('addPersonBirth') || emptyGenealogyDate('Exact date');
+    const deathDate = livingStatus === 'Deceased' ? collectGenealogyDateField('addPersonDeath') || emptyGenealogyDate('Exact date') : emptyGenealogyDate('Exact date');
+    const display = [firstName, middleName, lastName].filter(Boolean).join(' ');
+    const initials = `${firstName[0] || 'U'}${lastName[0] || ''}`.toUpperCase();
+    const birthPlace = resolvePlaceInputSelector('#addPersonBirthPlace');
+    const deathPlace = livingStatus === 'Deceased'
         ? resolvePlaceInputSelector('#addPersonDeathPlace')
         : { placeId: null, placeText: '', address: '', created: false };
-      const now =
+    const now =
         new Date().toISOString();
-      const person = {
+    const person = {
         id,
         projectId,
         createdAt: now,
@@ -6288,33 +6710,33 @@
         livingStatus,
         avatarClass: genderValue === 'Female' ? 'avatar-purple' : genderValue === 'Male' ? 'avatar-green' : '',
         birth: {
-          ...birthDate,
-          placeId: birthPlace.placeId,
-          placeText: birthPlace.placeText,
-          address: birthPlace.address
+            ...birthDate,
+            placeId: birthPlace.placeId,
+            placeText: birthPlace.placeText,
+            address: birthPlace.address
         },
         death: {
-          ...deathDate,
+            ...deathDate,
 
-          placeId:
+            placeId:
             deathPlace.placeId,
 
-          placeText:
+            placeText:
             deathPlace.placeText,
 
-          address:
+            address:
             deathPlace.address,
 
-          reason:
+            reason:
             '',
 
-          cause:
+            cause:
             '',
 
-          burialPlaceId:
+            burialPlaceId:
             null,
 
-          burialPlaceText:
+            burialPlaceText:
             ''
         },
         profile: { alternativeNames: null },
@@ -6324,405 +6746,450 @@
         citations: [],
         counts: { files: 0, notes: 0 },
         meta: { updated: 'Just now', sourceStatus: 'Unsourced', reviewStatus: 'New record' }
-      };
+    };
 
-      applyAddPersonAdditionalFacts(person, additionalFacts);
-      sampleData.people.push(person);
-      return person;
-    }
+    applyAddPersonAdditionalFacts(person, additionalFacts);
+    sampleData.people.push(person);
+    return person;
+}
 
-    function relationshipRoleHintForPerson(personId) {
-      const gender = String(getPerson(personId)?.gender || '').toLowerCase();
+function relationshipRoleHintForPerson(personId)
+{
+    const gender = String(getPerson(personId)?.gender || '').toLowerCase();
 
-      if (gender === 'male') return 'HUSB';
-      if (gender === 'female') return 'WIFE';
+    if (gender === 'male') return 'HUSB';
+    if (gender === 'female') return 'WIFE';
 
-      return '';
-    }
+    return '';
+}
 
-    function parentSlotPreference(personId) {
-      const gender = String(getPerson(personId)?.gender || '').toLowerCase();
+function parentSlotPreference(personId)
+{
+    const gender = String(getPerson(personId)?.gender || '').toLowerCase();
 
-      if (gender === 'female') return 'mother';
-      return 'father';
-    }
+    if (gender === 'female') return 'mother';
+    return 'father';
+}
 
-    function uniqueFamilyId(baseId) {
-      const cleanBase = String(baseId || 'family')
+function uniqueFamilyId(baseId)
+{
+    const cleanBase = String(baseId || 'family')
         .replace(/[^a-z0-9]+/gi, '-')
         .replace(/^-|-$/g, '') || 'family';
 
-      let id = cleanBase;
-      let counter = 2;
+    let id = cleanBase;
+    let counter = 2;
 
-      while (centralFamilyRecords().some(family => family.id === id)) {
+    while (centralFamilyRecords().some(family => family.id === id))
+    {
         id = `${cleanBase}-${counter}`;
         counter += 1;
-      }
-
-      return id;
     }
 
-    function syncFamilyPartnerAliases(family) {
-      const partnerA = family.partnerAId || family.partner1Id || family.personAId || '';
-      const partnerB = family.partnerBId || family.partner2Id || family.personBId || '';
+    return id;
+}
 
-      family.partnerAId = partnerA;
-      family.partner1Id = partnerA;
-      family.personAId = partnerA;
+function syncFamilyPartnerAliases(family)
+{
+    const partnerA = family.partnerAId || family.partner1Id || family.personAId || '';
+    const partnerB = family.partnerBId || family.partner2Id || family.personBId || '';
 
-      family.partnerBId = partnerB;
-      family.partner2Id = partnerB;
-      family.personBId = partnerB;
+    family.partnerAId = partnerA;
+    family.partner1Id = partnerA;
+    family.personAId = partnerA;
 
-      family.childIds = [...new Set([...(family.childIds || []), ...(family.childrenIds || [])].filter(Boolean))];
-      family.childrenIds = [...family.childIds];
+    family.partnerBId = partnerB;
+    family.partner2Id = partnerB;
+    family.personBId = partnerB;
 
-      family.events = Array.isArray(family.events) ? family.events : [];
-      family.attributes = Array.isArray(family.attributes) ? family.attributes : [];
-      family.notes = Array.isArray(family.notes) ? family.notes : [];
-      family.citations = Array.isArray(family.citations) ? family.citations : [];
-      family.mediaIds = Array.isArray(family.mediaIds) ? family.mediaIds : [];
+    family.childIds = [...new Set([...(family.childIds || []), ...(family.childrenIds || [])].filter(Boolean))];
+    family.childrenIds = [...family.childIds];
 
-      family.relationshipStatus = family.relationshipStatus || 'active';
-      family.gedcomXref = family.gedcomXref || `@F${family.id.replace(/[^a-z0-9]/gi, '').toUpperCase()}@`;
+    family.events = Array.isArray(family.events) ? family.events : [];
+    family.attributes = Array.isArray(family.attributes) ? family.attributes : [];
+    family.notes = Array.isArray(family.notes) ? family.notes : [];
+    family.citations = Array.isArray(family.citations) ? family.citations : [];
+    family.mediaIds = Array.isArray(family.mediaIds) ? family.mediaIds : [];
 
-      return family;
-    }
+    family.relationshipStatus = family.relationshipStatus || 'active';
+    family.gedcomXref = family.gedcomXref || `@F${family.id.replace(/[^a-z0-9]/gi, '').toUpperCase()}@`;
 
-    function personDisplayName(personId) {
-      return connectPersonName(getPerson(personId));
-    }
+    return family;
+}
 
-    function parentIdsForPerson(personId) {
-      return getParents(personId)
+function personDisplayName(personId)
+{
+    return connectPersonName(getPerson(personId));
+}
+
+function parentIdsForPerson(personId)
+{
+    return getParents(personId)
         .map(parent => parent.id)
         .filter(Boolean);
-    }
+}
 
-    function childIdsForPerson(personId) {
-      return getChildren(personId)
+function childIdsForPerson(personId)
+{
+    return getChildren(personId)
         .map(child => child.id)
         .filter(Boolean);
-    }
+}
 
-    function collectAncestorIds(personId, visited = new Set()) {
-      parentIdsForPerson(personId).forEach(parentId => {
+function collectAncestorIds(personId, visited = new Set())
+{
+    parentIdsForPerson(personId).forEach(parentId =>
+    {
         if (!parentId || visited.has(parentId)) return;
         visited.add(parentId);
         collectAncestorIds(parentId, visited);
-      });
+    });
 
-      return visited;
-    }
+    return visited;
+}
 
-    function collectDescendantIds(personId, visited = new Set()) {
-      childIdsForPerson(personId).forEach(childId => {
+function collectDescendantIds(personId, visited = new Set())
+{
+    childIdsForPerson(personId).forEach(childId =>
+    {
         if (!childId || visited.has(childId)) return;
         visited.add(childId);
         collectDescendantIds(childId, visited);
-      });
+    });
 
-      return visited;
-    }
+    return visited;
+}
 
-    function hasParentChildRelationship(parentId, childId) {
-      return centralFamilyRecords().some(family =>
+function hasParentChildRelationship(parentId, childId)
+{
+    return centralFamilyRecords().some(family =>
         (family.childIds || family.childrenIds || []).includes(childId)
           && familyIncludesPerson(family, parentId)
-      );
+    );
+}
+
+function hasPartnerRelationship(personAId, personBId)
+{
+    return Boolean(getPartnerRelationshipBetween(personAId, personBId));
+}
+
+function validateParentChildConnection(parentId, childId)
+{
+    if (!parentId || !childId)
+    {
+        return {
+            ok: false,
+            title: 'Missing person',
+            message: 'Select a person to connect.'
+        };
     }
 
-    function hasPartnerRelationship(personAId, personBId) {
-      return Boolean(getPartnerRelationshipBetween(personAId, personBId));
+    if (!getPerson(parentId) || !getPerson(childId))
+    {
+        return {
+            ok: false,
+            title: 'Person not found',
+            message: 'Person record not found.'
+        };
     }
 
-    function validateParentChildConnection(parentId, childId) {
-      if (!parentId || !childId) {
+    if (parentId === childId)
+    {
         return {
-          ok: false,
-          title: 'Missing person',
-          message: 'Select a person to connect.'
+            ok: false,
+            title: 'Invalid relationship',
+            message: 'A person cannot be connected to themselves.'
         };
-      }
-
-      if (!getPerson(parentId) || !getPerson(childId)) {
-        return {
-          ok: false,
-          title: 'Person not found',
-          message: 'Person record not found.'
-        };
-      }
-
-      if (parentId === childId) {
-        return {
-          ok: false,
-          title: 'Invalid relationship',
-          message: 'A person cannot be connected to themselves.'
-        };
-      }
-
-      if (hasParentChildRelationship(parentId, childId)) {
-        return {
-          ok: false,
-          title: 'Already connected',
-          message: `${personDisplayName(parentId)} is already connected as a parent of ${personDisplayName(childId)}.`
-        };
-      }
-
-      if (collectDescendantIds(childId).has(parentId)) {
-        return {
-          ok: false,
-          title: 'Relationship loop',
-          message: `${personDisplayName(parentId)} is already a descendant of ${personDisplayName(childId)}. Connecting them as a parent would create a cycle.`
-        };
-      }
-
-      if (collectAncestorIds(parentId).has(childId)) {
-        return {
-          ok: false,
-          title: 'Relationship loop',
-          message: `${personDisplayName(childId)} is already an ancestor of ${personDisplayName(parentId)}. Connecting them as a child would create a cycle.`
-        };
-      }
-
-      return { ok: true };
     }
 
-    function validatePartnerConnection(personAId, personBId) {
-      if (!personAId || !personBId) {
+    if (hasParentChildRelationship(parentId, childId))
+    {
         return {
-          ok: false,
-          title: 'Missing person',
-          message: 'Select a person to connect.'
+            ok: false,
+            title: 'Already connected',
+            message: `${personDisplayName(parentId)} is already connected as a parent of ${personDisplayName(childId)}.`
         };
-      }
-
-      if (!getPerson(personAId) || !getPerson(personBId)) {
-        return {
-          ok: false,
-          title: 'Person not found',
-          message: 'Person record not found.'
-        };
-      }
-
-      if (personAId === personBId) {
-        return {
-          ok: false,
-          title: 'Invalid relationship',
-          message: 'A person cannot be connected to themselves.'
-        };
-      }
-
-      if (hasPartnerRelationship(personAId, personBId)) {
-        return {
-          ok: false,
-          title: 'Already connected',
-          message: `${personDisplayName(personAId)} and ${personDisplayName(personBId)} are already connected as partners.`
-        };
-      }
-
-      return { ok: true };
     }
 
-    function parentWarningForConnection(parentId, childId) {
-      if (!parentId || !childId) return null;
+    if (collectDescendantIds(childId).has(parentId))
+    {
+        return {
+            ok: false,
+            title: 'Relationship loop',
+            message: `${personDisplayName(parentId)} is already a descendant of ${personDisplayName(childId)}. Connecting them as a parent would create a cycle.`
+        };
+    }
 
-      const existingParents = getParents(childId)
+    if (collectAncestorIds(parentId).has(childId))
+    {
+        return {
+            ok: false,
+            title: 'Relationship loop',
+            message: `${personDisplayName(childId)} is already an ancestor of ${personDisplayName(parentId)}. Connecting them as a child would create a cycle.`
+        };
+    }
+
+    return { ok: true };
+}
+
+function validatePartnerConnection(personAId, personBId)
+{
+    if (!personAId || !personBId)
+    {
+        return {
+            ok: false,
+            title: 'Missing person',
+            message: 'Select a person to connect.'
+        };
+    }
+
+    if (!getPerson(personAId) || !getPerson(personBId))
+    {
+        return {
+            ok: false,
+            title: 'Person not found',
+            message: 'Person record not found.'
+        };
+    }
+
+    if (personAId === personBId)
+    {
+        return {
+            ok: false,
+            title: 'Invalid relationship',
+            message: 'A person cannot be connected to themselves.'
+        };
+    }
+
+    if (hasPartnerRelationship(personAId, personBId))
+    {
+        return {
+            ok: false,
+            title: 'Already connected',
+            message: `${personDisplayName(personAId)} and ${personDisplayName(personBId)} are already connected as partners.`
+        };
+    }
+
+    return { ok: true };
+}
+
+function parentWarningForConnection(parentId, childId)
+{
+    if (!parentId || !childId) return null;
+
+    const existingParents = getParents(childId)
         .filter(parent => parent.id && parent.id !== parentId);
 
-      if (!existingParents.length) return null;
+    if (!existingParents.length) return null;
 
-      return {
+    return {
         severity: 'warning',
         title: 'Warning!',
         message: `${personDisplayName(childId)} already has ${existingParents.length === 1 ? 'a recorded parent' : 'recorded parents'}. The selected person will be connected as an additional parent.`
-      };
-    }
+    };
+}
 
-    const SINGLE_PARENT_FAMILY_CHOICE = '__single_parent__';
+const SINGLE_PARENT_FAMILY_CHOICE = '__single_parent__';
 
-    function activeProjectFamiliesForPerson(personId) {
-      const person = getPerson(personId);
-      const projectId = person?.projectId || currentProjectId();
+function activeProjectFamiliesForPerson(personId)
+{
+    const person = getPerson(personId);
+    const projectId = person?.projectId || currentProjectId();
 
-      return centralFamilyRecords().filter(family =>
+    return centralFamilyRecords().filter(family =>
         family
           && family.projectId === projectId
           && family.relationshipStatus !== 'deleted'
-      );
-    }
+    );
+}
 
-    function partnerFamiliesForPerson(personId) {
-      return activeProjectFamiliesForPerson(personId)
+function partnerFamiliesForPerson(personId)
+{
+    return activeProjectFamiliesForPerson(personId)
         .filter(family => familyIncludesPerson(family, personId));
-    }
+}
 
-    function parentFamiliesForPerson(personId) {
-      return activeProjectFamiliesForPerson(personId)
+function parentFamiliesForPerson(personId)
+{
+    return activeProjectFamiliesForPerson(personId)
         .filter(family => unlinkFamilyChildrenIds(family).includes(personId));
-    }
+}
 
-    function familyHasSecondPartner(family, personId) {
-      return Boolean(familyPartnerId(family, personId));
-    }
+function familyHasSecondPartner(family, personId)
+{
+    return Boolean(familyPartnerId(family, personId));
+}
 
-    function parentFamilyDisplayLabel(family) {
-      const names = [
+function parentFamilyDisplayLabel(family)
+{
+    const names = [
         familyPartnerAId(family),
         familyPartnerBId(family)
-      ]
+    ]
         .filter(Boolean)
         .map(personDisplayName)
         .map(translateText)
         .filter(Boolean);
 
-      return names.length > 1
+    return names.length > 1
         ? `${names[0]} ${t('and')} ${names[1]}`
         : names[0] || 'Unknown family';
+}
+
+function parentFamilyChoices(anchorPersonId, relationshipType)
+{
+    const type = normalizeConnectRelationshipType(relationshipType);
+
+    if (type === 'sibling')
+    {
+        return parentFamiliesForPerson(anchorPersonId).map(family => ({
+            value: family.id,
+            label: parentFamilyDisplayLabel(family),
+            family
+        }));
     }
 
-    function parentFamilyChoices(anchorPersonId, relationshipType) {
-      const type = normalizeConnectRelationshipType(relationshipType);
+    if (type !== 'child') return [];
 
-      if (type === 'sibling') {
-        return parentFamiliesForPerson(anchorPersonId).map(family => ({
-          value: family.id,
-          label: parentFamilyDisplayLabel(family),
-          family
-        }));
-      }
-
-      if (type !== 'child') return [];
-
-      const existing = partnerFamiliesForPerson(anchorPersonId)
+    const existing = partnerFamiliesForPerson(anchorPersonId)
         .filter(family => familyHasSecondPartner(family, anchorPersonId))
         .map(family => ({
-          value: family.id,
-          label: parentFamilyDisplayLabel(family),
-          family
+            value: family.id,
+            label: parentFamilyDisplayLabel(family),
+            family
         }));
 
-      return [
+    return [
         ...existing,
         {
-          value: SINGLE_PARENT_FAMILY_CHOICE,
-          label: `${t('Single parent')} — ${translateText(personDisplayName(anchorPersonId))}`,
-          family: null
+            value: SINGLE_PARENT_FAMILY_CHOICE,
+            label: `${t('Single parent')} — ${translateText(personDisplayName(anchorPersonId))}`,
+            family: null
         }
-      ];
-    }
+    ];
+}
 
-    function defaultParentFamilySelection(
-      anchorPersonId,
-      relationshipType,
-      preferredFamilyId = ''
-    ) {
-      const type = normalizeConnectRelationshipType(relationshipType);
-      const choices = parentFamilyChoices(anchorPersonId, type);
-      const preferred = String(preferredFamilyId || '');
+function defaultParentFamilySelection(
+    anchorPersonId,
+    relationshipType,
+    preferredFamilyId = ''
+)
+{
+    const type = normalizeConnectRelationshipType(relationshipType);
+    const choices = parentFamilyChoices(anchorPersonId, type);
+    const preferred = String(preferredFamilyId || '');
 
-      if (choices.some(choice => choice.value === preferred)) {
+    if (choices.some(choice => choice.value === preferred))
+    {
         return preferred;
-      }
+    }
 
-      if (type === 'sibling') {
+    if (type === 'sibling')
+    {
         return choices.length === 1 ? choices[0].value : '';
-      }
+    }
 
-      const partnerChoices = choices.filter(choice =>
+    const partnerChoices = choices.filter(choice =>
         choice.value !== SINGLE_PARENT_FAMILY_CHOICE
-      );
+    );
 
-      if (partnerChoices.length === 1) {
+    if (partnerChoices.length === 1)
+    {
         return partnerChoices[0].value;
-      }
+    }
 
-      if (!partnerChoices.length) {
+    if (!partnerChoices.length)
+    {
         return SINGLE_PARENT_FAMILY_CHOICE;
-      }
-
-      return '';
     }
 
-    function validateParentFamilySelection({
-      anchorPersonId,
-      relationshipType,
-      selection
-    } = {}) {
-      const type = normalizeConnectRelationshipType(relationshipType);
+    return '';
+}
 
-      if (!['child', 'sibling'].includes(type)) {
+function validateParentFamilySelection({
+    anchorPersonId,
+    relationshipType,
+    selection
+} = {})
+{
+    const type = normalizeConnectRelationshipType(relationshipType);
+
+    if (!['child', 'sibling'].includes(type))
+    {
         return { ok: true };
-      }
-
-      const choices = parentFamilyChoices(anchorPersonId, type);
-      const selected = String(selection || '');
-
-      if (!selected) {
-        return {
-          ok: false,
-          title: 'Select a parent family',
-          message: type === 'sibling'
-            ? 'Choose the parent family the siblings share.'
-            : 'Choose the family this child will be added to.'
-        };
-      }
-
-      if (!choices.some(choice => choice.value === selected)) {
-        return {
-          ok: false,
-          title: 'Parent family unavailable',
-          message: type === 'sibling'
-            ? 'Add or connect a parent before creating a sibling.'
-            : 'The selected parent family is no longer available.'
-        };
-      }
-
-      return { ok: true };
     }
 
-    function renderParentFamilySelector({
-      anchorPersonId,
-      relationshipType,
-      selectedValue = '',
-      controlId = 'addPersonParentFamily',
-      showSelectionLabel = true
-    } = {}) {
-      const type =
+    const choices = parentFamilyChoices(anchorPersonId, type);
+    const selected = String(selection || '');
+
+    if (!selected)
+    {
+        return {
+            ok: false,
+            title: 'Select a parent family',
+            message: type === 'sibling'
+                ? 'Choose the parent family the siblings share.'
+                : 'Choose the family this child will be added to.'
+        };
+    }
+
+    if (!choices.some(choice => choice.value === selected))
+    {
+        return {
+            ok: false,
+            title: 'Parent family unavailable',
+            message: type === 'sibling'
+                ? 'Add or connect a parent before creating a sibling.'
+                : 'The selected parent family is no longer available.'
+        };
+    }
+
+    return { ok: true };
+}
+
+function renderParentFamilySelector({
+    anchorPersonId,
+    relationshipType,
+    selectedValue = '',
+    controlId = 'addPersonParentFamily',
+    showSelectionLabel = true
+} = {})
+{
+    const type =
         normalizeConnectRelationshipType(
-          relationshipType
+            relationshipType
         );
 
-      if (!['child', 'sibling'].includes(type)) {
+    if (!['child', 'sibling'].includes(type))
+    {
         return '';
-      }
+    }
 
-      const choices =
+    const choices =
         parentFamilyChoices(
-          anchorPersonId,
-          type
+            anchorPersonId,
+            type
         );
 
-      const selected =
+    const selected =
         selectedValue
         || defaultParentFamilySelection(
-          anchorPersonId,
-          type
+            anchorPersonId,
+            type
         );
 
-      const isSibling =
+    const isSibling =
         type === 'sibling';
 
-      const headingId =
+    const headingId =
         `${controlId}Heading`;
 
-      const selectionLabel =
+    const selectionLabel =
         isSibling
-          ? 'Shared parent family'
-          : 'Family for this child';
+            ? 'Shared parent family'
+            : 'Family for this child';
 
-      return `
+    return `
         <section
           class="add-person-parent-family"
           data-parent-family-selector>
@@ -6735,13 +7202,13 @@
 
           <div class="field">
             ${
-              showSelectionLabel
-                ? `
+                showSelectionLabel
+                    ? `
                   <label for="${escapeHtml(controlId)}">
                     ${selectionLabel}
                   </label>
                 `
-                : ''
+                    : ''
             }
 
             <div class="add-person-select-field">
@@ -6750,34 +7217,34 @@
                 id="${escapeHtml(controlId)}"
                 data-parent-family-selection
                 ${
-                  showSelectionLabel
-                    ? ''
-                    : `aria-labelledby="${escapeHtml(headingId)}"`
+                    showSelectionLabel
+                        ? ''
+                        : `aria-labelledby="${escapeHtml(headingId)}"`
                 }
                 ${choices.length ? '' : 'disabled'}>
 
                 ${
-                  selected
-                    ? ''
-                    : '<option value="">Select a parent family</option>'
+                    selected
+                        ? ''
+                        : '<option value="">Select a parent family</option>'
                 }
 
                 ${
-                  choices.length
-                    ? choices
-                        .map(choice => `
+                    choices.length
+                        ? choices
+                            .map(choice => `
                           <option
                             value="${escapeHtml(choice.value)}"
                             ${
-                              choice.value === selected
-                                ? 'selected'
-                                : ''
+                                choice.value === selected
+                                    ? 'selected'
+                                    : ''
                             }>
                             ${escapeHtml(choice.label)}
                           </option>
                         `)
-                        .join('')
-                    : `
+                            .join('')
+                        : `
                         <option value="">
                           No parent family available
                         </option>
@@ -6794,89 +7261,97 @@
 
             <span class="field-help">
               ${
-                isSibling
-                  ? 'The new sibling will be added to this existing parent family.'
-                  : 'This determines which parent or partner family receives the child.'
-              }
+                    isSibling
+                        ? 'The new sibling will be added to this existing parent family.'
+                        : 'This determines which parent or partner family receives the child.'
+                }
             </span>
           </div>
         </section>
       `;
-    }
+}
 
-    const PARTNER_CHILDREN_ADD_PARENT = 'add-parent';
-    const PARTNER_CHILDREN_KEEP_SINGLE = 'keep-single-parent';
+const PARTNER_CHILDREN_ADD_PARENT = 'add-parent';
+const PARTNER_CHILDREN_KEEP_SINGLE = 'keep-single-parent';
 
-    function normalizePartnerChildrenMode(value) {
-      return value === PARTNER_CHILDREN_KEEP_SINGLE
+function normalizePartnerChildrenMode(value)
+{
+    return value === PARTNER_CHILDREN_KEEP_SINGLE
         ? PARTNER_CHILDREN_KEEP_SINGLE
         : PARTNER_CHILDREN_ADD_PARENT;
-    }
+}
 
-    function singleParentFamilyWithChildrenForPerson(personId) {
-      return partnerFamiliesForPerson(personId).find(family =>
+function singleParentFamilyWithChildrenForPerson(personId)
+{
+    return partnerFamiliesForPerson(personId).find(family =>
         !familyHasSecondPartner(family, personId)
           && unlinkFamilyChildrenIds(family).length > 0
-      ) || null;
-    }
+    ) || null;
+}
 
-    function partnerChildrenParentRole(personId) {
-      const gender = String(getPerson(personId)?.gender || '').toLowerCase();
+function partnerChildrenParentRole(personId)
+{
+    const gender = String(getPerson(personId)?.gender || '').toLowerCase();
 
-      if (gender === 'male') return 'father';
-      if (gender === 'female') return 'mother';
+    if (gender === 'male') return 'father';
+    if (gender === 'female') return 'mother';
 
-      return 'parent';
-    }
+    return 'parent';
+}
 
-    function partnerChildrenAddLabel(
-      selectedPersonId = '',
-      genderValue = ''
-    ) {
-      const normalizedGender =
+function partnerChildrenAddLabel(
+    selectedPersonId = '',
+    genderValue = ''
+)
+{
+    const normalizedGender =
         String(genderValue || '').trim().toLowerCase();
 
-      const role = selectedPersonId
+    const role = selectedPersonId
         ? partnerChildrenParentRole(selectedPersonId)
         : normalizedGender === 'male'
-          ? 'father'
-          : normalizedGender === 'female'
-            ? 'mother'
-            : 'parent';
+            ? 'father'
+            : normalizedGender === 'female'
+                ? 'mother'
+                : 'parent';
 
-      if (role === 'father') {
+    if (role === 'father')
+    {
         return 'Add new partner as the children\'s father';
-      }
-
-      if (role === 'mother') {
-        return 'Add new partner as the children\'s mother';
-      }
-
-      return 'Add new partner as the children\'s parent';
     }
 
-    function renderPartnerChildrenSelector({
-      anchorPersonId,
-      relationshipType,
-      selectedPersonId = '',
-      selectedValue = PARTNER_CHILDREN_ADD_PARENT,
-      controlId = 'connectPersonPartnerChildrenMode'
-    } = {}) {
-      const type = normalizeConnectRelationshipType(relationshipType);
-      const singleParentFamily =
+    if (role === 'mother')
+    {
+        return 'Add new partner as the children\'s mother';
+    }
+
+    return 'Add new partner as the children\'s parent';
+}
+
+function renderPartnerChildrenSelector({
+    anchorPersonId,
+    relationshipType,
+    selectedPersonId = '',
+    selectedValue = PARTNER_CHILDREN_ADD_PARENT,
+    controlId = 'connectPersonPartnerChildrenMode'
+} = {})
+{
+    const type = normalizeConnectRelationshipType(relationshipType);
+    const singleParentFamily =
         singleParentFamilyWithChildrenForPerson(anchorPersonId);
 
-      if (type !== 'partner' || !singleParentFamily) {
+    if (type !== 'partner' || !singleParentFamily)
+    {
         return '';
-      }
+    }
 
-      const selectedMode =
+    const selectedMode =
         normalizePartnerChildrenMode(selectedValue);
 
-      const addParentLabel =
+    const addParentLabel =
         partnerChildrenAddLabel(selectedPersonId);
 
-      return `<div class="connect-partner-children-selector" data-partner-children-selector>
+    return `<div class="connect-partner-children-selector" data-partner-children-selector>
         <div class="field">
           <label for="${escapeHtml(controlId)}">${escapeHtml(t('Existing children'))}</label>
 
@@ -6908,106 +7383,118 @@
           </span>
         </div>
       </div>`;
+}
+
+function connectionPairForRelationship(anchorPersonId, relativePersonId, relationshipType)
+{
+    const anchorId = String(anchorPersonId || '');
+    const relativeId = String(relativePersonId || '');
+    const type = normalizeConnectRelationshipType(relationshipType);
+
+    if (type === 'parent')
+    {
+        return {
+            type,
+            parentId: relativeId,
+            childId: anchorId
+        };
     }
 
-    function connectionPairForRelationship(anchorPersonId, relativePersonId, relationshipType) {
-      const anchorId = String(anchorPersonId || '');
-      const relativeId = String(relativePersonId || '');
-      const type = normalizeConnectRelationshipType(relationshipType);
-
-      if (type === 'parent') {
+    if (type === 'child')
+    {
         return {
-          type,
-          parentId: relativeId,
-          childId: anchorId
+            type,
+            parentId: anchorId,
+            childId: relativeId
         };
-      }
+    }
 
-      if (type === 'child') {
+    if (type === 'sibling')
+    {
         return {
-          type,
-          parentId: anchorId,
-          childId: relativeId
+            type,
+            anchorPersonId: anchorId,
+            siblingPersonId: relativeId
         };
-      }
+    }
 
-      if (type === 'sibling') {
-        return {
-          type,
-          anchorPersonId: anchorId,
-          siblingPersonId: relativeId
-        };
-      }
-
-      return {
+    return {
         type,
         personAId: anchorId,
         personBId: relativeId
-      };
-    }
+    };
+}
 
-    function validateRelationshipConnection({
-      anchorPersonId,
-      relativePersonId,
-      relationshipType,
-      parentFamilySelection = ''
-    } = {}) {
-      const pair = connectionPairForRelationship(anchorPersonId, relativePersonId, relationshipType);
+function validateRelationshipConnection({
+    anchorPersonId,
+    relativePersonId,
+    relationshipType,
+    parentFamilySelection = ''
+} = {})
+{
+    const pair = connectionPairForRelationship(anchorPersonId, relativePersonId, relationshipType);
 
-      if (pair.type === 'parent' || pair.type === 'child') {
+    if (pair.type === 'parent' || pair.type === 'child')
+    {
         const parentChildValidation = validateParentChildConnection(pair.parentId, pair.childId);
         if (!parentChildValidation.ok) return parentChildValidation;
 
         return pair.type === 'child'
-          ? validateParentFamilySelection({
-              anchorPersonId: pair.parentId,
-              relationshipType: 'child',
-              selection: parentFamilySelection
+            ? validateParentFamilySelection({
+                anchorPersonId: pair.parentId,
+                relationshipType: 'child',
+                selection: parentFamilySelection
             })
-          : parentChildValidation;
-      }
+            : parentChildValidation;
+    }
 
-      if (pair.type === 'sibling') {
+    if (pair.type === 'sibling')
+    {
         return validateSiblingConnection(
-          pair.anchorPersonId,
-          pair.siblingPersonId,
-          parentFamilySelection
+            pair.anchorPersonId,
+            pair.siblingPersonId,
+            parentFamilySelection
         );
-      }
-
-      return validatePartnerConnection(pair.personAId, pair.personBId);
     }
 
-    function relationshipWarningForConnection({ anchorPersonId, relativePersonId, relationshipType } = {}) {
-      const pair = connectionPairForRelationship(anchorPersonId, relativePersonId, relationshipType);
+    return validatePartnerConnection(pair.personAId, pair.personBId);
+}
 
-      if (pair.type === 'parent' || pair.type === 'child') {
+function relationshipWarningForConnection({ anchorPersonId, relativePersonId, relationshipType } = {})
+{
+    const pair = connectionPairForRelationship(anchorPersonId, relativePersonId, relationshipType);
+
+    if (pair.type === 'parent' || pair.type === 'child')
+    {
         return parentWarningForConnection(pair.parentId, pair.childId);
-      }
-
-      return null;
     }
 
-    function familyCanAcceptParent(family, parentId) {
-      if (!family) return false;
-      if (familyIncludesPerson(family, parentId)) return true;
+    return null;
+}
 
-      const preferredSlot = parentSlotPreference(parentId);
+function familyCanAcceptParent(family, parentId)
+{
+    if (!family) return false;
+    if (familyIncludesPerson(family, parentId)) return true;
 
-      if (preferredSlot === 'mother' && !familyPartnerBId(family)) return true;
-      if (preferredSlot === 'father' && !familyPartnerAId(family)) return true;
+    const preferredSlot = parentSlotPreference(parentId);
 
-      return !familyPartnerAId(family) || !familyPartnerBId(family);
-    }
+    if (preferredSlot === 'mother' && !familyPartnerBId(family)) return true;
+    if (preferredSlot === 'father' && !familyPartnerAId(family)) return true;
 
-    function assignParentToFamily(family, parentId) {
-      if (!family || !parentId) return false;
-      if (familyIncludesPerson(family, parentId)) return true;
+    return !familyPartnerAId(family) || !familyPartnerBId(family);
+}
 
-      const preferredSlot = parentSlotPreference(parentId);
-      const roleHint = relationshipRoleHintForPerson(parentId);
+function assignParentToFamily(family, parentId)
+{
+    if (!family || !parentId) return false;
+    if (familyIncludesPerson(family, parentId)) return true;
 
-      if (preferredSlot === 'mother' && !familyPartnerBId(family)) {
+    const preferredSlot = parentSlotPreference(parentId);
+    const roleHint = relationshipRoleHintForPerson(parentId);
+
+    if (preferredSlot === 'mother' && !familyPartnerBId(family))
+    {
         family.partnerBId = parentId;
         family.partner2Id = parentId;
         family.personBId = parentId;
@@ -7016,9 +7503,10 @@
         family.partner2RoleHint = family.partnerBRoleHint;
         family.personBRoleHint = family.partnerBRoleHint;
         return true;
-      }
+    }
 
-      if (preferredSlot === 'father' && !familyPartnerAId(family)) {
+    if (preferredSlot === 'father' && !familyPartnerAId(family))
+    {
         family.partnerAId = parentId;
         family.partner1Id = parentId;
         family.personAId = parentId;
@@ -7027,9 +7515,10 @@
         family.partner1RoleHint = family.partnerARoleHint;
         family.personARoleHint = family.partnerARoleHint;
         return true;
-      }
+    }
 
-      if (!familyPartnerAId(family)) {
+    if (!familyPartnerAId(family))
+    {
         family.partnerAId = parentId;
         family.partner1Id = parentId;
         family.personAId = parentId;
@@ -7038,9 +7527,10 @@
         family.partner1RoleHint = roleHint;
         family.personARoleHint = roleHint;
         return true;
-      }
+    }
 
-      if (!familyPartnerBId(family)) {
+    if (!familyPartnerBId(family))
+    {
         family.partnerBId = parentId;
         family.partner2Id = parentId;
         family.personBId = parentId;
@@ -7049,17 +7539,18 @@
         family.partner2RoleHint = roleHint;
         family.personBRoleHint = roleHint;
         return true;
-      }
-
-      return false;
     }
 
-    function createParentChildFamily(parentId, childId) {
-      const parent = getPerson(parentId);
-      const child = getPerson(childId);
-      const projectId = child?.projectId || parent?.projectId || currentProjectId();
+    return false;
+}
 
-      const family = {
+function createParentChildFamily(parentId, childId)
+{
+    const parent = getPerson(parentId);
+    const child = getPerson(childId);
+    const projectId = child?.projectId || parent?.projectId || currentProjectId();
+
+    const family = {
         id: uniqueFamilyId(`fam-${parentId}-${childId}-parent`),
         projectId,
         type: 'family',
@@ -7084,27 +7575,29 @@
         mediaIds: [],
         createdAt: 'Just now',
         updatedAt: 'Just now'
-      };
+    };
 
-      assignParentToFamily(family, parentId);
-      syncFamilyPartnerAliases(family);
-      centralFamilyRecords().push(family);
+    assignParentToFamily(family, parentId);
+    syncFamilyPartnerAliases(family);
+    centralFamilyRecords().push(family);
 
-      return family;
-    }
+    return family;
+}
 
-    function findOrCreateSingleParentFamily(parentId) {
-      const existing = partnerFamiliesForPerson(parentId).find(family =>
+function findOrCreateSingleParentFamily(parentId)
+{
+    const existing = partnerFamiliesForPerson(parentId).find(family =>
         !familyHasSecondPartner(family, parentId)
-      );
+    );
 
-      if (existing) {
+    if (existing)
+    {
         syncFamilyPartnerAliases(existing);
         return existing;
-      }
+    }
 
-      const parent = getPerson(parentId);
-      const family = {
+    const parent = getPerson(parentId);
+    const family = {
         id: uniqueFamilyId(`fam-${parentId}-single-parent`),
         projectId: parent?.projectId || currentProjectId(),
         type: 'family',
@@ -7129,219 +7622,241 @@
         mediaIds: [],
         createdAt: 'Just now',
         updatedAt: 'Just now'
-      };
+    };
 
-      assignParentToFamily(family, parentId);
-      syncFamilyPartnerAliases(family);
-      centralFamilyRecords().push(family);
-      return family;
+    assignParentToFamily(family, parentId);
+    syncFamilyPartnerAliases(family);
+    centralFamilyRecords().push(family);
+    return family;
+}
+
+function addChildToFamily(family, parentId, childId)
+{
+    if (!family || !familyIncludesPerson(family, parentId))
+    {
+        return {
+            ok: false,
+            title: 'Parent family unavailable',
+            message: 'The selected person is not a parent in this family.'
+        };
     }
 
-    function addChildToFamily(family, parentId, childId) {
-      if (!family || !familyIncludesPerson(family, parentId)) {
+    const existingChildren = unlinkFamilyChildrenIds(family);
+
+    if (existingChildren.includes(childId))
+    {
         return {
-          ok: false,
-          title: 'Parent family unavailable',
-          message: 'The selected person is not a parent in this family.'
+            ok: true,
+            family,
+            relationshipType: 'parentChild',
+            warning: null,
+            reused: true
         };
-      }
+    }
 
-      const existingChildren = unlinkFamilyChildrenIds(family);
+    const validation = validateParentChildConnection(parentId, childId);
+    if (!validation.ok) return validation;
 
-      if (existingChildren.includes(childId)) {
-        return {
-          ok: true,
-          family,
-          relationshipType: 'parentChild',
-          warning: null,
-          reused: true
-        };
-      }
+    unlinkSetFamilyChildren(family, [...existingChildren, childId]);
+    syncFamilyPartnerAliases(family);
+    family.updatedAt = 'Just now';
 
-      const validation = validateParentChildConnection(parentId, childId);
-      if (!validation.ok) return validation;
-
-      unlinkSetFamilyChildren(family, [...existingChildren, childId]);
-      syncFamilyPartnerAliases(family);
-      family.updatedAt = 'Just now';
-
-      return {
+    return {
         ok: true,
         family,
         relationshipType: 'parentChild',
         warning: parentWarningForConnection(parentId, childId)
-      };
-    }
+    };
+}
 
-    function connectChildToParentFamily(parentId, childId, selection) {
-      const familySelection = String(selection || '');
-      const selectionValidation = validateParentFamilySelection({
+function connectChildToParentFamily(parentId, childId, selection)
+{
+    const familySelection = String(selection || '');
+    const selectionValidation = validateParentFamilySelection({
         anchorPersonId: parentId,
         relationshipType: 'child',
         selection: familySelection
-      });
+    });
 
-      if (!selectionValidation.ok) return selectionValidation;
+    if (!selectionValidation.ok) return selectionValidation;
 
-      const family = familySelection === SINGLE_PARENT_FAMILY_CHOICE
+    const family = familySelection === SINGLE_PARENT_FAMILY_CHOICE
         ? findOrCreateSingleParentFamily(parentId)
         : centralFamilyRecords().find(candidate => candidate.id === familySelection);
 
-      return addChildToFamily(family, parentId, childId);
+    return addChildToFamily(family, parentId, childId);
+}
+
+function validateSiblingConnection(anchorPersonId, siblingPersonId, familyId)
+{
+    if (!anchorPersonId || !siblingPersonId || anchorPersonId === siblingPersonId)
+    {
+        return {
+            ok: false,
+            title: 'Invalid relationship',
+            message: 'A person cannot be connected as their own sibling.'
+        };
     }
 
-    function validateSiblingConnection(anchorPersonId, siblingPersonId, familyId) {
-      if (!anchorPersonId || !siblingPersonId || anchorPersonId === siblingPersonId) {
-        return {
-          ok: false,
-          title: 'Invalid relationship',
-          message: 'A person cannot be connected as their own sibling.'
-        };
-      }
-
-      const selectionValidation = validateParentFamilySelection({
+    const selectionValidation = validateParentFamilySelection({
         anchorPersonId,
         relationshipType: 'sibling',
         selection: familyId
-      });
+    });
 
-      if (!selectionValidation.ok) return selectionValidation;
+    if (!selectionValidation.ok) return selectionValidation;
 
-      const family = centralFamilyRecords().find(candidate => candidate.id === familyId);
-      if (!family || !unlinkFamilyChildrenIds(family).includes(anchorPersonId)) {
+    const family = centralFamilyRecords().find(candidate => candidate.id === familyId);
+    if (!family || !unlinkFamilyChildrenIds(family).includes(anchorPersonId))
+    {
         return {
-          ok: false,
-          title: 'Parent family unavailable',
-          message: 'The selected parent family does not contain the reference person.'
+            ok: false,
+            title: 'Parent family unavailable',
+            message: 'The selected parent family does not contain the reference person.'
         };
-      }
-
-      if (unlinkFamilyChildrenIds(family).includes(siblingPersonId)) {
-        return {
-          ok: false,
-          title: 'Already connected',
-          message: `${personDisplayName(anchorPersonId)} and ${personDisplayName(siblingPersonId)} are already siblings in this family.`
-        };
-      }
-
-      if (
-        collectAncestorIds(anchorPersonId).has(siblingPersonId)
-        || collectDescendantIds(anchorPersonId).has(siblingPersonId)
-      ) {
-        return {
-          ok: false,
-          title: 'Relationship loop',
-          message: 'An ancestor or descendant cannot also be added as a sibling.'
-        };
-      }
-
-      for (const parentId of [familyPartnerAId(family), familyPartnerBId(family)].filter(Boolean)) {
-        const validation = validateParentChildConnection(parentId, siblingPersonId);
-        if (!validation.ok) return validation;
-      }
-
-      return { ok: true, family };
     }
 
-    function connectSiblingsThroughFamily(anchorPersonId, siblingPersonId, familyId) {
-      const validation = validateSiblingConnection(
+    if (unlinkFamilyChildrenIds(family).includes(siblingPersonId))
+    {
+        return {
+            ok: false,
+            title: 'Already connected',
+            message: `${personDisplayName(anchorPersonId)} and ${personDisplayName(siblingPersonId)} are already siblings in this family.`
+        };
+    }
+
+    if (
+        collectAncestorIds(anchorPersonId).has(siblingPersonId)
+        || collectDescendantIds(anchorPersonId).has(siblingPersonId)
+    )
+    {
+        return {
+            ok: false,
+            title: 'Relationship loop',
+            message: 'An ancestor or descendant cannot also be added as a sibling.'
+        };
+    }
+
+    for (const parentId of [familyPartnerAId(family), familyPartnerBId(family)].filter(Boolean))
+    {
+        const validation = validateParentChildConnection(parentId, siblingPersonId);
+        if (!validation.ok) return validation;
+    }
+
+    return { ok: true, family };
+}
+
+function connectSiblingsThroughFamily(anchorPersonId, siblingPersonId, familyId)
+{
+    const validation = validateSiblingConnection(
         anchorPersonId,
         siblingPersonId,
         familyId
-      );
+    );
 
-      if (!validation.ok) return validation;
+    if (!validation.ok) return validation;
 
-      const family = validation.family;
-      unlinkSetFamilyChildren(family, [
+    const family = validation.family;
+    unlinkSetFamilyChildren(family, [
         ...unlinkFamilyChildrenIds(family),
         siblingPersonId
-      ]);
-      syncFamilyPartnerAliases(family);
-      family.updatedAt = 'Just now';
+    ]);
+    syncFamilyPartnerAliases(family);
+    family.updatedAt = 'Just now';
 
-      return {
+    return {
         ok: true,
         family,
         relationshipType: 'sibling',
         warning: null
-      };
+    };
+}
+
+function connectParentToChild(parentId, childId)
+{
+    const validation = validateParentChildConnection(parentId, childId);
+
+    if (!validation.ok)
+    {
+        return validation;
     }
 
-    function connectParentToChild(parentId, childId) {
-      const validation = validateParentChildConnection(parentId, childId);
+    const warning = parentWarningForConnection(parentId, childId);
 
-      if (!validation.ok) {
-        return validation;
-      }
-
-      const warning = parentWarningForConnection(parentId, childId);
-
-      let family = centralFamilyRecords().find(candidate =>
+    let family = centralFamilyRecords().find(candidate =>
         (candidate.childIds || candidate.childrenIds || []).includes(childId)
           && familyCanAcceptParent(candidate, parentId)
-      );
+    );
 
-      if (!family) {
+    if (!family)
+    {
         family = createParentChildFamily(parentId, childId);
-      } else {
+    }
+    else
+    {
         family.childIds = [...new Set([...(family.childIds || []), childId])];
         family.childrenIds = [...family.childIds];
         assignParentToFamily(family, parentId);
         syncFamilyPartnerAliases(family);
         family.updatedAt = 'Just now';
-      }
+    }
 
-      return {
+    return {
         ok: true,
         family,
         relationshipType: 'parentChild',
         warning
-      };
-    }
+    };
+}
 
-    function getPartnerRelationshipBetween(personAId, personBId) {
-      return centralFamilyRecords().find(family => {
+function getPartnerRelationshipBetween(personAId, personBId)
+{
+    return centralFamilyRecords().find(family =>
+    {
         const a = familyPartnerAId(family);
         const b = familyPartnerBId(family);
 
         return (a === personAId && b === personBId) || (a === personBId && b === personAId);
-      }) || null;
-    }
+    }) || null;
+}
 
-    function connectPartners(personAId, personBId, options = {}) {
-      const validation =
+function connectPartners(personAId, personBId, options = {})
+{
+    const validation =
         validatePartnerConnection(personAId, personBId);
 
-      if (!validation.ok) {
+    if (!validation.ok)
+    {
         return validation;
-      }
+    }
 
-      const personA = getPerson(personAId);
-      const personB = getPerson(personBId);
+    const personA = getPerson(personAId);
+    const personB = getPerson(personBId);
 
-      const existingChildrenFamilyId =
+    const existingChildrenFamilyId =
         String(options.existingChildrenFamilyId || '');
 
-      const existingChildrenFamily = existingChildrenFamilyId
+    const existingChildrenFamily = existingChildrenFamilyId
         ? centralFamilyRecords().find(family =>
             family.id === existingChildrenFamilyId
               && familyIncludesPerson(family, personAId)
               && !familyHasSecondPartner(family, personAId)
               && unlinkFamilyChildrenIds(family).length > 0
-          )
+        )
         : null;
 
-      if (existingChildrenFamily) {
+    if (existingChildrenFamily)
+    {
         const assigned =
-          assignParentToFamily(existingChildrenFamily, personBId);
+            assignParentToFamily(existingChildrenFamily, personBId);
 
-        if (!assigned) {
-          return {
-            ok: false,
-            title: 'Family cannot accept another parent',
-            message: 'The selected family already has two recorded parents.'
-          };
+        if (!assigned)
+        {
+            return {
+                ok: false,
+                title: 'Family cannot accept another parent',
+                message: 'The selected family already has two recorded parents.'
+            };
         }
 
         existingChildrenFamily.relationshipType = 'Partner';
@@ -7351,21 +7866,21 @@
         syncFamilyPartnerAliases(existingChildrenFamily);
 
         return {
-          ok: true,
-          family: existingChildrenFamily,
-          relationshipType: 'partner',
-          warning: null,
-          reused: true,
-          inheritedChildren: true
+            ok: true,
+            family: existingChildrenFamily,
+            relationshipType: 'partner',
+            warning: null,
+            reused: true,
+            inheritedChildren: true
         };
-      }
+    }
 
-      const id =
+    const id =
         uniqueFamilyId(
-          relationshipIdForPartners(personAId, personBId)
+            relationshipIdForPartners(personAId, personBId)
         );
 
-      const family = {
+    const family = {
         id,
         projectId:
           personA.projectId
@@ -7398,208 +7913,227 @@
         mediaIds: [],
         createdAt: 'Just now',
         updatedAt: 'Just now'
-      };
+    };
 
-      syncFamilyPartnerAliases(family);
-      centralFamilyRecords().push(family);
+    syncFamilyPartnerAliases(family);
+    centralFamilyRecords().push(family);
 
-      return {
+    return {
         ok: true,
         family,
         relationshipType: 'partner',
         warning: null
-      };
-    }
+    };
+}
 
-    function connectPeopleByRelationship({
-      anchorPersonId,
-      relativePersonId,
-      relationshipType,
-      parentFamilySelection = '',
-      partnerChildrenMode = PARTNER_CHILDREN_ADD_PARENT
-    } = {}) {
-      const anchorId = String(anchorPersonId || '');
-      const relativeId = String(relativePersonId || '');
-      const type =
+function connectPeopleByRelationship({
+    anchorPersonId,
+    relativePersonId,
+    relationshipType,
+    parentFamilySelection = '',
+    partnerChildrenMode = PARTNER_CHILDREN_ADD_PARENT
+} = {})
+{
+    const anchorId = String(anchorPersonId || '');
+    const relativeId = String(relativePersonId || '');
+    const type =
         normalizeConnectRelationshipType(relationshipType);
 
-      const normalizedPartnerChildrenMode =
+    const normalizedPartnerChildrenMode =
         normalizePartnerChildrenMode(partnerChildrenMode);
 
-      const validation = validateRelationshipConnection({
+    const validation = validateRelationshipConnection({
         anchorPersonId: anchorId,
         relativePersonId: relativeId,
         relationshipType: type,
         parentFamilySelection
-      });
+    });
 
-      if (!validation.ok) {
+    if (!validation.ok)
+    {
         return validation;
-      }
+    }
 
-      let result;
+    let result;
 
-      if (type === 'parent') {
+    if (type === 'parent')
+    {
         result = connectParentToChild(relativeId, anchorId);
-      } else if (type === 'child') {
+    }
+    else if (type === 'child')
+    {
         result = connectChildToParentFamily(
-          anchorId,
-          relativeId,
-          parentFamilySelection
+            anchorId,
+            relativeId,
+            parentFamilySelection
         );
-      } else if (type === 'sibling') {
+    }
+    else if (type === 'sibling')
+    {
         result = connectSiblingsThroughFamily(
-          anchorId,
-          relativeId,
-          parentFamilySelection
+            anchorId,
+            relativeId,
+            parentFamilySelection
         );
-      } else {
+    }
+    else
+    {
         const existingChildrenFamily =
-          normalizedPartnerChildrenMode ===
+            normalizedPartnerChildrenMode ===
             PARTNER_CHILDREN_ADD_PARENT
-            ? singleParentFamilyWithChildrenForPerson(anchorId)
-            : null;
+                ? singleParentFamilyWithChildrenForPerson(anchorId)
+                : null;
 
         result = connectPartners(
-          anchorId,
-          relativeId,
-          {
-            existingChildrenFamilyId:
+            anchorId,
+            relativeId,
+            {
+                existingChildrenFamilyId:
               existingChildrenFamily?.id || ''
-          }
+            }
         );
-      }
+    }
 
-      if (!result.ok) return result;
+    if (!result.ok) return result;
 
-      syncFamilyReciprocalLinks();
-      rebuildSampleEventsAndPruneSourceLinks();
+    syncFamilyReciprocalLinks();
+    rebuildSampleEventsAndPruneSourceLinks();
 
-      return {
+    return {
         ...result,
         anchorPersonId: anchorId,
         relativePersonId: relativeId,
         connectType: type,
         partnerChildrenMode:
           type === 'partner'
-            ? normalizedPartnerChildrenMode
-            : ''
-      };
-    }
+              ? normalizedPartnerChildrenMode
+              : ''
+    };
+}
 
-    function addPersonConnectionTypeFromRelativeType(relativeType) {
-      const value = String(relativeType || '').toLowerCase();
+function addPersonConnectionTypeFromRelativeType(relativeType)
+{
+    const value = String(relativeType || '').toLowerCase();
 
-      if (['father', 'mother', 'parent'].includes(value)) return 'parent';
-      if (['son', 'daughter', 'child'].includes(value)) return 'child';
-      if (['brother', 'sister', 'sibling'].includes(value)) return 'sibling';
-      if (['partner', 'spouse'].includes(value)) return 'partner';
+    if (['father', 'mother', 'parent'].includes(value)) return 'parent';
+    if (['son', 'daughter', 'child'].includes(value)) return 'child';
+    if (['brother', 'sister', 'sibling'].includes(value)) return 'sibling';
+    if (['partner', 'spouse'].includes(value)) return 'partner';
 
-      return '';
-    }
+    return '';
+}
 
-    function addPersonCreateConnectionIntent(options = {}) {
-      const relationshipType = addPersonConnectionTypeFromRelativeType(
+function addPersonCreateConnectionIntent(options = {})
+{
+    const relationshipType = addPersonConnectionTypeFromRelativeType(
         options.connectRelationshipType || options.relativeType
-      );
+    );
 
-      const anchorPersonId = String(
+    const anchorPersonId = String(
         options.connectToPersonId
           || options.anchorPersonId
           || options.personId
           || ''
-      );
+    );
 
-      return {
+    return {
         shouldConnect: Boolean(options.mode !== 'edit' && relationshipType && anchorPersonId),
         anchorPersonId,
         relationshipType
-      };
-    }
+    };
+}
 
-    function addPersonPartnerChildrenMode(options = {}) {
-      const liveValue =
+function addPersonPartnerChildrenMode(options = {})
+{
+    const liveValue =
         modalBackdrop
-          ?.querySelector('#addPersonPartnerChildrenMode')
-          ?.value;
+            ?.querySelector('#addPersonPartnerChildrenMode')
+            ?.value;
 
-      return normalizePartnerChildrenMode(
+    return normalizePartnerChildrenMode(
         liveValue || options.partnerChildrenMode
-      );
-    }
+    );
+}
 
-    function addPersonParentFamilySelection(options = {}) {
-      const intent = addPersonCreateConnectionIntent(options);
-      if (!['child', 'sibling'].includes(intent.relationshipType)) return '';
+function addPersonParentFamilySelection(options = {})
+{
+    const intent = addPersonCreateConnectionIntent(options);
+    if (!['child', 'sibling'].includes(intent.relationshipType)) return '';
 
-      return modalBackdrop
+    return modalBackdrop
         ?.querySelector('#addPersonParentFamily')
         ?.value
         || defaultParentFamilySelection(
-          intent.anchorPersonId,
-          intent.relationshipType,
-          options.parentFamilyId
+            intent.anchorPersonId,
+            intent.relationshipType,
+            options.parentFamilyId
             || options.parentFamilySelection
             || ''
         );
-    }
+}
 
-    function addPersonConnectionToastLabel(relationshipType) {
-      const map = {
+function addPersonConnectionToastLabel(relationshipType)
+{
+    const map = {
         parent: 'parent',
         child: 'child',
         sibling: 'sibling',
         partner: 'partner'
-      };
+    };
 
-      return map[relationshipType] || 'relative';
-    }
+    return map[relationshipType] || 'relative';
+}
 
-    function applyPartnerDetailsToCreatedConnection(connectionResult, relationshipValues) {
-      if (!connectionResult?.ok || connectionResult.connectType !== 'partner') return;
-      if (!connectionResult.family) return;
+function applyPartnerDetailsToCreatedConnection(connectionResult, relationshipValues)
+{
+    if (!connectionResult?.ok || connectionResult.connectType !== 'partner') return;
+    if (!connectionResult.family) return;
 
-      const values = relationshipValues?.relationships?.[0];
-      if (!values) return;
+    const values = relationshipValues?.relationships?.[0];
+    if (!values) return;
 
-      upsertPartnerRelationshipEvents(connectionResult.family, values);
+    upsertPartnerRelationshipEvents(connectionResult.family, values);
 
-      if (typeof syncFamilyPartnerAliases === 'function') {
+    if (typeof syncFamilyPartnerAliases === 'function')
+    {
         syncFamilyPartnerAliases(connectionResult.family);
-      }
-
-      syncFamilyReciprocalLinks();
-      rebuildSampleEventsAndPruneSourceLinks();
     }
-    
-    function addPersonDateFieldHasTypedValue(fieldId) {
-      const root = modalBackdrop?.querySelector(`[data-genealogy-date-field="${CSS.escape(fieldId)}"]`);
-      if (!root) return false;
 
-      return Boolean(
+    syncFamilyReciprocalLinks();
+    rebuildSampleEventsAndPruneSourceLinks();
+}
+
+function addPersonDateFieldHasTypedValue(fieldId)
+{
+    const root = modalBackdrop?.querySelector(`[data-genealogy-date-field="${CSS.escape(fieldId)}"]`);
+    if (!root) return false;
+
+    return Boolean(
         root.querySelector('[data-genealogy-date-input]')?.value.trim()
           || root.querySelector('[data-genealogy-date-input-to]')?.value.trim()
-      );
-    }
+    );
+}
 
-    function addPersonPlaceFieldHasTypedValue(selector) {
-      const value = modalBackdrop?.querySelector(selector)?.value || '';
-      return hasTextValue(value);
-    }
+function addPersonPlaceFieldHasTypedValue(selector)
+{
+    const value = modalBackdrop?.querySelector(selector)?.value || '';
+    return hasTextValue(value);
+}
 
-    function addPersonFactsHaveIdentifyingValue(facts = {}) {
-      if (!facts || facts.invalid) return false;
+function addPersonFactsHaveIdentifyingValue(facts = {})
+{
+    if (!facts || facts.invalid) return false;
 
-      const burialPlaceText = facts.burialPlace?.text || '';
-      const education = facts.education || {};
-      const educationPlaceText = education.place?.text || '';
-      const work = facts.work || {};
-      const baptism = facts.baptism || {};
-      const baptismPlaceText = baptism.place?.text || '';
-      const customFact = facts.customFact || {};
-      const customFactPlaceText = customFact.place?.text || '';
+    const burialPlaceText = facts.burialPlace?.text || '';
+    const education = facts.education || {};
+    const educationPlaceText = education.place?.text || '';
+    const work = facts.work || {};
+    const baptism = facts.baptism || {};
+    const baptismPlaceText = baptism.place?.text || '';
+    const customFact = facts.customFact || {};
+    const customFactPlaceText = customFact.place?.text || '';
 
-      return Boolean(
+    return Boolean(
         hasTextValue(facts.alternativeNames)
           || hasTextValue(burialPlaceText)
           || hasTextValue(education.institutionName)
@@ -7619,16 +8153,17 @@
           || hasTextValue(customFact.notes)
           || hasTextValue(customFactPlaceText)
           || hasGenealogyDateValue(
-            customFact.date,
-            'Exact date'
+              customFact.date,
+              'Exact date'
           )
-      );
-    }
+    );
+}
 
-    function addPersonHasCoreIdentifyingValue() {
-      const livingStatus = normalizeLivingStatus(readAddPersonModalValue('#addPersonLivingStatus'));
+function addPersonHasCoreIdentifyingValue()
+{
+    const livingStatus = normalizeLivingStatus(readAddPersonModalValue('#addPersonLivingStatus'));
 
-      return Boolean(
+    return Boolean(
         readAddPersonModalValue('#addPersonFirstName')
           || readAddPersonModalValue('#addPersonLastName')
           || readAddPersonModalValue('#addPersonMiddleName')
@@ -7636,167 +8171,182 @@
           || addPersonDateFieldHasTypedValue('addPersonBirth')
           || addPersonPlaceFieldHasTypedValue('#addPersonBirthPlace')
           || (
-            livingStatus === 'Deceased'
+              livingStatus === 'Deceased'
               && (
-                addPersonDateFieldHasTypedValue('addPersonDeath')
+                  addPersonDateFieldHasTypedValue('addPersonDeath')
                   || addPersonPlaceFieldHasTypedValue('#addPersonDeathPlace')
               )
           )
-      );
-    }
+    );
+}
 
-    function focusAddPersonFirstIdentifyingField() {
-      const target = modalBackdrop?.querySelector('#addPersonFirstName')
+function focusAddPersonFirstIdentifyingField()
+{
+    const target = modalBackdrop?.querySelector('#addPersonFirstName')
         || modalBackdrop?.querySelector('#addPersonLastName')
         || modalBackdrop?.querySelector('#addPersonBirthDate');
 
-      target?.focus({ preventScroll: true });
-    }
+    target?.focus({ preventScroll: true });
+}
 
-    function validateAddPersonCreateIdentity(options = {}, additionalFacts = {}) {
-      const connectionIntent = addPersonCreateConnectionIntent(options);
+function validateAddPersonCreateIdentity(options = {}, additionalFacts = {})
+{
+    const connectionIntent = addPersonCreateConnectionIntent(options);
 
-      if (
+    if (
         connectionIntent.shouldConnect
           || addPersonHasCoreIdentifyingValue()
           || addPersonFactsHaveIdentifyingValue(additionalFacts)
-      ) {
+    )
+    {
         return { ok: true };
-      }
-
-      return {
-        ok: false,
-        message: 'Add a name or at least one identifying fact before creating a person.'
-      };
     }
 
-    function applyAddPersonAttachmentDrafts(personId) {
-      const person =
+    return {
+        ok: false,
+        message: 'Add a name or at least one identifying fact before creating a person.'
+    };
+}
+
+function applyAddPersonAttachmentDrafts(personId)
+{
+    const person =
         getPerson(personId);
 
-      if (!person) return;
+    if (!person) return;
 
-      setPersonPhotoIds(
+    setPersonPhotoIds(
         person.id,
         readAddPersonPhotoIds(),
         {
-          rerender: false
+            rerender: false
         }
-      );
+    );
 
-      const fileWrites =
+    const fileWrites =
         readAddPersonFileIds().map(fileId => ({
-          ownerType: 'file',
-          ownerId: fileId,
-          entityType: 'person',
-          entityId: person.id,
-          shouldLink: true
+            ownerType: 'file',
+            ownerId: fileId,
+            entityType: 'person',
+            entityId: person.id,
+            shouldLink: true
         }));
 
-      if (fileWrites.length) {
+    if (fileWrites.length)
+    {
         archiveSetConnectionsAtomically(
-          fileWrites
+            fileWrites
         );
-      }
+    }
 
-      readAddPersonNoteIds().forEach(noteId => {
+    readAddPersonNoteIds().forEach(noteId =>
+    {
         const note =
-          getNote(noteId, {
-            projectId:
+            getNote(noteId, {
+                projectId:
               person.projectId,
-            includeArchived:
+                includeArchived:
               true
-          });
+            });
 
         if (!note) return;
 
         setNoteEntityLinks(
-          note.id,
-          'person',
-          [
-            ...new Set([
-              ...(note.linkedPersonIds || []),
-              person.id
-            ])
-          ],
-          {
-            projectId:
+            note.id,
+            'person',
+            [
+                ...new Set([
+                    ...(note.linkedPersonIds || []),
+                    person.id
+                ])
+            ],
+            {
+                projectId:
               note.projectId
-          }
+            }
         );
-      });
-    }
+    });
+}
 
-    function commitAddPersonModalCreate(title, subtitle, options = {}) {
-      const createAnother = modalBackdrop.querySelector('#addPersonCreateAnother')?.checked;
-      const additionalFacts = collectAddPersonAdditionalFacts('');
+function commitAddPersonModalCreate(title, subtitle, options = {})
+{
+    const createAnother = modalBackdrop.querySelector('#addPersonCreateAnother')?.checked;
+    const additionalFacts = collectAddPersonAdditionalFacts('');
 
-      if (additionalFacts.invalid) {
+    if (additionalFacts.invalid)
+    {
         showToast(additionalFacts.message || 'Check the additional facts before creating.');
         return null;
-      }
+    }
 
-      const identityValidation = validateAddPersonCreateIdentity(options, additionalFacts);
+    const identityValidation = validateAddPersonCreateIdentity(options, additionalFacts);
 
-      if (!identityValidation.ok) {
+    if (!identityValidation.ok)
+    {
         showToast(identityValidation.message);
         focusAddPersonFirstIdentifyingField();
         return null;
-      }
+    }
 
-      const relationshipValues = collectAddPersonRelationshipBlock();
+    const relationshipValues = collectAddPersonRelationshipBlock();
 
-      if (relationshipValues.invalid) {
+    if (relationshipValues.invalid)
+    {
         showToast(relationshipValues.message || 'Check the relationship details before creating.');
         return null;
-      }
+    }
 
-      const connectionIntent = addPersonCreateConnectionIntent(options);
-      const parentFamilySelection = addPersonParentFamilySelection(options);
-      const familySelectionValidation = validateParentFamilySelection({
+    const connectionIntent = addPersonCreateConnectionIntent(options);
+    const parentFamilySelection = addPersonParentFamilySelection(options);
+    const familySelectionValidation = validateParentFamilySelection({
         anchorPersonId: connectionIntent.anchorPersonId,
         relationshipType: connectionIntent.relationshipType,
         selection: parentFamilySelection
-      });
+    });
 
-      if (!familySelectionValidation.ok) {
+    if (!familySelectionValidation.ok)
+    {
         showToast(familySelectionValidation.message);
         modalBackdrop.querySelector('#addPersonParentFamily')?.focus({
-          preventScroll: true
+            preventScroll: true
         });
         return null;
-      }
+    }
 
-      const projectPeopleBeforeCreate = getPeople(currentProjectId()).length;
-      const newPerson = createPersonFromAddPersonModal(options, additionalFacts);
-      if (!newPerson) return null;
-      applyAddPersonAttachmentDrafts(
+    const projectPeopleBeforeCreate = getPeople(currentProjectId()).length;
+    const newPerson = createPersonFromAddPersonModal(options, additionalFacts);
+    if (!newPerson) return null;
+    applyAddPersonAttachmentDrafts(
         newPerson.id
-      );
-      let connectionResult = null;
+    );
+    let connectionResult = null;
 
-      if (connectionIntent.shouldConnect) {
+    if (connectionIntent.shouldConnect)
+    {
         connectionResult = connectPeopleByRelationship({
-          anchorPersonId: connectionIntent.anchorPersonId,
-          relativePersonId: newPerson.id,
-          relationshipType: connectionIntent.relationshipType,
-          parentFamilySelection,
-          partnerChildrenMode:
+            anchorPersonId: connectionIntent.anchorPersonId,
+            relativePersonId: newPerson.id,
+            relationshipType: connectionIntent.relationshipType,
+            parentFamilySelection,
+            partnerChildrenMode:
             addPersonPartnerChildrenMode(options)
         });
 
-        if (connectionResult.ok) {
-          applyPartnerDetailsToCreatedConnection(connectionResult, relationshipValues);
+        if (connectionResult.ok)
+        {
+            applyPartnerDetailsToCreatedConnection(connectionResult, relationshipValues);
         }
-      }
+    }
 
-      rebuildSampleEventsAndPruneSourceLinks();
+    rebuildSampleEventsAndPruneSourceLinks();
 
-      if (projectPeopleBeforeCreate === 0) {
+    if (projectPeopleBeforeCreate === 0)
+    {
         const project = validProjectById(newPerson.projectId);
-        if (project) {
-          project.defaultPersonId = newPerson.id;
-          touchProjectModified(project);
+        if (project)
+        {
+            project.defaultPersonId = newPerson.id;
+            touchProjectModified(project);
         }
         const treeView = treeProjectViewState(newPerson.projectId);
         treeView.focusPersonId = newPerson.id;
@@ -7804,121 +8354,143 @@
         treeView.navigationBackStack = [];
         treeView.navigationForwardStack = [];
         state.treeCenterTargetId = newPerson.id;
-      }
+    }
 
-      clearPeopleSelection();
+    clearPeopleSelection();
 
-      const selectedAfterCreateId =
+    const selectedAfterCreateId =
         connectionIntent.shouldConnect
         && getPerson(
-          connectionIntent.anchorPersonId
+            connectionIntent.anchorPersonId
         )
-          ? connectionIntent.anchorPersonId
-          : newPerson.id;
+            ? connectionIntent.anchorPersonId
+            : newPerson.id;
 
-      state.selectedPersonId = selectedAfterCreateId;
+    state.selectedPersonId = selectedAfterCreateId;
 
-      state.selectedPeopleId = selectedAfterCreateId;
+    state.selectedPeopleId = selectedAfterCreateId;
 
-      closeModal();
+    closeModal();
 
-      if (state.activeModule === 'Family Tree') {
+    if (state.activeModule === 'Family Tree')
+    {
         renderFamilyTreePreserveScroll?.() || renderFamilyTree();
-      } else {
+    }
+    else
+    {
         render();
-      }
+    }
 
-      if (connectionIntent.shouldConnect) {
-        if (connectionResult?.ok) {
-          showToast(`Person created and connected as ${addPersonConnectionToastLabel(connectionIntent.relationshipType)}.`);
-        } else {
-          showToast(connectionResult?.message || 'Person created, but could not connect the relationship.');
+    if (connectionIntent.shouldConnect)
+    {
+        if (connectionResult?.ok)
+        {
+            showToast(`Person created and connected as ${addPersonConnectionToastLabel(connectionIntent.relationshipType)}.`);
         }
-      } else {
+        else
+        {
+            showToast(connectionResult?.message || 'Person created, but could not connect the relationship.');
+        }
+    }
+    else
+    {
         showToast('Person created.');
-      }
+    }
 
-      if (createAnother) {
-        requestAnimationFrame(() => {
-          if (connectionIntent.shouldConnect) {
-            openAddPersonModal(title, subtitle, {
-              ...options,
-              personId: connectionIntent.anchorPersonId,
-              connectToPersonId: connectionIntent.anchorPersonId,
-              connectAfterCreate: true,
-              connectRelationshipType: connectionIntent.relationshipType,
-              parentFamilySelection
-            });
-          } else {
-            openAddPersonModal('Add person', 'Create a new person in this project');
-          }
+    if (createAnother)
+    {
+        requestAnimationFrame(() =>
+        {
+            if (connectionIntent.shouldConnect)
+            {
+                openAddPersonModal(title, subtitle, {
+                    ...options,
+                    personId: connectionIntent.anchorPersonId,
+                    connectToPersonId: connectionIntent.anchorPersonId,
+                    connectAfterCreate: true,
+                    connectRelationshipType: connectionIntent.relationshipType,
+                    parentFamilySelection
+                });
+            }
+            else
+            {
+                openAddPersonModal('Add person', 'Create a new person in this project');
+            }
         });
-      }
+    }
 
-      return {
+    return {
         ok: true,
         person: newPerson,
         connectionResult
-      };
-    }
+    };
+}
 
-    function normalizeAddPersonMatchText(value) {
-      return cleanEditFieldValue(value)
+function normalizeAddPersonMatchText(value)
+{
+    return cleanEditFieldValue(value)
         .replace(/\s+/g, ' ')
         .toLowerCase();
-    }
+}
 
-    function addPersonMatchTextVariants(value) {
-      const source = value == null ? '' : String(value);
+function addPersonMatchTextVariants(value)
+{
+    const source = value == null ? '' : String(value);
 
-      return [...new Set([
+    return [...new Set([
         source,
         localizedDataFieldValue(source)
-      ]
+    ]
         .map(normalizeAddPersonMatchText)
         .filter(Boolean))];
-    }
+}
 
-    function addPersonMatchValues(...values) {
-      return [...new Set(values.flatMap(addPersonMatchTextVariants))];
-    }
+function addPersonMatchValues(...values)
+{
+    return [...new Set(values.flatMap(addPersonMatchTextVariants))];
+}
 
-    function addPersonDraftDateValue(selector) {
-      return normalizeAddPersonMatchText(modalBackdrop?.querySelector(selector)?.value || '');
-    }
+function addPersonDraftDateValue(selector)
+{
+    return normalizeAddPersonMatchText(modalBackdrop?.querySelector(selector)?.value || '');
+}
 
-    function addPersonDraftPlaceValue(selector) {
-      return normalizeAddPersonMatchText(modalBackdrop?.querySelector(selector)?.value || '');
-    }
+function addPersonDraftPlaceValue(selector)
+{
+    return normalizeAddPersonMatchText(modalBackdrop?.querySelector(selector)?.value || '');
+}
 
-    function addPersonPersonDateValues(event) {
-      return addPersonMatchValues(
+function addPersonPersonDateValues(event)
+{
+    return addPersonMatchValues(
         event?.date,
         event?.dateLabel,
         event?.originalText,
         event?.sortDate
-      );
-    }
+    );
+}
 
-    function addPersonPersonPlaceValues(event) {
-      return addPersonMatchValues(
+function addPersonPersonPlaceValues(event)
+{
+    return addPersonMatchValues(
         getPlaceEventDisplay(event),
         getPlaceDisplay(event?.placeId),
         event?.placeText
-      );
-    }
+    );
+}
 
-    function collectAddPersonDraftForMatching() {
-      const firstName = normalizeAddPersonMatchText(readAddPersonModalValue('#addPersonFirstName'));
-      const middleName = normalizeAddPersonMatchText(readAddPersonModalValue('#addPersonMiddleName'));
-      const lastName = normalizeAddPersonMatchText(readAddPersonModalValue('#addPersonLastName'));
-      const maidenName = normalizeAddPersonMatchText(readAddPersonModalValue('#addPersonMaidenName'));
-      const birthDate = addPersonDraftDateValue('#addPersonBirthDate');
-      const deathDate = addPersonDraftDateValue('#addPersonDeathDate');
-      const birthPlace = addPersonDraftPlaceValue('#addPersonBirthPlace');
-      const deathPlace = addPersonDraftPlaceValue('#addPersonDeathPlace');
+function collectAddPersonDraftForMatching()
+{
+    const firstName = normalizeAddPersonMatchText(readAddPersonModalValue('#addPersonFirstName'));
+    const middleName = normalizeAddPersonMatchText(readAddPersonModalValue('#addPersonMiddleName'));
+    const lastName = normalizeAddPersonMatchText(readAddPersonModalValue('#addPersonLastName'));
+    const maidenName = normalizeAddPersonMatchText(readAddPersonModalValue('#addPersonMaidenName'));
+    const birthDate = addPersonDraftDateValue('#addPersonBirthDate');
+    const deathDate = addPersonDraftDateValue('#addPersonDeathDate');
+    const birthPlace = addPersonDraftPlaceValue('#addPersonBirthPlace');
+    const deathPlace = addPersonDraftPlaceValue('#addPersonDeathPlace');
 
-      return {
+    return {
         firstName,
         middleName,
         lastName,
@@ -7928,7 +8500,7 @@
         birthPlace,
         deathPlace,
         hasSignal: Boolean(
-          firstName
+            firstName
             || middleName
             || lastName
             || maidenName
@@ -7937,11 +8509,12 @@
             || birthPlace
             || deathPlace
         )
-      };
-    }
+    };
+}
 
-    function addPersonNameValuesForPerson(person) {
-      return [
+function addPersonNameValuesForPerson(person)
+{
+    return [
         person?.names?.prefix,
         person?.names?.first,
         person?.names?.middle,
@@ -7950,122 +8523,127 @@
         person?.names?.maiden,
         person?.names?.display,
         person?.name
-      ]
+    ]
 
         .map(normalizeAddPersonMatchText)
         .filter(Boolean);
-    }
+}
 
-    function scoreAddPersonPossibleMatch(person, draft, options = {}) {
-      let score = 0;
-      const names = person?.names || {};
-      const personFirst = addPersonMatchTextVariants(names.first);
-      const personMiddle = addPersonMatchTextVariants(names.middle);
-      const personLast = addPersonMatchTextVariants(names.last);
-      const personMaiden = addPersonMatchTextVariants(names.maiden);
-      const personDisplay = addPersonMatchTextVariants(names.display || person?.name);
-      const birthDates = addPersonPersonDateValues(person?.birth);
-      const deathDates = addPersonPersonDateValues(person?.death);
-      const birthPlaces = addPersonPersonPlaceValues(person?.birth);
-      const deathPlaces = addPersonPersonPlaceValues(person?.death);
+function scoreAddPersonPossibleMatch(person, draft, options = {})
+{
+    let score = 0;
+    const names = person?.names || {};
+    const personFirst = addPersonMatchTextVariants(names.first);
+    const personMiddle = addPersonMatchTextVariants(names.middle);
+    const personLast = addPersonMatchTextVariants(names.last);
+    const personMaiden = addPersonMatchTextVariants(names.maiden);
+    const personDisplay = addPersonMatchTextVariants(names.display || person?.name);
+    const birthDates = addPersonPersonDateValues(person?.birth);
+    const deathDates = addPersonPersonDateValues(person?.death);
+    const birthPlaces = addPersonPersonPlaceValues(person?.birth);
+    const deathPlaces = addPersonPersonPlaceValues(person?.death);
 
-      if (draft.firstName && personFirst.includes(draft.firstName)) score += 34;
-      else if (draft.firstName && personFirst.some(value => value.startsWith(draft.firstName))) score += 18;
-      else if (draft.firstName && personDisplay.some(value => value.includes(draft.firstName))) score += 12;
+    if (draft.firstName && personFirst.includes(draft.firstName)) score += 34;
+    else if (draft.firstName && personFirst.some(value => value.startsWith(draft.firstName))) score += 18;
+    else if (draft.firstName && personDisplay.some(value => value.includes(draft.firstName))) score += 12;
 
-      if (draft.middleName && personMiddle.includes(draft.middleName)) score += 10;
+    if (draft.middleName && personMiddle.includes(draft.middleName)) score += 10;
 
-      if (draft.lastName && personLast.includes(draft.lastName)) score += 32;
-      else if (draft.lastName && personDisplay.some(value => value.includes(draft.lastName))) score += 16;
+    if (draft.lastName && personLast.includes(draft.lastName)) score += 32;
+    else if (draft.lastName && personDisplay.some(value => value.includes(draft.lastName))) score += 16;
 
-      if (draft.maidenName && (personMaiden.includes(draft.maidenName) || personLast.includes(draft.maidenName))) score += 22;
+    if (draft.maidenName && (personMaiden.includes(draft.maidenName) || personLast.includes(draft.maidenName))) score += 22;
 
-      if (draft.birthDate && birthDates.includes(draft.birthDate)) score += 34;
-      else if (draft.birthDate && birthDates.some(value => value.includes(draft.birthDate) || draft.birthDate.includes(value))) score += 24;
+    if (draft.birthDate && birthDates.includes(draft.birthDate)) score += 34;
+    else if (draft.birthDate && birthDates.some(value => value.includes(draft.birthDate) || draft.birthDate.includes(value))) score += 24;
 
-      if (draft.deathDate && deathDates.includes(draft.deathDate)) score += 26;
-      else if (draft.deathDate && deathDates.some(value => value.includes(draft.deathDate) || draft.deathDate.includes(value))) score += 24;
+    if (draft.deathDate && deathDates.includes(draft.deathDate)) score += 26;
+    else if (draft.deathDate && deathDates.some(value => value.includes(draft.deathDate) || draft.deathDate.includes(value))) score += 24;
 
-      if (draft.birthPlace && birthPlaces.some(value => value === draft.birthPlace)) score += 24;
-      else if (draft.birthPlace && birthPlaces.some(value => value.includes(draft.birthPlace) || draft.birthPlace.includes(value))) score += 24;
+    if (draft.birthPlace && birthPlaces.some(value => value === draft.birthPlace)) score += 24;
+    else if (draft.birthPlace && birthPlaces.some(value => value.includes(draft.birthPlace) || draft.birthPlace.includes(value))) score += 24;
 
-      if (draft.deathPlace && deathPlaces.some(value => value === draft.deathPlace)) score += 24;
-      else if (draft.deathPlace && deathPlaces.some(value => value.includes(draft.deathPlace) || draft.deathPlace.includes(value))) score += 24;
+    if (draft.deathPlace && deathPlaces.some(value => value === draft.deathPlace)) score += 24;
+    else if (draft.deathPlace && deathPlaces.some(value => value.includes(draft.deathPlace) || draft.deathPlace.includes(value))) score += 24;
 
-      const anchor = getPerson(options.connectToPersonId || options.personId || '');
-      if (anchor) {
+    const anchor = getPerson(options.connectToPersonId || options.personId || '');
+    if (anchor)
+    {
         const anchorLast = addPersonMatchTextVariants(anchor.names?.last);
         if (anchorLast.some(value => personLast.includes(value))) score += 8;
-      }
-
-      return score;
     }
 
-    let addPersonPossibleMatchState = {
-      selectedPersonId: ''
-    };
+    return score;
+}
 
-    function findAddPersonPossibleMatches(options = {}, editPerson = null) {
-      const draft = collectAddPersonDraftForMatching();
-      if (!draft.hasSignal) return [];
+let addPersonPossibleMatchState = {
+    selectedPersonId: ''
+};
 
-      const currentPersonId = editPerson?.id || '';
+function findAddPersonPossibleMatches(options = {}, editPerson = null)
+{
+    const draft = collectAddPersonDraftForMatching();
+    if (!draft.hasSignal) return [];
 
-      return getPeople(currentProjectId())
+    const currentPersonId = editPerson?.id || '';
+
+    return getPeople(currentProjectId())
         .filter(person => person?.id && person.id !== currentPersonId)
         .filter(person => !person.deleted)
         .map(person => ({
-          person,
-          score: scoreAddPersonPossibleMatch(person, draft, options)
+            person,
+            score: scoreAddPersonPossibleMatch(person, draft, options)
         }))
         .filter(item => item.score >= 24)
         .sort((a, b) => b.score - a.score || connectPersonName(a.person).localeCompare(connectPersonName(b.person)))
         .slice(0, 2);
-    }
+}
 
-    function addPersonPossibleMatchMeta(person) {
-      const life =
+function addPersonPossibleMatchMeta(person)
+{
+    const life =
         connectPersonLifeLine(
-          person
+            person
         );
 
-      const place =
+    const place =
         getPlaceEventDisplay(
-          person?.birth
+            person?.birth
         )
         || getPlaceEventDisplay(
-          person?.death
+            person?.death
         )
         || '';
 
-      return [
+    return [
         life,
         place
-      ]
+    ]
         .filter(Boolean)
         .map(escapeHtml)
         .join('<br>');
-    }
+}
 
-    function renderAddPersonPossibleMatchRow(
-      item,
-      {
+function renderAddPersonPossibleMatchRow(
+    item,
+    {
         context = 'family-tree',
         selectedPersonId =
-          addPersonPossibleMatchState
-            .selectedPersonId
-      } = {}
-    ) {
-      const person = item.person;
-      const selected =
+            addPersonPossibleMatchState
+                .selectedPersonId
+    } = {}
+)
+{
+    const person = item.person;
+    const selected =
         person.id === selectedPersonId;
 
-      const selectionAttribute =
+    const selectionAttribute =
         context === 'geneograph'
-          ? 'data-geneo-person-possible-match'
-          : 'data-add-person-possible-match';
+            ? 'data-geneo-person-possible-match'
+            : 'data-add-person-possible-match';
 
-      return `<button
+    return `<button
         class="match-row is-possible-duplicate ${selected ? 'is-selected' : ''}"
         type="button"
         ${selectionAttribute}="${escapeHtml(person.id)}"
@@ -8076,40 +8654,45 @@
           ${addPersonPossibleMatchMeta(person)}
         </div>
       </button>`;
-    }
+}
 
-    function addPersonPossibleMatchActionLabel(options = {}) {
-      const connectionIntent = addPersonCreateConnectionIntent(options);
-      return connectionIntent.shouldConnect ? 'Connect selected' : 'Open selected';
-    }
+function addPersonPossibleMatchActionLabel(options = {})
+{
+    const connectionIntent = addPersonCreateConnectionIntent(options);
+    return connectionIntent.shouldConnect ? 'Connect selected' : 'Open selected';
+}
 
-    function renderAddPersonPossibleMatchesCard(options = {}, editPerson = null) {
-      const matches = findAddPersonPossibleMatches(options, editPerson);
-      const draft = collectAddPersonDraftForMatching();
-      const selectedPerson = getPerson(addPersonPossibleMatchState.selectedPersonId);
-      const actionLabel = addPersonPossibleMatchActionLabel(options);
+function renderAddPersonPossibleMatchesCard(options = {}, editPerson = null)
+{
+    const matches = findAddPersonPossibleMatches(options, editPerson);
+    const draft = collectAddPersonDraftForMatching();
+    const selectedPerson = getPerson(addPersonPossibleMatchState.selectedPersonId);
+    const actionLabel = addPersonPossibleMatchActionLabel(options);
 
-      if (!draft.hasSignal) {
+    if (!draft.hasSignal)
+    {
         return `<div class="modal-side-card" data-add-person-possible-matches>
           <h3>Possible matches<br><span class="panel-muted">Similar people in this project</span></h3>
           <div class="add-person-match-empty">Enter a name, date, or place to check for existing people.</div>
         </div>`;
-      }
+    }
 
-      if (!matches.length) {
+    if (!matches.length)
+    {
         return `<div class="modal-side-card" data-add-person-possible-matches>
           <h3>Possible matches<br><span class="panel-muted">Similar people in this project</span></h3>
           <div class="add-person-match-empty">No strong matches found in this project.</div>
         </div>`;
-      }
+    }
 
-      const selectedStillVisible = matches.some(item => item.person.id === addPersonPossibleMatchState.selectedPersonId);
+    const selectedStillVisible = matches.some(item => item.person.id === addPersonPossibleMatchState.selectedPersonId);
 
-      if (addPersonPossibleMatchState.selectedPersonId && !selectedStillVisible) {
+    if (addPersonPossibleMatchState.selectedPersonId && !selectedStillVisible)
+    {
         addPersonPossibleMatchState.selectedPersonId = '';
-      }
+    }
 
-      return `<div class="modal-side-card" data-add-person-possible-matches>
+    return `<div class="modal-side-card" data-add-person-possible-matches>
         <h3>Possible matches<br><span class="panel-muted">Similar people in this project</span></h3>
         <div class="add-person-match-list">
           ${matches.map(renderAddPersonPossibleMatchRow).join('')}
@@ -8123,56 +8706,61 @@
           <span>${escapeHtml(actionLabel)}</span>
         </button>
       </div>`;
-    }
+}
 
-    let addPersonAttachmentDraftState = {
-      photoIds: [],
-      fileIds: [],
-      noteIds: []
-    };
+let addPersonAttachmentDraftState = {
+    photoIds: [],
+    fileIds: [],
+    noteIds: []
+};
 
-    function initializeAddPersonAttachmentDraft(editPerson = null) {
-      addPersonAttachmentDraftState = {
+function initializeAddPersonAttachmentDraft(editPerson = null)
+{
+    addPersonAttachmentDraftState = {
         photoIds:
           editPerson
-            ? getPhotosForPerson(editPerson.id)
-                .map(photo => photo.id)
-            : [],
+              ? getPhotosForPerson(editPerson.id)
+                  .map(photo => photo.id)
+              : [],
 
         fileIds:
           editPerson
-            ? getArchiveFilesForPerson(editPerson.id)
-                .map(file => file.id)
-            : [],
+              ? getArchiveFilesForPerson(editPerson.id)
+                  .map(file => file.id)
+              : [],
 
         noteIds:
           editPerson
-            ? getNotesForPerson(editPerson.id)
-                .map(note => note.id)
-            : []
-      };
-    }
+              ? getNotesForPerson(editPerson.id)
+                  .map(note => note.id)
+              : []
+    };
+}
 
-    function readAddPersonPhotoIds() {
-      return [
+function readAddPersonPhotoIds()
+{
+    return [
         ...addPersonAttachmentDraftState.photoIds
-      ];
-    }
+    ];
+}
 
-    function readAddPersonFileIds() {
-      return [
+function readAddPersonFileIds()
+{
+    return [
         ...addPersonAttachmentDraftState.fileIds
-      ];
-    }
+    ];
+}
 
-    function readAddPersonNoteIds() {
-      return [
+function readAddPersonNoteIds()
+{
+    return [
         ...addPersonAttachmentDraftState.noteIds
-      ];
-    }
+    ];
+}
 
-    function refreshAddPersonAttachmentCounts() {
-      const counts = {
+function refreshAddPersonAttachmentCounts()
+{
+    const counts = {
         photo:
           addPersonAttachmentDraftState.photoIds.length,
 
@@ -8181,67 +8769,74 @@
 
         note:
           addPersonAttachmentDraftState.noteIds.length
-      };
+    };
 
-      Object.entries(counts).forEach(
-        ([type, count]) => {
-          const element =
-            modalBackdrop.querySelector(
-              `[data-add-person-attachment-count="${type}"]`
-            );
+    Object.entries(counts).forEach(
+        ([type, count]) =>
+        {
+            const element =
+                modalBackdrop.querySelector(
+                    `[data-add-person-attachment-count="${type}"]`
+                );
 
-          if (element) {
-            element.textContent =
-              `${count} selected`;
-          }
+            if (element)
+            {
+                element.textContent =
+                    `${count} selected`;
+            }
         }
-      );
-    }
+    );
+}
 
-    function setAddPersonPhotoDraftIds(photoIds) {
-      addPersonAttachmentDraftState.photoIds = [
+function setAddPersonPhotoDraftIds(photoIds)
+{
+    addPersonAttachmentDraftState.photoIds = [
         ...new Set(photoIds || [])
-      ].filter(id => Boolean(getPhoto(id)));
+    ].filter(id => Boolean(getPhoto(id)));
 
-      refreshAddPersonAttachmentCounts();
-    }
+    refreshAddPersonAttachmentCounts();
+}
 
-    function setAddPersonFileDraftIds(fileIds) {
-      addPersonAttachmentDraftState.fileIds = [
+function setAddPersonFileDraftIds(fileIds)
+{
+    addPersonAttachmentDraftState.fileIds = [
         ...new Set(fileIds || [])
-      ].filter(id =>
+    ].filter(id =>
         Boolean(archiveFileById(id))
-      );
+    );
 
-      refreshAddPersonAttachmentCounts();
-    }
+    refreshAddPersonAttachmentCounts();
+}
 
-    function setAddPersonNoteDraftIds(noteIds) {
-      addPersonAttachmentDraftState.noteIds = [
+function setAddPersonNoteDraftIds(noteIds)
+{
+    addPersonAttachmentDraftState.noteIds = [
         ...new Set(noteIds || [])
-      ].filter(id =>
+    ].filter(id =>
         Boolean(
-          getNote(id, {
-            includeArchived: true
-          })
+            getNote(id, {
+                includeArchived: true
+            })
         )
-      );
+    );
 
-      refreshAddPersonAttachmentCounts();
-    }
+    refreshAddPersonAttachmentCounts();
+}
 
-    function renderAddPersonAttachmentSideCard() {
-      const row = ({
+function renderAddPersonAttachmentSideCard()
+{
+    const row = ({
         type,
         title,
         iconHtml,
         extraClass = '',
         attribute
-      }) => {
+    }) =>
+    {
         const count =
-          addPersonAttachmentDraftState[
-            `${type}Ids`
-          ]?.length || 0;
+            addPersonAttachmentDraftState[
+                `${type}Ids`
+            ]?.length || 0;
 
         return `<button
           class="attach-row"
@@ -8262,235 +8857,253 @@
             </span>
           </div>
         </button>`;
-      };
+    };
 
-      return `<div class="modal-side-card">
+    return `<div class="modal-side-card">
         <h3>Attach to this person</h3>
 
         ${row({
-          type: 'photo',
-          title: 'Add photos',
-          iconHtml: icon.image,
-          extraClass: 'photo',
-          attribute: 'data-add-person-photos'
+            type: 'photo',
+            title: 'Add photos',
+            iconHtml: icon.image,
+            extraClass: 'photo',
+            attribute: 'data-add-person-photos'
         })}
 
         ${row({
-          type: 'file',
-          title: 'Add file',
-          iconHtml: icon.file,
-          extraClass: 'file',
-          attribute: 'data-add-person-files'
+            type: 'file',
+            title: 'Add file',
+            iconHtml: icon.file,
+            extraClass: 'file',
+            attribute: 'data-add-person-files'
         })}
 
         ${row({
-          type: 'note',
-          title: 'Add note',
-          iconHtml: icon.note,
-          extraClass: 'note',
-          attribute: 'data-add-person-note'
+            type: 'note',
+            title: 'Add note',
+            iconHtml: icon.note,
+            extraClass: 'note',
+            attribute: 'data-add-person-note'
         })}
       </div>`;
-    }
+}
 
-    function refreshAddPersonPossibleMatchesCard(options = {}, editPerson = null) {
-      const container = modalBackdrop?.querySelector('[data-add-person-possible-matches]');
-      if (!container) return;
+function refreshAddPersonPossibleMatchesCard(options = {}, editPerson = null)
+{
+    const container = modalBackdrop?.querySelector('[data-add-person-possible-matches]');
+    if (!container) return;
 
-      const previousSelection = addPersonPossibleMatchState.selectedPersonId;
+    const previousSelection = addPersonPossibleMatchState.selectedPersonId;
 
-      container.outerHTML = renderAddPersonPossibleMatchesCard(options, editPerson);
+    container.outerHTML = renderAddPersonPossibleMatchesCard(options, editPerson);
 
-      const stillExists = modalBackdrop?.querySelector(
+    const stillExists = modalBackdrop?.querySelector(
         `[data-add-person-possible-match="${CSS.escape(previousSelection)}"]`
-      );
+    );
 
-      if (previousSelection && !stillExists) {
+    if (previousSelection && !stillExists)
+    {
         addPersonPossibleMatchState.selectedPersonId = '';
         const refreshed = modalBackdrop?.querySelector('[data-add-person-possible-matches]');
         if (refreshed) refreshed.outerHTML = renderAddPersonPossibleMatchesCard(options, editPerson);
-      }
-
-      bindAddPersonPossibleMatchRows(options, editPerson);
     }
 
-    function openAddPersonPossibleMatch(personId) {
-      const person = getPerson(personId);
-      if (!person) return;
+    bindAddPersonPossibleMatchRows(options, editPerson);
+}
 
-      closeModal();
+function openAddPersonPossibleMatch(personId)
+{
+    const person = getPerson(personId);
+    if (!person) return;
 
-      state.selectedPersonId = person.id;
-      state.selectedPeopleId = person.id;
-      state.treeInspectorCollapsed = false;
+    closeModal();
 
-      if (state.activeModule === 'Family Tree') {
+    state.selectedPersonId = person.id;
+    state.selectedPeopleId = person.id;
+    state.treeInspectorCollapsed = false;
+
+    if (state.activeModule === 'Family Tree')
+    {
         renderFamilyTreePreserveScroll?.() || renderFamilyTree();
-      } else {
+    }
+    else
+    {
         render();
-      }
-
-      showToast(`Opened possible match: ${connectPersonName(person)}.`);
     }
 
-    function bindAddPersonPossibleMatchRows(options = {}, editPerson = null) {
-      modalBackdrop?.querySelectorAll('[data-add-person-possible-match]').forEach(button => {
-        button.addEventListener('click', () => {
-          selectAddPersonPossibleMatch(button.dataset.addPersonPossibleMatch || '', options, editPerson);
+    showToast(`Opened possible match: ${connectPersonName(person)}.`);
+}
+
+function bindAddPersonPossibleMatchRows(options = {}, editPerson = null)
+{
+    modalBackdrop?.querySelectorAll('[data-add-person-possible-match]').forEach(button =>
+    {
+        button.addEventListener('click', () =>
+        {
+            selectAddPersonPossibleMatch(button.dataset.addPersonPossibleMatch || '', options, editPerson);
         });
-      });
+    });
 
-      modalBackdrop?.querySelector('[data-add-person-match-action]')?.addEventListener('click', () => {
+    modalBackdrop?.querySelector('[data-add-person-match-action]')?.addEventListener('click', () =>
+    {
         commitAddPersonPossibleMatchAction(options);
-      });
-    }
+    });
+}
 
-    function bindAddPersonSideCards(options = {}, editPerson = null) {
-      const projectId =
+function bindAddPersonSideCards(options = {}, editPerson = null)
+{
+    const projectId =
         editPerson?.projectId
         || currentProjectId();
 
-      const subjectLabel =
+    const subjectLabel =
         editPerson?.names?.display
         || 'New person';
 
-      modalBackdrop
+    modalBackdrop
         ?.querySelector('[data-add-person-photos]')
-        ?.addEventListener('click', () => {
-          openAddPhotosForPersonDraftModal({
-            projectId,
-            subjectLabel,
-            existingPhotoIds:
+        ?.addEventListener('click', () =>
+        {
+            openAddPhotosForPersonDraftModal({
+                projectId,
+                subjectLabel,
+                existingPhotoIds:
               readAddPersonPhotoIds(),
 
-            onSave:
+                onSave:
               setAddPersonPhotoDraftIds
-          });
+            });
         });
 
-      modalBackdrop
+    modalBackdrop
         ?.querySelector('[data-add-person-files]')
-        ?.addEventListener('click', () => {
-          openConnectedFilesModal({
-            projectId,
+        ?.addEventListener('click', () =>
+        {
+            openConnectedFilesModal({
+                projectId,
 
-            title:
+                title:
               `Add files to ${subjectLabel}`,
 
-            subtitle:
+                subtitle:
               'Connect existing Archive files or add new files.',
 
-            existingFileIds:
+                existingFileIds:
               readAddPersonFileIds(),
 
-            modalOpener:
+                modalOpener:
               openNestedModal,
 
-            onSave:
-              fileIds => {
-                setAddPersonFileDraftIds([
-                  ...readAddPersonFileIds(),
-                  ...fileIds
-                ]);
+                onSave:
+              fileIds =>
+              {
+                  setAddPersonFileDraftIds([
+                      ...readAddPersonFileIds(),
+                      ...fileIds
+                  ]);
 
-                return {
-                  ok: true,
-                  addedLinkCount:
+                  return {
+                      ok: true,
+                      addedLinkCount:
                     fileIds.length
-                };
+                  };
               },
 
-            afterSave:
+                afterSave:
               refreshAddPersonAttachmentCounts,
 
-            successMessage:
+                successMessage:
               null
-          });
+            });
         });
 
-      modalBackdrop
+    modalBackdrop
         ?.querySelector('[data-add-person-note]')
-        ?.addEventListener('click', () => {
-          openNoteLinkPickerModal({
-            projectId,
+        ?.addEventListener('click', () =>
+        {
+            openNoteLinkPickerModal({
+                projectId,
 
-            title:
+                title:
               'Add note',
 
-            description:
+                description:
               `Link existing notes to “${subjectLabel}”.`,
 
-            existingNoteIds:
+                existingNoteIds:
               readAddPersonNoteIds(),
 
-            includeArchived:
+                includeArchived:
               false,
 
-            existingStatus:
+                existingStatus:
               'Already selected',
 
-            existingMetaLabel:
+                existingMetaLabel:
               'already selected',
 
-            createLabel:
+                createLabel:
               'Create note',
 
-            modalOpener:
+                modalOpener:
               openNestedModal,
 
-            onCreate:
-              () => {
-                const note =
-                  createCentralNote({
-                    projectId,
-                    activate: false,
-                    renderAfterCreate: false,
-                    focusTitleAfterCreate: false,
-                    showCreatedToast: false,
-                    inheritActiveContext: false,
-                    inheritActiveCollection: false
-                  });
+                onCreate:
+              () =>
+              {
+                  const note =
+                      createCentralNote({
+                          projectId,
+                          activate: false,
+                          renderAfterCreate: false,
+                          focusTitleAfterCreate: false,
+                          showCreatedToast: false,
+                          inheritActiveContext: false,
+                          inheritActiveCollection: false
+                      });
 
-                if (!note) return;
+                  if (!note) return;
 
-                setAddPersonNoteDraftIds([
-                  ...readAddPersonNoteIds(),
-                  note.id
-                ]);
+                  setAddPersonNoteDraftIds([
+                      ...readAddPersonNoteIds(),
+                      note.id
+                  ]);
 
-                showToast(
-                  'Note created and selected.'
-                );
+                  showToast(
+                      'Note created and selected.'
+                  );
               },
 
-            onSave:
-              noteIds => {
-                setAddPersonNoteDraftIds([
-                  ...readAddPersonNoteIds(),
-                  ...noteIds
-                ]);
+                onSave:
+              noteIds =>
+              {
+                  setAddPersonNoteDraftIds([
+                      ...readAddPersonNoteIds(),
+                      ...noteIds
+                  ]);
 
-                return {
-                  addedLinkCount:
+                  return {
+                      addedLinkCount:
                     noteIds.length
-                };
+                  };
               },
 
-            afterSave:
+                afterSave:
               refreshAddPersonAttachmentCounts,
 
-            successMessage:
+                successMessage:
               null
-          });
+            });
         });
 
-      bindAddPersonPossibleMatchRows(options, editPerson);
+    bindAddPersonPossibleMatchRows(options, editPerson);
 
-      const refresh = () => {
+    const refresh = () =>
+    {
         addPersonPossibleMatchState.selectedPersonId = '';
         refreshAddPersonPossibleMatchesCard(options, editPerson);
-      };
-      const selectors = [
+    };
+    const selectors = [
         '#addPersonFirstName',
         '#addPersonMiddleName',
         '#addPersonLastName',
@@ -8499,73 +9112,85 @@
         '#addPersonDeathDate',
         '#addPersonBirthPlace',
         '#addPersonDeathPlace'
-      ];
+    ];
 
-      selectors.forEach(selector => {
+    selectors.forEach(selector =>
+    {
         const input = modalBackdrop?.querySelector(selector);
         if (!input) return;
         input.addEventListener('input', refresh);
         input.addEventListener('change', refresh);
-      });
-    }
+    });
+}
 
-    function unlinkStoredFamilies() {
-      if (!Array.isArray(sampleData.families)) sampleData.families = [];
-      return sampleData.families;
-    }
+function unlinkStoredFamilies()
+{
+    if (!Array.isArray(sampleData.families)) sampleData.families = [];
+    return sampleData.families;
+}
 
-    function unlinkPersonName(personOrId) {
-      const person = typeof personOrId === 'string' ? getPerson(personOrId) : personOrId;
-      return person?.names?.display || person?.name || 'Unknown person';
-    }
+function unlinkPersonName(personOrId)
+{
+    const person = typeof personOrId === 'string' ? getPerson(personOrId) : personOrId;
+    return person?.names?.display || person?.name || 'Unknown person';
+}
 
-    function unlinkFamilyPartnerAId(family) {
-      return familyPartnerAId(family) || family?.fatherId || family?.husbandId || '';
-    }
+function unlinkFamilyPartnerAId(family)
+{
+    return familyPartnerAId(family) || family?.fatherId || family?.husbandId || '';
+}
 
-    function unlinkFamilyPartnerBId(family) {
-      return familyPartnerBId(family) || family?.motherId || family?.wifeId || '';
-    }
+function unlinkFamilyPartnerBId(family)
+{
+    return familyPartnerBId(family) || family?.motherId || family?.wifeId || '';
+}
 
-    function unlinkFamilyIncludesPerson(family, personId) {
-      return Boolean(personId && (
+function unlinkFamilyIncludesPerson(family, personId)
+{
+    return Boolean(personId && (
         unlinkFamilyPartnerAId(family) === personId
           || unlinkFamilyPartnerBId(family) === personId
-      ));
-    }
+    ));
+}
 
-    function unlinkFamilyPartnerId(family, personId) {
-      if (unlinkFamilyPartnerAId(family) === personId) return unlinkFamilyPartnerBId(family);
-      if (unlinkFamilyPartnerBId(family) === personId) return unlinkFamilyPartnerAId(family);
-      return '';
-    }
+function unlinkFamilyPartnerId(family, personId)
+{
+    if (unlinkFamilyPartnerAId(family) === personId) return unlinkFamilyPartnerBId(family);
+    if (unlinkFamilyPartnerBId(family) === personId) return unlinkFamilyPartnerAId(family);
+    return '';
+}
 
-    function unlinkFamilyChildrenIds(family) {
-      return [...new Set([...(family?.childIds || []), ...(family?.childrenIds || [])].filter(Boolean))];
-    }
+function unlinkFamilyChildrenIds(family)
+{
+    return [...new Set([...(family?.childIds || []), ...(family?.childrenIds || [])].filter(Boolean))];
+}
 
-    function unlinkSetFamilyChildren(family, childIds = []) {
-      const ids = [...new Set(childIds.filter(Boolean))];
-      family.childIds = ids;
-      family.childrenIds = [...ids];
-      return ids;
-    }
+function unlinkSetFamilyChildren(family, childIds = [])
+{
+    const ids = [...new Set(childIds.filter(Boolean))];
+    family.childIds = ids;
+    family.childrenIds = [...ids];
+    return ids;
+}
 
-    function unlinkStoredFamilyById(familyId) {
-      return unlinkStoredFamilies().find(family => family.id === familyId) || null;
-    }
+function unlinkStoredFamilyById(familyId)
+{
+    return unlinkStoredFamilies().find(family => family.id === familyId) || null;
+}
 
-    function unlinkCentralFamilyById(familyId) {
-      return centralFamilyRecords().find(family => family.id === familyId) || null;
-    }
+function unlinkCentralFamilyById(familyId)
+{
+    return centralFamilyRecords().find(family => family.id === familyId) || null;
+}
 
-    function unlinkMaterializeFamily(family) {
-      if (!family?.id) return null;
+function unlinkMaterializeFamily(family)
+{
+    if (!family?.id) return null;
 
-      const existing = unlinkStoredFamilyById(family.id);
-      if (existing) return existing;
+    const existing = unlinkStoredFamilyById(family.id);
+    if (existing) return existing;
 
-      const copy = {
+    const copy = {
         ...family,
         childIds: unlinkFamilyChildrenIds(family),
         childrenIds: unlinkFamilyChildrenIds(family),
@@ -8575,143 +9200,157 @@
         citations: Array.isArray(family.citations) ? [...family.citations] : [],
         mediaIds: Array.isArray(family.mediaIds) ? [...family.mediaIds] : [],
         parentChildTypes: sanitizeParentChildTypes(
-          family.parentChildTypes
+            family.parentChildTypes
         ),
-      };
+    };
 
-      unlinkStoredFamilies().push(copy);
-      return copy;
-    }
+    unlinkStoredFamilies().push(copy);
+    return copy;
+}
 
-    function unlinkFindCentralFamilyForParentChild(parentId, childId, preferredFamilyId = '') {
-      const families = centralFamilyRecords();
+function unlinkFindCentralFamilyForParentChild(parentId, childId, preferredFamilyId = '')
+{
+    const families = centralFamilyRecords();
 
-      if (preferredFamilyId) {
+    if (preferredFamilyId)
+    {
         const family = families.find(item =>
-          item.id === preferredFamilyId
+            item.id === preferredFamilyId
             && unlinkFamilyIncludesPerson(item, parentId)
             && unlinkFamilyChildrenIds(item).includes(childId)
         );
 
         if (family) return family;
-      }
+    }
 
-      return families.find(family =>
+    return families.find(family =>
         unlinkFamilyIncludesPerson(family, parentId)
           && unlinkFamilyChildrenIds(family).includes(childId)
-      ) || null;
-    }
+    ) || null;
+}
 
-    function unlinkFindStoredFamilyForParentChild(parentId, childId, preferredFamilyId = '') {
-      return unlinkMaterializeFamily(
+function unlinkFindStoredFamilyForParentChild(parentId, childId, preferredFamilyId = '')
+{
+    return unlinkMaterializeFamily(
         unlinkFindCentralFamilyForParentChild(parentId, childId, preferredFamilyId)
-      );
-    }
+    );
+}
 
-    function unlinkFindCentralPartnerFamily(personAId, personBId, preferredFamilyId = '') {
-      const families = centralFamilyRecords();
+function unlinkFindCentralPartnerFamily(personAId, personBId, preferredFamilyId = '')
+{
+    const families = centralFamilyRecords();
 
-      if (preferredFamilyId) {
+    if (preferredFamilyId)
+    {
         const family = families.find(item =>
-          item.id === preferredFamilyId
+            item.id === preferredFamilyId
             && unlinkFamilyIncludesPerson(item, personAId)
             && unlinkFamilyIncludesPerson(item, personBId)
         );
 
         if (family) return family;
-      }
+    }
 
-      return families.find(family =>
+    return families.find(family =>
         unlinkFamilyIncludesPerson(family, personAId)
           && unlinkFamilyIncludesPerson(family, personBId)
-      ) || null;
-    }
+    ) || null;
+}
 
-    function unlinkFindStoredPartnerFamily(personAId, personBId, preferredFamilyId = '') {
-      return unlinkMaterializeFamily(
+function unlinkFindStoredPartnerFamily(personAId, personBId, preferredFamilyId = '')
+{
+    return unlinkMaterializeFamily(
         unlinkFindCentralPartnerFamily(personAId, personBId, preferredFamilyId)
-      );
-    }
+    );
+}
 
-    function unlinkUniqueFamilyId(base = 'family') {
-      const cleanBase = String(base || 'family')
+function unlinkUniqueFamilyId(base = 'family')
+{
+    const cleanBase = String(base || 'family')
         .replace(/[^a-z0-9]+/gi, '-')
         .replace(/^-|-$/g, '') || 'family';
 
-      let id = cleanBase;
-      let counter = 2;
+    let id = cleanBase;
+    let counter = 2;
 
-      while (centralFamilyRecords().some(family => family.id === id) || unlinkStoredFamilyById(id)) {
+    while (centralFamilyRecords().some(family => family.id === id) || unlinkStoredFamilyById(id))
+    {
         id = `${cleanBase}-${counter}`;
         counter += 1;
-      }
-
-      return id;
     }
 
-    function unlinkParentSlotForPerson(parentId) {
-      const gender = String(getPerson(parentId)?.gender || '').toLowerCase();
+    return id;
+}
 
-      if (gender === 'female') {
+function unlinkParentSlotForPerson(parentId)
+{
+    const gender = String(getPerson(parentId)?.gender || '').toLowerCase();
+
+    if (gender === 'female')
+    {
         return {
-          partnerAId: '',
-          partnerBId: parentId,
-          fatherId: '',
-          motherId: parentId,
-          partnerARoleHint: '',
-          partnerBRoleHint: 'WIFE'
+            partnerAId: '',
+            partnerBId: parentId,
+            fatherId: '',
+            motherId: parentId,
+            partnerARoleHint: '',
+            partnerBRoleHint: 'WIFE'
         };
-      }
+    }
 
-      return {
+    return {
         partnerAId: parentId,
         partnerBId: '',
         fatherId: parentId,
         motherId: '',
         partnerARoleHint: 'HUSB',
         partnerBRoleHint: ''
-      };
-    }
+    };
+}
 
-    function unlinkApplyFamilyAliases(family) {
-      const partnerA = unlinkFamilyPartnerAId(family);
-      const partnerB = unlinkFamilyPartnerBId(family);
+function unlinkApplyFamilyAliases(family)
+{
+    const partnerA = unlinkFamilyPartnerAId(family);
+    const partnerB = unlinkFamilyPartnerBId(family);
 
-      family.partnerAId = partnerA;
-      family.partner1Id = partnerA;
-      family.personAId = partnerA;
+    family.partnerAId = partnerA;
+    family.partner1Id = partnerA;
+    family.personAId = partnerA;
 
-      family.partnerBId = partnerB;
-      family.partner2Id = partnerB;
-      family.personBId = partnerB;
+    family.partnerBId = partnerB;
+    family.partner2Id = partnerB;
+    family.personBId = partnerB;
 
-      unlinkSetFamilyChildren(family, unlinkFamilyChildrenIds(family));
+    unlinkSetFamilyChildren(family, unlinkFamilyChildrenIds(family));
 
-      family.events = Array.isArray(family.events) ? family.events : [];
-      family.attributes = Array.isArray(family.attributes) ? family.attributes : [];
-      family.notes = Array.isArray(family.notes) ? family.notes : [];
-      family.citations = Array.isArray(family.citations) ? family.citations : [];
-      family.mediaIds = Array.isArray(family.mediaIds) ? family.mediaIds : [];
+    family.events = Array.isArray(family.events) ? family.events : [];
+    family.attributes = Array.isArray(family.attributes) ? family.attributes : [];
+    family.notes = Array.isArray(family.notes) ? family.notes : [];
+    family.citations = Array.isArray(family.citations) ? family.citations : [];
+    family.mediaIds = Array.isArray(family.mediaIds) ? family.mediaIds : [];
 
-      family.type = family.type || 'family';
-      family.relationshipStatus = family.relationshipStatus || 'active';
+    family.type = family.type || 'family';
+    family.relationshipStatus = family.relationshipStatus || 'active';
 
-      return family;
-    }
+    return family;
+}
 
-    function unlinkFindStoredSingleParentFamily(parentId) {
-      return unlinkStoredFamilies().find(family => {
+function unlinkFindStoredSingleParentFamily(parentId)
+{
+    return unlinkStoredFamilies().find(family =>
+    {
         const partnerA = unlinkFamilyPartnerAId(family);
         const partnerB = unlinkFamilyPartnerBId(family);
         const partners = [partnerA, partnerB].filter(Boolean);
 
         return partners.length === 1 && partners[0] === parentId;
-      }) || null;
-    }
+    }) || null;
+}
 
-    function unlinkCreateSingleParentFamily(parentId, childIds = [], projectId = '') {
-      const slot = unlinkParentSlotForPerson(parentId);
-      const family = {
+function unlinkCreateSingleParentFamily(parentId, childIds = [], projectId = '')
+{
+    const slot = unlinkParentSlotForPerson(parentId);
+    const family = {
         id: unlinkUniqueFamilyId(`family-${parentId}-single-parent`),
         projectId: projectId || currentProjectId(),
         type: 'family',
@@ -8740,313 +9379,342 @@
         mediaIds: [],
         parentChildTypes: {},
         gedcomXref: ''
-      };
+    };
 
-      family.gedcomXref = `@F${family.id.replace(/[^a-z0-9]/gi, '').toUpperCase()}@`;
-      unlinkSetFamilyChildren(family, childIds);
+    family.gedcomXref = `@F${family.id.replace(/[^a-z0-9]/gi, '').toUpperCase()}@`;
+    unlinkSetFamilyChildren(family, childIds);
 
-      unlinkStoredFamilies().push(family);
-      return family;
-    }
+    unlinkStoredFamilies().push(family);
+    return family;
+}
 
-    function unlinkAddChildrenToSingleParentFamily(parentId, childIds = [], projectId = '') {
-      if (!parentId || !childIds.length) return null;
+function unlinkAddChildrenToSingleParentFamily(parentId, childIds = [], projectId = '')
+{
+    if (!parentId || !childIds.length) return null;
 
-      const family = unlinkFindStoredSingleParentFamily(parentId)
+    const family = unlinkFindStoredSingleParentFamily(parentId)
         || unlinkCreateSingleParentFamily(parentId, [], projectId);
 
-      unlinkSetFamilyChildren(family, [
+    unlinkSetFamilyChildren(family, [
         ...unlinkFamilyChildrenIds(family),
         ...childIds
-      ]);
+    ]);
 
-      return unlinkApplyFamilyAliases(family);
-    }
+    return unlinkApplyFamilyAliases(family);
+}
 
-    function unlinkFamilyHasPartnerPair(family) {
-      return Boolean(unlinkFamilyPartnerAId(family) && unlinkFamilyPartnerBId(family));
-    }
+function unlinkFamilyHasPartnerPair(family)
+{
+    return Boolean(unlinkFamilyPartnerAId(family) && unlinkFamilyPartnerBId(family));
+}
 
-    function unlinkFamilyHasPayload(family) {
-      return Boolean(
+function unlinkFamilyHasPayload(family)
+{
+    return Boolean(
         (family?.events || []).length
           || (family?.attributes || []).length
           || (family?.notes || []).length
           || (family?.citations || []).length
           || (family?.mediaIds || []).length
-      );
-    }
+    );
+}
 
-    function unlinkRemoveFamilyById(familyId) {
-      const families = unlinkStoredFamilies();
-      const index = families.findIndex(family => family.id === familyId);
+function unlinkRemoveFamilyById(familyId)
+{
+    const families = unlinkStoredFamilies();
+    const index = families.findIndex(family => family.id === familyId);
 
-      if (index >= 0) {
+    if (index >= 0)
+    {
         families.splice(index, 1);
         return true;
-      }
-
-      return false;
     }
 
-    function unlinkRemoveFamilyIfEmptyAndOrphaned(family) {
-      if (!family?.id) return false;
-      if (unlinkFamilyChildrenIds(family).length) return false;
-      if (unlinkFamilyHasPartnerPair(family)) return false;
-      if (unlinkFamilyHasPayload(family)) return false;
+    return false;
+}
 
-      return unlinkRemoveFamilyById(family.id);
-    }
+function unlinkRemoveFamilyIfEmptyAndOrphaned(family)
+{
+    if (!family?.id) return false;
+    if (unlinkFamilyChildrenIds(family).length) return false;
+    if (unlinkFamilyHasPartnerPair(family)) return false;
+    if (unlinkFamilyHasPayload(family)) return false;
 
-    function unlinkParentChildRelationship({ parentId, childId, familyId = '' } = {}) {
-      if (!parentId || !childId) {
+    return unlinkRemoveFamilyById(family.id);
+}
+
+function unlinkParentChildRelationship({ parentId, childId, familyId = '' } = {})
+{
+    if (!parentId || !childId)
+    {
         return { ok: false, message: 'Relationship information is missing.' };
-      }
+    }
 
-      const family = unlinkFindStoredFamilyForParentChild(parentId, childId, familyId);
+    const family = unlinkFindStoredFamilyForParentChild(parentId, childId, familyId);
 
-      if (!family) {
+    if (!family)
+    {
         return { ok: false, message: 'Relationship record not found.' };
-      }
+    }
 
-      const children = unlinkFamilyChildrenIds(family);
+    const children = unlinkFamilyChildrenIds(family);
 
-      if (!children.includes(childId)) {
+    if (!children.includes(childId))
+    {
         return { ok: false, message: 'This parent-child relationship has already been removed.' };
-      }
+    }
 
-      const otherParentId =
+    const otherParentId =
         unlinkFamilyPartnerId(family, parentId);
 
-      const otherParentType = otherParentId
+    const otherParentType = otherParentId
         ? parentChildRelationshipType(
             family,
             otherParentId,
             childId
-          )
+        )
         : 'Biological';
 
-      unlinkSetFamilyChildren(
+    unlinkSetFamilyChildren(
         family,
         children.filter(id => id !== childId)
-      );
+    );
 
-      /*
+    /*
       * The child is no longer represented by this family,
       * so remove all connection-type keys for that child.
       */
-      removeParentChildRelationshipType(
+    removeParentChildRelationshipType(
         family,
         parentId,
         childId
-      );
+    );
 
-      if (otherParentId) {
+    if (otherParentId)
+    {
         removeParentChildRelationshipType(
-          family,
-          otherParentId,
-          childId
+            family,
+            otherParentId,
+            childId
         );
 
         const singleParentFamily =
-          unlinkAddChildrenToSingleParentFamily(
-            otherParentId,
-            [childId],
-            family.projectId
-          );
+            unlinkAddChildrenToSingleParentFamily(
+                otherParentId,
+                [childId],
+                family.projectId
+            );
 
         setParentChildRelationshipType(
-          singleParentFamily,
-          otherParentId,
-          childId,
-          otherParentType
+            singleParentFamily,
+            otherParentId,
+            childId,
+            otherParentType
         );
-      }
-
-      unlinkApplyFamilyAliases(family);
-      unlinkRemoveFamilyIfEmptyAndOrphaned(family);
-
-      return {
-        ok: true,
-        message: 'Relationship unlinked.'
-      };
     }
 
-    function unlinkPartnerRelationship({ personAId, personBId, familyId = '', keepChildrenWithParentId = '' } = {}) {
-      if (!personAId || !personBId) {
+    unlinkApplyFamilyAliases(family);
+    unlinkRemoveFamilyIfEmptyAndOrphaned(family);
+
+    return {
+        ok: true,
+        message: 'Relationship unlinked.'
+    };
+}
+
+function unlinkPartnerRelationship({ personAId, personBId, familyId = '', keepChildrenWithParentId = '' } = {})
+{
+    if (!personAId || !personBId)
+    {
         return { ok: false, message: 'Relationship information is missing.' };
-      }
+    }
 
-      const family = unlinkFindStoredPartnerFamily(personAId, personBId, familyId);
+    const family = unlinkFindStoredPartnerFamily(personAId, personBId, familyId);
 
-      if (!family) {
+    if (!family)
+    {
         return { ok: false, message: 'Relationship record not found.' };
-      }
+    }
 
-      const childIds = unlinkFamilyChildrenIds(family);
+    const childIds = unlinkFamilyChildrenIds(family);
 
-      if (childIds.length) {
-        if (![personAId, personBId].includes(keepChildrenWithParentId)) {
-          return { ok: false, message: 'Choose which parent should keep the children.' };
+    if (childIds.length)
+    {
+        if (![personAId, personBId].includes(keepChildrenWithParentId))
+        {
+            return { ok: false, message: 'Choose which parent should keep the children.' };
         }
         const retainedTypes = childIds.map(childId => ({
-          childId,
-          type: parentChildRelationshipType(
-            family,
-            keepChildrenWithParentId,
-            childId
-          )
+            childId,
+            type: parentChildRelationshipType(
+                family,
+                keepChildrenWithParentId,
+                childId
+            )
         }));
 
         const singleParentFamily =
-          unlinkAddChildrenToSingleParentFamily(
-            keepChildrenWithParentId,
-            childIds,
-            family.projectId
-          );
+            unlinkAddChildrenToSingleParentFamily(
+                keepChildrenWithParentId,
+                childIds,
+                family.projectId
+            );
 
-        retainedTypes.forEach(({ childId, type }) => {
-          setParentChildRelationshipType(
-            singleParentFamily,
-            keepChildrenWithParentId,
-            childId,
-            type
-          );
+        retainedTypes.forEach(({ childId, type }) =>
+        {
+            setParentChildRelationshipType(
+                singleParentFamily,
+                keepChildrenWithParentId,
+                childId,
+                type
+            );
         });
-      }
-
-      unlinkRemoveFamilyById(family.id);
-
-      return {
-        ok: true,
-        message: 'Relationship unlinked.'
-      };
     }
 
-    function refreshAfterRelationshipChange(
-      focusPersonId,
-      context = 'tree'
-    ) {
-      syncFamilyReciprocalLinks();
-      rebuildSampleEventsAndPruneSourceLinks();
+    unlinkRemoveFamilyById(family.id);
 
-      if (focusPersonId) {
+    return {
+        ok: true,
+        message: 'Relationship unlinked.'
+    };
+}
+
+function refreshAfterRelationshipChange(
+    focusPersonId,
+    context = 'tree'
+)
+{
+    syncFamilyReciprocalLinks();
+    rebuildSampleEventsAndPruneSourceLinks();
+
+    if (focusPersonId)
+    {
         state.selectedPersonId = focusPersonId;
 
         if (
-          context === 'people'
+            context === 'people'
           || context === 'profile'
-        ) {
-          state.selectedPeopleId = focusPersonId;
+        )
+        {
+            state.selectedPeopleId = focusPersonId;
         }
-      }
+    }
 
-      closeModal();
+    closeModal();
 
-      if (context === 'profile') {
+    if (context === 'profile')
+    {
         state.activeModule = 'People';
         state.peopleView = 'profile';
         state.peopleSide = 'profile';
         state.peopleProfileEditing = false;
         renderPeople();
         return;
-      }
+    }
 
-      if (context === 'people') {
+    if (context === 'people')
+    {
         state.peoplePreviewCollapsed = false;
         renderPeople();
         return;
-      }
-
-      state.treeInspectorCollapsed = false;
-
-      renderFamilyTreePreserveScroll?.()
-        || renderFamilyTree();
     }
 
-    function buildUnlinkRelationshipContext(raw = {}) {
-      const kind = String(raw.kind || '').toLowerCase();
-      const personId = String(raw.personId || '');
-      const relatedPersonId = String(raw.relatedPersonId || '');
-      const familyId = String(raw.familyId || '');
-      const sidebarContext = raw.sidebarContext || 'tree';
+    state.treeInspectorCollapsed = false;
 
-      if (!personId || !relatedPersonId) {
+    renderFamilyTreePreserveScroll?.()
+        || renderFamilyTree();
+}
+
+function buildUnlinkRelationshipContext(raw = {})
+{
+    const kind = String(raw.kind || '').toLowerCase();
+    const personId = String(raw.personId || '');
+    const relatedPersonId = String(raw.relatedPersonId || '');
+    const familyId = String(raw.familyId || '');
+    const sidebarContext = raw.sidebarContext || 'tree';
+
+    if (!personId || !relatedPersonId)
+    {
         return { ok: false, message: 'Relationship information is missing.' };
-      }
+    }
 
-      if (kind === 'sibling') {
+    if (kind === 'sibling')
+    {
         return {
-          ok: false,
-          message: 'Sibling relationships come from shared parents. Remove or edit parent-child links instead.'
+            ok: false,
+            message: 'Sibling relationships come from shared parents. Remove or edit parent-child links instead.'
         };
-      }
+    }
 
-      if (kind === 'parent') {
+    if (kind === 'parent')
+    {
         const family = unlinkFindCentralFamilyForParentChild(relatedPersonId, personId, familyId);
 
         return {
-          ok: Boolean(family),
-          message: family ? '' : 'Relationship record not found.',
-          kind,
-          sidebarContext,
-          personId,
-          relatedPersonId,
-          parentId: relatedPersonId,
-          childId: personId,
-          familyId: family?.id || familyId,
-          childrenIds: []
+            ok: Boolean(family),
+            message: family ? '' : 'Relationship record not found.',
+            kind,
+            sidebarContext,
+            personId,
+            relatedPersonId,
+            parentId: relatedPersonId,
+            childId: personId,
+            familyId: family?.id || familyId,
+            childrenIds: []
         };
-      }
+    }
 
-      if (kind === 'child') {
+    if (kind === 'child')
+    {
         const family = unlinkFindCentralFamilyForParentChild(personId, relatedPersonId, familyId);
 
         return {
-          ok: Boolean(family),
-          message: family ? '' : 'Relationship record not found.',
-          kind,
-          sidebarContext,
-          personId,
-          relatedPersonId,
-          parentId: personId,
-          childId: relatedPersonId,
-          familyId: family?.id || familyId,
-          childrenIds: []
+            ok: Boolean(family),
+            message: family ? '' : 'Relationship record not found.',
+            kind,
+            sidebarContext,
+            personId,
+            relatedPersonId,
+            parentId: personId,
+            childId: relatedPersonId,
+            familyId: family?.id || familyId,
+            childrenIds: []
         };
-      }
+    }
 
-      if (kind === 'partner') {
+    if (kind === 'partner')
+    {
         const family = unlinkFindCentralPartnerFamily(personId, relatedPersonId, familyId);
         const childrenIds = unlinkFamilyChildrenIds(family);
 
         return {
-          ok: Boolean(family),
-          message: family ? '' : 'Relationship record not found.',
-          kind,
-          sidebarContext,
-          personId,
-          relatedPersonId,
-          personAId: personId,
-          personBId: relatedPersonId,
-          familyId: family?.id || familyId,
-          childrenIds
+            ok: Boolean(family),
+            message: family ? '' : 'Relationship record not found.',
+            kind,
+            sidebarContext,
+            personId,
+            relatedPersonId,
+            personAId: personId,
+            personBId: relatedPersonId,
+            familyId: family?.id || familyId,
+            childrenIds
         };
-      }
-
-      return {
-        ok: false,
-        message: 'Unsupported relationship type.'
-      };
     }
 
-    function renderUnlinkRelationshipChildren(context) {
-      if (context.kind !== 'partner' || !context.childrenIds.length) return '';
+    return {
+        ok: false,
+        message: 'Unsupported relationship type.'
+    };
+}
 
-      const personAName = unlinkPersonName(context.personAId);
-      const personBName = unlinkPersonName(context.personBId);
+function renderUnlinkRelationshipChildren(context)
+{
+    if (context.kind !== 'partner' || !context.childrenIds.length) return '';
 
-      return `<div class="unlink-relationship-children">
+    const personAName = unlinkPersonName(context.personAId);
+    const personBName = unlinkPersonName(context.personBId);
+
+    return `<div class="unlink-relationship-children">
         <div class="unlink-relationship-children-title">Children connected through this relationship</div>
         <ul class="unlink-relationship-child-list">
           ${context.childrenIds.map(childId => `<li>${escapeHtml(unlinkPersonName(childId))}</li>`).join('')}
@@ -9063,34 +9731,40 @@
           </label>
         </div>
       </div>`;
+}
+
+function unlinkRelationshipDescription(context)
+{
+    if (context.kind === 'parent')
+    {
+        return `This will remove ${unlinkPersonName(context.parentId)} as ${unlinkPersonName(context.childId)}’s parent. Neither person will be deleted.`;
     }
 
-    function unlinkRelationshipDescription(context) {
-      if (context.kind === 'parent') {
-        return `This will remove ${unlinkPersonName(context.parentId)} as ${unlinkPersonName(context.childId)}’s parent. Neither person will be deleted.`;
-      }
-
-      if (context.kind === 'child') {
+    if (context.kind === 'child')
+    {
         return `This will remove ${unlinkPersonName(context.childId)} as ${unlinkPersonName(context.parentId)}’s child. Neither person will be deleted.`;
-      }
+    }
 
-      if (context.kind === 'partner') {
+    if (context.kind === 'partner')
+    {
         const base = `This will remove the partner relationship between ${unlinkPersonName(context.personAId)} and ${unlinkPersonName(context.personBId)}. Neither person will be deleted.`;
 
-        if (context.childrenIds.length) {
-          return `${base} Choose which parent should keep the children after unlinking.`;
+        if (context.childrenIds.length)
+        {
+            return `${base} Choose which parent should keep the children after unlinking.`;
         }
 
         return base;
-      }
-
-      return 'This will remove the selected relationship. No person will be deleted.';
     }
 
-    function renderUnlinkRelationshipModal(context) {
-      const needsChildDecision = context.kind === 'partner' && context.childrenIds.length > 0;
+    return 'This will remove the selected relationship. No person will be deleted.';
+}
 
-      return `<div class="modal unlink-relationship-modal" role="dialog" aria-modal="true" aria-labelledby="unlinkRelationshipTitle">
+function renderUnlinkRelationshipModal(context)
+{
+    const needsChildDecision = context.kind === 'partner' && context.childrenIds.length > 0;
+
+    return `<div class="modal unlink-relationship-modal" role="dialog" aria-modal="true" aria-labelledby="unlinkRelationshipTitle">
         <div class="modal-header">
           <div>
             <h2 id="unlinkRelationshipTitle">Remove relationship?</h2>
@@ -9120,186 +9794,203 @@
           </button>
         </div>
       </div>`;
-    }
+}
 
-    function openUnlinkRelationshipModal(rawContext = {}) {
-      const context = buildUnlinkRelationshipContext(rawContext);
+function openUnlinkRelationshipModal(rawContext = {})
+{
+    const context = buildUnlinkRelationshipContext(rawContext);
 
-      if (!context.ok) {
+    if (!context.ok)
+    {
         showToast(context.message || 'Relationship cannot be unlinked.');
         return;
-      }
-
-      openModal(renderUnlinkRelationshipModal(context));
-      bindUnlinkRelationshipModal(context);
     }
 
-    function bindUnlinkRelationshipModal(context) {
-      const confirmButton = modalBackdrop.querySelector('[data-confirm-unlink-relationship]');
-      const keepChildrenInputs = [...modalBackdrop.querySelectorAll('input[name="unlinkKeepChildrenWith"]')];
+    openModal(renderUnlinkRelationshipModal(context));
+    bindUnlinkRelationshipModal(context);
+}
 
-      keepChildrenInputs.forEach(input => {
-        input.addEventListener('change', () => {
-          if (confirmButton) confirmButton.disabled = false;
+function bindUnlinkRelationshipModal(context)
+{
+    const confirmButton = modalBackdrop.querySelector('[data-confirm-unlink-relationship]');
+    const keepChildrenInputs = [...modalBackdrop.querySelectorAll('input[name="unlinkKeepChildrenWith"]')];
+
+    keepChildrenInputs.forEach(input =>
+    {
+        input.addEventListener('change', () =>
+        {
+            if (confirmButton) confirmButton.disabled = false;
         });
-      });
+    });
 
-      confirmButton?.addEventListener('click', () => {
+    confirmButton?.addEventListener('click', () =>
+    {
         let result = null;
 
-        if (context.kind === 'parent' || context.kind === 'child') {
-          result = unlinkParentChildRelationship({
-            parentId: context.parentId,
-            childId: context.childId,
-            familyId: context.familyId
-          });
+        if (context.kind === 'parent' || context.kind === 'child')
+        {
+            result = unlinkParentChildRelationship({
+                parentId: context.parentId,
+                childId: context.childId,
+                familyId: context.familyId
+            });
         }
 
-        if (context.kind === 'partner') {
-          const keepChildrenWithParentId = modalBackdrop.querySelector('input[name="unlinkKeepChildrenWith"]:checked')?.value || '';
+        if (context.kind === 'partner')
+        {
+            const keepChildrenWithParentId = modalBackdrop.querySelector('input[name="unlinkKeepChildrenWith"]:checked')?.value || '';
 
-          result = unlinkPartnerRelationship({
-            personAId: context.personAId,
-            personBId: context.personBId,
-            familyId: context.familyId,
-            keepChildrenWithParentId
-          });
+            result = unlinkPartnerRelationship({
+                personAId: context.personAId,
+                personBId: context.personBId,
+                familyId: context.familyId,
+                keepChildrenWithParentId
+            });
         }
 
-        if (!result?.ok) {
-          showToast(result?.message || 'Relationship could not be unlinked.');
-          return;
+        if (!result?.ok)
+        {
+            showToast(result?.message || 'Relationship could not be unlinked.');
+            return;
         }
 
         refreshAfterRelationshipChange(
-          context.personId,
-          context.sidebarContext
+            context.personId,
+            context.sidebarContext
         );
-      });
-    }
+    });
+}
 
-    function buildRelationshipEditContext(raw = {}) {
-      const kind =
+function buildRelationshipEditContext(raw = {})
+{
+    const kind =
         String(raw.kind || '').toLowerCase();
 
-      const personId =
+    const personId =
         String(raw.personId || '');
 
-      const relatedPersonId =
+    const relatedPersonId =
         String(raw.relatedPersonId || '');
 
-      const familyId =
+    const familyId =
         String(raw.familyId || '');
 
-      const sidebarContext =
+    const sidebarContext =
         raw.sidebarContext || 'tree';
 
-      if (!personId || !relatedPersonId) {
+    if (!personId || !relatedPersonId)
+    {
         return {
-          ok: false,
-          message: 'Relationship information is missing.'
+            ok: false,
+            message: 'Relationship information is missing.'
         };
-      }
+    }
 
-      if (kind === 'sibling') {
+    if (kind === 'sibling')
+    {
         return {
-          ok: false,
-          message:
+            ok: false,
+            message:
             'Sibling relationships are derived from shared parents.'
         };
-      }
+    }
 
-      if (kind === 'parent') {
+    if (kind === 'parent')
+    {
         const family =
-          unlinkFindCentralFamilyForParentChild(
-            relatedPersonId,
-            personId,
-            familyId
-          );
+            unlinkFindCentralFamilyForParentChild(
+                relatedPersonId,
+                personId,
+                familyId
+            );
 
         return {
-          ok: Boolean(family),
-          message: family
-            ? ''
-            : 'Relationship record not found.',
-          kind,
-          sidebarContext,
-          personId,
-          relatedPersonId,
-          family,
-          familyId: family?.id || familyId,
-          parentId: relatedPersonId,
-          childId: personId
-        };
-      }
-
-      if (kind === 'child') {
-        const family =
-          unlinkFindCentralFamilyForParentChild(
+            ok: Boolean(family),
+            message: family
+                ? ''
+                : 'Relationship record not found.',
+            kind,
+            sidebarContext,
             personId,
             relatedPersonId,
-            familyId
-          );
+            family,
+            familyId: family?.id || familyId,
+            parentId: relatedPersonId,
+            childId: personId
+        };
+    }
+
+    if (kind === 'child')
+    {
+        const family =
+            unlinkFindCentralFamilyForParentChild(
+                personId,
+                relatedPersonId,
+                familyId
+            );
 
         return {
-          ok: Boolean(family),
-          message: family
-            ? ''
-            : 'Relationship record not found.',
-          kind,
-          sidebarContext,
-          personId,
-          relatedPersonId,
-          family,
-          familyId: family?.id || familyId,
-          parentId: personId,
-          childId: relatedPersonId
-        };
-      }
-
-      if (kind === 'partner') {
-        const family =
-          unlinkFindCentralPartnerFamily(
+            ok: Boolean(family),
+            message: family
+                ? ''
+                : 'Relationship record not found.',
+            kind,
+            sidebarContext,
             personId,
             relatedPersonId,
-            familyId
-          );
+            family,
+            familyId: family?.id || familyId,
+            parentId: personId,
+            childId: relatedPersonId
+        };
+    }
+
+    if (kind === 'partner')
+    {
+        const family =
+            unlinkFindCentralPartnerFamily(
+                personId,
+                relatedPersonId,
+                familyId
+            );
 
         return {
-          ok: Boolean(family),
-          message: family
-            ? ''
-            : 'Relationship record not found.',
-          kind,
-          sidebarContext,
-          personId,
-          relatedPersonId,
-          family,
-          familyId: family?.id || familyId
+            ok: Boolean(family),
+            message: family
+                ? ''
+                : 'Relationship record not found.',
+            kind,
+            sidebarContext,
+            personId,
+            relatedPersonId,
+            family,
+            familyId: family?.id || familyId
         };
-      }
+    }
 
-      return {
+    return {
         ok: false,
         message: 'Unsupported relationship type.'
-      };
-    }
+    };
+}
 
-    function relationshipEditPersonName(personId) {
-      return getPerson(personId)?.names?.display
+function relationshipEditPersonName(personId)
+{
+    return getPerson(personId)?.names?.display
         || 'Unknown person';
-    }
+}
 
-    function renderParentChildRelationshipEditFields(
-      context
-    ) {
-      const currentType = parentChildRelationshipType(
+function renderParentChildRelationshipEditFields(
+    context
+)
+{
+    const currentType = parentChildRelationshipType(
         context.family,
         context.parentId,
         context.childId
-      );
+    );
 
-      return `
+    return `
         <div class="field add-person-select-field">
           <label for="relationshipEditParentChildType">
             Parent–child connection
@@ -9309,7 +10000,7 @@
             class="compact-select add-person-select"
             id="relationshipEditParentChildType">
             ${parentChildRelationshipTypeOptions(
-              currentType
+                currentType
             )}
           </select>
 
@@ -9325,33 +10016,34 @@
           connected. It does not change either person record.
         </div>
       `;
-    }
+}
 
-    function renderPartnerRelationshipEditFields(
-      context
-    ) {
-      const family = context.family;
+function renderPartnerRelationshipEditFields(
+    context
+)
+{
+    const family = context.family;
 
-      const relationshipType =
+    const relationshipType =
         relationshipTypeFromLegacy(family);
 
-      const startEvent =
+    const startEvent =
         partnerRelationshipStartEvent(
-          family,
-          relationshipType
+            family,
+            relationshipType
         );
 
-      const marriageType =
+    const marriageType =
         startEvent.typeLabel
         || family.marriageType
         || 'Civil';
 
-      const showMarriageType =
+    const showMarriageType =
         addPersonRelationshipShowsMarriageType(
-          relationshipType
+            relationshipType
         );
 
-      return `
+    return `
         <div class="field add-person-select-field">
           <label for="relationshipEditType">
             Relationship type
@@ -9361,7 +10053,7 @@
             class="compact-select add-person-select"
             id="relationshipEditType">
             ${addPersonRelationshipTypeOptions(
-              relationshipType
+                relationshipType
             )}
           </select>
 
@@ -9374,10 +10066,10 @@
 
         <div data-relationship-edit-fields>
           ${renderPartnerRelationshipDateFields({
-            prefix: 'relationshipEdit',
-            relationshipType,
-            family
-          })}
+                prefix: 'relationshipEdit',
+                relationshipType,
+                family
+            })}
         </div>
 
         <div
@@ -9393,7 +10085,7 @@
             class="compact-select add-person-select"
             id="relationshipEditMarriageType">
             ${addPersonMarriageTypeOptions(
-              marriageType
+                marriageType
             )}
           </select>
 
@@ -9404,18 +10096,19 @@
           </span>
         </div>
       `;
-    }
+}
 
-    function renderRelationshipEditModal(context) {
-      const personName =
+function renderRelationshipEditModal(context)
+{
+    const personName =
         relationshipEditPersonName(context.personId);
 
-      const relatedName =
+    const relatedName =
         relationshipEditPersonName(
-          context.relatedPersonId
+            context.relatedPersonId
         );
 
-      return `
+    return `
         <div
           class="modal"
           role="dialog"
@@ -9445,11 +10138,11 @@
 
           <div class="modal-body form-grid">
             ${context.kind === 'partner'
-              ? renderPartnerRelationshipEditFields(
-                  context
+                ? renderPartnerRelationshipEditFields(
+                    context
                 )
-              : renderParentChildRelationshipEditFields(
-                  context
+                : renderParentChildRelationshipEditFields(
+                    context
                 )}
           </div>
 
@@ -9470,214 +10163,230 @@
           </div>
         </div>
       `;
-    }
+}
 
-    function bindRelationshipEditModal(context) {
-      if (context.kind === 'partner') {
+function bindRelationshipEditModal(context)
+{
+    if (context.kind === 'partner')
+    {
         bindGenealogyDateFields(modalBackdrop);
         bindPlaceComboboxes(modalBackdrop);
         bindNameAffixComboboxes(modalBackdrop);
 
 
         const typeSelect =
-          modalBackdrop.querySelector(
-            '#relationshipEditType'
-          );
+            modalBackdrop.querySelector(
+                '#relationshipEditType'
+            );
 
         const marriageTypeField =
-          modalBackdrop.querySelector(
-            '[data-relationship-edit-marriage-type]'
-          );
+            modalBackdrop.querySelector(
+                '[data-relationship-edit-marriage-type]'
+            );
 
-        const updateMarriageTypeVisibility = () => {
-          if (!marriageTypeField || !typeSelect) {
-            return;
-          }
-          updatePartnerRelationshipFields(
-            modalBackdrop,
-            typeSelect.value
-          );
+        const updateMarriageTypeVisibility = () =>
+        {
+            if (!marriageTypeField || !typeSelect)
+            {
+                return;
+            }
+            updatePartnerRelationshipFields(
+                modalBackdrop,
+                typeSelect.value
+            );
         };
 
         typeSelect?.addEventListener(
-          'change',
-          updateMarriageTypeVisibility
+            'change',
+            updateMarriageTypeVisibility
         );
 
         updateMarriageTypeVisibility();
-      }
-
-      modalBackdrop
-        .querySelector(
-          '[data-save-relationship-edit]'
-        )
-        ?.addEventListener('click', () => {
-          const family = context.family;
-
-          if (!family) {
-            showToast(
-              'Relationship record not found.'
-            );
-            return;
-          }
-
-          if (context.kind === 'partner') {
-            const relationshipType =
-              modalBackdrop.querySelector(
-                '#relationshipEditType'
-              )?.value || 'Partner';
-
-            const definition =
-              partnerRelationshipDefinition(
-                relationshipType
-              );
-
-            const startDate =
-              collectGenealogyDateField(
-                'relationshipEditStartDate'
-              );
-
-            const endDate = definition.hasEnd
-              ? collectGenealogyDateField(
-                  'relationshipEditEndDate'
-                )
-              : emptyGenealogyDate('Exact date');
-
-            if (!startDate || (definition.hasEnd && !endDate)) {
-              showToast(
-                'Check the relationship dates before saving.'
-              );
-              return;
-            }
-
-            if (definition.hasEnd && !partnerRelationshipDateOrderIsValid(startDate, endDate)) {
-              showToast(
-                'The relationship end date must be after or equal to the start date.'
-              );
-              return;
-            }
-
-            const marriageType =
-              addPersonRelationshipShowsMarriageType(
-                relationshipType
-              )
-                ? modalBackdrop.querySelector(
-                    '#relationshipEditMarriageType'
-                  )?.value || 'Civil'
-                : '';
-
-            upsertPartnerRelationshipEvents(family, {
-              relationshipType,
-              marriageType,
-              startDate,
-              startPlace: readPlaceInputValue(
-                '#relationshipEditStartPlace',
-                modalBackdrop
-              ),
-              endDate,
-              endPlace: definition.hasEnd
-                ? readPlaceInputValue(
-                    '#relationshipEditEndPlace',
-                    modalBackdrop
-                  )
-                : { text: '', selectedPlaceId: '' }
-            });
-
-            if (
-              typeof syncFamilyPartnerAliases
-              === 'function'
-            ) {
-              syncFamilyPartnerAliases(family);
-            }
-          } else {
-            const value = modalBackdrop.querySelector(
-              '#relationshipEditParentChildType'
-            )?.value;
-
-            if (!PARENT_CHILD_RELATIONSHIP_TYPES.includes(value)) {
-              showToast(
-                state.language === 'ru'
-                  ? 'Выберите тип связи между родителем и ребёнком.'
-                  : 'Choose a parent–child relationship type.'
-              );
-              return;
-            }
-
-            const key = parentChildRelationshipKey(
-              context.parentId,
-              context.childId
-            );
-
-            family.parentChildTypes = {
-              ...sanitizeParentChildTypes(
-                family.parentChildTypes
-              ),
-              [key]: value
-            };
-          }
-
-          family.updatedAt = 'Just now';
-
-          refreshAfterRelationshipChange(
-            context.personId,
-            context.sidebarContext
-          );
-
-          showToast('Relationship updated.');
-        });
     }
 
-    function openRelationshipEditModal(
-      rawContext = {}
-    ) {
-      const context =
+    modalBackdrop
+        .querySelector(
+            '[data-save-relationship-edit]'
+        )
+        ?.addEventListener('click', () =>
+        {
+            const family = context.family;
+
+            if (!family)
+            {
+                showToast(
+                    'Relationship record not found.'
+                );
+                return;
+            }
+
+            if (context.kind === 'partner')
+            {
+                const relationshipType =
+                    modalBackdrop.querySelector(
+                        '#relationshipEditType'
+                    )?.value || 'Partner';
+
+                const definition =
+                    partnerRelationshipDefinition(
+                        relationshipType
+                    );
+
+                const startDate =
+                    collectGenealogyDateField(
+                        'relationshipEditStartDate'
+                    );
+
+                const endDate = definition.hasEnd
+                    ? collectGenealogyDateField(
+                        'relationshipEditEndDate'
+                    )
+                    : emptyGenealogyDate('Exact date');
+
+                if (!startDate || (definition.hasEnd && !endDate))
+                {
+                    showToast(
+                        'Check the relationship dates before saving.'
+                    );
+                    return;
+                }
+
+                if (definition.hasEnd && !partnerRelationshipDateOrderIsValid(startDate, endDate))
+                {
+                    showToast(
+                        'The relationship end date must be after or equal to the start date.'
+                    );
+                    return;
+                }
+
+                const marriageType =
+                    addPersonRelationshipShowsMarriageType(
+                        relationshipType
+                    )
+                        ? modalBackdrop.querySelector(
+                            '#relationshipEditMarriageType'
+                        )?.value || 'Civil'
+                        : '';
+
+                upsertPartnerRelationshipEvents(family, {
+                    relationshipType,
+                    marriageType,
+                    startDate,
+                    startPlace: readPlaceInputValue(
+                        '#relationshipEditStartPlace',
+                        modalBackdrop
+                    ),
+                    endDate,
+                    endPlace: definition.hasEnd
+                        ? readPlaceInputValue(
+                            '#relationshipEditEndPlace',
+                            modalBackdrop
+                        )
+                        : { text: '', selectedPlaceId: '' }
+                });
+
+                if (
+                    typeof syncFamilyPartnerAliases
+              === 'function'
+                )
+                {
+                    syncFamilyPartnerAliases(family);
+                }
+            }
+            else
+            {
+                const value = modalBackdrop.querySelector(
+                    '#relationshipEditParentChildType'
+                )?.value;
+
+                if (!PARENT_CHILD_RELATIONSHIP_TYPES.includes(value))
+                {
+                    showToast(
+                        state.language === 'ru'
+                            ? 'Выберите тип связи между родителем и ребёнком.'
+                            : 'Choose a parent–child relationship type.'
+                    );
+                    return;
+                }
+
+                const key = parentChildRelationshipKey(
+                    context.parentId,
+                    context.childId
+                );
+
+                family.parentChildTypes = {
+                    ...sanitizeParentChildTypes(
+                        family.parentChildTypes
+                    ),
+                    [key]: value
+                };
+            }
+
+            family.updatedAt = 'Just now';
+
+            refreshAfterRelationshipChange(
+                context.personId,
+                context.sidebarContext
+            );
+
+            showToast('Relationship updated.');
+        });
+}
+
+function openRelationshipEditModal(
+    rawContext = {}
+)
+{
+    const context =
         buildRelationshipEditContext(rawContext);
 
-      if (!context.ok) {
+    if (!context.ok)
+    {
         showToast(
-          context.message
+            context.message
           || 'Relationship cannot be edited.'
         );
         return;
-      }
-
-      openModal(
-        renderRelationshipEditModal(context)
-      );
-
-      bindRelationshipEditModal(context);
     }
 
-    function openAddPersonModal(title, subtitle, options = {}) {
-      const isEditMode = options.mode === 'edit';
-      const editPerson = isEditMode ? getPerson(options.personId) : null;
-      initializeAddPersonAttachmentDraft(
+    openModal(
+        renderRelationshipEditModal(context)
+    );
+
+    bindRelationshipEditModal(context);
+}
+
+function openAddPersonModal(title, subtitle, options = {})
+{
+    const isEditMode = options.mode === 'edit';
+    const editPerson = isEditMode ? getPerson(options.personId) : null;
+    initializeAddPersonAttachmentDraft(
         editPerson
-      );
-      addPersonPossibleMatchState = {
+    );
+    addPersonPossibleMatchState = {
         selectedPersonId: ''
-      };
-      const editValues = editPersonFormValues(editPerson);
-      const isPartnerMode = options.relativeType === 'partner';
-      const showRelationshipBlock = relationshipBlockShouldShow(options, editPerson);
-      const connectionIntent = addPersonCreateConnectionIntent(options);
-      const initialParentFamilySelection = defaultParentFamilySelection(
+    };
+    const editValues = editPersonFormValues(editPerson);
+    const isPartnerMode = options.relativeType === 'partner';
+    const showRelationshipBlock = relationshipBlockShouldShow(options, editPerson);
+    const connectionIntent = addPersonCreateConnectionIntent(options);
+    const initialParentFamilySelection = defaultParentFamilySelection(
         connectionIntent.anchorPersonId,
         connectionIntent.relationshipType,
         options.parentFamilyId
           || options.parentFamilySelection
           || ''
-      );
+    );
 
-      const relativeGender = getGenderForRelativeType(options.relativeType);
+    const relativeGender = getGenderForRelativeType(options.relativeType);
 
-      const initialGender = options.gender
+    const initialGender = options.gender
         || (isEditMode ? editValues.gender : relativeGender)
         || 'Unknown';
 
-      const initialStatus = options.livingStatus
+    const initialStatus = options.livingStatus
         || (isEditMode ? editValues.livingStatus : 'Living');
-      openModal(`<div class="modal add-person-modal" role="dialog" aria-modal="true" aria-labelledby="addPersonTitle">
+    openModal(`<div class="modal add-person-modal" role="dialog" aria-modal="true" aria-labelledby="addPersonTitle">
         <div class="modal-header add-person-header"><div class="add-person-icon">${icon.people}</div><div><h2 id="addPersonTitle">${escapeHtml(title)}</h2><p>${escapeHtml(subtitle)}</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div>
         <div class="modal-body add-person-grid">
           <div class="form-grid">
@@ -9713,48 +10422,48 @@
               </div>
             </div></section>
           ${isEditMode ? '' : renderParentFamilySelector({
-            anchorPersonId: connectionIntent.anchorPersonId,
-            relationshipType: connectionIntent.relationshipType,
-            selectedValue: initialParentFamilySelection,
-            controlId: 'addPersonParentFamily'
-          })}
+                anchorPersonId: connectionIntent.anchorPersonId,
+                relationshipType: connectionIntent.relationshipType,
+                selectedValue: initialParentFamilySelection,
+                controlId: 'addPersonParentFamily'
+            })}
           <section>
             <h3 class="form-section-title">Life events</h3>
             <div class="add-person-life-grid">
               <div class="add-person-life-event-block">
                 ${renderGenealogyDateField('addPersonBirth', 'Birth date', editPerson?.birth || emptyGenealogyDate('Exact date'), {
-                  inputId: 'addPersonBirthDate',
-                  typeId: 'addPersonBirthDateType',
-                  placeholder: 'e.g. 14 Feb 1915',
-                  defaultDateType: 'Exact date',
-                  className: 'genealogy-date-inline-range'
+                    inputId: 'addPersonBirthDate',
+                    typeId: 'addPersonBirthDateType',
+                    placeholder: 'e.g. 14 Feb 1915',
+                    defaultDateType: 'Exact date',
+                    className: 'genealogy-date-inline-range'
                 })}
 
               ${renderPlaceCombobox({
-                id: 'addPersonBirthPlace',
-                label: 'Birth place',
-                value: editValues.birthPlace,
-                selectedPlaceId: editPerson?.birth?.placeId || '',
-                addressValue: editPerson?.birth?.address || '',
-                placeholder: 'e.g. Pawford, England'
-              })}
+                    id: 'addPersonBirthPlace',
+                    label: 'Birth place',
+                    value: editValues.birthPlace,
+                    selectedPlaceId: editPerson?.birth?.placeId || '',
+                    addressValue: editPerson?.birth?.address || '',
+                    placeholder: 'e.g. Pawford, England'
+                })}
 
               <div class="add-person-life-event-block add-person-death-fields" id="deathFieldsGroup">
                 ${renderGenealogyDateField('addPersonDeath', 'Death date', editPerson?.death || emptyGenealogyDate('Exact date'), {
-                  inputId: 'addPersonDeathDate',
-                  typeId: 'addPersonDeathDateType',
-                  placeholder: 'e.g. 14 Feb 1925',
-                  defaultDateType: 'Exact date',
-                  className: 'genealogy-date-inline-range'
+                    inputId: 'addPersonDeathDate',
+                    typeId: 'addPersonDeathDateType',
+                    placeholder: 'e.g. 14 Feb 1925',
+                    defaultDateType: 'Exact date',
+                    className: 'genealogy-date-inline-range'
                 })}
 
                 ${renderPlaceCombobox({
-                  id: 'addPersonDeathPlace',
-                  label: 'Death place',
-                  value: editValues.deathPlace,
-                  selectedPlaceId: editPerson?.death?.placeId || '',
-                  addressValue: editPerson?.death?.address || '',
-                  placeholder: 'e.g. Meowbridge, England'
+                    id: 'addPersonDeathPlace',
+                    label: 'Death place',
+                    value: editValues.deathPlace,
+                    selectedPlaceId: editPerson?.death?.placeId || '',
+                    addressValue: editPerson?.death?.address || '',
+                    placeholder: 'e.g. Meowbridge, England'
                 })}
               </div>
             </div>
@@ -9788,194 +10497,220 @@
           </div>
         </div>
       </div>`);
-      bindAddPersonModalControls(options.mode === 'edit' ? options.personId || '' : '');
-      bindAddPersonSideCards(options, editPerson);
-      updateAddPersonConditionalFields();
-      if (isEditMode) {
-        modalBackdrop.querySelector('[data-save-edit-person]')?.addEventListener('click', () => {
-          saveEditPersonModalValues(options.personId);
+    bindAddPersonModalControls(options.mode === 'edit' ? options.personId || '' : '');
+    bindAddPersonSideCards(options, editPerson);
+    updateAddPersonConditionalFields();
+    if (isEditMode)
+    {
+        modalBackdrop.querySelector('[data-save-edit-person]')?.addEventListener('click', () =>
+        {
+            saveEditPersonModalValues(options.personId);
         });
-      } else {
-        modalBackdrop.querySelector('[data-create-person]')?.addEventListener('click', event => {
-          const button = event.currentTarget;
-          if (button.disabled) return;
+    }
+    else
+    {
+        modalBackdrop.querySelector('[data-create-person]')?.addEventListener('click', event =>
+        {
+            const button = event.currentTarget;
+            if (button.disabled) return;
 
-          button.disabled = true;
-          const result = commitAddPersonModalCreate(title, subtitle, options);
+            button.disabled = true;
+            const result = commitAddPersonModalCreate(title, subtitle, options);
 
-          if (!result?.ok && modalBackdrop.contains(button)) {
-            button.disabled = false;
-          }
+            if (!result?.ok && modalBackdrop.contains(button))
+            {
+                button.disabled = false;
+            }
         });
-      }
     }
+}
 
-    function selectAddPersonPossibleMatch(personId, options = {}, editPerson = null) {
-      addPersonPossibleMatchState.selectedPersonId = personId || '';
-      refreshAddPersonPossibleMatchesCard(options, editPerson);
-    }
+function selectAddPersonPossibleMatch(personId, options = {}, editPerson = null)
+{
+    addPersonPossibleMatchState.selectedPersonId = personId || '';
+    refreshAddPersonPossibleMatchesCard(options, editPerson);
+}
 
-    function refreshAfterPossibleMatchConnection(anchorPersonId) {
-      closeModal();
+function refreshAfterPossibleMatchConnection(anchorPersonId)
+{
+    closeModal();
 
-      state.selectedPersonId = anchorPersonId || state.selectedPersonId;
-      state.selectedPeopleId = anchorPersonId || state.selectedPeopleId;
-      state.treeInspectorCollapsed = false;
+    state.selectedPersonId = anchorPersonId || state.selectedPersonId;
+    state.selectedPeopleId = anchorPersonId || state.selectedPeopleId;
+    state.treeInspectorCollapsed = false;
 
-      if (state.activeModule === 'Family Tree') {
+    if (state.activeModule === 'Family Tree')
+    {
         renderFamilyTreePreserveScroll?.() || renderFamilyTree();
-      } else {
-        render();
-      }
     }
+    else
+    {
+        render();
+    }
+}
 
-    function commitAddPersonPossibleMatchAction(options = {}) {
-      const selectedPerson = getPerson(addPersonPossibleMatchState.selectedPersonId);
+function commitAddPersonPossibleMatchAction(options = {})
+{
+    const selectedPerson = getPerson(addPersonPossibleMatchState.selectedPersonId);
 
-      if (!selectedPerson) {
+    if (!selectedPerson)
+    {
         showToast('Select a possible match first.');
         return;
-      }
+    }
 
-      const connectionIntent = addPersonCreateConnectionIntent(options);
+    const connectionIntent = addPersonCreateConnectionIntent(options);
 
-      if (!connectionIntent.shouldConnect) {
+    if (!connectionIntent.shouldConnect)
+    {
         openAddPersonPossibleMatch(selectedPerson.id);
         return;
-      }
+    }
 
-      const relationshipValues = collectAddPersonRelationshipBlock();
+    const relationshipValues = collectAddPersonRelationshipBlock();
 
-      if (relationshipValues.invalid) {
+    if (relationshipValues.invalid)
+    {
         showToast(relationshipValues.message || 'Check the relationship details before connecting.');
         return;
-      }
+    }
 
-      const result = connectPeopleByRelationship({
+    const result = connectPeopleByRelationship({
         anchorPersonId: connectionIntent.anchorPersonId,
         relativePersonId: selectedPerson.id,
         relationshipType: connectionIntent.relationshipType,
         parentFamilySelection: addPersonParentFamilySelection(options),
         partnerChildrenMode:
           addPersonPartnerChildrenMode(options)
-      });
+    });
 
-      if (!result.ok) {
+    if (!result.ok)
+    {
         showToast(result.message || 'Could not connect the selected match.');
         return;
-      }
-
-      applyPartnerDetailsToCreatedConnection(result, relationshipValues);
-
-      rebuildSampleEventsAndPruneSourceLinks();
-      refreshAfterPossibleMatchConnection(connectionIntent.anchorPersonId);
-
-      showToast(`${connectPersonName(selectedPerson)} connected as ${addPersonConnectionToastLabel(connectionIntent.relationshipType)}.`);
     }
 
-    function readAddPersonModalValue(selector) {
-      const control =
+    applyPartnerDetailsToCreatedConnection(result, relationshipValues);
+
+    rebuildSampleEventsAndPruneSourceLinks();
+    refreshAfterPossibleMatchConnection(connectionIntent.anchorPersonId);
+
+    showToast(`${connectPersonName(selectedPerson)} connected as ${addPersonConnectionToastLabel(connectionIntent.relationshipType)}.`);
+}
+
+function readAddPersonModalValue(selector)
+{
+    const control =
         modalBackdrop.querySelector(selector);
 
-      if (!control) {
+    if (!control)
+    {
         return '';
-      }
+    }
 
-      return collectLocalizedDataFieldValue(
+    return collectLocalizedDataFieldValue(
         control,
         control.dataset.sourceValue
           ?? control.value
-      ).trim();
-    }
+    ).trim();
+}
 
-    function updateAddPersonFactSummary() {
-      const section =
+function updateAddPersonFactSummary()
+{
+    const section =
         modalBackdrop?.querySelector(
-          '[data-add-person-facts]'
+            '[data-add-person-facts]'
         );
 
-      if (!section) return;
+    if (!section) return;
 
-      const count =
+    const count =
         section.querySelectorAll(
-          '[data-add-person-fact-card]'
+            '[data-add-person-fact-card]'
         ).length;
 
-      const countLabel =
+    const countLabel =
         section.querySelector(
-          '[data-add-person-facts-count]'
+            '[data-add-person-facts-count]'
         );
 
-      if (countLabel) {
+    if (countLabel)
+    {
         countLabel.textContent =
-          formatAddPersonFactSummary(count);
-      }
+            formatAddPersonFactSummary(count);
     }
+}
 
-    function collectAddPersonActiveFactIds() {
-      const section = modalBackdrop?.querySelector('[data-add-person-facts]');
-      if (!section) return [];
-      return Array.from(section.querySelectorAll('[data-add-person-fact-card]'))
+function collectAddPersonActiveFactIds()
+{
+    const section = modalBackdrop?.querySelector('[data-add-person-facts]');
+    if (!section) return [];
+    return Array.from(section.querySelectorAll('[data-add-person-fact-card]'))
         .map(card => card.dataset.addPersonFactCard)
         .filter(Boolean);
-    }
+}
 
-    function addPersonFactToModal(factId, personId = '') {
-      const section = modalBackdrop?.querySelector('[data-add-person-facts]');
-      const target = section?.querySelector('[data-add-person-facts-added]');
-      if (!section || !target || target.querySelector(`[data-add-person-fact-card="${CSS.escape(factId)}"]`)) return;
-      const person = personId ? getPerson(personId) : null;
-      target.insertAdjacentHTML('beforeend', addPersonFactCardHtml(factId, person));
-      const button = section.querySelector(`[data-add-person-add-fact="${CSS.escape(factId)}"]`);
-      if (button) {
+function addPersonFactToModal(factId, personId = '')
+{
+    const section = modalBackdrop?.querySelector('[data-add-person-facts]');
+    const target = section?.querySelector('[data-add-person-facts-added]');
+    if (!section || !target || target.querySelector(`[data-add-person-fact-card="${CSS.escape(factId)}"]`)) return;
+    const person = personId ? getPerson(personId) : null;
+    target.insertAdjacentHTML('beforeend', addPersonFactCardHtml(factId, person));
+    const button = section.querySelector(`[data-add-person-add-fact="${CSS.escape(factId)}"]`);
+    if (button)
+    {
         button.disabled = true;
         button.classList.add('is-added');
-      }
-      const body = section.querySelector('[data-add-person-facts-body]');
-      const toggle = section.querySelector('[data-add-person-facts-toggle]');
-      if (body) body.hidden = false;
-      if (toggle) toggle.setAttribute('aria-expanded', 'true');
-      const insertedFact = target.lastElementChild || target;
-      bindGenealogyDateFields(insertedFact);
-      bindPlaceComboboxes(insertedFact);
-      bindNameAffixComboboxes(insertedFact);
-
-      updateAddPersonFactSummary();
     }
+    const body = section.querySelector('[data-add-person-facts-body]');
+    const toggle = section.querySelector('[data-add-person-facts-toggle]');
+    if (body) body.hidden = false;
+    if (toggle) toggle.setAttribute('aria-expanded', 'true');
+    const insertedFact = target.lastElementChild || target;
+    bindGenealogyDateFields(insertedFact);
+    bindPlaceComboboxes(insertedFact);
+    bindNameAffixComboboxes(insertedFact);
 
-    function removeAddPersonFactCard(section, factId) {
-      section.querySelector(`[data-add-person-fact-card="${CSS.escape(factId)}"]`)?.remove();
-      const button = section.querySelector(`[data-add-person-add-fact="${CSS.escape(factId)}"]`);
-      if (button) {
+    updateAddPersonFactSummary();
+}
+
+function removeAddPersonFactCard(section, factId)
+{
+    section.querySelector(`[data-add-person-fact-card="${CSS.escape(factId)}"]`)?.remove();
+    const button = section.querySelector(`[data-add-person-add-fact="${CSS.escape(factId)}"]`);
+    if (button)
+    {
         button.disabled = false;
         button.classList.remove('is-added');
-      }
-      updateAddPersonFactSummary();
     }
+    updateAddPersonFactSummary();
+}
 
-    function confirmRemoveAddPersonFact(
-      factId,
-      onConfirm
-    ) {
-      const definition =
+function confirmRemoveAddPersonFact(
+    factId,
+    onConfirm
+)
+{
+    const definition =
         addPersonFactDefinition(factId);
 
-      document
+    document
         .querySelector(
-          '[data-add-person-fact-confirm]'
+            '[data-add-person-fact-confirm]'
         )
         ?.remove();
 
-      const backdrop =
+    const backdrop =
         document.createElement('div');
 
-      backdrop.className =
+    backdrop.className =
         'add-person-fact-confirm-backdrop';
 
-      backdrop.dataset.addPersonFactConfirm =
+    backdrop.dataset.addPersonFactConfirm =
         'true';
 
-      backdrop.innerHTML = `
+    backdrop.innerHTML = `
         <div class="add-person-fact-confirm-card" role="dialog" aria-modal="true" aria-labelledby="removeFactTitle">
           <div class="add-person-fact-confirm-header">
             <h3 id="removeFactTitle">Remove ${escapeHtml(definition.label)}?</h3>
@@ -9993,598 +10728,668 @@
         </div>
       `;
 
-      let backdropDismissBinding = null;
+    let backdropDismissBinding = null;
 
-      function handleKeydown(event) {
-        if (event.key === 'Escape') {
-          close();
+    function handleKeydown(event)
+    {
+        if (event.key === 'Escape')
+        {
+            close();
         }
-      }
+    }
 
-      function close() {
+    function close()
+    {
         backdropDismissBinding?.destroy();
         backdropDismissBinding = null;
 
         document.removeEventListener(
-          'keydown',
-          handleKeydown
+            'keydown',
+            handleKeydown
         );
 
         backdrop.remove();
-      }
-
-      backdrop.addEventListener(
-        'click',
-        event => {
-          if (
-            event.target.closest(
-              '[data-cancel-remove-fact]'
-            )
-          ) {
-            close();
-            return;
-          }
-
-          if (
-            event.target.closest(
-              '[data-confirm-remove-fact]'
-            )
-          ) {
-            close();
-            onConfirm?.();
-          }
-        }
-      );
-
-      document.addEventListener(
-        'keydown',
-        handleKeydown
-      );
-
-      document.body.appendChild(backdrop);
-
-      backdropDismissBinding =
-        bindIntentionalBackdropDismiss(
-          backdrop,
-          close
-        );
-
-      backdrop
-        .querySelector(
-          '[data-cancel-remove-fact]'
-        )
-        ?.focus({
-          preventScroll: true
-        });
     }
 
-    function bindAddPersonAdditionalFacts(personId = '') {
-      const section = modalBackdrop?.querySelector('[data-add-person-facts]');
-      if (!section) return;
-      const toggle = section.querySelector('[data-add-person-facts-toggle]');
-      const body = section.querySelector('[data-add-person-facts-body]');
-      toggle?.addEventListener('click', () => {
+    backdrop.addEventListener(
+        'click',
+        event =>
+        {
+            if (
+                event.target.closest(
+                    '[data-cancel-remove-fact]'
+                )
+            )
+            {
+                close();
+                return;
+            }
+
+            if (
+                event.target.closest(
+                    '[data-confirm-remove-fact]'
+                )
+            )
+            {
+                close();
+                onConfirm?.();
+            }
+        }
+    );
+
+    document.addEventListener(
+        'keydown',
+        handleKeydown
+    );
+
+    document.body.appendChild(backdrop);
+
+    backdropDismissBinding =
+        bindIntentionalBackdropDismiss(
+            backdrop,
+            close
+        );
+
+    backdrop
+        .querySelector(
+            '[data-cancel-remove-fact]'
+        )
+        ?.focus({
+            preventScroll: true
+        });
+}
+
+function bindAddPersonAdditionalFacts(personId = '')
+{
+    const section = modalBackdrop?.querySelector('[data-add-person-facts]');
+    if (!section) return;
+    const toggle = section.querySelector('[data-add-person-facts-toggle]');
+    const body = section.querySelector('[data-add-person-facts-body]');
+    toggle?.addEventListener('click', () =>
+    {
         const expanded = toggle.getAttribute('aria-expanded') === 'true';
         toggle.setAttribute('aria-expanded', expanded ? 'false' : 'true');
         if (body) body.hidden = expanded;
-      });
-      section.querySelectorAll('[data-add-person-add-fact]').forEach(button => button.addEventListener('click', () => {
+    });
+    section.querySelectorAll('[data-add-person-add-fact]').forEach(button => button.addEventListener('click', () =>
+    {
         addPersonFactToModal(button.dataset.addPersonAddFact, personId);
-      }));
-      section.addEventListener('click', event => {
+    }));
+    section.addEventListener('click', event =>
+    {
         const remove = event.target.closest('[data-add-person-remove-fact]');
         if (!remove) return;
         const factId = remove.dataset.addPersonRemoveFact;
         confirmRemoveAddPersonFact(factId, () => removeAddPersonFactCard(section, factId));
-      });
-      updateAddPersonFactSummary();
-    }
+    });
+    updateAddPersonFactSummary();
+}
 
-    function collectCustomFactFields(
-      idPrefix,
-      root = modalBackdrop
-    ) {
-      const select = suffix =>
+function collectCustomFactFields(
+    idPrefix,
+    root = modalBackdrop
+)
+{
+    const select = suffix =>
         root?.querySelector(
-          `#${CSS.escape(`${idPrefix}${suffix}`)}`
+            `#${CSS.escape(`${idPrefix}${suffix}`)}`
         );
 
-      const typeInput = select('Type');
-      const valueInput = select('Value');
-      const notesInput = select('Notes');
+    const typeInput = select('Type');
+    const valueInput = select('Value');
+    const notesInput = select('Notes');
 
-      const typeField =
+    const typeField =
         typeInput?.closest(
-          '[data-custom-fact-field="type"]'
+            '[data-custom-fact-field="type"]'
         );
 
-      const contentField =
+    const contentField =
         valueInput?.closest(
-          '[data-custom-fact-field="content"]'
+            '[data-custom-fact-field="content"]'
         );
 
-      const typeError =
+    const typeError =
         select('TypeError');
 
-      const contentError =
+    const contentError =
         select('ContentError');
 
-      typeField?.classList.remove('has-error');
-      contentField?.classList.remove('has-error');
+    typeField?.classList.remove('has-error');
+    contentField?.classList.remove('has-error');
 
-      typeInput?.removeAttribute('aria-invalid');
-      valueInput?.removeAttribute('aria-invalid');
+    typeInput?.removeAttribute('aria-invalid');
+    valueInput?.removeAttribute('aria-invalid');
 
-      if (typeError) {
+    if (typeError)
+    {
         typeError.textContent = '';
-      }
+    }
 
-      if (contentError) {
+    if (contentError)
+    {
         contentError.textContent = '';
-      }
+    }
 
-      const type =
+    const type =
         String(typeInput?.value || '').trim();
 
-      const value =
+    const value =
         String(valueInput?.value || '').trim();
 
-      const notes =
+    const notes =
         String(notesInput?.value || '').trim();
 
-      const place = readPlaceInputValue(
+    const place = readPlaceInputValue(
         `#${idPrefix}Place`,
         root
-      );
+    );
 
-      const date = collectGenealogyDateField(
+    const date = collectGenealogyDateField(
         `${idPrefix}Date`
-      );
+    );
 
-      if (!type) {
+    if (!type)
+    {
         typeField?.classList.add('has-error');
 
         typeInput?.setAttribute(
-          'aria-invalid',
-          'true'
+            'aria-invalid',
+            'true'
         );
 
-        if (typeError) {
-          typeError.textContent =
-            'Enter a short name for this fact.';
+        if (typeError)
+        {
+            typeError.textContent =
+                'Enter a short name for this fact.';
         }
 
         typeInput?.focus({
-          preventScroll: true
+            preventScroll: true
         });
 
         return {
-          invalid: true,
-          message:
+            invalid: true,
+            message:
             'Enter a name for the custom fact.'
         };
-      }
+    }
 
-      if (!date) {
+    if (!date)
+    {
         root
-          ?.querySelector(
-            `[data-genealogy-date-field="${CSS.escape(
-              `${idPrefix}Date`
-            )}"] [data-genealogy-date-input]`
-          )
-          ?.focus({
-            preventScroll: true
-          });
+            ?.querySelector(
+                `[data-genealogy-date-field="${CSS.escape(
+                    `${idPrefix}Date`
+                )}"] [data-genealogy-date-input]`
+            )
+            ?.focus({
+                preventScroll: true
+            });
 
         return {
-          invalid: true,
-          message:
+            invalid: true,
+            message:
             'Check the custom fact date before saving.'
         };
-      }
+    }
 
-      const hasContent = Boolean(
+    const hasContent = Boolean(
         value
           || notes
           || place.text
           || place.selectedPlaceId
           || hasGenealogyDateValue(
-            date,
-            'Exact date'
+              date,
+              'Exact date'
           )
-      );
+    );
 
-      if (!hasContent) {
+    if (!hasContent)
+    {
         contentField?.classList.add('has-error');
 
         valueInput?.setAttribute(
-          'aria-invalid',
-          'true'
+            'aria-invalid',
+            'true'
         );
 
-        if (contentError) {
-          contentError.textContent =
-            'Add a value, date, place, or note.';
+        if (contentError)
+        {
+            contentError.textContent =
+                'Add a value, date, place, or note.';
         }
 
         valueInput?.focus({
-          preventScroll: true
+            preventScroll: true
         });
 
         return {
-          invalid: true,
-          message:
+            invalid: true,
+            message:
             'Add some information to the custom fact.'
         };
-      }
+    }
 
-      return {
+    return {
         invalid: false,
 
         value: {
-          type,
-          value,
-          date,
-          place,
-          notes
+            type,
+            value,
+            date,
+            place,
+            notes
         }
-      };
-    }
+    };
+}
 
-    function collectAddPersonAdditionalFacts(personId = '') {
-      const section = modalBackdrop?.querySelector('[data-add-person-facts]');
-      const facts = { activeFactIds: collectAddPersonActiveFactIds() };
-      if (!section) return facts;
-      const hasFact = factId => Boolean(section.querySelector(`[data-add-person-fact-card="${CSS.escape(factId)}"]`));
-      if (hasFact('prefix')) facts.prefix = readAddPersonModalValue('#addPersonFactPrefix');
-      if (hasFact('suffix')) facts.suffix = readAddPersonModalValue('#addPersonFactSuffix');
-      if (hasFact('causeOfDeath')) facts.deathReason = readAddPersonModalValue('#addPersonFactCauseOfDeath');
-      if (hasFact('burialPlace')) {
+function collectAddPersonAdditionalFacts(personId = '')
+{
+    const section = modalBackdrop?.querySelector('[data-add-person-facts]');
+    const facts = { activeFactIds: collectAddPersonActiveFactIds() };
+    if (!section) return facts;
+    const hasFact = factId => Boolean(section.querySelector(`[data-add-person-fact-card="${CSS.escape(factId)}"]`));
+    if (hasFact('prefix')) facts.prefix = readAddPersonModalValue('#addPersonFactPrefix');
+    if (hasFact('suffix')) facts.suffix = readAddPersonModalValue('#addPersonFactSuffix');
+    if (hasFact('causeOfDeath')) facts.deathReason = readAddPersonModalValue('#addPersonFactCauseOfDeath');
+    if (hasFact('burialPlace'))
+    {
         facts.burialPlace = readPlaceInputValue('#addPersonFactBurialPlace', modalBackdrop);
-      }
-      if (hasFact('alternativeNames')) facts.alternativeNames = readAddPersonModalValue('#addPersonFactAlternativeNames');
-      if (hasFact('customFact')) { const result = collectCustomFactFields('addPersonCustomFact',  modalBackdrop);
-        if (result.invalid) {
-          return result;
+    }
+    if (hasFact('alternativeNames')) facts.alternativeNames = readAddPersonModalValue('#addPersonFactAlternativeNames');
+    if (hasFact('customFact'))
+    {
+        const result = collectCustomFactFields('addPersonCustomFact',  modalBackdrop);
+        if (result.invalid)
+        {
+            return result;
         }
         facts.customFact = result.value;
-      }
-      if (hasFact('education')) {
+    }
+    if (hasFact('education'))
+    {
         const fromDate = collectGenealogyDateField('addPersonFactEducationFrom');
         const toDate = collectGenealogyDateField('addPersonFactEducationTo');
         if (!fromDate || !toDate) return { invalid: true, message: 'Check the education dates before saving.' };
         facts.education = {
-          institutionName: readAddPersonModalValue('#addPersonFactEducationInstitutionName'),
-          institutionType: modalBackdrop.querySelector('#addPersonFactEducationInstitutionType')?.value || 'Unknown',
-          value: readAddPersonModalValue('#addPersonFactEducationValue'),
-          place: readPlaceInputValue('#addPersonFactEducationPlace', modalBackdrop),
-          notes: readAddPersonModalValue('#addPersonFactEducationNotes'),
-          fromDate,
-          toDate
+            institutionName: readAddPersonModalValue('#addPersonFactEducationInstitutionName'),
+            institutionType: modalBackdrop.querySelector('#addPersonFactEducationInstitutionType')?.value || 'Unknown',
+            value: readAddPersonModalValue('#addPersonFactEducationValue'),
+            place: readPlaceInputValue('#addPersonFactEducationPlace', modalBackdrop),
+            notes: readAddPersonModalValue('#addPersonFactEducationNotes'),
+            fromDate,
+            toDate
         };
-      }
-      if (hasFact('occupation')) {
+    }
+    if (hasFact('occupation'))
+    {
         const fromDate = collectGenealogyDateField('addPersonFactWorkFrom');
         const toDate = collectGenealogyDateField('addPersonFactWorkTo');
         if (!fromDate || !toDate) return { invalid: true, message: 'Check the occupation dates before saving.' };
         facts.work = {
-          company: readAddPersonModalValue('#addPersonFactWorkCompany'),
-          occupation: readAddPersonModalValue('#addPersonFactWorkOccupation'),
-          notes: readAddPersonModalValue('#addPersonFactWorkNotes'),
-          fromDate,
-          toDate
+            company: readAddPersonModalValue('#addPersonFactWorkCompany'),
+            occupation: readAddPersonModalValue('#addPersonFactWorkOccupation'),
+            notes: readAddPersonModalValue('#addPersonFactWorkNotes'),
+            fromDate,
+            toDate
         };
-      }
-      if (hasFact('religion')) {
+    }
+    if (hasFact('religion'))
+    {
         facts.religion = readReligionField(
-          modalBackdrop,
-          'addPersonFactReligion'
+            modalBackdrop,
+            'addPersonFactReligion'
         );
-      }
-      if (hasFact('baptism')) {
+    }
+    if (hasFact('baptism'))
+    {
         const baptismDate = collectGenealogyDateField('addPersonFactBaptism');
         if (!baptismDate) return { invalid: true, message: 'Check the baptism date before saving.' };
         facts.baptism = {
-          place: readPlaceInputValue('#addPersonFactBaptismPlace', modalBackdrop),
-          date: baptismDate
+            place: readPlaceInputValue('#addPersonFactBaptismPlace', modalBackdrop),
+            date: baptismDate
         };
-      }
-      return facts;
     }
+    return facts;
+}
 
-    function applyPersonCustomFact(
-      person,
-      values
-    ) {
-      ensurePersonCentralStructures(person);
+function applyPersonCustomFact(
+    person,
+    values
+)
+{
+    ensurePersonCentralStructures(person);
 
-      if (!values) {
+    if (!values)
+    {
         removePersonAttribute(
-          person,
-          'FACT'
+            person,
+            'FACT'
         );
 
         return null;
-      }
+    }
 
-      const existing =
+    const existing =
         personAttributeByTag(
-          person,
-          'FACT'
+            person,
+            'FACT'
         );
 
-      const resolvedPlace =
+    const resolvedPlace =
         resolvePlaceAssignment(
-          values.place,
-          existing?.placeId
+            values.place,
+            existing?.placeId
         );
 
-      return upsertPersonAttribute(
+    return upsertPersonAttribute(
         person,
         'FACT',
         {
-          type:
+            type:
             valueOrNull(values.type) || '',
 
-          value:
+            value:
             valueOrNull(values.value) || '',
 
-          date:
+            date:
             genealogyDateOrNull(
-              values.date,
-              'Exact date'
+                values.date,
+                'Exact date'
             ),
 
-          placeId:
+            placeId:
             resolvedPlace.placeId,
 
-          placeText:
+            placeText:
             resolvedPlace.placeText,
 
-          address:
+            address:
             resolvedPlace.address,
 
-          notes:
+            notes:
             valueOrNull(values.notes) || ''
         }
-      );
-    }
+    );
+}
 
-    function applyAddPersonAdditionalFacts(person, facts = {}) {
-      ensurePersonCentralStructures(person);
-      const active = new Set(facts.activeFactIds || []);
+function applyAddPersonAdditionalFacts(person, facts = {})
+{
+    ensurePersonCentralStructures(person);
+    const active = new Set(facts.activeFactIds || []);
 
-      person.names.prefix = active.has('prefix') ? (normalizeNameSegment(facts.prefix)) : '';
-      person.names.suffix = active.has('suffix') ? (normalizeNameSegment(facts.suffix)) : '';
-      rebuildPersonDisplayName(person);
+    person.names.prefix = active.has('prefix') ? (normalizeNameSegment(facts.prefix)) : '';
+    person.names.suffix = active.has('suffix') ? (normalizeNameSegment(facts.suffix)) : '';
+    rebuildPersonDisplayName(person);
 
 
-      if (person.livingStatus === 'Deceased' && active.has('causeOfDeath')) {
+    if (person.livingStatus === 'Deceased' && active.has('causeOfDeath'))
+    {
         person.death.reason = valueOrNull(facts.deathReason) || '';
         person.death.cause = person.death.reason;
-      } else {
+    }
+    else
+    {
         person.death.reason = '';
         person.death.cause = '';
-      }
+    }
 
-      if (person.livingStatus === 'Deceased' && active.has('burialPlace')) {
+    if (person.livingStatus === 'Deceased' && active.has('burialPlace'))
+    {
         const burialPlace = resolvePlaceAssignment(facts.burialPlace, person.death?.burialPlaceId);
         person.death.burialPlaceText = burialPlace.placeText;
         person.death.burialPlaceId = burialPlace.placeId;
         person.death.burialAddress = burialPlace.address;
-      } else {
+    }
+    else
+    {
         person.death.burialPlaceText = '';
         person.death.burialPlaceId = null;
         person.death.burialAddress = '';
-      }
+    }
 
-      person.profile.alternativeNames = active.has('alternativeNames') ? valueOrNull(facts.alternativeNames) : null;
+    person.profile.alternativeNames = active.has('alternativeNames') ? valueOrNull(facts.alternativeNames) : null;
 
-      if (active.has('customFact') && facts.customFact) {applyPersonCustomFact(person, facts.customFact);
-      } else {
+    if (active.has('customFact') && facts.customFact)
+    {
+        applyPersonCustomFact(person, facts.customFact);
+    }
+    else
+    {
         applyPersonCustomFact(person, null);
-      }
+    }
 
-      if (active.has('education') && facts.education) {
+    if (active.has('education') && facts.education)
+    {
         const existingEducation = personAttributeByTag(person, 'EDUC');
         const educationPlace = resolvePlaceAssignment(facts.education.place, existingEducation?.placeId);
         const institutionType = valueOrNull(facts.education.institutionType) || 'Unknown';
 
         upsertPersonAttribute(person, 'EDUC', {
-          value: valueOrNull(facts.education.value) || 'Education',
-          type: institutionType === 'Unknown' ? '' : institutionType,
-          institutionName: valueOrNull(facts.education.institutionName) || '',
-          institutionType,
-          placeText: educationPlace.placeText,
-          placeId: educationPlace.placeId,
-          address: educationPlace.address,
-          notes: valueOrNull(facts.education.notes) || '',
-          fromDate: genealogyDateOrNull(facts.education.fromDate, 'Year only'),
-          toDate: genealogyDateOrNull(facts.education.toDate, 'Year only')
+            value: valueOrNull(facts.education.value) || 'Education',
+            type: institutionType === 'Unknown' ? '' : institutionType,
+            institutionName: valueOrNull(facts.education.institutionName) || '',
+            institutionType,
+            placeText: educationPlace.placeText,
+            placeId: educationPlace.placeId,
+            address: educationPlace.address,
+            notes: valueOrNull(facts.education.notes) || '',
+            fromDate: genealogyDateOrNull(facts.education.fromDate, 'Year only'),
+            toDate: genealogyDateOrNull(facts.education.toDate, 'Year only')
         });
-      } else {
+    }
+    else
+    {
         removePersonAttribute(person, 'EDUC');
-      }
+    }
 
-      if (active.has('occupation') && facts.work) {
+    if (active.has('occupation') && facts.work)
+    {
         upsertPersonAttribute(person, 'OCCU', {
-          value: valueOrNull(facts.work.occupation) || '',
-          company: valueOrNull(facts.work.company) || '',
-          notes: valueOrNull(facts.work.notes) || '',
-          fromDate: genealogyDateOrNull(facts.work.fromDate, 'Exact date'),
-          toDate: genealogyDateOrNull(facts.work.toDate, 'Exact date')
+            value: valueOrNull(facts.work.occupation) || '',
+            company: valueOrNull(facts.work.company) || '',
+            notes: valueOrNull(facts.work.notes) || '',
+            fromDate: genealogyDateOrNull(facts.work.fromDate, 'Exact date'),
+            toDate: genealogyDateOrNull(facts.work.toDate, 'Exact date')
         });
-      } else {
+    }
+    else
+    {
         removePersonAttribute(person, 'OCCU');
-      }
+    }
 
-      if (active.has('religion')) {
+    if (active.has('religion'))
+    {
         upsertPersonAttribute(
-          person,
-          'RELI',
-          {
-            value: normalizeReligionValue(
-              facts.religion
-            )
-          }
+            person,
+            'RELI',
+            {
+                value: normalizeReligionValue(
+                    facts.religion
+                )
+            }
         );
-      } else {
+    }
+    else
+    {
         removePersonAttribute(person, 'RELI');
-      }
+    }
 
-      if (active.has('baptism') && facts.baptism) {
+    if (active.has('baptism') && facts.baptism)
+    {
         const existingBaptism = personEventByTag(person, 'BAPM');
         const baptismPlace = resolvePlaceAssignment(facts.baptism.place, existingBaptism?.placeId);
 
         upsertPersonEvent(person, 'BAPM', {
-          date: genealogyDateOrNull(facts.baptism.date, 'Exact date'),
-          placeText: baptismPlace.placeText,
-          placeId: baptismPlace.placeId,
-          address: baptismPlace.address
+            date: genealogyDateOrNull(facts.baptism.date, 'Exact date'),
+            placeText: baptismPlace.placeText,
+            placeId: baptismPlace.placeId,
+            address: baptismPlace.address
         });
-      } else {
+    }
+    else
+    {
         removePersonEvent(person, 'BAPM');
-      }
     }
-    function updatePersonInitials(person) {
-      const first = person.names.first || '';
-      const last = person.names.last || '';
-      person.names.initials = `${first[0] || ''}${last[0] || ''}`.toUpperCase() || person.names.initials || '??';
-    }
+}
+function updatePersonInitials(person)
+{
+    const first = person.names.first || '';
+    const last = person.names.last || '';
+    person.names.initials = `${first[0] || ''}${last[0] || ''}`.toUpperCase() || person.names.initials || '??';
+}
 
-    function saveEditPersonModalValues(personId) {
-      const person = getPerson(personId);
+function saveEditPersonModalValues(personId)
+{
+    const person = getPerson(personId);
 
-      if (!person) {
+    if (!person)
+    {
         closeModal();
         showToast('Person record was not found.');
         return;
-      }
+    }
 
-      const genderValue = readAddPersonModalValue('#addPersonGender');
-      const livingStatus = readAddPersonModalValue('#addPersonLivingStatus');
-      const birthPlace = resolvePlaceInputSelector('#addPersonBirthPlace');
-      const deathPlace = resolvePlaceInputSelector('#addPersonDeathPlace');
+    const genderValue = readAddPersonModalValue('#addPersonGender');
+    const livingStatus = readAddPersonModalValue('#addPersonLivingStatus');
+    const birthPlace = resolvePlaceInputSelector('#addPersonBirthPlace');
+    const deathPlace = resolvePlaceInputSelector('#addPersonDeathPlace');
 
-      person.names.first = readAddPersonModalValue('#addPersonFirstName');
-      person.names.last = readAddPersonModalValue('#addPersonLastName');
-      person.names.middle = readAddPersonModalValue('#addPersonMiddleName');
-      person.names.maiden = readAddPersonModalValue('#addPersonMaidenName');
+    person.names.first = readAddPersonModalValue('#addPersonFirstName');
+    person.names.last = readAddPersonModalValue('#addPersonLastName');
+    person.names.middle = readAddPersonModalValue('#addPersonMiddleName');
+    person.names.maiden = readAddPersonModalValue('#addPersonMaidenName');
 
-      rebuildPersonDisplayName(person);
+    rebuildPersonDisplayName(person);
 
 
-      person.gender = genderValue === 'Male'
+    person.gender = genderValue === 'Male'
         ? 'male'
         : genderValue === 'Female'
-          ? 'female'
-          : 'unknown';
+            ? 'female'
+            : 'unknown';
 
-      person.livingStatus = normalizeLivingStatus(livingStatus);
+    person.livingStatus = normalizeLivingStatus(livingStatus);
 
-      const additionalFacts = collectAddPersonAdditionalFacts(personId);
-      if (additionalFacts.invalid) {
+    const additionalFacts = collectAddPersonAdditionalFacts(personId);
+    if (additionalFacts.invalid)
+    {
         showToast(additionalFacts.message || 'Check the additional facts before saving.');
         return;
-      }
+    }
 
-      const relationshipValues = collectAddPersonRelationshipBlock();
-      if (relationshipValues.invalid) {
+    const relationshipValues = collectAddPersonRelationshipBlock();
+    if (relationshipValues.invalid)
+    {
         showToast(relationshipValues.message || 'Check the relationship details before saving.');
         return;
-      }
+    }
 
-      const birthDate = collectGenealogyDateField('addPersonBirth');
-      if (!birthDate) {
+    const birthDate = collectGenealogyDateField('addPersonBirth');
+    if (!birthDate)
+    {
         showToast('Check the birth date before saving.');
         return;
-      }
-      person.birth = {
+    }
+    person.birth = {
         ...birthDate,
         placeId: birthPlace.placeId,
         placeText: birthPlace.placeText,
         address: birthPlace.address
-      };
+    };
 
-      if (person.livingStatus === 'Deceased') {
+    if (person.livingStatus === 'Deceased')
+    {
         const deathDate = collectGenealogyDateField('addPersonDeath');
-        if (!deathDate) {
-          showToast('Check the death date before saving.');
-          return;
+        if (!deathDate)
+        {
+            showToast('Check the death date before saving.');
+            return;
         }
-      person.death = {
-        ...deathDate,
-        placeId: deathPlace.placeId,
-        placeText: deathPlace.placeText,
-        address: deathPlace.address,
-        reason: person.death?.reason || '',
-        cause: person.death?.cause || person.death?.reason || '',
-        burialPlaceId: cleanDatePlaceId(person.death?.burialPlaceId),
-        burialPlaceText: person.death?.burialPlaceText || ''
-      };
-      } else {
         person.death = {
-          ...emptyGenealogyDate('Exact date'),
-          placeId: null,
-          placeText: '',
-          reason: '',
-          cause: '',
-          burialPlaceId: null,
-          burialPlaceText: ''
+            ...deathDate,
+            placeId: deathPlace.placeId,
+            placeText: deathPlace.placeText,
+            address: deathPlace.address,
+            reason: person.death?.reason || '',
+            cause: person.death?.cause || person.death?.reason || '',
+            burialPlaceId: cleanDatePlaceId(person.death?.burialPlaceId),
+            burialPlaceText: person.death?.burialPlaceText || ''
         };
-      }
-
-      applyAddPersonAdditionalFacts(person, additionalFacts);
-      savePersonRelationshipBlock(personId, relationshipValues);
-      applyAddPersonAttachmentDrafts(
-        personId
-      );
-      syncFamilyReciprocalLinks();
-
-      markPersonUpdated(person);
-      rebuildSampleEventsAndPruneSourceLinks();
-
-      closeModal();
-      if (state.activeModule === 'Family Tree') {
-        renderFamilyTreePreserveScroll?.() || renderFamilyTree();
-      } else {
-        render();
-      }
-      showToast('Person updated.');
+    }
+    else
+    {
+        person.death = {
+            ...emptyGenealogyDate('Exact date'),
+            placeId: null,
+            placeText: '',
+            reason: '',
+            cause: '',
+            burialPlaceId: null,
+            burialPlaceText: ''
+        };
     }
 
-    function openEditPersonModal(personId) {
-      const person = getPerson(personId);
+    applyAddPersonAdditionalFacts(person, additionalFacts);
+    savePersonRelationshipBlock(personId, relationshipValues);
+    applyAddPersonAttachmentDrafts(
+        personId
+    );
+    syncFamilyReciprocalLinks();
 
-      if (!person) {
+    markPersonUpdated(person);
+    rebuildSampleEventsAndPruneSourceLinks();
+
+    closeModal();
+    if (state.activeModule === 'Family Tree')
+    {
+        renderFamilyTreePreserveScroll?.() || renderFamilyTree();
+    }
+    else
+    {
+        render();
+    }
+    showToast('Person updated.');
+}
+
+function openEditPersonModal(personId)
+{
+    const person = getPerson(personId);
+
+    if (!person)
+    {
         showToast('Person record was not found.');
         return;
-      }
-
-      openAddPersonModal('Edit person', person.names.display, {
-        mode: 'edit',
-        personId
-      });
     }
 
-    function bindAddPersonModalControls(personId = '') {
-      bindGenealogyDateFields(modalBackdrop);
-      bindPlaceComboboxes(modalBackdrop);
-      bindNameAffixComboboxes(modalBackdrop);
+    openAddPersonModal('Edit person', person.names.display, {
+        mode: 'edit',
+        personId
+    });
+}
 
-      bindAddPersonAdditionalFacts(personId);
-      bindAddPersonRelationshipBlock();
-      const gender = modalBackdrop.querySelector('#addPersonGender');
-      const statusButton = modalBackdrop.querySelector('#addPersonStatusButton');
-      const statusMenu = modalBackdrop.querySelector('#addPersonStatusMenu');
-      gender?.addEventListener('change', updateAddPersonConditionalFields);
-      statusButton?.addEventListener('click', event => {
+function bindAddPersonModalControls(personId = '')
+{
+    bindGenealogyDateFields(modalBackdrop);
+    bindPlaceComboboxes(modalBackdrop);
+    bindNameAffixComboboxes(modalBackdrop);
+
+    bindAddPersonAdditionalFacts(personId);
+    bindAddPersonRelationshipBlock();
+    const gender = modalBackdrop.querySelector('#addPersonGender');
+    const statusButton = modalBackdrop.querySelector('#addPersonStatusButton');
+    const statusMenu = modalBackdrop.querySelector('#addPersonStatusMenu');
+    gender?.addEventListener('change', updateAddPersonConditionalFields);
+    statusButton?.addEventListener('click', event =>
+    {
         event.stopPropagation();
         const open = statusMenu?.hidden;
         if (statusMenu) statusMenu.hidden = !open;
         statusButton.setAttribute('aria-expanded', open ? 'true' : 'false');
-      });
-      statusMenu?.querySelectorAll('[data-status-value]').forEach(button => button.addEventListener('click', () => {
+    });
+    statusMenu?.querySelectorAll('[data-status-value]').forEach(button => button.addEventListener('click', () =>
+    {
         const status = button.dataset.statusValue;
         modalBackdrop.querySelector('#addPersonLivingStatus').value = status;
         modalBackdrop.querySelector('#addPersonStatusLabel').textContent = status;
@@ -10592,39 +11397,45 @@
         if (dot) dot.className = `add-person-status-dot ${statusDotClass(status)}`;
         statusMenu.hidden = true;
         statusButton.setAttribute('aria-expanded', 'false');
-        statusMenu.querySelectorAll('[data-status-value]').forEach(item => {
-          item.classList.toggle('active', item.dataset.statusValue === status);
-          item.setAttribute('aria-selected', item.dataset.statusValue === status ? 'true' : 'false');
-          const check = item.querySelector('[data-status-check]');
-          if (check) check.innerHTML = item.dataset.statusValue === status ? icon.check : '';
+        statusMenu.querySelectorAll('[data-status-value]').forEach(item =>
+        {
+            item.classList.toggle('active', item.dataset.statusValue === status);
+            item.setAttribute('aria-selected', item.dataset.statusValue === status ? 'true' : 'false');
+            const check = item.querySelector('[data-status-check]');
+            if (check) check.innerHTML = item.dataset.statusValue === status ? icon.check : '';
         });
         const deathModel = modalBackdrop.querySelector('[data-genealogy-date-field="addPersonDeath"] [data-genealogy-date-model]');
-        if (deathModel) {
-          const currentDeath = normalizeGenealogyDateInput(JSON.parse(deathModel.value || '{}'));
-            if (status === 'Deceased' && !currentDeath.date && !currentDeath.dateLabel) {
-              applyGenealogyDateToField('addPersonDeath', emptyGenealogyDate('Exact date'));
+        if (deathModel)
+        {
+            const currentDeath = normalizeGenealogyDateInput(JSON.parse(deathModel.value || '{}'));
+            if (status === 'Deceased' && !currentDeath.date && !currentDeath.dateLabel)
+            {
+                applyGenealogyDateToField('addPersonDeath', emptyGenealogyDate('Exact date'));
             }
 
-            if (status !== 'Deceased') {
-              applyGenealogyDateToField('addPersonDeath', emptyGenealogyDate('Exact date'));
+            if (status !== 'Deceased')
+            {
+                applyGenealogyDateToField('addPersonDeath', emptyGenealogyDate('Exact date'));
             }
         }
         updateAddPersonConditionalFields();
-      }));
-      modalBackdrop.querySelectorAll('[data-possible-match]').forEach(button => button.addEventListener('click', () => showToast(`Possible match selected: ${button.dataset.possibleMatch}. Connect/merge flow will be added later.`)));
-    }
+    }));
+    modalBackdrop.querySelectorAll('[data-possible-match]').forEach(button => button.addEventListener('click', () => showToast(`Possible match selected: ${button.dataset.possibleMatch}. Connect/merge flow will be added later.`)));
+}
 
-    function updateAddPersonConditionalFields() {
-      const gender = modalBackdrop.querySelector('#addPersonGender')?.value || 'Unknown';
-      const status = modalBackdrop.querySelector('#addPersonLivingStatus')?.value || 'Living';
-      const maiden = modalBackdrop.querySelector('#maidenNameField');
-      const death = modalBackdrop.querySelector('#deathFieldsGroup');
-      if (maiden) maiden.hidden = gender !== 'Female';
-      if (death) death.hidden = status !== 'Deceased';
-    }
+function updateAddPersonConditionalFields()
+{
+    const gender = modalBackdrop.querySelector('#addPersonGender')?.value || 'Unknown';
+    const status = modalBackdrop.querySelector('#addPersonLivingStatus')?.value || 'Living';
+    const maiden = modalBackdrop.querySelector('#maidenNameField');
+    const death = modalBackdrop.querySelector('#deathFieldsGroup');
+    if (maiden) maiden.hidden = gender !== 'Female';
+    if (death) death.hidden = status !== 'Deceased';
+}
 
-    function defaultPeopleProfileDetails() {
-      return {
+function defaultPeopleProfileDetails()
+{
+    return {
         prefix: '',
         suffix: '',
         maidenName: '',
@@ -10648,125 +11459,140 @@
         religion: '',
         baptismPlace: '',
         baptismDate: emptyGenealogyDate('Exact date')
-      };
-    }
+    };
+}
 
-    function valueOrNull(value) {
-      const text = String(value ?? '').trim();
-      return text ? text : null;
-    }
+function valueOrNull(value)
+{
+    const text = String(value ?? '').trim();
+    return text ? text : null;
+}
 
-    function genealogyDateOrNull(value, fallbackType = 'Exact date') {
-      if (!value) return null;
-      const date = normalizeGenealogyDateInput(value, fallbackType);
-      return formatGenealogyDateLabel(date) ? date : null;
-    }
+function genealogyDateOrNull(value, fallbackType = 'Exact date')
+{
+    if (!value) return null;
+    const date = normalizeGenealogyDateInput(value, fallbackType);
+    return formatGenealogyDateLabel(date) ? date : null;
+}
 
-    function dateForForm(value, fallbackType = 'Exact date') {
-      return normalizeGenealogyDateInput(value || emptyGenealogyDate(fallbackType), fallbackType);
-    }
+function dateForForm(value, fallbackType = 'Exact date')
+{
+    return normalizeGenealogyDateInput(value || emptyGenealogyDate(fallbackType), fallbackType);
+}
 
-    function ensurePersonCentralStructures(person) {
-      if (!person) return null;
-      person.profile = person.profile && typeof person.profile === 'object' ? person.profile : {};
-      person.attributes = Array.isArray(person.attributes) ? person.attributes : [];
-      person.events = Array.isArray(person.events) ? person.events : [];
-      person.notes = Array.isArray(person.notes) ? person.notes : [];
-      person.citations = Array.isArray(person.citations) ? person.citations : [];
-      person.names = person.names || {};
-      person.birth = person.birth || emptyGenealogyDate('Exact date');
-      person.death = person.death || { ...emptyGenealogyDate('Exact date'), placeId: null, reason: '', cause: '', burialPlaceId: null };
-      if (typeof person.birth.placeText === 'undefined') person.birth.placeText = '';
-      if (typeof person.birth.address === 'undefined') person.birth.address = '';
-      if (typeof person.death.placeText === 'undefined') person.death.placeText = '';
-      if (typeof person.death.address === 'undefined') person.death.address = '';
-      if (typeof person.death.burialPlaceText === 'undefined') person.death.burialPlaceText = '';
-      if (typeof person.death.burialAddress === 'undefined') person.death.burialAddress = '';
-      if (typeof person.death.cause === 'undefined') person.death.cause = person.death.reason || '';
-      if (typeof person.death.reason === 'undefined') person.death.reason = person.death.cause || '';
-      return person;
-    }
+function ensurePersonCentralStructures(person)
+{
+    if (!person) return null;
+    person.profile = person.profile && typeof person.profile === 'object' ? person.profile : {};
+    person.attributes = Array.isArray(person.attributes) ? person.attributes : [];
+    person.events = Array.isArray(person.events) ? person.events : [];
+    person.notes = Array.isArray(person.notes) ? person.notes : [];
+    person.citations = Array.isArray(person.citations) ? person.citations : [];
+    person.names = person.names || {};
+    person.birth = person.birth || emptyGenealogyDate('Exact date');
+    person.death = person.death || { ...emptyGenealogyDate('Exact date'), placeId: null, reason: '', cause: '', burialPlaceId: null };
+    if (typeof person.birth.placeText === 'undefined') person.birth.placeText = '';
+    if (typeof person.birth.address === 'undefined') person.birth.address = '';
+    if (typeof person.death.placeText === 'undefined') person.death.placeText = '';
+    if (typeof person.death.address === 'undefined') person.death.address = '';
+    if (typeof person.death.burialPlaceText === 'undefined') person.death.burialPlaceText = '';
+    if (typeof person.death.burialAddress === 'undefined') person.death.burialAddress = '';
+    if (typeof person.death.cause === 'undefined') person.death.cause = person.death.reason || '';
+    if (typeof person.death.reason === 'undefined') person.death.reason = person.death.cause || '';
+    return person;
+}
 
-    function personAttributeByTag(person, tag) {
-      ensurePersonCentralStructures(person);
-      return person?.attributes?.find(attribute => attribute.tag === tag) || null;
-    }
+function personAttributeByTag(person, tag)
+{
+    ensurePersonCentralStructures(person);
+    return person?.attributes?.find(attribute => attribute.tag === tag) || null;
+}
 
-    function upsertPersonAttribute(person, tag, values = {}) {
-      ensurePersonCentralStructures(person);
-      let attribute = person.attributes.find(item => item.tag === tag);
-      if (!attribute) {
+function upsertPersonAttribute(person, tag, values = {})
+{
+    ensurePersonCentralStructures(person);
+    let attribute = person.attributes.find(item => item.tag === tag);
+    if (!attribute)
+    {
         attribute = {
-          id: `${tag.toLowerCase()}-${person.id}`,
-          tag,
-          value: '',
-          type: '',
-          institutionName: '',
-          institutionType: '',
-          date: null,
-          fromDate: null,
-          toDate: null,
-          placeId: null,
-          placeText: '',
-          notes: '',
-          citations: [],
-          mediaIds: []
+            id: `${tag.toLowerCase()}-${person.id}`,
+            tag,
+            value: '',
+            type: '',
+            institutionName: '',
+            institutionType: '',
+            date: null,
+            fromDate: null,
+            toDate: null,
+            placeId: null,
+            placeText: '',
+            notes: '',
+            citations: [],
+            mediaIds: []
         };
         person.attributes.push(attribute);
-      }
-      Object.assign(attribute, values);
-      return attribute;
     }
+    Object.assign(attribute, values);
+    return attribute;
+}
 
-    function removePersonAttribute(person, tag) {
-      ensurePersonCentralStructures(person);
-      person.attributes = person.attributes.filter(attribute => attribute.tag !== tag);
-    }
+function removePersonAttribute(person, tag)
+{
+    ensurePersonCentralStructures(person);
+    person.attributes = person.attributes.filter(attribute => attribute.tag !== tag);
+}
 
-    function personEventByTag(person, tag) {
-      ensurePersonCentralStructures(person);
-      return person?.events?.find(event => event.tag === tag || event.gedcomTag === tag) || null;
-    }
+function personEventByTag(person, tag)
+{
+    ensurePersonCentralStructures(person);
+    return person?.events?.find(event => event.tag === tag || event.gedcomTag === tag) || null;
+}
 
-    function upsertPersonEvent(person, tag, values = {}) {
-      ensurePersonCentralStructures(person);
-      let event = person.events.find(item => item.tag === tag || item.gedcomTag === tag);
-      if (!event) {
+function upsertPersonEvent(person, tag, values = {})
+{
+    ensurePersonCentralStructures(person);
+    let event = person.events.find(item => item.tag === tag || item.gedcomTag === tag);
+    if (!event)
+    {
         event = {
-          id: `${tag.toLowerCase()}-${person.id}`,
-          tag,
-          gedcomTag: tag,
-          type: tag,
-          date: null,
-          placeId: null,
-          placeText: '',
-          notes: '',
-          citations: [],
-          mediaIds: []
+            id: `${tag.toLowerCase()}-${person.id}`,
+            tag,
+            gedcomTag: tag,
+            type: tag,
+            date: null,
+            placeId: null,
+            placeText: '',
+            notes: '',
+            citations: [],
+            mediaIds: []
         };
         person.events.push(event);
-      }
-      Object.assign(event, values, { tag, gedcomTag: tag });
-      return event;
     }
+    Object.assign(event, values, { tag, gedcomTag: tag });
+    return event;
+}
 
-    function removePersonEvent(person, tag) {
-      ensurePersonCentralStructures(person);
-      person.events = person.events.filter(event => event.tag !== tag && event.gedcomTag !== tag);
-    }
+function removePersonEvent(person, tag)
+{
+    ensurePersonCentralStructures(person);
+    person.events = person.events.filter(event => event.tag !== tag && event.gedcomTag !== tag);
+}
 
-    function hasTextValue(value) {
-      return value !== null && value !== undefined && String(value).trim() !== '';
-    }
+function hasTextValue(value)
+{
+    return value !== null && value !== undefined && String(value).trim() !== '';
+}
 
-    function hasGenealogyDateValue(value, fallbackType = 'Exact date') {
-      return Boolean(value && formatGenealogyDateLabel(normalizeGenealogyDateInput(value, fallbackType)));
-    }
+function hasGenealogyDateValue(value, fallbackType = 'Exact date')
+{
+    return Boolean(value && formatGenealogyDateLabel(normalizeGenealogyDateInput(value, fallbackType)));
+}
 
-    function personHasEducationFact(person) {
-      const fact = personAttributeByTag(person, 'EDUC');
+function personHasEducationFact(person)
+{
+    const fact = personAttributeByTag(person, 'EDUC');
 
-      return Boolean(fact && (
+    return Boolean(fact && (
         hasTextValue(educationInstitutionLabel(fact))
         || hasTextValue(educationInstitutionTypeLabel(fact))
         || hasTextValue(educationValueLabel(fact))
@@ -10775,712 +11601,818 @@
         || hasTextValue(fact.notes)
         || hasGenealogyDateValue(fact.fromDate, 'Year only')
         || hasGenealogyDateValue(fact.toDate, 'Year only')
-      ));
-    }
+    ));
+}
 
-    function personHasOccupationFact(person) {
-      const fact = personAttributeByTag(person, 'OCCU');
-      return Boolean(fact && (hasTextValue(fact.company) || hasTextValue(fact.value) || hasTextValue(fact.notes) || hasGenealogyDateValue(fact.fromDate, 'Exact date') || hasGenealogyDateValue(fact.toDate, 'Exact date')));
-    }
+function personHasOccupationFact(person)
+{
+    const fact = personAttributeByTag(person, 'OCCU');
+    return Boolean(fact && (hasTextValue(fact.company) || hasTextValue(fact.value) || hasTextValue(fact.notes) || hasGenealogyDateValue(fact.fromDate, 'Exact date') || hasGenealogyDateValue(fact.toDate, 'Exact date')));
+}
 
-    function personHasReligionFact(person) {
-      const fact = personAttributeByTag(person, 'RELI');
-      return Boolean(fact && hasTextValue(fact.value));
-    }
+function personHasReligionFact(person)
+{
+    const fact = personAttributeByTag(person, 'RELI');
+    return Boolean(fact && hasTextValue(fact.value));
+}
 
-    function personHasBaptismFact(person) {
-      const event = personEventByTag(person, 'BAPM');
-      return Boolean(event && (hasTextValue(event.placeText) || hasTextValue(event.placeId) || hasGenealogyDateValue(event.date, 'Exact date')));
-    }
+function personHasBaptismFact(person)
+{
+    const event = personEventByTag(person, 'BAPM');
+    return Boolean(event && (hasTextValue(event.placeText) || hasTextValue(event.placeId) || hasGenealogyDateValue(event.date, 'Exact date')));
+}
 
-    function peopleProfileDetailsFor(person) {
-      const centralPerson = ensurePersonCentralStructures(getPerson(person?.id) || person);
-      if (!centralPerson) return defaultPeopleProfileDetails();
+function peopleProfileDetailsFor(person)
+{
+    const centralPerson = ensurePersonCentralStructures(getPerson(person?.id) || person);
+    if (!centralPerson) return defaultPeopleProfileDetails();
 
-      return new Proxy({}, {
-        get(_target, prop) {
-          const education = personAttributeByTag(centralPerson, 'EDUC');
-          const work = personAttributeByTag(centralPerson, 'OCCU');
-          const religion = personAttributeByTag(centralPerson, 'RELI');
-          const baptism = personEventByTag(centralPerson, 'BAPM');
-          if (prop === 'prefix') return centralPerson.names.prefix || '';
-          if (prop === 'suffix') return centralPerson.names.suffix || '';
-          if (prop === 'maidenName') return centralPerson.names.maiden || '';
-          if (prop === 'alternativeNames') return centralPerson.profile.alternativeNames || '';
-          if (prop === 'birthDateType') return centralPerson.birth?.dateType || 'Exact date';
-          if (prop === 'deathDateType') return centralPerson.death?.dateType || 'Exact date';
-          if (prop === 'deathReason') return centralPerson.death?.cause || centralPerson.death?.reason || '';
-          if (prop === 'burialPlace') return editPlaceValue(centralPerson.death?.burialPlaceId, centralPerson.death?.burialPlaceText);
-          if (prop === 'educationInstitutionName') return educationInstitutionLabel(education);
-          if (prop === 'educationInstitutionType') return educationInstitutionTypeLabel(education) || 'Unknown';
-          if (prop === 'educationValue') return educationValueLabel(education);
-          if (prop === 'educationPlace') return editPlaceValue(education?.placeId, education?.placeText);
-          if (prop === 'educationNotes') return education?.notes || '';
-          if (prop === 'educationFromDate') return dateForForm(education?.fromDate, 'Year only');
-          if (prop === 'educationToDate') return dateForForm(education?.toDate, 'Year only');
-          if (prop === 'workCompany') return work?.company || work?.agency || '';
-          if (prop === 'workOccupation') return work?.value || '';
-          if (prop === 'workNotes') return work?.notes || '';
-          if (prop === 'workFromDate') return dateForForm(work?.fromDate, 'Exact date');
-          if (prop === 'workToDate') return dateForForm(work?.toDate, 'Exact date');
-          if (prop === 'religion') return religion?.value || '';
-          if (prop === 'baptismPlace') return editPlaceValue(baptism?.placeId, baptism?.placeText);
-          if (prop === 'baptismDate') return dateForForm(baptism?.date, 'Exact date');
-          return undefined;
+    return new Proxy({}, {
+        get(_target, prop)
+        {
+            const education = personAttributeByTag(centralPerson, 'EDUC');
+            const work = personAttributeByTag(centralPerson, 'OCCU');
+            const religion = personAttributeByTag(centralPerson, 'RELI');
+            const baptism = personEventByTag(centralPerson, 'BAPM');
+            if (prop === 'prefix') return centralPerson.names.prefix || '';
+            if (prop === 'suffix') return centralPerson.names.suffix || '';
+            if (prop === 'maidenName') return centralPerson.names.maiden || '';
+            if (prop === 'alternativeNames') return centralPerson.profile.alternativeNames || '';
+            if (prop === 'birthDateType') return centralPerson.birth?.dateType || 'Exact date';
+            if (prop === 'deathDateType') return centralPerson.death?.dateType || 'Exact date';
+            if (prop === 'deathReason') return centralPerson.death?.cause || centralPerson.death?.reason || '';
+            if (prop === 'burialPlace') return editPlaceValue(centralPerson.death?.burialPlaceId, centralPerson.death?.burialPlaceText);
+            if (prop === 'educationInstitutionName') return educationInstitutionLabel(education);
+            if (prop === 'educationInstitutionType') return educationInstitutionTypeLabel(education) || 'Unknown';
+            if (prop === 'educationValue') return educationValueLabel(education);
+            if (prop === 'educationPlace') return editPlaceValue(education?.placeId, education?.placeText);
+            if (prop === 'educationNotes') return education?.notes || '';
+            if (prop === 'educationFromDate') return dateForForm(education?.fromDate, 'Year only');
+            if (prop === 'educationToDate') return dateForForm(education?.toDate, 'Year only');
+            if (prop === 'workCompany') return work?.company || work?.agency || '';
+            if (prop === 'workOccupation') return work?.value || '';
+            if (prop === 'workNotes') return work?.notes || '';
+            if (prop === 'workFromDate') return dateForForm(work?.fromDate, 'Exact date');
+            if (prop === 'workToDate') return dateForForm(work?.toDate, 'Exact date');
+            if (prop === 'religion') return religion?.value || '';
+            if (prop === 'baptismPlace') return editPlaceValue(baptism?.placeId, baptism?.placeText);
+            if (prop === 'baptismDate') return dateForForm(baptism?.date, 'Exact date');
+            return undefined;
         },
-        set(_target, prop, value) {
-          if (prop === 'prefix') { centralPerson.names.prefix = normalizeNameSegment(value); rebuildPersonDisplayName(centralPerson); return true; }
-          if (prop === 'suffix') { centralPerson.names.suffix = normalizeNameSegment(value); rebuildPersonDisplayName(centralPerson); return true; }
+        set(_target, prop, value)
+        {
+            if (prop === 'prefix')
+            {
+                centralPerson.names.prefix = normalizeNameSegment(value); rebuildPersonDisplayName(centralPerson); return true;
+            }
+            if (prop === 'suffix')
+            {
+                centralPerson.names.suffix = normalizeNameSegment(value); rebuildPersonDisplayName(centralPerson); return true;
+            }
 
-          if (prop === 'maidenName') { centralPerson.names.maiden = valueOrNull(value) || ''; return true; }
-          if (prop === 'alternativeNames') { centralPerson.profile.alternativeNames = valueOrNull(value); return true; }
-          if (prop === 'birthDateType') { centralPerson.birth.dateType = value || centralPerson.birth.dateType || 'Exact date'; return true; }
-          if (prop === 'deathDateType') { centralPerson.death.dateType = value || centralPerson.death.dateType || 'Exact date'; return true; }
-          if (prop === 'deathReason') { centralPerson.death.reason = valueOrNull(value) || ''; centralPerson.death.cause = centralPerson.death.reason; return true; }
-          if (prop === 'burialPlace') {
-            const resolved = resolvePlaceAssignment(value, centralPerson.death?.burialPlaceId);
-            centralPerson.death.burialPlaceText = resolved.placeText;
-            centralPerson.death.burialPlaceId = resolved.placeId;
-            centralPerson.death.burialAddress = resolved.address;
-            return true;
-          }
-          if (prop === 'educationInstitutionName') {
-            upsertPersonAttribute(centralPerson, 'EDUC', {
-              institutionName: valueOrNull(value) || ''
-            });
-            return true;
-          }
+            if (prop === 'maidenName')
+            {
+                centralPerson.names.maiden = valueOrNull(value) || ''; return true;
+            }
+            if (prop === 'alternativeNames')
+            {
+                centralPerson.profile.alternativeNames = valueOrNull(value); return true;
+            }
+            if (prop === 'birthDateType')
+            {
+                centralPerson.birth.dateType = value || centralPerson.birth.dateType || 'Exact date'; return true;
+            }
+            if (prop === 'deathDateType')
+            {
+                centralPerson.death.dateType = value || centralPerson.death.dateType || 'Exact date'; return true;
+            }
+            if (prop === 'deathReason')
+            {
+                centralPerson.death.reason = valueOrNull(value) || ''; centralPerson.death.cause = centralPerson.death.reason; return true;
+            }
+            if (prop === 'burialPlace')
+            {
+                const resolved = resolvePlaceAssignment(value, centralPerson.death?.burialPlaceId);
+                centralPerson.death.burialPlaceText = resolved.placeText;
+                centralPerson.death.burialPlaceId = resolved.placeId;
+                centralPerson.death.burialAddress = resolved.address;
+                return true;
+            }
+            if (prop === 'educationInstitutionName')
+            {
+                upsertPersonAttribute(centralPerson, 'EDUC', {
+                    institutionName: valueOrNull(value) || ''
+                });
+                return true;
+            }
 
-          if (prop === 'educationInstitutionType') {
-            const institutionType = valueOrNull(value) || 'Unknown';
+            if (prop === 'educationInstitutionType')
+            {
+                const institutionType = valueOrNull(value) || 'Unknown';
 
-            upsertPersonAttribute(centralPerson, 'EDUC', {
-              institutionType,
-              type: institutionType === 'Unknown' ? '' : institutionType
-            });
+                upsertPersonAttribute(centralPerson, 'EDUC', {
+                    institutionType,
+                    type: institutionType === 'Unknown' ? '' : institutionType
+                });
 
-            return true;
-          }
+                return true;
+            }
 
-          if (prop === 'educationValue') {
-            upsertPersonAttribute(centralPerson, 'EDUC', {
-              value: valueOrNull(value) || 'Education'
-            });
+            if (prop === 'educationValue')
+            {
+                upsertPersonAttribute(centralPerson, 'EDUC', {
+                    value: valueOrNull(value) || 'Education'
+                });
 
-            return true;
-          }
-          if (prop === 'educationPlace') {
-            const attr = upsertPersonAttribute(centralPerson, 'EDUC');
-            const resolved = resolvePlaceAssignment(value, attr.placeId);
-            attr.placeText = resolved.placeText;
-            attr.placeId = resolved.placeId;
-            attr.address = resolved.address;
-            return true;
-          }
-          if (prop === 'educationNotes') { upsertPersonAttribute(centralPerson, 'EDUC', { notes: valueOrNull(value) || '' }); return true; }
-          if (prop === 'educationFromDate') { upsertPersonAttribute(centralPerson, 'EDUC', { fromDate: genealogyDateOrNull(value, 'Year only') }); return true; }
-          if (prop === 'educationToDate') { upsertPersonAttribute(centralPerson, 'EDUC', { toDate: genealogyDateOrNull(value, 'Year only') }); return true; }
-          if (prop === 'workCompany') { upsertPersonAttribute(centralPerson, 'OCCU', { company: valueOrNull(value) || '' }); return true; }
-          if (prop === 'workOccupation') { upsertPersonAttribute(centralPerson, 'OCCU', { value: valueOrNull(value) || '' }); return true; }
-          if (prop === 'workNotes') { upsertPersonAttribute(centralPerson, 'OCCU', { notes: valueOrNull(value) || '' }); return true; }
-          if (prop === 'workFromDate') { upsertPersonAttribute(centralPerson, 'OCCU', { fromDate: genealogyDateOrNull(value, 'Exact date') }); return true; }
-          if (prop === 'workToDate') { upsertPersonAttribute(centralPerson, 'OCCU', { toDate: genealogyDateOrNull(value, 'Exact date') }); return true; }
-          if (prop === 'religion') {
-            upsertPersonAttribute(
-              centralPerson,
-              'RELI',
-              {
-                value: normalizeReligionValue(value)
-              }
-            );
+                return true;
+            }
+            if (prop === 'educationPlace')
+            {
+                const attr = upsertPersonAttribute(centralPerson, 'EDUC');
+                const resolved = resolvePlaceAssignment(value, attr.placeId);
+                attr.placeText = resolved.placeText;
+                attr.placeId = resolved.placeId;
+                attr.address = resolved.address;
+                return true;
+            }
+            if (prop === 'educationNotes')
+            {
+                upsertPersonAttribute(centralPerson, 'EDUC', { notes: valueOrNull(value) || '' }); return true;
+            }
+            if (prop === 'educationFromDate')
+            {
+                upsertPersonAttribute(centralPerson, 'EDUC', { fromDate: genealogyDateOrNull(value, 'Year only') }); return true;
+            }
+            if (prop === 'educationToDate')
+            {
+                upsertPersonAttribute(centralPerson, 'EDUC', { toDate: genealogyDateOrNull(value, 'Year only') }); return true;
+            }
+            if (prop === 'workCompany')
+            {
+                upsertPersonAttribute(centralPerson, 'OCCU', { company: valueOrNull(value) || '' }); return true;
+            }
+            if (prop === 'workOccupation')
+            {
+                upsertPersonAttribute(centralPerson, 'OCCU', { value: valueOrNull(value) || '' }); return true;
+            }
+            if (prop === 'workNotes')
+            {
+                upsertPersonAttribute(centralPerson, 'OCCU', { notes: valueOrNull(value) || '' }); return true;
+            }
+            if (prop === 'workFromDate')
+            {
+                upsertPersonAttribute(centralPerson, 'OCCU', { fromDate: genealogyDateOrNull(value, 'Exact date') }); return true;
+            }
+            if (prop === 'workToDate')
+            {
+                upsertPersonAttribute(centralPerson, 'OCCU', { toDate: genealogyDateOrNull(value, 'Exact date') }); return true;
+            }
+            if (prop === 'religion')
+            {
+                upsertPersonAttribute(
+                    centralPerson,
+                    'RELI',
+                    {
+                        value: normalizeReligionValue(value)
+                    }
+                );
 
+                return true;
+            }
+            if (prop === 'baptismPlace')
+            {
+                const event = upsertPersonEvent(centralPerson, 'BAPM');
+                const resolved = resolvePlaceAssignment(value, event.placeId);
+                event.placeText = resolved.placeText;
+                event.placeId = resolved.placeId;
+                event.address = resolved.address;
+                return true;
+            }
+            if (prop === 'baptismDate')
+            {
+                upsertPersonEvent(centralPerson, 'BAPM', { date: genealogyDateOrNull(value, 'Exact date') }); return true;
+            }
             return true;
-          }
-          if (prop === 'baptismPlace') {
-            const event = upsertPersonEvent(centralPerson, 'BAPM');
-            const resolved = resolvePlaceAssignment(value, event.placeId);
-            event.placeText = resolved.placeText;
-            event.placeId = resolved.placeId;
-            event.address = resolved.address;
-            return true;
-          }
-          if (prop === 'baptismDate') { upsertPersonEvent(centralPerson, 'BAPM', { date: genealogyDateOrNull(value, 'Exact date') }); return true; }
-          return true;
         }
-      });
-    }
+    });
+}
 
-    function profileDetailDateLabel(input, fallback = '-') {
-      return formatGenealogyDateLabel(input) || fallback;
-    }
+function profileDetailDateLabel(input, fallback = '-')
+{
+    return formatGenealogyDateLabel(input) || fallback;
+}
 
-    const SHARED_FILTER_UNKNOWN_VALUE =
-      '__unknown__';
+const SHARED_FILTER_UNKNOWN_VALUE =
+    '__unknown__';
 
-    function normalizeSharedFilterSearch(
-      value
-    ) {
-      return String(value || '')
+function normalizeSharedFilterSearch(
+    value
+)
+{
+    return String(value || '')
         .normalize('NFKD')
         .replace(
-          /\p{Diacritic}/gu,
-          ''
+            /\p{Diacritic}/gu,
+            ''
         )
         .trim()
         .toLocaleLowerCase(
-          state.language === 'ru'
-            ? 'ru'
-            : 'en'
+            state.language === 'ru'
+                ? 'ru'
+                : 'en'
         );
-    }
+}
 
-    function normalizeSharedFilterYearRange(
-      value
-    ) {
-      const source =
+function normalizeSharedFilterYearRange(
+    value
+)
+{
+    const source =
         value
         && typeof value === 'object'
-          ? value
-          : {};
+            ? value
+            : {};
 
-      const requestedMode =
+    const requestedMode =
         String(
-          source.mode || ''
+            source.mode || ''
         ).toLowerCase();
 
-      const mode =
+    const mode =
         [
-          'before',
-          'after',
-          'between'
+            'before',
+            'after',
+            'between'
         ].includes(requestedMode)
-          ? requestedMode
-          : '';
+            ? requestedMode
+            : '';
 
-      return {
+    return {
         mode,
 
         from:
           String(
-            source.from ?? ''
+              source.from ?? ''
           ).trim(),
 
         to:
           String(
-            source.to ?? ''
+              source.to ?? ''
           ).trim()
-      };
+    };
+}
+
+function sharedFilterYearNumber(
+    value
+)
+{
+    const text =
+        String(value ?? '')
+            .trim();
+
+    if (
+        !/^\d{1,4}$/.test(text)
+    )
+    {
+        return null;
     }
 
-    function sharedFilterYearNumber(
-      value
-    ) {
-      const text =
-        String(value ?? '')
-          .trim();
-
-      if (
-        !/^\d{1,4}$/.test(text)
-      ) {
-        return null;
-      }
-
-      const year =
+    const year =
         Number(text);
 
-      return (
+    return (
         Number.isInteger(year)
         && year >= 1
         && year <= 9999
-      )
+    )
         ? year
         : null;
+}
+
+function sharedFilterYearRangeError(
+    value
+)
+{
+    const range =
+        normalizeSharedFilterYearRange(
+            value
+        );
+
+    if (!range.mode)
+    {
+        return '';
     }
 
-    function sharedFilterYearRangeError(
-      value
-    ) {
-      const range =
-        normalizeSharedFilterYearRange(
-          value
-        );
-
-      if (!range.mode) {
-        return '';
-      }
-
-      const fromYear =
+    const fromYear =
         sharedFilterYearNumber(
-          range.from
+            range.from
         );
 
-      if (fromYear == null) {
+    if (fromYear == null)
+    {
         return translateText(
-          range.mode === 'between'
-            ? 'Enter a valid starting year.'
-            : 'Enter a valid year.'
+            range.mode === 'between'
+                ? 'Enter a valid starting year.'
+                : 'Enter a valid year.'
         );
-      }
+    }
 
-      if (
+    if (
         range.mode !== 'between'
-      ) {
+    )
+    {
         return '';
-      }
+    }
 
-      const toYear =
+    const toYear =
         sharedFilterYearNumber(
-          range.to
+            range.to
         );
 
-      if (toYear == null) {
+    if (toYear == null)
+    {
         return translateText(
-          'Enter a valid ending year.'
+            'Enter a valid ending year.'
         );
-      }
-
-      if (fromYear > toYear) {
-        return translateText(
-          'The starting year must not be later than the ending year.'
-        );
-      }
-
-      return '';
     }
 
-    function sharedFilterYearRangeLabel(
-      value
-    ) {
-      const range =
+    if (fromYear > toYear)
+    {
+        return translateText(
+            'The starting year must not be later than the ending year.'
+        );
+    }
+
+    return '';
+}
+
+function sharedFilterYearRangeLabel(
+    value
+)
+{
+    const range =
         normalizeSharedFilterYearRange(
-          value
+            value
         );
 
-      if (
+    if (
         range.mode === 'before'
-      ) {
+    )
+    {
         return `${
-          translateText('Before')
+            translateText('Before')
         } ${range.from}`;
-      }
-
-      if (
-        range.mode === 'after'
-      ) {
-        return `${
-          translateText('After')
-        } ${range.from}`;
-      }
-
-      if (
-        range.mode === 'between'
-      ) {
-        return `${
-          range.from
-        }–${
-          range.to
-        }`;
-      }
-
-      return '';
     }
 
-    function sharedFilterYearMatches(
-      yearValue,
-      rangeValue
-    ) {
-      const range =
+    if (
+        range.mode === 'after'
+    )
+    {
+        return `${
+            translateText('After')
+        } ${range.from}`;
+    }
+
+    if (
+        range.mode === 'between'
+    )
+    {
+        return `${
+            range.from
+        }–${
+            range.to
+        }`;
+    }
+
+    return '';
+}
+
+function sharedFilterYearMatches(
+    yearValue,
+    rangeValue
+)
+{
+    const range =
         normalizeSharedFilterYearRange(
-          rangeValue
+            rangeValue
         );
 
-      if (
+    if (
         !range.mode
         || sharedFilterYearRangeError(
-          range
+            range
         )
-      ) {
+    )
+    {
         return true;
-      }
-
-      const year =
-        sharedFilterYearNumber(
-          yearValue
-        );
-
-      if (year == null) {
-        return false;
-      }
-
-      const fromYear =
-        sharedFilterYearNumber(
-          range.from
-        );
-
-      if (
-        range.mode === 'before'
-      ) {
-        return year < fromYear;
-      }
-
-      if (
-        range.mode === 'after'
-      ) {
-        return year > fromYear;
-      }
-
-      const toYear =
-        sharedFilterYearNumber(
-          range.to
-        );
-
-      return (
-        year >= fromYear
-        && year <= toYear
-      );
     }
 
-    function cloneSharedFilterValues(
-      schema,
-      source = {}
-    ) {
-      const result = {};
+    const year =
+        sharedFilterYearNumber(
+            yearValue
+        );
 
-      schema.forEach(definition => {
+    if (year == null)
+    {
+        return false;
+    }
+
+    const fromYear =
+        sharedFilterYearNumber(
+            range.from
+        );
+
+    if (
+        range.mode === 'before'
+    )
+    {
+        return year < fromYear;
+    }
+
+    if (
+        range.mode === 'after'
+    )
+    {
+        return year > fromYear;
+    }
+
+    const toYear =
+        sharedFilterYearNumber(
+            range.to
+        );
+
+    return (
+        year >= fromYear
+        && year <= toYear
+    );
+}
+
+function cloneSharedFilterValues(
+    schema,
+    source = {}
+)
+{
+    const result = {};
+
+    schema.forEach(definition =>
+    {
         const fallback =
-          definition.control
+            definition.control
             === 'year-range'
-            ? definition.defaultValue
+                ? definition.defaultValue
               || {}
-            : definition.multiple
-              ? []
-              : definition.defaultValue
+                : definition.multiple
+                    ? []
+                    : definition.defaultValue
                 ?? '';
 
         const sourceValue =
-          Object.prototype
-            .hasOwnProperty.call(
-              source || {},
-              definition.key
-            )
-            ? source[
-                definition.key
-              ]
-            : fallback;
+            Object.prototype
+                .hasOwnProperty.call(
+                    source || {},
+                    definition.key
+                )
+                ? source[
+                    definition.key
+                ]
+                : fallback;
 
         if (
-          definition.control
+            definition.control
             === 'year-range'
-        ) {
-          result[
-            definition.key
-          ] =
-            normalizeSharedFilterYearRange(
-              sourceValue
-            );
+        )
+        {
+            result[
+                definition.key
+            ] =
+                normalizeSharedFilterYearRange(
+                    sourceValue
+                );
 
-          return;
+            return;
         }
 
         result[
-          definition.key
+            definition.key
         ] =
-          definition.multiple
-            ? [
-                ...new Set(
-                  (
-                    Array.isArray(sourceValue)
-                      ? sourceValue
-                      : sourceValue
-                        ? [sourceValue]
-                        : []
-                  )
-                    .map(value =>
-                      String(value)
+            definition.multiple
+                ? [
+                    ...new Set(
+                        (
+                            Array.isArray(sourceValue)
+                                ? sourceValue
+                                : sourceValue
+                                    ? [sourceValue]
+                                    : []
+                        )
+                            .map(value =>
+                                String(value)
+                            )
+                            .filter(Boolean)
                     )
-                    .filter(Boolean)
-                )
-              ]
-            : sourceValue
+                ]
+                : sourceValue
               ?? fallback;
-      });
+    });
 
-      return result;
-    }
+    return result;
+}
 
-    function sharedFilterOptions(
-      definition
-    ) {
-      const source =
+function sharedFilterOptions(
+    definition
+)
+{
+    const source =
         typeof definition.getOptions
           === 'function'
-          ? definition.getOptions()
-          : definition.options
+            ? definition.getOptions()
+            : definition.options
             || [];
 
-      return source.map(option => {
+    return source.map(option =>
+    {
         if (
-          typeof option === 'string'
-        ) {
-          return {
-            value:
+            typeof option === 'string'
+        )
+        {
+            return {
+                value:
               option,
 
-            label:
+                label:
               option
-          };
+            };
         }
 
         return {
-          value:
+            value:
             String(
-              option?.value
+                option?.value
               ?? ''
             ),
 
-          label:
+            label:
             String(
-              option?.label
+                option?.label
               ?? option?.value
               ?? ''
             ),
 
-          keywords:
+            keywords:
             Array.isArray(
-              option?.keywords
+                option?.keywords
             )
-              ? option.keywords
-              : [],
+                ? option.keywords
+                : [],
 
-          count:
+            count:
             Number.isFinite(
-              Number(option?.count)
+                Number(option?.count)
             )
-              ? Number(option.count)
-              : null
+                ? Number(option.count)
+                : null
         };
-      });
-    }
+    });
+}
 
-    function sharedFilterDefinitionByKey(
-      schema,
-      key
-    ) {
-      return schema.find(
+function sharedFilterDefinitionByKey(
+    schema,
+    key
+)
+{
+    return schema.find(
         definition =>
-          definition.key === key
-      ) || null;
+            definition.key === key
+    ) || null;
+}
+
+function sharedFilterValueIsActive(
+    definition,
+    value
+)
+{
+    if (!definition)
+    {
+        return false;
     }
 
-    function sharedFilterValueIsActive(
-      definition,
-      value
-    ) {
-      if (!definition) {
-        return false;
-      }
-
-      if (
+    if (
         definition.control
           === 'year-range'
-      ) {
+    )
+    {
         const range =
-          normalizeSharedFilterYearRange(
-            value
-          );
+            normalizeSharedFilterYearRange(
+                value
+            );
 
         return Boolean(
-          range.mode
+            range.mode
           && !sharedFilterYearRangeError(
-            range
+              range
           )
         );
-      }
+    }
 
-      if (definition.multiple) {
+    if (definition.multiple)
+    {
         return (
-          Array.isArray(value)
+            Array.isArray(value)
           && value.length > 0
         );
-      }
+    }
 
-      if (
+    if (
         definition.control === 'boolean'
-      ) {
+    )
+    {
         return Boolean(value);
-      }
+    }
 
-      return (
+    return (
         String(value ?? '')
         !== String(
-          definition.defaultValue
+            definition.defaultValue
           ?? ''
         )
-      );
-    }
+    );
+}
 
-    function sharedFilterOptionLabel(
-      definition,
-      value
-    ) {
-      const option =
+function sharedFilterOptionLabel(
+    definition,
+    value
+)
+{
+    const option =
         sharedFilterOptions(
-          definition
+            definition
         ).find(item =>
-          item.value === String(value)
+            item.value === String(value)
         );
 
-      return translateText(
+    return translateText(
         option?.label
         || String(value || '')
-      );
-    }
+    );
+}
 
-    function sharedFilterDisplayValue(
-      definition,
-      value
-    ) {
-      if (
+function sharedFilterDisplayValue(
+    definition,
+    value
+)
+{
+    if (
         definition?.control
           === 'year-range'
-      ) {
+    )
+    {
         return sharedFilterYearRangeLabel(
-          value
+            value
         );
-      }
-      if (
+    }
+    if (
         definition?.multiple
-      ) {
+    )
+    {
         const values =
-          Array.isArray(value)
-            ? value
-            : [];
+            Array.isArray(value)
+                ? value
+                : [];
 
-        if (!values.length) {
-          return '';
+        if (!values.length)
+        {
+            return '';
         }
 
         const labels =
-          values.map(item =>
-            sharedFilterOptionLabel(
-              definition,
-              item
-            )
-          );
+            values.map(item =>
+                sharedFilterOptionLabel(
+                    definition,
+                    item
+                )
+            );
 
-        if (labels.length === 1) {
-          return labels[0];
+        if (labels.length === 1)
+        {
+            return labels[0];
         }
 
         return `${
-          labels[0]
+            labels[0]
         } +${
-          labels.length - 1
+            labels.length - 1
         }`;
-      }
+    }
 
-      return sharedFilterOptionLabel(
+    return sharedFilterOptionLabel(
         definition,
         value
-      );
-    }
+    );
+}
 
-    function sharedFilterOptionStatus(
-      count
-    ) {
-      if (
+function sharedFilterOptionStatus(
+    count
+)
+{
+    if (
         state.language === 'ru'
-      ) {
+    )
+    {
         const rule =
-          new Intl.PluralRules('ru')
-            .select(count);
+            new Intl.PluralRules('ru')
+                .select(count);
 
         const word =
-          rule === 'one'
-            ? 'вариант'
-            : rule === 'few'
-              ? 'варианта'
-              : 'вариантов';
+            rule === 'one'
+                ? 'вариант'
+                : rule === 'few'
+                    ? 'варианта'
+                    : 'вариантов';
 
         return `${count} ${word}`;
-      }
-
-      return `${count} ${
-        count === 1
-          ? 'option'
-          : 'options'
-      } available`;
     }
 
-    function sharedFilterRemoveValueLabel(
-      label
-    ) {
-      return state.language === 'ru'
+    return `${count} ${
+        count === 1
+            ? 'option'
+            : 'options'
+    } available`;
+}
+
+function sharedFilterRemoveValueLabel(
+    label
+)
+{
+    return state.language === 'ru'
         ? `Удалить: ${label}`
         : `Remove ${label}`;
-    }
+}
 
-    function sharedFilterSafeId(
-      value
-    ) {
-      return String(value || '')
+function sharedFilterSafeId(
+    value
+)
+{
+    return String(value || '')
         .replace(
-          /[^a-z0-9_-]+/gi,
-          '-'
+            /[^a-z0-9_-]+/gi,
+            '-'
         );
-    }
+}
 
-    function renderSharedFilterFields({
-      schema,
-      values,
-      prefix
-    }) {
-      const normalized =
+function renderSharedFilterFields({
+    schema,
+    values,
+    prefix
+})
+{
+    const normalized =
         cloneSharedFilterValues(
-          schema,
-          values
+            schema,
+            values
         );
 
-      const fields =
-        schema.map(definition => {
-          const fieldId =
-            `${prefix}-${
-              sharedFilterSafeId(
-                definition.key
-              )
-            }`;
+    const fields =
+        schema.map(definition =>
+        {
+            const fieldId =
+                `${prefix}-${
+                    sharedFilterSafeId(
+                        definition.key
+                    )
+                }`;
 
-          const fieldClass =
-            definition.layout === 'full'
-              ? 'shared-filter-field shared-filter-field--full'
-              : 'shared-filter-field';
+            const fieldClass =
+                definition.layout === 'full'
+                    ? 'shared-filter-field shared-filter-field--full'
+                    : 'shared-filter-field';
 
-          if (
-            definition.control === 'combobox'
-          ) {
-            const listboxId =
-              `${fieldId}-listbox`;
+            if (
+                definition.control === 'combobox'
+            )
+            {
+                const listboxId =
+                    `${fieldId}-listbox`;
 
-            return `
+                return `
               <div
                 class="${fieldClass}">
 
                 <label
                   for="${escapeHtml(fieldId)}">
                   ${escapeHtml(
-                    translateText(
-                      definition.label
-                    )
-                  )}
+                        translateText(
+                            definition.label
+                        )
+                    )}
                 </label>
 
                 <div
                   class="shared-filter-combobox"
                   data-shared-filter-combobox="${
-                    escapeHtml(
-                      definition.key
-                    )
-                  }">
+                        escapeHtml(
+                            definition.key
+                        )
+                    }">
 
                   <div
                     class="shared-filter-selected"
@@ -11502,19 +12434,19 @@
                       aria-autocomplete="list"
                       aria-expanded="false"
                       aria-controls="${
-                        escapeHtml(
-                          listboxId
-                        )
-                      }"
+                            escapeHtml(
+                                listboxId
+                            )
+                        }"
                       autocomplete="off"
                       placeholder="${
-                        escapeHtml(
-                          translateText(
-                            definition.placeholder
+                            escapeHtml(
+                                translateText(
+                                    definition.placeholder
                             || 'Search'
-                          )
-                        )
-                      }"
+                                )
+                            )
+                        }"
                       data-shared-filter-input>
 
                     <button
@@ -11523,12 +12455,12 @@
                       "
                       type="button"
                       aria-label="${
-                        escapeHtml(
-                          translateText(
-                            'Open options'
-                          )
-                        )
-                      }"
+                            escapeHtml(
+                                translateText(
+                                    'Open options'
+                                )
+                            )
+                        }"
                       data-shared-filter-toggle>
 
                       ${icon.chevron}
@@ -11540,9 +12472,9 @@
                     id="${escapeHtml(listboxId)}"
                     role="listbox"
                     ${
-                      definition.multiple
-                        ? 'aria-multiselectable="true"'
-                        : ''
+                        definition.multiple
+                            ? 'aria-multiselectable="true"'
+                            : ''
                     }
                     data-shared-filter-listbox
                     hidden>
@@ -11558,30 +12490,31 @@
                 </div>
               </div>
             `;
-          }
-          if (
-            definition.control
+            }
+            if (
+                definition.control
               === 'year-range'
-          ) {
-            const range =
-              normalizeSharedFilterYearRange(
-                normalized[
-                  definition.key
-                ]
-              );
+            )
+            {
+                const range =
+                    normalizeSharedFilterYearRange(
+                        normalized[
+                            definition.key
+                        ]
+                    );
 
-            const isBetween =
-              range.mode === 'between';
+                const isBetween =
+                    range.mode === 'between';
 
-            const error =
-              sharedFilterYearRangeError(
-                range
-              );
+                const error =
+                    sharedFilterYearRangeError(
+                        range
+                    );
 
-            const errorId =
-              `${fieldId}-error`;
+                const errorId =
+                    `${fieldId}-error`;
 
-            return `
+                return `
               <div
                 class="
                   ${fieldClass}
@@ -11589,19 +12522,19 @@
                 ">
                 <label id="${escapeHtml(fieldId)}-label">
                   ${escapeHtml(
-                    translateText(
-                      definition.label
-                    )
-                  )}
+                        translateText(
+                            definition.label
+                        )
+                    )}
                 </label>
 
                 <div
                   class="shared-filter-year-range"
                   data-shared-filter-year-range="${
-                    escapeHtml(
-                      definition.key
-                    )
-                  }">
+                        escapeHtml(
+                            definition.key
+                        )
+                    }">
 
                   <div
                     class="
@@ -11622,55 +12555,55 @@
                           ${range.mode ? '' : 'selected'}>
 
                           ${escapeHtml(
-                            translateText(
-                              'Any year'
-                            )
-                          )}
+                                translateText(
+                                    'Any year'
+                                )
+                            )}
                         </option>
 
                         <option
                           value="before"
                           ${
-                            range.mode === 'before'
-                              ? 'selected'
-                              : ''
-                          }>
+                                range.mode === 'before'
+                                    ? 'selected'
+                                    : ''
+                            }>
 
                           ${escapeHtml(
-                            translateText(
-                              'Before'
-                            )
-                          )}
+                                translateText(
+                                    'Before'
+                                )
+                            )}
                         </option>
 
                         <option
                           value="after"
                           ${
-                            range.mode === 'after'
-                              ? 'selected'
-                              : ''
-                          }>
+                                range.mode === 'after'
+                                    ? 'selected'
+                                    : ''
+                            }>
 
                           ${escapeHtml(
-                            translateText(
-                              'After'
-                            )
-                          )}
+                                translateText(
+                                    'After'
+                                )
+                            )}
                         </option>
 
                         <option
                           value="between"
                           ${
-                            isBetween
-                              ? 'selected'
-                              : ''
-                          }>
+                                isBetween
+                                    ? 'selected'
+                                    : ''
+                            }>
 
                           ${escapeHtml(
-                            translateText(
-                              'Between'
-                            )
-                          )}
+                                translateText(
+                                    'Between'
+                                )
+                            )}
                         </option>
                       </select>
 
@@ -11692,11 +12625,11 @@
                         data-shared-filter-year-from-label>
 
                         ${escapeHtml(
-                          translateText(
-                            isBetween
-                              ? 'Year from'
-                              : 'Year'
-                          )
+                            translateText(
+                                isBetween
+                                    ? 'Year from'
+                                    : 'Year'
+                            )
                         )}
                       </span>
 
@@ -11707,13 +12640,13 @@
                         maxlength="4"
                         autocomplete="off"
                         placeholder="${
-                          escapeHtml(
-                            translateText(
-                              isBetween
-                                ? 'From'
-                                : 'Year'
+                            escapeHtml(
+                                translateText(
+                                    isBetween
+                                        ? 'From'
+                                        : 'Year'
+                                )
                             )
-                          )
                         }"
                         value="${escapeHtml(range.from)}"
                         aria-describedby="${escapeHtml(errorId)}"
@@ -11729,9 +12662,9 @@
                         class="shared-filter-visually-hidden">
 
                         ${escapeHtml(
-                          translateText(
-                            'Year to'
-                          )
+                            translateText(
+                                'Year to'
+                            )
                         )}
                       </span>
 
@@ -11742,9 +12675,9 @@
                         maxlength="4"
                         autocomplete="off"
                         placeholder="${
-                          escapeHtml(
-                            translateText('To')
-                          )
+                            escapeHtml(
+                                translateText('To')
+                            )
                         }"
                         value="${escapeHtml(range.to)}"
                         aria-describedby="${escapeHtml(errorId)}"
@@ -11763,11 +12696,12 @@
                 </div>
               </div>
             `;
-          }
-          if (
-            definition.control === 'boolean'
-          ) {
-            return `
+            }
+            if (
+                definition.control === 'boolean'
+            )
+            {
+                return `
               <div
                 class="
                   ${fieldClass}
@@ -11779,10 +12713,10 @@
                     shared-filter-boolean-title
                   ">
                   ${escapeHtml(
-                    translateText(
-                      definition.label
-                    )
-                  )}
+                        translateText(
+                            definition.label
+                        )
+                    )}
                 </span>
 
                 <label
@@ -11793,44 +12727,44 @@
                   <input
                     type="checkbox"
                     data-shared-filter-boolean="${
-                      escapeHtml(
-                        definition.key
-                      )
+                        escapeHtml(
+                            definition.key
+                        )
                     }"
                     ${
-                      normalized[
-                        definition.key
-                      ]
-                        ? 'checked'
-                        : ''
+                        normalized[
+                            definition.key
+                        ]
+                            ? 'checked'
+                            : ''
                     }>
 
                   <span>
                     ${escapeHtml(
-                      translateText(
-                        definition.checkboxLabel
+                        translateText(
+                            definition.checkboxLabel
                         || definition.label
-                      )
+                        )
                     )}
                   </span>
                 </label>
               </div>
             `;
-          }
+            }
 
-          const options =
-            sharedFilterOptions(
-              definition
-            );
+            const options =
+                sharedFilterOptions(
+                    definition
+                );
 
-          return `
+            return `
             <div class="${fieldClass}">
               <label
                 for="${escapeHtml(fieldId)}">
                 ${escapeHtml(
-                  translateText(
-                    definition.label
-                  )
+                    translateText(
+                        definition.label
+                    )
                 )}
               </label>
 
@@ -11839,33 +12773,33 @@
                   class="compact-select common-select"
                   id="${escapeHtml(fieldId)}"
                   data-shared-filter-select="${
-                    escapeHtml(
-                      definition.key
-                    )
-                  }">
+                        escapeHtml(
+                            definition.key
+                        )
+                    }">
 
                   ${options.map(option => `
                     <option
                       value="${
-                        escapeHtml(
-                          option.value
-                        )
-                      }"
+                            escapeHtml(
+                                option.value
+                            )
+                        }"
                       ${
-                        String(
-                          normalized[
-                            definition.key
-                          ]
-                        ) === option.value
-                          ? 'selected'
-                          : ''
-                      }>
+                            String(
+                                normalized[
+                                    definition.key
+                                ]
+                            ) === option.value
+                                ? 'selected'
+                                : ''
+                        }>
 
                       ${escapeHtml(
-                        translateText(
-                          option.label
-                        )
-                      )}
+                            translateText(
+                                option.label
+                            )
+                        )}
                     </option>
                   `).join('')}
                 </select>
@@ -11881,15 +12815,15 @@
           `;
         }).join('');
 
-      return `
+    return `
         <div
           class="shared-filter-fields"
           data-shared-filter-root="${
-            escapeHtml(prefix)
-          }">
+                escapeHtml(prefix)
+            }">
 
           ${fields}
         </div>
       `;
-    }
+}
 

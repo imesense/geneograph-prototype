@@ -1,19 +1,19 @@
-    const state = {
-      projectOpen: false,
-      currentProjectId: null,
-      selectedProjectId: 'p1',
-      activeModule: 'Projects',
-      viewMode: 'grid',
-      search: '',
-      openSide: 'overview',
-      projectContinuation: null,
-      treeView: 'Classic',
-      treeZoom: 100,
-      selectedPersonId: 'silver',
-      treeProjectViews: {},
-      treeCenterTargetId: 'silver',
-      treeInspectorCollapsed: false,
-      inspectorSections: {
+const state = {
+    projectOpen: false,
+    currentProjectId: null,
+    selectedProjectId: 'p1',
+    activeModule: 'Projects',
+    viewMode: 'grid',
+    search: '',
+    openSide: 'overview',
+    projectContinuation: null,
+    treeView: 'Classic',
+    treeZoom: 100,
+    selectedPersonId: 'silver',
+    treeProjectViews: {},
+    treeCenterTargetId: 'silver',
+    treeInspectorCollapsed: false,
+    inspectorSections: {
         insights: false,
         timeline: false,
         relationships: false,
@@ -22,133 +22,133 @@
         notes: false,
         sources: false,
         record: false
-      },
-      peopleView: 'directory',
-      peopleSide: 'people',
-      selectedPeopleId: 'silver',
-      peopleSelectedIds: [],
-      peopleSelectionAnchorId: '',
-      peopleSearch: '',
-      peoplePage: 1,
-      peopleRowsPerPage: 25,
-      peoplePaginationQueryKey: '',
-      peopleSavedView: 'All people',
-      peopleSavedViewId: '',
-      peopleFilters: {
+    },
+    peopleView: 'directory',
+    peopleSide: 'people',
+    selectedPeopleId: 'silver',
+    peopleSelectedIds: [],
+    peopleSelectionAnchorId: '',
+    peopleSearch: '',
+    peoplePage: 1,
+    peopleRowsPerPage: 25,
+    peoplePaginationQueryKey: '',
+    peopleSavedView: 'All people',
+    peopleSavedViewId: '',
+    peopleFilters: {
         surnames: [],
         birthPlaceIds: [],
         birthYear: {
-          mode: '',
-          from: '',
-          to: ''
+            mode: '',
+            from: '',
+            to: ''
         },
         living: 'Any',
         reviewStatus: ''
-      },
-      peopleVisibleColumns: { living: true, birth: true, birthPlace: true, death: true, deathPlace: true, updated: true },
-      peoplePreviewCollapsed: false,
-      peopleProfileEditing: false,
-      peopleProfileEditTab: 'main',
-      geneoView: 'home',
-      geneoLibraryView: 'all',
-      geneoActiveCollectionId: null,
-      geneoBoardSearch: '',
-      geneoBoardViewMode: 'grid',
-      selectedGeneoBoardId: 'gb1',
-      selectedGeneoNodeId: null,
-      selectedGeneoNodeIds: [],
-      selectedGeneoConnectionId: null,
-      selectedGeneoConnectionIds: [],
-      selectedGeneoWaypointIndex: null,
-      geneoTool: 'pan',
-      geneoPlacementReturnTool: null,
-      geneoContentKind: 'sticky',
-      geneoConnectorPattern: 'solid',
-      geneoShapeKind: 'rectangle',
-      geneoConnectionDraft: null,
-      geneoInlineEditNodeId: null,
-      geneoInlineEditSelectAll: false,
-      geneoInlineEditSurface: 'canvas',
-      geneoLayerRename: null,
-      geneoZoom: 83,
-      geneoBoardViewports: {},
-      geneoInspectorCollapsed: false,
-      geneoLayerSearch: '',
-      geneoSidebarSections: { layers: true, connections: true },
-      geneoInspectorSections: {
+    },
+    peopleVisibleColumns: { living: true, birth: true, birthPlace: true, death: true, deathPlace: true, updated: true },
+    peoplePreviewCollapsed: false,
+    peopleProfileEditing: false,
+    peopleProfileEditTab: 'main',
+    geneoView: 'home',
+    geneoLibraryView: 'all',
+    geneoActiveCollectionId: null,
+    geneoBoardSearch: '',
+    geneoBoardViewMode: 'grid',
+    selectedGeneoBoardId: 'gb1',
+    selectedGeneoNodeId: null,
+    selectedGeneoNodeIds: [],
+    selectedGeneoConnectionId: null,
+    selectedGeneoConnectionIds: [],
+    selectedGeneoWaypointIndex: null,
+    geneoTool: 'pan',
+    geneoPlacementReturnTool: null,
+    geneoContentKind: 'sticky',
+    geneoConnectorPattern: 'solid',
+    geneoShapeKind: 'rectangle',
+    geneoConnectionDraft: null,
+    geneoInlineEditNodeId: null,
+    geneoInlineEditSelectAll: false,
+    geneoInlineEditSurface: 'canvas',
+    geneoLayerRename: null,
+    geneoZoom: 83,
+    geneoBoardViewports: {},
+    geneoInspectorCollapsed: false,
+    geneoLayerSearch: '',
+    geneoSidebarSections: { layers: true, connections: true },
+    geneoInspectorSections: {
         canvas: {
-          appearance: true,
-          personCards: true
+            appearance: true,
+            personCards: true
         },
 
         person: {
-          content: true,
-          familyTreeLink: true,
-          card: true,
-          appearance: true,
-          layout: true
+            content: true,
+            familyTreeLink: true,
+            card: true,
+            appearance: true,
+            layout: true
         },
 
         text: {
-          content: true,
-          appearance: true,
-          layout: true
+            content: true,
+            appearance: true,
+            layout: true
         },
 
         sticky: {
-          content: true,
-          appearance: true,
-          layout: true
+            content: true,
+            appearance: true,
+            layout: true
         },
 
         image: {
-          imageSource: true,
-          appearance: true,
-          layout: true
+            imageSource: true,
+            appearance: true,
+            layout: true
         },
 
         panel: {
-          content: true,
-          appearance: true,
-          layout: true
+            content: true,
+            appearance: true,
+            layout: true
         },
 
         place: {
-          content: true,
-          appearance: true,
-          layout: true
+            content: true,
+            appearance: true,
+            layout: true
         },
 
         shape: {
-          content: true,
-          appearance: true,
-          layout: true
+            content: true,
+            appearance: true,
+            layout: true
         },
 
         drawing: {
-          appearance: true,
-          layout: true
+            appearance: true,
+            layout: true
         },
 
         node: {
-          content: true,
-          appearance: true,
-          layout: true
+            content: true,
+            appearance: true,
+            layout: true
         },
 
         connection: {
-          connection: true,
-          relationship: true,
-          appearance: true
+            connection: true,
+            relationship: true,
+            appearance: true
         },
 
         multi: {
-          selection: true,
-          personCards: true
+            selection: true,
+            personCards: true
         }
-      },
-      geneoCollapsedPanels: {},
-      geneoImagePicker: {
+    },
+    geneoCollapsedPanels: {},
+    geneoImagePicker: {
         open: false,
         mode: 'add',
         nodeId: null,
@@ -158,30 +158,30 @@
         uploadDrafts: [],
         uploadErrors: [],
         uploadBusy: false
-      },
-      albumsView: 'all',
-      activeAlbumId: null,
-      albumsSearch: '',
-      albumsFilters: { personId: '', placeId: '', dateRange: '', favouriteOnly: false },
-      albumsViewMode: 'grid',
-      albumsPage: 1,
-      albumsRowsPerPage: 25,
-      albumsGridWidth: 0,
-      selectedPhotoId: 'photo-silver-portrait',
-      selectedPhotoIds: [],
-      albumsDetailCollapsed: false,
-      albumsDetailEditing: false,
-      albumsDetailEditOriginal: null,
-      albumsDetailDraft: null,
-      albumsDetailSections: {
+    },
+    albumsView: 'all',
+    activeAlbumId: null,
+    albumsSearch: '',
+    albumsFilters: { personId: '', placeId: '', dateRange: '', favouriteOnly: false },
+    albumsViewMode: 'grid',
+    albumsPage: 1,
+    albumsRowsPerPage: 25,
+    albumsGridWidth: 0,
+    selectedPhotoId: 'photo-silver-portrait',
+    selectedPhotoIds: [],
+    albumsDetailCollapsed: false,
+    albumsDetailEditing: false,
+    albumsDetailEditOriginal: null,
+    albumsDetailDraft: null,
+    albumsDetailSections: {
         details: true,
         people: true,
         albums: true,
         notes: true,
         sources: false,
         metadata: false
-      },
-      personPhotoPicker: {
+    },
+    personPhotoPicker: {
         open: false,
         personId: null,
         step: 'choose',
@@ -194,8 +194,8 @@
         uploadError: '',
         crop: null,
         dirty: false
-      },
-      personPhotosAdder: {
+    },
+    personPhotosAdder: {
         open: false,
         personId: null,
         sourceTab: 'project',
@@ -203,38 +203,38 @@
         selectedProjectPhotoIds: [],
         uploadDrafts: [],
         uploadErrors: []
-      },
-      archiveView: 'files',
-      archiveSelectedFolderId: null,
-      archiveSelectedFolderItemId: null,
-      archiveSelectedFileId: null,
-      archiveSelectedSourceId: 'as1',
-      archiveSelectedFileIds: [],
-      archiveSearch: '',
-      archiveFileFilters: {
+    },
+    archiveView: 'files',
+    archiveSelectedFolderId: null,
+    archiveSelectedFolderItemId: null,
+    archiveSelectedFileId: null,
+    archiveSelectedSourceId: 'as1',
+    archiveSelectedFileIds: [],
+    archiveSearch: '',
+    archiveFileFilters: {
         scope: 'all',
         fileType: 'all',
         connections: 'all',
         personIds: [],
         placeIds: [],
         documentYears: {
-          mode: '',
-          from: '',
-          to: ''
+            mode: '',
+            from: '',
+            to: ''
         },
         favouriteOnly: false
-      },
-      archiveFilterPresentation: 'flat',
-      archiveFilterScopeFolderId: null,
-      archiveSourceCategoryFilter: 'all',
-      archiveSourceConnectionFilter: 'all',
-      archiveSourceFavouriteOnly: false,
-      archiveSourceTargetFilter: null,
-      archiveInspectorCollapsed: false,
-      archiveFileEditing: false,
-      archiveFileEditOriginal: null,
-      archiveFileEditDraft: null,
-      archiveInspectorSections: {
+    },
+    archiveFilterPresentation: 'flat',
+    archiveFilterScopeFolderId: null,
+    archiveSourceCategoryFilter: 'all',
+    archiveSourceConnectionFilter: 'all',
+    archiveSourceFavouriteOnly: false,
+    archiveSourceTargetFilter: null,
+    archiveInspectorCollapsed: false,
+    archiveFileEditing: false,
+    archiveFileEditOriginal: null,
+    archiveFileEditDraft: null,
+    archiveInspectorSections: {
         details: true,
         sources: true,
         people: false,
@@ -247,35 +247,35 @@
         'source-event': false,
         'source-note': false,
         'source-place': false
-      },
-      archiveExpandedFolders: {
+    },
+    archiveExpandedFolders: {
         pawford: true,
         fond12: true,
         opis3: true,
         documents:
           true
-      },
-      archiveNavigationBackStack: [],
-      archiveNavigationForwardStack: [],
-      archivePendingTreeRevealId: null,
-      notesView: 'all',
-      notesActiveCollectionId: null,
-      selectedNoteId: null,
-      notesSearch: '',
-      notesContext: null,
-      notesMobilePane: 'browser',
-      notesSaveStatus: 'Saved',
+    },
+    archiveNavigationBackStack: [],
+    archiveNavigationForwardStack: [],
+    archivePendingTreeRevealId: null,
+    notesView: 'all',
+    notesActiveCollectionId: null,
+    selectedNoteId: null,
+    notesSearch: '',
+    notesContext: null,
+    notesMobilePane: 'browser',
+    notesSaveStatus: 'Saved',
 
-      notesRightCollapsed: true,
-      notesBrowserWidth: 550,
+    notesRightCollapsed: true,
+    notesBrowserWidth: 550,
 
-      notesFilters: {
+    notesFilters: {
         linkedRecords: 'any',
         relatedNotes: 'any',
         collections: 'any'
-      },
+    },
 
-      notesEditorSections: {
+    notesEditorSections: {
         collections: true,
         checklist: true,
         people: false,
@@ -286,49 +286,49 @@
         files: false,
         related: false,
         info: false
-      },
-      placesView: 'all',
-      placesSavedFilterId: '',
-      selectedPlaceId: 'place-pawford',
-      placesSearch: '',
-      placesReviewFocusId: '',
-      placesViewMode: 'map',
-      placesInspectorCollapsed: false,
-      placesInspectorSections: {
+    },
+    placesView: 'all',
+    placesSavedFilterId: '',
+    selectedPlaceId: 'place-pawford',
+    placesSearch: '',
+    placesReviewFocusId: '',
+    placesViewMode: 'map',
+    placesInspectorCollapsed: false,
+    placesInspectorSections: {
         names: true,
         events: true,
         photos: false,
         files: false,
         notes: false,
         sources: false
-      },
-      placesInspectorShowAllEvents: false,
-      placesMapView: {
+    },
+    placesInspectorShowAllEvents: false,
+    placesMapView: {
         center: null,
         zoom: PLACES_MAP_CONFIG.defaultZoom,
         userMoved: false,
         lastFitKey: ''
-      },
-      placesRouteMode: 'none',
-      placesRoutePersonId: '',
-      placesRouteSurname: '',
-      placesShowRoute: false,
-      placesMapInfoExpanded: false,
-      placesFilters: {
+    },
+    placesRouteMode: 'none',
+    placesRoutePersonId: '',
+    placesRouteSurname: '',
+    placesShowRoute: false,
+    placesMapInfoExpanded: false,
+    placesFilters: {
         ...defaultPlaceFilters
-      },
-      placesExpandedCountries: ['England'],
-      publishView: 'home',
-      publishSide: 'drafts',
-      publishSearch: '',
-      publishSelectedDraftId: 'pub1',
-      publishWizardStep: 'type',
-      publishOutputType: 'report',
-      publishScopeMode: 'person',
-      publishFocusPersonId: 'silver',
-      publishGenerations: 4,
-      publishFormat: 'PDF',
-      publishSettings: {
+    },
+    placesExpandedCountries: ['England'],
+    publishView: 'home',
+    publishSide: 'drafts',
+    publishSearch: '',
+    publishSelectedDraftId: 'pub1',
+    publishWizardStep: 'type',
+    publishOutputType: 'report',
+    publishScopeMode: 'person',
+    publishFocusPersonId: 'silver',
+    publishGenerations: 4,
+    publishFormat: 'PDF',
+    publishSettings: {
         includePhotos: true,
         includeDatesPlaces: true,
         includeSources: true,
@@ -338,228 +338,243 @@
         anonymizeLiving: true,
         includePrivateNotes: false,
         includeUnsourcedFacts: false
-      },
-      sort: 'updated',
-      sortDirection: 'descending',
+    },
+    sort: 'updated',
+    sortDirection: 'descending',
 
-      peopleSort: 'updated',
-      peopleSortDirection: 'descending',
+    peopleSort: 'updated',
+    peopleSortDirection: 'descending',
 
-      geneoBoardSort: 'updated',
-      geneoBoardSortDirection: 'descending',
+    geneoBoardSort: 'updated',
+    geneoBoardSortDirection: 'descending',
 
-      albumsSort: 'updated',
-      albumsSortDirection: 'descending',
+    albumsSort: 'updated',
+    albumsSortDirection: 'descending',
 
-      archiveFileSort: 'updated',
-      archiveFileSortDirection: 'descending',
+    archiveFileSort: 'updated',
+    archiveFileSortDirection: 'descending',
 
-      archiveSourceSort: 'updated',
-      archiveSourceSortDirection: 'descending',
+    archiveSourceSort: 'updated',
+    archiveSourceSortDirection: 'descending',
 
-      notesSort: 'updated',
-      notesSortDirection: 'descending',
+    notesSort: 'updated',
+    notesSortDirection: 'descending',
 
-      placesSort: 'name',
-      placesSortDirection: 'ascending',
-      topbarPopover: null,
-      userSignedIn: true,
-      unreadNotifications: 5,
-      globalSettingsSection: 'general',
-      language: normalizeLang(localStorage.getItem(LANGUAGE_STORAGE_KEY) || 'en')
-    };
+    placesSort: 'name',
+    placesSortDirection: 'ascending',
+    topbarPopover: null,
+    userSignedIn: true,
+    unreadNotifications: 5,
+    globalSettingsSection: 'general',
+    language: normalizeLang(localStorage.getItem(LANGUAGE_STORAGE_KEY) || 'en')
+};
 
-    function validProjectById(projectId) {
-      return (
+function validProjectById(projectId)
+{
+    return (
         sampleData.projects || []
-      ).find(project =>
+    ).find(project =>
         project.id === projectId
         && !project.deleted
         && project.available !== false
-      ) || null;
-    }
+    ) || null;
+}
 
-    function currentProjectId() {
-      const activeId =
+function currentProjectId()
+{
+    const activeId =
         state.currentProjectId
         || '';
 
-      return validProjectById(activeId)?.id || '';
-    }
+    return validProjectById(activeId)?.id || '';
+}
 
-    function requireActiveProjectId() {
-      const projectId = currentProjectId();
+function requireActiveProjectId()
+{
+    const projectId = currentProjectId();
 
-      if (!projectId) {
+    if (!projectId)
+    {
         showToast('Open a project before creating records.');
         return '';
-      }
-
-      return projectId;
     }
 
-    function currentTreePeople() {
-      const projectId = currentFamilyTreeProjectId();
-      return projectId
+    return projectId;
+}
+
+function currentTreePeople()
+{
+    const projectId = currentFamilyTreeProjectId();
+    return projectId
         ? getTreePeopleFromSampleData(projectId)
         : [];
-    }
+}
 
-    function currentTreeFamilies() {
-      const projectId = currentFamilyTreeProjectId();
-      return projectId
+function currentTreeFamilies()
+{
+    const projectId = currentFamilyTreeProjectId();
+    return projectId
         ? getTreeFamiliesFromSampleData(projectId)
         : [];
-    }
+}
 
-    const TREE_ANCESTOR_GENERATION_MIN = 0;
-    const TREE_ANCESTOR_GENERATION_MAX = 6;
-    const TREE_DESCENDANT_GENERATION_MIN = 0;
-    const TREE_DESCENDANT_GENERATION_MAX = 5;
-    const TREE_NAVIGATION_HISTORY_LIMIT = 50;
+const TREE_ANCESTOR_GENERATION_MIN = 0;
+const TREE_ANCESTOR_GENERATION_MAX = 6;
+const TREE_DESCENDANT_GENERATION_MIN = 0;
+const TREE_DESCENDANT_GENERATION_MAX = 5;
+const TREE_NAVIGATION_HISTORY_LIMIT = 50;
 
-    function treeDefaultPersonId(projectId = currentFamilyTreeProjectId()) {
-      const project = sampleData.projects.find(item => item.id === projectId);
-      const people = getPeople(projectId);
-      return people.some(person => person.id === project?.defaultPersonId)
+function treeDefaultPersonId(projectId = currentFamilyTreeProjectId())
+{
+    const project = sampleData.projects.find(item => item.id === projectId);
+    const people = getPeople(projectId);
+    return people.some(person => person.id === project?.defaultPersonId)
         ? project.defaultPersonId
         : people[0]?.id || '';
-    }
+}
 
-    function treeProjectViewState(projectId = currentFamilyTreeProjectId()) {
-      if (!state.treeProjectViews[projectId]) {
+function treeProjectViewState(projectId = currentFamilyTreeProjectId())
+{
+    if (!state.treeProjectViews[projectId])
+    {
         const defaultPersonId = treeDefaultPersonId(projectId);
 
         state.treeProjectViews[projectId] = {
-          focusPersonId: defaultPersonId,
-          ancestorGenerations: 4,
-          descendantGenerations: 3,
-          showCousins: true,
-          recentPersonIds: defaultPersonId ? [defaultPersonId] : [],
-          navigationBackStack: [],
-          navigationForwardStack: []
+            focusPersonId: defaultPersonId,
+            ancestorGenerations: 4,
+            descendantGenerations: 3,
+            showCousins: true,
+            recentPersonIds: defaultPersonId ? [defaultPersonId] : [],
+            navigationBackStack: [],
+            navigationForwardStack: []
         };
         state.treeProjectViews[projectId] = {
-          focusPersonId: defaultPersonId,
-          ancestorGenerations: 4,
-          descendantGenerations: 3,
-          showCousins: true,
-          recentPersonIds:
+            focusPersonId: defaultPersonId,
+            ancestorGenerations: 4,
+            descendantGenerations: 3,
+            showCousins: true,
+            recentPersonIds:
             defaultPersonId
-              ? [defaultPersonId]
-              : [],
-          navigationBackStack: [],
-          navigationForwardStack: [],
-          canvasScroll: null
+                ? [defaultPersonId]
+                : [],
+            navigationBackStack: [],
+            navigationForwardStack: [],
+            canvasScroll: null
         };
-      }
+    }
 
-      const view = state.treeProjectViews[projectId];
+    const view = state.treeProjectViews[projectId];
 
-      view.recentPersonIds = Array.isArray(view.recentPersonIds)
+    view.recentPersonIds = Array.isArray(view.recentPersonIds)
         ? view.recentPersonIds
         : [];
 
-      view.navigationBackStack = Array.isArray(view.navigationBackStack)
+    view.navigationBackStack = Array.isArray(view.navigationBackStack)
         ? view.navigationBackStack
         : [];
 
-      view.navigationForwardStack = Array.isArray(view.navigationForwardStack)
+    view.navigationForwardStack = Array.isArray(view.navigationForwardStack)
         ? view.navigationForwardStack
         : [];
 
-      return view;
-    }
+    return view;
+}
 
-    function rememberTreeSelectedPerson(
-      personId,
-      projectId = currentFamilyTreeProjectId()
-    ) {
-      const person = getPerson(personId);
-      if (!person || person.projectId !== projectId) return [];
+function rememberTreeSelectedPerson(
+    personId,
+    projectId = currentFamilyTreeProjectId()
+)
+{
+    const person = getPerson(personId);
+    if (!person || person.projectId !== projectId) return [];
 
-      const view = treeProjectViewState(projectId);
-      view.recentPersonIds = [
+    const view = treeProjectViewState(projectId);
+    view.recentPersonIds = [
         personId,
         ...view.recentPersonIds.filter(id => id !== personId)
-      ]
-        .filter(id => {
-          const candidate = getPerson(id);
-          return candidate && candidate.projectId === projectId && !candidate.deleted;
+    ]
+        .filter(id =>
+        {
+            const candidate = getPerson(id);
+            return candidate && candidate.projectId === projectId && !candidate.deleted;
         })
         .slice(0, 10);
 
-      return view.recentPersonIds;
-    }
+    return view.recentPersonIds;
+}
 
-    function treeRecentPeople(projectId = currentFamilyTreeProjectId()) {
-      const view = treeProjectViewState(projectId);
-      return view.recentPersonIds
+function treeRecentPeople(projectId = currentFamilyTreeProjectId())
+{
+    const view = treeProjectViewState(projectId);
+    return view.recentPersonIds
         .map(id => getPerson(id))
         .filter(person => person && person.projectId === projectId && !person.deleted)
         .slice(0, 10);
-    }
+}
 
-    function normalizeTreeNavigationEntry(
-      entry,
-      projectId = currentFamilyTreeProjectId()
-    ) {
-      if (!entry || typeof entry !== 'object') return null;
+function normalizeTreeNavigationEntry(
+    entry,
+    projectId = currentFamilyTreeProjectId()
+)
+{
+    if (!entry || typeof entry !== 'object') return null;
 
-      const projectPeople = getPeople(projectId)
+    const projectPeople = getPeople(projectId)
         .filter(person => person && !person.deleted);
 
-      const peopleById = new Map(
+    const peopleById = new Map(
         projectPeople.map(person => [person.id, person])
-      );
+    );
 
-      if (!peopleById.has(entry.focusPersonId)) return null;
+    if (!peopleById.has(entry.focusPersonId)) return null;
 
-      const selectedPersonId = peopleById.has(entry.selectedPersonId)
+    const selectedPersonId = peopleById.has(entry.selectedPersonId)
         ? entry.selectedPersonId
         : entry.focusPersonId;
 
-      const zoom = Number.isFinite(Number(entry.zoom))
+    const zoom = Number.isFinite(Number(entry.zoom))
         ? Math.max(70, Math.min(130, Math.round(Number(entry.zoom))))
         : 100;
 
-      const hasValidScroll =
+    const hasValidScroll =
         Number.isFinite(Number(entry.scroll?.left))
         && Number.isFinite(Number(entry.scroll?.top));
 
-      return {
+    return {
         focusPersonId: entry.focusPersonId,
         selectedPersonId,
         zoom,
         scroll: hasValidScroll
-          ? {
-              left: Math.max(0, Number(entry.scroll.left)),
-              top: Math.max(0, Number(entry.scroll.top))
+            ? {
+                left: Math.max(0, Number(entry.scroll.left)),
+                top: Math.max(0, Number(entry.scroll.top))
             }
-          : null
-      };
-    }
+            : null
+    };
+}
 
-    function treeNavigationSnapshot(
-      projectId = currentFamilyTreeProjectId()
-    ) {
-      const view = treeProjectViewState(projectId);
+function treeNavigationSnapshot(
+    projectId = currentFamilyTreeProjectId()
+)
+{
+    const view = treeProjectViewState(projectId);
 
-      return normalizeTreeNavigationEntry(
+    return normalizeTreeNavigationEntry(
         {
-          focusPersonId: view.focusPersonId,
-          selectedPersonId: state.selectedPersonId || view.focusPersonId,
-          zoom: state.treeZoom,
-          scroll: getTreeCanvasScroll()
+            focusPersonId: view.focusPersonId,
+            selectedPersonId: state.selectedPersonId || view.focusPersonId,
+            zoom: state.treeZoom,
+            scroll: getTreeCanvasScroll()
         },
         projectId
-      );
-    }
+    );
+}
 
-    function treeNavigationEntriesMatch(first, second) {
-      if (!first || !second) return false;
+function treeNavigationEntriesMatch(first, second)
+{
+    if (!first || !second) return false;
 
-      return (
+    return (
         first.focusPersonId === second.focusPersonId
         && first.selectedPersonId === second.selectedPersonId
         && first.zoom === second.zoom
@@ -567,271 +582,296 @@
           === Math.round(second.scroll?.left || 0)
         && Math.round(first.scroll?.top || 0)
           === Math.round(second.scroll?.top || 0)
-      );
-    }
+    );
+}
 
-    function pushTreeNavigationEntry(stack, entry) {
-      if (!Array.isArray(stack) || !entry) return;
+function pushTreeNavigationEntry(stack, entry)
+{
+    if (!Array.isArray(stack) || !entry) return;
 
-      const previous = stack[stack.length - 1];
+    const previous = stack[stack.length - 1];
 
-      if (!treeNavigationEntriesMatch(previous, entry)) {
+    if (!treeNavigationEntriesMatch(previous, entry))
+    {
         stack.push(entry);
-      }
-
-      if (stack.length > TREE_NAVIGATION_HISTORY_LIMIT) {
-        stack.splice(
-          0,
-          stack.length - TREE_NAVIGATION_HISTORY_LIMIT
-        );
-      }
     }
 
-    function treeNavigationCanGo(
-      direction,
-      projectId = currentFamilyTreeProjectId()
-    ) {
-      const view = treeProjectViewState(projectId);
-      const stack = direction === 'forward'
+    if (stack.length > TREE_NAVIGATION_HISTORY_LIMIT)
+    {
+        stack.splice(
+            0,
+            stack.length - TREE_NAVIGATION_HISTORY_LIMIT
+        );
+    }
+}
+
+function treeNavigationCanGo(
+    direction,
+    projectId = currentFamilyTreeProjectId()
+)
+{
+    const view = treeProjectViewState(projectId);
+    const stack = direction === 'forward'
         ? view.navigationForwardStack
         : view.navigationBackStack;
 
-      return stack.some(entry =>
+    return stack.some(entry =>
         Boolean(normalizeTreeNavigationEntry(entry, projectId))
-      );
-    }
+    );
+}
 
-    function treeNavigationFocusForPerson(
-      personId,
-      {
+function treeNavigationFocusForPerson(
+    personId,
+    {
         focusBranch = false,
         projectId = currentFamilyTreeProjectId()
-      } = {}
-    ) {
-      const view = treeProjectViewState(projectId);
+    } = {}
+)
+{
+    const view = treeProjectViewState(projectId);
 
-      if (focusBranch) return personId;
+    if (focusBranch) return personId;
 
-      const projection = buildFamilyTreeProjection(
+    const projection = buildFamilyTreeProjection(
         currentTreePeople(),
         currentTreeFamilies(),
         {
-          focusPersonId: view.focusPersonId,
-          ancestorGenerations: view.ancestorGenerations,
-          descendantGenerations: view.descendantGenerations,
-          showCousins: view.showCousins
+            focusPersonId: view.focusPersonId,
+            ancestorGenerations: view.ancestorGenerations,
+            descendantGenerations: view.descendantGenerations,
+            showCousins: view.showCousins
         }
-      );
+    );
 
-      return projection.visiblePersonIds.has(personId)
+    return projection.visiblePersonIds.has(personId)
         ? view.focusPersonId
         : personId;
-    }
+}
 
-    function navigateFamilyTreeToPerson(
-      personId,
-      {
+function navigateFamilyTreeToPerson(
+    personId,
+    {
         focusBranch = false,
         center = true,
         recordHistory = true
-      } = {}
-    ) {
-      const projectId = currentFamilyTreeProjectId();
-      const person = getPerson(personId);
+    } = {}
+)
+{
+    const projectId = currentFamilyTreeProjectId();
+    const person = getPerson(personId);
 
-      if (
+    if (
         state.activeModule !== 'Family Tree'
         || !person
         || person.deleted
         || person.projectId !== projectId
-      ) {
+    )
+    {
         return false;
-      }
+    }
 
-      const view = treeProjectViewState(projectId);
-      const nextFocusPersonId = treeNavigationFocusForPerson(
+    const view = treeProjectViewState(projectId);
+    const nextFocusPersonId = treeNavigationFocusForPerson(
         personId,
         {
-          focusBranch,
-          projectId
+            focusBranch,
+            projectId
         }
-      );
+    );
 
-      const selectionChanged =
+    const selectionChanged =
         state.selectedPersonId !== personId;
 
-      const focusChanged =
+    const focusChanged =
         view.focusPersonId !== nextFocusPersonId;
 
-      if (!selectionChanged && !focusChanged) {
+    if (!selectionChanged && !focusChanged)
+    {
         if (center) centerTreeOnPerson(personId);
         return false;
-      }
+    }
 
-      if (recordHistory) {
+    if (recordHistory)
+    {
         const currentEntry = treeNavigationSnapshot(projectId);
 
         pushTreeNavigationEntry(
-          view.navigationBackStack,
-          currentEntry
+            view.navigationBackStack,
+            currentEntry
         );
 
         view.navigationForwardStack = [];
-      }
-
-      view.focusPersonId = nextFocusPersonId;
-      state.selectedPersonId = personId;
-      state.treeInspectorCollapsed = false;
-      state.treeCenterTargetId = center ? personId : '';
-
-      rememberTreeSelectedPerson(personId, projectId);
-
-      if (center) {
-        renderFamilyTree();
-      } else {
-        renderFamilyTreePreserveScroll();
-      }
-
-      return true;
     }
 
-    function navigateTreeHistory(direction) {
-      const projectId = currentFamilyTreeProjectId();
-      const view = treeProjectViewState(projectId);
+    view.focusPersonId = nextFocusPersonId;
+    state.selectedPersonId = personId;
+    state.treeInspectorCollapsed = false;
+    state.treeCenterTargetId = center ? personId : '';
 
-      const sourceStack = direction === 'forward'
+    rememberTreeSelectedPerson(personId, projectId);
+
+    if (center)
+    {
+        renderFamilyTree();
+    }
+    else
+    {
+        renderFamilyTreePreserveScroll();
+    }
+
+    return true;
+}
+
+function navigateTreeHistory(direction)
+{
+    const projectId = currentFamilyTreeProjectId();
+    const view = treeProjectViewState(projectId);
+
+    const sourceStack = direction === 'forward'
         ? view.navigationForwardStack
         : view.navigationBackStack;
 
-      const destinationStack = direction === 'forward'
+    const destinationStack = direction === 'forward'
         ? view.navigationBackStack
         : view.navigationForwardStack;
 
-      let targetEntry = null;
+    let targetEntry = null;
 
-      while (sourceStack.length && !targetEntry) {
+    while (sourceStack.length && !targetEntry)
+    {
         targetEntry = normalizeTreeNavigationEntry(
-          sourceStack.pop(),
-          projectId
+            sourceStack.pop(),
+            projectId
         );
-      }
+    }
 
-      if (!targetEntry) return false;
+    if (!targetEntry) return false;
 
-      const currentEntry = treeNavigationSnapshot(projectId);
+    const currentEntry = treeNavigationSnapshot(projectId);
 
-      pushTreeNavigationEntry(
+    pushTreeNavigationEntry(
         destinationStack,
         currentEntry
-      );
+    );
 
-      view.focusPersonId = targetEntry.focusPersonId;
-      state.selectedPersonId = targetEntry.selectedPersonId;
-      state.treeZoom = targetEntry.zoom;
-      state.treeInspectorCollapsed = false;
-      state.treeCenterTargetId = '';
+    view.focusPersonId = targetEntry.focusPersonId;
+    state.selectedPersonId = targetEntry.selectedPersonId;
+    state.treeZoom = targetEntry.zoom;
+    state.treeInspectorCollapsed = false;
+    state.treeCenterTargetId = '';
 
-      rememberTreeSelectedPerson(
+    rememberTreeSelectedPerson(
         targetEntry.selectedPersonId,
         projectId
-      );
+    );
 
-      renderFamilyTree();
+    renderFamilyTree();
 
-      if (targetEntry.scroll) {
+    if (targetEntry.scroll)
+    {
         restoreTreeCanvasScroll(targetEntry.scroll);
-      } else {
+    }
+    else
+    {
         requestAnimationFrame(() =>
-          centerTreeOnPerson(targetEntry.selectedPersonId)
+            centerTreeOnPerson(targetEntry.selectedPersonId)
         );
-      }
-
-      return true;
     }
 
-    function resolveTreeFocusPersonId(people, projectId = currentFamilyTreeProjectId()) {
-      const ids = new Set((people || []).map(person => person.id));
-      const view = treeProjectViewState(projectId);
-      if (!ids.has(view.focusPersonId)) {
+    return true;
+}
+
+function resolveTreeFocusPersonId(people, projectId = currentFamilyTreeProjectId())
+{
+    const ids = new Set((people || []).map(person => person.id));
+    const view = treeProjectViewState(projectId);
+    if (!ids.has(view.focusPersonId))
+    {
         view.focusPersonId = ids.has(treeDefaultPersonId(projectId))
-          ? treeDefaultPersonId(projectId)
-          : people?.[0]?.id || '';
-      }
-      return view.focusPersonId;
+            ? treeDefaultPersonId(projectId)
+            : people?.[0]?.id || '';
     }
+    return view.focusPersonId;
+}
 
-    function setTreeFocusPerson(personId, { center = true } = {}) {
-      return navigateFamilyTreeToPerson(
+function setTreeFocusPerson(personId, { center = true } = {})
+{
+    return navigateFamilyTreeToPerson(
         personId,
         {
-          focusBranch: true,
-          center
+            focusBranch: true,
+            center
         }
-      );
-    }
+    );
+}
 
-    function focusTreeBranchForRelative(personId) {
-      return navigateFamilyTreeToPerson(
+function focusTreeBranchForRelative(personId)
+{
+    return navigateFamilyTreeToPerson(
         personId,
         {
-          focusBranch: true,
-          center: true
+            focusBranch: true,
+            center: true
         }
-      );
-    }
+    );
+}
 
-    function openTreeRecentPeopleMenu(anchor) {
-      closeMenu();
-      if (!anchor) return;
-      anchor.setAttribute('aria-expanded', 'true');
+function openTreeRecentPeopleMenu(anchor)
+{
+    closeMenu();
+    if (!anchor) return;
+    anchor.setAttribute('aria-expanded', 'true');
 
-      const people = treeRecentPeople();
-      const rect = anchor.getBoundingClientRect();
-      const menu = document.createElement('div');
-      menu.className = 'menu-popover tree-recent-people-menu';
-      menu.id = 'projectMenu';
-      menu.setAttribute('role', 'menu');
-      menu.setAttribute('aria-label', 'Recently selected people');
-      menu.style.top = `${rect.bottom + 6}px`;
-      menu.style.left = `${Math.max(12, Math.min(rect.left, window.innerWidth - 344))}px`;
-      menu.innerHTML = `<div class="tree-recent-people-head">Recently selected people</div>
+    const people = treeRecentPeople();
+    const rect = anchor.getBoundingClientRect();
+    const menu = document.createElement('div');
+    menu.className = 'menu-popover tree-recent-people-menu';
+    menu.id = 'projectMenu';
+    menu.setAttribute('role', 'menu');
+    menu.setAttribute('aria-label', 'Recently selected people');
+    menu.style.top = `${rect.bottom + 6}px`;
+    menu.style.left = `${Math.max(12, Math.min(rect.left, window.innerWidth - 344))}px`;
+    menu.innerHTML = `<div class="tree-recent-people-head">Recently selected people</div>
         ${people.length
-          ? people.map(person => `<button class="tree-recent-person" type="button" role="menuitem" data-tree-recent-person="${escapeHtml(person.id)}">
+            ? people.map(person => `<button class="tree-recent-person" type="button" role="menuitem" data-tree-recent-person="${escapeHtml(person.id)}">
               ${renderPersonAvatar(person, 'small-avatar')}
               <span><strong>${escapeHtml(connectPersonName(person))}</strong><small>${escapeHtml(connectPersonLifeLine(person))}</small></span>
               ${person.id === state.selectedPersonId ? `<span class="tree-recent-current" aria-label="Selected">${icon.check}</span>` : ''}
             </button>`).join('')
-          : `<div class="tree-recent-people-empty">No recently selected people</div>`}`;
+            : `<div class="tree-recent-people-empty">No recently selected people</div>`}`;
 
-      document.body.appendChild(menu);
-      localizeUI(menu, { suppressObserverReplay: true });
+    document.body.appendChild(menu);
+    localizeUI(menu, { suppressObserverReplay: true });
 
-      menu.querySelectorAll('[data-tree-recent-person]').forEach(button => {
-        button.addEventListener('click', () => {
-          const personId = button.dataset.treeRecentPerson;
+    menu.querySelectorAll('[data-tree-recent-person]').forEach(button =>
+    {
+        button.addEventListener('click', () =>
+        {
+            const personId = button.dataset.treeRecentPerson;
 
-          closeMenu();
+            closeMenu();
 
-          navigateFamilyTreeToPerson(
-            personId,
-            {
-              focusBranch: false,
-              center: true
-            }
-          );
+            navigateFamilyTreeToPerson(
+                personId,
+                {
+                    focusBranch: false,
+                    center: true
+                }
+            );
         });
-      });
+    });
 
-      bindMenuLifecycle(anchor);
-      requestAnimationFrame(() => menu.querySelector('[role="menuitem"]')?.focus({ preventScroll: true }));
-    }
+    bindMenuLifecycle(anchor);
+    requestAnimationFrame(() => menu.querySelector('[role="menuitem"]')?.focus({ preventScroll: true }));
+}
 
-    function openTreeSettingsModal() {
-      const projectId = currentFamilyTreeProjectId();
-      const view = treeProjectViewState(projectId);
-      const focusPerson = getPerson(view.focusPersonId);
+function openTreeSettingsModal()
+{
+    const projectId = currentFamilyTreeProjectId();
+    const view = treeProjectViewState(projectId);
+    const focusPerson = getPerson(view.focusPersonId);
 
-      openModal(`<div class="modal tree-settings-modal" role="dialog" aria-modal="true" aria-labelledby="treeSettingsTitle">
+    openModal(`<div class="modal tree-settings-modal" role="dialog" aria-modal="true" aria-labelledby="treeSettingsTitle">
         <div class="modal-header">
           <div>
             <h2 id="treeSettingsTitle">Tree Settings</h2>
@@ -872,179 +912,195 @@
         </form>
       </div>`);
 
-      modalBackdrop.querySelector('#treeSettingsForm')?.addEventListener('submit', event => {
+    modalBackdrop.querySelector('#treeSettingsForm')?.addEventListener('submit', event =>
+    {
         event.preventDefault();
         const ancestorValue = Number(modalBackdrop.querySelector('#treeAncestorGenerations')?.value);
         const descendantValue = Number(modalBackdrop.querySelector('#treeDescendantGenerations')?.value);
         view.ancestorGenerations = clampNumber(
-          Number.isFinite(ancestorValue) ? Math.round(ancestorValue) : view.ancestorGenerations,
-          TREE_ANCESTOR_GENERATION_MIN,
-          TREE_ANCESTOR_GENERATION_MAX
+            Number.isFinite(ancestorValue) ? Math.round(ancestorValue) : view.ancestorGenerations,
+            TREE_ANCESTOR_GENERATION_MIN,
+            TREE_ANCESTOR_GENERATION_MAX
         );
         view.descendantGenerations = clampNumber(
-          Number.isFinite(descendantValue) ? Math.round(descendantValue) : view.descendantGenerations,
-          TREE_DESCENDANT_GENERATION_MIN,
-          TREE_DESCENDANT_GENERATION_MAX
+            Number.isFinite(descendantValue) ? Math.round(descendantValue) : view.descendantGenerations,
+            TREE_DESCENDANT_GENERATION_MIN,
+            TREE_DESCENDANT_GENERATION_MAX
         );
         view.showCousins = Boolean(modalBackdrop.querySelector('#treeShowCousins')?.checked);
         state.treeCenterTargetId = view.focusPersonId;
         closeModal();
         renderFamilyTree();
-      });
-    }
+    });
+}
 
-    function treeParentFamilyContext(people, families, personId) {
-      const personIds = new Set(
+function treeParentFamilyContext(people, families, personId)
+{
+    const personIds = new Set(
         (people || []).map(person => person.id)
-      );
-      const parentIds = new Set();
-      const ownFamilyIds = new Set();
+    );
+    const parentIds = new Set();
+    const ownFamilyIds = new Set();
 
-      (families || []).forEach(family => {
+    (families || []).forEach(family =>
+    {
         if (!(family.children || []).includes(personId)) return;
 
         ownFamilyIds.add(family.id);
 
-        [family.left, family.right].forEach(id => {
-          if (id && personIds.has(id)) parentIds.add(id);
+        [family.left, family.right].forEach(id =>
+        {
+            if (id && personIds.has(id)) parentIds.add(id);
         });
-      });
+    });
 
-      // Expand only through this person's recorded parents.
-      // Newly discovered partners do not expand the scope again.
-      const relatedFamilies = (families || []).filter(family =>
+    // Expand only through this person's recorded parents.
+    // Newly discovered partners do not expand the scope again.
+    const relatedFamilies = (families || []).filter(family =>
         ownFamilyIds.has(family.id)
         || [family.left, family.right].some(id =>
-          id && parentIds.has(id)
+            id && parentIds.has(id)
         )
-      );
+    );
 
-      const siblingIds = new Set(
+    const siblingIds = new Set(
         relatedFamilies
-          .flatMap(family => family.children || [])
-          .filter(id => id !== personId && personIds.has(id))
-      );
+            .flatMap(family => family.children || [])
+            .filter(id => id !== personId && personIds.has(id))
+    );
 
-      return {
+    return {
         parentIds,
         families: relatedFamilies,
         siblingIds
-      };
-    }
+    };
+}
 
-    function deriveTreeBranchRoles(
-      people,
-      families,
-      focusPersonId,
-      visiblePersonIds = null,
-      visibleFamilyIds = null
-    ) {
-      const projectPersonIds = new Set((people || []).map(person => person.id));
-      const visibleIds = visiblePersonIds instanceof Set
+function deriveTreeBranchRoles(
+    people,
+    families,
+    focusPersonId,
+    visiblePersonIds = null,
+    visibleFamilyIds = null
+)
+{
+    const projectPersonIds = new Set((people || []).map(person => person.id));
+    const visibleIds = visiblePersonIds instanceof Set
         ? new Set([...visiblePersonIds].filter(id => projectPersonIds.has(id)))
         : new Set(projectPersonIds);
-      const parentFamiliesByChild = new Map();
-      const childFamiliesByParent = new Map();
-      const partnerIdsByPerson = new Map();
+    const parentFamiliesByChild = new Map();
+    const childFamiliesByParent = new Map();
+    const partnerIdsByPerson = new Map();
 
-      (families || []).forEach(family => {
+    (families || []).forEach(family =>
+    {
         const partners = [family.left, family.right].filter(id => projectPersonIds.has(id));
         const children = (family.children || []).filter(id => projectPersonIds.has(id));
 
-        children.forEach(childId => {
-          if (!parentFamiliesByChild.has(childId)) parentFamiliesByChild.set(childId, []);
-          parentFamiliesByChild.get(childId).push(family);
+        children.forEach(childId =>
+        {
+            if (!parentFamiliesByChild.has(childId)) parentFamiliesByChild.set(childId, []);
+            parentFamiliesByChild.get(childId).push(family);
         });
 
-        partners.forEach(parentId => {
-          if (!childFamiliesByParent.has(parentId)) childFamiliesByParent.set(parentId, []);
-          childFamiliesByParent.get(parentId).push(family);
-          if (!partnerIdsByPerson.has(parentId)) partnerIdsByPerson.set(parentId, new Set());
-          partners.filter(id => id !== parentId).forEach(id => partnerIdsByPerson.get(parentId).add(id));
+        partners.forEach(parentId =>
+        {
+            if (!childFamiliesByParent.has(parentId)) childFamiliesByParent.set(parentId, []);
+            childFamiliesByParent.get(parentId).push(family);
+            if (!partnerIdsByPerson.has(parentId)) partnerIdsByPerson.set(parentId, new Set());
+            partners.filter(id => id !== parentId).forEach(id => partnerIdsByPerson.get(parentId).add(id));
         });
-      });
+    });
 
-      const collectRelatives = (startId, nextIds) => {
+    const collectRelatives = (startId, nextIds) =>
+    {
         const collected = new Set();
         const queue = startId ? [startId] : [];
         const visited = new Set(queue);
-        while (queue.length) {
-          const personId = queue.shift();
-          nextIds(personId).forEach(relativeId => {
-            if (!projectPersonIds.has(relativeId) || visited.has(relativeId)) return;
-            visited.add(relativeId);
-            collected.add(relativeId);
-            queue.push(relativeId);
-          });
+        while (queue.length)
+        {
+            const personId = queue.shift();
+            nextIds(personId).forEach(relativeId =>
+            {
+                if (!projectPersonIds.has(relativeId) || visited.has(relativeId)) return;
+                visited.add(relativeId);
+                collected.add(relativeId);
+                queue.push(relativeId);
+            });
         }
         return collected;
-      };
+    };
 
-      const directAncestorIds = collectRelatives(focusPersonId, personId =>
+    const directAncestorIds = collectRelatives(focusPersonId, personId =>
         (parentFamiliesByChild.get(personId) || [])
-          .flatMap(family => [family.left, family.right])
-          .filter(Boolean)
-      );
-      const directDescendantIds = collectRelatives(focusPersonId, personId =>
+            .flatMap(family => [family.left, family.right])
+            .filter(Boolean)
+    );
+    const directDescendantIds = collectRelatives(focusPersonId, personId =>
         (childFamiliesByParent.get(personId) || [])
-          .flatMap(family => family.children || [])
-          .filter(Boolean)
-      );
-      const lineageRelativeIds = collectRelatives(focusPersonId, personId => [
+            .flatMap(family => family.children || [])
+            .filter(Boolean)
+    );
+    const lineageRelativeIds = collectRelatives(focusPersonId, personId => [
         ...(parentFamiliesByChild.get(personId) || [])
-          .flatMap(family => [family.left, family.right])
-          .filter(Boolean),
+            .flatMap(family => [family.left, family.right])
+            .filter(Boolean),
         ...(childFamiliesByParent.get(personId) || [])
-          .flatMap(family => family.children || [])
-          .filter(Boolean)
-      ]);
-      const focusPartnerIds = new Set(partnerIdsByPerson.get(focusPersonId) || []);
-      const directSiblingIds = treeParentFamilyContext(
+            .flatMap(family => family.children || [])
+            .filter(Boolean)
+    ]);
+    const focusPartnerIds = new Set(partnerIdsByPerson.get(focusPersonId) || []);
+    const directSiblingIds = treeParentFamilyContext(
         people,
         families,
         focusPersonId
-      ).siblingIds;
-      const householdSiblingIds = new Set(
+    ).siblingIds;
+    const householdSiblingIds = new Set(
         [...directSiblingIds].filter(personId =>
-          (childFamiliesByParent.get(personId) || []).some(family => {
-            if (visibleFamilyIds instanceof Set && !visibleFamilyIds.has(family.id)) return false;
-            const hasVisiblePartner = [family.left, family.right]
-              .some(id => id && id !== personId && visibleIds.has(id));
-            const hasVisibleChild = (family.children || [])
-              .some(id => visibleIds.has(id));
-            return hasVisiblePartner || hasVisibleChild;
-          })
+            (childFamiliesByParent.get(personId) || []).some(family =>
+            {
+                if (visibleFamilyIds instanceof Set && !visibleFamilyIds.has(family.id)) return false;
+                const hasVisiblePartner = [family.left, family.right]
+                    .some(id => id && id !== personId && visibleIds.has(id));
+                const hasVisibleChild = (family.children || [])
+                    .some(id => visibleIds.has(id));
+                return hasVisiblePartner || hasVisibleChild;
+            })
         )
-      );
-      const visibleRelativePartnerIds = new Set();
-      lineageRelativeIds.forEach(personId => {
+    );
+    const visibleRelativePartnerIds = new Set();
+    lineageRelativeIds.forEach(personId =>
+    {
         if (!visibleIds.has(personId)) return;
-        (partnerIdsByPerson.get(personId) || []).forEach(partnerId => {
-          if (visibleIds.has(partnerId)) visibleRelativePartnerIds.add(partnerId);
+        (partnerIdsByPerson.get(personId) || []).forEach(partnerId =>
+        {
+            if (visibleIds.has(partnerId)) visibleRelativePartnerIds.add(partnerId);
         });
-      });
+    });
 
-      const placeholderPersonIds = new Set([focusPersonId, ...directAncestorIds]);
-      [...placeholderPersonIds].forEach(id => {
+    const placeholderPersonIds = new Set([focusPersonId, ...directAncestorIds]);
+    [...placeholderPersonIds].forEach(id =>
+    {
         if (!visibleIds.has(id)) placeholderPersonIds.delete(id);
-      });
+    });
 
-      // Every visible person can become the focus.
-      // The current focus already has its in-card focus badge.
-      const focusActionPersonIds = new Set(
+    // Every visible person can become the focus.
+    // The current focus already has its in-card focus badge.
+    const focusActionPersonIds = new Set(
         [...visibleIds].filter(id => id !== focusPersonId)
-      );
+    );
 
-      const parentPresenceByPerson = new Map();
-      placeholderPersonIds.forEach(personId => {
+    const parentPresenceByPerson = new Map();
+    placeholderPersonIds.forEach(personId =>
+    {
         const parentFamilies = parentFamiliesByChild.get(personId) || [];
         parentPresenceByPerson.set(personId, {
-          father: parentFamilies.some(family => Boolean(family.left)),
-          mother: parentFamilies.some(family => Boolean(family.right))
+            father: parentFamilies.some(family => Boolean(family.left)),
+            mother: parentFamilies.some(family => Boolean(family.right))
         });
-      });
+    });
 
-      return {
+    return {
         directAncestorIds,
         directDescendantIds,
         directSiblingIds,
@@ -1055,222 +1111,254 @@
         placeholderPersonIds,
         focusActionPersonIds,
         parentPresenceByPerson
-      };
-    }
+    };
+}
 
-    function buildFamilyTreeProjection(people, families, options = {}) {
-      const peopleById = new Map((people || []).map(person => [person.id, person]));
-      const familyById = new Map((families || []).map(family => [family.id, family]));
-      const parentFamiliesByChild = new Map();
-      const childFamiliesByParent = new Map();
+function buildFamilyTreeProjection(people, families, options = {})
+{
+    const peopleById = new Map((people || []).map(person => [person.id, person]));
+    const familyById = new Map((families || []).map(family => [family.id, family]));
+    const parentFamiliesByChild = new Map();
+    const childFamiliesByParent = new Map();
 
-      familyById.forEach(family => {
-        (family.children || []).forEach(childId => {
-          if (!parentFamiliesByChild.has(childId)) parentFamiliesByChild.set(childId, []);
-          parentFamiliesByChild.get(childId).push(family);
+    familyById.forEach(family =>
+    {
+        (family.children || []).forEach(childId =>
+        {
+            if (!parentFamiliesByChild.has(childId)) parentFamiliesByChild.set(childId, []);
+            parentFamiliesByChild.get(childId).push(family);
         });
-        [family.left, family.right].filter(Boolean).forEach(parentId => {
-          if (!childFamiliesByParent.has(parentId)) childFamiliesByParent.set(parentId, []);
-          childFamiliesByParent.get(parentId).push(family);
+        [family.left, family.right].filter(Boolean).forEach(parentId =>
+        {
+            if (!childFamiliesByParent.has(parentId)) childFamiliesByParent.set(parentId, []);
+            childFamiliesByParent.get(parentId).push(family);
         });
-      });
+    });
 
-      const focusPersonId = peopleById.has(options.focusPersonId)
+    const focusPersonId = peopleById.has(options.focusPersonId)
         ? options.focusPersonId
         : people?.[0]?.id || '';
-      const ancestorGenerations = clampNumber(
+    const ancestorGenerations = clampNumber(
         Number(options.ancestorGenerations) || 0,
         TREE_ANCESTOR_GENERATION_MIN,
         TREE_ANCESTOR_GENERATION_MAX
-      );
-      const descendantGenerations = clampNumber(
+    );
+    const descendantGenerations = clampNumber(
         Number(options.descendantGenerations) || 0,
         TREE_DESCENDANT_GENERATION_MIN,
         TREE_DESCENDANT_GENERATION_MAX
-      );
-      const visiblePersonIds = new Set(focusPersonId ? [focusPersonId] : []);
-      const visibleFamilyIds = new Set();
+    );
+    const visiblePersonIds = new Set(focusPersonId ? [focusPersonId] : []);
+    const visibleFamilyIds = new Set();
 
-      const includeFamily = (family, { children = true } = {}) => {
+    const includeFamily = (family, { children = true } = {}) =>
+    {
         if (!family) return;
         visibleFamilyIds.add(family.id);
         [family.left, family.right].filter(Boolean).forEach(id => visiblePersonIds.add(id));
         if (children) (family.children || []).forEach(id => visiblePersonIds.add(id));
-      };
+    };
 
-      let ancestorFrontier = focusPersonId ? [focusPersonId] : [];
-      for (let depth = 1; depth <= ancestorGenerations && ancestorFrontier.length; depth += 1) {
+    let ancestorFrontier = focusPersonId ? [focusPersonId] : [];
+    for (let depth = 1; depth <= ancestorGenerations && ancestorFrontier.length; depth += 1)
+    {
         const next = [];
-        ancestorFrontier.forEach(childId => {
-          (parentFamiliesByChild.get(childId) || []).forEach(family => {
-            includeFamily(family, { children: depth === 1 });
-            [family.left, family.right].filter(Boolean).forEach(parentId => next.push(parentId));
-          });
+        ancestorFrontier.forEach(childId =>
+        {
+            (parentFamiliesByChild.get(childId) || []).forEach(family =>
+            {
+                includeFamily(family, { children: depth === 1 });
+                [family.left, family.right].filter(Boolean).forEach(parentId => next.push(parentId));
+            });
         });
         ancestorFrontier = [...new Set(next)];
-      }
+    }
 
-      let descendantFrontier = focusPersonId ? [focusPersonId] : [];
-      for (let depth = 1; depth <= descendantGenerations && descendantFrontier.length; depth += 1) {
+    let descendantFrontier = focusPersonId ? [focusPersonId] : [];
+    for (let depth = 1; depth <= descendantGenerations && descendantFrontier.length; depth += 1)
+    {
         const next = [];
-        descendantFrontier.forEach(parentId => {
-          (childFamiliesByParent.get(parentId) || []).forEach(family => {
-            includeFamily(family);
-            (family.children || []).forEach(childId => next.push(childId));
-          });
+        descendantFrontier.forEach(parentId =>
+        {
+            (childFamiliesByParent.get(parentId) || []).forEach(family =>
+            {
+                includeFamily(family);
+                (family.children || []).forEach(childId => next.push(childId));
+            });
         });
         descendantFrontier = [...new Set(next)];
-      }
+    }
 
-      (childFamiliesByParent.get(focusPersonId) || []).forEach(family => {
+    (childFamiliesByParent.get(focusPersonId) || []).forEach(family =>
+    {
         includeFamily(family, { children: descendantGenerations > 0 });
-      });
+    });
 
-      if (ancestorGenerations > 0) {
+    if (ancestorGenerations > 0)
+    {
         const parentContext = treeParentFamilyContext(
-          people,
-          families,
-          focusPersonId
+            people,
+            families,
+            focusPersonId
         );
 
         // These children are siblings in the focused person's generation.
         // They remain visible even when descendantGenerations is zero.
-        parentContext.families.forEach(family => {
-          includeFamily(family);
+        parentContext.families.forEach(family =>
+        {
+            includeFamily(family);
         });
 
-        parentContext.siblingIds.forEach(siblingId => {
-          (childFamiliesByParent.get(siblingId) || []).forEach(family => {
-            const hasPartner = [family.left, family.right]
-              .some(id => id && id !== siblingId && peopleById.has(id));
-            const hasChildren = (family.children || [])
-              .some(id => peopleById.has(id));
-            if (!hasPartner && !hasChildren) return;
-            includeFamily(family, { children: descendantGenerations > 0 });
-          });
+        parentContext.siblingIds.forEach(siblingId =>
+        {
+            (childFamiliesByParent.get(siblingId) || []).forEach(family =>
+            {
+                const hasPartner = [family.left, family.right]
+                    .some(id => id && id !== siblingId && peopleById.has(id));
+                const hasChildren = (family.children || [])
+                    .some(id => peopleById.has(id));
+                if (!hasPartner && !hasChildren) return;
+                includeFamily(family, { children: descendantGenerations > 0 });
+            });
         });
-      }
+    }
 
-      if (options.showCousins && ancestorGenerations >= 2) {
+    if (options.showCousins && ancestorGenerations >= 2)
+    {
         const focusParentIds = new Set(
-          (parentFamiliesByChild.get(focusPersonId) || [])
-            .flatMap(family => [family.left, family.right])
-            .filter(Boolean)
+            (parentFamiliesByChild.get(focusPersonId) || [])
+                .flatMap(family => [family.left, family.right])
+                .filter(Boolean)
         );
 
-        focusParentIds.forEach(parentId => {
-          (parentFamiliesByChild.get(parentId) || []).forEach(grandparentFamily => {
-            includeFamily(grandparentFamily);
-            (grandparentFamily.children || [])
-              .filter(relativeId => relativeId !== parentId)
-              .forEach(auntOrUncleId => {
-                (childFamiliesByParent.get(auntOrUncleId) || []).forEach(cousinFamily => {
-                  includeFamily(cousinFamily);
-                });
-              });
-          });
+        focusParentIds.forEach(parentId =>
+        {
+            (parentFamiliesByChild.get(parentId) || []).forEach(grandparentFamily =>
+            {
+                includeFamily(grandparentFamily);
+                (grandparentFamily.children || [])
+                    .filter(relativeId => relativeId !== parentId)
+                    .forEach(auntOrUncleId =>
+                    {
+                        (childFamiliesByParent.get(auntOrUncleId) || []).forEach(cousinFamily =>
+                        {
+                            includeFamily(cousinFamily);
+                        });
+                    });
+            });
         });
-      }
+    }
 
-      const projectedFamilies = (families || [])
+    const projectedFamilies = (families || [])
         .filter(family => visibleFamilyIds.has(family.id))
         .map(family => ({
-          ...family,
-          children: (family.children || []).filter(childId => visiblePersonIds.has(childId))
+            ...family,
+            children: (family.children || []).filter(childId => visiblePersonIds.has(childId))
         }));
-      const coherentPersonIds = new Set(visiblePersonIds);
-      projectedFamilies.forEach(family => {
+    const coherentPersonIds = new Set(visiblePersonIds);
+    projectedFamilies.forEach(family =>
+    {
         [family.left, family.right, ...(family.children || [])]
-          .filter(Boolean)
-          .forEach(id => coherentPersonIds.add(id));
-      });
+            .filter(Boolean)
+            .forEach(id => coherentPersonIds.add(id));
+    });
 
-      const branchRoles = deriveTreeBranchRoles(
+    const branchRoles = deriveTreeBranchRoles(
         people,
         families,
         focusPersonId,
         coherentPersonIds,
         visibleFamilyIds
-      );
+    );
 
-      return {
+    return {
         focusPersonId,
         people: (people || []).filter(person => coherentPersonIds.has(person.id)),
         families: projectedFamilies,
         visiblePersonIds: coherentPersonIds,
         visibleFamilyIds,
         branchRoles
-      };
-    }
+    };
+}
 
-    function currentPeopleRecords() {
-      return getPeopleRecordsFromSampleData(currentProjectId());
-    }
+function currentPeopleRecords()
+{
+    return getPeopleRecordsFromSampleData(currentProjectId());
+}
 
-    function normalizePlaceLookupText(value) {
-      return cleanEditFieldValue(value)
+function normalizePlaceLookupText(value)
+{
+    return cleanEditFieldValue(value)
         .replace(/\s+/g, ' ')
         .replace(/[.,;:]+$/g, '')
         .toLowerCase();
-    }
+}
 
-    function placeDisplayText(place) {
-      return cleanEditFieldValue(place?.name);
-    }
+function placeDisplayText(place)
+{
+    return cleanEditFieldValue(place?.name);
+}
 
-    function findExactPlaceMatch(text, projectId = currentProjectId()) {
-      const normalized = normalizePlaceLookupText(text);
-      if (!normalized || !projectId) return null;
+function findExactPlaceMatch(text, projectId = currentProjectId())
+{
+    const normalized = normalizePlaceLookupText(text);
+    if (!normalized || !projectId) return null;
 
-      return sampleData.places.find(place => {
+    return sampleData.places.find(place =>
+    {
         if (!place || place.deleted || place.projectId !== projectId) return false;
 
         const values = [
-          place.name,
-          placePrimaryName(place),
-          placeSecondaryName(place),
-          ...placeAlternativeNames(place)
+            place.name,
+            placePrimaryName(place),
+            placeSecondaryName(place),
+            ...placeAlternativeNames(place)
         ];
 
         return values.some(value => normalizePlaceLookupText(value) === normalized);
-      }) || null;
-    }
+    }) || null;
+}
 
-    function samplePlaceIdFromDisplay(display) {
-      return findExactPlaceMatch(display)?.id || null;
-    }
-    function slugFromPlaceText(text) {
-      return normalizePlaceLookupText(text)
+function samplePlaceIdFromDisplay(display)
+{
+    return findExactPlaceMatch(display)?.id || null;
+}
+function slugFromPlaceText(text)
+{
+    return normalizePlaceLookupText(text)
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-|-$/g, '') || 'place';
-    }
+}
 
-    function uniquePlaceIdFromText(text) {
-      const base = `place-${slugFromPlaceText(text)}`;
-      let id = base;
-      let counter = 2;
+function uniquePlaceIdFromText(text)
+{
+    const base = `place-${slugFromPlaceText(text)}`;
+    let id = base;
+    let counter = 2;
 
-      while (sampleData.places.some(place => place.id === id)) {
+    while (sampleData.places.some(place => place.id === id))
+    {
         id = `${base}-${counter}`;
         counter += 1;
-      }
-
-      return id;
     }
 
-    function createPlaceFromText(text) {
-      const display = cleanEditFieldValue(text);
-      if (!display) return null;
+    return id;
+}
 
-      const projectId = requireActiveProjectId();
-      if (!projectId) return null;
+function createPlaceFromText(text)
+{
+    const display = cleanEditFieldValue(text);
+    if (!display) return null;
 
-      const exact = findExactPlaceMatch(display);
-      if (exact) return exact;
+    const projectId = requireActiveProjectId();
+    if (!projectId) return null;
 
-      const now =
+    const exact = findExactPlaceMatch(display);
+    if (exact) return exact;
+
+    const now =
         new Date().toISOString();
-      const place = {
+    const place = {
         id: uniquePlaceIdFromText(display),
         projectId,
         name: display,
@@ -1279,186 +1367,202 @@
         createdAt: now,
         updatedAt: now,
         deleted: false
-      };
+    };
 
-      sampleData.places.push(place);
-      return place;
+    sampleData.places.push(place);
+    return place;
+}
+
+function resolvePlaceInputValue(text, selectedPlaceId = '', address = '')
+{
+    const placeText = cleanEditFieldValue(text);
+    const normalizedAddress = cleanEditFieldValue(address);
+
+    if (!placeText)
+    {
+        return {
+            placeId: null,
+            placeText: '',
+            address: normalizedAddress,
+            created: false
+        };
     }
 
-    function resolvePlaceInputValue(text, selectedPlaceId = '', address = '') {
-      const placeText = cleanEditFieldValue(text);
-      const normalizedAddress = cleanEditFieldValue(address);
-
-      if (!placeText) {
-        return {
-          placeId: null,
-          placeText: '',
-          address: normalizedAddress,
-          created: false
-        };
-      }
-
-      const selectedPlace = selectedPlaceId ? getPlace(selectedPlaceId) : null;
-      if (
+    const selectedPlace = selectedPlaceId ? getPlace(selectedPlaceId) : null;
+    if (
         selectedPlace &&
         normalizePlaceLookupText(placeText) === normalizePlaceLookupText(placeDisplayText(selectedPlace))
-      ) {
+    )
+    {
         return {
-          placeId: selectedPlace.id,
-          placeText,
-          address: normalizedAddress,
-          created: false
+            placeId: selectedPlace.id,
+            placeText,
+            address: normalizedAddress,
+            created: false
         };
-      }
+    }
 
-      const exact = findExactPlaceMatch(placeText);
-      if (exact) {
+    const exact = findExactPlaceMatch(placeText);
+    if (exact)
+    {
         return {
-          placeId: exact.id,
-          placeText,
-          address: normalizedAddress,
-          created: false
+            placeId: exact.id,
+            placeText,
+            address: normalizedAddress,
+            created: false
         };
-      }
+    }
 
-      const created = createPlaceFromText(placeText);
+    const created = createPlaceFromText(placeText);
 
-      return {
+    return {
         placeId: created?.id || null,
         placeText,
         address: normalizedAddress,
         created: Boolean(created)
-      };
-    }
+    };
+}
 
-    function resolvePlaceInputSelector(selector, root = modalBackdrop) {
-      const input = root?.querySelector(selector);
-      const addressInput = input?.closest('[data-place-combobox]')?.querySelector('[data-place-address]');
-      const value = collectLocalizedDataFieldValue(
+function resolvePlaceInputSelector(selector, root = modalBackdrop)
+{
+    const input = root?.querySelector(selector);
+    const addressInput = input?.closest('[data-place-combobox]')?.querySelector('[data-place-address]');
+    const value = collectLocalizedDataFieldValue(
         input,
         input?.dataset.sourceValue || ''
-      );
-      const address = collectLocalizedDataFieldValue(
+    );
+    const address = collectLocalizedDataFieldValue(
         addressInput,
         addressInput?.dataset.sourceValue || ''
-      );
-      return resolvePlaceInputValue(value, input?.dataset.placeId || '', address);
-    }
+    );
+    return resolvePlaceInputValue(value, input?.dataset.placeId || '', address);
+}
 
-    function readPlaceInputValue(selector, root = document) {
-      const input = root?.querySelector(selector);
+function readPlaceInputValue(selector, root = document)
+{
+    const input = root?.querySelector(selector);
 
-      return {
+    return {
         text: collectLocalizedDataFieldValue(
-          input,
-          input?.dataset.sourceValue || ''
+            input,
+            input?.dataset.sourceValue || ''
         ).trim(),
         selectedPlaceId: input?.dataset.placeId || '',
-        address: (() => {
-          const addressInput = input?.closest('[data-place-combobox]')?.querySelector('[data-place-address]');
-          return collectLocalizedDataFieldValue(
-            addressInput,
-            addressInput?.dataset.sourceValue || ''
-          ).trim();
+        address: (() =>
+        {
+            const addressInput = input?.closest('[data-place-combobox]')?.querySelector('[data-place-address]');
+            return collectLocalizedDataFieldValue(
+                addressInput,
+                addressInput?.dataset.sourceValue || ''
+            ).trim();
         })()
-      };
-    }
+    };
+}
 
-    function resolvePlaceAssignment(value, currentPlaceId = '') {
-      if (value && typeof value === 'object') {
+function resolvePlaceAssignment(value, currentPlaceId = '')
+{
+    if (value && typeof value === 'object')
+    {
         return resolvePlaceInputValue(
-          value.text || '',
-          value.selectedPlaceId || currentPlaceId || '',
-          value.address || ''
+            value.text || '',
+            value.selectedPlaceId || currentPlaceId || '',
+            value.address || ''
         );
-      }
-
-      return resolvePlaceInputValue(value || '', currentPlaceId || '');
     }
 
-    function placeInputDisplayValue(placeId, fallbackText = '') {
-      return cleanEditFieldValue(getPlaceDisplay(placeId)) || cleanEditFieldValue(fallbackText);
-    }
+    return resolvePlaceInputValue(value || '', currentPlaceId || '');
+}
 
-    function syncPeopleRecordToSampleData(record) {
-      const person = getPerson(record?.id);
-      const birthPlace = resolvePlaceInputValue(record.birthPlace, person.birth?.placeId);
-      const deathPlace = resolvePlaceInputValue(record.deathPlace, person.death?.placeId);
-      if (!person) return;
-      person.names.first = record.first || person.names.first;
-      person.names.last = record.surname || person.names.last;
-      rebuildPersonDisplayName(person);
-      person.gender = record.gender || person.gender;
-      person.livingStatus = record.living || person.livingStatus;
-      person.birth = {
+function placeInputDisplayValue(placeId, fallbackText = '')
+{
+    return cleanEditFieldValue(getPlaceDisplay(placeId)) || cleanEditFieldValue(fallbackText);
+}
+
+function syncPeopleRecordToSampleData(record)
+{
+    const person = getPerson(record?.id);
+    const birthPlace = resolvePlaceInputValue(record.birthPlace, person.birth?.placeId);
+    const deathPlace = resolvePlaceInputValue(record.deathPlace, person.death?.placeId);
+    if (!person) return;
+    person.names.first = record.first || person.names.first;
+    person.names.last = record.surname || person.names.last;
+    rebuildPersonDisplayName(person);
+    person.gender = record.gender || person.gender;
+    person.livingStatus = record.living || person.livingStatus;
+    person.birth = {
         ...normalizeGenealogyDateInput({
-          date: record.birth,
-          dateLabel: record.birth,
-          dateType: peopleProfileDetailsFor(record).birthDateType || person.birth?.dateType || 'Unknown',
-          calendar: person.birth?.calendar,
-          originalText: record.birth
+            date: record.birth,
+            dateLabel: record.birth,
+            dateType: peopleProfileDetailsFor(record).birthDateType || person.birth?.dateType || 'Unknown',
+            calendar: person.birth?.calendar,
+            originalText: record.birth
         }, 'Unknown'),
         placeId: birthPlace.placeId || cleanDatePlaceId(person.birth?.placeId),
         placeText: birthPlace.placeText || person.birth?.placeText || '',
         address: person.birth?.address || ''
-      };
-      if (person.livingStatus === 'Deceased') {
+    };
+    if (person.livingStatus === 'Deceased')
+    {
         person.death = {
-          ...normalizeGenealogyDateInput({
-            date: record.death,
-            dateLabel: record.death,
-            dateType: peopleProfileDetailsFor(record).deathDateType || person.death?.dateType || 'Unknown',
-            calendar: person.death?.calendar,
-            originalText: record.death
-          }, 'Unknown'),
-          placeId: deathPlace.placeId,
-          placeText: deathPlace.placeText,
-          reason: person.death?.reason || '',
-          burialPlaceId: cleanDatePlaceId(person.death?.burialPlaceId),
-          burialPlaceText: person.death?.burialPlaceText || ''
+            ...normalizeGenealogyDateInput({
+                date: record.death,
+                dateLabel: record.death,
+                dateType: peopleProfileDetailsFor(record).deathDateType || person.death?.dateType || 'Unknown',
+                calendar: person.death?.calendar,
+                originalText: record.death
+            }, 'Unknown'),
+            placeId: deathPlace.placeId,
+            placeText: deathPlace.placeText,
+            reason: person.death?.reason || '',
+            burialPlaceId: cleanDatePlaceId(person.death?.burialPlaceId),
+            burialPlaceText: person.death?.burialPlaceText || ''
         };
-      } else {
-        person.death = {
-          ...emptyGenealogyDate('Exact date'),
-          placeId: null,
-          reason: '',
-          burialPlaceId: null
-        };
-      }
-      person.meta.updated = record.updated || person.meta.updated;
-      rebuildSampleEventsAndPruneSourceLinks();
     }
+    else
+    {
+        person.death = {
+            ...emptyGenealogyDate('Exact date'),
+            placeId: null,
+            reason: '',
+            burialPlaceId: null
+        };
+    }
+    person.meta.updated = record.updated || person.meta.updated;
+    rebuildSampleEventsAndPruneSourceLinks();
+}
 
 
+const topbar = document.getElementById('topbar');
+const sidebar = document.getElementById('sidebar');
+const main = document.getElementById('main');
+const modalBackdrop = document.getElementById('modalBackdrop');
+const toast = document.getElementById('toast');
+const workspace = document.querySelector('.workspace');
 
-    const topbar = document.getElementById('topbar');
-    const sidebar = document.getElementById('sidebar');
-    const main = document.getElementById('main');
-    const modalBackdrop = document.getElementById('modalBackdrop');
-    const toast = document.getElementById('toast');
-    const workspace = document.querySelector('.workspace');
+const INTENTIONAL_BACKDROP_DRAG_THRESHOLD = 6;
 
-    const INTENTIONAL_BACKDROP_DRAG_THRESHOLD = 6;
-
-    function bindIntentionalBackdropDismiss(
-      backdrop,
-      onDismiss,
-      options = {}
-    ) {
-      const dragThreshold = Number.isFinite(options.dragThreshold)
+function bindIntentionalBackdropDismiss(
+    backdrop,
+    onDismiss,
+    options = {}
+)
+{
+    const dragThreshold = Number.isFinite(options.dragThreshold)
         ? Math.max(0, options.dragThreshold)
         : INTENTIONAL_BACKDROP_DRAG_THRESHOLD;
 
-      const thresholdSquared =
+    const thresholdSquared =
         dragThreshold * dragThreshold;
 
-      let gesture = null;
+    let gesture = null;
 
-      const reset = () => {
+    const reset = () =>
+    {
         gesture = null;
-      };
+    };
 
-      const handlePointerDown = event => {
+    const handlePointerDown = event =>
+    {
         /*
         * Beginning a new gesture always clears any state that
         * may have survived an interrupted previous gesture.
@@ -1466,65 +1570,71 @@
         reset();
 
         if (
-          event.target !== backdrop ||
+            event.target !== backdrop ||
           event.isPrimary === false ||
           event.button !== 0
-        ) {
-          return;
+        )
+        {
+            return;
         }
 
         gesture = {
-          startedOnBackdrop: true,
-          pointerId: event.pointerId,
-          startX: event.clientX,
-          startY: event.clientY,
-          moved: false
+            startedOnBackdrop: true,
+            pointerId: event.pointerId,
+            startX: event.clientX,
+            startY: event.clientY,
+            moved: false
         };
-      };
+    };
 
-      const handlePointerMove = event => {
+    const handlePointerMove = event =>
+    {
         if (
-          !gesture ||
+            !gesture ||
           event.pointerId !== gesture.pointerId
-        ) {
-          return;
+        )
+        {
+            return;
         }
 
         const deltaX =
-          event.clientX - gesture.startX;
+            event.clientX - gesture.startX;
 
         const deltaY =
-          event.clientY - gesture.startY;
+            event.clientY - gesture.startY;
 
         if (
-          deltaX * deltaX + deltaY * deltaY >
+            deltaX * deltaX + deltaY * deltaY >
           thresholdSquared
-        ) {
-          gesture.moved = true;
+        )
+        {
+            gesture.moved = true;
         }
-      };
+    };
 
-      const handlePointerUp = event => {
+    const handlePointerUp = event =>
+    {
         if (
-          !gesture ||
+            !gesture ||
           event.pointerId !== gesture.pointerId
-        ) {
-          return;
+        )
+        {
+            return;
         }
 
         const deltaX =
-          event.clientX - gesture.startX;
+            event.clientX - gesture.startX;
 
         const deltaY =
-          event.clientY - gesture.startY;
+            event.clientY - gesture.startY;
 
         const stayedWithinThreshold =
-          !gesture.moved &&
+            !gesture.moved &&
           deltaX * deltaX + deltaY * deltaY <=
             thresholdSquared;
 
         const shouldDismiss =
-          gesture.startedOnBackdrop &&
+            gesture.startedOnBackdrop &&
           event.target === backdrop &&
           stayedWithinThreshold;
 
@@ -1534,226 +1644,238 @@
         */
         reset();
 
-        if (shouldDismiss) {
-          onDismiss?.(event);
+        if (shouldDismiss)
+        {
+            onDismiss?.(event);
         }
-      };
+    };
 
-      const handlePointerCancel = () => {
+    const handlePointerCancel = () =>
+    {
         reset();
-      };
+    };
 
-      backdrop.addEventListener(
+    backdrop.addEventListener(
         'pointerdown',
         handlePointerDown
-      );
+    );
 
-      backdrop.addEventListener(
+    backdrop.addEventListener(
         'pointermove',
         handlePointerMove
-      );
+    );
 
-      backdrop.addEventListener(
+    backdrop.addEventListener(
         'pointerup',
         handlePointerUp
-      );
+    );
 
-      backdrop.addEventListener(
+    backdrop.addEventListener(
         'pointercancel',
         handlePointerCancel
-      );
+    );
 
-      return {
+    return {
         reset,
 
-        destroy() {
-          reset();
+        destroy()
+        {
+            reset();
 
-          backdrop.removeEventListener(
-            'pointerdown',
-            handlePointerDown
-          );
+            backdrop.removeEventListener(
+                'pointerdown',
+                handlePointerDown
+            );
 
-          backdrop.removeEventListener(
-            'pointermove',
-            handlePointerMove
-          );
+            backdrop.removeEventListener(
+                'pointermove',
+                handlePointerMove
+            );
 
-          backdrop.removeEventListener(
-            'pointerup',
-            handlePointerUp
-          );
+            backdrop.removeEventListener(
+                'pointerup',
+                handlePointerUp
+            );
 
-          backdrop.removeEventListener(
-            'pointercancel',
-            handlePointerCancel
-          );
+            backdrop.removeEventListener(
+                'pointercancel',
+                handlePointerCancel
+            );
         }
-      };
-    }
+    };
+}
 
-    let modalBackdropDismissBinding = null;
+let modalBackdropDismissBinding = null;
 
-    const notesRichTextRuntime = {
-      instance:
+const notesRichTextRuntime = {
+    instance:
         null,
 
-      noteId:
+    noteId:
         '',
 
-      toolbarElement:
+    toolbarElement:
         null,
 
-      editorElement:
+    editorElement:
         null,
 
-      fallbackElement:
+    fallbackElement:
         null,
 
-      textChangeHandler:
+    textChangeHandler:
         null,
 
-      selectionChangeHandler:
+    selectionChangeHandler:
         null,
 
-      lastSelection:
+    lastSelection:
         null,
 
-      initializing:
+    initializing:
         false,
 
-      fallbackActive:
+    fallbackActive:
         false,
 
-      fallbackToastShown:
+    fallbackToastShown:
         false
-    };
+};
 
-    const geneoRichTextRuntime = {
-      nodeId: '',
+const geneoRichTextRuntime = {
+    nodeId: '',
 
-      instances: {
+    instances: {
         canvas: null,
         inspector: null
-      },
+    },
 
-      textChangeHandlers: {
+    textChangeHandlers: {
         canvas: null,
         inspector: null
-      },
+    },
 
-      fallbackElements: {
+    fallbackElements: {
         canvas: null,
         inspector: null
-      },
+    },
 
-      outsidePointerHandler: null,
-      keydownHandler: null,
+    outsidePointerHandler: null,
+    keydownHandler: null,
 
-      draftDelta: null,
-      draftText: '',
+    draftDelta: null,
+    draftText: '',
 
-      syncing: false,
-      fallbackActive: false
-    };
+    syncing: false,
+    fallbackActive: false
+};
 
-    const localizationObserver =
-      new MutationObserver(
-        records => {
-          if (
-            state.language !== 'ru'
-          ) {
-            return;
-          }
-
-          records.forEach(record => {
+const localizationObserver =
+    new MutationObserver(
+        records =>
+        {
             if (
-              localizationMutationIsHandled(
-                record.target
-              )
-            ) {
-              return;
+                state.language !== 'ru'
+            )
+            {
+                return;
             }
 
-            if (
-              record.type
+            records.forEach(record =>
+            {
+                if (
+                    localizationMutationIsHandled(
+                        record.target
+                    )
+                )
+                {
+                    return;
+                }
+
+                if (
+                    record.type
                 === 'childList'
-            ) {
-              record.addedNodes
-                .forEach(node => {
-                  if (
-                    node.nodeType
+                )
+                {
+                    record.addedNodes
+                        .forEach(node =>
+                        {
+                            if (
+                                node.nodeType
                       === Node.ELEMENT_NODE
                     || node.nodeType
                       === Node.TEXT_NODE
                     || node.nodeType
                       === Node.DOCUMENT_FRAGMENT_NODE
-                  ) {
-                    localizeUI(node);
-                  }
-                });
+                            )
+                            {
+                                localizeUI(node);
+                            }
+                        });
 
-              return;
-            }
+                    return;
+                }
 
-            if (
-              record.type
+                if (
+                    record.type
                 === 'characterData'
-            ) {
-              localizeTextNode(
-                record.target
-              );
+                )
+                {
+                    localizeTextNode(
+                        record.target
+                    );
 
-              return;
-            }
+                    return;
+                }
 
-            if (
-              record.type
+                if (
+                    record.type
                 === 'attributes'
               && record.target
                 instanceof Element
               && record.attributeName
-            ) {
-              localizeElementAttribute(
-                record.target,
-                record.attributeName
-              );
-            }
-          });
+                )
+                {
+                    localizeElementAttribute(
+                        record.target,
+                        record.attributeName
+                    );
+                }
+            });
         }
-      );
+    );
 
-    localizationObserver.observe(
-      document.body,
-      {
+localizationObserver.observe(
+    document.body,
+    {
         childList: true,
         subtree: true,
         characterData: true,
         attributes: true,
         attributeFilter: [
-          ...LOCALIZABLE_DOM_ATTRIBUTES
+            ...LOCALIZABLE_DOM_ATTRIBUTES
         ]
-      }
-    );
+    }
+);
 
-    sampleData.notifications = [
-      {
+sampleData.notifications = [
+    {
         id: 'archive-files-added',
         tone: 'green',
         icon: icon.archive,
         title: 'Archive files are ready to organize',
         meta: 'Archive · Files',
         module: 'Archive'
-      },
-      {
+    },
+    {
         id: 'unsorted-photos',
         tone: 'green',
         icon: icon.image,
         title: '8 photos are not assigned to an album',
         meta: 'Albums - Cleanup',
         module: 'Albums'
-      },
-      {
+    },
+    {
         id: 'needs-review-places',
         tone: 'blue',
         icon: icon.mapPin,
@@ -1761,8 +1883,8 @@
         meta: 'Places - Review',
         module: 'Places',
         placesView: 'review'
-      },
-      {
+    },
+    {
         id: 'backup-reminder',
         tone: 'warn',
         icon: icon.syncoffline,
@@ -1770,35 +1892,36 @@
         meta: 'Project settings - Stored locally',
         module: 'Projects',
         openSide: 'settings'
-      },
-      {
+    },
+    {
         id: 'publish-privacy',
         tone: 'purple',
         icon: icon.people,
         title: 'Living people are hidden by default in exports',
         meta: 'Publish - Privacy reminder',
         module: 'Publish'
-      }
-    ].map(notification => ({
-      ...notification,
-      projectId: 'p1'
-    }));
-
-    sampleData.activity = [
-      { id: 'activity-photos-added', projectId: 'p1', module: 'Albums', tone: 'red', title: 'Photos added', detail: '4 photos added to Family photos', occurredAt: '2026-05-24T10:42:00Z' },
-      { id: 'activity-person-updated', projectId: 'p1', module: 'People', tone: 'purple', title: 'Person updated', detail: 'Luna Purrington profile updated', occurredAt: '2026-05-23T10:42:00Z' },
-      { id: 'activity-gedcom-imported', projectId: 'p1', module: 'Family Tree', tone: 'amber', title: 'GEDCOM imported', detail: '24 people imported from GEDCOM', occurredAt: '2026-05-25T09:00:00Z' },
-      { id: 'activity-note-added', projectId: 'p1', module: 'Notes', tone: '', title: 'Research note added', detail: 'Surname origin note updated', occurredAt: '2026-05-21T11:00:00Z' },
-      { id: 'activity-relationship-connected', projectId: 'p1', module: 'Family Tree', tone: '', title: 'Relationship connected', detail: 'Luna Purrington was connected to the tree', occurredAt: '2026-05-18T12:00:00Z' },
-      { id: 'activity-file-linked', projectId: 'p1', module: 'Archive', tone: 'amber', title: 'Archive file linked', detail: 'Pawford household register linked to Silver Whiskerfield', occurredAt: '2026-05-14T09:00:00Z' },
-      { id: 'activity-duplicate-reviewed', projectId: 'p1', module: 'People', tone: '', title: 'Duplicate reviewed', detail: 'Possible duplicate was marked reviewed', occurredAt: '2026-05-10T14:00:00Z' },
-      { id: 'activity-photo-tags', projectId: 'p1', module: 'Albums', tone: 'red', title: 'Photo tags added', detail: 'Three portraits were linked to people', occurredAt: '2026-05-07T15:00:00Z' }
-    ];
-
-    function projectNotifications(projectId = currentProjectId()) {
-      if (!projectId) return [];
-      return (sampleData.notifications || []).filter(notification =>
-        notification.projectId === projectId
-      );
     }
+].map(notification => ({
+    ...notification,
+    projectId: 'p1'
+}));
+
+sampleData.activity = [
+    { id: 'activity-photos-added', projectId: 'p1', module: 'Albums', tone: 'red', title: 'Photos added', detail: '4 photos added to Family photos', occurredAt: '2026-05-24T10:42:00Z' },
+    { id: 'activity-person-updated', projectId: 'p1', module: 'People', tone: 'purple', title: 'Person updated', detail: 'Luna Purrington profile updated', occurredAt: '2026-05-23T10:42:00Z' },
+    { id: 'activity-gedcom-imported', projectId: 'p1', module: 'Family Tree', tone: 'amber', title: 'GEDCOM imported', detail: '24 people imported from GEDCOM', occurredAt: '2026-05-25T09:00:00Z' },
+    { id: 'activity-note-added', projectId: 'p1', module: 'Notes', tone: '', title: 'Research note added', detail: 'Surname origin note updated', occurredAt: '2026-05-21T11:00:00Z' },
+    { id: 'activity-relationship-connected', projectId: 'p1', module: 'Family Tree', tone: '', title: 'Relationship connected', detail: 'Luna Purrington was connected to the tree', occurredAt: '2026-05-18T12:00:00Z' },
+    { id: 'activity-file-linked', projectId: 'p1', module: 'Archive', tone: 'amber', title: 'Archive file linked', detail: 'Pawford household register linked to Silver Whiskerfield', occurredAt: '2026-05-14T09:00:00Z' },
+    { id: 'activity-duplicate-reviewed', projectId: 'p1', module: 'People', tone: '', title: 'Duplicate reviewed', detail: 'Possible duplicate was marked reviewed', occurredAt: '2026-05-10T14:00:00Z' },
+    { id: 'activity-photo-tags', projectId: 'p1', module: 'Albums', tone: 'red', title: 'Photo tags added', detail: 'Three portraits were linked to people', occurredAt: '2026-05-07T15:00:00Z' }
+];
+
+function projectNotifications(projectId = currentProjectId())
+{
+    if (!projectId) return [];
+    return (sampleData.notifications || []).filter(notification =>
+        notification.projectId === projectId
+    );
+}
 
