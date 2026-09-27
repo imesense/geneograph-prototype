@@ -1,0 +1,81 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+
+name: "Deploy prototype"
+
+on:
+    push:
+        branches:
+            - "default"
+        paths:
+            - ".github/workflows/**"
+            - "src/**"
+            - "*.html"
+            - "*.css"
+            - "*.js"
+
+permissions:
+    contents: read
+    pages: write
+    id-token: write
+
+concurrency:
+    group: pages
+    cancel-in-progress: true
+
+defaults:
+    run:
+        shell: pwsh
+
+jobs:
+    build-prototype:
+        name: "Build prototype"
+
+        strategy:
+            matrix:
+                system:
+                    - ubuntu-24.04
+
+        runs-on: ${{ matrix.system }}
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v7
+              with:
+                  fetch-depth: 0
+
+            - name: Build prototype
+              run: |
+                  mkdir `
+                      -p ${{ github.workspace }}/dist/
+                  Copy-Item `
+                      -Path ${{ github.workspace }}/src/* `
+                      -Destination ${{ github.workspace }}/dist/ `
+                      -Recurse
+
+            - name: Upload prototype
+              id: deployment
+              uses: actions/upload-pages-artifact@v5
+              with:
+                  path: ${{ github.workspace }}/dist
+
+    deploy-prototype:
+        name: "Deploy prototype"
+
+        needs:
+            - build-prototype
+
+        strategy:
+            matrix:
+                system:
+                    - ubuntu-24.04
+
+        runs-on: ${{ matrix.system }}
+
+        environment:
+            name: github-pages
+            url: ${{ steps.deployment.outputs.page_url }}
+
+        steps:
+            - name: Deploy prototype
+              id: deployment
+              uses: actions/deploy-pages@v5
