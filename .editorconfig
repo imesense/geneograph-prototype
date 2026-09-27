@@ -16,3 +16,50 @@ end_of_line = crlf
 indent_size = 2
 indent_style = space
 insert_final_newline = true
+
+# HTML documents
+[*.{htm,html}]
+charset = utf-8
+end_of_line = lf
+indent_size = 4
+indent_style = space
+insert_final_newline = true
+
+# CSS styles
+[*.css]
+charset = utf-8
+end_of_line = lf
+indent_size = 4
+indent_style = space
+insert_final_newline = true
+
+# JSON documents
+[*.json]
+charset = utf-8
+end_of_line = lf
+indent_size = 4
+indent_style = space
+insert_final_newline = true
+
+# JavaScript sources
+[*.js]
+charset = utf-8
+end_of_line = lf
+indent_size = 4
+indent_style = space
+insert_final_newline = true
+
+# Git configs
+[.{gitattributes,gitignore}]
+charset = utf-8
+end_of_line = lf
+indent_style = tab
+insert_final_newline = true
+
+# EditorConfig configs
+[.editorconfig]
+charset = utf-8
+end_of_line = crlf
+indent_size = 4
+indent_style = space
+insert_final_newline = true

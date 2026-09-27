@@ -8,6 +8,30 @@
 # Image files
 *.ico binary
 *.png binary
+*.webp binary
+*.jpg binary
+*.jpeg binary
+*.svg binary
 
 # Markdown files
 *.md text eol=crlf encoding=utf-8
+
+# HTML documents
+*.htm text eol=lf encoding=utf-8
+*.html text eol=lf encoding=utf-8
+
+# CSS styles
+*.css text eol=lf encoding=utf-8
+
+# JSON documents
+*.json text eol=lf encoding=utf-8
+
+# JavaScript sources
+*.js text eol=lf encoding=utf-8
+
+# Git configs
+.gitattributes text eol=lf encoding=utf-8
+.gitignore text eol=lf encoding=utf-8
+
+# EditorConfig files
+.editorconfig text eol=crlf encoding=utf-8
