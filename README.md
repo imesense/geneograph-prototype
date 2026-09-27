@@ -1,13 +1,13 @@
 # GeneoGraph Prototype
 
-This is a static site. Open `index.html` directly or serve the repository root
-as static files; no build step is required. GitHub Pages serves the same files.
+This is a static site. Open `src/index.html` directly or serve `src/` as static
+files; no build step is required. The current root-based GitHub Pages
+configuration does not publish the application from `src/`.
 
 The HTML contains the application shell and a small runtime configuration block.
-Styles live in `styles/`, behavior and sample data in `scripts/`, and local
-images in `assets/`. Stylesheets and classic deferred scripts are listed in
-source order in `index.html`; keep that order when editing them. The existing
-Leaflet and Quill CDN tags remain pinned dependencies.
+Styles, scripts, sample data, and images live directly in `src/`. Stylesheets
+and classic deferred scripts are listed in source order in `src/index.html`;
+keep that order when editing them. Leaflet and Quill remain pinned CDN dependencies.
 
 ## License
 

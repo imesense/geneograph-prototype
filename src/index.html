@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GeneoGraph - Interactive concept</title>
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin="" />
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script>
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css">
+  <script
+    src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+  <link rel="stylesheet" href="foundation.css">
+  <link rel="stylesheet" href="family-people.css">
+  <link rel="stylesheet" href="people-shared.css">
+  <link rel="stylesheet" href="geneograph.css">
+  <link rel="stylesheet" href="albums.css">
+  <link rel="stylesheet" href="archive.css">
+  <link rel="stylesheet" href="notes-places.css">
+  <link rel="stylesheet" href="publish.css">
+  <link rel="stylesheet" href="final-overrides.css">
+
+</head>
+<body>
+  <div class="app">
+    <header class="topbar" id="topbar"></header>
+    <div class="workspace">
+      <aside class="sidebar" id="sidebar"></aside>
+      <main class="main" id="main"></main>
+    </div>
+  </div>
+  <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true"></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    window.GENEOGRAPH_CONFIG = {
+      maptilerKey: 'QoZYanI1MAQspHo09iET'
+    };
+  </script>
+
+  <script src="icons.js" defer></script>
+  <script src="runtime-config.js" defer></script>
+  <script src="localization.js" defer></script>
+  <script src="sample-data.js" defer></script>
+  <script src="shared-media.js" defer></script>
+  <script src="validation.js" defer></script>
+  <script src="state-tree-core.js" defer></script>
+  <script src="app-shell.js" defer></script>
+  <script src="projects-tree-layout.js" defer></script>
+  <script src="family-and-shared.js" defer></script>
+  <script src="seed-genealogy.js" defer></script>
+  <script src="people.js" defer></script>
+  <script src="albums.js" defer></script>
+  <script src="geneograph.js" defer></script>
+  <script src="seed-boards.js" defer></script>
+  <script src="archive.js" defer></script>
+  <script src="notes.js" defer></script>
+  <script src="places.js" defer></script>
+  <script src="publish.js" defer></script>
+  <script src="shared-actions.js" defer></script>
+  <script src="bootstrap.js" defer></script>
+
+</body>
+</html>
