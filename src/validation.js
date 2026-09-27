@@ -1272,7 +1272,7 @@ function validateSampleData()
         if (!Number.isFinite(Date.parse(issue.dismissedAt || ''))) warn(`Place issue ${issue.id} has an invalid dismissedAt timestamp`);
     });
 
-    if (sampleData.media.length !== 15) warn(`Expected exactly 15 seeded media records; found ${sampleData.media.length}`);
+    if (sampleData.media.length !== 14) warn(`Expected exactly 14 seeded media records; found ${sampleData.media.length}`);
 
     (sampleData.albums || []).forEach(album =>
     {
