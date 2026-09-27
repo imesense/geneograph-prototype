@@ -48,7 +48,7 @@
     --scrollbar-thumb: #2D3634;
     --scrollbar-thumb-hover: #3A4743;
     --scrollbar-thumb-active: #4B5B56;
-    --geneograph-cover-tree-image: url("geneograph-cover-tree.png");
+    --geneograph-cover-tree-image: url("assets/geneograph-cover-tree.png");
 }
 
 html {

@@ -5,8 +5,9 @@ files; no build step is required. The current root-based GitHub Pages
 configuration does not publish the application from `src/`.
 
 The HTML contains the application shell and a small runtime configuration block.
-Styles, scripts, sample data, and images live directly in `src/`. Stylesheets
-and classic deferred scripts are listed in source order in `src/index.html`;
+Styles, scripts, and sample data live directly in `src/`; images are in
+`src/assets/`. Stylesheets and classic deferred scripts are listed in source
+order in `src/index.html`;
 keep that order when editing them. Leaflet and Quill remain pinned CDN dependencies.
 
 ## License
