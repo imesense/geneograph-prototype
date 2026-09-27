@@ -7940,18 +7940,75 @@
     .tree-lines { width: 100%; height: 100%; }
     .tree-line.descendant { stroke: rgba(245,247,246,.88); }
     
-    @media (min-width: 901px) and (max-width: 1400px) {
+    @media (max-width: 1400px) {
+      .startup-page .main-column {
+        container: startup-projects / inline-size;
+      }
+
       .startup-page .toolbar {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 52px 52px;
-        align-items: start;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
         gap: var(--space-3);
       }
-      .startup-page .toolbar-left { grid-column: 1; grid-row: 1; }
-      .startup-page .toolbar-right { display: contents; }
-      .startup-page .projects-sort-field { grid-column: 1 / -1; grid-row: 2; width: 215px; }
-      .startup-page [data-view="grid"] { grid-column: 2; grid-row: 1; }
-      .startup-page [data-view="list"] { grid-column: 3; grid-row: 1; }
+
+      .startup-page .toolbar-left {
+        grid-column: 1;
+        grid-row: 1;
+        width: 100%;
+      }
+
+      .startup-page .toolbar-left .app-search-field {
+        width: 100%;
+        max-width: none;
+        flex: 1 1 auto;
+      }
+
+      .startup-page .toolbar-right {
+        grid-column: 2;
+        grid-row: 1;
+        width: auto;
+        flex-wrap: nowrap;
+        justify-self: end;
+      }
+
+      .startup-page .toolbar-right .toolbar-button {
+        flex: 0 0 52px;
+      }
+    }
+
+    @container startup-projects (max-width: 620px) {
+      .startup-page .toolbar {
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 8px;
+      }
+
+      .startup-page .toolbar-right {
+        gap: 8px;
+      }
+
+      .startup-page .projects-sort-field {
+        width: 44px;
+        max-width: 44px;
+        flex: 0 0 44px;
+      }
+
+      .startup-page .projects-sort-field .app-sort-trigger {
+        width: 44px;
+        justify-content: center;
+        gap: 0;
+        padding: 0;
+      }
+
+      .startup-page .projects-sort-field .app-sort-current,
+      .startup-page .projects-sort-field .app-sort-chevron {
+        display: none;
+      }
+
+      .startup-page .toolbar-right .toolbar-button {
+        width: 44px;
+        flex-basis: 44px;
+      }
     }
 
     @media (max-width: 1500px) {
@@ -50864,7 +50921,8 @@
                   field: state.sort,
                   direction: state.sortDirection,
                   ariaLabel: 'Sort projects',
-                  options: APP_SORT_OPTIONS.projects
+                  options: APP_SORT_OPTIONS.projects,
+                  className: 'projects-sort-field'
                 })}
                 <button class="toolbar-button ${state.viewMode === 'grid' ? 'active' : ''}" type="button" data-view="grid" aria-label="Grid view" aria-pressed="${state.viewMode === 'grid'}">${icon.grid}</button>
                 <button class="toolbar-button ${state.viewMode === 'list' ? 'active' : ''}" type="button" data-view="list" aria-label="List view" aria-pressed="${state.viewMode === 'list'}">${icon.list}</button>
