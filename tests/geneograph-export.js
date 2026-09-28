@@ -82,20 +82,53 @@ async function runGeneographExportChecks()
         app.__exportTestDiagram = app.eval('structuredClone(selectedGeneographBoard().diagram)');
         const restore = () => app.eval('selectedGeneographBoard().diagram = structuredClone(window.__exportTestDiagram); renderGeneographEditorPreserveScroll();');
 
-        await check('PNG signature and original Projects logo', async () =>
+        await check('PNG logo sits in a bottom-right badge without a full-width strip', async () =>
         {
             const blob = await exportOnce();
             exportTestAssert(blob?.type === 'image/png', 'No PNG blob');
             const signature = new Uint8Array(await blob.slice(0, 8).arrayBuffer());
             exportTestAssert(signature.join(',') === '137,80,78,71,13,10,26,10', 'Invalid PNG signature');
             const canvas = await exportTestImage(blob);
-            const pixels = canvas.getContext('2d').getImageData(canvas.width - 500, canvas.height - 100, 500, 100).data;
+            const context = canvas.getContext('2d');
+            const brand = app.eval('geneoPngBrandLayout(2, t("Created with GeneoGraph"))');
+            const left = canvas.width - brand.inset - brand.width;
+            const top = canvas.height - brand.inset - brand.height;
+            const pixels = context.getImageData(left, top, brand.width, brand.height).data;
             let green = 0;
             for (let index = 0; index < pixels.length; index += 4)
             {
                 if (pixels[index + 1] > 100 && pixels[index + 1] > pixels[index] * 1.3 && pixels[index + 2] < 170) green += 1;
             }
-            exportTestAssert(green > 30, 'Logo green is absent from the branding strip');
+            exportTestAssert(green > 30, 'Original Projects logo is absent from the badge');
+            const corner = context.getImageData(4, 4, 1, 1).data;
+            const besideBadge = context.getImageData(4, top + Math.floor(brand.height / 2), 1, 1).data;
+            exportTestAssert(corner.every((value, index) => value === besideBadge[index]), 'A full-width footer remains');
+        });
+
+        await check('Light board background and reduced scale keep the watermark clear', async () =>
+        {
+            app.eval('selectedGeneographBoard().diagram.canvas.backgroundPaint.color = "#F3F7F5"; renderGeneographEditorPreserveScroll();');
+            try
+            {
+                const canvas = await exportTestImage(await exportOnce());
+                const context = canvas.getContext('2d');
+                const brand = app.eval('geneoPngBrandLayout(2, t("Created with GeneoGraph"))');
+                const top = canvas.height - brand.inset - brand.height;
+                const corner = context.getImageData(4, 4, 1, 1).data;
+                const besideBadge = context.getImageData(4, top + Math.floor(brand.height / 2), 1, 1).data;
+                exportTestAssert(corner.every((value, index) => value === besideBadge[index]), 'Dark footer covers the light board');
+                exportTestAssert(corner[0] > 200 && corner[1] > 200, 'Light background was not preserved');
+                for (const scale of [2, 0.3])
+                {
+                    const dimensions = app.eval(`geneoPngDimensions(400, 300, ${scale}, t("Created with GeneoGraph"))`);
+                    exportTestAssert(dimensions.width >= dimensions.brand.width + dimensions.brand.inset * 2, `Watermark is clipped at ${scale}x`);
+                    exportTestAssert(dimensions.height - dimensions.brand.inset - dimensions.brand.height >= (300 - 48) * scale, `Watermark overlaps content at ${scale}x`);
+                }
+            }
+            finally
+            {
+                restore();
+            }
         });
 
         await check('25%, 100%, and 200% have identical framing and bytes', async () =>
@@ -259,7 +292,19 @@ async function runGeneographExportChecks()
         {
             app.eval('state.language = "ru"; renderGeneographEditorPreserveScroll();');
             exportTestAssert(app.eval('t("Created with GeneoGraph")') === 'Создано в GeneoGraph', 'Wrong attribution');
-            exportTestAssert(Boolean(await exportOnce()), 'Russian PNG failed');
+            const blob = await exportOnce();
+            exportTestAssert(Boolean(blob), 'Russian PNG failed');
+            const canvas = await exportTestImage(blob);
+            const brand = app.eval('geneoPngBrandLayout(2, t("Created with GeneoGraph"))');
+            const textLeft = Math.floor(canvas.width - brand.inset - brand.width + brand.paddingX + brand.logoWidth + brand.gap);
+            const textTop = canvas.height - brand.inset - brand.height;
+            const pixels = canvas.getContext('2d').getImageData(textLeft, textTop, canvas.width - brand.inset - brand.paddingX - textLeft, brand.height).data;
+            let light = 0;
+            for (let index = 0; index < pixels.length; index += 4)
+            {
+                if (pixels[index] > 200 && pixels[index + 1] > 200 && pixels[index + 2] > 200) light += 1;
+            }
+            exportTestAssert(light > 30, 'Russian attribution is missing from the badge');
             exportTestAssert(app.document.getElementById('toast').textContent.includes('Загрузка PNG'), 'No Russian feedback');
         });
     }

@@ -344,25 +344,41 @@ async function geneoPngLogo()
     return geneoPngLoadImage(source, 'Projects logo');
 }
 
-function geneoPngDimensions(boardWidth, boardHeight, scale, attribution)
+function geneoPngBrandLayout(scale, attribution)
 {
-    const capturedWidth = Math.max(1, Math.ceil(boardWidth * scale));
-    const capturedHeight = Math.max(1, Math.ceil(boardHeight * scale));
-    const stripHeight = Math.max(56, Math.ceil(72 * scale));
+    const inset = Math.max(16, Math.round(24 * scale));
+    const paddingX = Math.max(12, Math.round(14 * scale));
+    const paddingY = Math.max(8, Math.round(10 * scale));
+    const gap = Math.max(8, Math.round(12 * scale));
     const fontSize = Math.max(14, Math.round(16 * scale));
     const logoHeight = Math.max(28, Math.round(34 * scale));
     const logoWidth = logoHeight * 412 / 368;
     const measure = document.createElement('canvas').getContext('2d');
     measure.font = `600 ${fontSize}px Inter, Segoe UI, sans-serif`;
-    const brandWidth = Math.ceil(
-        measure.measureText(attribution).width
-        + logoWidth + 12 * scale + 2 * Math.max(20, Math.round(24 * scale))
-    );
-    const width = Math.max(320, capturedWidth, brandWidth);
     return {
-        width,
-        height: capturedHeight + stripHeight,
-        stripHeight
+        inset,
+        paddingX,
+        gap,
+        fontSize,
+        logoHeight,
+        logoWidth,
+        width: Math.ceil(paddingX * 2 + logoWidth + gap + measure.measureText(attribution).width),
+        height: Math.ceil(paddingY * 2 + Math.max(logoHeight, fontSize * 1.35))
+    };
+}
+
+function geneoPngDimensions(boardWidth, boardHeight, scale, attribution)
+{
+    const capturedWidth = Math.max(1, Math.ceil(boardWidth * scale));
+    const capturedHeight = Math.max(1, Math.ceil(boardHeight * scale));
+    const brand = geneoPngBrandLayout(scale, attribution);
+    return {
+        width: Math.max(320, capturedWidth, brand.width + brand.inset * 2),
+        height: Math.max(
+            capturedHeight,
+            Math.ceil((boardHeight - GENEO_PNG_PADDING) * scale + brand.height + brand.inset)
+        ),
+        brand
     };
 }
 
@@ -495,8 +511,8 @@ async function runGeneographPngExport()
 
         const dimensions = geneoPngDimensions(boardWidth, boardHeight, scale, attribution);
         finalCanvas = document.createElement('canvas');
-        finalCanvas.width = dimensions.width;
-        finalCanvas.height = Math.max(dimensions.height, capturedCanvas.height + dimensions.stripHeight);
+        finalCanvas.width = Math.max(dimensions.width, capturedCanvas.width);
+        finalCanvas.height = Math.max(dimensions.height, capturedCanvas.height);
         if (finalCanvas.width > GENEO_PNG_MAX_SIDE
             || finalCanvas.height > GENEO_PNG_MAX_SIDE
             || finalCanvas.width * finalCanvas.height > GENEO_PNG_MAX_PIXELS)
@@ -508,23 +524,21 @@ async function runGeneographPngExport()
         const context = finalCanvas.getContext('2d');
         if (!context) throw new Error('Canvas drawing is unavailable.');
         context.fillStyle = background;
-        const stripTop = finalCanvas.height - dimensions.stripHeight;
-        context.fillRect(0, 0, finalCanvas.width, stripTop);
+        context.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
         context.drawImage(capturedCanvas, (finalCanvas.width - capturedCanvas.width) / 2, 0);
-        context.fillStyle = '#0B0F0E';
-        context.fillRect(0, stripTop, finalCanvas.width, dimensions.stripHeight);
-        const logoHeight = Math.max(28, Math.round(34 * scale));
-        const logoWidth = logoHeight * logo.naturalWidth / logo.naturalHeight;
-        const fontSize = Math.max(14, Math.round(16 * scale));
-        const label = attribution;
-        context.font = `600 ${fontSize}px Inter, Segoe UI, sans-serif`;
+        const brand = dimensions.brand;
+        const badgeLeft = finalCanvas.width - brand.inset - brand.width;
+        const badgeTop = finalCanvas.height - brand.inset - brand.height;
+        context.fillStyle = 'rgba(11, 15, 14, 0.92)';
+        context.beginPath();
+        context.roundRect(badgeLeft, badgeTop, brand.width, brand.height, Math.max(6, Math.round(8 * scale)));
+        context.fill();
+        context.font = `600 ${brand.fontSize}px Inter, Segoe UI, sans-serif`;
         context.fillStyle = '#EAF5F0';
         context.textBaseline = 'middle';
-        const textWidth = context.measureText(label).width;
-        const right = finalCanvas.width - Math.max(20, Math.round(24 * scale));
-        const centerY = stripTop + dimensions.stripHeight / 2;
-        context.drawImage(logo, right - textWidth - logoWidth - 12 * scale, centerY - logoHeight / 2, logoWidth, logoHeight);
-        context.fillText(label, right - textWidth, centerY);
+        const centerY = badgeTop + brand.height / 2;
+        context.drawImage(logo, badgeLeft + brand.paddingX, centerY - brand.logoHeight / 2, brand.logoWidth, brand.logoHeight);
+        context.fillText(attribution, badgeLeft + brand.paddingX + brand.logoWidth + brand.gap, centerY);
 
         const blob = await geneoPngCanvasBlob(finalCanvas);
         const url = URL.createObjectURL(blob);
