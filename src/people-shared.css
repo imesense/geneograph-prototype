@@ -2559,16 +2559,18 @@
 }
 
 @media (max-width: 1280px) {
+    .people-bulk-actions {
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 1180px) {
     .people-layout {
         grid-template-columns: minmax(0, 1fr);
     }
 
     .people-person-sidebar {
         display: none;
-    }
-
-    .people-bulk-actions {
-        justify-content: flex-start;
     }
 }
 
