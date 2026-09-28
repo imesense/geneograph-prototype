@@ -3721,6 +3721,8 @@ const RU_UI_PLACES = Object.freeze({
     'Map tiles could not be loaded':
         'Не удалось загрузить карту',
 
+    'Retry': 'Повторить',
+
     'Markers and routes remain available. Check the MapTiler key or network connection.':
         'Маркеры и маршруты остаются доступными. Проверьте ключ MapTiler или подключение к сети.',
 

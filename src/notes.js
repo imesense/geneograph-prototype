@@ -16084,7 +16084,7 @@ function setPlacesMapStatus(title = '', message = '', { retry = false } = {})
         return;
     }
     status.hidden = false;
-    status.innerHTML = `<strong>${escapeHtml(title)}</strong><span>${escapeHtml(message)}</span>${retry ? '<button class="button secondary" type="button" data-places-map-retry>Retry</button>' : ''}`;
+    status.innerHTML = `<strong>${escapeHtml(title)}</strong><span>${escapeHtml(message)}</span>${retry ? `<button class="button secondary" type="button" data-places-map-retry>${escapeHtml(t('Retry'))}</button>` : ''}`;
     status.querySelector('[data-places-map-retry]')?.addEventListener('click', () =>
     {
         const places = [...(placesMapRuntime.currentPlaces || [])];

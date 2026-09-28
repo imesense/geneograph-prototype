@@ -44,10 +44,11 @@ function geneoPngRequiredPhotos(board, visibleNodes)
             {
                 throw geneoPngAssetError(`image object ${node.id}`, 'resolve');
             }
-            if (source.photo.src)
+            if (!source.photo.src)
             {
-                photos.set(String(source.photo.src), `image object ${node.id}`);
+                throw geneoPngAssetError(`image object ${node.id}`, 'resolve');
             }
+            photos.set(String(source.photo.src), `image object ${node.id}`);
         }
 
         if (node.type === 'person')
@@ -65,10 +66,11 @@ function geneoPngRequiredPhotos(board, visibleNodes)
             {
                 throw geneoPngAssetError(`person ${node.id}, photo ${photoId}`, 'resolve');
             }
-            if (photo.src)
+            if (!photo.src)
             {
-                photos.set(String(photo.src), `person ${node.id}, photo ${photoId}`);
+                throw geneoPngAssetError(`person ${node.id}, photo ${photoId}`, 'resolve');
             }
+            photos.set(String(photo.src), `person ${node.id}, photo ${photoId}`);
         }
     });
 

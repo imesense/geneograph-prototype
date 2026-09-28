@@ -195,6 +195,36 @@ async function runGeneographExportChecks()
             restore();
         });
 
+        await check('Empty image-object source fails without a download', async () =>
+        {
+            app.eval('window.__exportTestImage = resolveGeneographImageSource(selectedGeneographBoard().diagram.nodes.find(node => node.type === "image")).photo; window.__exportTestImageSource = window.__exportTestImage.src; window.__exportTestImage.src = ""; renderGeneographEditorPreserveScroll();');
+            try
+            {
+                exportTestAssert(await exportOnce() === null, 'Empty image source produced PNG');
+                exportTestAssert(app.document.getElementById('toast').textContent.includes('required board image'), 'No asset feedback');
+                exportTestAssert(!app.eval('geneoPngExportRuntime.busy') && !app.document.querySelector('.geneo-export-host'), 'Cleanup failed');
+            }
+            finally
+            {
+                app.eval('window.__exportTestImage.src = window.__exportTestImageSource; renderGeneographEditorPreserveScroll();');
+            }
+        });
+
+        await check('Empty linked person-photo source fails without a download', async () =>
+        {
+            app.eval('window.__exportTestPersonPhoto = getPhoto("photo-silver-portrait", { projectId: selectedGeneographBoard().projectId }); window.__exportTestPersonPhotoSource = window.__exportTestPersonPhoto.src; window.__exportTestPersonPhoto.src = ""; renderGeneographEditorPreserveScroll();');
+            try
+            {
+                exportTestAssert(await exportOnce() === null, 'Empty person photo produced PNG');
+                exportTestAssert(app.document.getElementById('toast').textContent.includes('required board image'), 'No asset feedback');
+                exportTestAssert(!app.eval('geneoPngExportRuntime.busy') && !app.document.querySelector('.geneo-export-host'), 'Cleanup failed');
+            }
+            finally
+            {
+                app.eval('window.__exportTestPersonPhoto.src = window.__exportTestPersonPhotoSource; renderGeneographEditorPreserveScroll();');
+            }
+        });
+
         await check('Corrupt image bytes fail without fallback', async () =>
         {
             app.eval('window.__exportTestImage = resolveGeneographImageSource(selectedGeneographBoard().diagram.nodes.find(node => node.type === "image")).photo; window.__exportTestImageSource = window.__exportTestImage.src; window.__exportTestImage.src = "data:image/png;base64,broken"; renderGeneographEditorPreserveScroll();');
