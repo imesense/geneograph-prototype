@@ -340,6 +340,7 @@
 .people-count {
     display: inline-flex;
     align-items: center;
+    flex: 0 0 auto;
     gap: 6px;
     color: var(--text-secondary);
     padding: 0 var(--space-3);
@@ -351,6 +352,10 @@
     height: 22px;
     display: block;
     flex: 0 0 22px;
+}
+
+.people-count-number {
+    display: none;
 }
 
 .tree-workspace {
@@ -4960,6 +4965,39 @@
     flex-wrap: nowrap;
 }
 
+.tree-toolbar-left {
+    flex: 0 1 auto;
+}
+
+.tree-toolbar-right {
+    flex: 1 1 320px;
+}
+
+.tree-toolbar .tree-control-select {
+    flex: 0 1 320px;
+    min-width: 180px;
+}
+
+.tree-toolbar-right .app-search-field {
+    width: auto;
+    max-width: var(--search-field-max-width);
+    flex: 1 1 240px;
+    min-width: 140px;
+}
+
+.tree-toolbar-right .tree-action {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+.tree-toolbar-right .tree-action:first-of-type {
+    margin-left: auto;
+}
+
+.tree-toolbar-right .tree-action svg {
+    flex: 0 0 18px;
+}
+
 .tree-control {
     min-width: 270px;
     height: 44px;
@@ -4972,6 +5010,64 @@
 
 .view-modes {
     height: 44px;
+}
+
+@media (max-width: 1920px) {
+    .tree-toolbar-right .tree-action {
+        width: 44px;
+        padding: 0;
+    }
+
+    .tree-toolbar-right .tree-action-label {
+        display: none;
+    }
+}
+
+@media (max-width: 1350px) {
+    .tree-toolbar {
+        gap: 8px;
+        padding: 0 12px;
+    }
+
+    .tree-toolbar-left,
+    .tree-toolbar-right {
+        gap: 6px;
+    }
+
+    .tree-toolbar .view-mode {
+        min-width: 72px;
+        padding: 0 8px;
+    }
+
+    .tree-toolbar .people-count-label {
+        display: none;
+    }
+
+    .tree-toolbar .people-count-number {
+        display: inline;
+    }
+
+    .tree-toolbar .people-count {
+        padding: 0 4px;
+    }
+}
+
+@media (max-width: 1100px) {
+    .tree-toolbar .tree-control-select {
+        min-width: 160px;
+        max-width: 170px;
+    }
+}
+
+@media (max-width: 850px) {
+    .tree-toolbar-left,
+    .tree-toolbar-right {
+        flex: 0 0 auto;
+    }
+
+    .tree-toolbar-right .app-search-field {
+        flex: 0 0 140px;
+    }
 }
 
 .tree-workspace {

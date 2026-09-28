@@ -410,6 +410,7 @@ function renderFamilyTree()
               </div>
             <span
               class="people-count"
+              role="group"
               aria-label="${
                     escapeHtml(
                         familyPeopleCountLabel
@@ -418,7 +419,8 @@ function renderFamilyTree()
 
               ${icon.peoplegroup}
 
-              <span>
+              <span class="people-count-number" aria-hidden="true">${getProjectPeopleCount(treeProjectId)}</span>
+              <span class="people-count-label" aria-hidden="true">
                 ${escapeHtml(
                     familyPeopleCountLabel
                 )}
@@ -427,9 +429,9 @@ function renderFamilyTree()
             </div>
             <div class="tree-toolbar-right">
               <label class="app-search-field">${icon.search}<input type="search" placeholder="Search people..." id="treeSearch"></label>
-              <button class="tree-action" type="button" data-toast="Export is planned for the Publish iteration.">${icon.export} Export</button>
-              <button class="tree-action" type="button" data-toast="Print preview will be added later.">${icon.print} Print</button>
-              <button class="tree-action" type="button" data-tree-settings>${icon.settings} Tree Settings</button>
+              <button class="tree-action" type="button" data-toast="Export is planned for the Publish iteration." aria-label="Export" title="Export">${icon.export}<span class="tree-action-label">Export</span></button>
+              <button class="tree-action" type="button" data-toast="Print preview will be added later." aria-label="Print" title="Print">${icon.print}<span class="tree-action-label">Print</span></button>
+              <button class="tree-action" type="button" data-tree-settings aria-label="Tree Settings" title="Tree Settings">${icon.settings}<span class="tree-action-label">Tree Settings</span></button>
             </div>
           </div>
           <div class="tree-workspace ${state.treeInspectorCollapsed ? 'inspector-collapsed' : ''}">
