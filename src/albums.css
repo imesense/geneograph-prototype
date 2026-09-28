@@ -4734,3 +4734,55 @@ button.albums-inspector-row-main:focus-visible {
         grid-template-columns: 1fr;
     }
 }
+
+@media (min-width: 1180px) and (max-width: 1449px) {
+    .albums-shell:not(.detail-collapsed):not(.no-detail) .albums-toolbar {
+        gap: 8px;
+    }
+
+    .albums-shell:not(.detail-collapsed):not(.no-detail) .albums-toolbar-left {
+        min-width: 160px;
+    }
+
+    .albums-shell:not(.detail-collapsed):not(.no-detail) .albums-toolbar-right {
+        gap: 8px;
+    }
+
+    .albums-shell:not(.detail-collapsed):not(.no-detail) .albums-filter-button,
+    .albums-shell:not(.detail-collapsed):not(.no-detail) .albums-toolbar .app-sort-field,
+    .albums-shell:not(.detail-collapsed):not(.no-detail) .albums-toolbar .app-sort-trigger {
+        width: 44px;
+        min-width: 44px;
+        max-width: 44px;
+    }
+
+    .albums-shell:not(.detail-collapsed):not(.no-detail) .albums-filter-button,
+    .albums-shell:not(.detail-collapsed):not(.no-detail) .albums-toolbar .app-sort-trigger {
+        padding-inline: 0;
+        justify-content: center;
+    }
+
+    .albums-shell:not(.detail-collapsed):not(.no-detail) .albums-filter-button > span:not(.albums-filter-icon):not(.albums-filter-count),
+    .albums-shell:not(.detail-collapsed):not(.no-detail) .albums-toolbar .app-sort-current,
+    .albums-shell:not(.detail-collapsed):not(.no-detail) .albums-toolbar .app-sort-chevron {
+        display: none;
+    }
+
+    .albums-shell:not(.detail-collapsed):not(.no-detail) .albums-header-actions .button.primary {
+        width: 44px;
+        min-width: 44px;
+        padding-inline: 0;
+        justify-content: center;
+    }
+
+    .albums-shell:not(.detail-collapsed):not(.no-detail) .albums-header-actions .button.primary span {
+        display: none;
+    }
+
+    .albums-shell:not(.detail-collapsed):not(.no-detail) .albums-view-button {
+        width: 44px;
+        min-width: 44px;
+        padding-inline: 0;
+        justify-content: center;
+    }
+}

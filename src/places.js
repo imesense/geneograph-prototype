@@ -3321,9 +3321,11 @@ function renderPlacesMain()
                   <button
                     class="button primary"
                     type="button"
-                    id="placesAddPlace">
+                    id="placesAddPlace"
+                    aria-label="Add place"
+                    title="Add place">
                     ${icon.plus}
-                    Add place
+                    <span>Add place</span>
                   </button>
                 </div>
               </header>

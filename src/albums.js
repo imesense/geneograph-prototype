@@ -4763,10 +4763,12 @@ function renderAlbumsMainMarkup()
           <button
             class="button primary"
             type="button"
-            id="albumsAddPhotos">
+            id="albumsAddPhotos"
+            aria-label="Add photos"
+            title="Add photos">
 
             ${icon.plus}
-            Add photos
+            <span>Add photos</span>
           </button>
         </div>
       </header>

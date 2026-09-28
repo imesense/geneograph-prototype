@@ -5393,6 +5393,45 @@
     }
 }
 
+.project-wide-hero-page::before {
+    content: none;
+}
+
+@media (min-width: 901px) and (max-width: 1280px) {
+    .project-wide-hero-page > .main-column {
+        display: contents;
+    }
+
+    .project-wide-hero-page .project-hero {
+        grid-column: 1 / -1;
+        grid-row: 1;
+        height: max-content;
+        margin-bottom: 0;
+    }
+
+    .project-wide-hero-page .overview-grid,
+    .project-wide-hero-page > .main-column > .activity-panel {
+        grid-column: 1;
+        grid-row: 2;
+    }
+
+    .project-wide-hero-page > .main-column > .activity-panel {
+        height: max-content;
+    }
+
+    .project-wide-hero-page .dropzone {
+        grid-column: 1;
+        grid-row: 3;
+        margin-top: 0;
+    }
+
+    .project-wide-hero-page > .right-column {
+        grid-column: 2;
+        grid-row: 2 / span 2;
+        align-self: start;
+    }
+}
+
 @media (max-width: 900px) {
     body {
         overflow: auto;

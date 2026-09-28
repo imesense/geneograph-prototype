@@ -6201,3 +6201,20 @@
         min-width: var(--inspector-collapsed-width);
     }
 }
+@media (min-width: 1180px) and (max-width: 1400px) {
+    .geneo-editor-toolbar:is([data-toolbar-density="narrow"], [data-toolbar-density="minimal"]) .geneo-tool-group .geneo-tool.active .geneo-tool-label {
+        display: none;
+    }
+
+    .geneo-editor-toolbar:is([data-toolbar-density="narrow"], [data-toolbar-density="minimal"]) .geneo-tool-group .geneo-tool.active {
+        width: 38px;
+        flex-basis: 38px;
+        padding: 0;
+        gap: 0;
+    }
+
+    .geneo-editor-toolbar:is([data-toolbar-density="narrow"], [data-toolbar-density="minimal"]) .geneo-tool-group {
+        width: 126px;
+        flex-basis: 126px;
+    }
+}

@@ -462,7 +462,7 @@ function renderOpenProject()
           </section>
         </div>
       ` : `
-        <div class="page-grid open-project-page">
+        <div class="page-grid open-project-page project-wide-hero-page">
           <section class="main-column">
             <div class="project-hero">
               <div class="project-hero-layout">
