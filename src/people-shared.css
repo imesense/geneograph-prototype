@@ -35,20 +35,26 @@
     min-height: 44px;
     display: grid;
     align-items: stretch;
+    container-type: inline-size;
 }
 
 .people-toolbar {
-    display: grid;
-    grid-template-columns: minmax(220px, 1fr) max-content max-content minmax(190px, 220px) max-content;
+    display: flex;
+    flex-wrap: nowrap;
     gap: var(--space-3);
     align-items: center;
     min-width: 0;
 }
 
 .people-search-field {
-    width: 100%;
+    width: auto;
     max-width: none;
-    flex: none;
+    min-width: 140px;
+    flex: 1 1 220px;
+}
+
+.people-normal-toolbar > :not(.people-search-field) {
+    flex: 0 0 auto;
 }
 
 .people-bulk-toolbar {
@@ -2561,17 +2567,55 @@
         display: none;
     }
 
-    .people-normal-toolbar {
-        grid-template-columns: 1fr auto;
+    .people-bulk-actions {
+        justify-content: flex-start;
+    }
+}
+
+@container (max-width: 940px) {
+    .people-normal-toolbar .people-columns-button,
+    .people-normal-toolbar .people-filter-button {
+        width: 44px;
+        min-width: 44px;
+        padding: 0;
     }
 
-    .people-normal-toolbar .people-sort-field,
-    .people-normal-toolbar .button.secondary {
+    .people-normal-toolbar .people-columns-button span,
+    .people-normal-toolbar .people-filter-button > span:not(.people-filter-icon) {
         display: none;
     }
 
-    .people-bulk-actions {
-        justify-content: flex-start;
+    .people-normal-toolbar .app-sort-trigger {
+        width: 44px;
+        padding: 0;
+        justify-content: center;
+    }
+
+    .people-normal-toolbar .app-sort-current,
+    .people-normal-toolbar .app-sort-chevron {
+        display: none;
+    }
+}
+
+@container (max-width: 520px) {
+    .people-normal-toolbar #addPeoplePerson {
+        width: 44px;
+        min-width: 44px;
+        padding: 0;
+    }
+
+    .people-normal-toolbar #addPeoplePerson span {
+        display: none;
+    }
+}
+
+@container (max-width: 400px) {
+    .people-normal-toolbar {
+        flex-wrap: wrap;
+    }
+
+    .people-normal-toolbar .people-search-field {
+        flex: 0 0 100%;
     }
 }
 

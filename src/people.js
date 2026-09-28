@@ -3288,7 +3288,9 @@ function renderPeopleNormalToolbar()
             }"
             type="button"
             id="peopleColumnsButton"
-            aria-haspopup="dialog">
+            aria-haspopup="dialog"
+            aria-label="Columns"
+            title="Columns">
             ${icon.grid}
             <span>Columns</span>
           </button>
@@ -3339,7 +3341,9 @@ function renderPeopleNormalToolbar()
           <button
             class="button primary"
             type="button"
-            id="addPeoplePerson">
+            id="addPeoplePerson"
+            aria-label="Add person"
+            title="Add person">
             ${icon.plus}
             <span>Add person</span>
           </button>
