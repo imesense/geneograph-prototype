@@ -570,7 +570,7 @@
     border-color: rgba(242, 244, 243, .42);
 }
 
-.tree-person-card.unknown-gender:hover {
+.tree-person-card.unknown-gender:not(.selected):hover {
     border-color: rgba(242, 244, 243, .64);
 }
 
@@ -5027,6 +5027,15 @@
         0 22px 60px rgba(0, 0, 0, .38);
     background: linear-gradient(180deg, rgba(22, 58, 42, .98), rgba(26, 32, 31, .96));
     z-index: 20;
+}
+
+.tree-person-card:not(.selected):hover {
+    background: rgba(33, 40, 38, .98);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, .24);
+}
+
+.tree-person-card.is-focus-person:not(.selected):hover {
+    box-shadow: inset 0 0 0 1px rgba(98, 217, 154, .34), 0 15px 40px rgba(0, 0, 0, .24);
 }
 
 .tree-name {
