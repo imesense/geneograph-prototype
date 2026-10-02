@@ -15950,10 +15950,6 @@ function renderGeneographEditor()
                 )
             }
 
-            ${renderGeneoContentSplitTool()}
-
-            ${renderGeneoShapeSplitTool()}
-
             ${
                 renderGeneoToolbarObjectButton(
                     'panel',
@@ -15961,12 +15957,16 @@ function renderGeneographEditor()
                     'Panel'
                 )
             }
+
+            ${renderGeneoContentSplitTool()}
+
+            ${renderGeneoShapeSplitTool()}
           </div>
         </div>
 
         <div class="geneo-editor-toolbar-right">
           <button
-            class="geneo-toolbar-button geneo-icon-button"
+            class="geneo-toolbar-button"
             type="button"
             data-geneo-toolbar-item="export"
             data-geneo-export
@@ -15978,6 +15978,7 @@ function renderGeneographEditor()
             }">
 
             ${icon.export}
+            <span>${escapeHtml(t('Export'))}</span>
           </button>
 
           <button
