@@ -1396,12 +1396,18 @@ function openProjectMenu(id, anchor)
     closeMenu();
     const rect = anchor.getBoundingClientRect();
     const menu = document.createElement('div');
-    menu.className = 'menu-popover';
+    menu.className = 'menu-popover project-action-menu';
     menu.id = 'projectMenu';
-    menu.style.top = `${rect.bottom + 6}px`;
-    menu.style.left = `${Math.max(12, rect.right - 190)}px`;
+    menu.style.visibility = 'hidden';
     menu.innerHTML = `<button type="button" data-action="rename">${escapeHtml(t('Rename'))}</button><button type="button" data-action="duplicate">${escapeHtml(t('Duplicate'))}</button><button type="button" data-action="cover">${escapeHtml(t('Update cover'))}</button><button type="button" class="danger" data-action="delete">${escapeHtml(t('Delete'))}</button>`;
     document.body.appendChild(menu);
+    const menuRect = menu.getBoundingClientRect();
+    const margin = 12;
+    menu.style.left = `${Math.max(margin, Math.min(rect.right - menuRect.width, window.innerWidth - menuRect.width - margin))}px`;
+    menu.style.top = `${rect.bottom + 6 + menuRect.height <= window.innerHeight - margin
+        ? rect.bottom + 6
+        : Math.max(margin, rect.top - menuRect.height - 6)}px`;
+    menu.style.visibility = 'visible';
     menu.addEventListener('click', e =>
     {
         const action = e.target.closest('[data-action]')?.dataset.action;
