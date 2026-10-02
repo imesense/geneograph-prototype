@@ -9598,47 +9598,24 @@ function openAlbumPhotoMenu(
         return;
     }
 
-    closeMenu();
-
-    const rect =
-        anchor.getBoundingClientRect();
-
-    const menu =
-        document.createElement(
-            'div'
-        );
-
-    menu.className =
-        'menu-popover';
-
-    menu.id =
-        'projectMenu';
-
-    menu.style.top =
-        `${rect.bottom + 6}px`;
-
-    menu.style.left =
-        `${
-            Math.max(
-                12,
-                rect.right - 210
-            )
-        }px`;
-
     const favoriteLabel =
         photo.favorite
             ? 'Remove from favourites'
             : 'Mark as favourite';
 
-    menu.innerHTML = `
+    mountAlbumsActionMenu(
+        anchor,
+        `
         <button
           type="button"
+          role="menuitem"
           data-photo-action="open">
           Open
         </button>
 
         <button
           type="button"
+          role="menuitem"
           data-photo-action="favorite">
           ${escapeHtml(
                 favoriteLabel
@@ -9647,12 +9624,14 @@ function openAlbumPhotoMenu(
 
         <button
           type="button"
+          role="menuitem"
           data-photo-action="people">
           Tag people
         </button>
 
         <button
           type="button"
+          role="menuitem"
           data-photo-action="album">
           Add to album
         </button>
@@ -9660,33 +9639,14 @@ function openAlbumPhotoMenu(
         <button
           class="danger"
           type="button"
+          role="menuitem"
           data-photo-action="delete">
           Delete photo
         </button>
-      `;
-
-    document.body.appendChild(
-        menu
-    );
-
-    menu.addEventListener(
-        'click',
-        event =>
+      `,
+        'data-photo-action',
+        action =>
         {
-            const action =
-                event.target
-                    .closest(
-                        '[data-photo-action]'
-                    )
-                    ?.dataset.photoAction;
-
-            if (!action)
-            {
-                return;
-            }
-
-            closeMenu();
-
             if (action === 'open')
             {
                 openPhotoLightbox(
@@ -9733,18 +9693,8 @@ function openAlbumPhotoMenu(
                     photo.id
                 ]);
             }
-        }
-    );
-
-    setTimeout(
-        () =>
-        {
-            document.addEventListener(
-                'click',
-                closeMenu
-            );
         },
-        0
+        'albums-photo-action-menu'
     );
 }
 
@@ -9752,7 +9702,8 @@ function mountAlbumsActionMenu(
     anchor,
     markup,
     attributeName,
-    onAction
+    onAction,
+    className = ''
 )
 {
     closeMenu();
@@ -9763,7 +9714,8 @@ function mountAlbumsActionMenu(
     const menu =
         document.createElement('div');
 
-    menu.className = 'menu-popover';
+    menu.className =
+        `menu-popover ${className}`.trim();
     menu.id = 'projectMenu';
     menu.setAttribute('role', 'menu');
 

@@ -285,6 +285,12 @@
     scrollbar-gutter: stable;
 }
 
+.albums-photo-action-menu {
+    width: min(210px, calc(100vw - 24px));
+    max-height: calc(100vh - 24px);
+    overflow-y: auto;
+}
+
 .albums-justified-grid {
     min-width: 0;
     display: flex;
