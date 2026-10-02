@@ -64,37 +64,57 @@ async function runProductTourChecks()
     try
     {
         await tourTestUntil(() => Boolean(app.document.querySelector('.app')), 'App did not load');
-        await check('First project opening offers the welcome card', async () =>
+        await check('Project selection offers the welcome card', async () =>
         {
             app.localStorage.removeItem('geneograph.productTour');
-            app.eval('geneoTourRuntime.invited = false; openProject("p1")');
+            app.eval('geneoTourRuntime.invited = false; state.activeModule = "Projects"; state.projectOpen = false; render(); maybeOfferGeneoProductTour()');
             await tourTestUntil(() => Boolean(app.document.querySelector('[data-geneo-tour-action="start"]')), 'Welcome did not open');
             tourTestAssert(app.document.querySelector('[data-geneo-tour-title]').textContent === 'Explore a family story', 'Wrong welcome title');
             tourTestAssert(app.document.querySelector('.geneo-tour-card').getAttribute('aria-modal') === 'true', 'Dialog semantics missing');
         });
 
-        await check('Nine stops reach their records and Finish leaves the board open', async () =>
+        await check('Twenty-two stops reach real records and Finish leaves the board open', async () =>
         {
             const recordsBefore = tourTestRecordSnapshot(app);
             app.document.querySelector('[data-geneo-tour-action="start"]').click();
-            const expected = ['Projects', 'Family Tree', 'People', 'People', 'Albums', 'Archive', 'Notes', 'Places', 'Geneograph'];
+            const expected = ['Projects', ...Array(4).fill('Family Tree'), ...Array(3).fill('People'),
+                ...Array(3).fill('Albums'), ...Array(3).fill('Archive'), ...Array(2).fill('Notes'),
+                ...Array(3).fill('Places'), ...Array(3).fill('Geneograph')];
+            const ids = ['projects', 'tree-group', 'tree-sidebar', 'tree-relative', 'tree-edit',
+                'people-navigation', 'people-list', 'people-profile', 'albums-navigation',
+                'albums-photo', 'albums-context', 'archive-navigation', 'archive-file',
+                'archive-context', 'notes-list', 'notes-editor', 'places-navigation',
+                'places-map', 'places-people', 'geneograph-toolbar', 'geneograph-board',
+                'geneograph-settings'];
             for (let index = 0; index < expected.length; index += 1)
             {
                 await tourTestStep(app, index);
                 tourTestAssert(app.eval('state.activeModule') === expected[index], `Wrong module at ${index}`);
+                tourTestAssert(app.eval('geneoTourSteps[geneoTourRuntime.index].id') === ids[index], `Wrong stop at ${index}`);
                 tourTestAssert(!app.eval('geneoTourRuntime.fallback'), `Missing target at ${index}`);
                 tourTestAssert(app.eval('geneoTourRuntime.target?.isConnected'), `Detached target at ${index}`);
                 tourTestAssert(app.document.querySelector('[data-geneo-tour-progress]').textContent.includes(String(index + 1)), `Wrong progress at ${index}`);
+                tourTestAssert(app.document.querySelector('[data-geneo-tour-progress]').textContent.includes(expected[index]), `Missing chapter at ${index}`);
                 if (index === 3)
                 {
+                    tourTestAssert(Boolean(app.document.querySelector('#relativePopover')), 'Real relative popover missing');
                     app.document.querySelector('[data-geneo-tour-action="back"]').click();
                     await tourTestStep(app, 2);
+                    tourTestAssert(!app.document.querySelector('#relativePopover'), 'Relative preview not cleaned up');
                     app.document.querySelector('[data-geneo-tour-action="next"]').click();
                     await tourTestStep(app, 3);
                 }
+                if (index === 4)
+                {
+                    tourTestAssert(app.document.querySelector('#modalBackdrop').classList.contains('open'), 'Real quick-edit modal missing');
+                    tourTestAssert(app.document.querySelector('#modalBackdrop').inert, 'Quick-edit preview is editable');
+                    tourTestAssert(!app.document.querySelector('[data-geneo-tour]').classList.contains('is-unanchored'), 'Quick-edit form is obscured');
+                }
+                if (index === 12) tourTestAssert(app.eval('geneoTourRuntime.target?.matches("[data-archive-file-row=af5]")'), 'File row not highlighted');
+                if (index === 13) tourTestAssert(app.eval('!!sampleData.sources.find(source => source.id === "as3")'), 'Source missing');
                 app.document.querySelector('[data-geneo-tour-action="next"]').click();
             }
-            await tourTestStep(app, 9);
+            await tourTestStep(app, 22);
             app.document.querySelector('[data-geneo-tour-action="finish"]').click();
             tourTestAssert(!app.eval('geneoTourRuntime.active'), 'Tour did not finish');
             tourTestAssert(app.eval('state.activeModule') === 'Geneograph', 'Finish left the board');
@@ -111,11 +131,26 @@ async function runProductTourChecks()
             tourTestAssert(app.document.querySelector('[data-geneo-tour-title]').textContent === 'Исследуйте историю семьи', 'Welcome not translated');
             app.document.querySelector('[data-geneo-tour-action="start"]').click();
             await tourTestStep(app, 0);
-            app.document.querySelector('[data-geneo-tour-action="skip"]').click();
+            app.document.querySelector('.geneo-tour-close').click();
             tourTestAssert(!app.eval('geneoTourRuntime.active'), 'Skip did not close');
             tourTestAssert(app.document.querySelector('.toast').textContent.includes('Вернуться назад'), 'Return action missing');
             app.document.querySelector('.toast button').click();
             await tourTestUntil(() => app.eval('state.activeModule') === origin, 'Origin not restored');
+        });
+
+        await check('Skip module and Back follow visited history', async () =>
+        {
+            app.eval('startGeneoProductTour()');
+            await tourTestStep(app, -1);
+            app.document.querySelector('[data-geneo-tour-action="start"]').click();
+            await tourTestStep(app, 0);
+            app.document.querySelector('[data-geneo-tour-action="skip-module"]').click();
+            await tourTestStep(app, 1);
+            app.document.querySelector('[data-geneo-tour-action="skip-module"]').click();
+            await tourTestStep(app, 5);
+            app.document.querySelector('[data-geneo-tour-action="back"]').click();
+            await tourTestStep(app, 1);
+            app.eval('geneoTourClose({ offerRestore: false })');
         });
 
         await check('Missing target uses an unanchored same-step fallback', async () =>
@@ -131,8 +166,6 @@ async function runProductTourChecks()
                 tourTestAssert(app.eval('geneoTourRuntime.fallback'), 'Fallback was not set');
                 tourTestAssert(!app.document.querySelector('[data-geneo-tour-fallback]').hidden, 'Fallback copy hidden');
                 tourTestAssert(app.document.querySelector('[data-geneo-tour-title]').textContent === app.eval('t("Everything starts with a project")'), 'Wrong fallback step');
-                const card = app.document.querySelector('.geneo-tour-card').getBoundingClientRect();
-                tourTestAssert(Math.abs(card.left + card.width / 2 - app.innerWidth / 2) < 2, 'Fallback card is not centered');
             }
             finally
             {

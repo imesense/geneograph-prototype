@@ -37,6 +37,43 @@
     pointer-events: auto;
 }
 
+.geneo-tour.is-centered .geneo-tour-card {
+    width: min(440px, calc(100vw - 24px));
+}
+
+.geneo-tour-welcome {
+    display: grid;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.geneo-tour-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-primary);
+    font-size: 18px;
+}
+
+.geneo-tour-brand svg {
+    width: 32px;
+    height: 32px;
+    color: var(--brand-green-300);
+}
+
+.geneo-tour-cover {
+    min-height: 104px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    background: var(--surface-app) url('assets/geneograph-cover-tree.png') center / cover no-repeat;
+}
+
+.geneo-tour-itinerary {
+    color: var(--text-secondary);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
 .geneo-tour.is-centered .geneo-tour-card,
 .geneo-tour.is-unanchored .geneo-tour-card {
     left: 50%;

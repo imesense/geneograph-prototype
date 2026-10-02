@@ -41,3 +41,4 @@ main.addEventListener('click', e =>
 });
 
 render();
+maybeOfferGeneoProductTour();
