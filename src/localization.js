@@ -6338,6 +6338,28 @@ function normalizeLang(lang)
     return SUPPORTED_LANGUAGES.includes(lang) ? lang : 'en';
 }
 
+function initialLanguage()
+{
+    const url = new URL(window.location.href);
+    const requested = url.searchParams.get('lang');
+    if (!SUPPORTED_LANGUAGES.includes(requested))
+    {
+        return normalizeLang(localStorage.getItem(LANGUAGE_STORAGE_KEY) || 'en');
+    }
+
+    localStorage.setItem(LANGUAGE_STORAGE_KEY, requested);
+    url.searchParams.delete('lang');
+    try
+    {
+        history.replaceState(history.state, '', url.href);
+    }
+    catch (_error)
+    {
+        // Some direct-file browsers disallow history replacement.
+    }
+    return requested;
+}
+
 function translateExact(value)
 {
     if (!value) return value;

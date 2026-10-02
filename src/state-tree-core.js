@@ -366,7 +366,7 @@ const state = {
     userSignedIn: true,
     unreadNotifications: 5,
     globalSettingsSection: 'general',
-    language: normalizeLang(localStorage.getItem(LANGUAGE_STORAGE_KEY) || 'en')
+    language: initialLanguage()
 };
 
 function validProjectById(projectId)
