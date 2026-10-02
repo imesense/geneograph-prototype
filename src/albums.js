@@ -4642,7 +4642,7 @@ function renderAlbumsSidebar()
             </div>
 
             <div class="side-nav">
-              ${projectAlbums
+              ${projectAlbums.length ? projectAlbums
                     .map(album =>
                     {
                         const isActive =
@@ -4705,7 +4705,7 @@ function renderAlbumsSidebar()
                     </div>
                   `;
                     })
-                    .join('')}
+                    .join('') : `<div class="sidebar-entity-empty">${escapeHtml(t('No albums yet'))}</div>`}
             </div>
           </div>
 

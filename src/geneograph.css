@@ -276,7 +276,8 @@
         vertical;
 }
 
-.geneo-collection-sidebar-empty {
+.geneo-collection-sidebar-empty,
+.sidebar-entity-empty {
     padding:
         var(--space-3);
 

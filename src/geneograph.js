@@ -2663,7 +2663,7 @@ function renderGeneographCollectionSidebarRows()
               geneo-collection-sidebar-empty
             ">
 
-            No collections yet.
+            ${escapeHtml(t('No collections yet'))}
           </div>
         `;
     }

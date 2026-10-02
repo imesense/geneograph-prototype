@@ -285,7 +285,7 @@ function renderFamilyTree()
     if (!treeProjectId || !treePeopleSource.length)
     {
         main.innerHTML = `
-          <div class="tree-shell">
+          <div class="tree-shell tree-shell-empty">
             <section class="tree-empty-state" aria-labelledby="treeEmptyTitle">
               <div class="tree-empty-state-card">
                 <div class="tree-empty-state-icon" aria-hidden="true">${icon.tree}</div>

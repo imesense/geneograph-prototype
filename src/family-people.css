@@ -4953,6 +4953,10 @@
     margin: 0;
 }
 
+.tree-shell-empty {
+    grid-template-rows: minmax(0, 1fr);
+}
+
 .tree-toolbar {
     min-height: 70px;
     align-self: stretch;

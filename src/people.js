@@ -3379,6 +3379,9 @@ function renderPeopleDirectoryControls(rows)
 
 function renderPeople()
 {
+    if (!currentPeopleRecords().length && state.peopleView === 'profile')
+        state.peopleView = 'directory';
+
     workspace.classList.remove(
         'no-sidebar'
     );
@@ -3411,6 +3414,8 @@ function renderPeople()
 
     renderPeopleSidebar();
 
+    const hasProjectPeople = currentPeopleRecords().length > 0;
+
     /*
       * filteredPeople() returns the complete filtered and sorted
       * result. Pagination is deliberately applied afterward.
@@ -3436,7 +3441,9 @@ function renderPeople()
           class="
             people-layout
             ${
-                state.peoplePreviewCollapsed
+                !hasProjectPeople
+                    ? 'no-preview'
+                    : state.peoplePreviewCollapsed
                     ? 'preview-collapsed'
                     : ''
             }
@@ -3462,10 +3469,10 @@ function renderPeople()
             )}
           </section>
 
-          ${renderPersonSidebar(
+          ${hasProjectPeople ? renderPersonSidebar(
                 selected?.id,
                 'people'
-            )}
+            ) : ''}
         </div>
       `;
 
@@ -3482,6 +3489,7 @@ function renderPeopleSidebar()
 
 function renderPeopleSidebarInner()
 {
+    const profileAvailable = currentPeopleRecords().length > 0;
     const savedViewsMarkup = peopleSavedViews.map(view =>
     {
         const isActive = state.peopleSavedViewId === view.id;
@@ -3520,9 +3528,10 @@ function renderPeopleSidebarInner()
             </button>
 
             <button
-              class="side-link ${state.peopleView === 'profile' ? 'active' : ''}"
+              class="side-link ${state.peopleView === 'profile' ? 'active' : ''} ${profileAvailable ? '' : 'people-nav-unavailable'}"
               type="button"
-              data-open-profile>
+              data-open-profile
+              ${profileAvailable ? '' : 'disabled'}>
               ${icon.profile}
               <span>Profile</span>
             </button>

@@ -1674,30 +1674,33 @@
 }
 
 .notes-empty {
-    height: 100%;
-    min-height: 360px;
+    min-height: 100%;
     display: grid;
     place-items: center;
-    padding: var(--space-8);
-    color: var(--text-tertiary);
-    text-align: center;
+    padding: var(--space-6);
 }
 
 .notes-empty-card {
-    max-width: 460px;
-    padding: var(--space-8);
-    border: 1px dashed var(--border-strong);
-    border-radius: var(--radius-lg);
-    background: rgba(26, 32, 31, .55);
+    max-width: 430px;
+    text-align: center;
+    color: var(--text-tertiary);
+}
+
+.notes-empty-card > svg {
+    width: 40px;
+    height: 40px;
+    color: var(--text-tertiary);
 }
 
 .notes-empty h2 {
-    margin: 0 0 var(--space-2);
+    margin: var(--space-3) 0 var(--space-2);
     color: var(--text-primary);
+    font-size: 20px;
 }
 
 .notes-empty p {
     margin: 0 0 var(--space-4);
+    line-height: 1.55;
 }
 
 .notes-sidebar-tip {

@@ -250,7 +250,7 @@ function renderNotesSidebar()
             </div>
 
             <div class="side-nav">
-              ${collectionRows}
+              ${collectionRows || `<div class="sidebar-entity-empty">${escapeHtml(t('No collections yet'))}</div>`}
             </div>
           </div>
 
@@ -1960,8 +1960,10 @@ function renderNotesBrowserEmpty()
     return `
         <div class="notes-empty">
           <div class="notes-empty-card">
+            ${icon.note}
             <h2>${copy[0]}</h2>
             <p>${copy[1]}</p>
+            ${state.notesView === 'archived' ? '' : `<button class="button primary" type="button" id="notesEmptyCreate">${icon.plus} ${escapeHtml(t('Add note'))}</button>`}
           </div>
         </div>
       `;
@@ -13523,6 +13525,8 @@ function bindNotesBrowserControls()
             () =>
                 createCentralNote()
         );
+
+    main.querySelector('#notesEmptyCreate')?.addEventListener('click', createCentralNote);
 
     main
         .querySelectorAll(

@@ -8500,7 +8500,9 @@ function renderArchiveSidebar()
                       role="tree"
                       aria-label="Archive folder tree">
 
-                      ${renderArchiveFolderTree()}
+                      ${archiveFolderChildren().length
+                            ? renderArchiveFolderTree()
+                            : `<div class="sidebar-entity-empty">${escapeHtml(t('No folders yet'))}</div>`}
                     </div>
                   `
                 }
@@ -10065,7 +10067,7 @@ function renderArchiveFileDropzone(
 
             <span
               class="
-                archive-empty-dropzone-action
+                button primary archive-empty-dropzone-action
               ">
 
               Click to choose files

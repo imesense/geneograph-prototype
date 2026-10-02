@@ -3500,6 +3500,20 @@ button.app-chip:disabled,
     text-align: right;
 }
 
+.overview-grid > .activity-panel,
+.overview-grid > .activity-panel > .panel-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.overview-grid > .activity-panel > .panel-body {
+    flex: 1;
+}
+
+.overview-grid .project-activity-footer {
+    margin-top: auto;
+}
+
 .overview-grid .module-shortcuts {
     margin-top: 0;
 }

@@ -2203,6 +2203,7 @@ const RU_UI_ALBUMS = {
         'Добавить источник'
 };
 const RU_UI_ARCHIVE = {
+    'No folders yet': 'Папок пока нет',
     // ========================================
     // Archive workspace / navigation
     // ========================================
@@ -2963,6 +2964,7 @@ const RU_UI_ARCHIVE = {
         'Развернуть папку'
 };
 const RU_UI_NOTES = {
+    'No collections yet': 'Коллекций пока нет',
     // ========================================
     // Notes navigation / browser
     // ========================================
