@@ -5831,6 +5831,12 @@ const RU_UI_COMPLETION = {
 };
 
 const RU_UI_TOUR = Object.freeze({
+    'Module': 'Раздел',
+    'Previous module': 'Предыдущий раздел',
+    'Next module': 'Следующий раздел',
+    'Browse modules': 'Обзор разделов',
+    'Return to tour': 'Вернуться к экскурсии',
+    'Continue to {module}': 'Далее: {module}',
     'Follow a sample family across eight connected modules. You can skip a section at any time.': 'Познакомьтесь с примером семьи в восьми связанных разделах. Любой раздел можно пропустить.',
     "A project brings one family's tree, records, photographs, and research together. Open the sample project to explore.": 'Проект объединяет семейное древо, документы, фотографии и исследования. Откройте пример проекта.',
     'See Silver and his relatives across generations. Focus on a person to explore a different branch.': 'Посмотрите на Сильвера и его родственников разных поколений. Выберите человека, чтобы изучить другую ветвь.',

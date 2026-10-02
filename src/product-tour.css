@@ -86,13 +86,96 @@
     gap: var(--space-3);
 }
 
-.geneo-tour-progress {
-    color: var(--brand-green-300);
-    font-size: 12px;
-    font-weight: 700;
+.geneo-tour-chapter {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    flex: 1 1 auto;
+    gap: var(--space-2);
 }
 
-.geneo-tour-progress[hidden],
+.geneo-tour.is-module-map .geneo-tour-chapter {
+    display: none;
+}
+
+.geneo-tour-chapter span {
+    min-width: 0;
+    color: var(--brand-green-300);
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+.geneo-tour-browse {
+    display: grid;
+    width: 30px;
+    height: 30px;
+    flex: 0 0 30px;
+    padding: 6px;
+    place-items: center;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.geneo-tour-browse:hover {
+    background: var(--surface-card-hover);
+    color: var(--text-primary);
+}
+
+.geneo-tour-browse svg {
+    width: 18px;
+    height: 18px;
+}
+
+.geneo-tour-map[hidden],
+[data-geneo-tour-step-view][hidden] {
+    display: none;
+}
+
+.geneo-tour-map h2 {
+    margin: var(--space-3) 0;
+}
+
+.geneo-tour-map-list {
+    display: grid;
+    gap: 4px;
+    max-height: min(48vh, 340px);
+    overflow-y: auto;
+}
+
+.geneo-tour-map-list button {
+    min-height: 42px;
+    padding: 8px 12px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-secondary);
+    text-align: left;
+    cursor: pointer;
+}
+
+.geneo-tour-map-list button:hover,
+.geneo-tour-map-list button.is-current {
+    background: var(--surface-card-hover);
+    color: var(--text-primary);
+}
+
+.geneo-tour-map-list button.is-current {
+    border-color: var(--brand-green-300);
+}
+
+.geneo-tour-map-return {
+    margin-top: var(--space-3);
+    padding: 8px 0;
+    border: 0;
+    background: transparent;
+    color: var(--brand-green-300);
+    cursor: pointer;
+}
+
 .geneo-tour-close[hidden] {
     display: none;
 }
@@ -151,6 +234,15 @@
     white-space: normal;
 }
 
+.geneo-tour:not(.is-centered) .geneo-tour-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.geneo-tour:not(.is-centered) .geneo-tour-actions .button {
+    min-width: 0;
+}
+
 .geneo-tour-card button:focus-visible {
     outline: 2px solid var(--brand-green-300);
     outline-offset: 2px;
@@ -188,6 +280,20 @@
 
     .geneo-tour-close svg,
     .geneo-tour-actions [data-geneo-tour-action="skip"] {
+        display: none;
+    }
+
+    .geneo-tour:not(.is-centered) .geneo-tour-close {
+        width: 28px;
+        padding: 4px;
+        text-decoration: none;
+    }
+
+    .geneo-tour:not(.is-centered) .geneo-tour-close svg {
+        display: block;
+    }
+
+    .geneo-tour:not(.is-centered) .geneo-tour-close::after {
         display: none;
     }
 

@@ -25,6 +25,7 @@ const geneoTourSteps = [
     { id: 'geneograph-board', module: 'Geneograph', title: 'Connect ideas visually', body: 'Arrange people and evidence on a canvas to explore relationships and research questions.' },
     { id: 'geneograph-settings', module: 'Geneograph', title: 'Shape the board', body: 'Canvas settings let you adjust the board’s appearance while keeping the research connected.' }
 ];
+const geneoTourModules = [...new Set(geneoTourSteps.map(step => step.module))];
 
 const geneoTourRuntime = {
     active: false,
@@ -364,15 +365,17 @@ function geneoTourOnKeydown(event)
     {
         event.preventDefault();
         event.stopImmediatePropagation();
-        geneoTourClose();
+        if (geneoTourRuntime.root?.classList.contains('is-module-map')) geneoTourCloseModuleMap();
+        else geneoTourClose();
         return;
     }
     if (!geneoTourRuntime.root) return;
     if (event.key === 'Tab')
     {
-        const buttons = [...geneoTourRuntime.root.querySelectorAll('button:not([disabled])')];
-        const first = buttons[0];
-        const last = buttons.at(-1);
+        const controls = [...geneoTourRuntime.root.querySelectorAll('button:not([disabled])')]
+            .filter(control => control.getClientRects().length);
+        const first = controls[0];
+        const last = controls.at(-1);
         if (event.shiftKey && document.activeElement === first)
         {
             event.preventDefault();
@@ -401,6 +404,38 @@ function geneoTourCardCopy()
     return { title: t(title), body: t(body) };
 }
 
+function geneoTourOpenModuleMap()
+{
+    const root = geneoTourRuntime.root;
+    if (!root || geneoTourRuntime.transitioning) return;
+    root.classList.add('is-module-map', 'is-unanchored');
+    root.querySelector('[data-geneo-tour-step-view]').hidden = true;
+    root.querySelector('[data-geneo-tour-map-view]').hidden = false;
+    root.querySelector('.geneo-tour-card').setAttribute('aria-labelledby', 'geneoTourMapTitle');
+    root.querySelector('.geneo-tour-card').removeAttribute('aria-describedby');
+    geneoTourPosition();
+    const current = root.querySelector('[data-geneo-tour-module].is-current');
+    const list = root.querySelector('.geneo-tour-map-list');
+    if (current)
+    {
+        list.scrollTop = current.offsetTop - list.offsetTop - (list.clientHeight - current.offsetHeight) / 2;
+        current.focus({ preventScroll: true });
+    }
+}
+
+function geneoTourCloseModuleMap()
+{
+    const root = geneoTourRuntime.root;
+    if (!root) return;
+    root.classList.remove('is-module-map', 'is-unanchored');
+    root.querySelector('[data-geneo-tour-step-view]').hidden = false;
+    root.querySelector('[data-geneo-tour-map-view]').hidden = true;
+    root.querySelector('.geneo-tour-card').setAttribute('aria-labelledby', 'geneoTourTitle');
+    root.querySelector('.geneo-tour-card').setAttribute('aria-describedby', 'geneoTourBody');
+    geneoTourPosition();
+    root.querySelector('[data-geneo-tour-action="browse-modules"]')?.focus({ preventScroll: true });
+}
+
 function geneoTourRefreshCopy()
 {
     const root = geneoTourRuntime.root;
@@ -408,16 +443,32 @@ function geneoTourRefreshCopy()
     const { title, body } = geneoTourCardCopy();
     root.querySelector('[data-geneo-tour-title]').textContent = title;
     root.querySelector('[data-geneo-tour-body]').textContent = body;
-    const progress = root.querySelector('[data-geneo-tour-progress]');
-    if (progress && geneoTourRuntime.index >= 0 && geneoTourRuntime.index < geneoTourSteps.length)
+    const moduleName = root.querySelector('[data-geneo-tour-module-name]');
+    if (moduleName)
     {
-        progress.textContent = `${t('Step {current} of {total}')
-            .replace('{current}', String(geneoTourRuntime.index + 1))
-            .replace('{total}', String(geneoTourSteps.length))} · ${t(geneoTourSteps[geneoTourRuntime.index].module)}`;
+        const currentModule = geneoTourSteps[geneoTourRuntime.index].module;
+        moduleName.textContent = t(currentModule);
+        const browse = root.querySelector('[data-geneo-tour-action="browse-modules"]');
+        browse.setAttribute('aria-label', t('Browse modules'));
+        browse.title = t('Browse modules');
+        root.querySelector('[data-geneo-tour-map-title]').textContent = t('Browse modules');
+        root.querySelector('[data-geneo-tour-map-return]').textContent = t('Return to tour');
+        root.querySelectorAll('[data-geneo-tour-module]').forEach(button =>
+        {
+            const isCurrent = button.dataset.geneoTourModule === currentModule;
+            button.querySelector('span').textContent = t(button.dataset.geneoTourModule);
+            button.classList.toggle('is-current', isCurrent);
+            if (isCurrent) button.setAttribute('aria-current', 'step');
+            else button.removeAttribute('aria-current');
+        });
     }
     root.querySelectorAll('[data-geneo-tour-label]').forEach(button =>
     {
-        button.textContent = t(button.dataset.geneoTourLabel);
+        const nextModule = geneoTourSteps[geneoTourRuntime.index + 1]?.module;
+        const currentModule = geneoTourSteps[geneoTourRuntime.index]?.module;
+        button.textContent = button.dataset.geneoTourAction === 'next' && nextModule && nextModule !== currentModule
+            ? t('Continue to {module}').replace('{module}', t(nextModule))
+            : t(button.dataset.geneoTourLabel);
     });
     root.querySelector('.geneo-tour-close').setAttribute('aria-label', t('Skip tour'));
     geneoTourQueuePosition();
@@ -432,11 +483,30 @@ function geneoTourRenderOverlay(target = null)
         ? index < 0
             ? [['dismiss', 'Explore on my own'], ['start', 'Start tour']]
             : [['finish', 'Explore the demo']]
-        : [['back', 'Back'], ['skip-module', 'Skip module'], ['next', index === geneoTourSteps.length - 1 ? 'Finish tour' : 'Next']];
+        : [['back', 'Back'], ['next', index === geneoTourSteps.length - 1 ? 'Finish tour' : 'Next']];
     const root = document.createElement('div');
     root.className = `geneo-tour${centered ? ' is-centered' : ''}${index < 0 ? ' is-welcome' : ''}`;
     root.dataset.geneoTour = '';
-    root.innerHTML = `<div class="geneo-tour-scrim" data-geneo-tour-scrim></div><div class="geneo-tour-scrim" data-geneo-tour-scrim></div><div class="geneo-tour-scrim" data-geneo-tour-scrim></div><div class="geneo-tour-scrim" data-geneo-tour-scrim></div><div class="geneo-tour-target-block" data-geneo-tour-block></div><section class="geneo-tour-card" role="dialog" aria-modal="true" aria-labelledby="geneoTourTitle" aria-describedby="geneoTourBody"><div class="geneo-tour-card-head"><span class="geneo-tour-progress" data-geneo-tour-progress aria-live="polite"></span><button class="geneo-tour-close" type="button" aria-label="${escapeHtml(t('Skip tour'))}" data-geneo-tour-action="skip">${icon.close}</button></div>${index < 0 ? `<div class="geneo-tour-welcome"><span class="geneo-tour-brand">${icon.logo}<strong>GeneoGraph</strong></span><div class="geneo-tour-cover" aria-hidden="true"></div></div>` : ''}<h2 id="geneoTourTitle" data-geneo-tour-title></h2><p id="geneoTourBody" data-geneo-tour-body></p><p class="geneo-tour-fallback" data-geneo-tour-fallback hidden>${escapeHtml(t('This part of the sample is unavailable. Continue to the next stop.'))}</p><div class="geneo-tour-actions">${actions.map(([action, label]) => `<button class="button ${action === 'next' || action === 'start' || action === 'finish' ? 'primary' : 'secondary'}" type="button" data-geneo-tour-action="${action}" data-geneo-tour-label="${escapeHtml(label)}"></button>`).join('')}</div></section>`;
+    root.innerHTML = `
+        <div class="geneo-tour-scrim" data-geneo-tour-scrim></div>
+        <div class="geneo-tour-scrim" data-geneo-tour-scrim></div>
+        <div class="geneo-tour-scrim" data-geneo-tour-scrim></div>
+        <div class="geneo-tour-scrim" data-geneo-tour-scrim></div>
+        <div class="geneo-tour-target-block" data-geneo-tour-block></div>
+        <section class="geneo-tour-card" role="dialog" aria-modal="true" aria-labelledby="geneoTourTitle" aria-describedby="geneoTourBody">
+            <div class="geneo-tour-card-head">
+                ${centered ? '' : `<div class="geneo-tour-chapter"><span data-geneo-tour-module-name aria-live="polite"></span><button class="geneo-tour-browse" type="button" data-geneo-tour-action="browse-modules">${icon.grid}</button></div>`}
+                <button class="geneo-tour-close" type="button" aria-label="${escapeHtml(t('Skip tour'))}" data-geneo-tour-action="skip">${icon.close}</button>
+            </div>
+            <div data-geneo-tour-step-view>
+                ${index < 0 ? `<div class="geneo-tour-welcome"><span class="geneo-tour-brand">${icon.logo}<strong>GeneoGraph</strong></span><div class="geneo-tour-cover" aria-hidden="true"></div></div>` : ''}
+                <h2 id="geneoTourTitle" data-geneo-tour-title></h2>
+                <p id="geneoTourBody" data-geneo-tour-body></p>
+                <p class="geneo-tour-fallback" data-geneo-tour-fallback hidden>${escapeHtml(t('This part of the sample is unavailable. Continue to the next stop.'))}</p>
+                <div class="geneo-tour-actions">${actions.map(([action, label]) => `<button class="button ${action === 'next' || action === 'start' || action === 'finish' ? 'primary' : 'secondary'}" type="button" data-geneo-tour-action="${action}" data-geneo-tour-label="${escapeHtml(label)}"></button>`).join('')}</div>
+            </div>
+            ${centered ? '' : `<div class="geneo-tour-map" data-geneo-tour-map-view hidden><h2 id="geneoTourMapTitle" data-geneo-tour-map-title></h2><div class="geneo-tour-map-list">${geneoTourModules.map(module => `<button type="button" data-geneo-tour-module="${escapeHtml(module)}"><span></span></button>`).join('')}</div><button class="geneo-tour-map-return" type="button" data-geneo-tour-action="return-to-tour" data-geneo-tour-map-return></button></div>`}
+        </section>`;
     document.body.appendChild(root);
     geneoTourRuntime.root = root;
     geneoTourRuntime.target = target;
@@ -452,15 +522,17 @@ function geneoTourRenderOverlay(target = null)
         else if (action === 'start') geneoTourNavigate(0);
         else if (action === 'back') geneoTourNavigate(geneoTourRuntime.history.pop() ?? -1, false);
         else if (action === 'next') geneoTourNavigate(index + 1);
-        else if (action === 'skip-module')
-        {
-            const next = geneoTourSteps.findIndex((step, position) => position > index && step.module !== geneoTourSteps[index].module);
-            geneoTourNavigate(next < 0 ? geneoTourSteps.length : next);
-        }
+        else if (action === 'browse-modules') geneoTourOpenModuleMap();
+        else if (action === 'return-to-tour') geneoTourCloseModuleMap();
+    }));
+    root.querySelectorAll('[data-geneo-tour-module]').forEach(button => button.addEventListener('click', () =>
+    {
+        const targetIndex = geneoTourSteps.findIndex(step => step.module === button.dataset.geneoTourModule);
+        if (button.dataset.geneoTourModule === geneoTourSteps[index].module) geneoTourCloseModuleMap();
+        else if (targetIndex >= 0) geneoTourNavigate(targetIndex);
     }));
     root.querySelector('.geneo-tour-close').hidden = index < 0 || index >= geneoTourSteps.length;
     root.querySelector('[data-geneo-tour-fallback]').hidden = !geneoTourRuntime.fallback;
-    if (centered) root.querySelector('[data-geneo-tour-progress]').hidden = true;
     geneoTourRefreshCopy();
     geneoTourRuntime.observer = new MutationObserver(geneoTourQueuePosition);
     geneoTourRuntime.observer.observe(main, { childList: true, subtree: true });
@@ -501,7 +573,8 @@ function geneoTourPosition()
         }
     }
     const target = geneoTourRuntime.target;
-    const centered = root.classList.contains('is-centered') || !target?.isConnected || geneoTourRuntime.fallback;
+    const centered = root.classList.contains('is-centered') || root.classList.contains('is-module-map')
+        || !target?.isConnected || geneoTourRuntime.fallback;
     if (centered)
     {
         if (!root.classList.contains('is-centered')) root.classList.add('is-unanchored');
