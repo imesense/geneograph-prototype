@@ -1772,13 +1772,13 @@ const RU_UI_ALBUMS = {
         'Фотографии, ожидающие распределения по альбомам.',
 
     'Every active photo belongs to an album.':
-        'Все активные фотографии добавлены в альбомы.',
+        'Все фотографии добавлены в альбомы.',
 
     'Your photos and visual memories.':
         'Ваши фотографии и визуальные воспоминания.',
 
     'No photos match this view.':
-        'В этом представлении нет подходящих фотографий.',
+        'В этом альбоме нет фотографий.',
 
     'Unlink note from photo?': 'Разорвать связь заметки с фото?',
     'The photo will be removed from Albums and all other linked records.': 'Эта фотография будет удалена из альбомов и всех связанных записей.',
@@ -1842,8 +1842,8 @@ const RU_UI_ALBUMS = {
     'Try a different search or clear the active filters.':
         'Попробуйте другой запрос или очистите активные фильтры.',
 
-    'Add a prototype photo to begin organizing this collection.':
-        'Добавьте тестовую фотографию, чтобы начать организацию этой коллекции.',
+    'Add a photo to begin organizing this collection.':
+        'Добавьте фотографию, чтобы начать организацию этой коллекции.',
 
     'Clear search and filters':
         'Очистить поиск и фильтры',

@@ -5332,7 +5332,7 @@ function renderAlbumsEmpty(
     const copy =
         filtered
             ? 'Try a different search or clear the active filters.'
-            : 'Add a prototype photo to begin organizing this collection.';
+            : 'Add a photo to begin organizing this collection.';
 
     const action =
         filtered
