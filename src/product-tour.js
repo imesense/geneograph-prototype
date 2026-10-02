@@ -2,7 +2,14 @@ const GENEO_TOUR_STORAGE_KEY = 'geneograph.productTour';
 const GENEO_TOUR_VERSION = 2;
 const GENEO_TOUR_PROJECT_ID = 'p1';
 const geneoTourSteps = [
-    { id: 'projects', module: 'Projects', title: 'Everything starts with a project', body: "A project brings one family's tree, records, photographs, and research together. Open the sample project to explore." },
+    { id: 'projects-welcome', module: 'Projects', projectView: 'library', presentation: 'centered', title: 'Welcome to Projects', body: 'Projects bring your family tree, photographs, records, and notes into one workspace. This is where each family-history project begins.' },
+    { id: 'projects-actions', module: 'Projects', projectView: 'library', title: 'Start or open a project', body: 'Create family tree starts a blank project. Import GEDCOM and Open project are prototype entry points for bringing in existing research.' },
+    { id: 'projects-continue', module: 'Projects', projectView: 'library', title: 'Pick up where you left off', body: 'This shortcut reopens the last project and module you visited.' },
+    { id: 'projects-card', module: 'Projects', projectView: 'library', title: 'Explore a sample project', body: 'The Whiskerfield card summarizes a sample project. Next, open its overview to see the research inside.' },
+    { id: 'projects-hero', module: 'Projects', projectView: 'overview', title: 'Project overview', body: 'The hero keeps the project name, description, status, dates, and project actions together.' },
+    { id: 'projects-tags', module: 'Projects', projectView: 'overview', title: 'Research at a glance', body: 'These tags show how many people, photographs, files, and notes belong to this project.' },
+    { id: 'projects-back', module: 'Projects', projectView: 'overview', title: 'Return to all projects', body: 'Back to all projects returns to the project library without leaving the workspace.' },
+    { id: 'projects-tabs', module: 'Projects', projectView: 'overview', title: 'Move between modules', body: 'These tabs open the connected areas of this project. Continue to Family Tree to explore its people and relationships.' },
     { id: 'tree-group', module: 'Family Tree', title: 'Follow the connections', body: 'See Silver and his relatives across generations. Focus on a person to explore a different branch.' },
     { id: 'tree-sidebar', module: 'Family Tree', title: 'Details stay connected', body: 'The selected person’s details and linked records stay beside the tree.' },
     { id: 'tree-relative', module: 'Family Tree', title: 'Add or connect a relative', body: 'Choose a relationship to add someone new or connect a person already in the project. This is a read-only preview.' },
@@ -26,6 +33,7 @@ const geneoTourSteps = [
     { id: 'geneograph-settings', module: 'Geneograph', title: 'Shape the board', body: 'Canvas settings let you adjust the board’s appearance while keeping the research connected.' }
 ];
 const geneoTourModules = [...new Set(geneoTourSteps.map(step => step.module))];
+const geneoTourOptionalTargets = new Set(['projects-actions', 'projects-continue', 'projects-back', 'projects-tabs']);
 
 const geneoTourRuntime = {
     active: false,
@@ -36,6 +44,7 @@ const geneoTourRuntime = {
     root: null,
     target: null,
     fallback: false,
+    optionalFallback: false,
     origin: null,
     returnFocus: null,
     observer: null,
@@ -141,7 +150,7 @@ function startGeneoProductTour()
 function geneoTourPrepare(index)
 {
     const step = geneoTourSteps[index];
-    if (index === 0)
+    if (step.module === 'Projects' && step.projectView === 'library')
     {
         state.activeModule = 'Projects';
         state.projectOpen = false;
@@ -208,7 +217,13 @@ function geneoTourTarget(index)
 {
     const id = geneoTourSteps[index]?.id;
     const selectors = {
-        projects: '[data-project-id="p1"]',
+        'projects-actions': '.button-stack',
+        'projects-continue': '.startup-continue',
+        'projects-card': '[data-project-id="p1"]',
+        'projects-hero': '.project-hero',
+        'projects-tags': '.project-hero .stat-chips',
+        'projects-back': '#backToProjects',
+        'projects-tabs': '.topnav',
         'tree-group': '.tree-person-card[data-person-id="silver"]',
         'tree-sidebar': '.tree-inspector',
         'tree-relative': '#relativePopover',
@@ -478,14 +493,16 @@ function geneoTourRenderOverlay(target = null)
 {
     geneoTourDestroyOverlay({ keepInert: true });
     const index = geneoTourRuntime.index;
-    const centered = index < 0 || index >= geneoTourSteps.length;
-    const actions = centered
+    const outerScreen = index < 0 || index >= geneoTourSteps.length;
+    const projectIntro = geneoTourSteps[index]?.presentation === 'centered';
+    const centered = outerScreen || projectIntro;
+    const actions = outerScreen
         ? index < 0
             ? [['dismiss', 'Explore on my own'], ['start', 'Start tour']]
             : [['finish', 'Explore the demo']]
         : [['back', 'Back'], ['next', index === geneoTourSteps.length - 1 ? 'Finish tour' : 'Next']];
     const root = document.createElement('div');
-    root.className = `geneo-tour${centered ? ' is-centered' : ''}${index < 0 ? ' is-welcome' : ''}`;
+    root.className = `geneo-tour${centered ? ' is-centered' : ''}${index < 0 ? ' is-welcome' : ''}${projectIntro ? ' is-project-intro' : ''}`;
     root.dataset.geneoTour = '';
     root.innerHTML = `
         <div class="geneo-tour-scrim" data-geneo-tour-scrim></div>
@@ -495,7 +512,7 @@ function geneoTourRenderOverlay(target = null)
         <div class="geneo-tour-target-block" data-geneo-tour-block></div>
         <section class="geneo-tour-card" role="dialog" aria-modal="true" aria-labelledby="geneoTourTitle" aria-describedby="geneoTourBody">
             <div class="geneo-tour-card-head">
-                ${centered ? '' : `<div class="geneo-tour-chapter"><span data-geneo-tour-module-name aria-live="polite"></span><button class="geneo-tour-browse" type="button" data-geneo-tour-action="browse-modules">${icon.grid}</button></div>`}
+                ${outerScreen ? '' : `<div class="geneo-tour-chapter"><span data-geneo-tour-module-name aria-live="polite"></span><button class="geneo-tour-browse" type="button" data-geneo-tour-action="browse-modules">${icon.grid}</button></div>`}
                 <button class="geneo-tour-close" type="button" aria-label="${escapeHtml(t('Skip tour'))}" data-geneo-tour-action="skip">${icon.close}</button>
             </div>
             <div data-geneo-tour-step-view>
@@ -505,7 +522,7 @@ function geneoTourRenderOverlay(target = null)
                 <p class="geneo-tour-fallback" data-geneo-tour-fallback hidden>${escapeHtml(t('This part of the sample is unavailable. Continue to the next stop.'))}</p>
                 <div class="geneo-tour-actions">${actions.map(([action, label]) => `<button class="button ${action === 'next' || action === 'start' || action === 'finish' ? 'primary' : 'secondary'}" type="button" data-geneo-tour-action="${action}" data-geneo-tour-label="${escapeHtml(label)}"></button>`).join('')}</div>
             </div>
-            ${centered ? '' : `<div class="geneo-tour-map" data-geneo-tour-map-view hidden><h2 id="geneoTourMapTitle" data-geneo-tour-map-title></h2><div class="geneo-tour-map-list">${geneoTourModules.map(module => `<button type="button" data-geneo-tour-module="${escapeHtml(module)}"><span></span></button>`).join('')}</div><button class="geneo-tour-map-return" type="button" data-geneo-tour-action="return-to-tour" data-geneo-tour-map-return></button></div>`}
+            ${outerScreen ? '' : `<div class="geneo-tour-map" data-geneo-tour-map-view hidden><h2 id="geneoTourMapTitle" data-geneo-tour-map-title></h2><div class="geneo-tour-map-list">${geneoTourModules.map(module => `<button type="button" data-geneo-tour-module="${escapeHtml(module)}"><span></span></button>`).join('')}</div><button class="geneo-tour-map-return" type="button" data-geneo-tour-action="return-to-tour" data-geneo-tour-map-return></button></div>`}
         </section>`;
     document.body.appendChild(root);
     geneoTourRuntime.root = root;
@@ -532,7 +549,7 @@ function geneoTourRenderOverlay(target = null)
         else if (targetIndex >= 0) geneoTourNavigate(targetIndex);
     }));
     root.querySelector('.geneo-tour-close').hidden = index < 0 || index >= geneoTourSteps.length;
-    root.querySelector('[data-geneo-tour-fallback]').hidden = !geneoTourRuntime.fallback;
+    root.querySelector('[data-geneo-tour-fallback]').hidden = !geneoTourRuntime.fallback || geneoTourRuntime.optionalFallback;
     geneoTourRefreshCopy();
     geneoTourRuntime.observer = new MutationObserver(geneoTourQueuePosition);
     geneoTourRuntime.observer.observe(main, { childList: true, subtree: true });
@@ -561,11 +578,11 @@ function geneoTourPosition()
     const scrims = [...root.querySelectorAll('[data-geneo-tour-scrim]')];
     const block = root.querySelector('[data-geneo-tour-block]');
     const card = root.querySelector('.geneo-tour-card');
-    if (!geneoTourRuntime.target?.isConnected)
+    if (!root.classList.contains('is-centered') && !geneoTourRuntime.target?.isConnected)
     {
         geneoTourRuntime.target = geneoTourTarget(geneoTourRuntime.index);
         if (geneoTourRuntime.target) geneoTourRuntime.resizeObserver?.observe(geneoTourRuntime.target);
-        else if (!root.classList.contains('is-centered'))
+        else if (!geneoTourRuntime.optionalFallback)
         {
             geneoTourRuntime.fallback = true;
             root.querySelector('[data-geneo-tour-fallback]').hidden = false;
@@ -707,6 +724,7 @@ async function geneoTourMoveTo(index)
     geneoTourClosePreview();
     geneoTourRuntime.index = index;
     geneoTourRuntime.fallback = false;
+    geneoTourRuntime.optionalFallback = false;
     geneoTourRuntime.mobileScrollAdjusted = false;
     if (index < 0 || index >= geneoTourSteps.length)
     {
@@ -722,6 +740,22 @@ async function geneoTourMoveTo(index)
     catch (error)
     {
         console.warn(`GeneoGraph tour could not prepare ${geneoTourSteps[index].id}:`, error);
+    }
+    if (geneoTourSteps[index].presentation === 'centered')
+    {
+        geneoTourRenderOverlay();
+        geneoTourRuntime.transitioning = false;
+        return;
+    }
+    const optionalTarget = geneoTourOptionalTargets.has(geneoTourSteps[index].id);
+    const mountedTarget = optionalTarget ? geneoTourTarget(index) : null;
+    if (optionalTarget && (!mountedTarget?.isConnected || !mountedTarget.getBoundingClientRect().width))
+    {
+        geneoTourRuntime.fallback = true;
+        geneoTourRuntime.optionalFallback = true;
+        geneoTourRenderOverlay();
+        geneoTourRuntime.transitioning = false;
+        return;
     }
     const target = await geneoTourWaitForTarget(index, token);
     if (token !== geneoTourRuntime.token || !geneoTourRuntime.active) return;

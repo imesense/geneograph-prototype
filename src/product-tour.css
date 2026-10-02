@@ -234,12 +234,14 @@
     white-space: normal;
 }
 
-.geneo-tour:not(.is-centered) .geneo-tour-actions {
+.geneo-tour:not(.is-centered) .geneo-tour-actions,
+.geneo-tour.is-project-intro .geneo-tour-actions {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.geneo-tour:not(.is-centered) .geneo-tour-actions .button {
+.geneo-tour:not(.is-centered) .geneo-tour-actions .button,
+.geneo-tour.is-project-intro .geneo-tour-actions .button {
     min-width: 0;
 }
 

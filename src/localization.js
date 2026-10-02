@@ -5831,6 +5831,21 @@ const RU_UI_COMPLETION = {
 };
 
 const RU_UI_TOUR = Object.freeze({
+    'Welcome to Projects': 'Добро пожаловать в раздел проектов',
+    'Projects bring your family tree, photographs, records, and notes into one workspace. This is where each family-history project begins.': 'Проекты объединяют семейное древо, фотографии, документы и заметки в одном рабочем пространстве. Здесь начинается каждое семейное исследование.',
+    'Start or open a project': 'Начните или откройте проект',
+    'Create family tree starts a blank project. Import GEDCOM and Open project are prototype entry points for bringing in existing research.': '«Создать семейное древо» начинает пустой проект. «Импорт GEDCOM» и «Открыть проект» показывают будущие способы добавить существующее исследование в прототип.',
+    'Pick up where you left off': 'Продолжите с того места, где остановились',
+    'This shortcut reopens the last project and module you visited.': 'Этот блок возвращает к последнему открытому проекту и разделу.',
+    'Explore a sample project': 'Изучите пример проекта',
+    'The Whiskerfield card summarizes a sample project. Next, open its overview to see the research inside.': 'Карточка Уискерфилдов кратко описывает пример проекта. Далее откроется его обзор с материалами исследования.',
+    'The hero keeps the project name, description, status, dates, and project actions together.': 'В верхней части обзора собраны название и описание проекта, его статус, даты и действия.',
+    'Research at a glance': 'Исследование с первого взгляда',
+    'These tags show how many people, photographs, files, and notes belong to this project.': 'Эти метки показывают количество людей, фотографий, файлов и заметок в проекте.',
+    'Return to all projects': 'Вернитесь ко всем проектам',
+    'Back to all projects returns to the project library without leaving the workspace.': 'Кнопка «Вернуться ко всем проектам» открывает список проектов, не выходя из рабочего пространства.',
+    'Move between modules': 'Переходите между разделами',
+    'These tabs open the connected areas of this project. Continue to Family Tree to explore its people and relationships.': 'Эти вкладки открывают связанные разделы проекта. Далее перейдите к семейному древу, чтобы изучить людей и родственные связи.',
     'Module': 'Раздел',
     'Previous module': 'Предыдущий раздел',
     'Next module': 'Следующий раздел',
