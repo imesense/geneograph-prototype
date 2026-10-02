@@ -408,9 +408,6 @@ function geneoTourRefreshCopy()
     const { title, body } = geneoTourCardCopy();
     root.querySelector('[data-geneo-tour-title]').textContent = title;
     root.querySelector('[data-geneo-tour-body]').textContent = body;
-    const itinerary = root.querySelector('.geneo-tour-itinerary');
-    if (itinerary) itinerary.textContent = ['Projects', 'Family Tree', 'People', 'Albums', 'Archive', 'Notes', 'Places', 'Geneograph']
-        .map(module => t(module)).join(' · ');
     const progress = root.querySelector('[data-geneo-tour-progress]');
     if (progress && geneoTourRuntime.index >= 0 && geneoTourRuntime.index < geneoTourSteps.length)
     {
@@ -437,11 +434,9 @@ function geneoTourRenderOverlay(target = null)
             : [['finish', 'Explore the demo']]
         : [['back', 'Back'], ['skip-module', 'Skip module'], ['next', index === geneoTourSteps.length - 1 ? 'Finish tour' : 'Next']];
     const root = document.createElement('div');
-    root.className = `geneo-tour${centered ? ' is-centered' : ''}`;
+    root.className = `geneo-tour${centered ? ' is-centered' : ''}${index < 0 ? ' is-welcome' : ''}`;
     root.dataset.geneoTour = '';
-    const itinerary = ['Projects', 'Family Tree', 'People', 'Albums', 'Archive', 'Notes', 'Places', 'Geneograph']
-        .map(module => escapeHtml(t(module))).join(' · ');
-    root.innerHTML = `<div class="geneo-tour-scrim" data-geneo-tour-scrim></div><div class="geneo-tour-scrim" data-geneo-tour-scrim></div><div class="geneo-tour-scrim" data-geneo-tour-scrim></div><div class="geneo-tour-scrim" data-geneo-tour-scrim></div><div class="geneo-tour-target-block" data-geneo-tour-block></div><section class="geneo-tour-card" role="dialog" aria-modal="true" aria-labelledby="geneoTourTitle" aria-describedby="geneoTourBody"><div class="geneo-tour-card-head"><span class="geneo-tour-progress" data-geneo-tour-progress aria-live="polite"></span><button class="geneo-tour-close" type="button" aria-label="${escapeHtml(t('Skip tour'))}" data-geneo-tour-action="skip">${icon.close}</button></div>${index < 0 ? `<div class="geneo-tour-welcome"><span class="geneo-tour-brand">${icon.logo}<strong>GeneoGraph</strong></span><div class="geneo-tour-cover" aria-hidden="true"></div><span class="geneo-tour-itinerary">${itinerary}</span></div>` : ''}<h2 id="geneoTourTitle" data-geneo-tour-title></h2><p id="geneoTourBody" data-geneo-tour-body></p><p class="geneo-tour-fallback" data-geneo-tour-fallback hidden>${escapeHtml(t('This part of the sample is unavailable. Continue to the next stop.'))}</p><div class="geneo-tour-actions">${actions.map(([action, label]) => `<button class="button ${action === 'next' || action === 'start' || action === 'finish' ? 'primary' : 'secondary'}" type="button" data-geneo-tour-action="${action}" data-geneo-tour-label="${escapeHtml(label)}"></button>`).join('')}</div></section>`;
+    root.innerHTML = `<div class="geneo-tour-scrim" data-geneo-tour-scrim></div><div class="geneo-tour-scrim" data-geneo-tour-scrim></div><div class="geneo-tour-scrim" data-geneo-tour-scrim></div><div class="geneo-tour-scrim" data-geneo-tour-scrim></div><div class="geneo-tour-target-block" data-geneo-tour-block></div><section class="geneo-tour-card" role="dialog" aria-modal="true" aria-labelledby="geneoTourTitle" aria-describedby="geneoTourBody"><div class="geneo-tour-card-head"><span class="geneo-tour-progress" data-geneo-tour-progress aria-live="polite"></span><button class="geneo-tour-close" type="button" aria-label="${escapeHtml(t('Skip tour'))}" data-geneo-tour-action="skip">${icon.close}</button></div>${index < 0 ? `<div class="geneo-tour-welcome"><span class="geneo-tour-brand">${icon.logo}<strong>GeneoGraph</strong></span><div class="geneo-tour-cover" aria-hidden="true"></div></div>` : ''}<h2 id="geneoTourTitle" data-geneo-tour-title></h2><p id="geneoTourBody" data-geneo-tour-body></p><p class="geneo-tour-fallback" data-geneo-tour-fallback hidden>${escapeHtml(t('This part of the sample is unavailable. Continue to the next stop.'))}</p><div class="geneo-tour-actions">${actions.map(([action, label]) => `<button class="button ${action === 'next' || action === 'start' || action === 'finish' ? 'primary' : 'secondary'}" type="button" data-geneo-tour-action="${action}" data-geneo-tour-label="${escapeHtml(label)}"></button>`).join('')}</div></section>`;
     document.body.appendChild(root);
     geneoTourRuntime.root = root;
     geneoTourRuntime.target = target;

@@ -44,7 +44,10 @@
 .geneo-tour-welcome {
     display: grid;
     gap: 12px;
-    margin-top: 8px;
+}
+
+.geneo-tour.is-welcome .geneo-tour-card-head {
+    display: none;
 }
 
 .geneo-tour-brand {
@@ -66,12 +69,6 @@
     border: 1px solid var(--border-strong);
     border-radius: var(--radius-sm);
     background: var(--surface-app) url('assets/geneograph-cover-tree.png') center / cover no-repeat;
-}
-
-.geneo-tour-itinerary {
-    color: var(--text-secondary);
-    font-size: 12px;
-    line-height: 1.5;
 }
 
 .geneo-tour.is-centered .geneo-tour-card,
