@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>GeneoGraph product tour checks</title>
+        <style>
+            body { margin: 24px; background: #0b0f0e; color: #eaf5f0; font: 15px/1.5 system-ui, sans-serif; }
+            button { padding: 10px 16px; background: #2fae74; border: 0; color: #07110c; font: inherit; font-weight: 700; cursor: pointer; }
+            iframe { position: fixed; left: -100000px; width: 1280px; height: 720px; border: 0; }
+            .pass { color: #62d99a; }
+            .fail { color: #ff9b9b; }
+        </style>
+    </head>
+    <body>
+        <h1>GeneoGraph product tour checks</h1>
+        <button id="run" type="button">Run checks</button>
+        <ol id="results" aria-live="polite"></ol>
+        <iframe id="prototype" title="Prototype under test" src="../src/index.html"></iframe>
+        <script src="product-tour.js" defer></script>
+    </body>
+</html>

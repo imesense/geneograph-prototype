@@ -5828,8 +5828,46 @@ const RU_UI_COMPLETION = {
     'Add related notes': 'Добавить связанные заметки'
 };
 
+const RU_UI_TOUR = Object.freeze({
+    'Take the tour': 'Пройти экскурсию',
+    'Explore the sample project across GeneoGraph.': 'Познакомьтесь с примером проекта в GeneoGraph.',
+    'Explore a family story': 'Исследуйте историю семьи',
+    'Follow a sample family through its people, records, places, and research. This guided tour takes about three minutes.': 'Познакомьтесь с людьми, документами, местами и исследованиями одной семьи. Экскурсия займёт около трёх минут.',
+    'Everything starts with a project': 'Всё начинается с проекта',
+    "A project brings one family's tree, records, photographs, and research together. Let's open the sample project.": 'Проект объединяет семейное древо, документы, фотографии и исследования. Откроем пример проекта.',
+    'Follow the connections': 'Проследите родственные связи',
+    'See relatives across generations. Focus on a person to explore their family from a different point of view.': 'Посмотрите на родственников разных поколений. Выберите человека в центре древа, чтобы изучить его семью с другой стороны.',
+    'Meet the people behind the tree': 'Познакомьтесь с людьми в древе',
+    'Find a person and see the events and records connected to their life. Open their profile for the fuller story.': 'Найдите человека и посмотрите связанные с ним события и записи. В профиле можно узнать больше.',
+    "A person's story in one place": 'История человека в одном месте',
+    'Their profile brings together family relationships, photographs, files, notes, and places. Follow any connection to learn more.': 'Профиль объединяет родственные связи, фотографии, файлы, заметки и места. Перейдите по любой связи, чтобы узнать больше.',
+    'Keep photographs in context': 'Сохраняйте контекст фотографий',
+    'Collect related images in an album so a set of moments can be explored together.': 'Собирайте связанные снимки в альбом, чтобы рассматривать важные моменты вместе.',
+    'Keep the evidence close': 'Держите доказательства рядом',
+    'Store documents and other files, then connect them to people, notes, and sources so their context stays clear.': 'Храните документы и другие файлы и связывайте их с людьми, заметками и источниками, чтобы не терять контекст.',
+    'Record questions and discoveries': 'Записывайте вопросы и открытия',
+    'Write down observations and research questions alongside the people, places, and evidence they concern.': 'Записывайте наблюдения и вопросы рядом с людьми, местами и доказательствами, к которым они относятся.',
+    'Put the story on a map': 'Покажите историю на карте',
+    "Explore where family events happened. When dated events have mapped places, Routes can show a person's journey.": 'Посмотрите, где происходили семейные события. Если датированные события привязаны к карте, маршруты могут показать путь человека.',
+    'Connect ideas visually': 'Соединяйте идеи наглядно',
+    'Arrange people, evidence, and research ideas on a canvas to see relationships and work through a question.': 'Размещайте людей, доказательства и исследовательские идеи на доске, чтобы видеть связи и разбирать вопросы.',
+    'Your turn to explore': 'Теперь исследуйте сами',
+    'The tour is complete. Return to any module and follow the connections that interest you.': 'Экскурсия завершена. Вернитесь в любой раздел и исследуйте интересующие вас связи.',
+    'Start tour': 'Начать экскурсию',
+    'Explore on my own': 'Исследовать самостоятельно',
+    'Next': 'Далее',
+    'Skip tour': 'Пропустить экскурсию',
+    'Finish tour': 'Завершить экскурсию',
+    'Explore the demo': 'Исследовать демо',
+    'Step {current} of {total}': 'Шаг {current} из {total}',
+    'Return to where you were': 'Вернуться назад',
+    'Tour closed.': 'Экскурсия закрыта.',
+    'This part of the sample is unavailable. Continue to the next stop.': 'Эта часть примера недоступна. Перейдите к следующему шагу.'
+});
+
 const RU_UI_MODULE_BLOCKS = Object.freeze({
     shared: RU_UI_SHARED,
+    tour: RU_UI_TOUR,
     completion: RU_UI_COMPLETION,
     projects: RU_UI_PROJECTS,
     familyTree: RU_UI_FAMILY_TREE,

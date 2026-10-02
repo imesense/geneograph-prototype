@@ -1,0 +1,186 @@
+.geneo-tour {
+    position: fixed;
+    inset: 0;
+    z-index: 11000;
+    pointer-events: none;
+}
+
+.geneo-tour-scrim {
+    position: absolute;
+    background: rgba(4, 9, 8, .68);
+    pointer-events: auto;
+}
+
+.geneo-tour-target-block {
+    position: absolute;
+    border: 2px solid var(--brand-green-300);
+    border-radius: var(--radius-sm);
+    box-shadow: 0 0 0 1px var(--surface-app);
+    pointer-events: auto;
+}
+
+.geneo-tour-target-block[hidden] {
+    display: none;
+}
+
+.geneo-tour-card {
+    position: absolute;
+    width: min(360px, calc(100vw - 24px));
+    max-height: calc(100vh - 24px);
+    overflow-y: auto;
+    padding: var(--space-5);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    background: var(--surface-card);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-soft);
+    pointer-events: auto;
+}
+
+.geneo-tour.is-centered .geneo-tour-card,
+.geneo-tour.is-unanchored .geneo-tour-card {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.geneo-tour-card-head {
+    display: flex;
+    min-height: 24px;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+}
+
+.geneo-tour-progress {
+    color: var(--brand-green-300);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.geneo-tour-progress[hidden],
+.geneo-tour-close[hidden] {
+    display: none;
+}
+
+.geneo-tour-close {
+    display: grid;
+    width: 28px;
+    height: 28px;
+    padding: 4px;
+    place-items: center;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.geneo-tour-close svg {
+    width: 18px;
+    height: 18px;
+}
+
+.geneo-tour-close:hover {
+    background: var(--surface-card-hover);
+    color: var(--text-primary);
+}
+
+.geneo-tour-card h2 {
+    margin: var(--space-3) 0 var(--space-2);
+    font-size: 20px;
+    line-height: 1.25;
+}
+
+.geneo-tour-card p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.geneo-tour-fallback:not([hidden]) {
+    margin-top: var(--space-3);
+    color: var(--amber);
+}
+
+.geneo-tour-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--space-2);
+    margin-top: var(--space-5);
+}
+
+.geneo-tour-actions .button {
+    min-height: 38px;
+    white-space: normal;
+}
+
+.geneo-tour-card button:focus-visible {
+    outline: 2px solid var(--brand-green-300);
+    outline-offset: 2px;
+}
+
+@media (max-width: 640px) {
+    .geneo-tour:not(.is-centered):not(.is-unanchored) .geneo-tour-card {
+        left: 0;
+        right: 0;
+        top: auto;
+        bottom: 0;
+        width: 100%;
+        max-height: min(45vh, 360px);
+        border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+        padding: var(--space-4);
+    }
+
+    .geneo-tour.is-top-sheet:not(.is-centered):not(.is-unanchored) .geneo-tour-card {
+        top: 0;
+        bottom: auto;
+        border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+    }
+
+    .geneo-tour-card h2 {
+        font-size: 18px;
+    }
+
+    .geneo-tour-close {
+        width: auto;
+        padding: 4px 0;
+        font-size: 12px;
+        text-decoration: underline;
+        white-space: nowrap;
+    }
+
+    .geneo-tour-close svg,
+    .geneo-tour-actions [data-geneo-tour-action="skip"] {
+        display: none;
+    }
+
+    .geneo-tour-close::after {
+        content: attr(aria-label);
+    }
+}
+
+@media (max-width: 640px) and (max-height: 420px) {
+    .geneo-tour:not(.is-centered):not(.is-unanchored) .geneo-tour-card {
+        max-height: 62vh;
+        padding: var(--space-3);
+    }
+
+    .geneo-tour-card h2 {
+        margin: var(--space-2) 0;
+    }
+
+    .geneo-tour-actions {
+        margin-top: var(--space-3);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .geneo-tour, .geneo-tour * {
+        scroll-behavior: auto !important;
+        transition: none !important;
+        animation: none !important;
+    }
+}

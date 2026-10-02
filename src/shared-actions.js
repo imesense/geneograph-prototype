@@ -627,6 +627,7 @@ function activateProject(projectId, {
     });
 
     if (renderNow) render();
+    maybeOfferGeneoProductTour();
     return true;
 }
 
@@ -2037,6 +2038,7 @@ function openModal(
     html
 )
 {
+    if (geneoTourRuntime.active) geneoTourClose({ offerRestore: false });
     const activeBeforeMenuClose =
         document.activeElement;
 
