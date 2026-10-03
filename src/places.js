@@ -6412,6 +6412,11 @@ function openPlacesFilterPopover(
     anchor
 )
 {
+    if (document.getElementById('placesFilterPopover'))
+    {
+        closePlacesFilterPopover();
+        return;
+    }
     closePlacesFilterPopover();
     closeMenu();
     const filters =
@@ -6505,18 +6510,11 @@ function openPlacesFilterPopover(
     const below =
         rect.bottom + 8;
 
-    const top =
-        below
-          + popover.offsetHeight
-          <= window.innerHeight
-            - margin
-            ? below
-            : Math.max(
-                margin,
-                rect.top
-                - popover.offsetHeight
-                - 8
-            );
+    const spaceBelow = window.innerHeight - margin - below;
+    const spaceAbove = rect.top - 8 - margin;
+    const placeBelow = popover.offsetHeight <= spaceBelow || spaceBelow >= spaceAbove;
+    popover.style.maxHeight = `${Math.max(0, placeBelow ? spaceBelow : spaceAbove)}px`;
+    const top = placeBelow ? below : rect.top - 8 - popover.offsetHeight;
 
     popover.style.left =
         `${left}px`;

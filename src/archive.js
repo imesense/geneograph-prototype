@@ -10409,6 +10409,7 @@ function closeArchiveFilterPopover({
             'archiveFilterPopover'
         )
         ?.remove();
+    document.getElementById('archiveFilterButton')?.setAttribute('aria-expanded', 'false');
 
     document.removeEventListener(
         'click',
@@ -10507,6 +10508,11 @@ function openArchiveFilterPopover(
     anchor
 )
 {
+    if (document.getElementById('archiveFilterPopover'))
+    {
+        closeArchiveFilterPopover();
+        return;
+    }
     closeArchiveFilterPopover();
     closeAlbumsFilterPopover();
     closePeopleFilterPopover();
@@ -10514,6 +10520,7 @@ function openArchiveFilterPopover(
 
     archiveFilterReturnFocus =
         anchor;
+    anchor.setAttribute('aria-expanded', 'true');
 
     const sourcesView =
         archiveToolbarIsSources();
@@ -10806,7 +10813,10 @@ function openArchiveFilterPopover(
 
     requestAnimationFrame(() =>
     {
-        controller?.focusFirst();
+        if (window.innerWidth <= 640)
+            panel.querySelector('[data-archive-filter-close]')?.focus({ preventScroll: true });
+        else
+            controller?.focusFirst();
     });
 
     setTimeout(() =>

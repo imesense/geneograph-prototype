@@ -6972,6 +6972,7 @@ function closeAlbumsFilterPopover({
             'albumsFilterPopover'
         )
         ?.remove();
+    document.getElementById('albumsFilterButton')?.setAttribute('aria-expanded', 'false');
 
     document.removeEventListener(
         'click',
@@ -7076,12 +7077,18 @@ function openAlbumsFilterPopover(
     anchor
 )
 {
+    if (document.getElementById('albumsFilterPopover'))
+    {
+        closeAlbumsFilterPopover();
+        return;
+    }
     closeAlbumsFilterPopover();
     closePeopleFilterPopover();
     closeMenu();
 
     albumsFilterReturnFocus =
         anchor;
+    anchor.setAttribute('aria-expanded', 'true');
 
     const filters =
         albumsFiltersWithDefaults();

@@ -1356,8 +1356,6 @@ function positionSharedFilterPanel(
         panel.classList.add(
             'is-mobile'
         );
-
-        return;
     }
 
     const margin = 12;
@@ -1367,32 +1365,25 @@ function positionSharedFilterPanel(
         anchor.getBoundingClientRect();
 
     const left =
-        Math.min(
-            Math.max(
-                margin,
-                anchorRect.right
-              - panel.offsetWidth
-            ),
-            window.innerWidth
-            - panel.offsetWidth
-            - margin
-        );
+        window.innerWidth <= 640
+            ? margin
+            : Math.min(
+                Math.max(
+                    margin,
+                    anchorRect.right - panel.offsetWidth
+                ),
+                window.innerWidth - panel.offsetWidth - margin
+            );
 
     const below =
         anchorRect.bottom
         + gap;
 
-    const top =
-        below + panel.offsetHeight
-          <= window.innerHeight
-            - margin
-            ? below
-            : Math.max(
-                margin,
-                anchorRect.top
-                - panel.offsetHeight
-                - gap
-            );
+    const spaceBelow = window.innerHeight - margin - below;
+    const spaceAbove = anchorRect.top - gap - margin;
+    const placeBelow = panel.offsetHeight <= spaceBelow || spaceBelow >= spaceAbove;
+    panel.style.maxHeight = `${Math.max(0, placeBelow ? spaceBelow : spaceAbove)}px`;
+    const top = placeBelow ? below : anchorRect.top - gap - panel.offsetHeight;
 
     panel.style.left =
         `${left}px`;
@@ -3289,6 +3280,7 @@ function renderPeopleNormalToolbar()
             type="button"
             id="peopleColumnsButton"
             aria-haspopup="dialog"
+            aria-expanded="false"
             aria-label="Columns"
             title="Columns">
             ${icon.grid}
@@ -3304,6 +3296,7 @@ function renderPeopleNormalToolbar()
             type="button"
             id="peopleFilterButton"
             aria-haspopup="dialog"
+            aria-expanded="false"
             aria-label="${
                 hasActiveFilters
                     ? `Filters, ${activeFilterCount} active`
@@ -7362,6 +7355,7 @@ function openAddFactOverlay(person)
 function closePeopleColumnsPopover()
 {
     document.getElementById('peopleColumnsPopover')?.remove();
+    document.getElementById('peopleColumnsButton')?.setAttribute('aria-expanded', 'false');
     document.removeEventListener('click', closePeopleColumnsOnOutside);
     document.removeEventListener('keydown', closePeopleColumnsOnEscape);
 }
@@ -7378,6 +7372,11 @@ function closePeopleColumnsOnEscape(event)
 
 function openPeopleColumnsPopover(anchor)
 {
+    if (document.getElementById('peopleColumnsPopover'))
+    {
+        closePeopleColumnsPopover();
+        return;
+    }
     closePeopleColumnsPopover();
     closePeopleFilterPopover();
     closeMenu();
@@ -7393,6 +7392,7 @@ function openPeopleColumnsPopover(anchor)
     popover.setAttribute('aria-label', 'Choose People table columns');
     popover.innerHTML = `<div class="people-columns-header"><h3>Columns</h3><p>Choose which fields are visible in the people table.</p></div><div class="people-columns-list"><label class="people-columns-option"><input type="checkbox" checked disabled> <span>Name</span></label>${optionalColumns}<label class="people-columns-option"><input type="checkbox" checked disabled> <span>Actions</span></label></div><div class="people-columns-footer"><button class="button secondary" type="button" data-people-columns-reset>Reset columns</button><button class="button primary" type="button" data-people-columns-close>Done</button></div>`;
     document.body.appendChild(popover);
+    anchor.setAttribute('aria-expanded', 'true');
     popover.querySelectorAll('[data-people-column]').forEach(input => input.addEventListener('change', () =>
     {
         state.peopleVisibleColumns = peopleColumnsWithDefaults();
@@ -7432,6 +7432,7 @@ function closePeopleFilterPopover({
             'peopleFilterPopover'
         )
         ?.remove();
+    document.getElementById('peopleFilterButton')?.setAttribute('aria-expanded', 'false');
 
     document.removeEventListener(
         'click',
@@ -7553,6 +7554,11 @@ function openPeopleFilterPopover(
     anchor
 )
 {
+    if (document.getElementById('peopleFilterPopover'))
+    {
+        closePeopleFilterPopover();
+        return;
+    }
     closePeopleFilterPopover();
     closeAlbumsFilterPopover();
     closePeopleColumnsPopover();
@@ -7560,6 +7566,7 @@ function openPeopleFilterPopover(
 
     peopleFilterReturnFocus =
         anchor;
+    anchor.setAttribute('aria-expanded', 'true');
 
     const filters =
         peopleFiltersWithDefaults();

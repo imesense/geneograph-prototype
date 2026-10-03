@@ -885,6 +885,11 @@ function openNotesFilterMenu(
     anchor
 )
 {
+    if (document.getElementById('projectMenu')?.classList.contains('notes-filter-popover'))
+    {
+        closeMenu();
+        return;
+    }
     closeMenu();
 
     const rect =
@@ -1074,6 +1079,7 @@ function openNotesFilterMenu(
     document.body.appendChild(
         menu
     );
+    anchor.setAttribute('aria-expanded', 'true');
 
     const menuRect =
         menu.getBoundingClientRect();
