@@ -8681,8 +8681,7 @@ function openPeopleProfileFromRow(personId)
     state.peopleView = 'profile';
     state.peopleSide = 'profile';
     state.peoplePreviewCollapsed = false;
-    state.activeModule = 'People';
-    render();
+    navigateToProjectModule(currentProjectId(), 'People');
 }
 
 function showPersonInFamilyTree(personId)
