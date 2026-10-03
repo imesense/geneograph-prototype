@@ -5838,7 +5838,7 @@ const RU_UI_TOUR = Object.freeze({
     'Pick up where you left off': 'Продолжите с того места, где остановились',
     'This shortcut reopens the last project and module you visited.': 'Этот блок возвращает к последнему открытому проекту и разделу.',
     'Explore a sample project': 'Изучите пример проекта',
-    'The Whiskerfield card summarizes a sample project. Next, open its overview to see the research inside.': 'Карточка Уискерфилдов кратко описывает пример проекта. Далее откроется его обзор с материалами исследования.',
+    'The Whiskerfield card summarizes a sample project. Next, open its overview to see the research inside.': 'Карточка Вискерфильдов кратко описывает пример проекта. Далее откроется его обзор с материалами исследования.',
     'The hero keeps the project name, description, status, dates, and project actions together.': 'В верхней части обзора собраны название и описание проекта, его статус, даты и действия.',
     'Research at a glance': 'Исследование с первого взгляда',
     'These tags show how many people, photographs, files, and notes belong to this project.': 'Эти метки показывают количество людей, фотографий, файлов и заметок в проекте.',
