@@ -3,26 +3,26 @@ const GENEO_TOUR_VERSION = 2;
 const GENEO_TOUR_PROJECT_ID = 'p1';
 const geneoTourSteps = [
     { id: 'projects-welcome', module: 'Projects', projectView: 'library', presentation: 'centered', title: 'Welcome to Projects', body: 'Projects bring your family tree, photographs, records, and notes into one workspace. This is where each family-history project begins.' },
-    { id: 'projects-actions', module: 'Projects', projectView: 'library', title: 'Start or open a project', body: 'Create family tree starts a blank project. Import GEDCOM and Open project are prototype entry points for bringing in existing research.' },
+    { id: 'projects-actions', module: 'Projects', projectView: 'library', title: 'Create or open a project', body: 'Create family tree starts a blank project. Import GEDCOM and Open project will later allow bringing in existing research into the app.' },
     { id: 'projects-continue', module: 'Projects', projectView: 'library', title: 'Pick up where you left off', body: 'This shortcut reopens the last project and module you visited.' },
-    { id: 'projects-card', module: 'Projects', projectView: 'library', title: 'Explore a sample project', body: 'The Whiskerfield card summarizes a sample project. Next, open its overview to see the research inside.' },
+    { id: 'projects-card', module: 'Projects', projectView: 'library', title: 'Explore a sample project', body: 'The Whiskerfield Family Tree project card summarizes a sample project. Let’s open it to see the research inside.' },
     { id: 'projects-hero', module: 'Projects', projectView: 'overview', title: 'Project overview', body: 'The hero keeps the project name, description, status, dates, and project actions together.' },
     { id: 'projects-tags', module: 'Projects', projectView: 'overview', title: 'Research at a glance', body: 'These tags show how many people, photographs, files, and notes belong to this project.' },
-    { id: 'projects-back', module: 'Projects', projectView: 'overview', title: 'Return to all projects', body: 'Back to all projects returns to the project library without leaving the workspace.' },
-    { id: 'projects-tabs', module: 'Projects', projectView: 'overview', title: 'Move between modules', body: 'These tabs open the connected areas of this project. Continue to Family Tree to explore its people and relationships.' },
-    { id: 'tree-welcome', module: 'Family Tree', presentation: 'centered', title: 'Welcome to Family Tree', body: 'See how people in your project connect across generations, and explore the family from different points of view.' },
+    { id: 'projects-back', module: 'Projects', projectView: 'overview', title: 'Return to all projects', body: 'Back to all projects button returns you to the project library. Your open project saves automatically.' },
+    { id: 'projects-tabs', module: 'Projects', projectView: 'overview', title: 'Move between modules', body: 'Navigation tabs open the connected modules inside the project. Continue to Family Tree to explore its people and relationships.' },
+    { id: 'tree-welcome', module: 'Family Tree', presentation: 'centered', title: 'Welcome to Family Tree', body: 'See your family across generations, discover how people are related, and explore different branches of the tree.' },
     { id: 'tree-person-card', module: 'Family Tree', title: 'Meet a person in the tree', body: 'Silver’s card shows his name, photograph, and key life dates. Each card is a starting point for exploring a person.' },
-    { id: 'tree-focus-switch', module: 'Family Tree', title: 'Change the focus', body: 'Focus on Luna to explore the tree from her branch without changing the family records.' },
-    { id: 'tree-navigation', module: 'Family Tree', title: 'Move through the tree', body: 'Previous and Next revisit your selections. The people menu gives you quick access to recently selected people.' },
-    { id: 'tree-sidebar', module: 'Family Tree', title: 'Details beside the tree', body: 'The right sidebar keeps information about the selected person close to the relationships you are viewing.' },
-    { id: 'tree-sidebar-hero', module: 'Family Tree', title: 'Person at a glance', body: 'The hero brings together Silver’s photograph, identity, life details, and a link to his full profile.' },
-    { id: 'tree-sidebar-actions', module: 'Family Tree', title: 'Work with this person', body: 'Use these actions to edit, see more options, add a relative, or connect someone already in the project.' },
+    { id: 'tree-focus-switch', module: 'Family Tree', title: 'Change the focus', body: 'Focus on Luna to explore her tree branch.' },
+    { id: 'tree-navigation', module: 'Family Tree', title: 'Move through the tree', body: 'Previous and Next buttons revisit your selections. The people menu gives you quick access to recently selected people.' },
+    { id: 'tree-sidebar', module: 'Family Tree', title: 'Details beside the tree', body: 'The right sidebar shows information about the selected person, brining important context right to the family tree.' },
+    { id: 'tree-sidebar-hero', module: 'Family Tree', title: 'Person at a glance', body: 'The hero brings together photograph, identity, life details, and a link to his full profile.' },
+    { id: 'tree-sidebar-actions', module: 'Family Tree', title: 'Work with this person', body: 'Use these actions to edit, add a relative, or connect someone already in the project as a new relative.' },
     { id: 'tree-quick-edit-button', module: 'Family Tree', title: 'Quick edit from the tree', body: 'Quick edit opens the person’s details without leaving the Family Tree. Next, take a look at the window.' },
-    { id: 'tree-quick-edit-modal', module: 'Family Tree', title: 'Edit person details', body: 'This window organizes identity and life events so you can update the person while keeping the tree in context.' },
+    { id: 'tree-quick-edit-modal', module: 'Family Tree', title: 'Edit person details', body: 'This window organizes identity and life events so you can update the person without leaving the tree.' },
     { id: 'tree-add-relative', module: 'Family Tree', title: 'Add or connect a relative', body: 'Choose a relationship, then add someone new or connect a person who is already in the project.' },
     { id: 'tree-sections-overview', module: 'Family Tree', title: 'Explore connected details', body: 'Expand these sections to find insights, events, relationships, photos, files, notes, sources, and record information.' },
-    { id: 'tree-timeline', module: 'Family Tree', title: 'Follow a life over time', body: 'The open Timeline section puts dated events together so you can follow Silver’s story in order.' },
-    { id: 'tree-to-people', module: 'Family Tree', title: 'Continue to People', body: 'Open the full profile from here, or use the People tab to browse everyone in the project. The tour continues in People.' },
+    { id: 'tree-timeline', module: 'Family Tree', title: 'Follow a life over time', body: 'The open Timeline section puts dated events together so you can follow person’s story in order.' },
+    { id: 'tree-to-people', module: 'Family Tree', title: 'Continue to People', body: 'Use the People tab to browse everyone in the project. You can also open the full profile directly from the sidebar. The tour continues in People.' },
     { id: 'people-navigation', module: 'People', title: 'Explore People', body: 'Use the navigation to move between the directory and a person’s full profile.' },
     { id: 'people-list', module: 'People', title: 'Find people in the directory', body: 'Search the directory and select a person to see their details alongside the list.' },
     { id: 'people-profile', module: 'People', title: "A person's story in one place", body: 'Their profile brings together relationships, photographs, files, notes, and places.' },
@@ -458,7 +458,7 @@ function geneoTourCardCopy()
     const title = index < 0 ? 'Explore a family story'
         : index >= geneoTourSteps.length ? 'Your turn to explore' : step.title;
     const body = index < 0
-        ? 'Follow a sample family across eight connected modules. You can skip a section at any time.'
+        ? 'Follow a sample family project across eight connected modules. You can skip a module at any time.'
         : index >= geneoTourSteps.length
             ? 'The tour is complete. Return to any module and follow the connections that interest you.'
             : step.body;
@@ -527,9 +527,20 @@ function geneoTourRefreshCopy()
     {
         const nextModule = geneoTourSteps[geneoTourRuntime.index + 1]?.module;
         const currentModule = geneoTourSteps[geneoTourRuntime.index]?.module;
-        button.textContent = button.dataset.geneoTourAction === 'next' && nextModule && nextModule !== currentModule
-            ? t('Continue to {module}').replace('{module}', t(nextModule))
-            : t(button.dataset.geneoTourLabel);
+        const crossesModule = button.dataset.geneoTourAction === 'next'
+            && nextModule && nextModule !== currentModule;
+        button.textContent = crossesModule ? t('Next') : t(button.dataset.geneoTourLabel);
+        if (crossesModule)
+        {
+            const destination = t('Continue to {module}').replace('{module}', t(nextModule));
+            button.setAttribute('aria-label', destination);
+            button.title = destination;
+        }
+        else if (button.dataset.geneoTourAction === 'next')
+        {
+            button.removeAttribute('aria-label');
+            button.removeAttribute('title');
+        }
     });
     root.querySelector('.geneo-tour-close').setAttribute('aria-label', t('Skip tour'));
     geneoTourQueuePosition();

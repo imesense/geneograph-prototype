@@ -5831,61 +5831,71 @@ const RU_UI_COMPLETION = {
 };
 
 const RU_UI_TOUR = Object.freeze({
-    'Welcome to Projects': 'Добро пожаловать в раздел проектов',
+    'Explore a family story': 'Исследуйте историю семьи',
+    'Follow a sample family project across eight connected modules. You can skip a module at any time.': 'Изучите пример семейной истории, следуя через 8 связанных разделов. Любой раздел можно пропустить.',
+    
+    'Welcome to Projects': 'Добро пожаловать в раздел «Проекты»',
     'Projects bring your family tree, photographs, records, and notes into one workspace. This is where each family-history project begins.': 'Проекты объединяют семейное древо, фотографии, документы и заметки в одном рабочем пространстве. Здесь начинается каждое семейное исследование.',
-    'Start or open a project': 'Начните или откройте проект',
-    'Create family tree starts a blank project. Import GEDCOM and Open project are prototype entry points for bringing in existing research.': '«Создать семейное древо» начинает пустой проект. «Импорт GEDCOM» и «Открыть проект» показывают будущие способы добавить существующее исследование в прототип.',
+    
+    'Create or open a project': 'Создайте или откройте проект',
+    'Create family tree starts a blank project. Import GEDCOM and Open project will later allow bringing in existing research into the app.': 'Кнопка «Создать древо» создаст пустой проект. «Импорт GEDCOM» и «Открыть проект», в будущем, позволят добавить существующее исследование в приложение.',
+    
     'Pick up where you left off': 'Продолжите с того места, где остановились',
     'This shortcut reopens the last project and module you visited.': 'Этот блок возвращает к последнему открытому проекту и разделу.',
+    
     'Explore a sample project': 'Изучите пример проекта',
-    'The Whiskerfield card summarizes a sample project. Next, open its overview to see the research inside.': 'Карточка Вискерфильдов кратко описывает пример проекта. Далее откроется его обзор с материалами исследования.',
-    'The hero keeps the project name, description, status, dates, and project actions together.': 'В верхней части обзора собраны название и описание проекта, его статус, даты и действия.',
-    'Research at a glance': 'Исследование с первого взгляда',
-    'These tags show how many people, photographs, files, and notes belong to this project.': 'Эти метки показывают количество людей, фотографий, файлов и заметок в проекте.',
-    'Return to all projects': 'Вернитесь ко всем проектам',
-    'Back to all projects returns to the project library without leaving the workspace.': 'Кнопка «Вернуться ко всем проектам» открывает список проектов, не выходя из рабочего пространства.',
+    'The Whiskerfield Family Tree project card summarizes a sample project. Let’s open it to see the research inside.': 'Карточка проекта "Семейное древо Вискерфильдов" кратко описывает пример проекта. Давайте откроем его чтобы увидеть материалы исследования.',
+    
+    'The hero keeps the project name, description, status, dates, and project actions together.': 'В верхней части расположены название и описание проекта, его статус, даты и кнопки управления.',
+    
+    'Research at a glance': 'Исследование в цифрах',
+    'These tags show how many people, photographs, files, and notes belong to this project.': 'Эти теги показывают количество людей, фотографий, файлов и заметок в проекте.',
+    
+    'Return to all projects': 'Возврат ко всем проектам',
+    'Back to all projects button returns you to the project library. Your open project saves automatically.': 'Кнопка «Вернуться ко всем проектам» открывает выбор проектов. Текущий проект сохраняется автоматически.',
+    
     'Move between modules': 'Переходите между разделами',
-    'These tabs open the connected areas of this project. Continue to Family Tree to explore its people and relationships.': 'Эти вкладки открывают связанные разделы проекта. Далее перейдите к семейному древу, чтобы изучить людей и родственные связи.',
-    'Module': 'Раздел',
-    'Previous module': 'Предыдущий раздел',
-    'Next module': 'Следующий раздел',
-    'Browse modules': 'Обзор разделов',
-    'Return to tour': 'Вернуться к экскурсии',
-    'Continue to {module}': 'Далее: {module}',
-    'Follow a sample family across eight connected modules. You can skip a section at any time.': 'Познакомьтесь с примером семьи в восьми связанных разделах. Любой раздел можно пропустить.',
-    "A project brings one family's tree, records, photographs, and research together. Open the sample project to explore.": 'Проект объединяет семейное древо, документы, фотографии и исследования. Откройте пример проекта.',
-    'See Silver and his relatives across generations. Focus on a person to explore a different branch.': 'Посмотрите на Сильвера и его родственников разных поколений. Выберите человека, чтобы изучить другую ветвь.',
-    'Details stay connected': 'Сведения всегда рядом',
-    'The selected person’s details and linked records stay beside the tree.': 'Сведения о выбранном человеке и связанные записи находятся рядом с древом.',
-    'Add or connect a relative': 'Добавьте или присоедините родственника',
-    'Choose a relationship to add someone new or connect a person already in the project. This is a read-only preview.': 'Выберите родственную связь, чтобы добавить нового человека или присоединить существующего. Это предварительный просмотр без изменений.',
-    'Quick edit a person': 'Быстрое редактирование человека',
-    'Edit names and life events without leaving the tree. This is a read-only preview.': 'Редактируйте имена и события жизни, не покидая древо. Это предварительный просмотр без изменений.',
-    'Welcome to Family Tree': 'Добро пожаловать в семейное древо',
-    'See how people in your project connect across generations, and explore the family from different points of view.': 'Посмотрите, как связаны люди разных поколений, и исследуйте семью с разных точек зрения.',
+    'Navigation tabs open the connected modules inside the project. Continue to Family Tree to explore its people and relationships.': 'Вкладки открывают связанные разделы внутри проекта. Перейдите к семейному древу, чтобы изучить людей и их родственные связи.',
+    
+    'Welcome to Family Tree': 'Добро пожаловать в «Семейное древо»',
+    'See your family across generations, discover how people are related, and explore different branches of the tree.': 'Изучайте разные поколения семьи, узнавайте, как люди связаны друг с другом, и исследуйте разные ветви семейного древа.',
+
     'Meet a person in the tree': 'Познакомьтесь с человеком в древе',
     'Silver’s card shows his name, photograph, and key life dates. Each card is a starting point for exploring a person.': 'Карточка Сильвера показывает его имя, фотографию и основные даты жизни. С неё можно начать изучение человека.',
+
     'Change the focus': 'Смените фокус',
-    'Focus on Luna to explore the tree from her branch without changing the family records.': 'Переключите фокус на Луну, чтобы увидеть древо с её стороны, не изменяя семейные записи.',
+    'Focus on Luna to explore her tree branch.': 'Переключите фокус на Луну, чтобы изучить её ветвь древа.',
+
     'Move through the tree': 'Перемещайтесь по древу',
-    'Previous and Next revisit your selections. The people menu gives you quick access to recently selected people.': 'Кнопки «Назад» и «Вперёд» возвращают к предыдущим выборам. Меню людей открывает недавно выбранных людей.',
-    'Details beside the tree': 'Сведения рядом с древом',
-    'The right sidebar keeps information about the selected person close to the relationships you are viewing.': 'Правая панель показывает сведения о выбранном человеке рядом с его родственными связями.',
-    'Person at a glance': 'Человек с первого взгляда',
-    'The hero brings together Silver’s photograph, identity, life details, and a link to his full profile.': 'В верхнем блоке собраны фотография Сильвера, имя, сведения о жизни и ссылка на полный профиль.',
-    'Work with this person': 'Действия с человеком',
-    'Use these actions to edit, see more options, add a relative, or connect someone already in the project.': 'Здесь можно изменить данные, открыть дополнительные действия, добавить родственника или присоединить человека из проекта.',
-    'Quick edit from the tree': 'Быстрое редактирование в древе',
-    'Quick edit opens the person’s details without leaving the Family Tree. Next, take a look at the window.': 'Быстрое редактирование открывает данные человека прямо из семейного древа. Далее рассмотрим это окно.',
+    'Previous and Next buttons revisit your selections. The people menu gives you quick access to recently selected people.': 'Кнопки «Назад» и «Вперёд» возвращают к ранее выбранным людям. Выпадающий список показывает недавно просмотренных людей.',
+
+    'Details beside the tree': 'Данные под рукой',
+    'The right sidebar shows information about the selected person, brining important context right to the family tree.': 'Правая панель показывает сведения о выбранном человеке рядом, дополняя семейное древо важным контекстом.',
+
+    'Person at a glance': 'Быстрый обзор',
+    'The hero brings together photograph, identity, life details, and a link to his full profile.': 'В верхнем блоке собраны фотография человека, имя, сведения о жизни и кнопка перехода в полный профиль.',
+
+    'Work with this person': 'Быстрые действия',
+    'Use these actions to edit, add a relative, or connect someone already in the project as a new relative.': 'Здесь можно изменить данные, добавить родственника или создать родственную связь с существующим в проекте человеком.',
+    
+    'Quick edit from the tree': 'Редактирование в древе',
+    'Quick edit opens the person’s details without leaving the Family Tree. Next, take a look at the window.': 'Редактирование открывает окно с данными человека прямо в семейном древе. Далее рассмотрим это окно.',
+    
     'Edit person details': 'Измените сведения о человеке',
-    'This window organizes identity and life events so you can update the person while keeping the tree in context.': 'В этом окне удобно изменять личные данные и события жизни, не теряя контекст семейного древа.',
+    'This window organizes identity and life events so you can update the person without leaving the tree.': 'В этом окне удобно изменять личные данные и события жизни, не покидая семейное древо.',
+
+    'Add or connect a relative': 'Добавьте или присоедините родственника',
     'Choose a relationship, then add someone new or connect a person who is already in the project.': 'Выберите родственную связь, затем добавьте нового человека или присоедините существующего из проекта.',
-    'Explore connected details': 'Изучите связанные сведения',
-    'Expand these sections to find insights, events, relationships, photos, files, notes, sources, and record information.': 'Раскройте разделы, чтобы увидеть подсказки, события, связи, фото, файлы, заметки, источники и сведения о записи.',
-    'Follow a life over time': 'Проследите жизнь по времени',
-    'The open Timeline section puts dated events together so you can follow Silver’s story in order.': 'В открытом разделе «Хронология» события с датами собраны по порядку и показывают историю Сильвера.',
-    'Continue to People': 'Перейдите к людям',
-    'Open the full profile from here, or use the People tab to browse everyone in the project. The tour continues in People.': 'Откройте полный профиль здесь или перейдите на вкладку «Люди», чтобы просмотреть всех людей проекта. Экскурсия продолжится там.',
+
+    'Explore connected details': 'Изучите связанные данные',
+    'Expand these sections to find insights, events, relationships, photos, files, notes, sources, and record information.': 'Раскройте секции, чтобы увидеть подсказки, события, связи, фото, файлы, заметки, источники и сведения о записи.',
+    
+    'Follow a life over time': 'Проследите историю жизни',
+    'The open Timeline section puts dated events together so you can follow person’s story in order.': 'Взгляните на жизнь человека сквозь время в открытом разделе «Хронология».',
+
+    'Continue to People': 'Перейдите к разделу «Люди»',
+    'Use the People tab to browse everyone in the project. You can also open the full profile directly from the sidebar. The tour continues in People.': 'Перейдите во вкладку «Люди», чтобы просмотреть всех людей в проекте. Вы так же можете перейти напрямую в Профиль с помощью кнопки справа вверху. Экскурсия продолжится в разделе «Люди».',
+        
     'Explore People': 'Изучайте раздел «Люди»',
     'Use the navigation to move between the directory and a person’s full profile.': 'Переходите между списком людей и полным профилем человека.',
     'Find people in the directory': 'Найдите людей в списке',
@@ -5917,8 +5927,6 @@ const RU_UI_TOUR = Object.freeze({
     'Skip module': 'Пропустить раздел',
     'Take the tour': 'Пройти экскурсию',
     'Explore the sample project across GeneoGraph.': 'Познакомьтесь с примером проекта в GeneoGraph.',
-    'Explore a family story': 'Исследуйте историю семьи',
-    'Follow a sample family through its people, records, places, and research. This guided tour takes about three minutes.': 'Познакомьтесь с людьми, документами, местами и исследованиями одной семьи. Экскурсия займёт около трёх минут.',
     'Everything starts with a project': 'Всё начинается с проекта',
     "A project brings one family's tree, records, photographs, and research together. Let's open the sample project.": 'Проект объединяет семейное древо, документы, фотографии и исследования. Откроем пример проекта.',
     'Follow the connections': 'Проследите родственные связи',
@@ -5941,6 +5949,12 @@ const RU_UI_TOUR = Object.freeze({
     'The tour is complete. Return to any module and follow the connections that interest you.': 'Экскурсия завершена. Вернитесь в любой раздел и исследуйте интересующие вас связи.',
     'Start tour': 'Начать экскурсию',
     'Explore on my own': 'Исследовать самостоятельно',
+    'Module': 'Раздел',
+    'Previous module': 'Предыдущий раздел',
+    'Next module': 'Следующий раздел',
+    'Browse modules': 'Обзор разделов',
+    'Return to tour': 'Вернуться к экскурсии',
+    'Continue to {module}': 'Далее: {module}',
     'Next': 'Далее',
     'Skip tour': 'Пропустить экскурсию',
     'Finish tour': 'Завершить экскурсию',
