@@ -2,6 +2,7 @@ function render()
 {
     geneoProductTourOnRender();
     closeMenu();
+    disposeTreeSearch();
 
     if (state.activeModule !== 'Notes')
     {

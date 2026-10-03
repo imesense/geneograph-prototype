@@ -274,8 +274,180 @@ function bindTreeCanvasPan()
     canvas.addEventListener('lostpointercapture', finishGesture);
 }
 
+const treeSearchRuntime = {
+    input: null,
+    menu: null,
+    controller: null,
+    results: [],
+    activeIndex: -1
+};
+
+function hideTreeSearchResults()
+{
+    treeSearchRuntime.menu?.remove();
+    treeSearchRuntime.menu = null;
+    treeSearchRuntime.results = [];
+    treeSearchRuntime.activeIndex = -1;
+    treeSearchRuntime.input?.setAttribute('aria-expanded', 'false');
+    treeSearchRuntime.input?.removeAttribute('aria-controls');
+    treeSearchRuntime.input?.removeAttribute('aria-activedescendant');
+}
+
+function disposeTreeSearch()
+{
+    hideTreeSearchResults();
+    treeSearchRuntime.controller?.abort();
+    treeSearchRuntime.controller = null;
+    treeSearchRuntime.input = null;
+}
+
+function positionTreeSearchResults()
+{
+    const { input, menu } = treeSearchRuntime;
+    if (!input?.isConnected || !menu) return;
+
+    const rect = input.closest('.app-search-field').getBoundingClientRect();
+    const width = Math.min(332, window.innerWidth - 24);
+    menu.style.width = `${width}px`;
+    menu.style.left = `${Math.max(12, Math.min(rect.left, window.innerWidth - width - 12))}px`;
+    const below = window.innerHeight - rect.bottom - 12;
+    const above = rect.top - 12;
+    menu.style.maxHeight = `${Math.max(80, Math.min(360, Math.max(below, above)))}px`;
+    menu.style.top = below >= Math.min(menu.scrollHeight, 280) || below >= above
+        ? `${rect.bottom + 6}px`
+        : `${Math.max(12, rect.top - Math.min(menu.scrollHeight, 360) - 6)}px`;
+}
+
+function setTreeSearchActiveIndex(index)
+{
+    const { input, menu, results } = treeSearchRuntime;
+    if (!menu || !results.length) return;
+    treeSearchRuntime.activeIndex = (index + results.length) % results.length;
+    menu.querySelectorAll('[role="option"]').forEach((option, optionIndex) =>
+    {
+        const active = optionIndex === treeSearchRuntime.activeIndex;
+        option.classList.toggle('is-active', active);
+        option.setAttribute('aria-selected', String(active));
+    });
+    const activeOption = menu.querySelectorAll('[role="option"]')[treeSearchRuntime.activeIndex];
+    input.setAttribute('aria-activedescendant', activeOption.id);
+    activeOption.scrollIntoView({ block: 'nearest' });
+}
+
+function updateTreeSearchResults()
+{
+    const input = treeSearchRuntime.input;
+    const query = input?.value.trim().toLocaleLowerCase();
+    if (!query)
+    {
+        hideTreeSearchResults();
+        return;
+    }
+
+    const projectId = currentFamilyTreeProjectId();
+    const results = getPeople(projectId)
+        .filter(person => !person.deleted)
+        .filter(person =>
+        {
+            const names = [
+                connectPersonName(person),
+                person.names?.first,
+                person.names?.middle,
+                person.names?.last,
+                person.names?.maiden
+            ].filter(Boolean);
+            return [...names, ...names.map(name => translateText(name))]
+                .join(' ').toLocaleLowerCase().includes(query);
+        })
+        .sort((a, b) => connectPersonName(a).localeCompare(connectPersonName(b), state.language))
+        .slice(0, 12);
+    treeSearchRuntime.results = results;
+    treeSearchRuntime.activeIndex = -1;
+    input.removeAttribute('aria-activedescendant');
+
+    const menu = treeSearchRuntime.menu || document.createElement('div');
+    menu.id = 'treeSearchResults';
+    menu.className = 'menu-popover tree-search-results';
+    menu.setAttribute('role', 'listbox');
+    menu.setAttribute('aria-label', t('Search results'));
+    menu.innerHTML = results.length
+        ? results.map((person, index) => `<button id="treeSearchOption${index}" class="tree-recent-person" type="button" role="option" aria-selected="false" tabindex="-1" data-tree-search-person="${escapeHtml(person.id)}">
+              ${renderPersonAvatar(person, 'small-avatar')}
+              <span><strong>${escapeHtml(connectPersonName(person))}</strong><small>${escapeHtml(connectPersonLifeLine(person))}</small></span>
+            </button>`).join('')
+        : `<div class="tree-recent-people-empty" role="status">${escapeHtml(t('No matching people.'))}</div>`;
+    if (!menu.isConnected) document.body.appendChild(menu);
+    treeSearchRuntime.menu = menu;
+    input.setAttribute('aria-controls', menu.id);
+    input.setAttribute('aria-expanded', 'true');
+    localizeUI(menu, { suppressObserverReplay: true });
+    positionTreeSearchResults();
+}
+
+function bindTreeSearch()
+{
+    const input = main.querySelector('#treeSearch');
+    if (!input) return;
+    const controller = new AbortController();
+    const { signal } = controller;
+    treeSearchRuntime.input = input;
+    treeSearchRuntime.controller = controller;
+
+    input.addEventListener('input', updateTreeSearchResults, { signal });
+    input.addEventListener('focus', updateTreeSearchResults, { signal });
+    input.addEventListener('keydown', event =>
+    {
+        if (event.key === 'Escape')
+        {
+            if (!treeSearchRuntime.menu) return;
+            event.preventDefault();
+            event.stopPropagation();
+            hideTreeSearchResults();
+        }
+        else if (event.key === 'ArrowDown' || event.key === 'ArrowUp')
+        {
+            if (!treeSearchRuntime.menu) updateTreeSearchResults();
+            if (!treeSearchRuntime.results.length) return;
+            event.preventDefault();
+            setTreeSearchActiveIndex(treeSearchRuntime.activeIndex + (event.key === 'ArrowDown' ? 1 : -1));
+        }
+        else if (event.key === 'Enter' && treeSearchRuntime.menu)
+        {
+            const person = treeSearchRuntime.results[treeSearchRuntime.activeIndex < 0
+                ? 0 : treeSearchRuntime.activeIndex];
+            if (!person) return;
+            event.preventDefault();
+            hideTreeSearchResults();
+            input.value = '';
+            navigateFamilyTreeToPerson(person.id);
+        }
+    }, { signal });
+    document.addEventListener('pointerdown', event =>
+    {
+        if (!input.closest('.app-search-field')?.contains(event.target)
+            && !treeSearchRuntime.menu?.contains(event.target)) hideTreeSearchResults();
+    }, { signal });
+    document.addEventListener('scroll', positionTreeSearchResults, { capture: true, signal });
+    window.addEventListener('resize', positionTreeSearchResults, { signal });
+    document.addEventListener('pointerdown', event =>
+    {
+        const option = event.target.closest('[data-tree-search-person]');
+        if (option && treeSearchRuntime.menu?.contains(option)) event.preventDefault();
+    }, { signal });
+    document.addEventListener('click', event =>
+    {
+        const option = event.target.closest('[data-tree-search-person]');
+        if (!option || !treeSearchRuntime.menu?.contains(option)) return;
+        const personId = option.dataset.treeSearchPerson;
+        hideTreeSearchResults();
+        input.value = '';
+        navigateFamilyTreeToPerson(personId);
+    }, { signal });
+}
+
 function renderFamilyTree()
 {
+    disposeTreeSearch();
     sidebar.innerHTML = '';
     const treeProjectId =
         currentFamilyTreeProjectId();
@@ -428,7 +600,7 @@ function renderFamilyTree()
             </span>
             </div>
             <div class="tree-toolbar-right">
-              <label class="app-search-field">${icon.search}<input type="search" placeholder="Search people..." id="treeSearch"></label>
+              <label class="app-search-field">${icon.search}<input type="search" placeholder="Search people..." id="treeSearch" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-label="${escapeHtml(t('Search people'))}"></label>
               <button class="tree-action" type="button" data-toast="Export is planned for the Publish iteration." aria-label="Export" title="Export">${icon.export}<span class="tree-action-label">Export</span></button>
               <button class="tree-action" type="button" data-toast="Print preview will be added later." aria-label="Print" title="Print">${icon.print}<span class="tree-action-label">Print</span></button>
               <button class="tree-action" type="button" data-tree-settings aria-label="Tree Settings" title="Tree Settings">${icon.settings}<span class="tree-action-label">Tree Settings</span></button>
@@ -457,6 +629,7 @@ function renderFamilyTree()
         </div>
       `;
     bindTreeCanvasPan();
+    bindTreeSearch();
     main.querySelector('.tree-canvas')?.addEventListener('wheel', queueTreeWheelZoom, { passive: false });
     main
         .querySelectorAll('[data-tree-navigation]')

@@ -98,6 +98,17 @@
     display: none;
 }
 
+.geneo-tour-map-title {
+    display: none;
+    min-width: 0;
+    margin: 0;
+}
+
+.geneo-tour.is-module-map .geneo-tour-map-title {
+    display: block;
+    flex: 1 1 auto;
+}
+
 .geneo-tour-chapter span {
     min-width: 0;
     color: var(--brand-green-300);
@@ -133,10 +144,6 @@
 .geneo-tour-map[hidden],
 [data-geneo-tour-step-view][hidden] {
     display: none;
-}
-
-.geneo-tour-map h2 {
-    margin: var(--space-3) 0;
 }
 
 .geneo-tour-map-list {

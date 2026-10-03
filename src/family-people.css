@@ -162,6 +162,17 @@
     padding: 6px;
 }
 
+.tree-search-results {
+    z-index: 1200;
+    overflow-y: auto;
+    padding: 6px;
+}
+
+.tree-search-results .tree-recent-person.is-active {
+    background: var(--surface-card-hover);
+    color: var(--text-primary);
+}
+
 .tree-recent-people-head {
     padding: 8px 10px 7px;
     color: var(--text-tertiary);
