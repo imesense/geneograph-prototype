@@ -488,6 +488,7 @@ const RU_UI_PROJECTS = Object.freeze({
     'Family photo': 'Семейная фотография',
     'Project cover updated.': 'Обложка проекта обновлена.',
     'Delete project?': 'Удалить проект?',
+    'Delete {project} and all people, relationships, media, and research records owned by this project.': 'Удалить проект {project} и все принадлежащие ему записи о людях, родственных связях, медиафайлах и исследованиях.',
     'Project deleted.': 'Проект удалён.',
     'Project identity': 'Сведения о проекте',
     'Project description': 'Описание проекта',
@@ -560,8 +561,7 @@ const RU_DATA_PROJECTS = Object.freeze({
 
 const RU_DATA_PROJECT_COMPOSITES = Object.freeze({
     'Open Whiskerfield Family Tree': 'Открыть проект «Семейное древо Вискерфильдов»',
-    'Preview of Whiskerfield Family Tree cover': 'Предпросмотр обложки проекта «Семейное древо Вискерфильдов»',
-    'Delete Whiskerfield Family Tree and all people, relationships, media, and research records owned by this project.': 'Удалить проект «Семейное древо Вискерфильдов» и все принадлежащие ему записи о людях, родственных связях, медиафайлах и исследованиях.'
+    'Preview of Whiskerfield Family Tree cover': 'Предпросмотр обложки проекта «Семейное древо Вискерфильдов»'
 });
 
 const RU_DATA_PROJECT_ACTIVITY = Object.freeze({

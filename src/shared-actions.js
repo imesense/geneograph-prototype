@@ -1302,8 +1302,10 @@ function openDeleteProjectConfirm(projectId, anchor = null)
 {
     const project = sampleData.projects.find(item => item.id === projectId);
     if (!project) return;
+    const description = t('Delete {project} and all people, relationships, media, and research records owned by this project.')
+        .replace('{project}', escapeHtml(localizedDataFieldValue(project.name)));
     openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="deleteProjectTitle">
-        <div class="modal-header"><div><h2 id="deleteProjectTitle">Delete project?</h2><p>Delete ${escapeHtml(project.name)} and all people, relationships, media, and research records owned by this project.</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div>
+        <div class="modal-header"><div><h2 id="deleteProjectTitle">Delete project?</h2><p data-i18n-skip>${description}</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div>
         <div class="modal-body">
           <p class="project-delete-warning">This action cannot be undone.</p>
         </div>
