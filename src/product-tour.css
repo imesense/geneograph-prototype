@@ -275,7 +275,47 @@
     outline-offset: 2px;
 }
 
+@media (max-width: 1180px) and (min-width: 641px) {
+    body.geneo-tour-people-preview .people-person-sidebar {
+        display: block;
+        position: fixed;
+        top: 60px;
+        right: 0;
+        z-index: 8;
+        width: min(400px, 45vw);
+        height: calc(100vh - 60px);
+        overflow-y: auto;
+        box-shadow: var(--shadow-soft);
+    }
+}
+
 @media (max-width: 900px) {
+    body.geneo-tour-people-sidebar .workspace .sidebar {
+        display: block;
+        position: fixed;
+        top: 60px;
+        left: 0;
+        z-index: 8;
+        width: min(300px, 48vw);
+        height: calc(100vh - 60px);
+        overflow-y: auto;
+        box-shadow: var(--shadow-soft);
+    }
+
+    body.geneo-tour-people-tabs .topnav {
+        display: flex;
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    body.geneo-tour-people-tabs .topbar .top-actions {
+        display: none;
+    }
+
+    body.geneo-tour-people-tabs .topnav .tab {
+        padding: 0 var(--space-3);
+    }
+
     body.geneo-tour-tree-sidebar .tree-workspace .tree-inspector {
         display: block;
         position: absolute;
@@ -302,6 +342,16 @@
 }
 
 @media (max-width: 640px) {
+    body.geneo-tour-people-popover #peopleColumnsPopover,
+    body.geneo-tour-people-popover #peopleFilterPopover {
+        max-height: min(38vh, 240px);
+        overflow-y: auto;
+    }
+
+    body.geneo-tour-people-sidebar .workspace .sidebar {
+        width: min(300px, 100vw);
+    }
+
     .geneo-tour:not(.is-centered):not(.is-unanchored) .geneo-tour-card {
         left: 0;
         right: 0;

@@ -23,9 +23,22 @@ const geneoTourSteps = [
     { id: 'tree-sections-overview', module: 'Family Tree', title: 'Explore connected details', body: 'Expand these sections to find insights, events, relationships, photos, files, notes, sources, and record information.' },
     { id: 'tree-timeline', module: 'Family Tree', title: 'Follow a life over time', body: 'The open Timeline section puts dated events together so you can follow person’s story in order.' },
     { id: 'tree-to-people', module: 'Family Tree', title: 'Continue to People', body: 'Use the People tab to browse everyone in the project. You can also open the full profile directly from the sidebar. The tour continues in People.' },
-    { id: 'people-navigation', module: 'People', title: 'Explore People', body: 'Use the navigation to move between the directory and a person’s full profile.' },
-    { id: 'people-list', module: 'People', title: 'Find people in the directory', body: 'Search the directory and select a person to see their details alongside the list.' },
-    { id: 'people-profile', module: 'People', title: "A person's story in one place", body: 'Their profile brings together relationships, photographs, files, notes, and places.' },
+    { id: 'people-welcome', module: 'People', presentation: 'centered', title: 'Welcome to People', body: 'People brings everyone in this project together. Browse the directory, follow connections, and open a fuller profile for each person.' },
+    { id: 'people-navigation', module: 'People', title: 'Choose a People view', body: 'Use People to browse the directory, or Profile to see the selected person in greater detail.' },
+    { id: 'people-table', module: 'People', title: 'Browse everyone in the project', body: 'The table brings all project people into a searchable, sortable list with their key life details.' },
+    { id: 'people-columns', module: 'People', title: 'Choose your columns', body: 'Show the details you need in the directory and hide the columns you do not need right now.' },
+    { id: 'people-filters', module: 'People', title: 'Narrow the directory', body: 'Filters help you find people by names, dates, places, and other details without changing their records.' },
+    { id: 'people-save-filter', module: 'People', title: 'Save a useful filter', body: 'This surname filter is an example. Save filter can keep a view you want to return to later.' },
+    { id: 'people-saved-filters', module: 'People', title: 'Return to saved filters', body: 'Saved filters are available from the left sidebar, where you can open or edit them.' },
+    { id: 'people-to-profile', module: 'People', title: 'Open a full profile', body: 'Use Profile in the sidebar or View profile beside the directory to explore the selected person.' },
+    { id: 'people-profile-welcome', module: 'People', presentation: 'centered', title: 'Inside a person’s profile', body: 'A profile brings the person’s life details and connected research together in one place.' },
+    { id: 'people-profile-hero', module: 'People', title: 'Silver’s profile at a glance', body: 'The hero summarizes Silver’s identity, photograph, life details, and profile actions.' },
+    { id: 'people-profile-card', module: 'People', title: 'Explore the profile card', body: 'The four tabs organize the main information about Silver so you can move between different kinds of details.' },
+    { id: 'people-connected', module: 'People', title: 'Follow connected items', body: 'Photographs and archive files linked to Silver appear here, keeping their context close to his profile.' },
+    { id: 'people-to-geneograph', module: 'People', title: 'Continue to Geneograph', body: 'The Geneograph tab opens a visual board for arranging people, evidence, and research questions. Continue there next.' },
+    { id: 'geneograph-toolbar', module: 'Geneograph', title: 'Choose your tools', body: 'The toolbar gives you tools to navigate, add, connect, and arrange board objects.' },
+    { id: 'geneograph-board', module: 'Geneograph', title: 'Connect ideas visually', body: 'Arrange people and evidence on a canvas to explore relationships and research questions.' },
+    { id: 'geneograph-settings', module: 'Geneograph', title: 'Shape the board', body: 'Canvas settings let you adjust the board’s appearance while keeping the research connected.' },
     { id: 'albums-navigation', module: 'Albums', title: 'Browse albums', body: 'Albums organize photographs into groups you can explore together.' },
     { id: 'albums-photo', module: 'Albums', title: 'Explore a photograph', body: 'Select a photo to see it in the album and inspect its context.' },
     { id: 'albums-context', module: 'Albums', title: 'Keep photographs in context', body: 'The detail panel connects a photograph to its caption, people, and place.' },
@@ -36,13 +49,18 @@ const geneoTourSteps = [
     { id: 'notes-editor', module: 'Notes', title: 'Record questions and discoveries', body: 'Write research notes alongside the people, places, and evidence they concern.' },
     { id: 'places-navigation', module: 'Places', title: 'Browse places', body: 'Find the locations connected to this family from the Places navigation.' },
     { id: 'places-map', module: 'Places', title: 'Put the story on a map', body: 'Explore where family events happened. The selected place remains available even when map tiles are unavailable.' },
-    { id: 'places-people', module: 'Places', title: 'See connected people', body: 'The place inspector shows the people and events linked to this location.' },
-    { id: 'geneograph-toolbar', module: 'Geneograph', title: 'Choose your tools', body: 'The toolbar gives you tools to navigate, add, connect, and arrange board objects.' },
-    { id: 'geneograph-board', module: 'Geneograph', title: 'Connect ideas visually', body: 'Arrange people and evidence on a canvas to explore relationships and research questions.' },
-    { id: 'geneograph-settings', module: 'Geneograph', title: 'Shape the board', body: 'Canvas settings let you adjust the board’s appearance while keeping the research connected.' }
+    { id: 'places-people', module: 'Places', title: 'See connected people', body: 'The place inspector shows the people and events linked to this location.' }
 ];
 const geneoTourModules = ['Projects', 'Family Tree', 'People', 'Geneograph', 'Albums', 'Archive', 'Notes', 'Places'];
 const geneoTourOptionalTargets = new Set(['projects-actions', 'projects-continue', 'projects-back', 'projects-tabs']);
+const geneoTourSecondarySelectors = {
+    'tree-to-people': '.tree-person-hero-profile',
+    'tree-add-relative': '.tree-inspector #addRelative',
+    'people-columns': '#peopleColumnsButton',
+    'people-filters': '#peopleFilterButton',
+    'people-to-profile': '.people-layout .tree-person-hero-profile',
+    'people-connected': '.profile-resource-card--archive'
+};
 
 const geneoTourRuntime = {
     active: false,
@@ -63,7 +81,8 @@ const geneoTourRuntime = {
     mobileScrollAdjusted: false,
     history: [],
     ownedPreview: null,
-    openingPreview: false
+    openingPreview: false,
+    peopleOrigin: null
 };
 
 function geneoTourReadStatus()
@@ -160,6 +179,15 @@ function startGeneoProductTour()
 function geneoTourPrepare(index)
 {
     const step = geneoTourSteps[index];
+    if (step.module === 'People' && !geneoTourRuntime.peopleOrigin)
+    {
+        geneoTourRuntime.peopleOrigin = Object.fromEntries([
+            'peopleFilters', 'peopleSavedViewId', 'peopleSavedView', 'peopleSearch',
+            'selectedPeopleId', 'selectedPersonId', 'peopleSelectedIds', 'peopleSelectionAnchorId',
+            'peoplePage', 'peoplePaginationQueryKey', 'peopleView', 'peopleSide',
+            'peoplePreviewCollapsed', 'peopleProfileEditing', 'peopleProfileEditTab'
+        ].map(key => [key, structuredClone(state[key])]));
+    }
     if (step.module === 'Projects' && step.projectView === 'library')
     {
         state.activeModule = 'Projects';
@@ -187,12 +215,24 @@ function geneoTourPrepare(index)
     }
     if (step.module === 'People')
     {
-        state.peopleView = step.id === 'people-profile' ? 'profile' : 'directory';
-        state.peopleSide = step.id === 'people-profile' ? 'profile' : 'people';
+        const profile = ['people-profile-welcome', 'people-profile-hero', 'people-profile-card',
+            'people-connected', 'people-to-geneograph'].includes(step.id);
+        state.peopleView = profile ? 'profile' : 'directory';
+        state.peopleSide = profile ? 'profile' : 'people';
         state.selectedPeopleId = 'silver';
         state.selectedPersonId = 'silver';
+        state.peopleSelectedIds = [];
+        state.peopleSelectionAnchorId = '';
+        state.peoplePage = 1;
+        state.peoplePaginationQueryKey = '';
+        state.peopleSavedView = 'All people';
         state.peopleSearch = '';
         state.peoplePreviewCollapsed = false;
+        state.peopleProfileEditing = false;
+        state.peopleFilters = step.id === 'people-save-filter' || step.id === 'people-saved-filters'
+            ? peopleFiltersWithDefaults({ surnames: ['Whiskerfield'] })
+            : peopleFiltersWithDefaults({});
+        state.peopleSavedViewId = null;
     }
     if (step.module === 'Albums')
     {
@@ -236,11 +276,33 @@ function geneoTourPrepare(index)
 
 function geneoTourClearTreeReveal()
 {
-    document.body.classList.remove('geneo-tour-tree-sidebar', 'geneo-tour-tree-tabs');
+    document.body.classList.remove('geneo-tour-tree-sidebar', 'geneo-tour-tree-tabs',
+        'geneo-tour-people-sidebar', 'geneo-tour-people-preview', 'geneo-tour-people-tabs',
+        'geneo-tour-people-popover');
+}
+
+function geneoTourRestorePeopleState()
+{
+    if (!geneoTourRuntime.peopleOrigin) return;
+    Object.entries(geneoTourRuntime.peopleOrigin).forEach(([key, value]) =>
+    {
+        state[key] = structuredClone(value);
+    });
+    geneoTourRuntime.peopleOrigin = null;
 }
 
 function geneoTourApplyTreeReveal(step)
 {
+    if (step.module === 'People')
+    {
+        if (['people-navigation', 'people-saved-filters', 'people-to-profile'].includes(step.id))
+            document.body.classList.add('geneo-tour-people-sidebar');
+        if (step.id === 'people-to-profile') document.body.classList.add('geneo-tour-people-preview');
+        if (step.id === 'people-to-geneograph') document.body.classList.add('geneo-tour-people-tabs');
+        if (step.id === 'people-columns' || step.id === 'people-filters')
+            document.body.classList.add('geneo-tour-people-popover');
+        return;
+    }
     if (step.module !== 'Family Tree') return;
     if (['tree-sidebar', 'tree-sidebar-hero', 'tree-sidebar-actions', 'tree-quick-edit-button',
         'tree-quick-edit-modal', 'tree-add-relative', 'tree-sections-overview', 'tree-timeline', 'tree-to-people'].includes(step.id))
@@ -272,8 +334,16 @@ function geneoTourTarget(index)
         'tree-timeline': '.tree-inspector [data-toggle-section="timeline"]',
         'tree-to-people': '.topnav [data-module="People"]',
         'people-navigation': '.side-nav [data-people-side="people"]',
-        'people-list': '[data-people-row="silver"]',
-        'people-profile': '.profile-hero',
+        'people-table': '.people-table-wrap',
+        'people-columns': '#peopleColumnsPopover',
+        'people-filters': '#peopleFilterPopover',
+        'people-save-filter': '#peopleSaveView',
+        'people-saved-filters': '.people-saved-filter-row',
+        'people-to-profile': '.side-nav [data-open-profile]',
+        'people-profile-hero': '.profile-hero',
+        'people-profile-card': '[data-profile-card-root]',
+        'people-connected': '.profile-resource-card--photos',
+        'people-to-geneograph': '.topnav [data-module="Geneograph"]',
         'albums-navigation': '[data-album-open="al-family"]',
         'albums-photo': '[data-photo-id="photo-young-family"]',
         'albums-context': '.albums-detail',
@@ -290,10 +360,11 @@ function geneoTourTarget(index)
         'geneograph-settings': '.geneo-inspector'
     };
     const target = document.querySelector(selectors[id]);
+    if (id === 'people-saved-filters') return target?.parentElement?.parentElement || null;
     if (id === 'places-map' && (!target || !target.getBoundingClientRect().width))
         return document.querySelector('[data-places-inspector] .places-inspector-summary');
     if (target?.getBoundingClientRect().width) return target;
-    if (id === 'people-list') return document.querySelector('[data-person-sidebar-context="people"]');
+    if (id === 'people-table') return document.querySelector('[data-person-sidebar-context="people"]');
     if (id === 'places-people') return document.querySelector('[data-places-inspector]');
     return target;
 }
@@ -355,11 +426,27 @@ function geneoTourClosePreview()
         closeMenu();
     if (geneoTourRuntime.ownedPreview === 'modal' && modalBackdrop.classList.contains('open'))
         closeModal({ force: true });
+    if (geneoTourRuntime.ownedPreview === 'people-columns') closePeopleColumnsPopover();
+    if (geneoTourRuntime.ownedPreview === 'people-filters') closePeopleFilterPopover();
     geneoTourRuntime.ownedPreview = null;
 }
 
 function geneoTourOpenPreview(step)
 {
+    if (step.id === 'people-columns' || step.id === 'people-filters')
+    {
+        const columns = step.id === 'people-columns';
+        const anchor = document.getElementById(columns ? 'peopleColumnsButton' : 'peopleFilterButton');
+        if (!anchor) return;
+        if (columns) openPeopleColumnsPopover(anchor);
+        else openPeopleFilterPopover(anchor);
+        const popover = document.getElementById(columns ? 'peopleColumnsPopover' : 'peopleFilterPopover');
+        if (popover)
+        {
+            popover.inert = true;
+            geneoTourRuntime.ownedPreview = columns ? 'people-columns' : 'people-filters';
+        }
+    }
     if (step.id === 'tree-add-relative')
     {
         const anchor = document.querySelector('#addRelative');
@@ -400,8 +487,10 @@ function geneoTourClose({ completed = false, offerRestore = true } = {})
     geneoTourRuntime.token += 1;
     geneoTourRuntime.transitioning = false;
     geneoTourClosePreview();
+    geneoTourRestorePeopleState();
     geneoTourDestroyOverlay();
     geneoTourClearTreeReveal();
+    if (state.activeModule === 'People') renderPeople();
     document.removeEventListener('keydown', geneoTourOnKeydown, true);
     geneoTourWriteStatus(completed ? 'completed' : 'skipped');
     const focusTarget = geneoTourRuntime.returnFocus?.isConnected
@@ -586,10 +675,8 @@ function geneoTourRenderOverlay(target = null)
     document.body.appendChild(root);
     geneoTourRuntime.root = root;
     geneoTourRuntime.target = target;
-    geneoTourRuntime.secondaryTarget = geneoTourSteps[index]?.id === 'tree-to-people'
-        ? main.querySelector('.tree-person-hero-profile')
-        : geneoTourSteps[index]?.id === 'tree-add-relative'
-            ? main.querySelector('.tree-inspector #addRelative') : null;
+    const secondarySelector = geneoTourSecondarySelectors[geneoTourSteps[index]?.id];
+    geneoTourRuntime.secondaryTarget = secondarySelector ? document.querySelector(secondarySelector) : null;
     document.querySelector('.app').inert = true;
     modalBackdrop.inert = true;
     document.addEventListener('scroll', geneoTourQueuePosition, true);
@@ -692,6 +779,13 @@ function geneoTourPosition()
         }
     }
     const target = geneoTourRuntime.target;
+    if (geneoTourRuntime.secondaryTarget && !geneoTourRuntime.secondaryTarget.isConnected)
+    {
+        const selector = geneoTourSecondarySelectors[geneoTourSteps[geneoTourRuntime.index]?.id];
+        geneoTourRuntime.secondaryTarget = selector ? document.querySelector(selector) : null;
+        if (geneoTourRuntime.secondaryTarget)
+            geneoTourRuntime.resizeObserver?.observe(geneoTourRuntime.secondaryTarget);
+    }
     const centered = root.classList.contains('is-centered') || root.classList.contains('is-module-map')
         || !target?.isConnected || geneoTourRuntime.fallback;
     if (centered)
@@ -713,8 +807,9 @@ function geneoTourPosition()
     });
     const primary = toHole(rect);
     const secondaryTarget = geneoTourRuntime.secondaryTarget;
-    const secondary = secondaryTarget?.isConnected && secondaryTarget.getBoundingClientRect().width
-        ? toHole(secondaryTarget.getBoundingClientRect()) : null;
+    const secondaryRect = secondaryTarget?.isConnected ? secondaryTarget.getBoundingClientRect() : null;
+    const secondary = secondaryRect?.width && secondaryRect.bottom > 0 && secondaryRect.top < innerHeight
+        ? toHole(secondaryRect) : null;
     const holes = [primary, ...(secondary ? [secondary] : [])];
     geneoTourPaintScrims(root, holes);
     const { left: x, top: y, right, bottom } = primary;
@@ -810,6 +905,15 @@ function geneoTourTargetRect(target)
 {
     const rect = target.getBoundingClientRect();
     const stepId = geneoTourSteps[geneoTourRuntime.index]?.id;
+    if (stepId === 'people-table')
+        return { left: rect.left, right: rect.right, top: Math.max(rect.top, 72),
+            bottom: Math.min(rect.bottom, innerHeight - 80) };
+    if (stepId === 'people-navigation')
+    {
+        const other = main.closest('.workspace')?.querySelector('.side-nav [data-open-profile]')?.getBoundingClientRect();
+        return other ? { left: Math.min(rect.left, other.left), top: Math.min(rect.top, other.top),
+            right: Math.max(rect.right, other.right), bottom: Math.max(rect.bottom, other.bottom) } : rect;
+    }
     if (stepId === 'tree-navigation')
     {
         const controls = [...main.querySelectorAll('[data-tree-navigation], [data-tree-recent-toggle]')]
@@ -865,8 +969,11 @@ async function geneoTourMoveTo(index)
     if (!geneoTourRuntime.active || geneoTourRuntime.transitioning) return;
     geneoTourRuntime.transitioning = true;
     const token = ++geneoTourRuntime.token;
+    const leavingPeople = geneoTourSteps[geneoTourRuntime.index]?.module === 'People'
+        && geneoTourSteps[index]?.module !== 'People';
     geneoTourDestroyOverlay({ keepInert: true });
     geneoTourClosePreview();
+    if (leavingPeople) geneoTourRestorePeopleState();
     geneoTourClearTreeReveal();
     geneoTourRuntime.index = index;
     geneoTourRuntime.fallback = false;
@@ -933,6 +1040,15 @@ async function geneoTourMoveTo(index)
         }
         else if (geneoTourSteps[index].id === 'tree-to-people')
             main.querySelector('.tree-inspector')?.scrollTo(0, 0);
+        else if (geneoTourSteps[index].id === 'people-connected')
+        {
+            const archive = main.querySelector('.profile-resource-card--archive');
+            const photos = target.getBoundingClientRect();
+            const files = archive?.getBoundingClientRect();
+            if (files) geneoTourScrollTarget(target, (photos.top + files.bottom) / 2 - innerHeight / 2);
+        }
+        else if (geneoTourSteps[index].id === 'people-to-geneograph' && innerWidth <= 900)
+            target.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'instant' });
         else if (geneoTourSteps[index].id === 'geneograph-board' || !target.getBoundingClientRect().width)
             target.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' });
         else if (target.getBoundingClientRect().top < 60 || target.getBoundingClientRect().bottom > innerHeight - 40)
