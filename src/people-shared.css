@@ -2447,6 +2447,16 @@
     }
 }
 
+@media (min-width: 1181px) and (max-width: 1280px) {
+    @container people-profile (min-width: 761px) {
+        .profile-command-hero .profile-hero-actions {
+            width: max-content;
+            max-width: 260px;
+            justify-self: end;
+        }
+    }
+}
+
 .profile-back-link-icon svg {
     width: 16px;
     height: 16px;
@@ -3808,7 +3818,21 @@
     }
 }
 
-@media (max-width: 1180px) {
+@media (max-width: 1280px) {
+    .profile-command-hero .profile-hero-life-item {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .profile-command-hero .profile-hero-life-label {
+        flex: 0 0 auto;
+    }
+
+    .profile-command-hero .profile-hero-life-primary,
+    .profile-command-hero .profile-hero-life-place {
+        flex: 0 1 auto;
+    }
+
     .person-profile__top,
     .person-profile__bottom {
         grid-template-columns: 1fr;
@@ -3834,6 +3858,56 @@
 
     .profile-readonly-grid.profile-readonly-grid-tabbed.main {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (min-width: 761px) and (max-width: 1280px) {
+    .person-profile {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-rows: auto auto auto auto;
+    }
+
+    .person-profile__top,
+    .person-profile__bottom {
+        display: contents;
+    }
+
+    .person-profile .profile-command-hero,
+    .person-profile .profile-full-card,
+    .person-profile .profile-connected-cube {
+        grid-column: 1 / -1;
+    }
+
+    .person-profile .profile-full-card {
+        grid-row: 2;
+    }
+
+    .person-profile .profile-family-slot {
+        grid-column: 1;
+        grid-row: 3;
+    }
+
+    .person-profile .profile-compact-timeline {
+        grid-column: 2;
+        grid-row: 3;
+    }
+
+    .person-profile .profile-compact-timeline.profile-connected-card {
+        height: auto;
+        max-height: none;
+        align-self: stretch;
+    }
+
+    .person-profile .profile-connected-cube {
+        grid-row: 4;
+    }
+
+    .person-profile__top .profile-family-hub {
+        height: 100%;
+    }
+
+    .person-profile__top .profile-family-scroll {
+        max-height: none;
     }
 }
 
