@@ -73,6 +73,17 @@ const context = vm.createContext({
 vm.runInContext(tour, context);
 const evaluate = expression => vm.runInContext(expression, context);
 const steps = evaluate('geneoTourSteps');
+assert.deepEqual(Object.keys(evaluate('geneoTourModuleIconNames')), [
+    'Projects', 'Family Tree', 'People', 'Geneograph', 'Albums', 'Archive', 'Notes', 'Places'
+]);
+assert.equal(new Set(Object.values(evaluate('geneoTourModuleIconNames'))).size, 8);
+assert.match(tour, /data-geneo-tour-action="browse-modules">\$\{icon\.grid\}<span data-geneo-tour-module-name/);
+assert.match(tour, /geneo-tour-map-icon[^`]*icon\[geneoTourModuleIconNames\[module\]\]/);
+assert.match(css, /\.geneo-tour-browse\s*\{[^}]*background: transparent/s);
+assert.doesNotMatch(css, /\.geneo-tour-browse:hover\s*\{[^}]*background:/s);
+assert.match(css, /\.geneo-tour\.is-module-map \.geneo-tour-card\s*\{[^}]*560px/s);
+assert.match(css, /\.geneo-tour-map-list\s*\{[^}]*grid-template-columns: repeat\(2/s);
+assert.match(css, /@media \(max-width: 480px\)\s*\{\s*\.geneo-tour-map-list\s*\{[^}]*grid-template-columns: minmax\(0, 1fr\)/s);
 const chapter = steps.filter(step => step.module === 'Geneograph');
 assert.deepEqual(Array.from(chapter, step => step.id), [
     'geneograph-welcome', 'geneograph-navigation', 'geneograph-collections',
@@ -142,4 +153,52 @@ evaluate('geneoTourClosePreview()');
 assert.equal(modalCloses, 1);
 evaluate('geneoTourClearTreeReveal()');
 assert.ok(!classes.has('geneo-tour-geneo-toolbar'));
+const mapClasses = new Set();
+let currentFocused = false;
+let browseFocused = false;
+const mapCard = { setAttribute()
+{
+}, removeAttribute()
+{
+} };
+const currentCard = { offsetTop: 100, offsetHeight: 68, focus()
+{
+    currentFocused = true;
+} };
+const mapList = { offsetTop: 0, clientHeight: 300, scrollTop: 0 };
+const browseButton = { focus()
+{
+    browseFocused = true;
+} };
+const stepView = { hidden: false };
+const mapView = { hidden: true };
+const fakeRoot = {
+    classList: { add(...values)
+    {
+        values.forEach(value => mapClasses.add(value));
+    }, remove(...values)
+    {
+        values.forEach(value => mapClasses.delete(value));
+    } },
+    querySelector(selector)
+    {
+        return ({ '[data-geneo-tour-step-view]': stepView,
+            '[data-geneo-tour-map-view]': mapView, '.geneo-tour-card': mapCard,
+            '[data-geneo-tour-module].is-current': currentCard,
+            '.geneo-tour-map-list': mapList,
+            '[data-geneo-tour-action="browse-modules"]': browseButton })[selector];
+    }
+};
+context.fakeRoot = fakeRoot;
+context.geneoTourPosition = () => {};
+evaluate('geneoTourRuntime.root = fakeRoot; geneoTourRuntime.transitioning = false; geneoTourOpenModuleMap()');
+assert.ok(mapClasses.has('is-module-map'));
+assert.equal(stepView.hidden, true);
+assert.equal(mapView.hidden, false);
+assert.ok(currentFocused);
+evaluate('geneoTourCloseModuleMap()');
+assert.ok(!mapClasses.has('is-module-map'));
+assert.equal(stepView.hidden, false);
+assert.equal(mapView.hidden, true);
+assert.ok(browseFocused);
 console.log('Geneograph tour route, Russian copy, editor preparation, modal cleanup, and disabled import passed.');

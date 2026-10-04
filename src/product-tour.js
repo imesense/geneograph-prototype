@@ -68,6 +68,16 @@ const geneoTourSteps = [
     { id: 'places-people', module: 'Places', title: 'See connected people', body: 'The place inspector shows the people and events linked to this location.' }
 ];
 const geneoTourModules = ['Projects', 'Family Tree', 'People', 'Geneograph', 'Albums', 'Archive', 'Notes', 'Places'];
+const geneoTourModuleIconNames = {
+    Projects: 'home',
+    'Family Tree': 'tree',
+    People: 'people',
+    Geneograph: 'whiteboard',
+    Albums: 'image',
+    Archive: 'archive',
+    Notes: 'note',
+    Places: 'mapPin'
+};
 const geneoTourLibrarySteps = new Set([
     'geneograph-welcome', 'geneograph-navigation', 'geneograph-collections',
     'geneograph-create-actions', 'geneograph-create-modal', 'geneograph-card'
@@ -691,14 +701,14 @@ function geneoTourRefreshCopy()
         const currentModule = geneoTourSteps[geneoTourRuntime.index].module;
         moduleName.textContent = t(currentModule);
         const browse = root.querySelector('[data-geneo-tour-action="browse-modules"]');
-        browse.setAttribute('aria-label', t('Browse modules'));
+        browse.setAttribute('aria-label', `${t('Browse modules')}: ${t(currentModule)}`);
         browse.title = t('Browse modules');
         root.querySelector('[data-geneo-tour-map-title]').textContent = t('Browse modules');
         root.querySelector('[data-geneo-tour-map-return]').textContent = t('Return to tour');
         root.querySelectorAll('[data-geneo-tour-module]').forEach(button =>
         {
             const isCurrent = button.dataset.geneoTourModule === currentModule;
-            button.querySelector('span').textContent = t(button.dataset.geneoTourModule);
+            button.querySelector('.geneo-tour-map-name').textContent = t(button.dataset.geneoTourModule);
             button.classList.toggle('is-current', isCurrent);
             if (isCurrent) button.setAttribute('aria-current', 'step');
             else button.removeAttribute('aria-current');
@@ -751,7 +761,7 @@ function geneoTourRenderOverlay(target = null)
         <div class="geneo-tour-target-block" data-geneo-tour-block-secondary hidden></div>
         <section class="geneo-tour-card" role="dialog" aria-modal="true" aria-labelledby="geneoTourTitle" aria-describedby="geneoTourBody">
             <div class="geneo-tour-card-head">
-                ${outerScreen ? '' : `<div class="geneo-tour-chapter"><button class="geneo-tour-browse" type="button" data-geneo-tour-action="browse-modules">${icon.grid}</button><span data-geneo-tour-module-name aria-live="polite"></span></div>`}
+                ${outerScreen ? '' : `<div class="geneo-tour-chapter"><button class="geneo-tour-browse" type="button" data-geneo-tour-action="browse-modules">${icon.grid}<span data-geneo-tour-module-name aria-live="polite"></span></button></div>`}
                 ${outerScreen ? '' : '<h2 class="geneo-tour-map-title" id="geneoTourMapTitle" data-geneo-tour-map-title></h2>'}
                 <button class="geneo-tour-close" type="button" aria-label="${escapeHtml(t('Skip tour'))}" data-geneo-tour-action="skip">${icon.close}</button>
             </div>
@@ -762,7 +772,7 @@ function geneoTourRenderOverlay(target = null)
                 <p class="geneo-tour-fallback" data-geneo-tour-fallback hidden>${escapeHtml(t('This part of the sample is unavailable. Continue to the next stop.'))}</p>
                 <div class="geneo-tour-actions">${actions.map(([action, label]) => `<button class="button ${action === 'next' || action === 'start' || action === 'finish' ? 'primary' : 'secondary'}" type="button" data-geneo-tour-action="${action}" data-geneo-tour-label="${escapeHtml(label)}"></button>`).join('')}</div>
             </div>
-            ${outerScreen ? '' : `<div class="geneo-tour-map" data-geneo-tour-map-view hidden><div class="geneo-tour-map-list">${geneoTourModules.map(module => `<button type="button" data-geneo-tour-module="${escapeHtml(module)}"><span></span></button>`).join('')}</div><button class="geneo-tour-map-return" type="button" data-geneo-tour-action="return-to-tour" data-geneo-tour-map-return></button></div>`}
+            ${outerScreen ? '' : `<div class="geneo-tour-map" data-geneo-tour-map-view hidden><div class="geneo-tour-map-list">${geneoTourModules.map(module => `<button type="button" data-geneo-tour-module="${escapeHtml(module)}"><span class="geneo-tour-map-icon" aria-hidden="true">${icon[geneoTourModuleIconNames[module]]}</span><span class="geneo-tour-map-name"></span><span class="geneo-tour-map-current" aria-hidden="true">${icon.check}</span></button>`).join('')}</div><button class="geneo-tour-map-return" type="button" data-geneo-tour-action="return-to-tour" data-geneo-tour-map-return></button></div>`}
         </section>`;
     document.body.appendChild(root);
     geneoTourRuntime.root = root;
