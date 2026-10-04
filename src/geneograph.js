@@ -2334,7 +2334,7 @@ function renderGeneographHome()
           "
           aria-label="Geneograph navigation">
 
-          <div>
+          <div data-geneo-tour-target="library-navigation">
             <div
               class="
                 side-section-title
@@ -2365,7 +2365,7 @@ function renderGeneographHome()
             </div>
           </div>
 
-          <div>
+          <div data-geneo-tour-target="library-collections">
             <div
               class="
                 side-section-title
@@ -2464,10 +2464,12 @@ function renderGeneographHome()
                   secondary
                 "
                 type="button"
-                data-geneo-import>
+                data-geneo-import
+                disabled
+                aria-label="${escapeHtml(t('Import board'))}">
 
                 ${icon.import}
-                Import board
+                <span>${escapeHtml(t('Import board'))}</span>
               </button>
 
               <button
@@ -2854,14 +2856,6 @@ function filteredGeneographBoards()
         getFallback:
           board => board.title
     });
-}
-
-function openGeneographImportBoardModal()
-{
-    openSimpleModal(
-        'Import board',
-        'Board import is a placeholder in this iteration. Real .ggboard import will be added later.'
-    );
 }
 
 function renderGeneographNewBoardTile()
@@ -4867,18 +4861,6 @@ function bindGeneographHome()
             button.addEventListener(
                 'click',
                 openCreateGeneographBoardModal
-            );
-        });
-
-    main
-        .querySelectorAll(
-            '[data-geneo-import]'
-        )
-        .forEach(button =>
-        {
-            button.addEventListener(
-                'click',
-                openGeneographImportBoardModal
             );
         });
 

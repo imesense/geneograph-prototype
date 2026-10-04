@@ -289,7 +289,44 @@
     }
 }
 
+body.geneo-tour-geneo-toolbar .geneo-editor-toolbar-left {
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+}
+
+body.geneo-tour-geneo-toolbar .geneo-editor-toolbar [data-geneo-toolbar-item] {
+    display: inline-flex;
+}
+
 @media (max-width: 900px) {
+    body.geneo-tour-geneo-sidebar .workspace .sidebar {
+        display: block;
+        position: fixed;
+        top: 60px;
+        left: 0;
+        z-index: 8;
+        width: min(300px, 48vw);
+        height: calc(100vh - 60px);
+        overflow-y: auto;
+        box-shadow: var(--shadow-soft);
+    }
+
+    body.geneo-tour-geneo-tabs .topnav {
+        display: flex;
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    body.geneo-tour-geneo-tabs .topbar .top-actions {
+        display: none;
+    }
+
+    body.geneo-tour-geneo-tabs .topnav .tab {
+        padding: 0 var(--space-3);
+    }
+
     body.geneo-tour-people-sidebar .workspace .sidebar {
         display: block;
         position: fixed;
@@ -342,6 +379,10 @@
 }
 
 @media (max-width: 640px) {
+    body.geneo-tour-geneo-sidebar .workspace .sidebar {
+        width: min(300px, 100vw);
+    }
+
     body.geneo-tour-people-popover #peopleColumnsPopover,
     body.geneo-tour-people-popover #peopleFilterPopover {
         max-height: min(38vh, 240px);

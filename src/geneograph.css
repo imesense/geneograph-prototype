@@ -1,4 +1,15 @@
 /* Geneograph module */
+.geneo-home-page [data-geneo-import]:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+    filter: none;
+}
+
+.geneo-home-page [data-geneo-import]:disabled:hover {
+    background: #222927;
+    filter: none;
+}
+
 .geneo-home-page {
     height:
         100%;
