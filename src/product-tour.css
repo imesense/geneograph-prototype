@@ -382,6 +382,32 @@ body.geneo-tour-geneo-toolbar .geneo-editor-toolbar [data-geneo-toolbar-item] {
 }
 
 @media (max-width: 900px) {
+    body.geneo-tour-notes-sidebar .workspace .sidebar {
+        display: block;
+        position: fixed;
+        top: 60px;
+        left: 0;
+        z-index: 8;
+        width: min(300px, 100vw);
+        height: calc(100vh - 60px);
+        overflow-y: auto;
+        box-shadow: var(--shadow-soft);
+    }
+
+    body.geneo-tour-notes-tabs .topnav {
+        display: flex;
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    body.geneo-tour-notes-tabs .topbar .top-actions {
+        display: none;
+    }
+
+    body.geneo-tour-notes-tabs .topnav .tab {
+        padding: 0 var(--space-3);
+    }
+
     body.geneo-tour-archive-sidebar .workspace .sidebar {
         display: block;
         position: fixed;
@@ -512,6 +538,10 @@ body.geneo-tour-geneo-toolbar .geneo-editor-toolbar [data-geneo-toolbar-item] {
 }
 
 @media (max-width: 640px) {
+    body.geneo-tour-notes-popover .notes-filter-popover {
+        max-height: min(38vh, 240px);
+    }
+
     body.geneo-tour-archive-sidebar .workspace .sidebar {
         width: min(300px, 100vw);
     }

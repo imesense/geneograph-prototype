@@ -203,7 +203,7 @@ function renderNotesSidebar()
           class="notes-sidebar"
           aria-label="Notes navigation">
 
-          <div>
+          <div data-notes-tour-target="navigation">
             <div class="side-section-title">
               Navigation
             </div>
@@ -229,7 +229,7 @@ function renderNotesSidebar()
             </div>
           </div>
 
-          <div>
+          <div data-notes-tour-target="collections">
             <div
               class="
                 side-section-title

@@ -1751,6 +1751,18 @@
     gap: var(--space-3);
 }
 
+.notes-filter-popover .shared-filter-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.notes-filter-popover .shared-filter-field--full {
+    grid-column: 1 / -1;
+}
+
+.notes-filter-popover .shared-filter-boolean-title {
+    display: none;
+}
+
 .notes-filter-popover-footer {
     display: flex;
     justify-content: space-between;
