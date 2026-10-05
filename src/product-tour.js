@@ -62,7 +62,8 @@ const geneoTourSteps = [
     { id: 'albums-filters', module: 'Albums', title: 'Narrow your photos', body: 'Filters help you find photographs by person, place, source, date, or favourite status without changing them.' },
     { id: 'albums-summary', module: 'Albums', title: 'Inspect a photograph', body: 'The right panel shows a photo preview and its main details, including its name, date, place, and caption.' },
     { id: 'albums-actions', module: 'Albums', title: 'Work with a photo', body: 'Use these controls to edit photo details, mark it as a favourite, or open more actions.' },
-    { id: 'albums-connections', module: 'Albums', title: 'Keep photos connected', body: 'People and Albums show who is in this photograph and which collections contain it. Next, see how to add it to an album.' },
+    { id: 'albums-connections', module: 'Albums', title: 'Keep photos connected', body: 'People and Albums show who is in this photograph and which albums contain it. These links keep each photo in the context of your research.' },
+    { id: 'albums-connect-actions', module: 'Albums', title: 'Connect a photograph', body: 'Tag person links someone in the photo to their profile. Add to album groups the photo with related images. Next, see how to choose an album.' },
     { id: 'albums-add-to-album', module: 'Albums', title: 'Add a photo to an album', body: 'Choose an existing album or create a new one to organize this photograph with related images.' },
     { id: 'albums-to-archive', module: 'Albums', title: 'Continue to Archive', body: 'Archive keeps documents, files, and their sources alongside your photographs. Continue there next.' },
     { id: 'archive-navigation', module: 'Archive', title: 'Find your evidence', body: 'Browse folders and sources from the Archive navigation.' },
@@ -95,6 +96,8 @@ const geneoTourSecondarySelectors = {
     'tree-add-relative': '.tree-inspector #addRelative',
     'people-columns': '#peopleColumnsButton',
     'people-filters': '#peopleFilterButton',
+    'albums-filters': '#albumsFilterButton',
+    'albums-connect-actions': '#albumsLinkAlbum',
     'people-to-profile': '.people-layout .tree-person-hero-profile',
     'people-connected': '.profile-resource-card--archive'
 };
@@ -292,7 +295,7 @@ function geneoTourPrepare(index)
         state.selectedPhotoIds = [];
         state.albumsDetailCollapsed = false;
         state.albumsDetailSections.details = true;
-        if (step.id === 'albums-connections')
+        if (step.id === 'albums-connections' || step.id === 'albums-connect-actions')
         {
             state.albumsDetailSections.people = true;
             state.albumsDetailSections.albums = true;
@@ -395,7 +398,7 @@ function geneoTourApplyTreeReveal(step)
     {
         if (step.id === 'albums-navigation' || step.id === 'albums-albums')
             document.body.classList.add('geneo-tour-albums-sidebar');
-        if (['albums-summary', 'albums-actions', 'albums-connections'].includes(step.id))
+        if (['albums-summary', 'albums-actions', 'albums-connections', 'albums-connect-actions'].includes(step.id))
             document.body.classList.add('geneo-tour-albums-inspector');
         if (step.id === 'albums-filters')
             document.body.classList.add('geneo-tour-albums-popover');
@@ -472,6 +475,7 @@ function geneoTourTarget(index)
         'albums-summary': '.albums-detail-toolbar',
         'albums-actions': '#albumsEditPhoto',
         'albums-connections': '[data-albums-section-toggle="people"]',
+        'albums-connect-actions': '#albumsTagPeople',
         'albums-add-to-album': '#modalBackdrop .album-picker-modal',
         'albums-to-archive': '.topnav [data-module="Archive"]',
         'archive-navigation': '.archive-sidebar',
@@ -656,6 +660,7 @@ function geneoTourOpenPreview(step)
         if (popover)
         {
             popover.inert = true;
+            menuLifecycleController?.abort();
             geneoTourRuntime.ownedPreview = 'relative';
         }
     }
@@ -876,6 +881,8 @@ function geneoTourRenderOverlay(target = null)
         </section>`;
     document.body.appendChild(root);
     geneoTourRuntime.root = root;
+    root.addEventListener('click', event => event.stopPropagation());
+    root.addEventListener('pointerdown', event => event.stopPropagation());
     geneoTourRuntime.target = target;
     const secondarySelector = geneoTourSecondarySelectors[geneoTourSteps[index]?.id];
     geneoTourRuntime.secondaryTarget = secondarySelector ? document.querySelector(secondarySelector) : null;
@@ -1289,7 +1296,7 @@ async function geneoTourMoveTo(index)
         }
         else if (geneoTourSteps[index].id === 'albums-summary' || geneoTourSteps[index].id === 'albums-actions')
             main.querySelector('.albums-detail')?.scrollTo(0, 0);
-        else if (geneoTourSteps[index].id === 'albums-connections')
+        else if (geneoTourSteps[index].id === 'albums-connections' || geneoTourSteps[index].id === 'albums-connect-actions')
         {
             const inspector = main.querySelector('.albums-detail');
             const section = target.closest('.panel-section');
