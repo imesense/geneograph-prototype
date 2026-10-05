@@ -1751,24 +1751,6 @@
     gap: var(--space-3);
 }
 
-.notes-filter-field {
-    display: grid;
-    gap: 6px;
-    color: var(--text-secondary);
-    font-size: 12px;
-    font-weight: 800;
-}
-
-.notes-filter-field select {
-    width: 100%;
-    height: var(--control-height);
-    border: 1px solid var(--border-default);
-    border-radius: var(--radius-sm);
-    background: var(--surface-input);
-    color: var(--text-secondary);
-    padding: 0 36px 0 12px;
-}
-
 .notes-filter-popover-footer {
     display: flex;
     justify-content: space-between;

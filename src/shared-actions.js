@@ -537,9 +537,7 @@ function resetProjectModuleState(projectId)
     state.notesMobilePane = 'browser';
     state.notesSaveStatus = 'Saved';
     state.notesFilters = {
-        linkedRecords: 'any',
-        relatedNotes: 'any',
-        collections: 'any'
+        ...defaultNotesFilters
     };
 
     state.placesView = 'all';

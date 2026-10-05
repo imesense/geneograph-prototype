@@ -236,7 +236,7 @@ const state = {
     archiveFileEditDraft: null,
     archiveInspectorSections: {
         details: true,
-        sources: true,
+        sources: false,
         people: false,
         events: false,
         notes: false,
@@ -270,9 +270,14 @@ const state = {
     notesBrowserWidth: 550,
 
     notesFilters: {
-        linkedRecords: 'any',
-        relatedNotes: 'any',
-        collections: 'any'
+        personId: '',
+        placeId: '',
+        sourceId: '',
+        hasNotes: false,
+        hasPhotos: false,
+        hasFiles: false,
+        hasEvents: false,
+        noCollections: false
     },
 
     notesEditorSections: {

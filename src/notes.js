@@ -778,70 +778,115 @@ function noteBrowserMetadata(
         .join(' · ');
 }
 
+const defaultNotesFilters = Object.freeze({
+    personId: '',
+    placeId: '',
+    sourceId: '',
+    hasNotes: false,
+    hasPhotos: false,
+    hasFiles: false,
+    hasEvents: false,
+    noCollections: false
+});
+
+function notesFilterEntityOptions(type)
+{
+    const projectId = currentProjectId();
+    const entities = type === 'person'
+        ? getPeople(projectId)
+        : (sampleData.places || []).filter(place => place.projectId === projectId);
+
+    return entities
+        .map(entity => ({
+            value: entity.id,
+            label: type === 'person'
+                ? personResourceDisplayName(entity)
+                : getPlaceDisplay(entity.id)
+        }))
+        .sort((left, right) => left.label.localeCompare(
+            right.label,
+            state.language === 'ru' ? 'ru' : 'en'
+        ));
+}
+
+const notesFilterSchema = Object.freeze([
+    { key: 'personId', label: 'Person', control: 'combobox', multiple: false,
+        layout: 'full', placeholder: 'Search people', defaultValue: '',
+        getOptions: () => notesFilterEntityOptions('person') },
+    { key: 'placeId', label: 'Place', control: 'combobox', multiple: false,
+        layout: 'full', placeholder: 'Search places', defaultValue: '',
+        getOptions: () => notesFilterEntityOptions('place') },
+    { key: 'sourceId', label: 'Source', control: 'combobox', multiple: false,
+        layout: 'full', placeholder: 'Search sources...', defaultValue: '',
+        getOptions: connectedSourceFilterOptions },
+    { key: 'hasNotes', label: 'Connected notes', control: 'boolean',
+        defaultValue: false },
+    { key: 'hasPhotos', label: 'Connected photos', control: 'boolean',
+        defaultValue: false },
+    { key: 'hasFiles', label: 'Connected files', control: 'boolean',
+        defaultValue: false },
+    { key: 'hasEvents', label: 'Connected events', control: 'boolean',
+        defaultValue: false },
+    { key: 'noCollections', label: 'No collections', control: 'boolean',
+        defaultValue: false }
+]);
+
+function notesFiltersWithDefaults(filters = state.notesFilters)
+{
+    return cloneSharedFilterValues(notesFilterSchema, {
+        ...defaultNotesFilters,
+        ...(filters || {})
+    });
+}
+
+function noteMatchesNotesFilters(note, filters, projectId)
+{
+    if (filters.personId && !(note.linkedPersonIds || []).includes(filters.personId))
+    {
+        return false;
+    }
+
+    if (filters.placeId && !(note.linkedPlaceIds || []).includes(filters.placeId))
+    {
+        return false;
+    }
+
+    if (filters.sourceId && !sourceIdsForTarget('note', note.id, projectId).includes(filters.sourceId))
+    {
+        return false;
+    }
+
+    return !(
+        (filters.hasNotes && !(note.relatedNoteIds || []).length)
+        || (filters.hasPhotos && !(note.linkedPhotoIds || []).length)
+        || (filters.hasFiles && !(note.linkedArchiveFileIds || []).length)
+        || (filters.hasEvents && !(note.linkedEventIds || []).length)
+        || (filters.noCollections && (note.collectionIds || []).length)
+    );
+}
+
 function notesFilterCount()
 {
-    return Object
-        .values(
-            state.notesFilters
-          || {}
-        )
-        .filter(
-            value =>
-                value
-            && value !== 'any'
-        )
-        .length;
+    return Object.values(notesFiltersWithDefaults()).filter(Boolean).length;
 }
 
 function notesActiveFilterDescriptors()
 {
-    const filters =
-        state.notesFilters || {};
+    const filters = notesFiltersWithDefaults();
 
-    const labels = {
-        linkedRecords: {
-            with:
-            'Has linked records',
+    return notesFilterSchema
+        .filter(definition => Boolean(filters[definition.key]))
+        .map(definition => {
+            const value = filters[definition.key];
+            const option = definition.control === 'combobox'
+                ? sharedFilterOptions(definition).find(item => item.value === value)
+                : null;
 
-            without:
-            'No linked records'
-        },
-
-        relatedNotes: {
-            with:
-            'Has related notes',
-
-            without:
-            'No related notes'
-        },
-
-        collections: {
-            with:
-            'In a collection',
-
-            without:
-            'No collection'
-        }
-    };
-
-    return Object
-        .entries(filters)
-        .filter(([
-            ,
-            value
-        ]) =>
-            value
-          && value !== 'any'
-        )
-        .map(([
-            key,
-            value
-        ]) => ({
-            key,
-            label:
-            labels[key]?.[value]
-            || value
-        }));
+            return {
+                key: definition.key,
+                label: option?.label || definition.label
+            };
+        });
 }
 
 function renderNotesActiveFilters()
@@ -881,288 +926,68 @@ function renderNotesActiveFilters()
       `;
 }
 
-function openNotesFilterMenu(
-    anchor
-)
+function openNotesFilterMenu(anchor)
 {
     if (document.getElementById('projectMenu')?.classList.contains('notes-filter-popover'))
     {
         closeMenu();
         return;
     }
+
     closeMenu();
 
-    const rect =
-        anchor.getBoundingClientRect();
-
-    const filters = {
-        linkedRecords:
-          state.notesFilters
-              ?.linkedRecords
-          || 'any',
-
-        relatedNotes:
-          state.notesFilters
-              ?.relatedNotes
-          || 'any',
-
-        collections:
-          state.notesFilters
-              ?.collections
-          || 'any'
-    };
-
-    const menu =
-        document.createElement(
-            'div'
-        );
-
-    menu.className =
-        'notes-filter-popover';
-
-    menu.id =
-        'projectMenu';
-
-    menu.style.top =
-        `${rect.bottom + 6}px`;
-
-    menu.style.left =
-        `${
-            Math.max(
-                12,
-                Math.min(
-                    window.innerWidth
-              - 342,
-                    rect.right - 330
-                )
-            )
-        }px`;
-
+    const rect = anchor.getBoundingClientRect();
+    const menu = document.createElement('div');
+    menu.className = 'notes-filter-popover';
+    menu.id = 'projectMenu';
+    menu.style.top = `${rect.bottom + 6}px`;
+    menu.style.left = `${Math.max(12, Math.min(window.innerWidth - 342, rect.right - 330))}px`;
     menu.innerHTML = `
         <div class="notes-filter-popover-head">
           <strong>Filter notes</strong>
-          <span>
-            Narrow the current Notes view.
-          </span>
+          <span>Narrow the current Notes view.</span>
         </div>
-
         <div class="notes-filter-popover-body">
-          <label class="notes-filter-field">
-            Linked records
-            <select
-              data-notes-filter-input="linkedRecords">
-              <option
-                value="any"
-                ${
-                    filters.linkedRecords
-                    === 'any'
-                        ? 'selected'
-                        : ''
-                }>
-                Any
-              </option>
-              <option
-                value="with"
-                ${
-                    filters.linkedRecords
-                    === 'with'
-                        ? 'selected'
-                        : ''
-                }>
-                Has linked records
-              </option>
-              <option
-                value="without"
-                ${
-                    filters.linkedRecords
-                    === 'without'
-                        ? 'selected'
-                        : ''
-                }>
-                No linked records
-              </option>
-            </select>
-          </label>
-
-          <label class="notes-filter-field">
-            Related notes
-            <select
-              data-notes-filter-input="relatedNotes">
-              <option
-                value="any"
-                ${
-                    filters.relatedNotes
-                    === 'any'
-                        ? 'selected'
-                        : ''
-                }>
-                Any
-              </option>
-              <option
-                value="with"
-                ${
-                    filters.relatedNotes
-                    === 'with'
-                        ? 'selected'
-                        : ''
-                }>
-                Has related notes
-              </option>
-              <option
-                value="without"
-                ${
-                    filters.relatedNotes
-                    === 'without'
-                        ? 'selected'
-                        : ''
-                }>
-                No related notes
-              </option>
-            </select>
-          </label>
-
-          <label class="notes-filter-field">
-            Collections
-            <select
-              data-notes-filter-input="collections">
-              <option
-                value="any"
-                ${
-                    filters.collections
-                    === 'any'
-                        ? 'selected'
-                        : ''
-                }>
-                Any
-              </option>
-              <option
-                value="with"
-                ${
-                    filters.collections
-                    === 'with'
-                        ? 'selected'
-                        : ''
-                }>
-                In a collection
-              </option>
-              <option
-                value="without"
-                ${
-                    filters.collections
-                    === 'without'
-                        ? 'selected'
-                        : ''
-                }>
-                No collection
-              </option>
-            </select>
-          </label>
+          ${renderSharedFilterFields({
+              schema: notesFilterSchema,
+              values: notesFiltersWithDefaults(),
+              prefix: 'notes-popover-filter'
+          })}
         </div>
-
         <div class="notes-filter-popover-footer">
-          <button
-            class="button secondary"
-            type="button"
-            data-notes-filter-reset>
-            Reset
-          </button>
-
-          <button
-            class="button primary"
-            type="button"
-            data-notes-filter-apply>
-            Apply filters
-          </button>
+          <button class="button secondary" type="button" data-notes-filter-reset>Reset</button>
+          <button class="button primary" type="button" data-notes-filter-apply>Apply filters</button>
         </div>
-      `;
+    `;
 
-    document.body.appendChild(
-        menu
-    );
+    document.body.appendChild(menu);
+    localizeUI(menu);
     anchor.setAttribute('aria-expanded', 'true');
 
-    const menuRect =
-        menu.getBoundingClientRect();
+    const controller = bindSharedFilterFields(menu, {
+        schema: notesFilterSchema,
+        values: notesFiltersWithDefaults(),
+        prefix: 'notes-popover-filter'
+    });
 
-    menu.style.top =
-        `${
-            Math.max(
-                12,
-                Math.min(
-                    rect.bottom + 6,
-                    window.innerHeight
-              - menuRect.height
-              - 12
-                )
-            )
-        }px`;
+    const menuRect = menu.getBoundingClientRect();
+    menu.style.top = `${Math.max(12, Math.min(rect.bottom + 6, window.innerHeight - menuRect.height - 12))}px`;
 
-    menu
-        .querySelector(
-            '[data-notes-filter-reset]'
-        )
-        ?.addEventListener(
-            'click',
-            () =>
-            {
-                state.notesFilters = {
-                    linkedRecords:
-                'any',
+    menu.querySelector('[data-notes-filter-reset]')?.addEventListener('click', () =>
+    {
+        state.notesFilters = { ...defaultNotesFilters };
+        closeMenu();
+        renderNotes();
+    });
 
-                    relatedNotes:
-                'any',
+    menu.querySelector('[data-notes-filter-apply]')?.addEventListener('click', () =>
+    {
+        state.notesFilters = controller?.getValues() || notesFiltersWithDefaults();
+        closeMenu();
+        renderNotes();
+    });
 
-                    collections:
-                'any'
-                };
-
-                closeMenu();
-                renderNotes();
-            }
-        );
-
-    menu
-        .querySelector(
-            '[data-notes-filter-apply]'
-        )
-        ?.addEventListener(
-            'click',
-            () =>
-            {
-                state.notesFilters = {
-                    linkedRecords:
-                menu
-                    .querySelector(
-                        '[data-notes-filter-input="linkedRecords"]'
-                    )
-                    ?.value
-                || 'any',
-
-                    relatedNotes:
-                menu
-                    .querySelector(
-                        '[data-notes-filter-input="relatedNotes"]'
-                    )
-                    ?.value
-                || 'any',
-
-                    collections:
-                menu
-                    .querySelector(
-                        '[data-notes-filter-input="collections"]'
-                    )
-                    ?.value
-                || 'any'
-                };
-
-                closeMenu();
-                renderNotes();
-            }
-        );
-
-    bindMenuLifecycle(
-        anchor
-    );
+    bindMenuLifecycle(anchor);
 }
 
 function formatConnectedNoteMetadata(
@@ -13501,7 +13326,8 @@ function bindNotesBrowserControls()
                     }
 
                     state.notesFilters[key] =
-                        'any';
+                        notesFilterSchema.find(definition => definition.key === key)
+                            ?.control === 'boolean' ? false : '';
 
                     renderNotes();
                 }
@@ -14590,74 +14416,8 @@ function filteredNotes()
             );
     }
 
-    const filters =
-        state.notesFilters || {};
-
-    if (
-        filters.linkedRecords
-        && filters.linkedRecords
-          !== 'any'
-    )
-    {
-        list =
-            list.filter(note =>
-            {
-                const hasLinks =
-                    noteExternalEntityCount(
-                        note
-                    ) > 0;
-
-                return filters
-                    .linkedRecords
-              === 'with'
-                    ? hasLinks
-                    : !hasLinks;
-            });
-    }
-
-    if (
-        filters.relatedNotes
-        && filters.relatedNotes
-          !== 'any'
-    )
-    {
-        list =
-            list.filter(note =>
-            {
-                const hasRelated =
-                    (
-                        note.relatedNoteIds || []
-                    ).length > 0;
-
-                return filters
-                    .relatedNotes
-              === 'with'
-                    ? hasRelated
-                    : !hasRelated;
-            });
-    }
-
-    if (
-        filters.collections
-        && filters.collections
-          !== 'any'
-    )
-    {
-        list =
-            list.filter(note =>
-            {
-                const hasCollections =
-                    (
-                        note.collectionIds || []
-                    ).length > 0;
-
-                return filters
-                    .collections
-              === 'with'
-                    ? hasCollections
-                    : !hasCollections;
-            });
-    }
+    const filters = notesFiltersWithDefaults();
+    list = list.filter(note => noteMatchesNotesFilters(note, filters, projectId));
 
     const query =
         String(
@@ -15891,16 +15651,7 @@ function createCentralNote(
         state.notesSaveStatus =
             'Saved';
 
-        state.notesFilters = {
-            linkedRecords:
-            'any',
-
-            relatedNotes:
-            'any',
-
-            collections:
-            'any'
-        };
+        state.notesFilters = { ...defaultNotesFilters };
     }
 
     if (renderAfterCreate)

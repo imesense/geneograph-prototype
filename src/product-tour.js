@@ -66,9 +66,16 @@ const geneoTourSteps = [
     { id: 'albums-connect-actions', module: 'Albums', title: 'Connect a photograph', body: 'Tag person links someone in the photo to their profile. Add to album groups the photo with related images. Next, see how to choose an album.' },
     { id: 'albums-add-to-album', module: 'Albums', title: 'Add a photo to an album', body: 'Choose an existing album or create a new one to organize this photograph with related images.' },
     { id: 'albums-to-archive', module: 'Albums', title: 'Continue to Archive', body: 'Archive keeps documents, files, and their sources alongside your photographs. Continue there next.' },
-    { id: 'archive-navigation', module: 'Archive', title: 'Find your evidence', body: 'Browse folders and sources from the Archive navigation.' },
-    { id: 'archive-file', module: 'Archive', title: 'Keep the evidence close', body: 'Select a file from the main list to inspect the record you collected.' },
-    { id: 'archive-context', module: 'Archive', title: 'Trace a file’s context', body: 'The file panel shows connected records and source information, including where evidence came from.' },
+    { id: 'archive-welcome', module: 'Archive', presentation: 'centered', title: 'Welcome to Archive', body: 'Archive keeps research files and their sources in your project. Browse folders, inspect a file, and connect evidence to the rest of your work.' },
+    { id: 'archive-navigation', module: 'Archive', title: 'Browse the Archive', body: 'Use the left navigation to open files, favourites, and sources.' },
+    { id: 'archive-folders', module: 'Archive', title: 'Explore folders', body: 'The folder tree organizes files by location or subject. Open a branch to find its nested folders.' },
+    { id: 'archive-location', module: 'Archive', title: 'Move between folders', body: 'The path shows where you are. Use Back, Forward, Up, or a breadcrumb to move through folders.' },
+    { id: 'archive-table', module: 'Archive', title: 'Browse folder contents', body: 'Folders appear in the main table. Select one to see its details, or double-click it to open it.' },
+    { id: 'archive-folder-actions', module: 'Archive', title: 'Create a folder', body: 'Create a folder from the sidebar or page header. Select a folder to add a subfolder inside it.' },
+    { id: 'archive-folder-modal', module: 'Archive', title: 'Name and place a folder', body: 'Give the new folder a name and choose its parent. Nothing is created until you confirm.' },
+    { id: 'archive-inspector', module: 'Archive', title: 'Inspect a file', body: 'The right panel shows a conceptual preview in this prototype and the file’s recorded details.' },
+    { id: 'archive-file-actions', module: 'Archive', title: 'Work with a file', body: 'Edit details, move the file, mark it as a favourite, or open More actions from the toolbar.' },
+    { id: 'archive-to-notes', module: 'Archive', title: 'Continue to Notes', body: 'Notes keeps your observations and research questions alongside the files you collect. Continue there next.' },
     { id: 'notes-list', module: 'Notes', title: 'Choose a research note', body: 'All notes keeps observations and open questions easy to find.' },
     { id: 'notes-editor', module: 'Notes', title: 'Record questions and discoveries', body: 'Write research notes alongside the people, places, and evidence they concern.' },
     { id: 'places-navigation', module: 'Places', title: 'Browse places', body: 'Find the locations connected to this family from the Places navigation.' },
@@ -98,8 +105,12 @@ const geneoTourSecondarySelectors = {
     'people-filters': '#peopleFilterButton',
     'albums-filters': '#albumsFilterButton',
     'albums-connect-actions': '#albumsLinkAlbum',
+    'archive-folder-actions': '.archive-page-head [data-archive-create-folder]',
     'people-to-profile': '.people-layout .tree-person-hero-profile',
     'people-connected': '.profile-resource-card--archive'
+};
+const geneoTourTertiarySelectors = {
+    'archive-folder-actions': '.archive-folder-inspector-actions [data-archive-create-folder]'
 };
 
 const geneoTourRuntime = {
@@ -111,6 +122,7 @@ const geneoTourRuntime = {
     root: null,
     target: null,
     secondaryTarget: null,
+    tertiaryTarget: null,
     fallback: false,
     optionalFallback: false,
     origin: null,
@@ -124,7 +136,9 @@ const geneoTourRuntime = {
     openingPreview: false,
     peopleOrigin: null,
     albumsOrigin: null,
-    albumsModalSelection: null
+    albumsModalSelection: null,
+    archiveOrigin: null,
+    archiveOriginScroll: null
 };
 
 function geneoTourReadStatus()
@@ -252,6 +266,15 @@ function geneoTourPrepare(index)
             'albumsDetailCollapsed', 'albumsDetailSections'
         ].map(key => [key, structuredClone(state[key])]));
     }
+    if (step.module === 'Archive' && !geneoTourRuntime.archiveOrigin)
+    {
+        geneoTourRuntime.archiveOrigin = Object.fromEntries(Object.keys(state)
+            .filter(key => key.startsWith('archive'))
+            .map(key => [key, structuredClone(state[key])]));
+        geneoTourRuntime.archiveOriginScroll = Object.fromEntries(
+            ['.archive-sidebar', '.archive-inspector-scroll'].map(selector =>
+                [selector, document.querySelector(selector)?.scrollTop || 0]));
+    }
     if (step.module === 'Family Tree')
     {
         treeProjectViewState(GENEO_TOUR_PROJECT_ID).focusPersonId = 'silver';
@@ -304,10 +327,27 @@ function geneoTourPrepare(index)
     if (step.module === 'Archive')
     {
         state.archiveView = 'files';
-        state.archiveSelectedFolderId = 'certificates';
-        state.archiveSelectedFileId = 'af5';
+        const fileStop = ['archive-inspector', 'archive-file-actions', 'archive-to-notes'].includes(step.id);
+        const folderStop = ['archive-location', 'archive-table', 'archive-folder-actions', 'archive-folder-modal'].includes(step.id);
+        state.archiveSelectedFolderId = fileStop ? 'delo44' : folderStop ? 'opis3' : null;
+        state.archiveSelectedFolderItemId = ['archive-folder-actions', 'archive-folder-modal'].includes(step.id)
+            ? 'delo44' : null;
+        state.archiveSelectedFileId = fileStop ? 'af1' : null;
+        state.archiveSelectedFileIds = [];
+        state.archiveSelectedSourceId = null;
+        state.archiveSearch = '';
+        state.archiveFileFilters = archiveFileFiltersWithDefaults({});
+        state.archiveFilterPresentation = 'folders';
+        state.archiveFilterScopeFolderId = null;
+        state.archiveExpandedFolders = { ...state.archiveExpandedFolders,
+            pawford: true, fond12: true, opis3: true };
+        state.archiveNavigationBackStack = folderStop || fileStop
+            ? [archiveNormalizeLocationSnapshot({ view: 'files', folderId: null })] : [];
+        state.archiveNavigationForwardStack = [];
         state.archiveInspectorCollapsed = false;
-        if (state.archiveInspectorSections) state.archiveInspectorSections.sources = true;
+        state.archiveFileEditing = false;
+        state.archiveFileEditDraft = null;
+        state.archiveInspectorSections.details = true;
     }
     if (step.module === 'Notes')
     {
@@ -369,7 +409,8 @@ function geneoTourClearTreeReveal()
         'geneo-tour-people-popover', 'geneo-tour-geneo-sidebar', 'geneo-tour-geneo-toolbar',
         'geneo-tour-geneo-tabs', 'geneo-tour-albums-sidebar',
         'geneo-tour-albums-inspector', 'geneo-tour-albums-tabs',
-        'geneo-tour-albums-popover');
+        'geneo-tour-albums-popover', 'geneo-tour-archive-sidebar',
+        'geneo-tour-archive-inspector', 'geneo-tour-archive-tabs');
 }
 
 function geneoTourRestorePeopleState()
@@ -392,8 +433,41 @@ function geneoTourRestoreAlbumsState()
     geneoTourRuntime.albumsOrigin = null;
 }
 
+function geneoTourRestoreArchiveState()
+{
+    if (!geneoTourRuntime.archiveOrigin) return;
+    Object.entries(geneoTourRuntime.archiveOrigin).forEach(([key, value]) =>
+    {
+        state[key] = structuredClone(value);
+    });
+    geneoTourRuntime.archiveOrigin = null;
+    const scroll = geneoTourRuntime.archiveOriginScroll;
+    geneoTourRuntime.archiveOriginScroll = null;
+    if (state.activeModule === 'Archive')
+    {
+        renderArchive();
+        requestAnimationFrame(() =>
+        {
+            Object.entries(scroll || {}).forEach(([selector, top]) =>
+            {
+                document.querySelector(selector)?.scrollTo(0, top);
+            });
+        });
+    }
+}
+
 function geneoTourApplyTreeReveal(step)
 {
+    if (step.module === 'Archive')
+    {
+        if (['archive-navigation', 'archive-folders'].includes(step.id)
+            || (step.id === 'archive-folder-actions' && innerWidth > 1100))
+            document.body.classList.add('geneo-tour-archive-sidebar');
+        if (['archive-folder-actions', 'archive-inspector', 'archive-file-actions'].includes(step.id))
+            document.body.classList.add('geneo-tour-archive-inspector');
+        if (step.id === 'archive-to-notes') document.body.classList.add('geneo-tour-archive-tabs');
+        return;
+    }
     if (step.module === 'Albums')
     {
         if (step.id === 'albums-navigation' || step.id === 'albums-albums')
@@ -478,9 +552,15 @@ function geneoTourTarget(index)
         'albums-connect-actions': '#albumsTagPeople',
         'albums-add-to-album': '#modalBackdrop .album-picker-modal',
         'albums-to-archive': '.topnav [data-module="Archive"]',
-        'archive-navigation': '.archive-sidebar',
-        'archive-file': '[data-archive-file-row="af5"]',
-        'archive-context': '#archive-file-section-sources',
+        'archive-navigation': '.archive-sidebar .side-nav',
+        'archive-folders': '.archive-sidebar-folder-tree',
+        'archive-location': '.archive-location-row',
+        'archive-table': '.archive-table-wrap',
+        'archive-folder-actions': '.archive-sidebar [data-archive-create-folder]',
+        'archive-folder-modal': '#modalBackdrop .archive-create-folder-modal',
+        'archive-inspector': '.archive-file-preview',
+        'archive-file-actions': '#archiveEditFile',
+        'archive-to-notes': '.topnav [data-module="Notes"]',
         'notes-list': '.notes-browser-pane',
         'notes-editor': '.notes-editor-card',
         'places-navigation': '.places-sidebar',
@@ -504,7 +584,9 @@ function geneoTourTarget(index)
         'geneograph-export': '.geneo-editor-toolbar [data-geneo-export]',
         'geneograph-to-albums': '.topnav [data-module="Albums"]'
     };
-    const target = document.querySelector(selectors[id]);
+    const target = id === 'archive-folder-actions' && innerWidth <= 1100
+        ? document.querySelector(geneoTourTertiarySelectors[id])
+        : document.querySelector(selectors[id]);
     if (id === 'people-saved-filters') return target?.parentElement?.parentElement || null;
     if (id === 'places-map' && (!target || !target.getBoundingClientRect().width))
         return document.querySelector('[data-places-inspector] .places-inspector-summary');
@@ -556,6 +638,7 @@ function geneoTourDestroyOverlay({ keepInert = false } = {})
     geneoTourRuntime.root?.remove();
     geneoTourRuntime.root = null;
     geneoTourRuntime.secondaryTarget = null;
+    geneoTourRuntime.tertiaryTarget = null;
     if (!keepInert)
     {
         document.querySelector('.app').inert = false;
@@ -584,6 +667,23 @@ function geneoTourClosePreview()
 
 function geneoTourOpenPreview(step)
 {
+    if (step.id === 'archive-folder-modal')
+    {
+        geneoTourRuntime.openingPreview = true;
+        try
+        {
+            openArchiveCreateFolderModal('delo44');
+            if (modalBackdrop.classList.contains('open'))
+            {
+                modalBackdrop.inert = true;
+                geneoTourRuntime.ownedPreview = 'modal';
+            }
+        }
+        finally
+        {
+            geneoTourRuntime.openingPreview = false;
+        }
+    }
     if (step.id === 'albums-filters')
     {
         const anchor = document.getElementById('albumsFilterButton');
@@ -694,6 +794,7 @@ function geneoTourClose({ completed = false, offerRestore = true } = {})
     geneoTourClosePreview();
     geneoTourRestorePeopleState();
     geneoTourRestoreAlbumsState();
+    geneoTourRestoreArchiveState();
     geneoTourDestroyOverlay();
     geneoTourClearTreeReveal();
     if (state.activeModule === 'People') renderPeople();
@@ -855,7 +956,7 @@ function geneoTourRenderOverlay(target = null)
             : [['finish', 'Explore the demo']]
         : [['back', 'Back'], ['next', index === geneoTourSteps.length - 1 ? 'Finish tour' : 'Next']];
     const root = document.createElement('div');
-    root.className = `geneo-tour${centered ? ' is-centered' : ''}${index < 0 ? ' is-welcome' : ''}${projectIntro ? ' is-project-intro' : ''}${['tree-quick-edit-modal', 'geneograph-create-modal', 'albums-add-to-album'].includes(geneoTourSteps[index]?.id) ? ' is-modal-stop' : ''}`;
+    root.className = `geneo-tour${centered ? ' is-centered' : ''}${index < 0 ? ' is-welcome' : ''}${projectIntro ? ' is-project-intro' : ''}${['tree-quick-edit-modal', 'geneograph-create-modal', 'albums-add-to-album', 'archive-folder-modal'].includes(geneoTourSteps[index]?.id) ? ' is-modal-stop' : ''}`;
     root.dataset.geneoTour = '';
     root.innerHTML = `
         <div class="geneo-tour-scrim" data-geneo-tour-scrim></div>
@@ -864,6 +965,7 @@ function geneoTourRenderOverlay(target = null)
         <div class="geneo-tour-scrim" data-geneo-tour-scrim></div>
         <div class="geneo-tour-target-block" data-geneo-tour-block></div>
         <div class="geneo-tour-target-block" data-geneo-tour-block-secondary hidden></div>
+        <div class="geneo-tour-target-block" data-geneo-tour-block-tertiary hidden></div>
         <section class="geneo-tour-card" role="dialog" aria-modal="true" aria-labelledby="geneoTourTitle" aria-describedby="geneoTourBody">
             <div class="geneo-tour-card-head">
                 ${outerScreen ? '' : `<div class="geneo-tour-chapter"><button class="geneo-tour-browse" type="button" data-geneo-tour-action="browse-modules">${icon.grid}<span data-geneo-tour-module-name aria-live="polite"></span></button></div>`}
@@ -884,8 +986,11 @@ function geneoTourRenderOverlay(target = null)
     root.addEventListener('click', event => event.stopPropagation());
     root.addEventListener('pointerdown', event => event.stopPropagation());
     geneoTourRuntime.target = target;
-    const secondarySelector = geneoTourSecondarySelectors[geneoTourSteps[index]?.id];
+    const secondarySelector = geneoTourSteps[index]?.id === 'archive-folder-actions' && innerWidth <= 1100
+        ? null : geneoTourSecondarySelectors[geneoTourSteps[index]?.id];
     geneoTourRuntime.secondaryTarget = secondarySelector ? document.querySelector(secondarySelector) : null;
+    const tertiarySelector = innerWidth > 1100 ? geneoTourTertiarySelectors[geneoTourSteps[index]?.id] : null;
+    geneoTourRuntime.tertiaryTarget = tertiarySelector ? document.querySelector(tertiarySelector) : null;
     document.querySelector('.app').inert = true;
     modalBackdrop.inert = true;
     document.addEventListener('scroll', geneoTourQueuePosition, true);
@@ -916,6 +1021,7 @@ function geneoTourRenderOverlay(target = null)
     geneoTourRuntime.resizeObserver.observe(root.querySelector('.geneo-tour-card'));
     if (target) geneoTourRuntime.resizeObserver.observe(target);
     if (geneoTourRuntime.secondaryTarget) geneoTourRuntime.resizeObserver.observe(geneoTourRuntime.secondaryTarget);
+    if (geneoTourRuntime.tertiaryTarget) geneoTourRuntime.resizeObserver.observe(geneoTourRuntime.tertiaryTarget);
     root.querySelector('[data-geneo-tour-action="start"], [data-geneo-tour-action="next"], [data-geneo-tour-action="finish"]')?.focus({ preventScroll: true });
     geneoTourPosition();
     document.fonts.ready.then(geneoTourQueuePosition);
@@ -975,6 +1081,7 @@ function geneoTourPosition()
     if (!root) return;
     const block = root.querySelector('[data-geneo-tour-block]');
     const secondaryBlock = root.querySelector('[data-geneo-tour-block-secondary]');
+    const tertiaryBlock = root.querySelector('[data-geneo-tour-block-tertiary]');
     const card = root.querySelector('.geneo-tour-card');
     if (!root.classList.contains('is-centered') && !geneoTourRuntime.target?.isConnected)
     {
@@ -995,6 +1102,13 @@ function geneoTourPosition()
         if (geneoTourRuntime.secondaryTarget)
             geneoTourRuntime.resizeObserver?.observe(geneoTourRuntime.secondaryTarget);
     }
+    if (geneoTourRuntime.tertiaryTarget && !geneoTourRuntime.tertiaryTarget.isConnected)
+    {
+        const selector = geneoTourTertiarySelectors[geneoTourSteps[geneoTourRuntime.index]?.id];
+        geneoTourRuntime.tertiaryTarget = selector ? document.querySelector(selector) : null;
+        if (geneoTourRuntime.tertiaryTarget)
+            geneoTourRuntime.resizeObserver?.observe(geneoTourRuntime.tertiaryTarget);
+    }
     const centered = root.classList.contains('is-centered') || root.classList.contains('is-module-map')
         || !target?.isConnected || geneoTourRuntime.fallback;
     if (centered)
@@ -1003,6 +1117,7 @@ function geneoTourPosition()
         geneoTourPaintScrims(root, []);
         block.hidden = true;
         secondaryBlock.hidden = true;
+        tertiaryBlock.hidden = true;
         card.style.left = '';
         card.style.top = '';
         return;
@@ -1019,7 +1134,11 @@ function geneoTourPosition()
     const secondaryRect = secondaryTarget?.isConnected ? secondaryTarget.getBoundingClientRect() : null;
     const secondary = secondaryRect?.width && secondaryRect.bottom > 0 && secondaryRect.top < innerHeight
         ? toHole(secondaryRect) : null;
-    const holes = [primary, ...(secondary ? [secondary] : [])];
+    const tertiaryRect = geneoTourRuntime.tertiaryTarget?.isConnected
+        ? geneoTourRuntime.tertiaryTarget.getBoundingClientRect() : null;
+    const tertiary = tertiaryRect?.width && tertiaryRect.bottom > 0 && tertiaryRect.top < innerHeight
+        ? toHole(tertiaryRect) : null;
+    const holes = [primary, ...(secondary ? [secondary] : []), ...(tertiary ? [tertiary] : [])];
     geneoTourPaintScrims(root, holes);
     const { left: x, top: y, right, bottom } = primary;
     block.hidden = false;
@@ -1027,6 +1146,9 @@ function geneoTourPosition()
     secondaryBlock.hidden = !secondary;
     if (secondary)
         secondaryBlock.style.cssText = `left:${secondary.left}px;top:${secondary.top}px;width:${secondary.right - secondary.left}px;height:${secondary.bottom - secondary.top}px`;
+    tertiaryBlock.hidden = !tertiary;
+    if (tertiary)
+        tertiaryBlock.style.cssText = `left:${tertiary.left}px;top:${tertiary.top}px;width:${tertiary.right - tertiary.left}px;height:${tertiary.bottom - tertiary.top}px`;
     if (innerWidth <= 640)
     {
         const sheetHeight = card.offsetHeight;
@@ -1061,7 +1183,7 @@ function geneoTourPosition()
             && top < hole.bottom && top + height > hole.top));
     if (!position)
     {
-        if (['tree-quick-edit-modal', 'geneograph-create-modal', 'albums-add-to-album'].includes(geneoTourSteps[geneoTourRuntime.index]?.id) && innerWidth > 640)
+        if (['tree-quick-edit-modal', 'geneograph-create-modal', 'albums-add-to-album', 'archive-folder-modal'].includes(geneoTourSteps[geneoTourRuntime.index]?.id) && innerWidth > 640)
         {
             root.classList.remove('is-unanchored');
             card.style.left = `${innerWidth - width - 12}px`;
@@ -1072,6 +1194,7 @@ function geneoTourPosition()
         geneoTourPaintScrims(root, []);
         block.hidden = true;
         secondaryBlock.hidden = true;
+        tertiaryBlock.hidden = true;
         card.style.left = '';
         card.style.top = '';
         return;
@@ -1114,6 +1237,27 @@ function geneoTourTargetRect(target)
 {
     const rect = target.getBoundingClientRect();
     const stepId = geneoTourSteps[geneoTourRuntime.index]?.id;
+    if (stepId === 'archive-inspector')
+    {
+        const details = main.querySelector('#archive-file-section-details')?.getBoundingClientRect();
+        const inspector = main.querySelector('.archive-inspector-scroll')?.getBoundingClientRect();
+        if (details && inspector)
+        {
+            const top = Math.max(rect.top, inspector.top);
+            return { left: inspector.left, right: inspector.right, top,
+                bottom: Math.max(top + 40, Math.min(details.bottom, inspector.bottom)) };
+        }
+    }
+    if (stepId === 'archive-file-actions')
+    {
+        const last = main.querySelector('.archive-inspector-toolbar [data-archive-row-actions="file"]')
+            ?.getBoundingClientRect();
+        if (last) return { left: rect.left, top: Math.min(rect.top, last.top),
+            right: last.right, bottom: Math.max(rect.bottom, last.bottom) };
+    }
+    if (stepId === 'archive-table')
+        return { left: rect.left, right: rect.right, top: Math.max(rect.top, 64),
+            bottom: Math.min(rect.bottom, innerHeight - 64) };
     if (stepId === 'albums-photos')
     {
         const viewport = main.querySelector('.albums-content')?.getBoundingClientRect();
@@ -1217,10 +1361,13 @@ async function geneoTourMoveTo(index)
         && geneoTourSteps[index]?.module !== 'People';
     const leavingAlbums = geneoTourSteps[geneoTourRuntime.index]?.module === 'Albums'
         && geneoTourSteps[index]?.module !== 'Albums';
+    const leavingArchive = geneoTourSteps[geneoTourRuntime.index]?.module === 'Archive'
+        && geneoTourSteps[index]?.module !== 'Archive';
     geneoTourDestroyOverlay({ keepInert: true });
     geneoTourClosePreview();
     if (leavingPeople) geneoTourRestorePeopleState();
     if (leavingAlbums) geneoTourRestoreAlbumsState();
+    if (leavingArchive) geneoTourRestoreArchiveState();
     geneoTourClearTreeReveal();
     geneoTourRuntime.index = index;
     geneoTourRuntime.fallback = false;
@@ -1303,6 +1450,11 @@ async function geneoTourMoveTo(index)
             if (inspector && section)
                 inspector.scrollTop += section.getBoundingClientRect().top - inspector.getBoundingClientRect().top - 8;
         }
+        else if (geneoTourSteps[index].id === 'archive-inspector'
+            || geneoTourSteps[index].id === 'archive-file-actions')
+            main.querySelector('.archive-inspector-scroll')?.scrollTo(0, 0);
+        else if (geneoTourSteps[index].id === 'archive-to-notes' && innerWidth <= 900)
+            target.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'instant' });
         else if (geneoTourSteps[index].id === 'albums-to-archive' && innerWidth <= 900)
             target.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'instant' });
         else if (geneoTourSteps[index].id === 'people-to-geneograph' && innerWidth <= 900)
