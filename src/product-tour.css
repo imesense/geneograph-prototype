@@ -355,7 +355,46 @@ body.geneo-tour-geneo-toolbar .geneo-editor-toolbar [data-geneo-toolbar-item] {
     display: inline-flex;
 }
 
+@media (max-width: 980px) {
+    body.geneo-tour-albums-inspector .albums-shell .albums-detail {
+        display: block;
+        position: fixed;
+        top: 60px;
+        right: 0;
+        z-index: 8;
+        width: min(400px, 100vw);
+        height: calc(100vh - 60px);
+        box-shadow: var(--shadow-soft);
+    }
+}
+
 @media (max-width: 900px) {
+    body.geneo-tour-albums-sidebar .workspace .sidebar {
+        display: block;
+        position: fixed;
+        top: 60px;
+        left: 0;
+        z-index: 8;
+        width: min(300px, 48vw);
+        height: calc(100vh - 60px);
+        overflow-y: auto;
+        box-shadow: var(--shadow-soft);
+    }
+
+    body.geneo-tour-albums-tabs .topnav {
+        display: flex;
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    body.geneo-tour-albums-tabs .topbar .top-actions {
+        display: none;
+    }
+
+    body.geneo-tour-albums-tabs .topnav .tab {
+        padding: 0 var(--space-3);
+    }
+
     body.geneo-tour-geneo-sidebar .workspace .sidebar {
         display: block;
         position: fixed;
@@ -434,6 +473,15 @@ body.geneo-tour-geneo-toolbar .geneo-editor-toolbar [data-geneo-toolbar-item] {
 }
 
 @media (max-width: 640px) {
+    body.geneo-tour-albums-sidebar .workspace .sidebar {
+        width: min(300px, 100vw);
+    }
+
+    body.geneo-tour-albums-popover #albumsFilterPopover {
+        max-height: min(38vh, 240px);
+        overflow-y: auto;
+    }
+
     body.geneo-tour-geneo-sidebar .workspace .sidebar {
         width: min(300px, 100vw);
     }

@@ -177,7 +177,7 @@ const state = {
         details: true,
         people: true,
         albums: true,
-        notes: true,
+        notes: false,
         sources: false,
         metadata: false
     },

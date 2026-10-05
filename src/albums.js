@@ -4575,7 +4575,7 @@ function renderAlbumsSidebar()
           class="albums-sidebar"
           aria-label="Albums navigation">
 
-          <div>
+          <div data-albums-tour-target="navigation">
             <div class="side-section-title">
               Navigation
             </div>
@@ -4622,7 +4622,7 @@ function renderAlbumsSidebar()
             </div>
           </div>
 
-          <div>
+          <div data-albums-tour-target="albums">
             <div
               class="
                 side-section-title
