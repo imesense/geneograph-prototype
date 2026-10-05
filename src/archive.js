@@ -3378,16 +3378,6 @@ function archivePlaceFilterOptions()
 const archiveFileFilterSchema =
     Object.freeze([
         Object.freeze({
-            key: 'sourceId',
-            label: 'Source',
-            control: 'combobox',
-            multiple: false,
-            layout: 'full',
-            placeholder: 'Search sources...',
-            defaultValue: '',
-            getOptions: connectedSourceFilterOptions
-        }),
-        Object.freeze({
             key:
             'scope',
 
@@ -3627,6 +3617,16 @@ const archiveFileFilterSchema =
                 to:
                 ''
             })
+        }),
+        Object.freeze({
+            key: 'sourceId',
+            label: 'Source',
+            control: 'combobox',
+            multiple: false,
+            layout: 'full',
+            placeholder: 'Search sources...',
+            defaultValue: '',
+            getOptions: connectedSourceFilterOptions
         }),
     ]);
 
@@ -10816,7 +10816,7 @@ function openArchiveFilterPopover(
         if (window.innerWidth <= 640)
             panel.querySelector('[data-archive-filter-close]')?.focus({ preventScroll: true });
         else
-            controller?.focusFirst();
+            panel.querySelector('[data-shared-filter-select]')?.focus({ preventScroll: true });
     });
 
     setTimeout(() =>
