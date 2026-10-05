@@ -231,16 +231,6 @@ function albumsPlaceFilterOptions()
 const albumsFilterSchema =
     Object.freeze([
         Object.freeze({
-            key: 'sourceId',
-            label: 'Source',
-            control: 'combobox',
-            multiple: false,
-            layout: 'full',
-            placeholder: 'Search sources...',
-            defaultValue: '',
-            getOptions: connectedSourceFilterOptions
-        }),
-        Object.freeze({
             key:
             'personId',
 
@@ -290,6 +280,17 @@ const albumsFilterSchema =
 
             getOptions:
             albumsPlaceFilterOptions
+        }),
+
+        Object.freeze({
+            key: 'sourceId',
+            label: 'Source',
+            control: 'combobox',
+            multiple: false,
+            layout: 'full',
+            placeholder: 'Search sources...',
+            defaultValue: '',
+            getOptions: connectedSourceFilterOptions
         }),
 
         Object.freeze({

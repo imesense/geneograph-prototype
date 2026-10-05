@@ -8029,6 +8029,7 @@ function openPlacesRouteMenu(
             popover.querySelector(
                 '#placesRouteSubjectSearch'
             );
+        let openBeforePointer = null;
 
         const openResults = () =>
         {
@@ -8051,8 +8052,32 @@ function openPlacesRouteMenu(
         );
 
         search?.addEventListener(
+            'pointerdown',
+            () =>
+            {
+                openBeforePointer = resultsOpen;
+            }
+        );
+
+        search?.addEventListener(
             'click',
-            openResults
+            () =>
+            {
+                const wasOpen = openBeforePointer;
+                openBeforePointer = null;
+                if (wasOpen === true)
+                {
+                    resultsOpen = false;
+                    activeIndex = -1;
+                    popover.querySelector('#placesRouteSubjectResults').hidden = true;
+                    search.setAttribute('aria-expanded', 'false');
+                    search.removeAttribute('aria-activedescendant');
+                }
+                else if (wasOpen === false || !resultsOpen)
+                {
+                    openResults();
+                }
+            }
         );
 
         search?.addEventListener(
@@ -9700,6 +9725,7 @@ function bindPlaceEditor()
       */
     let suppressInitialSuggestionOpen =
         true;
+    let openBeforePointer = null;
 
     input.addEventListener(
         'pointerdown',
@@ -9707,6 +9733,7 @@ function bindPlaceEditor()
         {
             suppressInitialSuggestionOpen =
                 false;
+            openBeforePointer = input.getAttribute('aria-expanded') === 'true';
         }
     );
 
@@ -9727,11 +9754,13 @@ function bindPlaceEditor()
         'click',
         () =>
         {
-            if (
-                input.getAttribute(
-                    'aria-expanded'
-                ) !== 'true'
-            )
+            const wasOpen = openBeforePointer;
+            openBeforePointer = null;
+            if (wasOpen === true)
+            {
+                closePlaceEditorSuggestions();
+            }
+            else if (input.getAttribute('aria-expanded') !== 'true')
             {
                 renderPlaceEditorSuggestions();
             }

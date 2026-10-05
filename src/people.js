@@ -492,6 +492,7 @@ function bindSharedFilterFields(
         let query = '';
         let activeIndex = -1;
         let visibleOptions = [];
+        let openBeforePointer = null;
 
         const optionId =
             index =>
@@ -953,6 +954,32 @@ function bindSharedFilterFields(
         );
 
         input.addEventListener(
+            'pointerdown',
+            () =>
+            {
+                openBeforePointer = !listbox.hidden;
+            }
+        );
+
+        input.addEventListener(
+            'click',
+            () =>
+            {
+                const wasOpen = openBeforePointer;
+                openBeforePointer = null;
+
+                if (wasOpen === true)
+                {
+                    close();
+                }
+                else if (listbox.hidden)
+                {
+                    open();
+                }
+            }
+        );
+
+        input.addEventListener(
             'input',
             () =>
             {
@@ -1083,7 +1110,6 @@ function bindSharedFilterFields(
                 else
                 {
                     close();
-                    input.focus();
                 }
             }
         );

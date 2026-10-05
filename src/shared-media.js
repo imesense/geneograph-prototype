@@ -1379,6 +1379,7 @@ function bindNameAffixComboboxes(root = document)
         const suggestions = nameAffixSuggestionList(kind);
         let activeIndex = -1;
         let currentOptions = [];
+        let openBeforePointer = null;
 
         function buildOptions(query)
         {
@@ -1444,6 +1445,17 @@ function bindNameAffixComboboxes(root = document)
         }
 
         input.addEventListener('focus', refresh);
+        input.addEventListener('pointerdown', () =>
+        {
+            openBeforePointer = !list.hidden;
+        });
+        input.addEventListener('click', () =>
+        {
+            const wasOpen = openBeforePointer;
+            openBeforePointer = null;
+            if (wasOpen === true) close();
+            else if (list.hidden) refresh();
+        });
         input.addEventListener('input', refresh);
         input.addEventListener('keydown', event =>
         {
@@ -3996,6 +4008,7 @@ function bindPlaceComboboxes(root = document)
 
         let activeIndex = -1;
         let currentOptions = []; // [{type:'place'|'create', place?, text?}]
+        let openBeforePointer = null;
 
         function placeMatchScore(place, q)
         {
@@ -4103,6 +4116,17 @@ function bindPlaceComboboxes(root = document)
         }
 
         input.addEventListener('focus', refresh);
+        input.addEventListener('pointerdown', () =>
+        {
+            openBeforePointer = !list.hidden;
+        });
+        input.addEventListener('click', () =>
+        {
+            const wasOpen = openBeforePointer;
+            openBeforePointer = null;
+            if (wasOpen === true) close();
+            else if (list.hidden) refresh();
+        });
         input.addEventListener('input', () =>
         {
             // if typed text no longer matches selected place display, clear selection

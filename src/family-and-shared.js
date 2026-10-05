@@ -392,9 +392,21 @@ function bindTreeSearch()
     const { signal } = controller;
     treeSearchRuntime.input = input;
     treeSearchRuntime.controller = controller;
+    let openBeforePointer = null;
 
     input.addEventListener('input', updateTreeSearchResults, { signal });
     input.addEventListener('focus', updateTreeSearchResults, { signal });
+    input.addEventListener('pointerdown', () =>
+    {
+        openBeforePointer = Boolean(treeSearchRuntime.menu);
+    }, { signal });
+    input.addEventListener('click', () =>
+    {
+        const wasOpen = openBeforePointer;
+        openBeforePointer = null;
+        if (wasOpen === true) hideTreeSearchResults();
+        else if (!treeSearchRuntime.menu) updateTreeSearchResults();
+    }, { signal });
     input.addEventListener('keydown', event =>
     {
         if (event.key === 'Escape')
