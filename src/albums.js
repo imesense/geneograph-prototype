@@ -6703,6 +6703,14 @@ function renderAlbumsDetailPane()
             photo.projectId
         );
 
+    const peopleCount =
+        getPhotoPeople(photo).length;
+
+    const albumCount =
+        (photo.albumIds || [])
+            .filter(id => getAlbumName(id))
+            .length;
+
     const peopleAction =
         actionsLocked
             ? ''
@@ -6806,7 +6814,12 @@ function renderAlbumsDetailPane()
                     photo,
                     actionsLocked
                 ),
-                peopleAction
+                peopleAction,
+                `${peopleCount} ${
+                    peopleCount === 1
+                        ? 'person'
+                        : 'people'
+                }`
             )}
 
           ${renderAlbumsDetailSection(
@@ -6816,7 +6829,12 @@ function renderAlbumsDetailPane()
                     photo,
                     actionsLocked
                 ),
-                albumAction
+                albumAction,
+                `${albumCount} ${
+                    albumCount === 1
+                        ? 'album'
+                        : 'albums'
+                }`
             )}
 
           ${renderAlbumsDetailSection(
