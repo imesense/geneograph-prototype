@@ -7090,9 +7090,7 @@ function renderPlacesRoutePopupPicker({
                     data-route-subject-open
                     aria-haspopup="listbox"
                     aria-expanded="false"
-                    aria-controls="
-                      placesRouteSubjectResults
-                    ">
+                    aria-controls="placesRouteSubjectResults">
 
                     ${
                         selected.person
@@ -7151,17 +7149,13 @@ function renderPlacesRoutePopupPicker({
                     ${icon.search}
 
                     <input
-                      id="
-                        placesRouteSubjectSearch
-                      "
+                      id="placesRouteSubjectSearch"
                       type="search"
                       role="combobox"
                       autocomplete="off"
                       aria-autocomplete="list"
                       aria-expanded="${open}"
-                      aria-controls="
-                        placesRouteSubjectResults
-                      "
+                      aria-controls="placesRouteSubjectResults"
                       aria-activedescendant="${
                             activeIndex >= 0
                                 ? `placesRouteSubjectOption${activeIndex}`
@@ -7201,9 +7195,7 @@ function renderPlacesRoutePopupPicker({
 
                                     return `
                             <button
-                              id="
-                                placesRouteSubjectOption${index}
-                              "
+                              id="placesRouteSubjectOption${index}"
                               class="
                                 places-route-popup-option
                                 ${
@@ -7635,26 +7627,19 @@ function openPlacesRouteMenu(
                 window.innerWidth - 24
             );
 
-        const below =
-            rect.bottom + 8;
-
-        const above =
-            rect.top
-          - popover.offsetHeight
-          - 8;
-
-        const top =
-            below
-          + popover.offsetHeight
-          <= window.innerHeight - 12
-                ? below
-                : Math.max(
-                    12,
-                    above
-                );
-
         popover.style.width =
             `${width}px`;
+
+        popover.style.maxHeight = '';
+        const availableBelow = window.innerHeight - rect.bottom - 20;
+        const availableAbove = rect.top - 20;
+        const placeBelow = availableBelow >= popover.offsetHeight
+            || availableBelow >= availableAbove;
+        const available = placeBelow ? availableBelow : availableAbove;
+        popover.classList.toggle('is-constrained', popover.offsetHeight > available);
+        popover.style.maxHeight = `${Math.max(0, available)}px`;
+        const top = placeBelow ? rect.bottom + 8
+            : rect.top - popover.offsetHeight - 8;
 
         popover.style.left =
             `${
@@ -7669,8 +7654,7 @@ function openPlacesRouteMenu(
                 )
             }px`;
 
-        popover.style.top =
-            `${top}px`;
+        popover.style.top = `${Math.max(12, top)}px`;
     };
 
     const positionOptions = () =>
@@ -7712,7 +7696,8 @@ function openPlacesRouteMenu(
 
         picker.classList.toggle(
             'opens-up',
-            availableBelow
+            !popover.classList.contains('is-constrained')
+          && availableBelow
             < expectedHeight
           && availableAbove
             > availableBelow
@@ -7842,18 +7827,14 @@ function openPlacesRouteMenu(
             ">
 
             <strong
-              id="
-                placesRoutePopoverTitle
-              ">
+              id="placesRoutePopoverTitle">
               ${escapeHtml(
                     t('Calculate route')
                 )}
             </strong>
 
             <span
-              id="
-                placesRoutePopoverDescription
-              ">
+              id="placesRoutePopoverDescription">
               ${escapeHtml(
                     t(
                         'Choose a person or surname. Routes use dated events with mapped places.'

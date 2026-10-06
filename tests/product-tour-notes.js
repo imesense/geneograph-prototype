@@ -48,7 +48,7 @@ assert.match(notes, /data-notes-tour-target="navigation"/);
 assert.match(notes, /data-notes-tour-target="collections"/);
 assert.match(styles, /geneo-tour-notes-sidebar/);
 assert.match(styles, /geneo-tour-notes-tabs/);
-assert.match(source, /'archive-filters',\s*'notes-filters'\]\.includes\(stepId\) \? 2 : 8/);
+assert.match(source, /'archive-filters',\s*'notes-filters', 'places-filters'/);
 assert.equal(vm.runInContext("geneoTourSecondarySelectors['notes-add-actions']", context), undefined);
 assert.match(source, /'notes-add-actions': '\[data-note-editor-section="events"\] \[data-note-manage-links="event"\]'/);
 context.innerWidth = 900;

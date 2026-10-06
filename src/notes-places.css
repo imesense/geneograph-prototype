@@ -3869,6 +3869,11 @@
     gap: var(--space-4);
     overflow: visible;
     box-sizing: border-box;
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+}
+
+.places-route-popover.is-constrained {
+    overflow: hidden;
 }
 
 .places-route-popover-head {
@@ -3947,10 +3952,20 @@
 
 .places-route-popup-body {
     min-width: 0;
-    min-height: 176px;
+    min-height: 0;
     display: grid;
     align-content: start;
     gap: var(--space-3);
+}
+
+.places-route-popover.is-constrained .places-route-popup-body {
+    overflow-y: auto;
+}
+
+.places-route-popover.is-constrained .places-route-popup-options {
+    position: static;
+    margin-top: 6px;
+    max-height: none;
 }
 
 .places-route-popup-field {
@@ -6535,6 +6550,30 @@
 
 .places-map-panel.is-picking .places-map-navigation-wrap {
     bottom: 88px;
+}
+
+@media (min-width: 1180px) and (max-width: 1280px) {
+    .places-coordinate-bar {
+        display: grid;
+        grid-template-columns: 1.3fr .65fr .75fr 1.1fr;
+        gap: 8px;
+    }
+
+    .places-coordinate-bar > div {
+        grid-column: 1 / -1;
+        margin-right: 0;
+    }
+
+    .places-coordinate-bar > button {
+        min-width: 0;
+        width: 100%;
+        padding-inline: 5px;
+        font-size: 12px;
+    }
+
+    .places-map-panel.is-picking .places-map-navigation-wrap {
+        bottom: 140px;
+    }
 }
 
 .places-editor-disclosure {

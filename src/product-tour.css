@@ -41,6 +41,44 @@
     width: min(440px, calc(100vw - 24px));
 }
 
+.geneo-tour.is-finish .geneo-tour-card-head {
+    display: none;
+}
+
+.geneo-tour.is-finish .geneo-tour-card h2 {
+    margin-top: 0;
+}
+
+@media (min-width: 1260px) and (max-width: 1280px) {
+    .geneo-tour.is-modal-stop:is(.is-places-add-modal, .is-places-edit-modal) .geneo-tour-card {
+        width: 248px;
+    }
+}
+
+@media (min-width: 641px) {
+    .geneo-tour.is-places-add-map .geneo-tour-card {
+        padding: var(--space-3);
+    }
+}
+
+@media (min-width: 741px) and (max-width: 800px) {
+    .geneo-tour.is-places-routes .geneo-tour-card {
+        width: 300px;
+    }
+}
+
+@media (min-width: 741px) and (max-width: 850px) {
+    .geneo-tour.is-places-filters .geneo-tour-card {
+        width: 240px;
+    }
+}
+
+@media (min-width: 851px) and (max-width: 1000px) {
+    .geneo-tour.is-places-filters .geneo-tour-card {
+        width: 300px;
+    }
+}
+
 .geneo-tour.is-welcome .geneo-tour-card {
     width: min(540px, calc(100vw - 24px));
 }
