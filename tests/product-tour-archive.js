@@ -21,10 +21,15 @@ const state = {
 const original = structuredClone(state);
 let modalOpen = false;
 let modalParent = null;
+let filterOpen = false;
+let filterClosed = false;
+const filterPopover = { inert: false };
 const context = vm.createContext({
     state, structuredClone, console, innerWidth: 1280,
     document: {
-        body: { classList: { add()
+        body: { style: { removeProperty()
+        {
+        } }, classList: { add()
         {
         }, remove()
         {
@@ -32,6 +37,13 @@ const context = vm.createContext({
         querySelector()
         {
             return null;
+        },
+        getElementById(id)
+        {
+            if (id === 'archiveFilterButton') return { setAttribute()
+            {
+            } };
+            return id === 'archiveFilterPopover' && filterOpen ? filterPopover : null;
         }
     },
     modalBackdrop: { inert: false, classList: { contains(name)
@@ -62,6 +74,15 @@ const context = vm.createContext({
     closeModal()
     {
         modalOpen = false;
+    },
+    openArchiveFilterPopover()
+    {
+        filterOpen = true;
+    },
+    closeArchiveFilterPopover()
+    {
+        filterOpen = false;
+        filterClosed = true;
     }
 });
 vm.runInContext(source, context);
@@ -70,7 +91,7 @@ const steps = evaluate('geneoTourSteps');
 const archiveSteps = steps.filter(step => step.module === 'Archive');
 assert.deepEqual(Array.from(archiveSteps, step => step.id), [
     'archive-welcome', 'archive-navigation', 'archive-folders', 'archive-location',
-    'archive-table', 'archive-folder-actions', 'archive-folder-modal',
+    'archive-table', 'archive-filters', 'archive-folder-actions', 'archive-folder-modal',
     'archive-inspector', 'archive-file-actions', 'archive-to-notes'
 ]);
 assert.equal(archiveSteps[0].presentation, 'centered');
@@ -90,6 +111,14 @@ const prepare = id => evaluate(`geneoTourPrepare(geneoTourSteps.findIndex(step =
 prepare('archive-location');
 assert.equal(state.archiveSelectedFolderId, 'opis3');
 assert.equal(state.archiveSelectedFileId, null);
+prepare('archive-filters');
+assert.equal(state.archiveSelectedFolderId, 'opis3');
+evaluate("geneoTourOpenPreview({ id: 'archive-filters' })");
+assert.equal(filterPopover.inert, true);
+assert.equal(evaluate('geneoTourRuntime.ownedPreview'), 'archive-filters');
+evaluate('geneoTourClosePreview()');
+assert.equal(filterClosed, true);
+assert.equal(filterOpen, false);
 prepare('archive-folder-actions');
 assert.equal(state.archiveSelectedFolderItemId, 'delo44');
 prepare('archive-folder-modal');
@@ -115,6 +144,24 @@ evaluate("geneoTourRuntime.index = geneoTourSteps.findIndex(step => step.id === 
 const bounds = evaluate('geneoTourTargetRect({ getBoundingClientRect: () => ({ top: 150 }) })');
 assert.deepEqual(Array.from([bounds.left, bounds.top, bounds.right, bounds.bottom]), [900, 150, 1250, 540]);
 assert.ok(!source.includes("'archive-inspector': '#archive-file-section-details'"));
+assert.equal(evaluate("geneoTourTarget(geneoTourSteps.findIndex(step => step.id === 'archive-navigation'))"), null);
+assert.equal(evaluate("geneoTourSecondarySelectors['archive-inspector']"), '[data-archive-file-row="af1"]');
+assert.equal(evaluate("geneoTourSecondarySelectors['archive-filters']"), '#archiveFilterButton');
+assert.match(source, /stepId === 'archive-inspector' && innerWidth <= 1100/);
+assert.match(source, /'archive-navigation': '\.archive-sidebar-section'/);
+assert.match(source, /'archive-folders': '\.archive-sidebar-tree-section'/);
+context.main = { querySelector(selector)
+{
+    const bounds = selector === '.archive-table-wrap'
+        ? { left: 20, right: 500, top: 250, bottom: 650 }
+        : selector === '.archive-inspector'
+            ? { left: 430, right: 830, top: 60, bottom: 720 } : null;
+    return bounds ? { getBoundingClientRect: () => bounds } : null;
+} };
+const rowBounds = evaluate(`geneoTourSecondaryRect({ getBoundingClientRect: () =>
+    ({ left: 21, right: 811, top: 300, bottom: 354 }) }, 'archive-inspector')`);
+assert.deepEqual(Array.from([rowBounds.left, rowBounds.top, rowBounds.right, rowBounds.bottom]),
+    [21, 300, 418, 354]);
 assert.match(stateSource, /archiveInspectorSections:\s*\{\s*details: true,\s*sources: false,/);
 evaluate('geneoTourRestoreArchiveState()');
 for (const key of Object.keys(original).filter(key => key.startsWith('archive')))
