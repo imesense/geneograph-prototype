@@ -34,7 +34,7 @@ const geneoTourSteps = [
     { id: 'people-profile-welcome', module: 'People', presentation: 'centered', title: 'Inside a person’s profile', body: 'A profile brings the person’s life details and connected research together in one place.' },
     { id: 'people-profile-hero', module: 'People', title: 'Silver’s profile at a glance', body: 'The hero summarizes Silver’s identity, photograph, life details, and profile actions.' },
     { id: 'people-profile-card', module: 'People', title: 'Explore the profile card', body: 'The four tabs organize the main information about Silver so you can move between different kinds of details.' },
-    { id: 'people-connected', module: 'People', title: 'Follow connected items', body: 'Photographs and archive files linked to Silver appear here, keeping their context close to his profile.' },
+    { id: 'people-connected', module: 'People', title: 'Follow connected items', body: 'Photos, archive files, places, and notes linked to Silver stay close to his profile.' },
     { id: 'people-to-geneograph', module: 'People', title: 'Continue to Geneograph', body: 'The Geneograph tab opens a visual board for arranging people, evidence, and research questions. Continue there next.' },
     { id: 'geneograph-welcome', module: 'Geneograph', presentation: 'centered', title: 'Welcome to Geneograph', body: 'Geneograph is a flexible visual workspace for family charts, evidence, and ideas you are still investigating.' },
     { id: 'geneograph-navigation', module: 'Geneograph', title: 'Find your boards', body: 'Use these four choices to see all boards, favourites, boards outside collections, or archived boards.' },
@@ -135,7 +135,11 @@ const geneoTourSecondarySelectors = {
     'places-outro': '[data-topbar-help]'
 };
 const geneoTourTertiarySelectors = {
+    'people-connected': '.profile-resource-card--notes',
     'archive-folder-actions': '.archive-folder-inspector-actions [data-archive-create-folder]'
+};
+const geneoTourQuaternarySelectors = {
+    'people-connected': '.profile-resource-card--places'
 };
 
 const geneoTourRuntime = {
@@ -148,6 +152,7 @@ const geneoTourRuntime = {
     target: null,
     secondaryTarget: null,
     tertiaryTarget: null,
+    quaternaryTarget: null,
     fallback: false,
     optionalFallback: false,
     origin: null,
@@ -787,6 +792,7 @@ function geneoTourDestroyOverlay({ keepInert = false } = {})
     geneoTourRuntime.root = null;
     geneoTourRuntime.secondaryTarget = null;
     geneoTourRuntime.tertiaryTarget = null;
+    geneoTourRuntime.quaternaryTarget = null;
     if (!keepInert)
     {
         document.querySelector('.app').inert = false;
@@ -1214,6 +1220,7 @@ function geneoTourRenderOverlay(target = null)
         <div class="geneo-tour-target-block" data-geneo-tour-block></div>
         <div class="geneo-tour-target-block" data-geneo-tour-block-secondary hidden></div>
         <div class="geneo-tour-target-block" data-geneo-tour-block-tertiary hidden></div>
+        <div class="geneo-tour-target-block" data-geneo-tour-block-quaternary hidden></div>
         <section class="geneo-tour-card" role="dialog" aria-modal="true" aria-labelledby="geneoTourTitle" aria-describedby="geneoTourBody">
             <div class="geneo-tour-card-head">
                 ${outerScreen ? '' : `<div class="geneo-tour-chapter"><button class="geneo-tour-browse" type="button" data-geneo-tour-action="browse-modules">${icon.grid}<span data-geneo-tour-module-name aria-live="polite"></span></button></div>`}
@@ -1237,8 +1244,11 @@ function geneoTourRenderOverlay(target = null)
     const secondarySelector = geneoTourSteps[index]?.id === 'archive-folder-actions' && innerWidth <= 1100
         ? null : geneoTourSecondarySelectors[geneoTourSteps[index]?.id];
     geneoTourRuntime.secondaryTarget = secondarySelector ? document.querySelector(secondarySelector) : null;
-    const tertiarySelector = innerWidth > 1100 ? geneoTourTertiarySelectors[geneoTourSteps[index]?.id] : null;
+    const tertiarySelector = innerWidth > 1100 || geneoTourSteps[index]?.id === 'people-connected'
+        ? geneoTourTertiarySelectors[geneoTourSteps[index]?.id] : null;
     geneoTourRuntime.tertiaryTarget = tertiarySelector ? document.querySelector(tertiarySelector) : null;
+    const quaternarySelector = geneoTourQuaternarySelectors[geneoTourSteps[index]?.id];
+    geneoTourRuntime.quaternaryTarget = quaternarySelector ? document.querySelector(quaternarySelector) : null;
     document.querySelector('.app').inert = true;
     modalBackdrop.inert = true;
     document.addEventListener('scroll', geneoTourQueuePosition, true);
@@ -1275,6 +1285,7 @@ function geneoTourRenderOverlay(target = null)
     if (target) geneoTourRuntime.resizeObserver.observe(target);
     if (geneoTourRuntime.secondaryTarget) geneoTourRuntime.resizeObserver.observe(geneoTourRuntime.secondaryTarget);
     if (geneoTourRuntime.tertiaryTarget) geneoTourRuntime.resizeObserver.observe(geneoTourRuntime.tertiaryTarget);
+    if (geneoTourRuntime.quaternaryTarget) geneoTourRuntime.resizeObserver.observe(geneoTourRuntime.quaternaryTarget);
     root.querySelector('[data-geneo-tour-action="start"], [data-geneo-tour-action="next"], [data-geneo-tour-action="finish"]')?.focus({ preventScroll: true });
     geneoTourPosition();
     document.fonts.ready.then(geneoTourQueuePosition);
@@ -1335,6 +1346,7 @@ function geneoTourPosition()
     const block = root.querySelector('[data-geneo-tour-block]');
     const secondaryBlock = root.querySelector('[data-geneo-tour-block-secondary]');
     const tertiaryBlock = root.querySelector('[data-geneo-tour-block-tertiary]');
+    const quaternaryBlock = root.querySelector('[data-geneo-tour-block-quaternary]');
     const card = root.querySelector('.geneo-tour-card');
     if (!root.classList.contains('is-centered') && !geneoTourRuntime.target?.isConnected)
     {
@@ -1362,6 +1374,13 @@ function geneoTourPosition()
         if (geneoTourRuntime.tertiaryTarget)
             geneoTourRuntime.resizeObserver?.observe(geneoTourRuntime.tertiaryTarget);
     }
+    if (geneoTourRuntime.quaternaryTarget && !geneoTourRuntime.quaternaryTarget.isConnected)
+    {
+        const selector = geneoTourQuaternarySelectors[geneoTourSteps[geneoTourRuntime.index]?.id];
+        geneoTourRuntime.quaternaryTarget = selector ? document.querySelector(selector) : null;
+        if (geneoTourRuntime.quaternaryTarget)
+            geneoTourRuntime.resizeObserver?.observe(geneoTourRuntime.quaternaryTarget);
+    }
     const centered = root.classList.contains('is-centered') || root.classList.contains('is-module-map')
         || !target?.isConnected || geneoTourRuntime.fallback;
     if (centered)
@@ -1371,27 +1390,37 @@ function geneoTourPosition()
         block.hidden = true;
         secondaryBlock.hidden = true;
         tertiaryBlock.hidden = true;
+        quaternaryBlock.hidden = true;
         card.style.left = '';
         card.style.top = '';
         return;
     }
+    const stepId = geneoTourSteps[geneoTourRuntime.index]?.id;
     const rect = geneoTourTargetRect(target);
+    const padding = ['people-columns', 'people-filters'].includes(stepId) ? 2 : 8;
     const toHole = bounds => ({
-        left: Math.max(8, Math.min(innerWidth - 8, bounds.left - 8)),
-        top: Math.max(8, Math.min(innerHeight - 8, bounds.top - 8)),
-        right: Math.max(9, Math.min(innerWidth - 8, bounds.right + 8)),
-        bottom: Math.max(9, Math.min(innerHeight - 8, bounds.bottom + 8))
+        left: Math.max(8, Math.min(innerWidth - 8, bounds.left - padding)),
+        top: Math.max(8, Math.min(innerHeight - 8, bounds.top - padding)),
+        right: Math.max(9, Math.min(innerWidth - 8, bounds.right + padding)),
+        bottom: Math.max(9, Math.min(innerHeight - 8, bounds.bottom + padding))
     });
     const primary = toHole(rect);
     const secondaryTarget = geneoTourRuntime.secondaryTarget;
     const secondaryRect = secondaryTarget?.isConnected ? secondaryTarget.getBoundingClientRect() : null;
-    const secondary = secondaryRect?.width && secondaryRect.bottom > 0 && secondaryRect.top < innerHeight
+    const compactConnected = geneoTourSteps[geneoTourRuntime.index]?.id === 'people-connected'
+        && innerWidth <= 1280;
+    const secondary = !compactConnected && secondaryRect?.width && secondaryRect.bottom > 0 && secondaryRect.top < innerHeight
         ? toHole(secondaryRect) : null;
     const tertiaryRect = geneoTourRuntime.tertiaryTarget?.isConnected
         ? geneoTourRuntime.tertiaryTarget.getBoundingClientRect() : null;
-    const tertiary = tertiaryRect?.width && tertiaryRect.bottom > 0 && tertiaryRect.top < innerHeight
+    const tertiary = !compactConnected && tertiaryRect?.width && tertiaryRect.bottom > 0 && tertiaryRect.top < innerHeight
         ? toHole(tertiaryRect) : null;
-    const holes = [primary, ...(secondary ? [secondary] : []), ...(tertiary ? [tertiary] : [])];
+    const quaternaryRect = geneoTourRuntime.quaternaryTarget?.isConnected
+        ? geneoTourRuntime.quaternaryTarget.getBoundingClientRect() : null;
+    const quaternary = !compactConnected && quaternaryRect?.width && quaternaryRect.bottom > 0 && quaternaryRect.top < innerHeight
+        ? toHole(quaternaryRect) : null;
+    const holes = [primary, ...(secondary ? [secondary] : []), ...(tertiary ? [tertiary] : []),
+        ...(quaternary ? [quaternary] : [])];
     geneoTourPaintScrims(root, holes);
     const { left: x, top: y, right, bottom } = primary;
     block.hidden = false;
@@ -1402,6 +1431,9 @@ function geneoTourPosition()
     tertiaryBlock.hidden = !tertiary;
     if (tertiary)
         tertiaryBlock.style.cssText = `left:${tertiary.left}px;top:${tertiary.top}px;width:${tertiary.right - tertiary.left}px;height:${tertiary.bottom - tertiary.top}px`;
+    quaternaryBlock.hidden = !quaternary;
+    if (quaternary)
+        quaternaryBlock.style.cssText = `left:${quaternary.left}px;top:${quaternary.top}px;width:${quaternary.right - quaternary.left}px;height:${quaternary.bottom - quaternary.top}px`;
     if (innerWidth <= 640)
     {
         const sheetHeight = card.offsetHeight;
@@ -1439,6 +1471,21 @@ function geneoTourPosition()
             && top < hole.bottom && top + height > hole.top));
     if (!position)
     {
+        if (stepId === 'people-profile-card' && innerWidth > 640 && innerWidth <= 1280)
+        {
+            const cardLeft = innerWidth - width - 12;
+            const partial = { ...primary, right: Math.min(primary.right, cardLeft - 12),
+                bottom: Math.min(innerHeight - 8, Math.max(primary.bottom, rect.bottom)) };
+            if (partial.right - partial.left >= 200 && partial.bottom - partial.top >= 80)
+            {
+                geneoTourPaintScrims(root, [partial]);
+                block.style.cssText = `left:${partial.left}px;top:${partial.top}px;width:${partial.right - partial.left}px;height:${partial.bottom - partial.top}px`;
+                root.classList.remove('is-unanchored');
+                card.style.left = `${cardLeft}px`;
+                card.style.top = `${Math.max(12, Math.min(innerHeight - height - 12, partial.top))}px`;
+                return;
+            }
+        }
         if (['tree-quick-edit-modal', 'geneograph-create-modal', 'albums-add-to-album', 'archive-folder-modal'].includes(geneoTourSteps[geneoTourRuntime.index]?.id) && innerWidth > 640)
         {
             root.classList.remove('is-unanchored');
@@ -1451,6 +1498,7 @@ function geneoTourPosition()
         block.hidden = true;
         secondaryBlock.hidden = true;
         tertiaryBlock.hidden = true;
+        quaternaryBlock.hidden = true;
         card.style.left = '';
         card.style.top = '';
         return;
@@ -1460,7 +1508,7 @@ function geneoTourPosition()
     card.style.top = `${position[1]}px`;
 }
 
-function geneoTourScrollTarget(target, delta)
+function geneoTourScrollTarget(target, delta, allowPartial = false)
 {
     for (let parent = target.parentElement; parent; parent = parent.parentElement)
     {
@@ -1468,7 +1516,7 @@ function geneoTourScrollTarget(target, delta)
             || parent.scrollHeight <= parent.clientHeight + 1) continue;
         const before = parent.scrollTop;
         parent.scrollTop += delta;
-        if (Math.abs(parent.scrollTop - before) < Math.abs(delta) - 2)
+        if (Math.abs(parent.scrollTop - before) < Math.abs(delta) - 2 && !allowPartial)
         {
             parent.scrollTop = before;
             continue;
@@ -1575,8 +1623,16 @@ function geneoTourTargetRect(target)
     if (stepId === 'people-navigation')
     {
         const other = main.closest('.workspace')?.querySelector('.side-nav [data-open-profile]')?.getBoundingClientRect();
-        return other ? { left: Math.min(rect.left, other.left), top: Math.min(rect.top, other.top),
+        const heading = target.closest('.side-nav')?.previousElementSibling?.getBoundingClientRect();
+        return other ? { left: Math.min(rect.left, other.left, heading?.left ?? rect.left),
+            top: Math.min(rect.top, other.top, heading?.top ?? rect.top),
             right: Math.max(rect.right, other.right), bottom: Math.max(rect.bottom, other.bottom) } : rect;
+    }
+    if (innerWidth <= 1280 && ['people-profile-card', 'people-connected'].includes(stepId))
+    {
+        const visibleTop = Math.max(72, rect.top);
+        return { left: rect.left, right: rect.right, top: visibleTop,
+            bottom: Math.min(rect.bottom, innerHeight - 8, Math.max(visibleTop + 80, innerHeight * .58)) };
     }
     if (stepId === 'tree-navigation')
     {
@@ -1722,12 +1778,17 @@ async function geneoTourMoveTo(index)
         }
         else if (geneoTourSteps[index].id === 'tree-to-people')
             main.querySelector('.tree-inspector')?.scrollTo(0, 0);
-        else if (geneoTourSteps[index].id === 'people-connected')
+        else if (geneoTourSteps[index].id === 'people-profile-card'
+            || geneoTourSteps[index].id === 'people-connected')
         {
-            const archive = main.querySelector('.profile-resource-card--archive');
-            const photos = target.getBoundingClientRect();
-            const files = archive?.getBoundingClientRect();
-            if (files) geneoTourScrollTarget(target, (photos.top + files.bottom) / 2 - innerHeight / 2);
+            const rect = target.getBoundingClientRect();
+            if (innerWidth <= 1280)
+                geneoTourScrollTarget(target, rect.top - Math.max(80, innerHeight * .16), true);
+            else if (geneoTourSteps[index].id === 'people-connected')
+            {
+                const last = main.querySelector('.profile-resource-card--places')?.getBoundingClientRect();
+                if (last) geneoTourScrollTarget(target, (rect.top + last.bottom) / 2 - innerHeight / 2, true);
+            }
         }
         else if (geneoTourSteps[index].id === 'albums-summary' || geneoTourSteps[index].id === 'albums-actions')
             main.querySelector('.albums-detail')?.scrollTo(0, 0);

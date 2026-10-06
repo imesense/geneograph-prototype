@@ -5919,7 +5919,7 @@ const RU_UI_TOUR = Object.freeze({
     'Explore the profile card': 'Изучите карточку профиля',
     'The four tabs organize the main information about Silver so you can move between different kinds of details.': 'Четыре вкладки упорядочивают основные сведения о Сильвере и помогают переходить между ними.',
     'Follow connected items': 'Изучите связанные материалы',
-    'Photographs and archive files linked to Silver appear here, keeping their context close to his profile.': 'Связанные с Сильвером фотографии и архивные файлы показаны здесь, рядом с его профилем.',
+    'Photos, archive files, places, and notes linked to Silver stay close to his profile.': 'Фотографии, архивные файлы, места и заметки, связанные с Сильвером, находятся рядом с его профилем.',
     'Continue to Geneograph': 'Перейдите к Geneograph',
     'The Geneograph tab opens a visual board for arranging people, evidence, and research questions. Continue there next.': 'Вкладка Geneograph открывает холст для размещения людей, свидетельств и вопросов исследования. Далее перейдём туда.',
     'Welcome to Geneograph': 'Добро пожаловать в Geneograph',
