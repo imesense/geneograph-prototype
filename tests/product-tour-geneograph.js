@@ -29,7 +29,7 @@ const modalBackdrop = { inert: false, classList: {
     }
 } };
 const context = vm.createContext({
-    state, structuredClone, console, modalBackdrop,
+    state, structuredClone, console, modalBackdrop, innerWidth: 1440,
     document: { body: { classList: {
         add(value)
         {
@@ -83,7 +83,9 @@ assert.match(css, /\.geneo-tour-browse\s*\{[^}]*background: transparent/s);
 assert.doesNotMatch(css, /\.geneo-tour-browse:hover\s*\{[^}]*background:/s);
 assert.match(css, /\.geneo-tour\.is-module-map \.geneo-tour-card\s*\{[^}]*560px/s);
 assert.match(css, /\.geneo-tour-map-list\s*\{[^}]*grid-template-columns: repeat\(2/s);
+assert.match(css, /\.geneo-tour-map-list\s*\{[^}]*grid-template-rows: repeat\(4, auto\);[^}]*grid-auto-flow: column/s);
 assert.match(css, /@media \(max-width: 480px\)\s*\{\s*\.geneo-tour-map-list\s*\{[^}]*grid-template-columns: minmax\(0, 1fr\)/s);
+assert.match(css, /@media \(max-width: 480px\)\s*\{\s*\.geneo-tour-map-list\s*\{[^}]*grid-auto-flow: row/s);
 const chapter = steps.filter(step => step.module === 'Geneograph');
 assert.deepEqual(Array.from(chapter, step => step.id), [
     'geneograph-welcome', 'geneograph-navigation', 'geneograph-collections',
