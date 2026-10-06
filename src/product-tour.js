@@ -1523,9 +1523,11 @@ function geneoTourPosition()
         if (stepId === 'archive-inspector' && secondary)
         {
             const left = Math.max(12, Math.min(secondary.left, innerWidth - width - 12));
-            const top = secondary.bottom + 12;
-            if (top + height <= innerHeight - 12 && !holes.some(hole =>
-                left < hole.right && left + width > hole.left && top < hole.bottom && top + height > hole.top))
+            const positions = [secondary.bottom + 12, secondary.top - height - 12];
+            const top = positions.find(candidate => candidate >= 12 && candidate + height <= innerHeight - 12
+                && !holes.some(hole => left < hole.right && left + width > hole.left
+                    && candidate < hole.bottom && candidate + height > hole.top));
+            if (top !== undefined)
             {
                 root.classList.remove('is-unanchored');
                 card.style.left = `${left}px`;

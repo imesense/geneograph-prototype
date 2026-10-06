@@ -148,6 +148,7 @@ assert.equal(evaluate("geneoTourTarget(geneoTourSteps.findIndex(step => step.id 
 assert.equal(evaluate("geneoTourSecondarySelectors['archive-inspector']"), '[data-archive-file-row="af1"]');
 assert.equal(evaluate("geneoTourSecondarySelectors['archive-filters']"), '#archiveFilterButton');
 assert.match(source, /stepId === 'archive-inspector' && innerWidth <= 1100/);
+assert.match(source, /secondary\.top - height - 12/);
 assert.match(source, /'archive-navigation': '\.archive-sidebar-section'/);
 assert.match(source, /'archive-folders': '\.archive-sidebar-tree-section'/);
 context.main = { querySelector(selector)
