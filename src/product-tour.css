@@ -78,10 +78,10 @@
 }
 
 .geneo-tour-cover {
-    min-height: 104px;
+    aspect-ratio: 600 / 125;
     border: 1px solid var(--border-strong);
     border-radius: var(--radius-sm);
-    background: var(--surface-app) url('assets/geneograph-cover-tree.png') center / cover no-repeat;
+    background: var(--surface-app) url('assets/geneograph-tour-thread.png') center / contain no-repeat;
 }
 
 .geneo-tour.is-centered .geneo-tour-card,
