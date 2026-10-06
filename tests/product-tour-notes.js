@@ -20,7 +20,7 @@ assert.deepEqual(ids, [
 assert.equal(steps.find(step => step.id === 'notes-welcome').presentation, 'centered');
 assert.equal(steps.findIndex(step => step.id === 'notes-welcome'),
     steps.findIndex(step => step.id === 'archive-to-notes') + 1);
-assert.equal(steps.findIndex(step => step.id === 'places-navigation'),
+assert.equal(steps.findIndex(step => step.id === 'places-welcome'),
     steps.findIndex(step => step.id === 'notes-to-places') + 1);
 assert.match(source, /state\.selectedNoteId = 'note-daisy-parentage'/);
 assert.match(source, /'notes-list-example': '\[data-note-id="note-daisy-parentage"\]'/);

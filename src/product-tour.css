@@ -314,6 +314,15 @@
     min-width: 0;
 }
 
+.geneo-tour.is-finish .geneo-tour-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.geneo-tour.is-finish .geneo-tour-actions .button {
+    min-width: 0;
+}
+
 .geneo-tour:not(.is-centered) .geneo-tour-actions,
 .geneo-tour.is-project-intro .geneo-tour-actions {
     display: grid;
@@ -382,6 +391,18 @@ body.geneo-tour-geneo-toolbar .geneo-editor-toolbar [data-geneo-toolbar-item] {
 }
 
 @media (max-width: 900px) {
+    body.geneo-tour-places-sidebar .workspace .sidebar {
+        display: block;
+        position: fixed;
+        top: 60px;
+        left: 0;
+        z-index: 8;
+        width: min(300px, 100vw);
+        height: calc(100vh - 60px);
+        overflow-y: auto;
+        box-shadow: var(--shadow-soft);
+    }
+
     body.geneo-tour-notes-sidebar .workspace .sidebar {
         display: block;
         position: fixed;
@@ -538,6 +559,12 @@ body.geneo-tour-geneo-toolbar .geneo-editor-toolbar [data-geneo-toolbar-item] {
 }
 
 @media (max-width: 640px) {
+    body.geneo-tour-places-popover #placesFilterPopover,
+    body.geneo-tour-places-popover .places-route-popover {
+        max-height: min(38vh, 240px);
+        overflow-y: auto;
+    }
+
     body.geneo-tour-notes-popover .notes-filter-popover {
         max-height: min(38vh, 240px);
     }
