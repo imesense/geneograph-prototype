@@ -2591,18 +2591,6 @@
 }
 
 @container (max-width: 940px) {
-    .people-normal-toolbar .people-columns-button,
-    .people-normal-toolbar .people-filter-button {
-        width: 44px;
-        min-width: 44px;
-        padding: 0;
-    }
-
-    .people-normal-toolbar .people-columns-button span,
-    .people-normal-toolbar .people-filter-button > span:not(.people-filter-icon) {
-        display: none;
-    }
-
     .people-normal-toolbar .app-sort-trigger {
         width: 44px;
         padding: 0;
@@ -2615,7 +2603,31 @@
     }
 }
 
-@container (max-width: 520px) {
+@container (max-width: 800px) {
+    .people-normal-toolbar .people-filter-button {
+        width: 44px;
+        min-width: 44px;
+        padding: 0;
+    }
+
+    .people-normal-toolbar .people-filter-button > span:not(.people-filter-icon) {
+        display: none;
+    }
+}
+
+@container (max-width: 650px) {
+    .people-normal-toolbar .people-columns-button {
+        width: 44px;
+        min-width: 44px;
+        padding: 0;
+    }
+
+    .people-normal-toolbar .people-columns-button span {
+        display: none;
+    }
+}
+
+@container (max-width: 540px) {
     .people-normal-toolbar #addPeoplePerson {
         width: 44px;
         min-width: 44px;
