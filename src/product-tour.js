@@ -132,7 +132,6 @@ const geneoTourSecondarySelectors = {
     'people-to-profile': '.people-layout .tree-person-hero-profile',
     'people-connected': '.profile-resource-card--archive',
     'notes-filters': '#notesFilterButton',
-    'notes-add-actions': '[data-note-editor-section="events"] [data-note-manage-links="event"]',
     'places-list': '.places-view-switch',
     'places-filters': '#placesFilterButton',
     'places-actions': '[data-place-menu="place-meowbridge"]',
@@ -217,6 +216,8 @@ function geneoTourCaptureOrigin()
         const element = document.querySelector(selector);
         if (element) scroll[selector] = { x: element.scrollLeft, y: element.scrollTop };
     });
+    scroll.page = { x: document.scrollingElement?.scrollLeft || 0,
+        y: document.scrollingElement?.scrollTop || 0 };
     return { values, scroll };
 }
 
@@ -229,7 +230,7 @@ function geneoTourRestoreOrigin(origin)
     {
         Object.entries(origin.scroll).forEach(([selector, point]) =>
         {
-            const element = document.querySelector(selector);
+            const element = selector === 'page' ? document.scrollingElement : document.querySelector(selector);
             if (element) element.scrollTo(point.x, point.y);
         });
     });
@@ -282,6 +283,7 @@ function geneoTourPrepare(index)
         geneoTourRuntime.notesOriginScroll = Object.fromEntries(
             ['.main', '.notes-browser-scroll', '.notes-right-pane'].map(selector =>
                 [selector, document.querySelector(selector)?.scrollTop || 0]));
+        geneoTourRuntime.notesOriginScroll.page = document.scrollingElement?.scrollTop || 0;
     }
     if (step.module === 'People' && !geneoTourRuntime.peopleOrigin)
     {
@@ -540,6 +542,8 @@ function geneoTourRestoreNotesState({ renderNow = true } = {})
     geneoTourRuntime.notesOrigin = null;
     const scroll = geneoTourRuntime.notesOriginScroll;
     geneoTourRuntime.notesOriginScroll = null;
+    if (!renderNow && scroll?.page !== undefined)
+        document.scrollingElement?.scrollTo(0, scroll.page);
     if (renderNow && state.activeModule === 'Notes')
     {
         renderNotes();
@@ -547,7 +551,8 @@ function geneoTourRestoreNotesState({ renderNow = true } = {})
         {
             Object.entries(scroll || {}).forEach(([selector, top]) =>
             {
-                document.querySelector(selector)?.scrollTo(0, top);
+                if (selector === 'page') document.scrollingElement?.scrollTo(0, top);
+                else document.querySelector(selector)?.scrollTo(0, top);
             });
         });
     }
@@ -713,7 +718,7 @@ function geneoTourTarget(index)
         'notes-rich-text': '.notes-rich-editor-shell',
         'notes-sections': '.notes-editor-sections',
         'notes-checklist': '[data-note-editor-section="checklist"]',
-        'notes-add-actions': '[data-note-editor-section="people"] [data-note-manage-links="person"]',
+        'notes-add-actions': '[data-note-editor-section="events"] [data-note-manage-links="event"]',
         'notes-add-events': '#modalBackdrop [aria-labelledby="notesEventsTitle"]',
         'notes-to-places': '.topnav [data-module="Places"]',
         'places-navigation': '.places-nav',
@@ -809,7 +814,7 @@ function geneoTourDestroyOverlay({ keepInert = false } = {})
         modalBackdrop.inert = false;
     }
     document.removeEventListener('scroll', geneoTourQueuePosition, true);
-    window.removeEventListener('resize', geneoTourQueuePosition);
+    window.removeEventListener('resize', geneoTourOnResize);
 }
 
 function geneoTourClosePreview()
@@ -1293,7 +1298,7 @@ function geneoTourRenderOverlay(target = null)
     document.querySelector('.app').inert = true;
     modalBackdrop.inert = true;
     document.addEventListener('scroll', geneoTourQueuePosition, true);
-    window.addEventListener('resize', geneoTourQueuePosition);
+    window.addEventListener('resize', geneoTourOnResize);
     root.querySelectorAll('[data-geneo-tour-action]').forEach(button => button.addEventListener('click', () =>
     {
         const action = button.dataset.geneoTourAction;
@@ -1339,6 +1344,28 @@ function geneoTourQueuePosition()
     {
         geneoTourRuntime.positionFrame = 0;
         geneoTourPosition();
+    });
+}
+
+function geneoTourOnResize()
+{
+    const stepId = geneoTourSteps[geneoTourRuntime.index]?.id;
+    if (!['notes-rich-text', 'notes-sections', 'notes-checklist', 'notes-add-actions'].includes(stepId))
+    {
+        geneoTourQueuePosition();
+        return;
+    }
+    requestAnimationFrame(() =>
+    {
+        if (!geneoTourRuntime.active || geneoTourSteps[geneoTourRuntime.index]?.id !== stepId
+            || !geneoTourRuntime.target?.isConnected) return;
+        if (stepId === 'notes-rich-text')
+        {
+            main.querySelector('.notes-right-pane')?.scrollTo(0, 0);
+            if (innerWidth <= 1100) document.scrollingElement?.scrollTo(0, 0);
+        }
+        else geneoTourAlignNotesTarget(geneoTourRuntime.target);
+        geneoTourQueuePosition();
     });
 }
 
@@ -1438,7 +1465,8 @@ function geneoTourPosition()
     }
     const stepId = geneoTourSteps[geneoTourRuntime.index]?.id;
     const rect = geneoTourTargetRect(target);
-    const padding = ['people-columns', 'people-filters', 'albums-filters', 'archive-filters'].includes(stepId) ? 2 : 8;
+    const padding = ['people-columns', 'people-filters', 'albums-filters', 'archive-filters',
+        'notes-filters'].includes(stepId) ? 2 : 8;
     const toHole = bounds => ({
         left: Math.max(8, Math.min(innerWidth - 8, bounds.left - padding)),
         top: Math.max(8, Math.min(innerHeight - 8, bounds.top - padding)),
@@ -1508,7 +1536,12 @@ function geneoTourPosition()
     root.classList.remove('is-top-sheet');
     const width = card.offsetWidth;
     const height = card.offsetHeight;
-    const candidates = [
+    const preferred = [];
+    if (stepId === 'notes-rich-text' && innerWidth > 640 && innerWidth <= 1100)
+        preferred.push([right + 12, Math.max(12, Math.min(y, innerHeight - height - 12))]);
+    if (stepId === 'notes-add-actions' && innerWidth > 640)
+        preferred.push([x - width - 12, Math.max(12, Math.min(y, innerHeight - height - 12))]);
+    const candidates = [...preferred,
         [Math.min(x, innerWidth - width - 12), bottom + 12],
         [Math.min(x, innerWidth - width - 12), y - height - 12],
         [right + 12, Math.min(y, innerHeight - height - 12)],
@@ -1601,6 +1634,25 @@ function geneoTourScrollTarget(target, delta, allowPartial = false)
     return true;
 }
 
+function geneoTourAlignNotesTarget(target)
+{
+    const pane = main.querySelector('.notes-right-pane');
+    if (!pane || !target) return;
+    if (innerWidth > 1100)
+    {
+        if (document.scrollingElement) document.scrollingElement.scrollTop = 0;
+        const header = main.querySelector('.notes-editor-header')?.getBoundingClientRect();
+        const boundary = (header?.bottom || pane.getBoundingClientRect().top) + 12;
+        pane.scrollTop += target.getBoundingClientRect().top - boundary;
+    }
+    else
+    {
+        pane.scrollTop = 0;
+        const page = document.scrollingElement;
+        if (page) page.scrollTop += target.getBoundingClientRect().top - 90;
+    }
+}
+
 function geneoTourTargetRect(target)
 {
     const rect = target.getBoundingClientRect();
@@ -1621,14 +1673,28 @@ function geneoTourTargetRect(target)
     if (['notes-editor-overview', 'notes-rich-text', 'notes-sections', 'notes-checklist'].includes(stepId))
     {
         const pane = main.querySelector('.notes-right-pane')?.getBoundingClientRect();
+        const header = main.querySelector('.notes-editor-header')?.getBoundingClientRect();
         const collections = main.querySelector('[data-note-editor-section="collections"]')?.getBoundingClientRect();
         if (pane)
         {
             const bottom = stepId === 'notes-editor-overview' && collections
                 ? collections.bottom : rect.bottom;
-            const top = Math.max(rect.top, pane.top);
-            return { left: pane.left, right: pane.right, top,
-                bottom: Math.max(top + 40, Math.min(bottom, pane.bottom, innerHeight - 8)) };
+            const visibleTop = stepId === 'notes-sections' || stepId === 'notes-checklist'
+                ? innerWidth > 1100 ? Math.max(pane.top, (header?.bottom || pane.top) + 12) : 64
+                : pane.top;
+            const top = Math.max(rect.top, visibleTop);
+            const sheetTop = innerWidth <= 640 && ['notes-rich-text', 'notes-sections', 'notes-checklist'].includes(stepId)
+                ? innerHeight - (geneoTourRuntime.root?.querySelector('.geneo-tour-card')?.offsetHeight || 0) - 12
+                : innerHeight - 8;
+            const compactFocus = ['notes-rich-text', 'notes-sections', 'notes-checklist'].includes(stepId)
+                && innerWidth > 640 && innerWidth <= 1100;
+            const left = compactFocus
+                ? rect.left : pane.left;
+            const right = compactFocus
+                ? Math.min(rect.right, innerWidth - (geneoTourRuntime.root?.querySelector('.geneo-tour-card')?.offsetWidth || 360) - 32)
+                : pane.right;
+            return { left, right, top,
+                bottom: Math.max(top + 40, Math.min(bottom, pane.bottom, sheetTop)) };
         }
     }
     if (stepId === 'archive-inspector')
@@ -1885,17 +1951,9 @@ async function geneoTourMoveTo(index)
         else if (geneoTourSteps[index].id === 'notes-list-example')
             target.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' });
         else if (['notes-editor-overview', 'notes-rich-text'].includes(geneoTourSteps[index].id))
-            main.querySelector('.notes-right-pane')?.scrollTo(0, 0);
-        else if (['notes-sections', 'notes-checklist', 'notes-add-actions'].includes(geneoTourSteps[index].id))
         {
-            const pane = main.querySelector('.notes-right-pane');
-            const section = geneoTourSteps[index].id === 'notes-add-actions'
-                ? target.closest('.notes-panel-section') : target;
-            if (pane && section)
-                pane.scrollTop += section.getBoundingClientRect().top - pane.getBoundingClientRect().top - 12;
-            const visibleTarget = geneoTourSteps[index].id === 'notes-add-actions'
-                ? geneoTourRuntime.secondaryTarget || target : target;
-            visibleTarget.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' });
+            main.querySelector('.notes-right-pane')?.scrollTo(0, 0);
+            if (innerWidth <= 1100) document.scrollingElement?.scrollTo(0, 0);
         }
         else if (geneoTourSteps[index].id === 'notes-to-places' && innerWidth <= 900)
             target.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'instant' });
@@ -1919,6 +1977,12 @@ async function geneoTourMoveTo(index)
             target.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' });
         }
         await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    }
+    if (token !== geneoTourRuntime.token || !geneoTourRuntime.active) return;
+    if (target && ['notes-sections', 'notes-checklist', 'notes-add-actions'].includes(geneoTourSteps[index].id))
+    {
+        geneoTourAlignNotesTarget(target);
+        await new Promise(resolve => requestAnimationFrame(resolve));
     }
     if (token !== geneoTourRuntime.token || !geneoTourRuntime.active) return;
     geneoTourRenderOverlay(target);

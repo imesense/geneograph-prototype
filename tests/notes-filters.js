@@ -5,6 +5,7 @@ const vm = require('node:vm');
 
 const root = path.join(__dirname, '..', 'src');
 const source = fs.readFileSync(path.join(root, 'notes.js'), 'utf8');
+const styles = fs.readFileSync(path.join(root, 'notes-places.css'), 'utf8');
 const start = source.indexOf('const defaultNotesFilters =');
 const end = source.indexOf('function notesFilterCount()', start);
 assert.ok(start >= 0 && end > start, 'Notes filter definitions were not found');
@@ -72,4 +73,9 @@ const shared = fs.readFileSync(path.join(root, 'shared-actions.js'), 'utf8');
 assert.match(shared, /state\.notesFilters = \{\s*\.\.\.defaultNotesFilters/);
 assert.match(source, /state\.notesFilters = \{ \.\.\.defaultNotesFilters \}/);
 assert.match(state, /notesFilters: \{\s*personId: ''/);
+assert.match(styles, /\.notes-filter-popover \{[\s\S]*?width: min\(420px, calc\(100vw - 24px\)\)/);
+assert.match(styles, /\.notes-filter-popover \.shared-filter-fields \{\s*grid-template-columns: repeat\(3/);
+assert.match(styles, /@media \(max-width: 760px\) \{[\s\S]*?\.notes-filter-popover \.shared-filter-fields \{\s*grid-template-columns: repeat\(2/);
+assert.match(source, /const available = placeBelow \? below : above;/);
+assert.match(source, /if \(menuRect\.height > available\) menu\.style\.maxHeight/);
 console.log('Notes filter schema, matching, and reset checks passed.');

@@ -1719,20 +1719,21 @@
 .notes-filter-popover {
     position: fixed;
     z-index: 220;
-    width: min(330px, calc(100vw - 24px));
+    width: min(420px, calc(100vw - 24px));
     max-height: calc(100vh - 24px);
     display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
     border: 1px solid var(--border-strong);
     border-radius: var(--radius-sm);
     background: var(--surface-card);
     box-shadow: var(--shadow-soft);
-    overflow: auto;
+    overflow: hidden;
 }
 
 .notes-filter-popover-head,
 .notes-filter-popover-body,
 .notes-filter-popover-footer {
-    padding: var(--space-4);
+    padding: var(--space-3);
 }
 
 .notes-filter-popover-head {
@@ -1747,12 +1748,16 @@
 }
 
 .notes-filter-popover-body {
+    min-height: 0;
     display: grid;
-    gap: var(--space-3);
+    align-content: start;
+    overflow-y: auto;
+    overscroll-behavior: contain;
 }
 
 .notes-filter-popover .shared-filter-fields {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
 }
 
 .notes-filter-popover .shared-filter-field--full {
@@ -1768,6 +1773,16 @@
     justify-content: space-between;
     gap: var(--space-2);
     border-top: 1px solid var(--border-default);
+}
+
+@media (max-width: 760px) {
+    .notes-filter-popover {
+        width: min(330px, calc(100vw - 24px));
+    }
+
+    .notes-filter-popover .shared-filter-fields {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 
 .notes-modal-choice-copy {

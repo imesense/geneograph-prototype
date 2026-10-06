@@ -48,4 +48,44 @@ assert.match(notes, /data-notes-tour-target="navigation"/);
 assert.match(notes, /data-notes-tour-target="collections"/);
 assert.match(styles, /geneo-tour-notes-sidebar/);
 assert.match(styles, /geneo-tour-notes-tabs/);
+assert.match(source, /'archive-filters',\s*'notes-filters'\]\.includes\(stepId\) \? 2 : 8/);
+assert.equal(vm.runInContext("geneoTourSecondarySelectors['notes-add-actions']", context), undefined);
+assert.match(source, /'notes-add-actions': '\[data-note-editor-section="events"\] \[data-note-manage-links="event"\]'/);
+context.innerWidth = 900;
+context.innerHeight = 720;
+context.main = { querySelector: selector => ({
+    '.notes-right-pane': { left: 0, top: 52, right: 900, bottom: 720 },
+    '.notes-editor-header': { bottom: 219 }
+}[selector] ? { getBoundingClientRect: () => ({
+    '.notes-right-pane': { left: 0, top: 52, right: 900, bottom: 720 },
+    '.notes-editor-header': { bottom: 219 }
+}[selector]) } : null) };
+vm.runInContext("geneoTourRuntime.index = geneoTourSteps.findIndex(step => step.id === 'notes-rich-text')", context);
+const richBounds = vm.runInContext('geneoTourTargetRect({ getBoundingClientRect: () => ({ left: 20, top: 243, right: 880, bottom: 563 }) })', context);
+assert.deepEqual(Array.from([richBounds.left, richBounds.right]), [20, 508]);
+context.innerWidth = 1280;
+context.main = { querySelector: selector => ({
+    '.notes-right-pane': { left: 820, top: 52, right: 1280, bottom: 720 },
+    '.notes-editor-header': { bottom: 260 }
+}[selector] ? { getBoundingClientRect: () => ({
+    '.notes-right-pane': { left: 820, top: 52, right: 1280, bottom: 720 },
+    '.notes-editor-header': { bottom: 260 }
+}[selector]) } : null) };
+vm.runInContext("geneoTourRuntime.index = geneoTourSteps.findIndex(step => step.id === 'notes-sections')", context);
+const sectionBounds = vm.runInContext('geneoTourTargetRect({ getBoundingClientRect: () => ({ left: 841, top: 105, right: 1260, bottom: 696 }) })', context);
+assert.equal(sectionBounds.top, 272);
+const pane = { scrollTop: 0, getBoundingClientRect: () => ({ top: 52 }) };
+const page = { scrollTop: 0 };
+context.document = { scrollingElement: page };
+context.main = { querySelector: selector => selector === '.notes-right-pane' ? pane
+    : selector === '.notes-editor-header' ? { getBoundingClientRect: () => ({ bottom: 260 }) } : null };
+vm.runInContext('geneoTourAlignNotesTarget({ getBoundingClientRect: () => ({ top: 801 }) })', context);
+assert.equal(pane.scrollTop, 529);
+context.innerWidth = 900;
+pane.scrollTop = 20;
+vm.runInContext('geneoTourAlignNotesTarget({ getBoundingClientRect: () => ({ top: 500 }) })', context);
+assert.equal(pane.scrollTop, 0);
+assert.equal(page.scrollTop, 410);
+assert.match(source, /geneoTourAlignNotesTarget\(target\)/);
+assert.match(source, /notesOriginScroll\.page = document\.scrollingElement/);
 console.log('Notes tour route, localization, previews, and restoration checks passed.');

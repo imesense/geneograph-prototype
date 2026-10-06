@@ -940,8 +940,6 @@ function openNotesFilterMenu(anchor)
     const menu = document.createElement('div');
     menu.className = 'notes-filter-popover';
     menu.id = 'projectMenu';
-    menu.style.top = `${rect.bottom + 6}px`;
-    menu.style.left = `${Math.max(12, Math.min(window.innerWidth - 342, rect.right - 330))}px`;
     menu.innerHTML = `
         <div class="notes-filter-popover-head">
           <strong>Filter notes</strong>
@@ -971,7 +969,16 @@ function openNotesFilterMenu(anchor)
     });
 
     const menuRect = menu.getBoundingClientRect();
-    menu.style.top = `${Math.max(12, Math.min(rect.bottom + 6, window.innerHeight - menuRect.height - 12))}px`;
+    const gap = 6;
+    const inset = 12;
+    const below = Math.max(0, window.innerHeight - rect.bottom - gap - inset);
+    const above = Math.max(0, rect.top - gap - inset);
+    const placeBelow = menuRect.height <= below || below >= above;
+    const available = placeBelow ? below : above;
+    if (menuRect.height > available) menu.style.maxHeight = `${available}px`;
+    menu.style.left = `${Math.max(inset, Math.min(window.innerWidth - menuRect.width - inset,
+        rect.right - menuRect.width))}px`;
+    menu.style.top = `${placeBelow ? rect.bottom + gap : rect.top - gap - menu.offsetHeight}px`;
 
     menu.querySelector('[data-notes-filter-reset]')?.addEventListener('click', () =>
     {

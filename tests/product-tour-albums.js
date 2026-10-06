@@ -26,7 +26,7 @@ assert.match(source, /'albums-add-to-album-action': '#albumsLinkAlbum'/);
 assert.match(source, /openPhotoPeopleModal\('photo-silver-luna-wedding'\)/);
 assert.match(source, /state\.selectedPhotoIds = \['photo-silver-luna-wedding'\]/);
 assert.match(source, /state\.albumsDetailSections\.people = true;\s*state\.albumsDetailSections\.albums = true;/);
-assert.match(source, /'people-filters', 'albums-filters', 'archive-filters'\]\.includes\(stepId\) \? 2 : 8/);
+assert.match(source, /'people-filters', 'albums-filters', 'archive-filters',\s*'notes-filters'\]\.includes\(stepId\) \? 2 : 8/);
 
 const dictionaryStart = localization.indexOf('const RU_UI_TOUR =');
 const dictionaryEnd = localization.indexOf('const RU_UI_MODULE_BLOCKS =', dictionaryStart);
