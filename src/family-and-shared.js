@@ -12,6 +12,8 @@ function renderFamilyTreePreserveScroll()
     {
         restoreTreeCanvasScroll(scroll);
     }
+
+    return true;
 }
 
 const treeZoomRuntime = {
@@ -779,12 +781,6 @@ function renderFamilyTree()
     });
     main.querySelector('[data-tree-settings]')?.addEventListener('click', openTreeSettingsModal);
     bindPersonSidebar(main, 'tree');
-    if (state.treeCenterTargetId)
-    {
-        const targetId = state.treeCenterTargetId;
-        state.treeCenterTargetId = '';
-        requestAnimationFrame(() => centerTreeOnPerson(targetId));
-    }
     const centerTargetId =
         state.treeCenterTargetId;
 
@@ -792,12 +788,7 @@ function renderFamilyTree()
 
     if (centerTargetId)
     {
-        requestAnimationFrame(
-            () =>
-                centerTreeOnPerson(
-                    centerTargetId
-                )
-        );
+        centerTreeOnPerson(centerTargetId);
     }
     else if (
         treeViewState.canvasScroll
@@ -8545,13 +8536,7 @@ function commitAddPersonModalCreate(title, subtitle, options = {})
 
     clearPeopleSelection();
 
-    const selectedAfterCreateId =
-        connectionIntent.shouldConnect
-        && getPerson(
-            connectionIntent.anchorPersonId
-        )
-            ? connectionIntent.anchorPersonId
-            : newPerson.id;
+    const selectedAfterCreateId = newPerson.id;
 
     state.selectedPersonId = selectedAfterCreateId;
 
@@ -8561,7 +8546,9 @@ function commitAddPersonModalCreate(title, subtitle, options = {})
 
     if (state.activeModule === 'Family Tree')
     {
-        renderFamilyTreePreserveScroll?.() || renderFamilyTree();
+        treeProjectViewState(newPerson.projectId).focusPersonId = newPerson.id;
+        state.treeCenterTargetId = newPerson.id;
+        renderFamilyTreePreserveScroll();
     }
     else
     {
