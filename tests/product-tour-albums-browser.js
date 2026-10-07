@@ -55,6 +55,23 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
                     assert.ok(Math.abs(geometry.block.bottom - geometry.section.bottom - 8) < 2,
                         `${language} ${id}: spotlight misses the end of the section`);
             }
+            await page.evaluate(() => geneoTourMoveTo(geneoTourSteps.findIndex(step => step.id === 'albums-tag-person-modal')));
+            await page.waitForFunction(() => !geneoTourRuntime.transitioning);
+            const preview = await page.evaluate(() => ({
+                owned: geneoTourRuntime.ownedPreview,
+                inert: modalBackdrop.inert,
+                photoVisible: Boolean(document.querySelector('.photo-people-modal [data-face-region-selector]')
+                    ?.getBoundingClientRect().width),
+                focusVisible: !document.querySelector('[data-geneo-tour-block]')?.hidden
+            }));
+            assert.equal(preview.owned, 'modal');
+            assert.equal(preview.inert, true);
+            assert.equal(preview.photoVisible, true);
+            assert.equal(preview.focusVisible, true);
+            await page.evaluate(() => geneoTourMoveTo(geneoTourSteps.findIndex(step => step.id === 'albums-add-to-album-action')));
+            await page.waitForFunction(() => !geneoTourRuntime.transitioning);
+            assert.equal(await page.locator('.photo-people-modal').count(), 0,
+                `${language}: tour-owned tagging modal was not cleaned up`);
             assert.deepEqual(errors, [], `${language}: browser errors`);
             await page.close();
         }

@@ -47,6 +47,7 @@ assert.equal(evaluate('setPersonPhotoIds("person", [], { rerender: false })'), t
 assert.equal(evaluate('photoPersonRegion(sampleData.media[0], "person")'), null);
 
 assert.match(albumsSource, /renderFaceRegionSelector\(photo, region\)/);
-assert.match(albumsSource, /renderFaceRegionSelector\(photo, regions\[activePerson\.id\]/);
+assert.match(albumsSource, /renderFaceRegionSelector\(photo, activePerson \? regions\[activePerson\.id\] : null/);
+assert.match(albumsSource, /otherRegions = \[\.\.\.selectedIds\]/);
 assert.match(albumsSource, /data-albums-person-region/);
 console.log('Face regions: normalization, tagging, primary-photo cleanup, and shared selector checks passed.');

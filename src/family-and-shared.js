@@ -4583,6 +4583,7 @@ function renderRelation(item)
                     class="relation-action-button danger"
                     type="button"
                     aria-label="Unlink ${escapeHtml(name)}"
+                    title="Unlink relationship"
                     data-unlink-relationship>
                     ${icon.unlink}
                   </button>

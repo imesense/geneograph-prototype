@@ -994,12 +994,16 @@ function renderPersonPhotoRegionMedia(
       `;
 }
 
-function renderFaceRegionSelector(photo, region, label = 'Select face area')
+function renderFaceRegionSelector(photo, region, label = 'Select face area', otherRegions = [])
 {
     const rect = normalizeFaceRegion(region);
     const aspect = (Number(photo.width) || 1) / (Number(photo.height) || 1);
     return `<div class="face-region-selector" data-face-region-selector style="aspect-ratio:${aspect};width:min(100%,calc(52vh * ${aspect}),${520 * aspect}px)" aria-label="${escapeHtml(t(label))}">
         ${photo.src ? `<img src="${escapeHtml(photo.src)}" alt="" draggable="false">` : renderPhotoThumbnail(photo)}
+        ${otherRegions.map(({ region: other, name }) => {
+            const bounds = normalizeFaceRegion(other);
+            return bounds ? `<span class="face-region-other" data-face-region-other aria-hidden="true" title="${escapeHtml(localizedDataFieldValue(name))}" style="left:${bounds.x * 100}%;top:${bounds.y * 100}%;width:${bounds.width * 100}%;height:${bounds.height * 100}%"></span>` : '';
+        }).join('')}
         ${rect ? `<div class="face-region-box" data-face-region-box tabindex="0" role="group" aria-label="${escapeHtml(t('Face area. Arrow keys move; Shift and arrow keys resize.'))}" style="left:${rect.x * 100}%;top:${rect.y * 100}%;width:${rect.width * 100}%;height:${rect.height * 100}%"><span class="face-region-handle" data-face-region-resize aria-hidden="true"></span></div>` : ''}
       </div>`;
 }
@@ -7475,7 +7479,7 @@ function openPhotoPeopleModal(photoId)
 
     const regions = { ...(photo.personRegions || {}) };
     const initialRegions = JSON.stringify(regions);
-    let activeRegionPersonId = null;
+    let activeRegionPersonId = initialSelectedIds.values().next().value || null;
     const primaryPhotoPersonIds = new Set();
 
     let query = '';
@@ -7756,11 +7760,6 @@ function openPhotoPeopleModal(photoId)
               === photo.projectId
             );
 
-        if (!people.length)
-        {
-            return '';
-        }
-
         return `
           <div
             class="
@@ -7775,17 +7774,14 @@ function openPhotoPeopleModal(photoId)
             </span>
           </div>
 
-          <div
-            class="
-              photo-people-selected-list
-            ">
-            ${people.map(person =>
+          <div class="photo-people-selected-list">
+            ${people.length ? people.map(person =>
             {
                 const name =
                     personName(person);
 
                 return `
-                <div class="photo-people-selected-chip">
+                <div class="photo-people-selected-chip ${activeRegionPersonId === person.id ? 'is-active' : ''}">
                 <button
                   class="
                     photo-people-region-action
@@ -7796,6 +7792,7 @@ function openPhotoPeopleModal(photoId)
                             person.id
                         )
                     }"
+                  aria-pressed="${activeRegionPersonId === person.id}"
                   aria-label="${
                         escapeHtml(
                             `${t('Select face area for')} ${localizedDataFieldValue(name)}`
@@ -7817,11 +7814,13 @@ function openPhotoPeopleModal(photoId)
                     ${escapeHtml(name)}
                   </span>
 
+                  <span class="photo-people-area-status">${regions[person.id] ? 'Area selected' : 'No area'}</span>
+
                 </button>
                 <button type="button" class="photo-people-selected-remove" data-photo-people-remove="${escapeHtml(person.id)}" aria-label="${escapeHtml(`Remove tag for ${name}`)}">${icon.close}</button>
                 </div>
               `;
-            }).join('')}
+            }).join('') : '<p class="photo-people-empty-selection">No people tagged yet.</p>'}
           </div>
         `;
     };
@@ -7866,14 +7865,16 @@ function openPhotoPeopleModal(photoId)
                         )
                 || 'Dates unknown';
 
-                    const context =
-                        personContext(person);
+                    const context = personContext(person);
+                    const summary = [dates, context].filter(Boolean).join(' · ');
 
                     return `
-                <label
+                <button
                   class="
                     photo-people-result
-                  ">
+                  " type="button" data-photo-people-choice="${escapeHtml(person.id)}"
+                  aria-label="${escapeHtml(`Tag ${name}`)}"
+                  title="${escapeHtml(`${localizedDataFieldValue(name)} · ${localizedDataFieldValue(summary)}`)}">
 
                   ${renderPersonAvatar(
                         person,
@@ -7891,39 +7892,10 @@ function openPhotoPeopleModal(photoId)
                       ${escapeHtml(name)}
                     </strong>
 
-                    <span>
-                      ${escapeHtml(dates)}
-                    </span>
-
-                    ${
-                        context
-                            ? `
-                          <span>
-                            ${
-                                escapeHtml(
-                                    context
-                                )
-                            }
-                          </span>
-                        `
-                            : ''
-                    }
+                    <span>${escapeHtml(summary)}</span>
                   </span>
-
-                  <input
-                    type="checkbox"
-                    value="${
-                        escapeHtml(
-                            person.id
-                        )
-                    }"
-                    data-photo-people-choice
-                    aria-label="${
-                        escapeHtml(
-                            `Tag ${name}`
-                        )
-                    }">
-                </label>
+                  <span class="photo-people-result-add" aria-hidden="true">${icon.plus}</span>
+                </button>
               `;
                 })
                 .join('');
@@ -7971,7 +7943,7 @@ function openPhotoPeopleModal(photoId)
             class="
               photo-people-body
             ">
-
+            <div class="photo-people-sidebar">
             <div
               class="
                 field
@@ -7997,11 +7969,8 @@ function openPhotoPeopleModal(photoId)
               class="
                 photo-people-selected-panel
               "
-              data-photo-people-selected-panel
-              hidden>
+              data-photo-people-selected-panel>
             </section>
-
-            <section class="photo-people-region-panel" data-photo-people-region-panel hidden></section>
 
             <section
               class="
@@ -8027,6 +7996,11 @@ function openPhotoPeopleModal(photoId)
                 "
                 data-photo-people-choices>
               </div>
+            </section>
+            </div>
+
+            <section class="photo-people-workspace" aria-label="Photo and face areas">
+              <div class="photo-people-region-panel" data-photo-people-region-panel></div>
             </section>
           </div>
 
@@ -8096,22 +8070,29 @@ function openPhotoPeopleModal(photoId)
         const queryActive =
             Boolean(query.trim());
 
-        selectedPanel.hidden =
-            !selectedHtml;
-
         selectedPanel.innerHTML =
             selectedHtml;
 
         const regionPanel = modal.querySelector('[data-photo-people-region-panel]');
         const activePerson = selectedIds.has(activeRegionPersonId) ? getPerson(activeRegionPersonId) : null;
-        regionPanel.hidden = !activePerson;
-        regionPanel.innerHTML = activePerson ? `
-          <div class="photo-people-region-heading"><strong>${escapeHtml(t('Select face area for'))} ${escapeHtml(localizedDataFieldValue(personName(activePerson)))}</strong><button class="link" type="button" ${regions[activePerson.id] ? 'data-photo-people-clear-region' : 'data-photo-people-add-region'}>${regions[activePerson.id] ? 'Clear area' : 'Add area'}</button></div>
-          ${renderFaceRegionSelector(photo, regions[activePerson.id], `${t('Face area for')} ${localizedDataFieldValue(personName(activePerson))}`)}
-          <p class="person-photo-crop-hint">Drag on the photo to select an area, then move or resize it.</p>
-          <label class="photo-people-primary-choice"><input type="checkbox" data-photo-people-primary ${primaryPhotoPersonIds.has(activePerson.id) ? 'checked' : ''}> Use as profile photo</label>
-          <p class="photo-people-region-error" data-photo-people-region-error hidden>Select a face area first.</p>
-        ` : '';
+        regionPanel.classList.toggle('is-inactive', !activePerson);
+        const otherRegions = [...selectedIds]
+            .filter(personId => personId !== activeRegionPersonId && regions[personId])
+            .map(personId => ({ region: regions[personId], name: personName(getPerson(personId)) }));
+        regionPanel.innerHTML = `
+          <div class="photo-people-region-heading">
+            <strong>${activePerson ? `${escapeHtml(t('Select face area for'))} ${escapeHtml(localizedDataFieldValue(personName(activePerson)))}` : 'Select a person to mark on the photo'}</strong>
+            ${activePerson ? `<button class="link" type="button" ${regions[activePerson.id] ? 'data-photo-people-clear-region' : 'data-photo-people-add-region'}>${regions[activePerson.id] ? 'Clear area' : 'Add area'}</button>` : ''}
+          </div>
+          <div class="photo-people-photo-stage">
+            ${renderFaceRegionSelector(photo, activePerson ? regions[activePerson.id] : null,
+                activePerson ? `${t('Face area for')} ${localizedDataFieldValue(personName(activePerson))}` : 'Photo to tag', otherRegions)}
+          </div>
+          <div class="photo-people-region-controls">
+            <p class="person-photo-crop-hint">${activePerson ? 'Drag on the photo to select an area, then move or resize it.' : 'Choose a person on the left to mark their area.'}</p>
+            ${activePerson ? `<label class="photo-people-primary-choice"><input type="checkbox" data-photo-people-primary ${primaryPhotoPersonIds.has(activePerson.id) ? 'checked' : ''}> Use as profile photo</label>` : ''}
+          </div>
+          <p class="photo-people-region-error" data-photo-people-region-error hidden>Select a face area first.</p>`;
         if (activePerson) bindFaceRegionSelector(regionPanel,
             () => normalizeFaceRegion(regions[activePerson.id]),
             region =>
@@ -8442,11 +8423,6 @@ function openPhotoPeopleModal(photoId)
         'change',
         event =>
         {
-            const input =
-                event.target.closest(
-                    '[data-photo-people-choice]'
-                );
-
             if (event.target.matches('[data-photo-people-primary]'))
             {
                 if (event.target.checked) primaryPhotoPersonIds.add(activeRegionPersonId);
@@ -8454,15 +8430,6 @@ function openPhotoPeopleModal(photoId)
                 modal.querySelector('[data-photo-people-save]').disabled = !selectionChanged();
                 return;
             }
-            if (!input) return;
-
-            selectedIds.add(
-                input.value
-            );
-            activeRegionPersonId = input.value;
-            useAsProfilePhoto = false;
-
-            refresh();
         }
     );
 
@@ -8470,6 +8437,15 @@ function openPhotoPeopleModal(photoId)
         'click',
         event =>
         {
+            const choice = event.target.closest('[data-photo-people-choice]');
+            if (choice)
+            {
+                selectedIds.add(choice.dataset.photoPeopleChoice);
+                activeRegionPersonId = choice.dataset.photoPeopleChoice;
+                refresh();
+                modal.querySelector(`[data-photo-people-region="${CSS.escape(activeRegionPersonId)}"]`)?.focus();
+                return;
+            }
             const remove =
                 event.target.closest(
                     '[data-photo-people-remove]'
@@ -8491,7 +8467,7 @@ function openPhotoPeopleModal(photoId)
             {
                 activeRegionPersonId = regionButton.dataset.photoPeopleRegion;
                 refresh();
-                modal.querySelector('[data-photo-people-region-panel]')?.scrollIntoView({ block: 'center' });
+                modal.querySelector(`[data-photo-people-region="${CSS.escape(activeRegionPersonId)}"]`)?.focus();
                 return;
             }
             if (event.target.closest('[data-photo-people-clear-region]'))
