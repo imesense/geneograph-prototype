@@ -7396,6 +7396,21 @@ function closePeopleColumnsOnEscape(event)
     if (event.key === 'Escape') closePeopleColumnsPopover();
 }
 
+function positionPeopleColumnsPopover(popover, anchor)
+{
+    const rect = anchor.getBoundingClientRect();
+    popover.style.maxHeight = '';
+    const width = popover.offsetWidth;
+    const height = popover.offsetHeight;
+    const below = window.innerHeight - rect.bottom - 20;
+    const above = rect.top - 20;
+    const placeBelow = below >= height || below >= above;
+    popover.style.left = `${Math.max(12, Math.min(rect.left, window.innerWidth - width - 12))}px`;
+    popover.style.top = `${placeBelow ? rect.bottom + 8 : Math.max(12, rect.top - height - 8)}px`;
+    popover.style.maxHeight = `${Math.max(0, placeBelow ? below : above)}px`;
+    anchor.setAttribute('aria-expanded', 'true');
+}
+
 function openPeopleColumnsPopover(anchor)
 {
     if (document.getElementById('peopleColumnsPopover'))
@@ -7406,37 +7421,31 @@ function openPeopleColumnsPopover(anchor)
     closePeopleColumnsPopover();
     closePeopleFilterPopover();
     closeMenu();
-    const rect = anchor.getBoundingClientRect();
     const columns = peopleColumnsWithDefaults();
-    const optionalColumns = Object.entries(peopleColumnLabels).map(([key, label]) => `<label class="people-columns-option"><input type="checkbox" data-people-column="${key}" ${columns[key] ? 'checked' : ''}> <span>${escapeHtml(label)}</span></label>`).join('');
+    const optionalColumns = Object.entries(peopleColumnLabels).map(([key, label]) => `<label class="people-columns-option"><input type="checkbox" data-people-column="${key}" ${columns[key] ? 'checked' : ''}> <span>${escapeHtml(t(label))}</span></label>`).join('');
     const popover = document.createElement('div');
     popover.className = 'people-columns-popover';
     popover.id = 'peopleColumnsPopover';
-    popover.style.top = `${rect.bottom + 8}px`;
-    popover.style.left = `${Math.min(window.innerWidth - 308, Math.max(12, rect.left - 24))}px`;
     popover.setAttribute('role', 'dialog');
-    popover.setAttribute('aria-label', 'Choose People table columns');
-    popover.innerHTML = `<div class="people-columns-header"><h3>Columns</h3><p>Choose which fields are visible in the people table.</p></div><div class="people-columns-list"><label class="people-columns-option"><input type="checkbox" checked disabled> <span>Name</span></label>${optionalColumns}<label class="people-columns-option"><input type="checkbox" checked disabled> <span>Actions</span></label></div><div class="people-columns-footer"><button class="button secondary" type="button" data-people-columns-reset>Reset columns</button><button class="button primary" type="button" data-people-columns-close>Done</button></div>`;
+    popover.setAttribute('aria-label', t('Choose People table columns'));
+    popover.innerHTML = `<div class="people-columns-header"><h3>${escapeHtml(t('Columns'))}</h3><p>${escapeHtml(t('Choose which fields are visible in the people table.'))}</p></div><div class="people-columns-list">${optionalColumns}</div><div class="people-columns-footer"><button class="button secondary" type="button" data-people-columns-reset>${escapeHtml(t('Reset columns'))}</button><button class="button primary" type="button" data-people-columns-close>${escapeHtml(t('Done'))}</button></div>`;
     document.body.appendChild(popover);
-    anchor.setAttribute('aria-expanded', 'true');
+    positionPeopleColumnsPopover(popover, anchor);
     popover.querySelectorAll('[data-people-column]').forEach(input => input.addEventListener('change', () =>
     {
         state.peopleVisibleColumns = peopleColumnsWithDefaults();
         state.peopleVisibleColumns[input.dataset.peopleColumn] = input.checked;
         renderPeople();
-        setTimeout(() =>
-        {
-            const newAnchor = document.getElementById('peopleColumnsButton'); if (newAnchor) openPeopleColumnsPopover(newAnchor);
-        }, 0);
+        const newAnchor = document.getElementById('peopleColumnsButton');
+        if (newAnchor) positionPeopleColumnsPopover(popover, newAnchor);
     }));
     popover.querySelector('[data-people-columns-reset]')?.addEventListener('click', () =>
     {
         state.peopleVisibleColumns = { ...defaultPeopleColumns };
+        popover.querySelectorAll('[data-people-column]').forEach(input => { input.checked = true; });
         renderPeople();
-        setTimeout(() =>
-        {
-            const newAnchor = document.getElementById('peopleColumnsButton'); if (newAnchor) openPeopleColumnsPopover(newAnchor);
-        }, 0);
+        const newAnchor = document.getElementById('peopleColumnsButton');
+        if (newAnchor) positionPeopleColumnsPopover(popover, newAnchor);
     });
     popover.querySelector('[data-people-columns-close]')?.addEventListener('click', closePeopleColumnsPopover);
     setTimeout(() =>

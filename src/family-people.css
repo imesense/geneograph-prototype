@@ -4645,6 +4645,10 @@
     color: var(--text-tertiary);
 }
 
+.custom-fact-required {
+    color: var(--red);
+}
+
 .custom-fact-error {
     color: var(--red);
 }

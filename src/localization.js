@@ -999,7 +999,7 @@ const RU_UI_PEOPLE = {
     'Start date': 'Дата начала',
     'End date': 'Дата окончания',
     'Education notes': 'Заметки об образовании',
-    'Fact name *': 'Название факта *',
+    'Fact name': 'Название факта',
     'Fact details': 'Сведения о факте',
     'Date or period': 'Дата или период',
     'Required. Use a short category that describes the fact.': 'Обязательное поле. Укажите короткую категорию, описывающую факт.',
@@ -5892,6 +5892,12 @@ const RU_UI_TOUR = Object.freeze({
     
     'Follow a life over time': 'Проследите историю жизни',
     'The open Timeline section puts dated events together so you can follow person’s story in order.': 'Взгляните на жизнь человека сквозь время в открытом разделе «Хронология».',
+
+    'Explore relationships': 'Изучите родственные связи',
+    'See Silver’s parents, partner, and children here. You can select a relative, edit a connection, or unlink people without deleting their records.': 'Здесь показаны родители, партнёр и дети Сильвера. Вы можете выбрать родственника, изменить связь или удалить её, не удаляя записи о людях.',
+
+    'Edit or unlink a connection': 'Измените или удалите связь',
+    'Hover over a relative to reveal Edit and Unlink. Edit changes the relationship; Unlink removes the connection without deleting either person.': 'Наведите указатель на родственника, чтобы увидеть кнопки изменения и удаления связи. Изменение обновляет родственную связь, а удаление разрывает её, не удаляя ни одного человека.',
 
     'Continue to People': 'Перейдите к разделу «Люди»',
     'Use the People tab to browse everyone in the project. You can also open the full profile directly from the sidebar. The tour continues in People.': 'Перейдите во вкладку «Люди», чтобы просмотреть всех людей в проекте. Вы так же можете перейти напрямую в Профиль с помощью кнопки справа вверху. Экскурсия продолжится в разделе «Люди».',

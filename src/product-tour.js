@@ -22,6 +22,8 @@ const geneoTourSteps = [
     { id: 'tree-add-relative', module: 'Family Tree', title: 'Add or connect a relative', body: 'Choose a relationship, then add someone new or connect a person who is already in the project.' },
     { id: 'tree-sections-overview', module: 'Family Tree', title: 'Explore connected details', body: 'Expand these sections to find insights, events, relationships, photos, files, notes, sources, and record information.' },
     { id: 'tree-timeline', module: 'Family Tree', title: 'Follow a life over time', body: 'The open Timeline section puts dated events together so you can follow person’s story in order.' },
+    { id: 'tree-relationships', module: 'Family Tree', title: 'Explore relationships', body: 'See Silver’s parents, partner, and children here. You can select a relative, edit a connection, or unlink people without deleting their records.' },
+    { id: 'tree-relationship-actions', module: 'Family Tree', title: 'Edit or unlink a connection', body: 'Hover over a relative to reveal Edit and Unlink. Edit changes the relationship; Unlink removes the connection without deleting either person.' },
     { id: 'tree-to-people', module: 'Family Tree', title: 'Continue to People', body: 'Use the People tab to browse everyone in the project. You can also open the full profile directly from the sidebar. The tour continues in People.' },
     { id: 'people-welcome', module: 'People', presentation: 'centered', title: 'Welcome to People', body: 'People brings everyone in this project together. Browse the directory, follow connections, and open a fuller profile for each person.' },
     { id: 'people-navigation', module: 'People', title: 'Choose a People view', body: 'Use People to browse the directory, or Profile to see the selected person in greater detail.' },
@@ -339,10 +341,13 @@ function geneoTourPrepare(index)
         treeProjectViewState(GENEO_TOUR_PROJECT_ID).focusPersonId = 'silver';
         state.selectedPersonId = 'silver';
         state.treeInspectorCollapsed = false;
-        if (step.id === 'tree-sections-overview' || step.id === 'tree-timeline')
+        if (['tree-sections-overview', 'tree-timeline', 'tree-relationships',
+            'tree-relationship-actions'].includes(step.id))
         {
             ['insights', 'timeline', 'relationships', 'photos', 'archive', 'notes', 'sources', 'record']
-                .forEach(section => { state.inspectorSections[section] = step.id === 'tree-timeline' && section === 'timeline'; });
+                .forEach(section => { state.inspectorSections[section] = step.id === 'tree-timeline'
+                    ? section === 'timeline' : ['tree-relationships', 'tree-relationship-actions'].includes(step.id)
+                        && section === 'relationships'; });
         }
     }
     if (step.module === 'People')
@@ -497,7 +502,8 @@ function geneoTourClearTreeReveal()
         'geneo-tour-albums-popover', 'geneo-tour-archive-sidebar',
         'geneo-tour-archive-inspector', 'geneo-tour-archive-tabs',
         'geneo-tour-notes-sidebar', 'geneo-tour-notes-tabs', 'geneo-tour-notes-popover',
-        'geneo-tour-places-sidebar', 'geneo-tour-places-inspector', 'geneo-tour-places-popover');
+        'geneo-tour-places-sidebar', 'geneo-tour-places-inspector', 'geneo-tour-places-popover',
+        'geneo-tour-tree-relationship-actions');
 }
 
 function geneoTourRestorePeopleState()
@@ -661,8 +667,11 @@ function geneoTourApplyTreeReveal(step)
     }
     if (step.module !== 'Family Tree') return;
     if (['tree-sidebar', 'tree-sidebar-hero', 'tree-sidebar-actions', 'tree-quick-edit-button',
-        'tree-quick-edit-modal', 'tree-add-relative', 'tree-sections-overview', 'tree-timeline', 'tree-to-people'].includes(step.id))
+        'tree-quick-edit-modal', 'tree-add-relative', 'tree-sections-overview', 'tree-timeline',
+        'tree-relationships', 'tree-relationship-actions', 'tree-to-people'].includes(step.id))
         document.body.classList.add('geneo-tour-tree-sidebar');
+    if (step.id === 'tree-relationship-actions')
+        document.body.classList.add('geneo-tour-tree-relationship-actions');
     if (step.id === 'tree-to-people') document.body.classList.add('geneo-tour-tree-tabs');
 }
 
@@ -688,6 +697,8 @@ function geneoTourTarget(index)
         'tree-add-relative': '#relativePopover',
         'tree-sections-overview': '.tree-inspector .panel-section',
         'tree-timeline': '.tree-inspector [data-toggle-section="timeline"]',
+        'tree-relationships': '.tree-inspector [data-toggle-section="relationships"]',
+        'tree-relationship-actions': '.tree-inspector #section-relationships [data-relationship-related-person-id="luna"] .relation-actions',
         'tree-to-people': '.topnav [data-module="People"]',
         'people-navigation': '.side-nav [data-people-side="people"]',
         'people-table': '.people-table-wrap',
@@ -1921,6 +1932,13 @@ function geneoTourTargetRect(target)
             ? { ...section.toJSON(), bottom: Math.max(section.top + 40, Math.min(section.bottom, innerHeight * .66)) }
             : section;
     }
+    if (stepId === 'tree-relationships')
+    {
+        const inspector = main.querySelector('.tree-inspector')?.getBoundingClientRect();
+        const section = target.closest('.panel-section')?.getBoundingClientRect() || rect;
+        if (inspector) return { left: section.left, right: section.right,
+            top: Math.max(section.top, inspector.top), bottom: Math.min(section.bottom, inspector.bottom) };
+    }
     if (stepId === 'tree-add-relative' && innerWidth <= 640)
         return { ...rect.toJSON(), bottom: Math.max(rect.top + 40, Math.min(rect.bottom, innerHeight * .66)) };
     if (stepId === 'tree-sections-overview')
@@ -2060,12 +2078,16 @@ async function geneoTourMoveTo(index)
             await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
             centerTreeOnPerson('luna');
         }
-        else if (geneoTourSteps[index].id === 'tree-sections-overview' || geneoTourSteps[index].id === 'tree-timeline')
+        else if (['tree-sections-overview', 'tree-timeline', 'tree-relationships',
+            'tree-relationship-actions'].includes(geneoTourSteps[index].id))
         {
             const inspector = main.querySelector('.tree-inspector');
-            const section = target.closest('.panel-section');
-            if (inspector && section)
-                inspector.scrollTop += section.getBoundingClientRect().top - inspector.getBoundingClientRect().top - 8;
+            const scrollTarget = geneoTourSteps[index].id === 'tree-relationship-actions'
+                ? target : target.closest('.panel-section');
+            if (inspector && scrollTarget)
+                inspector.scrollTop += scrollTarget.getBoundingClientRect().top
+                    - inspector.getBoundingClientRect().top
+                    - (geneoTourSteps[index].id === 'tree-relationship-actions' ? 96 : 8);
         }
         else if (geneoTourSteps[index].id === 'tree-to-people')
             main.querySelector('.tree-inspector')?.scrollTo(0, 0);

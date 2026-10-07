@@ -5786,7 +5786,7 @@ function renderCustomFactFields(
           data-custom-fact-field="type">
 
           <label for="${escapeHtml(idPrefix)}Type">
-            Fact name *
+            ${escapeHtml(t('Fact name'))} <span class="custom-fact-required" aria-hidden="true">*</span>
           </label>
 
           <input

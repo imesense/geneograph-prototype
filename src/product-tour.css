@@ -23,6 +23,19 @@
     display: none;
 }
 
+body.geneo-tour-tree-relationship-actions .tree-inspector
+    [data-relationship-related-person-id="luna"] .relation-actions {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+}
+
+body.geneo-tour-tree-relationship-actions .tree-inspector
+    [data-relationship-related-person-id="luna"] {
+    border-color: var(--border-default);
+    background: rgba(255, 255, 255, .04);
+}
+
 .geneo-tour-card {
     position: absolute;
     width: min(360px, calc(100vw - 24px));
