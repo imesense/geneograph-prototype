@@ -22,6 +22,12 @@ let renders = 0;
 let modalOpens = 0;
 let modalCloses = 0;
 const classes = new Set();
+const stageClasses = new Set();
+const stage = { dataset: {}, classList: {
+    add(value) { stageClasses.add(value); },
+    remove(value) { stageClasses.delete(value); },
+    contains(value) { return stageClasses.has(value); }
+} };
 const modalBackdrop = { inert: false, classList: {
     contains(value)
     {
@@ -38,11 +44,20 @@ const context = vm.createContext({
         remove(...values)
         {
             values.forEach(value => classes.delete(value));
+        },
+        contains(value)
+        {
+            return classes.has(value);
         }
     } } },
     main: { querySelector(selector)
     {
+        if (selector === '.geneo-canvas-stage' && state.geneoView === 'board') return stage;
         return selector === '.geneo-editor' && state.geneoView === 'board' ? {} : null;
+    }, querySelectorAll(selector)
+    {
+        return selector === '.geneo-canvas-stage[data-geneo-tour-sockets]'
+            && stage.dataset.geneoTourSockets ? [stage] : [];
     } },
     activateProject(_id, { moduleName })
     {
@@ -59,6 +74,13 @@ const context = vm.createContext({
         state.selectedGeneoBoardId = id;
     },
     captureGeneographViewport()
+    {
+    },
+    geneoCurrentViewportCenter()
+    {
+        return null;
+    },
+    restoreGeneographViewportCenter()
     {
     },
     openCreateGeneographBoardModal()
@@ -93,7 +115,9 @@ assert.deepEqual(Array.from(chapter, step => step.id), [
     'geneograph-editor-welcome', 'geneograph-all-boards', 'geneograph-current-board',
     'geneograph-layers', 'geneograph-objects', 'geneograph-topbar',
     'geneograph-modes', 'geneograph-connect', 'geneograph-person',
-    'geneograph-other-objects', 'geneograph-inspector', 'geneograph-export',
+    'geneograph-other-objects', 'geneograph-sockets-intro',
+    'geneograph-sockets-partners', 'geneograph-sockets-children',
+    'geneograph-sockets-context', 'geneograph-inspector', 'geneograph-export',
     'geneograph-to-albums'
 ]);
 assert.equal(steps[steps.indexOf(chapter[0]) - 1].module, 'People');
@@ -134,6 +158,11 @@ prepare('geneograph-editor-welcome');
 assert.equal(state.selectedGeneoBoardId, 'gb1');
 assert.equal(boardOpens, 1);
 prepare('geneograph-layers');
+prepare('geneograph-objects');
+assert.ok(classes.has('geneo-tour-geneo-focus-canvas'));
+prepare('geneograph-sockets-intro');
+assert.ok(stageClasses.has('show-sockets'));
+assert.equal(stage.dataset.geneoTourSockets, 'true');
 prepare('geneograph-export');
 assert.equal(boardOpens, 1, 'Adjacent editor stops must preserve the board viewport');
 assert.ok(classes.has('geneo-tour-geneo-toolbar'));
@@ -155,6 +184,7 @@ evaluate('geneoTourClosePreview()');
 assert.equal(modalCloses, 1);
 evaluate('geneoTourClearTreeReveal()');
 assert.ok(!classes.has('geneo-tour-geneo-toolbar'));
+assert.ok(!stageClasses.has('show-sockets'));
 const mapClasses = new Set();
 let currentFocused = false;
 let browseFocused = false;

@@ -415,6 +415,14 @@ body.geneo-tour-geneo-toolbar .geneo-editor-toolbar-left {
     scrollbar-width: thin;
 }
 
+body.geneo-tour-geneo-focus-canvas .geneo-editor-main {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+body.geneo-tour-geneo-focus-canvas .geneo-editor-main > .geneo-inspector {
+    display: none;
+}
+
 body.geneo-tour-geneo-toolbar .geneo-editor-toolbar [data-geneo-toolbar-item] {
     display: inline-flex;
 }

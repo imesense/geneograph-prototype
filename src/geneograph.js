@@ -5683,6 +5683,7 @@ function renderGeneoConnectionSplitTool()
                     t('Choose connection style')
                 )
             }"
+            title="${escapeHtml(t('Choose connection style'))}"
             aria-haspopup="menu"
             aria-expanded="false">
 
@@ -5818,6 +5819,7 @@ function renderGeneoContentSplitTool()
                     t('Choose content type')
                 )
             }"
+            title="${escapeHtml(t('Choose content type'))}"
             aria-haspopup="menu"
             aria-expanded="false">
 
@@ -6085,6 +6087,7 @@ function renderGeneoShapeSplitTool()
             aria-label="${
                 escapeHtml(t('Choose shape'))
             }"
+            title="${escapeHtml(t('Choose shape'))}"
             aria-haspopup="menu"
             aria-expanded="false">
 
@@ -6144,67 +6147,28 @@ function openGeneoShapeMenu(anchor)
     requestAnimationFrame(() => menu.querySelector('[aria-checked="true"]')?.focus());
 }
 
-function geneoToolbarOverflowItems(
-    density
-)
+function geneoToolbarOverflowItems(toolbar)
 {
-    const items = [];
-
-    if (density === 'minimal')
-    {
-        items.push(
-            {
-                action: 'person',
-                label: t('Person'),
-                icon: icon.profile
-            },
-            {
-                action: 'connect',
-                label: t('Connect'),
-                icon: icon.link
-            },
-            {
-                action: 'connection-style',
-                label: t('Connection style'),
-                icon: icon.link
-            }
-        );
-    }
-
-    items.push(
-        {
-            action: 'place',
-            label: t('Place'),
-            icon: icon.mapPin
-        },
-        {
-            action: 'image',
-            label: t('Image'),
-            icon: icon.image
-        },
-        {
-            action: 'sticky',
-            label: t('Sticky note'),
-            icon: icon.note
-        },
-        {
-            action: 'text',
-            label: t('Text'),
-            icon: icon.text
-        },
-        {
-            action: 'panel',
-            label: t('Panel'),
-            icon: icon.shape
-        },
-        {
-            action: 'export',
-            label: t('Export board'),
-            icon: icon.export
-        }
-    );
-
-    return items;
+    const groups = [
+        ['history', [['undo', 'Undo', icon.undo], ['redo', 'Redo', icon.redo]]],
+        ['modes', [['select', 'Select', icon.cursorSelect], ['pan', 'Pan', icon.pan], ['pencil', 'Pencil', icon.edit]]],
+        ['connect', [['connect', 'Connect', icon.link], ['connection-style', 'Connection style', icon.link]]],
+        ['person', [['person', 'Person', icon.profile]]],
+        ['place', [['place', 'Place', icon.mapPin]]],
+        ['image', [['image', 'Image', icon.image]]],
+        ['panel', [['panel', 'Panel', icon.panel]]],
+        ['content', [['content', state.geneoContentKind === 'text' ? 'Place Text' : 'Place Sticky note',
+            state.geneoContentKind === 'text' ? icon.text : icon.note],
+        ['content-style', 'Choose content type', icon.chevron]]],
+        ['shape', [['shape', 'Shapes', icon.shape], ['shape-style', 'Choose shape', icon.shape]]],
+        ['export', [['export', 'Export board', icon.export]]]
+    ];
+    return groups.flatMap(([id, actions]) =>
+        geneoToolbarControl(toolbar, id)?.hasAttribute('data-geneo-hidden')
+            ? actions.map(([action, label, itemIcon]) => ({ action, label: t(label), icon: itemIcon,
+                disabled: action === 'undo' ? !geneoHistoryRuntime.undo.length
+                    : action === 'redo' ? !geneoHistoryRuntime.redo.length : false }))
+            : []);
 }
 
 function openGeneoToolbarOverflowMenu(
@@ -6225,15 +6189,8 @@ function openGeneoToolbarOverflowMenu(
             '.geneo-editor-toolbar'
         );
 
-    const density =
-        toolbar?.dataset
-            .toolbarDensity
-        || 'narrow';
-
-    const items =
-        geneoToolbarOverflowItems(
-            density
-        );
+    const items = geneoToolbarOverflowItems(toolbar);
+    if (!items.length) return;
 
     const rect =
         anchor.getBoundingClientRect();
@@ -6278,6 +6235,7 @@ function openGeneoToolbarOverflowMenu(
               <button
                 type="button"
                 role="menuitem"
+                ${item.disabled ? 'disabled' : ''}
                 data-geneo-toolbar-action="${
                     escapeHtml(item.action)
                 }">
@@ -6332,6 +6290,14 @@ function openGeneoToolbarOverflowMenu(
                 return;
             }
 
+            if (action === 'shape-style' || action === 'content-style')
+            {
+                closeMenu();
+                requestAnimationFrame(() => (action === 'shape-style'
+                    ? openGeneoShapeMenu : openGeneoContentMenu)(anchor));
+                return;
+            }
+
             closeMenu();
 
             if (
@@ -6346,20 +6312,9 @@ function openGeneoToolbarOverflowMenu(
                 return;
             }
 
-            if (
-                [
-                    'sticky',
-                    'text'
-                ].includes(action)
-            )
+            if (action === 'content')
             {
-                state.geneoContentKind =
-                    action;
-
-                activateGeneographPlacementTool(
-                    action
-                );
-
+                main.querySelector('[data-geneo-content-main]')?.click();
                 return;
             }
 
@@ -6375,6 +6330,19 @@ function openGeneoToolbarOverflowMenu(
             if (action === 'connect')
             {
                 activateGeneographConnectionTool();
+                return;
+            }
+
+            if (action === 'shape')
+            {
+                activateGeneographPlacementTool('shape');
+                return;
+            }
+
+            if (['undo', 'redo', 'select', 'pan', 'pencil'].includes(action))
+            {
+                main.querySelector(action === 'undo' || action === 'redo'
+                    ? `[data-geneo-${action}]` : `[data-geneo-tool="${action}"]`)?.click();
                 return;
             }
 
@@ -6464,26 +6432,16 @@ function openGeneoToolbarOverflowMenu(
     );
 }
 
-function geneoToolbarDensityForWidth(
-    width
-)
+const GENEO_TOOLBAR_ORDER_RIGHT_TO_LEFT = [
+    'export', 'shape', 'content', 'panel', 'image', 'place',
+    'person', 'connect', 'modes', 'history'
+];
+
+function geneoToolbarControl(toolbar, id)
 {
-    if (width >= 1320)
-    {
-        return 'expanded';
-    }
-
-    if (width >= 1040)
-    {
-        return 'compact';
-    }
-
-    if (width >= 720)
-    {
-        return 'narrow';
-    }
-
-    return 'minimal';
+    if (id === 'modes') return toolbar?.querySelector('.geneo-tool-group');
+    if (id === 'history') return toolbar?.querySelector('.geneo-history-group');
+    return toolbar?.querySelector(`[data-geneo-toolbar-item="${id}"]`);
 }
 
 function geneoVisibleToolbarButtons(
@@ -6552,22 +6510,54 @@ function bindGeneographToolbarDensity()
     geneoToolbarResizeObserver
         ?.disconnect();
 
-    const updateDensity =
-        width =>
+    const updateDensity = width =>
+    {
+        const left = toolbar.querySelector('.geneo-editor-toolbar-left');
+        const right = toolbar.querySelector('.geneo-editor-toolbar-right');
+        const objects = toolbar.querySelector('.geneo-toolbar-objects');
+        toolbar.dataset.toolbarDensity = width >= 1320 ? 'expanded' : 'adaptive';
+        delete toolbar.dataset.geneoOverflow;
+        GENEO_TOOLBAR_ORDER_RIGHT_TO_LEFT.forEach(id =>
         {
-            const density =
-                geneoToolbarDensityForWidth(
-                    width
-                );
-
-            toolbar.dataset
-                .toolbarDensity =
-                    density;
-
-            syncGeneoToolbarTabStops(
-                toolbar
-            );
-        };
+            const control = geneoToolbarControl(toolbar, id);
+            control?.removeAttribute('data-geneo-icon-only');
+            control?.removeAttribute('data-geneo-hidden');
+        });
+        objects?.removeAttribute('data-geneo-hidden');
+        if (width < 1320)
+        {
+            const style = getComputedStyle(toolbar);
+            const available = width - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight)
+                - parseFloat(style.columnGap || style.gap || 0);
+            const contentWidth = container =>
+            {
+                const children = [...container.children]
+                    .filter(child => getComputedStyle(child).display !== 'none');
+                const gap = parseFloat(getComputedStyle(container).columnGap || 0);
+                return children.reduce((sum, child) => sum + Math.max(
+                    child.scrollWidth, child.getBoundingClientRect().width), 0)
+                    + Math.max(0, children.length - 1) * gap;
+            };
+            const fits = () => contentWidth(left) + contentWidth(right)
+                + (toolbar.querySelector('.geneo-tool-group.is-icon-only:not([data-geneo-icon-only]):not([data-geneo-hidden])')
+                    ? 84 : 0) <= available + 1;
+            for (const id of GENEO_TOOLBAR_ORDER_RIGHT_TO_LEFT)
+            {
+                if (fits()) break;
+                if (id === 'history') continue;
+                geneoToolbarControl(toolbar, id)?.setAttribute('data-geneo-icon-only', '');
+            }
+            for (const id of GENEO_TOOLBAR_ORDER_RIGHT_TO_LEFT)
+            {
+                if (fits()) break;
+                geneoToolbarControl(toolbar, id)?.setAttribute('data-geneo-hidden', '');
+                toolbar.dataset.geneoOverflow = 'true';
+                if ([...objects.children].every(child => child.hasAttribute('data-geneo-hidden')))
+                    objects.setAttribute('data-geneo-hidden', '');
+            }
+        }
+        syncGeneoToolbarTabStops(toolbar);
+    };
 
     updateDensity(
         toolbar.getBoundingClientRect()
@@ -15869,7 +15859,7 @@ function renderGeneographEditor()
           </div>
 
           <div
-            class="geneo-tool-group"
+            class="geneo-tool-group${['select', 'pan', 'pencil'].includes(state.geneoTool) ? '' : ' is-icon-only'}"
             role="group"
             aria-label="${
                 escapeHtml(t('Working mode'))

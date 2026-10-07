@@ -1395,7 +1395,7 @@
     display: none;
 }
 
-.geneo-toolbar-overflow {
+.geneo-editor-toolbar .geneo-toolbar-overflow {
     display: none;
 }
 
@@ -1440,6 +1440,16 @@
     flex-basis: 124px;
 }
 
+.geneo-editor-toolbar .geneo-tool-group.is-icon-only {
+    width: 126px;
+    flex-basis: 126px;
+}
+
+.geneo-editor-toolbar[data-toolbar-density="minimal"] .geneo-tool-group.is-icon-only {
+    width: 112px;
+    flex-basis: 112px;
+}
+
 .geneo-toolbar-overflow-menu {
     min-width: 220px;
 }
@@ -1448,6 +1458,42 @@
     width: 18px;
     height: 18px;
     flex: 0 0 18px;
+}
+
+.geneo-editor-toolbar[data-toolbar-density="adaptive"] [data-geneo-icon-only] .geneo-toolbar-label,
+.geneo-editor-toolbar[data-toolbar-density="adaptive"] [data-geneo-icon-only].tool-split .tool-split-main span,
+.geneo-editor-toolbar[data-toolbar-density="adaptive"] [data-geneo-icon-only][data-geneo-export] span,
+.geneo-editor-toolbar[data-toolbar-density="adaptive"] .geneo-tool-group[data-geneo-icon-only] .geneo-tool-label {
+    display: none;
+}
+
+.geneo-editor-toolbar[data-toolbar-density="adaptive"] [data-geneo-icon-only].geneo-toolbar-object,
+.geneo-editor-toolbar[data-toolbar-density="adaptive"] [data-geneo-icon-only][data-geneo-export],
+.geneo-editor-toolbar[data-toolbar-density="adaptive"] [data-geneo-icon-only].tool-split .tool-split-main {
+    width: 40px;
+    min-width: 40px;
+    padding-inline: 0;
+    justify-content: center;
+}
+
+.geneo-editor-toolbar[data-toolbar-density="adaptive"] .geneo-tool-group[data-geneo-icon-only] {
+    width: 126px;
+    flex-basis: 126px;
+}
+
+.geneo-editor-toolbar[data-toolbar-density="adaptive"] .geneo-tool-group[data-geneo-icon-only] .geneo-tool.active {
+    width: 38px;
+    flex-basis: 38px;
+    padding: 0;
+    gap: 0;
+}
+
+.geneo-editor-toolbar[data-toolbar-density="adaptive"] [data-geneo-hidden] {
+    display: none;
+}
+
+.geneo-editor-toolbar[data-geneo-overflow="true"] .geneo-toolbar-overflow {
+    display: inline-flex;
 }
 
 .tool-split {
