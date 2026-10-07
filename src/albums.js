@@ -453,6 +453,72 @@ function personPhotoCropStyle(
     ].join(';');
 }
 
+function faceRegionAttribute(region)
+{
+    const rect = normalizeFaceRegion(region);
+    return rect ? escapeHtml(JSON.stringify(rect)) : '';
+}
+
+function positionFaceRegionMedia(media)
+{
+    const region = normalizeFaceRegion(JSON.parse(media.dataset.faceRegion || 'null'));
+    const image = media.querySelector('img.thumb-img, img');
+    const target = media.querySelector('.photo-thumbnail') || image;
+    if (!region || !image?.naturalWidth || !image?.naturalHeight || !target || !media.clientWidth || !media.clientHeight) return;
+    const width = media.clientWidth;
+    const height = media.clientHeight;
+    const scale = Math.max(width / (region.width * image.naturalWidth), height / (region.height * image.naturalHeight));
+    const imageWidth = image.naturalWidth * scale;
+    const imageHeight = image.naturalHeight * scale;
+    Object.assign(target.style, {
+        width: `${imageWidth}px`, height: `${imageHeight}px`,
+        left: `${width / 2 - (region.x + region.width / 2) * imageWidth}px`,
+        top: `${height / 2 - (region.y + region.height / 2) * imageHeight}px`
+    });
+}
+
+let faceRegionPositionScheduled = false;
+function scheduleFaceRegionPosition()
+{
+    if (faceRegionPositionScheduled) return;
+    faceRegionPositionScheduled = true;
+    requestAnimationFrame(() =>
+    {
+        faceRegionPositionScheduled = false;
+        document.querySelectorAll('[data-face-region-media]').forEach(media =>
+        {
+            positionFaceRegionMedia(media);
+            const image = media.querySelector('img.thumb-img, img');
+            if (image && !image.dataset.faceRegionBound)
+            {
+                image.dataset.faceRegionBound = 'true';
+                image.addEventListener('load', () => positionFaceRegionMedia(media));
+                if (!image.naturalWidth)
+                {
+                    setTimeout(() => positionFaceRegionMedia(media), 120);
+                    setTimeout(() => positionFaceRegionMedia(media), 800);
+                }
+            }
+        });
+    });
+}
+
+document.addEventListener('load', event =>
+{
+    const selectorImage = event.target.matches?.('[data-face-region-selector] > img') ? event.target : null;
+    if (selectorImage?.naturalWidth && selectorImage?.naturalHeight)
+    {
+        const stage = selectorImage.parentElement;
+        const aspect = selectorImage.naturalWidth / selectorImage.naturalHeight;
+        stage.style.aspectRatio = String(aspect);
+        stage.style.width = `min(100%, calc(52vh * ${aspect}), ${520 * aspect}px)`;
+    }
+    const media = event.target.closest?.('[data-face-region-media]');
+    if (media) positionFaceRegionMedia(media);
+}, true);
+window.addEventListener('resize', () => document.querySelectorAll('[data-face-region-media]').forEach(positionFaceRegionMedia));
+document.addEventListener('scroll', () => scheduleFaceRegionPosition(), true);
+
 function renderPersonAvatar(
     person,
     className,
@@ -494,18 +560,18 @@ function renderPersonAvatar(
         .filter(Boolean)
         .join(' ');
 
+    const faceRegion = photoPersonRegion(primaryPhoto, centralPerson?.id);
+    if (faceRegion) scheduleFaceRegionPosition();
     const content = primaryPhoto
         ? `
           <span
             class="person-avatar-viewport">
             <span
-              class="person-avatar-media"
-              style="${escapeHtml(
-                    personPhotoCropStyle(
+              class="person-avatar-media${faceRegion ? ' has-face-region' : ''}"
+              ${faceRegion ? `data-face-region-media data-face-region="${faceRegionAttribute(faceRegion)}"` : `style="${escapeHtml(personPhotoCropStyle(
                         centralPerson
                             ?.primaryPhotoCrop
-                    )
-                )}">
+                    ))}"`}>
               ${renderPhotoThumbnail(
                     primaryPhoto,
                     {
@@ -582,7 +648,7 @@ function resetPersonPhotoPickerState()
         initialPhotoId: null,
         uploadDraft: null,
         uploadError: '',
-        crop: null,
+        region: null,
         dirty: false
     };
 }
@@ -910,68 +976,123 @@ function renderPersonPhotoChooseStage()
       `;
 }
 
-function renderPersonPhotoCropMedia(
+function renderPersonPhotoRegionMedia(
     photo,
-    crop,
+    region,
     className = ''
 )
 {
+    scheduleFaceRegionPosition();
     return `
         <span
-          class="person-photo-crop-media ${
+          class="person-photo-region-preview ${
                 escapeHtml(className)
             }"
-          style="${escapeHtml(
-                personPhotoCropStyle(crop)
-            )}">
-          ${renderPhotoThumbnail(
-                photo,
-                {
-                    label:
-                photo.title
-                || photo.filename
-                }
-            )}
+          data-face-region-media data-face-region="${faceRegionAttribute(region)}">
+          ${photo.src ? `<img src="${escapeHtml(photo.src)}" alt="" draggable="false">` : renderPhotoThumbnail(photo)}
         </span>
       `;
+}
+
+function renderFaceRegionSelector(photo, region, label = 'Select face area')
+{
+    const rect = normalizeFaceRegion(region);
+    const aspect = (Number(photo.width) || 1) / (Number(photo.height) || 1);
+    return `<div class="face-region-selector" data-face-region-selector style="aspect-ratio:${aspect};width:min(100%,calc(52vh * ${aspect}),${520 * aspect}px)" aria-label="${escapeHtml(t(label))}">
+        ${photo.src ? `<img src="${escapeHtml(photo.src)}" alt="" draggable="false">` : renderPhotoThumbnail(photo)}
+        ${rect ? `<div class="face-region-box" data-face-region-box tabindex="0" role="group" aria-label="${escapeHtml(t('Face area. Arrow keys move; Shift and arrow keys resize.'))}" style="left:${rect.x * 100}%;top:${rect.y * 100}%;width:${rect.width * 100}%;height:${rect.height * 100}%"><span class="face-region-handle" data-face-region-resize aria-hidden="true"></span></div>` : ''}
+      </div>`;
+}
+
+function bindFaceRegionSelector(root, getRegion, setRegion)
+{
+    const stage = root.querySelector('[data-face-region-selector]');
+    if (!stage) return;
+    let drag = null;
+    const update = region =>
+    {
+        const normalized = normalizeFaceRegion(region);
+        setRegion(normalized);
+        let box = stage.querySelector('[data-face-region-box]');
+        if (!box && normalized)
+        {
+            box = document.createElement('div');
+            box.className = 'face-region-box';
+            box.dataset.faceRegionBox = '';
+            box.tabIndex = 0;
+            box.setAttribute('role', 'group');
+            box.setAttribute('aria-label', t('Face area. Arrow keys move; Shift and arrow keys resize.'));
+            box.innerHTML = '<span class="face-region-handle" data-face-region-resize aria-hidden="true"></span>';
+            stage.appendChild(box);
+        }
+        if (box && normalized)
+        {
+            Object.assign(box.style, {
+                left: `${normalized.x * 100}%`, top: `${normalized.y * 100}%`,
+                width: `${normalized.width * 100}%`, height: `${normalized.height * 100}%`
+            });
+        }
+    };
+    stage.addEventListener('pointerdown', event =>
+    {
+        if (event.button !== 0) return;
+        const bounds = stage.getBoundingClientRect();
+        const box = event.target.closest('[data-face-region-box]');
+        const current = getRegion();
+        const mode = event.target.closest('[data-face-region-resize]') ? 'resize' : box ? 'move' : 'draw';
+        const x = (event.clientX - bounds.left) / bounds.width;
+        const y = (event.clientY - bounds.top) / bounds.height;
+        drag = { mode, x, y, start: current || FACE_REGION_DEFAULT };
+        if (mode === 'draw') update({ x, y, width: FACE_REGION_MIN, height: FACE_REGION_MIN });
+        stage.setPointerCapture(event.pointerId);
+        event.preventDefault();
+    });
+    stage.addEventListener('pointermove', event =>
+    {
+        if (!drag) return;
+        const bounds = stage.getBoundingClientRect();
+        const x = (event.clientX - bounds.left) / bounds.width;
+        const y = (event.clientY - bounds.top) / bounds.height;
+        if (drag.mode === 'move') update({ ...drag.start, x: drag.start.x + x - drag.x, y: drag.start.y + y - drag.y });
+        else if (drag.mode === 'resize') update({ ...drag.start, width: x - drag.start.x, height: y - drag.start.y });
+        else update({ x: Math.min(drag.x, x), y: Math.min(drag.y, y), width: Math.abs(x - drag.x), height: Math.abs(y - drag.y) });
+    });
+    const finish = event =>
+    {
+        if (!drag) return;
+        drag = null;
+        if (stage.hasPointerCapture(event.pointerId)) stage.releasePointerCapture(event.pointerId);
+    };
+    stage.addEventListener('pointerup', finish);
+    stage.addEventListener('pointercancel', finish);
+    stage.addEventListener('keydown', event =>
+    {
+        if (!event.target.matches('[data-face-region-box]') || !event.key.startsWith('Arrow')) return;
+        const rect = getRegion();
+        if (!rect) return;
+        const step = event.ctrlKey ? 0.01 : 0.025;
+        const dx = event.key === 'ArrowLeft' ? -step : event.key === 'ArrowRight' ? step : 0;
+        const dy = event.key === 'ArrowUp' ? -step : event.key === 'ArrowDown' ? step : 0;
+        update(event.shiftKey ? { ...rect, width: rect.width + dx, height: rect.height + dy } : { ...rect, x: rect.x + dx, y: rect.y + dy });
+        event.preventDefault();
+    });
 }
 
 function renderPersonPhotoAdjustStage()
 {
     const photo = personPhotoPickerSourcePhoto();
     if (!photo) return '<div class="panel-muted">The selected photo is no longer available.</div>';
-    const crop = normalizePersonPhotoCrop(state.personPhotoPicker.crop);
+    const region = normalizeFaceRegion(state.personPhotoPicker.region) || FACE_REGION_DEFAULT;
     return `<div class="person-photo-adjust-layout">
         <div class="person-photo-crop-column">
-          <div class="person-photo-crop-stage" data-person-photo-crop-stage tabindex="0" aria-label="Drag to reposition photo">
-            ${renderPersonPhotoCropMedia(photo, crop)}
-            <span class="person-photo-crop-mask" aria-hidden="true"></span>
-          </div>
-          <p class="person-photo-crop-hint">Drag the photo to reposition it inside the crop.</p>
-          <div class="person-photo-crop-controls">
-            <div class="person-photo-zoom-row">
-              <button class="person-photo-tool-button" type="button" data-person-photo-zoom="-0.1" aria-label="Zoom out">${icon.zoomOut}</button>
-              <input type="range" min="${PERSON_PHOTO_ZOOM_MIN}" max="${PERSON_PHOTO_ZOOM_MAX}" step="0.01" value="${crop.zoom}" data-person-photo-zoom-slider aria-label="Photo zoom">
-              <button class="person-photo-tool-button" type="button" data-person-photo-zoom="0.1" aria-label="Zoom in">${icon.zoomIn}</button>
-            </div>
-            <div class="person-photo-crop-toolbar">
-              <button class="person-photo-tool-button" type="button" data-person-photo-rotate="-90">${icon.rotateLeft}<span>Rotate left</span></button>
-              <button class="person-photo-tool-button" type="button" data-person-photo-rotate="90">${icon.rotateRight}<span>Rotate right</span></button>
-              <button class="person-photo-tool-button" type="button" data-person-photo-reset>Reset</button>
-            </div>
-          </div>
+          ${renderFaceRegionSelector(photo, region)}
+          <p class="person-photo-crop-hint">Drag to select a face. Move the box or drag its corner to adjust it.</p>
+          <button class="person-photo-tool-button" type="button" data-person-photo-reset>Reset area</button>
         </div>
         <aside class="person-photo-preview-column" aria-label="Avatar previews">
-          <div class="person-photo-preview-card"><strong>Family Tree preview</strong><div class="person-photo-preview-avatar tree">${renderPersonPhotoCropMedia(photo, crop)}</div></div>
-          <div class="person-photo-preview-card"><strong>Profile preview</strong><div class="person-photo-preview-avatar profile">${renderPersonPhotoCropMedia(photo, crop)}</div></div>
+          <div class="person-photo-preview-card"><strong>Family Tree preview</strong><div class="person-photo-preview-avatar tree">${renderPersonPhotoRegionMedia(photo, region)}</div></div>
+          <div class="person-photo-preview-card"><strong>Profile preview</strong><div class="person-photo-preview-avatar profile">${renderPersonPhotoRegionMedia(photo, region)}</div></div>
         </aside>
-      </div>
-      <div class="modal-footer">
-        <button class="button secondary" type="button" data-person-photo-back>Back</button>
-        <div class="modal-footer-actions">
-          <button class="button secondary" type="button" data-close>Cancel</button>
-          <button class="button primary" type="button" data-person-photo-use>Use photo</button>
-        </div>
       </div>`;
 }
 
@@ -1048,6 +1169,13 @@ function renderPersonPhotoPickerModal()
                     : renderPersonPhotoChooseStage()
             }
           </div>
+          ${adjust ? `<div class="modal-footer">
+            <button class="button secondary" type="button" data-person-photo-back>Back</button>
+            <div class="modal-footer-actions">
+              <button class="button secondary" type="button" data-close>Cancel</button>
+              <button class="button primary" type="button" data-person-photo-use>Use photo</button>
+            </div>
+          </div>` : ''}
         </div>
       `);
 
@@ -1159,75 +1287,12 @@ async function processPersonPhotoUpload(file)
     renderPersonPhotoPickerModal();
 }
 
-function updatePersonPhotoCropDom()
-{
-    const crop = normalizePersonPhotoCrop(state.personPhotoPicker.crop);
-    state.personPhotoPicker.crop = crop;
-    modalBackdrop
-        .querySelectorAll(
-            '.person-photo-crop-media'
-        )
-        .forEach(media =>
-        {
-            media.setAttribute(
-                'style',
-                personPhotoCropStyle(crop)
-            );
-        });
-    const slider = modalBackdrop.querySelector('[data-person-photo-zoom-slider]');
-    if (slider) slider.value = String(crop.zoom);
-}
-
-function setPersonPhotoCrop(nextCrop, { dirty = true } = {})
-{
-    state.personPhotoPicker.crop = normalizePersonPhotoCrop(nextCrop);
-    if (dirty) state.personPhotoPicker.dirty = true;
-    updatePersonPhotoCropDom();
-}
-
-function bindPersonPhotoCropDrag()
-{
-    const stage = modalBackdrop.querySelector('[data-person-photo-crop-stage]');
-    if (!stage) return;
-    let drag = null;
-    stage.addEventListener('pointerdown', event =>
-    {
-        if (event.button !== 0) return;
-        const crop = normalizePersonPhotoCrop(state.personPhotoPicker.crop);
-        drag = { x: event.clientX, y: event.clientY, crop };
-        stage.classList.add('is-dragging');
-        stage.setPointerCapture(event.pointerId);
-    });
-    stage.addEventListener('pointermove', event =>
-    {
-        if (!drag) return;
-        const rect = stage.getBoundingClientRect();
-        const zoom = Math.max(PERSON_PHOTO_ZOOM_MIN, drag.crop.zoom);
-        setPersonPhotoCrop({
-            ...drag.crop,
-            centerX: drag.crop.centerX - (event.clientX - drag.x) / (rect.width * zoom),
-            centerY: drag.crop.centerY - (event.clientY - drag.y) / (rect.height * zoom)
-        });
-    });
-    const finish = event =>
-    {
-        if (!drag) return;
-        drag = null;
-        stage.classList.remove('is-dragging');
-        if (stage.hasPointerCapture(event.pointerId)) stage.releasePointerCapture(event.pointerId);
-    };
-    stage.addEventListener('pointerup', finish);
-    stage.addEventListener('pointercancel', finish);
-}
-
-function initializePersonPhotoCrop()
+function initializePersonPhotoRegion()
 {
     const person = personPhotoPickerPerson();
     const source = personPhotoPickerSourcePhoto();
     if (!person || !source) return false;
-    state.personPhotoPicker.crop = normalizePersonPhotoCrop(
-        source.id === person.primaryPhotoId ? person.primaryPhotoCrop : null
-    );
+    state.personPhotoPicker.region = photoPersonRegion(source, person.id) || { ...FACE_REGION_DEFAULT };
     state.personPhotoPicker.step = 'adjust';
     return true;
 }
@@ -3307,7 +3372,7 @@ function renderAfterPersonPrimaryPhotoChange()
     render();
 }
 
-function applyPersonPrimaryPhoto({ personId, existingPhotoId = '', uploadDraft = null, crop = null } = {})
+function applyPersonPrimaryPhoto({ personId, existingPhotoId = '', uploadDraft = null, region = null } = {})
 {
     const person = getPerson(personId);
     if (!person) return false;
@@ -3365,7 +3430,8 @@ function applyPersonPrimaryPhoto({ personId, existingPhotoId = '', uploadDraft =
     }
     if (!photo) return false;
     ensurePhotoPersonTag(photo, person);
-    setPersonPrimaryPhoto(person.id, photo.id, crop, { rerender: false, notify: false });
+    setPhotoPersonRegion(photo, person.id, region);
+    setPersonPrimaryPhoto(person.id, photo.id, null, { rerender: false, notify: false });
     const name = person.names?.display || 'Person';
     resetPersonPhotoPickerState();
     closeModal({ force: true });
@@ -3438,7 +3504,7 @@ function bindPersonPhotoPickerModal()
     }
     modalBackdrop.querySelector('[data-person-photo-continue]')?.addEventListener('click', () =>
     {
-        if (!initializePersonPhotoCrop()) return;
+        if (!initializePersonPhotoRegion()) return;
         renderPersonPhotoPickerModal();
     });
     modalBackdrop.querySelector('[data-person-photo-back]')?.addEventListener('click', () =>
@@ -3446,29 +3512,10 @@ function bindPersonPhotoPickerModal()
         state.personPhotoPicker.step = 'choose';
         renderPersonPhotoPickerModal();
     });
-    modalBackdrop.querySelectorAll('[data-person-photo-zoom]').forEach(button => button.addEventListener('click', () =>
-    {
-        const crop = normalizePersonPhotoCrop(state.personPhotoPicker.crop);
-        setPersonPhotoCrop({ ...crop, zoom: crop.zoom + Number(button.dataset.personPhotoZoom) });
-    }));
-    modalBackdrop.querySelector('[data-person-photo-zoom-slider]')?.addEventListener('input', event =>
-    {
-        setPersonPhotoCrop({
-            ...normalizePersonPhotoCrop(state.personPhotoPicker.crop),
-            zoom: Number(event.target.value)
-        });
-    });
-    modalBackdrop.querySelectorAll('[data-person-photo-rotate]').forEach(button => button.addEventListener('click', () =>
-    {
-        const crop = normalizePersonPhotoCrop(state.personPhotoPicker.crop);
-        const rotation = (crop.rotation + Number(button.dataset.personPhotoRotate) + 360) % 360;
-        setPersonPhotoCrop({ ...crop, rotation });
-    }));
     modalBackdrop.querySelector('[data-person-photo-reset]')?.addEventListener('click', () =>
     {
-        const current = normalizePersonPhotoCrop(state.personPhotoPicker.crop);
-        const next = normalizePersonPhotoCrop(null);
-        setPersonPhotoCrop(next, { dirty: JSON.stringify(current) !== JSON.stringify(next) });
+        state.personPhotoPicker.region = { ...FACE_REGION_DEFAULT };
+        renderPersonPhotoPickerModal();
     });
     modalBackdrop.querySelector('[data-person-photo-use]')?.addEventListener('click', () =>
     {
@@ -3479,11 +3526,22 @@ function bindPersonPhotoPickerModal()
             personId: state.personPhotoPicker.personId,
             existingPhotoId: uploadDraft ? '' : state.personPhotoPicker.selectedPhotoId,
             uploadDraft,
-            crop: state.personPhotoPicker.crop
+            region: state.personPhotoPicker.region
         });
     });
     modalBackdrop.querySelector('[data-person-photo-remove-current]')?.addEventListener('click', removeCurrentPersonPhoto);
-    bindPersonPhotoCropDrag();
+    bindFaceRegionSelector(modalBackdrop,
+        () => state.personPhotoPicker.region,
+        region =>
+        {
+            state.personPhotoPicker.region = region;
+            state.personPhotoPicker.dirty = true;
+            modalBackdrop.querySelectorAll('.person-photo-region-preview').forEach(preview =>
+            {
+                preview.dataset.faceRegion = JSON.stringify(region);
+                positionFaceRegionMedia(preview);
+            });
+        });
 }
 
 function openPersonPhotoPicker(personId)
@@ -3500,7 +3558,7 @@ function openPersonPhotoPicker(personId)
         projectScope: 'tagged',
         selectedPhotoId: activePrimary?.id || null,
         initialPhotoId: person.primaryPhotoId || null,
-        crop: normalizePersonPhotoCrop(person.primaryPhotoCrop)
+        region: photoPersonRegion(activePrimary, person.id)
     });
     renderPersonPhotoPickerModal();
 }
@@ -3558,14 +3616,13 @@ function openPersonPhotoAdjuster(
             || null,
             uploadDraft: null,
             uploadError: '',
-            crop: null,
             dirty:
             photo.id
             !== person.primaryPhotoId
         }
     );
 
-    if (!initializePersonPhotoCrop())
+    if (!initializePersonPhotoRegion())
     {
         resetPersonPhotoPickerState();
 
@@ -5998,6 +6055,7 @@ function renderAlbumsPhotoHero(
                   true
                 }
             )}
+            <span class="albums-face-highlight" data-albums-face-highlight hidden aria-hidden="true"></span>
           </button>
 
           <button
@@ -6211,7 +6269,7 @@ function renderAlbumsPhotoPeople(
             `;
 
                 return `
-              <div class="relation-row">
+              <div class="relation-row" data-albums-person-region="${escapeHtml(person.id)}">
                 ${
                     readOnly
                         ? `
@@ -6873,6 +6931,10 @@ function renderAlbumsDetailPane()
                     photo
                 )
             )}
+          <div class="albums-face-floating-preview" data-albums-face-floating hidden aria-hidden="true">
+            ${renderPhotoThumbnail(photo, { className: 'albums-detail-preview', label: photo.title || photo.filename, backdrop: true })}
+            <span class="albums-face-highlight" data-albums-face-highlight></span>
+          </div>
         </aside>
       `;
 }
@@ -7411,6 +7473,11 @@ function openPhotoPeopleModal(photoId)
     const selectedIds =
         new Set(initialSelectedIds);
 
+    const regions = { ...(photo.personRegions || {}) };
+    const initialRegions = JSON.stringify(regions);
+    let activeRegionPersonId = null;
+    const primaryPhotoPersonIds = new Set();
+
     let query = '';
 
     const personName = person =>
@@ -7455,7 +7522,7 @@ function openPhotoPeopleModal(photoId)
             ...initialSelectedIds
         ].some(personId =>
             !selectedIds.has(personId)
-        );
+        ) || JSON.stringify(regions) !== initialRegions || primaryPhotoPersonIds.size > 0;
 
     const getCandidates = () =>
     {
@@ -7718,19 +7785,20 @@ function openPhotoPeopleModal(photoId)
                     personName(person);
 
                 return `
+                <div class="photo-people-selected-chip">
                 <button
                   class="
-                    photo-people-selected-chip
+                    photo-people-region-action
                   "
                   type="button"
-                  data-photo-people-remove="${
+                  data-photo-people-region="${
                         escapeHtml(
                             person.id
                         )
                     }"
                   aria-label="${
                         escapeHtml(
-                            `Remove tag for ${name}`
+                            `${t('Select face area for')} ${localizedDataFieldValue(name)}`
                         )
                     }">
 
@@ -7749,14 +7817,9 @@ function openPhotoPeopleModal(photoId)
                     ${escapeHtml(name)}
                   </span>
 
-                  <span
-                    class="
-                      photo-people-selected-remove
-                    "
-                    aria-hidden="true">
-                    ${icon.close}
-                  </span>
                 </button>
+                <button type="button" class="photo-people-selected-remove" data-photo-people-remove="${escapeHtml(person.id)}" aria-label="${escapeHtml(`Remove tag for ${name}`)}">${icon.close}</button>
+                </div>
               `;
             }).join('')}
           </div>
@@ -7938,6 +8001,8 @@ function openPhotoPeopleModal(photoId)
               hidden>
             </section>
 
+            <section class="photo-people-region-panel" data-photo-people-region-panel hidden></section>
+
             <section
               class="
                 photo-people-results-panel
@@ -8037,6 +8102,25 @@ function openPhotoPeopleModal(photoId)
         selectedPanel.innerHTML =
             selectedHtml;
 
+        const regionPanel = modal.querySelector('[data-photo-people-region-panel]');
+        const activePerson = selectedIds.has(activeRegionPersonId) ? getPerson(activeRegionPersonId) : null;
+        regionPanel.hidden = !activePerson;
+        regionPanel.innerHTML = activePerson ? `
+          <div class="photo-people-region-heading"><strong>${escapeHtml(t('Select face area for'))} ${escapeHtml(localizedDataFieldValue(personName(activePerson)))}</strong><button class="link" type="button" ${regions[activePerson.id] ? 'data-photo-people-clear-region' : 'data-photo-people-add-region'}>${regions[activePerson.id] ? 'Clear area' : 'Add area'}</button></div>
+          ${renderFaceRegionSelector(photo, regions[activePerson.id], `${t('Face area for')} ${localizedDataFieldValue(personName(activePerson))}`)}
+          <p class="person-photo-crop-hint">Drag on the photo to select an area, then move or resize it.</p>
+          <label class="photo-people-primary-choice"><input type="checkbox" data-photo-people-primary ${primaryPhotoPersonIds.has(activePerson.id) ? 'checked' : ''}> Use as profile photo</label>
+          <p class="photo-people-region-error" data-photo-people-region-error hidden>Select a face area first.</p>
+        ` : '';
+        if (activePerson) bindFaceRegionSelector(regionPanel,
+            () => normalizeFaceRegion(regions[activePerson.id]),
+            region =>
+            {
+                if (region) regions[activePerson.id] = region;
+                else delete regions[activePerson.id];
+                modal.querySelector('[data-photo-people-save]').disabled = !selectionChanged();
+            });
+
         modal
             .querySelector(
                 '[data-photo-people-results-title]'
@@ -8124,8 +8208,13 @@ function openPhotoPeopleModal(photoId)
             photo.id,
             [
                 ...selectedIds
-            ]
+            ], { rerender: false }
         );
+
+        selectedIds.forEach(personId => setPhotoPersonRegion(photo, personId, regions[personId] || null));
+        primaryPhotoPersonIds.forEach(personId =>
+            setPersonPrimaryPhoto(personId, photo.id, null, { rerender: false, notify: false }));
+        render();
 
         showToast(
             'People tags updated.'
@@ -8134,6 +8223,15 @@ function openPhotoPeopleModal(photoId)
 
     const saveSelection = () =>
     {
+        const missingRegionPersonId = [...primaryPhotoPersonIds].find(personId => !normalizeFaceRegion(regions[personId]));
+        if (missingRegionPersonId)
+        {
+            activeRegionPersonId = missingRegionPersonId;
+            refresh();
+            const error = modal.querySelector('[data-photo-people-region-error]');
+            if (error) error.hidden = false;
+            return;
+        }
         if (!selectionChanged())
         {
             return;
@@ -8349,11 +8447,20 @@ function openPhotoPeopleModal(photoId)
                     '[data-photo-people-choice]'
                 );
 
+            if (event.target.matches('[data-photo-people-primary]'))
+            {
+                if (event.target.checked) primaryPhotoPersonIds.add(activeRegionPersonId);
+                else primaryPhotoPersonIds.delete(activeRegionPersonId);
+                modal.querySelector('[data-photo-people-save]').disabled = !selectionChanged();
+                return;
+            }
             if (!input) return;
 
             selectedIds.add(
                 input.value
             );
+            activeRegionPersonId = input.value;
+            useAsProfilePhoto = false;
 
             refresh();
         }
@@ -8370,12 +8477,34 @@ function openPhotoPeopleModal(photoId)
 
             if (remove)
             {
-                selectedIds.delete(
-                    remove.dataset
-                        .photoPeopleRemove
-                );
+                const personId = remove.dataset.photoPeopleRemove;
+                selectedIds.delete(personId);
+                delete regions[personId];
+                primaryPhotoPersonIds.delete(personId);
+                if (activeRegionPersonId === personId) activeRegionPersonId = null;
 
                 refresh();
+                return;
+            }
+            const regionButton = event.target.closest('[data-photo-people-region]');
+            if (regionButton)
+            {
+                activeRegionPersonId = regionButton.dataset.photoPeopleRegion;
+                refresh();
+                modal.querySelector('[data-photo-people-region-panel]')?.scrollIntoView({ block: 'center' });
+                return;
+            }
+            if (event.target.closest('[data-photo-people-clear-region]'))
+            {
+                delete regions[activeRegionPersonId];
+                refresh();
+                return;
+            }
+            if (event.target.closest('[data-photo-people-add-region]'))
+            {
+                regions[activeRegionPersonId] = { ...FACE_REGION_DEFAULT };
+                refresh();
+                modal.querySelector('[data-face-region-box]')?.focus();
                 return;
             }
 
@@ -12736,6 +12865,66 @@ function bindAlbumsControls()
                 }
             );
         });
+
+    const detailPreview = main.querySelector('.albums-detail-preview-button');
+    const faceHighlight = detailPreview?.querySelector('[data-albums-face-highlight]');
+    const floatingPreview = main.querySelector('[data-albums-face-floating]');
+    const clearFaceHighlight = () =>
+    {
+        if (faceHighlight) faceHighlight.hidden = true;
+        if (floatingPreview) floatingPreview.hidden = true;
+    };
+    const highlightPerson = personId =>
+    {
+        if (!faceHighlight || !detailPreview) return;
+        const photo = getPhoto(state.selectedPhotoId, { projectId: currentProjectId() });
+        const region = photoPersonRegion(photo, personId);
+        const pane = main.querySelector('.albums-detail');
+        const previewRect = detailPreview.getBoundingClientRect();
+        const paneRect = pane?.getBoundingClientRect();
+        const useFloating = Boolean(floatingPreview && paneRect && previewRect.bottom < paneRect.top + 80);
+        if (useFloating)
+        {
+            Object.assign(floatingPreview.style, {
+                left: `${paneRect.left + 16}px`, top: `${paneRect.top + 16}px`, width: `${paneRect.width - 32}px`
+            });
+            floatingPreview.hidden = false;
+        }
+        else if (floatingPreview) floatingPreview.hidden = true;
+        const preview = useFloating ? floatingPreview : detailPreview;
+        const highlight = useFloating ? floatingPreview.querySelector('[data-albums-face-highlight]') : faceHighlight;
+        const image = preview.querySelector('.albums-detail-preview .thumb-img');
+        if (!region || !image || !photo?.width || !photo?.height)
+        {
+            clearFaceHighlight();
+            return;
+        }
+        faceHighlight.hidden = useFloating;
+        const bounds = preview.getBoundingClientRect();
+        const imageWidth = image.naturalWidth || photo.width;
+        const imageHeight = image.naturalHeight || photo.height;
+        const scale = Math.min(image.clientWidth / imageWidth, image.clientHeight / imageHeight);
+        const width = imageWidth * scale;
+        const height = imageHeight * scale;
+        const left = (image.clientWidth - width) / 2 + region.x * width;
+        const top = (image.clientHeight - height) / 2 + region.y * height;
+        Object.assign(highlight.style, {
+            left: `${left / bounds.width * 100}%`, top: `${top / bounds.height * 100}%`,
+            width: `${region.width * width / bounds.width * 100}%`,
+            height: `${region.height * height / bounds.height * 100}%`
+        });
+        highlight.hidden = false;
+    };
+    main.querySelectorAll('[data-albums-person-region]').forEach(row =>
+    {
+        row.addEventListener('pointerenter', () => highlightPerson(row.dataset.albumsPersonRegion));
+        row.addEventListener('pointerleave', clearFaceHighlight);
+        row.addEventListener('focusin', () => highlightPerson(row.dataset.albumsPersonRegion));
+        row.addEventListener('focusout', event =>
+        {
+            if (!row.contains(event.relatedTarget)) clearFaceHighlight();
+        });
+    });
 
     main
         .querySelectorAll(

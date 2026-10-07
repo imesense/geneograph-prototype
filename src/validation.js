@@ -1295,6 +1295,18 @@ function validateSampleData()
             if (!person) warn(`Media ${photo.id} points to missing person ${personId}`);
             else if (person.projectId !== photo.projectId) warn(`Media ${photo.id} and person ${personId} are in different projects`);
         });
+        if (photo.personRegions != null)
+        {
+            if (!photo.personRegions || typeof photo.personRegions !== 'object' || Array.isArray(photo.personRegions)) warn(`Media ${photo.id} has invalid face regions`);
+            else Object.entries(photo.personRegions).forEach(([personId, region]) =>
+            {
+                if (!(photo.personIds || []).includes(personId)) warn(`Media ${photo.id} has face area for untagged person ${personId}`);
+                if (!region || !['x', 'y', 'width', 'height'].every(key => Number.isFinite(region[key]))
+                    || region.x < 0 || region.y < 0 || region.width < FACE_REGION_MIN || region.height < FACE_REGION_MIN
+                    || region.x + region.width > 1.000001 || region.y + region.height > 1.000001)
+                    warn(`Media ${photo.id} has invalid face area for ${personId}`);
+            });
+        }
         (photo.albumIds || []).forEach(albumId =>
         {
             const album = sampleData.albums.find(item => item.id === albumId);

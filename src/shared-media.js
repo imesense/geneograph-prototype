@@ -686,6 +686,45 @@ const PERSON_PHOTO_CROP_DEFAULT = Object.freeze({
     zoom: 1,
     rotation: 0
 });
+const FACE_REGION_DEFAULT = Object.freeze({ x: 0.3, y: 0.3, width: 0.4, height: 0.4 });
+const FACE_REGION_MIN = 0.06;
+
+function normalizeFaceRegion(region)
+{
+    if (!region) return null;
+    const values = ['x', 'y', 'width', 'height'].map(key => Number(region[key]));
+    if (values.some(value => !Number.isFinite(value))) return null;
+    const width = Math.min(1, Math.max(FACE_REGION_MIN, values[2]));
+    const height = Math.min(1, Math.max(FACE_REGION_MIN, values[3]));
+    return {
+        x: Math.min(1 - width, Math.max(0, values[0])),
+        y: Math.min(1 - height, Math.max(0, values[1])),
+        width,
+        height
+    };
+}
+
+function photoPersonRegion(photo, personId)
+{
+    return (photo?.personIds || []).includes(personId)
+        ? normalizeFaceRegion(photo?.personRegions?.[personId])
+        : null;
+}
+
+function setPhotoPersonRegion(photo, personId, region)
+{
+    if (!photo || !(photo.personIds || []).includes(personId)
+        || getPerson(personId)?.projectId !== photo.projectId) return false;
+    const regions = { ...(photo.personRegions || {}) };
+    const normalized = normalizeFaceRegion(region);
+    if (normalized) regions[personId] = normalized;
+    else delete regions[personId];
+    photo.personRegions = regions;
+    const person = getPerson(personId);
+    if (normalized && person?.primaryPhotoId === photo.id) person.primaryPhotoCrop = null;
+    photo.updatedAt = new Date().toISOString();
+    return true;
+}
 const PERSON_PHOTO_ZOOM_MIN = 1;
 const PERSON_PHOTO_ZOOM_MAX = 3;
 const PERSON_PHOTO_ROTATIONS = Object.freeze([0, 90, 180, 270]);
@@ -738,6 +777,12 @@ function setPhotoPersonIds(photoId, personIds, { rerender = true } = {})
         getPerson(personId)?.projectId === photo.projectId
     );
     photo.personIds = validIds;
+    if (photo.personRegions)
+    {
+        photo.personRegions = Object.fromEntries(
+            Object.entries(photo.personRegions).filter(([personId]) => validIds.includes(personId))
+        );
+    }
     photo.updatedAt = new Date().toISOString();
     repairPrimaryPhotoReferences([photo.id]);
     if (rerender) render();
@@ -759,6 +804,7 @@ function setPersonPhotoIds(personId, photoIds, { rerender = true } = {})
         if (selected.has(photo.id)) ids.add(person.id);
         else ids.delete(person.id);
         photo.personIds = [...ids];
+        if (photo.personRegions && !ids.has(person.id)) delete photo.personRegions[person.id];
         photo.updatedAt = new Date().toISOString();
     });
     repairPrimaryPhotoReferences();
@@ -773,9 +819,9 @@ function setPersonPrimaryPhoto(personId, photoId, crop = null, { rerender = true
     if (!person || !photo || !(photo.personIds || []).includes(personId)) return false;
     const previousPhotoId = person.primaryPhotoId || '';
     person.primaryPhotoId = photo.id;
-    person.primaryPhotoCrop = normalizePersonPhotoCrop(
-        crop || (previousPhotoId === photo.id ? person.primaryPhotoCrop : null)
-    );
+    person.primaryPhotoCrop = photoPersonRegion(photo, personId)
+        ? null
+        : normalizePersonPhotoCrop(crop || (previousPhotoId === photo.id ? person.primaryPhotoCrop : null));
     markPersonUpdated(person);
     if (rerender) render();
     if (notify) showToast('Primary photo updated.');

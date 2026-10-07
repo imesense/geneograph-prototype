@@ -2,6 +2,17 @@ const SUPPORTED_LANGUAGES = ['en', 'ru'];
 const LANGUAGE_STORAGE_KEY = 'geneograph.language';
 const PROJECT_CONTINUATION_STORAGE_KEY = 'geneograph.projectContinuation';
 const RU_UI_SHARED = Object.freeze({
+    'Select face area': 'Выберите область лица',
+    'Select face area for': 'Выберите область лица для',
+    'Face area for': 'Область лица для',
+    'Face area. Arrow keys move; Shift and arrow keys resize.': 'Область лица. Стрелки перемещают; Shift и стрелки изменяют размер.',
+    'Drag to select a face. Move the box or drag its corner to adjust it.': 'Выделите лицо. Перемещайте рамку или потяните за угол, чтобы изменить её размер.',
+    'Drag on the photo to select an area, then move or resize it.': 'Выделите область на фото, затем переместите рамку или измените её размер.',
+    'Use as profile photo': 'Использовать как фото профиля',
+    'Select a face area first.': 'Сначала выделите область лица.',
+    'Clear area': 'Очистить область',
+    'Add area': 'Добавить область',
+    'Reset area': 'Сбросить область',
     'Projects': 'Проекты',
     'Family Tree': 'Семейное древо',
     'People': 'Люди',
