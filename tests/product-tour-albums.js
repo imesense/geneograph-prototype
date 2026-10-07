@@ -14,13 +14,15 @@ const albums = Array.from(steps.filter(step => step.module === 'Albums'), step =
 assert.deepEqual(albums, [
     'albums-welcome', 'albums-photos', 'albums-navigation', 'albums-albums',
     'albums-filters', 'albums-summary', 'albums-actions', 'albums-connections',
-    'albums-tag-person', 'albums-tag-person-modal', 'albums-add-to-album-action',
+    'albums-tag-person-modal', 'albums-add-to-album-action',
     'albums-add-to-album', 'albums-to-archive'
 ]);
 assert.match(source, /state\.selectedPhotoId = 'photo-silver-luna-wedding'/);
 assert.ok(source.indexOf("if (step.module === 'Albums' && !geneoTourRuntime.albumsOrigin)")
     < source.indexOf("activateProject(GENEO_TOUR_PROJECT_ID, { moduleName: step.module, renderNow: false });"));
-assert.match(source, /'albums-tag-person': '#albumsTagPeople'/);
+assert.doesNotMatch(source, /id: 'albums-tag-person'/);
+assert.match(source, /\['albums-connections', 'albums-add-to-album-action'\]\.includes\(stepId\)/);
+assert.match(source, /target\.closest\('\.panel-section'\)\?\.getBoundingClientRect\(\)/);
 assert.match(source, /'albums-tag-person-modal': '#modalBackdrop \.photo-people-modal'/);
 assert.match(source, /'albums-add-to-album-action': '#albumsLinkAlbum'/);
 assert.match(source, /openPhotoPeopleModal\('photo-silver-luna-wedding'\)/);
@@ -37,4 +39,5 @@ for (const id of albums)
     assert.ok(russian[step.title], `Missing Russian title: ${step.title}`);
     assert.ok(russian[step.body], `Missing Russian copy: ${step.body}`);
 }
+assert.equal(russian['Tag a person'], undefined);
 console.log('Albums tour order, photo selection, modal targets, and Russian copy checks passed.');

@@ -68,8 +68,7 @@ const geneoTourSteps = [
     { id: 'albums-filters', module: 'Albums', title: 'Narrow your photos', body: 'Filters help you find photographs by person, place, source, date, or favourite status without changing them.' },
     { id: 'albums-summary', module: 'Albums', title: 'Inspect a photograph', body: 'The right panel shows a photo preview and its main details, including its name, date, place, and caption.' },
     { id: 'albums-actions', module: 'Albums', title: 'Work with a photo', body: 'Use these controls to edit photo details, mark it as a favourite, or open more actions.' },
-    { id: 'albums-connections', module: 'Albums', title: 'Keep photos connected', body: 'People and Albums show who is in this photograph and which albums contain it. These links keep each photo in the context of your research.' },
-    { id: 'albums-tag-person', module: 'Albums', title: 'Tag a person', body: 'Tag person links someone in this photograph to their profile. Open it to see how Silver and Luna are identified.' },
+    { id: 'albums-connections', module: 'Albums', title: 'Keep photos connected', body: 'People shows who is in this photograph and links each person to their profile. Next, see how Silver and Luna are tagged.' },
     { id: 'albums-tag-person-modal', module: 'Albums', title: 'Choose people in a photo', body: 'Silver and Luna are already tagged. Search project people here to change who is connected to the photograph.' },
     { id: 'albums-add-to-album-action', module: 'Albums', title: 'Add to an album', body: 'Add to album groups this photograph with related images. Next, choose an album.' },
     { id: 'albums-add-to-album', module: 'Albums', title: 'Add a photo to an album', body: 'Choose an existing album or create a new one to organize this photograph with related images.' },
@@ -392,7 +391,7 @@ function geneoTourPrepare(index)
         state.selectedPhotoIds = [];
         state.albumsDetailCollapsed = false;
         state.albumsDetailSections.details = true;
-        if (['albums-connections', 'albums-tag-person', 'albums-tag-person-modal',
+        if (['albums-connections', 'albums-tag-person-modal',
             'albums-add-to-album-action', 'albums-add-to-album'].includes(step.id))
         {
             state.albumsDetailSections.people = true;
@@ -674,7 +673,7 @@ function geneoTourApplyTreeReveal(step)
     {
         if (step.id === 'albums-navigation' || step.id === 'albums-albums')
             document.body.classList.add('geneo-tour-albums-sidebar');
-        if (['albums-summary', 'albums-actions', 'albums-connections', 'albums-tag-person',
+        if (['albums-summary', 'albums-actions', 'albums-connections',
             'albums-add-to-album-action'].includes(step.id))
             document.body.classList.add('geneo-tour-albums-inspector');
         if (step.id === 'albums-filters')
@@ -759,7 +758,6 @@ function geneoTourTarget(index)
         'albums-summary': '.albums-detail-toolbar',
         'albums-actions': '#albumsEditPhoto',
         'albums-connections': '[data-albums-section-toggle="people"]',
-        'albums-tag-person': '#albumsTagPeople',
         'albums-tag-person-modal': '#modalBackdrop .photo-people-modal',
         'albums-add-to-album-action': '#albumsLinkAlbum',
         'albums-add-to-album': '#modalBackdrop .album-picker-modal',
@@ -1922,21 +1920,31 @@ function geneoTourTargetRect(target)
         return viewport ? { left: Math.max(rect.left, viewport.left), top: Math.max(rect.top, viewport.top),
             right: Math.min(rect.right, viewport.right), bottom: Math.min(rect.bottom, viewport.bottom) } : rect;
     }
-    if (stepId === 'albums-summary' || stepId === 'albums-connections')
+    if (stepId === 'albums-summary')
     {
         const inspector = main.querySelector('.albums-detail')?.getBoundingClientRect();
-        const end = stepId === 'albums-summary'
-            ? main.querySelector('[data-albums-section-toggle="details"]')?.closest('.panel-section')
-            : main.querySelector('[data-albums-section-toggle="albums"]')?.closest('.panel-section');
+        const end = main.querySelector('[data-albums-section-toggle="details"]')?.closest('.panel-section');
         const endRect = end?.getBoundingClientRect();
         if (inspector && endRect)
         {
             const top = Math.max(rect.top, inspector.top);
             const visibleBottom = innerWidth <= 640
-                ? Math.min(inspector.bottom, innerHeight * (stepId === 'albums-connections' ? .62 : .66))
+                ? Math.min(inspector.bottom, innerHeight * .66)
                 : Math.min(inspector.bottom, innerHeight - 8);
             return { left: inspector.left, right: inspector.right, top,
                 bottom: Math.max(top + 40, Math.min(endRect.bottom, visibleBottom)) };
+        }
+    }
+    if (['albums-connections', 'albums-add-to-album-action'].includes(stepId))
+    {
+        const section = target.closest('.panel-section')?.getBoundingClientRect();
+        const inspector = main.querySelector('.albums-detail')?.getBoundingClientRect();
+        if (section && inspector)
+        {
+            const top = Math.max(section.top, inspector.top);
+            const bottom = Math.min(section.bottom, inspector.bottom, innerHeight - 8);
+            return { left: inspector.left, right: inspector.right, top,
+                bottom: Math.max(top + 1, bottom) };
         }
     }
     if (stepId === 'albums-actions')
@@ -2196,7 +2204,7 @@ async function geneoTourMoveTo(index)
         }
         else if (geneoTourSteps[index].id === 'albums-summary' || geneoTourSteps[index].id === 'albums-actions')
             main.querySelector('.albums-detail')?.scrollTo(0, 0);
-        else if (['albums-connections', 'albums-tag-person', 'albums-add-to-album-action'].includes(geneoTourSteps[index].id))
+        else if (['albums-connections', 'albums-add-to-album-action'].includes(geneoTourSteps[index].id))
         {
             const inspector = main.querySelector('.albums-detail');
             const section = target.closest('.panel-section');
