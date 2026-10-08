@@ -18,7 +18,7 @@ assert.deepEqual(places.map(step => step.id), [
     'places-routes', 'places-list', 'places-filters', 'places-save-filter',
     'places-saved-filters', 'places-add-button', 'places-add-modal',
     'places-add-coordinates', 'places-add-map', 'places-add-create',
-    'places-inspector', 'places-actions', 'places-edit-modal', 'places-outro'
+    'places-inspector', 'places-actions', 'places-outro'
 ]);
 assert.equal(places[0].presentation, 'centered');
 assert.equal(steps.at(-1).id, 'places-outro');
@@ -47,14 +47,13 @@ assert.match(source, /step\.id === 'places-save-filter' \? \{ mapped: 'mapped' \
 assert.match(source, /if \(stepId === 'places-actions'\)/);
 assert.match(source, /target\.closest\('\.places-inspector-toolbar'\)/);
 assert.match(source, /'places-filters', 'places-routes', 'places-actions',\s*'places-add-coordinates'\]\.includes\(stepId\) \? 2 : 8/);
-assert.match(source, /step\.id === 'places-edit-modal' \? 'place-meowbridge' : null/);
+assert.doesNotMatch(source, /places-edit-modal/);
 assert.match(source, /startPlaceEditorMapSelection\(\)/);
 assert.match(source, /handlePlacesMapClick\(\{ latlng:/);
 assert.match(source, /map\.containerPointToLatLng\(/);
 assert.match(source, /placesDraftCoordinates = \{ lat: pending\.lat, lng: pending\.lng \}/);
 assert.match(source, /geneoTourRuntime\.placesDraftCoordinates = null/);
-assert.match(source, /is-places-edit-modal/);
-assert.match(tourCss, /\.geneo-tour\.is-modal-stop:is\(\.is-places-add-modal, \.is-places-edit-modal\) \.geneo-tour-card\s*\{\s*width: 248px;/);
+assert.match(tourCss, /\.geneo-tour\.is-modal-stop\.is-places-add-modal \.geneo-tour-card\s*\{\s*width: 248px;/);
 assert.match(source, /stepId === 'places-add-coordinates' && innerWidth >= 1260 && innerWidth <= 1280/);
 assert.match(source, /details\.getBoundingClientRect\(\)\.bottom - body\.getBoundingClientRect\(\)\.bottom \+ 8/);
 assert.match(source, /bottom: Math\.min\(body\.bottom, Math\.max\(buttonBottom, details\.bottom\)\)/);

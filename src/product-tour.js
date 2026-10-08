@@ -111,8 +111,7 @@ const geneoTourSteps = [
     { id: 'places-add-map', module: 'Places', title: 'Place a marker', body: 'Click the map to place or move the draft marker. The coordinates appear below; choose Use position to bring them back to the Add place window.' },
     { id: 'places-add-create', module: 'Places', title: 'Create the place', body: 'The Add place window reopens with the chosen coordinates. Create place saves the new record when you are ready. This tour will not create one.' },
     { id: 'places-inspector', module: 'Places', title: 'Details beside the map', body: 'The right panel keeps the selected place, its details, and connected people and events together.' },
-    { id: 'places-actions', module: 'Places', title: 'Work with a place', body: 'Edit opens the place details; More actions offers other ways to manage this record. Next, look inside the edit window.' },
-    { id: 'places-edit-modal', module: 'Places', title: 'Edit a place', body: 'Update its name, location, and other details here. Nothing changes until you save.' },
+    { id: 'places-actions', module: 'Places', title: 'Work with a place', body: 'Edit opens the place details; More actions offers other ways to manage this record.' },
     { id: 'places-outro', module: 'Places', title: 'Take the tour again', body: 'Open Help and choose Take the tour whenever you want to revisit these modules. Next, explore the sample project on your own.' }
 ];
 const geneoTourModules = ['Projects', 'Family Tree', 'People', 'Geneograph', 'Albums', 'Archive', 'Notes', 'Places'];
@@ -797,7 +796,6 @@ function geneoTourTarget(index)
         'places-routes': '#projectMenu.places-route-popover',
         'places-inspector': '[data-places-inspector]',
         'places-actions': '[data-places-inspector-edit="place-meowbridge"]',
-        'places-edit-modal': '#modalBackdrop .place-editor-modal',
         'places-outro': '#topbarPopover [data-help-tour]',
         'places-map': '.places-map-panel',
         'geneograph-navigation': '[data-geneo-tour-target="library-navigation"]',
@@ -974,8 +972,7 @@ function geneoTourOpenPreview(step)
             geneoTourRuntime.ownedPreview = 'places-routes';
         }
     }
-    if (['places-add-modal', 'places-add-coordinates', 'places-add-create',
-        'places-edit-modal'].includes(step.id))
+    if (['places-add-modal', 'places-add-coordinates', 'places-add-create'].includes(step.id))
     {
         geneoTourRuntime.openingPreview = true;
         try
@@ -983,7 +980,7 @@ function geneoTourOpenPreview(step)
             if (step.id === 'places-add-create')
                 openPlaceModal(null, { initialCoordinates: window.L && placesMapRuntime.map
                     ? geneoTourExamplePlaceCoordinates() : null });
-            else openPlaceModal(step.id === 'places-edit-modal' ? 'place-meowbridge' : null);
+            else openPlaceModal(null);
             if (modalBackdrop.classList.contains('open'))
             {
                 if (step.id === 'places-add-coordinates'
@@ -1391,7 +1388,7 @@ function geneoTourRenderOverlay(target = null)
             : [['restart', 'Start again'], ['finish', 'Explore the demo']]
         : [['back', 'Back'], ['next', index === geneoTourSteps.length - 1 ? 'Finish tour' : 'Next']];
     const root = document.createElement('div');
-    root.className = `geneo-tour${centered ? ' is-centered' : ''}${index < 0 ? ' is-welcome' : ''}${index >= geneoTourSteps.length ? ' is-finish' : ''}${projectIntro ? ' is-project-intro' : ''}${geneoTourSteps[index]?.id === 'places-routes' ? ' is-places-routes' : ''}${geneoTourSteps[index]?.id === 'places-filters' ? ' is-places-filters' : ''}${geneoTourSteps[index]?.id === 'places-add-map' ? ' is-places-add-map' : ''}${geneoTourSteps[index]?.id === 'places-add-modal' ? ' is-places-add-modal' : ''}${geneoTourSteps[index]?.id === 'places-edit-modal' ? ' is-places-edit-modal' : ''}${['tree-quick-edit-modal', 'geneograph-create-modal', 'albums-tag-person-modal', 'albums-add-to-album', 'archive-folder-modal', 'notes-add-events', 'places-add-modal', 'places-add-coordinates', 'places-add-create', 'places-edit-modal'].includes(geneoTourSteps[index]?.id) ? ' is-modal-stop' : ''}`;
+    root.className = `geneo-tour${centered ? ' is-centered' : ''}${index < 0 ? ' is-welcome' : ''}${index >= geneoTourSteps.length ? ' is-finish' : ''}${projectIntro ? ' is-project-intro' : ''}${geneoTourSteps[index]?.id === 'places-routes' ? ' is-places-routes' : ''}${geneoTourSteps[index]?.id === 'places-filters' ? ' is-places-filters' : ''}${geneoTourSteps[index]?.id === 'places-add-map' ? ' is-places-add-map' : ''}${geneoTourSteps[index]?.id === 'places-add-modal' ? ' is-places-add-modal' : ''}${['tree-quick-edit-modal', 'geneograph-create-modal', 'albums-tag-person-modal', 'albums-add-to-album', 'archive-folder-modal', 'notes-add-events', 'places-add-modal', 'places-add-coordinates', 'places-add-create'].includes(geneoTourSteps[index]?.id) ? ' is-modal-stop' : ''}`;
     root.dataset.geneoTour = '';
     root.innerHTML = `
         <div class="geneo-tour-scrim" data-geneo-tour-scrim></div>
@@ -1622,7 +1619,7 @@ function geneoTourPosition()
             popover.style.left = `${Math.max(parseFloat(popover.style.left) || 0, desiredLeft)}px`;
     }
     const rect = geneoTourTargetRect(target);
-    const padding = ['places-add-modal', 'places-edit-modal'].includes(stepId)
+    const padding = stepId === 'places-add-modal'
         && innerWidth >= 1260 && innerWidth <= 1280
         ? 2 : ['people-columns', 'people-filters', 'albums-filters', 'archive-filters',
         'notes-filters', 'places-filters', 'places-routes', 'places-actions',
@@ -1731,6 +1728,34 @@ function geneoTourPosition()
             && top < hole.bottom && top + height > hole.top));
     if (!position)
     {
+        if (stepId === 'notes-add-events' && innerWidth > 640)
+        {
+            const pane = target.querySelector('.notes-event-person-pane')?.getBoundingClientRect();
+            const search = target.querySelector('.notes-event-search-field')?.getBoundingClientRect();
+            const firstResult = target.querySelector('.notes-event-person-result')?.getBoundingClientRect();
+            if (pane && search)
+            {
+                const partial = {
+                    left: primary.left,
+                    top: primary.top,
+                    right: Math.min(primary.right, pane.right + padding),
+                    bottom: Math.min(primary.bottom, pane.bottom + padding,
+                        Math.max(search.bottom, firstResult?.bottom || search.bottom) + padding)
+                };
+                const cardLeft = partial.right + 12;
+                const cardTop = Math.max(12, Math.min(partial.top, innerHeight - height - 12));
+                if (partial.right - partial.left >= 200 && partial.bottom - partial.top >= 80
+                    && cardLeft + width <= innerWidth - 12 && cardTop + height <= innerHeight - 12)
+                {
+                    geneoTourPaintScrims(root, [partial]);
+                    block.style.cssText = `left:${partial.left}px;top:${partial.top}px;width:${partial.right - partial.left}px;height:${partial.bottom - partial.top}px`;
+                    root.classList.remove('is-unanchored');
+                    card.style.left = `${cardLeft}px`;
+                    card.style.top = `${cardTop}px`;
+                    return;
+                }
+            }
+        }
         if (stepId === 'archive-inspector' && secondary)
         {
             const left = Math.max(12, Math.min(secondary.left, innerWidth - width - 12));
@@ -1860,11 +1885,11 @@ function geneoTourTargetRect(target)
             right: Math.max(rect.right, more.right), bottom: Math.max(rect.bottom, more.bottom) };
     }
     if (typeof innerWidth !== 'undefined' && innerWidth <= 640
-        && ['places-countries', 'places-list', 'places-edit-modal'].includes(stepId))
+        && ['places-countries', 'places-list'].includes(stepId))
     {
         const top = Math.max(64, rect.top);
         return { left: rect.left, right: rect.right, top,
-            bottom: Math.min(rect.bottom, top + (stepId === 'places-edit-modal' ? 390 : 210)) };
+            bottom: Math.min(rect.bottom, top + 210) };
     }
     if (['notes-editor-overview', 'notes-rich-text', 'notes-sections', 'notes-checklist'].includes(stepId))
     {

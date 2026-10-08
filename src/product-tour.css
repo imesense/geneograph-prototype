@@ -63,7 +63,7 @@ body.geneo-tour-tree-relationship-actions .tree-inspector
 }
 
 @media (min-width: 1260px) and (max-width: 1280px) {
-    .geneo-tour.is-modal-stop:is(.is-places-add-modal, .is-places-edit-modal) .geneo-tour-card {
+    .geneo-tour.is-modal-stop.is-places-add-modal .geneo-tour-card {
         width: 248px;
     }
 }
