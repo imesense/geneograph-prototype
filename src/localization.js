@@ -6127,7 +6127,7 @@ const RU_UI_TOUR = Object.freeze({
     'Finish tour': 'Завершить экскурсию',
     'Explore the demo': 'Исследовать демо',
     'Step {current} of {total}': 'Шаг {current} из {total}',
-    'Return to where you were': 'Вернуться назад',
+    'Resume tour': 'Продолжить экскурсию',
     'Tour closed.': 'Экскурсия закрыта.',
     'This part of the sample is unavailable. Continue to the next stop.': 'Эта часть примера недоступна. Перейдите к следующему шагу.'
 });

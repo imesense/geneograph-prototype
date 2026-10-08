@@ -122,10 +122,9 @@ async function runProductTourChecks()
             tourTestAssert(tourTestRecordSnapshot(app) === recordsBefore, 'Tour changed sample records');
         });
 
-        await check('Replay, Russian copy, Skip, and return action', async () =>
+        await check('Replay, Russian copy, Skip, and resume action', async () =>
         {
             app.eval('setLanguage("ru"); state.activeModule = "People"; state.peopleView = "directory"; render()');
-            const origin = app.eval('state.activeModule');
             app.eval('startGeneoProductTour()');
             await tourTestStep(app, -1);
             tourTestAssert(app.document.querySelector('[data-geneo-tour-title]').textContent === 'Исследуйте историю семьи', 'Welcome not translated');
@@ -133,9 +132,10 @@ async function runProductTourChecks()
             await tourTestStep(app, 0);
             app.document.querySelector('.geneo-tour-close').click();
             tourTestAssert(!app.eval('geneoTourRuntime.active'), 'Skip did not close');
-            tourTestAssert(app.document.querySelector('.toast').textContent.includes('Вернуться назад'), 'Return action missing');
+            tourTestAssert(app.document.querySelector('.toast').textContent.includes('Продолжить экскурсию'), 'Resume action missing');
             app.document.querySelector('.toast button').click();
-            await tourTestUntil(() => app.eval('state.activeModule') === origin, 'Origin not restored');
+            await tourTestStep(app, 0);
+            tourTestAssert(app.eval('geneoTourRuntime.active'), 'Tour did not resume');
         });
 
         await check('Skip module and Back follow visited history', async () =>

@@ -290,6 +290,22 @@ function startGeneoProductTour()
     return true;
 }
 
+function geneoTourResume({ index, history, origin, token })
+{
+    if (geneoTourRuntime.active || geneoTourRuntime.token !== token
+        || modalBackdrop.classList.contains('open') || !validProjectById(GENEO_TOUR_PROJECT_ID)) return false;
+    geneoTourRuntime.origin = origin;
+    geneoTourRuntime.returnFocus = document.querySelector('[data-topbar-help]');
+    geneoTourRuntime.history = [...history];
+    geneoTourRuntime.index = -1;
+    geneoTourRuntime.active = true;
+    document.addEventListener('keydown', geneoTourOnKeydown, true);
+    closeMenu();
+    closeTopbarPopover();
+    geneoTourMoveTo(index);
+    return true;
+}
+
 function geneoTourPrepare(index)
 {
     const step = geneoTourSteps[index];
@@ -1213,6 +1229,7 @@ function geneoTourClose({ completed = false, offerRestore = true } = {})
     if (!geneoTourRuntime.active) return;
     const index = geneoTourRuntime.index;
     const origin = geneoTourRuntime.origin;
+    const history = [...geneoTourRuntime.history];
     geneoTourRuntime.active = false;
     geneoTourRuntime.token += 1;
     geneoTourRuntime.transitioning = false;
@@ -1236,9 +1253,11 @@ function geneoTourClose({ completed = false, offerRestore = true } = {})
         geneoTourRestoreOrigin(origin);
     else if (!completed && offerRestore && index >= 0 && origin)
     {
+        const token = geneoTourRuntime.token;
         showActionToast({
             message: t('Tour closed.'),
-            actions: [{ label: t('Return to where you were'), onClick: () => geneoTourRestoreOrigin(origin) }],
+            actions: [{ label: t('Resume tour'),
+                onClick: () => geneoTourResume({ index, history, origin, token }) }],
             duration: 9000
         });
     }
