@@ -30,14 +30,14 @@ assert.match(source, /state\.selectedPhotoIds = \['photo-silver-luna-wedding'\]/
 assert.match(source, /state\.albumsDetailSections\.people = true;\s*state\.albumsDetailSections\.albums = true;/);
 assert.match(source, /'people-filters', 'albums-filters', 'archive-filters',\s*'notes-filters', 'places-filters'/);
 
-const dictionaryStart = localization.indexOf('const RU_UI_TOUR =');
-const dictionaryEnd = localization.indexOf('const RU_UI_MODULE_BLOCKS =', dictionaryStart);
-const russian = vm.runInNewContext(`${localization.slice(dictionaryStart, dictionaryEnd)}\nRU_UI_TOUR`);
+const dictionaryStart = localization.indexOf('const RU_TOUR_CARD_COPY =');
+const dictionaryEnd = localization.indexOf('const RU_UI_TOUR =', dictionaryStart);
+const russian = vm.runInNewContext(`${localization.slice(dictionaryStart, dictionaryEnd)}\nRU_TOUR_CARD_COPY`);
 for (const id of albums)
 {
     const step = steps.find(candidate => candidate.id === id);
-    assert.ok(russian[step.title], `Missing Russian title: ${step.title}`);
-    assert.ok(russian[step.body], `Missing Russian copy: ${step.body}`);
+    assert.ok(russian[step.id]?.title, `Missing Russian title: ${step.id}`);
+    assert.ok(russian[step.id]?.body, `Missing Russian copy: ${step.id}`);
 }
-assert.equal(russian['Tag a person'], undefined);
+assert.equal(russian['albums-tag-person'], undefined);
 console.log('Albums tour order, photo selection, modal targets, and Russian copy checks passed.');

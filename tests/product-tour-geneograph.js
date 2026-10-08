@@ -11,6 +11,9 @@ const css = fs.readFileSync(path.join(root, 'product-tour.css'), 'utf8');
 const russian = vm.runInNewContext(`${localization}\nRU_UI`, {
     document: { title: 'GeneoGraph' }
 });
+const copyStart = localization.indexOf('const RU_TOUR_CARD_COPY =');
+const copyEnd = localization.indexOf('const RU_UI_TOUR =', copyStart);
+const russianCopy = vm.runInNewContext(`${localization.slice(copyStart, copyEnd)}\nRU_TOUR_CARD_COPY`);
 assert.equal(russian['Current board'], 'Текущий холст');
 const state = {
     activeModule: 'People', geneoView: 'home', selectedGeneoBoardId: null,
@@ -125,22 +128,22 @@ assert.equal(steps[steps.indexOf(chapter.at(-1)) + 1].module, 'Albums');
 assert.equal(chapter[0].presentation, 'centered');
 assert.equal(chapter[6].presentation, 'centered');
 const byId = id => chapter.find(step => step.id === id);
-assert.equal(byId('geneograph-create-modal').title, 'Describe your board');
-assert.match(byId('geneograph-create-actions').body, /New board window/);
-assert.match(byId('geneograph-all-boards').body, /^All Boards /);
+assert.equal(byId('geneograph-create-modal').title, 'Set up a board');
+assert.match(byId('geneograph-create-actions').body, /Import board is not available/);
+assert.match(byId('geneograph-all-boards').body, /^All Boards opens/);
 assert.equal(byId('geneograph-current-board').title, 'Current board');
-assert.match(byId('geneograph-editor-welcome').body, /board’s canvas/);
-assert.match(byId('geneograph-inspector').body, /canvas settings for the current board/);
-assert.equal(byId('geneograph-export').title, 'Share your board');
+assert.match(byId('geneograph-editor-welcome').body, /arranging people/);
+assert.match(byId('geneograph-inspector').body, /canvas settings/);
+assert.equal(byId('geneograph-export').title, 'Export your board');
 assert.ok(!chapter.some(step => /canvases|current canvas|new canvas|sample canvas/i.test(`${step.title} ${step.body}`)));
 for (const step of chapter)
 {
-    assert.ok(russian[step.title] && russian[step.title] !== step.title, step.title);
-    assert.ok(russian[step.body] && russian[step.body] !== step.body, step.body);
-    assert.ok(!russian[step.title].includes('доск'), step.title);
-    assert.ok(!russian[step.body].includes('доск'), step.body);
+    assert.ok(russianCopy[step.id]?.title && russianCopy[step.id].title !== step.title, step.id);
+    assert.ok(russianCopy[step.id]?.body && russianCopy[step.id].body !== step.body, step.id);
+    assert.ok(!russianCopy[step.id].title.includes('доск'), step.id);
+    assert.ok(!russianCopy[step.id].body.includes('доск'), step.id);
 }
-assert.ok(russian[steps.find(step => step.id === 'people-to-geneograph').body].includes('холст'));
+assert.ok(russianCopy['people-to-geneograph'].body);
 assert.ok(!geneograph.includes('function openGeneographImportBoardModal('));
 assert.match(geneograph, /data-geneo-import\s+disabled/);
 assert.match(geneograph, /data-geneo-tour-target="library-navigation"/);

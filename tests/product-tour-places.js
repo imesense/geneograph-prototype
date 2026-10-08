@@ -28,10 +28,13 @@ assert.equal(steps.findIndex(step => step.id === 'places-welcome'),
 const start = localization.indexOf('const RU_UI_TOUR =');
 const end = localization.indexOf('const RU_UI_MODULE_BLOCKS =', start);
 const russian = vm.runInNewContext(`${localization.slice(start, end)}\nRU_UI_TOUR`);
+const copyStart = localization.indexOf('const RU_TOUR_CARD_COPY =');
+const copyEnd = localization.indexOf('const RU_UI_TOUR =', copyStart);
+const russianCopy = vm.runInNewContext(`${localization.slice(copyStart, copyEnd)}\nRU_TOUR_CARD_COPY`);
 for (const step of places)
 {
-    assert.ok(russian[step.title], `Missing Russian title: ${step.title}`);
-    assert.ok(russian[step.body], `Missing Russian copy: ${step.body}`);
+    assert.ok(russianCopy[step.id]?.title, `Missing Russian title: ${step.id}`);
+    assert.ok(russianCopy[step.id]?.body, `Missing Russian copy: ${step.id}`);
 }
 assert.match(source, /openPlacesFilterPopover\(anchor\)/);
 assert.match(source, /openPlacesRouteMenu\(anchor\)/);

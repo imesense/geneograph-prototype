@@ -17,15 +17,15 @@ assert.deepEqual(ids.slice(timeline, timeline + 4), [
     'tree-timeline', 'tree-relationships', 'tree-relationship-actions', 'tree-to-people'
 ]);
 
-const start = localization.indexOf('const RU_UI_TOUR =');
-const end = localization.indexOf('const RU_UI_MODULE_BLOCKS =', start);
-const russian = vm.runInNewContext(`${localization.slice(start, end)}\nRU_UI_TOUR`);
+const start = localization.indexOf('const RU_TOUR_CARD_COPY =');
+const end = localization.indexOf('const RU_UI_TOUR =', start);
+const russian = vm.runInNewContext(`${localization.slice(start, end)}\nRU_TOUR_CARD_COPY`);
 for (const id of ['tree-relationships', 'tree-relationship-actions'])
 {
     const step = steps.find(item => item.id === id);
     assert.equal(step.module, 'Family Tree');
-    assert.ok(russian[step.title], `Missing Russian title: ${step.title}`);
-    assert.ok(russian[step.body], `Missing Russian copy: ${step.body}`);
+    assert.ok(russian[step.id]?.title, `Missing Russian title: ${step.id}`);
+    assert.ok(russian[step.id]?.body, `Missing Russian copy: ${step.id}`);
 }
 
 assert.match(source, /'tree-relationships': '\.tree-inspector \[data-toggle-section="relationships"\]'/);

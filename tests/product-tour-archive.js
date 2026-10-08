@@ -98,13 +98,13 @@ assert.equal(archiveSteps[0].presentation, 'centered');
 assert.equal(steps[steps.indexOf(archiveSteps.at(-1)) + 1].module, 'Notes');
 assert.ok(archive.includes("id: 'opis3'") && archive.includes("id: 'delo44'") && archive.includes("id: 'af1'"));
 
-const start = localization.indexOf('const RU_UI_TOUR =');
-const end = localization.indexOf('const RU_UI_MODULE_BLOCKS =', start);
-const russian = vm.runInNewContext(`${localization.slice(start, end)}\nRU_UI_TOUR`);
+const start = localization.indexOf('const RU_TOUR_CARD_COPY =');
+const end = localization.indexOf('const RU_UI_TOUR =', start);
+const russian = vm.runInNewContext(`${localization.slice(start, end)}\nRU_TOUR_CARD_COPY`);
 for (const step of archiveSteps)
 {
-    assert.ok(russian[step.title], `Missing Russian title: ${step.title}`);
-    assert.ok(russian[step.body], `Missing Russian copy: ${step.body}`);
+    assert.ok(russian[step.id]?.title, `Missing Russian title: ${step.id}`);
+    assert.ok(russian[step.id]?.body, `Missing Russian copy: ${step.id}`);
 }
 
 const prepare = id => evaluate(`geneoTourPrepare(geneoTourSteps.findIndex(step => step.id === '${id}'))`);

@@ -7,9 +7,9 @@ const root = path.resolve(__dirname, '..', 'src');
 const tourSource = fs.readFileSync(path.join(root, 'product-tour.js'), 'utf8');
 const localizationSource = fs.readFileSync(path.join(root, 'localization.js'), 'utf8');
 const peopleSource = fs.readFileSync(path.join(root, 'people.js'), 'utf8');
-const dictionaryStart = localizationSource.indexOf('const RU_UI_TOUR =');
-const dictionaryEnd = localizationSource.indexOf('const RU_UI_MODULE_BLOCKS =', dictionaryStart);
-const russian = vm.runInNewContext(`${localizationSource.slice(dictionaryStart, dictionaryEnd)}\nRU_UI_TOUR`);
+const dictionaryStart = localizationSource.indexOf('const RU_TOUR_CARD_COPY =');
+const dictionaryEnd = localizationSource.indexOf('const RU_UI_TOUR =', dictionaryStart);
+const russian = vm.runInNewContext(`${localizationSource.slice(dictionaryStart, dictionaryEnd)}\nRU_TOUR_CARD_COPY`);
 const initialFilters = { surnames: ['Butterpaws'] };
 const state = {
     activeModule: 'Projects', peopleFilters: structuredClone(initialFilters),
@@ -84,8 +84,8 @@ assert.equal(peopleSteps[0].presentation, 'centered');
 assert.equal(peopleSteps[8].presentation, 'centered');
 for (const step of peopleSteps)
 {
-    assert.ok(russian[step.title] && russian[step.title] !== step.title, `Missing Russian title: ${step.title}`);
-    assert.ok(russian[step.body] && russian[step.body] !== step.body, `Missing Russian body: ${step.body}`);
+    assert.ok(russian[step.id]?.title && russian[step.id].title !== step.title, `Missing Russian title: ${step.id}`);
+    assert.ok(russian[step.id]?.body && russian[step.id].body !== step.body, `Missing Russian body: ${step.id}`);
 }
 assert.ok(!tourSource.includes("id: 'people-list'"));
 assert.ok(!tourSource.includes("id: 'people-profile'"));

@@ -58,7 +58,7 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
                 assert.equal(await page.evaluate(() => JSON.stringify(geneoTourRuntime.origin)), origin);
                 assert.equal(await page.evaluate(() => geneoTourRuntime.ownedPreview), preview);
                 assert.equal(await page.locator('[data-geneo-tour-title]').textContent(),
-                    await page.evaluate(stepId => t(geneoTourSteps.find(step => step.id === stepId).title), id));
+                    await page.evaluate(() => geneoTourCardCopy().title));
                 await page.locator('[data-geneo-tour-action="back"]').click();
                 await page.waitForFunction(() => geneoTourRuntime.index === 0 && !geneoTourRuntime.transitioning);
                 assert.equal(await page.evaluate(() => geneoTourRuntime.ownedPreview), null);

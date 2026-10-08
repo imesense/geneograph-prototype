@@ -127,7 +127,7 @@ async function runProductTourChecks()
             app.eval('setLanguage("ru"); state.activeModule = "People"; state.peopleView = "directory"; render()');
             app.eval('startGeneoProductTour()');
             await tourTestStep(app, -1);
-            tourTestAssert(app.document.querySelector('[data-geneo-tour-title]').textContent === 'Исследуйте историю семьи', 'Welcome not translated');
+            tourTestAssert(app.document.querySelector('[data-geneo-tour-title]').textContent === 'История семьи перед вами', 'Welcome not translated');
             app.document.querySelector('[data-geneo-tour-action="start"]').click();
             await tourTestStep(app, 0);
             app.document.querySelector('.geneo-tour-close').click();

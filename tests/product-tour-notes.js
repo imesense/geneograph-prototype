@@ -25,13 +25,13 @@ assert.equal(steps.findIndex(step => step.id === 'places-welcome'),
 assert.match(source, /state\.selectedNoteId = 'note-daisy-parentage'/);
 assert.match(source, /'notes-list-example': '\[data-note-id="note-daisy-parentage"\]'/);
 
-const start = localization.indexOf('const RU_UI_TOUR =');
-const end = localization.indexOf('const RU_UI_MODULE_BLOCKS =', start);
-const russian = vm.runInNewContext(`${localization.slice(start, end)}\nRU_UI_TOUR`);
+const start = localization.indexOf('const RU_TOUR_CARD_COPY =');
+const end = localization.indexOf('const RU_UI_TOUR =', start);
+const russian = vm.runInNewContext(`${localization.slice(start, end)}\nRU_TOUR_CARD_COPY`);
 for (const step of steps.filter(step => step.module === 'Notes'))
 {
-    assert.ok(russian[step.title], `Missing Russian title: ${step.title}`);
-    assert.ok(russian[step.body], `Missing Russian copy: ${step.body}`);
+    assert.ok(russian[step.id]?.title, `Missing Russian title: ${step.id}`);
+    assert.ok(russian[step.id]?.body, `Missing Russian copy: ${step.id}`);
 }
 for (const legacy of ['Choose a research note',
     'All notes keeps observations and open questions easy to find.'])
