@@ -42,6 +42,8 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
                 };
             });
             assert.equal(initial.selected, 2, `${width} ${language}: sample tags missing`);
+            assert.equal(await modal.locator('[data-face-region-other]').count(), 1,
+                `${width} ${language}: existing sample regions not shown`);
             assert.ok(initial.stage.width > 0 && initial.stage.height > 0, `${width}: photo hidden`);
             assert.ok(initial.suggestionHeight <= 56, `${width}: suggestions are not compact`);
             assert.equal(initial.overflow, false, `${width}: modal overflows horizontally`);
@@ -68,7 +70,7 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             await modal.locator('[data-photo-people-add-region]').click();
             await modal.locator('[data-photo-people-region="silver"]').click();
             assert.equal(await modal.locator('[data-photo-people-region]').count(), 4);
-            assert.equal(await modal.locator('[data-face-region-other]').count(), 2);
+            assert.equal(await modal.locator('[data-face-region-other]').count(), 3);
             assert.ok(await modal.locator('[data-face-region-selector]').isVisible());
             await modal.locator(`[data-photo-people-region="${firstAddedId}"]`).click();
             assert.deepEqual(await modal.locator('[data-face-region-box]').evaluate(box =>
