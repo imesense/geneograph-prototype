@@ -9387,6 +9387,15 @@ function deletePhotosPermanently(
             )
         );
 
+    sampleData.projects.forEach(project =>
+    {
+        if (!ids.has(project.coverPhotoId)) return;
+        project.cover = 'paper';
+        project.coverPhotoId = '';
+        project.coverImageSrc = '';
+        touchProjectModified(project);
+    });
+
     sampleData.people.forEach(
         person =>
         {

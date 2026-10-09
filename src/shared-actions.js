@@ -162,8 +162,19 @@ function updateProjectName(projectId, value)
 const PROJECT_COVER_STYLES = [
     'paper',
     'tree',
+    'golden-tree',
     'photo'
 ];
+const GOLDEN_TREE_COVER_SRC = 'assets/panoramic-golden-family-tree-landscape.jpg';
+
+function normalizeProjectCoverPosition(position)
+{
+    const clamp = value => Math.max(0, Math.min(100, Number(value)));
+    return {
+        x: Number.isFinite(Number(position?.x)) ? clamp(position.x) : 50,
+        y: Number.isFinite(Number(position?.y)) ? clamp(position.y) : 50
+    };
+}
 
 function isProjectCoverStyle(
     coverStyle
@@ -184,8 +195,34 @@ function normalizeProjectCoverStyle(
         : 'paper';
 }
 
+function projectCoverImageSource(project)
+{
+    if (project?.cover === 'golden-tree') return GOLDEN_TREE_COVER_SRC;
+    if (!project || project.cover !== 'photo') return '';
+    const photo = project.coverPhotoId
+        ? getPhoto(project.coverPhotoId, { projectId: project.id })
+        : null;
+    return photo?.src || project.coverImageSrc || '';
+}
+
+function resolvedProjectCoverStyle(project)
+{
+    const style = normalizeProjectCoverStyle(project?.cover);
+    return style === 'photo' && !projectCoverImageSource(project) ? 'paper' : style;
+}
+
+function projectHeroCoverStyleAttribute(project)
+{
+    const source = projectCoverImageSource(project);
+    if (!source) return '';
+    const position = normalizeProjectCoverPosition(project.coverPosition);
+    return `--project-hero-cover:url('${String(source).replace(/['"\\\r\n]/g, '')}');--cover-position:${position.x}% ${position.y}%`;
+}
+
 function projectCoverStyleAttribute(
-    coverStyle
+    coverStyle,
+    photoSource = '',
+    position = null
 )
 {
     const normalizedCover =
@@ -208,25 +245,16 @@ function projectCoverStyleAttribute(
         `;
     }
 
-    if (
-        normalizedCover === 'photo'
-    )
+    const imageSource = normalizedCover === 'golden-tree'
+        ? GOLDEN_TREE_COVER_SRC : photoSource;
+    if ((normalizedCover === 'photo' || normalizedCover === 'golden-tree') && imageSource)
     {
-        return `
-          --cover:
-            linear-gradient(
-              135deg,
-              rgba(85, 95, 84, .9),
-              rgba(218, 218, 196, .65)
-            ),
-            url(
-              'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 140%22%3E%3Crect width=%22400%22 height=%22140%22 fill=%22%239aa08b%22/%3E%3Ccircle cx=%2276%22 cy=%2258%22 r=%2222%22 fill=%22%232b332d%22/%3E%3Ccircle cx=%22137%22 cy=%2254%22 r=%2222%22 fill=%22%232b332d%22/%3E%3Ccircle cx=%22197%22 cy=%2260%22 r=%2222%22 fill=%22%232b332d%22/%3E%3Ccircle cx=%22263%22 cy=%2256%22 r=%2222%22 fill=%22%232b332d%22/%3E%3Ccircle cx=%22328%22 cy=%2254%22 r=%2222%22 fill=%22%232b332d%22/%3E%3C/svg%3E'
-            );
-
-          background-size:
-            cover;
-        `;
+        const safeSource = String(imageSource).replace(/['"\\\r\n]/g, '');
+        const point = normalizeProjectCoverPosition(position);
+        return `--cover:url('${safeSource}');background-size:cover;background-position:${point.x}% ${point.y}%;`;
     }
+
+    if (normalizedCover === 'photo') return projectCoverStyleAttribute('paper');
 
     return `
         --cover:
@@ -243,7 +271,9 @@ function projectCoverStyleAttribute(
 
 function updateProjectCoverPreview(
     preview,
-    coverStyle
+    coverStyle,
+    photoSource = '',
+    position = null
 )
 {
     if (!preview)
@@ -263,16 +293,109 @@ function updateProjectCoverPreview(
 
     preview.style.cssText =
         projectCoverStyleAttribute(
-            normalizedCover
+            normalizedCover,
+            photoSource,
+            position
         );
 
     preview.dataset.coverStyle =
         normalizedCover;
 }
 
+function bindProjectCoverPositioner(preview, { getSource, getPosition, onChange, resetButton })
+{
+    if (!preview) return () => {};
+    let image = null;
+    let loadedSource = '';
+    let drag = null;
+    const refresh = () =>
+    {
+        const source = getSource();
+        if (source !== loadedSource)
+        {
+            loadedSource = source;
+            image = null;
+            if (source)
+            {
+                const next = new Image();
+                next.onload = () =>
+                {
+                    if (loadedSource !== source) return;
+                    image = next;
+                    refresh();
+                };
+                next.onerror = () => { if (loadedSource === source) refreshState(false); };
+                next.src = source;
+            }
+        }
+        refreshState(true);
+    };
+    const overflow = () =>
+    {
+        if (!image || !preview.clientWidth || !preview.clientHeight) return { x: 0, y: 0 };
+        const scale = Math.max(preview.clientWidth / image.naturalWidth, preview.clientHeight / image.naturalHeight);
+        return {
+            x: Math.max(0, image.naturalWidth * scale - preview.clientWidth),
+            y: Math.max(0, image.naturalHeight * scale - preview.clientHeight)
+        };
+    };
+    const refreshState = () =>
+    {
+        const extra = overflow();
+        const movable = extra.x > 1 || extra.y > 1;
+        preview.classList.toggle('cover-positionable', movable);
+        preview.tabIndex = movable ? 0 : -1;
+        if (resetButton) resetButton.hidden = !movable;
+    };
+    preview.addEventListener('pointerdown', event =>
+    {
+        const extra = overflow();
+        if (event.button !== 0 || (!extra.x && !extra.y)) return;
+        drag = { x: event.clientX, y: event.clientY, position: normalizeProjectCoverPosition(getPosition()), extra };
+        preview.setPointerCapture(event.pointerId);
+        preview.classList.add('is-dragging');
+        event.preventDefault();
+    });
+    preview.addEventListener('pointermove', event =>
+    {
+        if (!drag) return;
+        const next = {
+            x: drag.extra.x ? drag.position.x - (event.clientX - drag.x) / drag.extra.x * 100 : 50,
+            y: drag.extra.y ? drag.position.y - (event.clientY - drag.y) / drag.extra.y * 100 : 50
+        };
+        onChange(normalizeProjectCoverPosition(next));
+    });
+    const endDrag = () =>
+    {
+        drag = null;
+        preview.classList.remove('is-dragging');
+    };
+    preview.addEventListener('pointerup', endDrag);
+    preview.addEventListener('pointercancel', endDrag);
+    preview.addEventListener('keydown', event =>
+    {
+        const extra = overflow();
+        const delta = event.shiftKey ? 1 : 5;
+        const position = normalizeProjectCoverPosition(getPosition());
+        if (event.key === 'ArrowLeft' && extra.x) position.x += delta;
+        else if (event.key === 'ArrowRight' && extra.x) position.x -= delta;
+        else if (event.key === 'ArrowUp' && extra.y) position.y += delta;
+        else if (event.key === 'ArrowDown' && extra.y) position.y -= delta;
+        else return;
+        event.preventDefault();
+        onChange(normalizeProjectCoverPosition(position));
+    });
+    resetButton?.addEventListener('click', () => onChange({ x: 50, y: 50 }));
+    const observer = new ResizeObserver(refresh);
+    observer.observe(preview);
+    refresh();
+    return refresh;
+}
+
 function setProjectCover(
     projectId,
-    coverStyle
+    coverStyle,
+    selection = {}
 )
 {
     const project =
@@ -291,14 +414,176 @@ function setProjectCover(
         return false;
     }
 
+    if (coverStyle === 'photo')
+    {
+        const photo = selection.photoId
+            ? getPhoto(selection.photoId, { projectId })
+            : null;
+        const src = photo?.src || selection.imageSrc || '';
+        if (!src) return false;
+        project.coverPhotoId = photo?.id || '';
+        project.coverImageSrc = photo ? '' : src;
+    }
+    else
+    {
+        project.coverPhotoId = '';
+        project.coverImageSrc = '';
+    }
+
     project.cover =
         coverStyle;
+    project.coverPosition = normalizeProjectCoverPosition(selection.position);
 
     touchProjectModified(
         project
     );
 
     return true;
+}
+
+function commitProjectCoverSelection(projectId, selection)
+{
+    if (selection.uploadDraft)
+    {
+        if (!photoUploadDraftIsValid(selection.uploadDraft)) return false;
+        if (selection.addToAlbums)
+        {
+            const photo = createMediaFromPhotoUpload({
+                projectId, draft: selection.uploadDraft, idPrefix: 'project-cover-photo'
+            });
+            return Boolean(photo && setProjectCover(projectId, 'photo', { photoId: photo.id, position: selection.position }));
+        }
+        return setProjectCover(projectId, 'photo', { imageSrc: selection.uploadDraft.src, position: selection.position });
+    }
+    return setProjectCover(projectId, 'photo', selection);
+}
+
+function openProjectCoverPhotoPicker(projectId, { onSelect, nested = false, selection = null } = {})
+{
+    const project = sampleData.projects.find(item => item.id === projectId);
+    if (!project || typeof onSelect !== 'function') return;
+    let chosen = selection ? {
+        ...selection, position: normalizeProjectCoverPosition(selection.position)
+    } : {
+        photoId: project.coverPhotoId || '', imageSrc: project.coverImageSrc || '',
+        position: normalizeProjectCoverPosition(project.coverPosition)
+    };
+    let query = '';
+    let uploadRequest = 0;
+    const photos = () => sampleData.media.filter(media =>
+        media.projectId === projectId && media.kind === 'photo' && media.src);
+    const source = () => chosen.uploadDraft?.src
+        || (chosen.photoId ? getPhoto(chosen.photoId, { projectId })?.src : '')
+        || chosen.imageSrc || '';
+    const renderGrid = () =>
+    {
+        const matches = photos().filter(photo =>
+            `${localizedDataFieldValue(photo.title || '')} ${photo.title || ''} ${photo.filename || ''}`
+                .toLocaleLowerCase().includes(query.toLocaleLowerCase()));
+        return matches.length ? matches.map(photo => {
+            const title = localizedDataFieldValue(photo.title || photo.filename);
+            return `
+            <button type="button" class="project-cover-photo-item" data-cover-photo-id="${escapeHtml(photo.id)}"
+                aria-pressed="${String(chosen.photoId === photo.id && !chosen.uploadDraft)}"
+                title="${escapeHtml(title)}">
+                ${renderPhotoThumbnail(photo, { label: title })}
+                <span>${escapeHtml(title)}</span>
+            </button>`;
+        }).join('') : `<p class="project-cover-photo-empty">${escapeHtml(t(query ? 'No matching photos.' : 'No photos in this project yet.'))}</p>`;
+    };
+
+    (nested ? openNestedModal : openModal)(`<div class="modal project-cover-photo-modal" role="dialog" aria-modal="true" aria-labelledby="coverPhotoPickerTitle">
+        <div class="modal-header"><div><h2 id="coverPhotoPickerTitle">Choose cover photo</h2><p>Select a project photo or upload a new image.</p></div>
+            <button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div>
+        <div class="project-cover-photo-body">
+            <div class="project-cover-photo-library">
+                <label class="project-cover-photo-search-label" for="coverPhotoSearch">Search photos</label>
+                <div class="app-search-field project-cover-photo-search">${icon.search}<input id="coverPhotoSearch" data-cover-photo-search type="search" placeholder="Search photos" autocomplete="off"></div>
+                <div class="project-cover-photo-grid" data-cover-photo-grid>${renderGrid()}</div>
+                <input data-cover-photo-file type="file" accept="image/jpeg,image/png,image/webp" hidden>
+                <button type="button" class="button secondary project-cover-photo-upload" data-cover-photo-upload>${icon.plus} Upload new photo</button>
+                <label class="project-cover-photo-albums" data-cover-photo-albums hidden><input type="checkbox" data-cover-photo-add-albums> Add to Albums</label>
+                <p class="project-cover-photo-error" data-cover-photo-error role="alert" hidden></p>
+            </div>
+            <div class="project-cover-photo-preview-pane"><h3>Cover preview</h3><div class="project-cover-preview project-cover-photo-preview" data-cover-photo-preview role="group" aria-label="Drag to position cover; use arrow keys to adjust"></div><button class="project-cover-reset" type="button" data-cover-photo-reset hidden>Reset position</button></div>
+        </div>
+        <div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button>
+            <button class="button primary" type="button" data-cover-photo-confirm>Use photo</button></div>
+    </div>`);
+
+    const modal = modalBackdrop.querySelector('.project-cover-photo-modal');
+    const grid = modal.querySelector('[data-cover-photo-grid]');
+    const preview = modal.querySelector('[data-cover-photo-preview]');
+    const albumsChoice = modal.querySelector('[data-cover-photo-albums]');
+    const confirm = modal.querySelector('[data-cover-photo-confirm]');
+    const error = modal.querySelector('[data-cover-photo-error]');
+    const positioner = bindProjectCoverPositioner(preview, {
+        getSource: source,
+        getPosition: () => chosen.position,
+        onChange: position =>
+        {
+            chosen.position = position;
+            updateProjectCoverPreview(preview, 'photo', source(), position);
+        },
+        resetButton: modal.querySelector('[data-cover-photo-reset]')
+    });
+    const refresh = () =>
+    {
+        grid.innerHTML = renderGrid();
+        updateProjectCoverPreview(preview, 'photo', source(), chosen.position);
+        positioner();
+        albumsChoice.hidden = !chosen.uploadDraft;
+        modal.querySelector('[data-cover-photo-add-albums]').checked = Boolean(chosen.addToAlbums);
+        confirm.disabled = !source();
+    };
+    modal.querySelector('[data-cover-photo-search]').addEventListener('input', event =>
+    {
+        query = event.target.value;
+        grid.innerHTML = renderGrid();
+    });
+    grid.addEventListener('click', event =>
+    {
+        const button = event.target.closest('[data-cover-photo-id]');
+        if (!button) return;
+        uploadRequest += 1;
+        chosen = { photoId: button.dataset.coverPhotoId, position: { x: 50, y: 50 } };
+        error.hidden = true;
+        refresh();
+    });
+    const fileInput = modal.querySelector('[data-cover-photo-file]');
+    modal.querySelector('[data-cover-photo-upload]').addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', async () =>
+    {
+        const file = fileInput.files?.[0];
+        if (!file) return;
+        const request = ++uploadRequest;
+        try
+        {
+            const draft = await createPhotoUploadDraft(file, { idPrefix: 'project-cover-draft' });
+            if (!modal.isConnected || request !== uploadRequest) return;
+            chosen = { uploadDraft: draft, addToAlbums: false, position: { x: 50, y: 50 } };
+            error.hidden = true;
+            refresh();
+        }
+        catch (_error)
+        {
+            if (!modal.isConnected || request !== uploadRequest) return;
+            error.textContent = t('Choose a JPEG, PNG, or WebP image under 20 MB.');
+            error.hidden = false;
+        }
+        fileInput.value = '';
+    });
+    modal.querySelector('[data-cover-photo-add-albums]').addEventListener('change', event =>
+    {
+        chosen.addToAlbums = event.target.checked;
+    });
+    confirm.addEventListener('click', () =>
+    {
+        if (!source()) return;
+        closeModal();
+        onSelect({ ...chosen });
+    });
+    refresh();
 }
 
 function formatProjectCount(count)
@@ -1036,7 +1321,9 @@ function duplicateProject(projectId)
         createdAt: timestamp,
         modifiedAt: timestamp,
         status: project.status || 'Local project',
-        cover: project.cover || 'paper',
+        cover: resolvedProjectCoverStyle(project),
+        coverImageSrc: project.cover === 'photo' ? projectCoverImageSource(project) : '',
+        coverPosition: normalizeProjectCoverPosition(project.coverPosition),
         files: 0,
         notes: 0,
         desc: project.desc || ''
@@ -1064,14 +1351,18 @@ function openProjectCoverModal(
         return;
     }
 
-    let selectedCover =
-        normalizeProjectCoverStyle(
-            project.cover
-        );
+    let selectedCover = resolvedProjectCoverStyle(project);
+    let selectedPosition = normalizeProjectCoverPosition(project.coverPosition);
+    let selectedPhoto = {
+        photoId: project.coverPhotoId || '', imageSrc: project.coverImageSrc || '',
+        position: selectedPosition
+    };
 
     const initialPreviewStyle =
         projectCoverStyleAttribute(
-            selectedCover
+            selectedCover,
+            projectCoverImageSource(project),
+            selectedPosition
         );
 
     openModal(`
@@ -1119,13 +1410,15 @@ function openProjectCoverModal(
               style="${
                     initialPreviewStyle
                 }"
-              role="img"
+              role="group"
               aria-label="${
                     escapeHtml(
-                        `Preview of ${project.name} cover`
+                        'Drag to position cover; use arrow keys to adjust'
                     )
                 }">
             </div>
+
+            <button class="project-cover-reset" type="button" data-project-cover-reset hidden>Reset position</button>
 
             <div
               class="project-cover-options"
@@ -1164,6 +1457,14 @@ function openProjectCoverModal(
               </button>
 
               <button
+                class="project-cover-option ${selectedCover === 'golden-tree' ? 'active' : ''}"
+                type="button"
+                data-project-cover-choice="golden-tree"
+                aria-pressed="${selectedCover === 'golden-tree'}">
+                Golden family tree
+              </button>
+
+              <button
                 class="project-cover-option ${
                     selectedCover === 'photo'
                         ? 'active'
@@ -1176,7 +1477,7 @@ function openProjectCoverModal(
                         ? 'true'
                         : 'false'
                 }">
-                Family photo
+                Photo
               </button>
             </div>
           </div>
@@ -1207,6 +1508,21 @@ function openProjectCoverModal(
         modalBackdrop.querySelector(
             '[data-project-cover-preview]'
         );
+    const currentPhotoSource = () => selectedPhoto.uploadDraft?.src
+        || (selectedPhoto.photoId ? getPhoto(selectedPhoto.photoId, { projectId: project.id })?.src : '')
+        || selectedPhoto.imageSrc || '';
+    const activeSource = () => selectedCover === 'golden-tree'
+        ? GOLDEN_TREE_COVER_SRC : selectedCover === 'photo' ? currentPhotoSource() : '';
+    const positioner = bindProjectCoverPositioner(preview, {
+        getSource: activeSource,
+        getPosition: () => selectedPosition,
+        onChange: position =>
+        {
+            selectedPosition = position;
+            updateProjectCoverPreview(preview, selectedCover, activeSource(), position);
+        },
+        resetButton: modalBackdrop.querySelector('[data-project-cover-reset]')
+    });
 
     modalBackdrop
         .querySelectorAll(
@@ -1234,8 +1550,32 @@ function openProjectCoverModal(
                         return;
                     }
 
+                    if (nextCover === 'photo')
+                    {
+                        openProjectCoverPhotoPicker(project.id, {
+                            nested: true,
+                            selection: selectedPhoto,
+                            onSelect: choice =>
+                            {
+                                selectedPhoto = choice;
+                                selectedCover = 'photo';
+                                selectedPosition = normalizeProjectCoverPosition(choice.position);
+                                modalBackdrop.querySelectorAll('[data-project-cover-choice]').forEach(option =>
+                                {
+                                    const active = option.dataset.projectCoverChoice === 'photo';
+                                    option.classList.toggle('active', active);
+                                    option.setAttribute('aria-pressed', String(active));
+                                });
+                                updateProjectCoverPreview(preview, 'photo', activeSource(), selectedPosition);
+                                positioner();
+                            }
+                        });
+                        return;
+                    }
+
                     selectedCover =
                         nextCover;
+                    selectedPosition = { x: 50, y: 50 };
 
                     modalBackdrop
                         .querySelectorAll(
@@ -1261,8 +1601,11 @@ function openProjectCoverModal(
 
                     updateProjectCoverPreview(
                         preview,
-                        selectedCover
+                        selectedCover,
+                        activeSource(),
+                        selectedPosition
                     );
+                    positioner();
                 }
             );
         });
@@ -1276,10 +1619,9 @@ function openProjectCoverModal(
             () =>
             {
                 const saved =
-                    setProjectCover(
-                        project.id,
-                        selectedCover
-                    );
+                    selectedCover === 'photo'
+                        ? commitProjectCoverSelection(project.id, { ...selectedPhoto, position: selectedPosition })
+                        : setProjectCover(project.id, selectedCover, { position: selectedPosition });
 
                 if (!saved)
                 {

@@ -464,7 +464,8 @@ function renderOpenProject()
       ` : `
         <div class="page-grid open-project-page project-wide-hero-page">
           <section class="main-column">
-            <div class="project-hero">
+            <div class="project-hero${projectCoverImageSource(project) ? ' has-photo-cover' : ''}"
+              ${projectCoverImageSource(project) ? `style="${projectHeroCoverStyleAttribute(project)}"` : ''}>
               <div class="project-hero-layout">
                 <div class="hero-content">
                   <div class="project-title-row-open">
@@ -583,10 +584,7 @@ function renderProjectSettings(project)
         localizedDataFieldValue(
             project.desc
         );
-    const coverStyle =
-        normalizeProjectCoverStyle(
-            project.cover
-        );
+    const coverStyle = resolvedProjectCoverStyle(project);
 
     const safeFileTitle =
         title
@@ -615,7 +613,9 @@ function renderProjectSettings(project)
 
     const coverStyleAttr =
         projectCoverStyleAttribute(
-            coverStyle
+            coverStyle,
+            projectCoverImageSource(project),
+            project.coverPosition
         );
     return `<div class="project-settings-page">
         <div class="project-settings-section-one">
@@ -642,12 +642,13 @@ function renderProjectSettings(project)
           <section class="project-settings-section project-settings-card project-settings-cover-card">
             <h3>Cover image</h3>
             <div class="project-settings-section-body">
-              <div class="project-cover-preview ${coverStyle === 'tree' ? 'tree' : ''}" id="projectCoverPreview" style="${coverStyleAttr}"></div>
+              <div class="project-cover-preview ${coverStyle === 'tree' ? 'tree' : ''}" id="projectCoverPreview" style="${coverStyleAttr}" role="group" aria-label="Drag to position cover; use arrow keys to adjust"></div>
+              <button class="project-cover-reset" type="button" id="projectCoverReset" hidden>Reset position</button>
               <div class="project-cover-options" role="group" aria-label="Cover style">
                 <button class="project-cover-option ${coverStyle === 'paper' ? 'active' : ''}" type="button" data-cover-style="paper">Archival paper</button>
                 <button class="project-cover-option ${coverStyle === 'tree' ? 'active' : ''}" type="button" data-cover-style="tree">Family tree</button>
-                <button class="project-cover-option ${coverStyle === 'photo' ? 'active' : ''}" type="button" data-cover-style="photo">Family photo</button>
-                <button class="project-cover-option" type="button" data-toast="Custom cover upload is a placeholder.">Custom image</button>
+                <button class="project-cover-option ${coverStyle === 'golden-tree' ? 'active' : ''}" type="button" data-cover-style="golden-tree">Golden family tree</button>
+                <button class="project-cover-option ${coverStyle === 'photo' ? 'active' : ''}" type="button" data-cover-photo>Photo</button>
               </div>
             </div>
           </section>
@@ -755,6 +756,19 @@ function bindProjectSettingsControls()
         showToast('Local backup created.');
     });
     main.querySelector('#enableProjectSync')?.addEventListener('click', () => showToast('Cloud sync is optional. This project is currently stored locally.'));
+    const coverPreview = main.querySelector('#projectCoverPreview');
+    bindProjectCoverPositioner(coverPreview, {
+        getSource: () => projectCoverImageSource(currentProject()),
+        getPosition: () => currentProject().coverPosition,
+        onChange: position =>
+        {
+            const project = currentProject();
+            project.coverPosition = position;
+            touchProjectModified(project);
+            updateProjectCoverPreview(coverPreview, project.cover, projectCoverImageSource(project), position);
+        },
+        resetButton: main.querySelector('#projectCoverReset')
+    });
     main.querySelectorAll('[data-cover-style]').forEach(button => button.addEventListener('click', () =>
     {
         const project = currentProject();
@@ -762,6 +776,15 @@ function bindProjectSettingsControls()
         showToast('Cover style updated. Save settings to keep other changes.');
         renderOpenProject();
     }));
+    main.querySelector('[data-cover-photo]')?.addEventListener('click', () =>
+        openProjectCoverPhotoPicker(currentProjectId(), {
+            onSelect: selection =>
+            {
+                if (!commitProjectCoverSelection(currentProjectId(), selection)) return;
+                renderOpenProject();
+                showToast('Project cover updated.');
+            }
+        }));
 }
 
 
@@ -921,10 +944,7 @@ function renderProjectCollection(
 
 function renderProjectCard(project)
 {
-    const coverStyle =
-        normalizeProjectCoverStyle(
-            project.cover
-        );
+    const coverStyle = resolvedProjectCoverStyle(project);
 
     const coverClass =
         coverStyle === 'tree'
@@ -933,7 +953,9 @@ function renderProjectCard(project)
 
     const coverStyleAttr =
         projectCoverStyleAttribute(
-            coverStyle
+            coverStyle,
+            projectCoverImageSource(project),
+            project.coverPosition
         );
     const peopleCountLabel =
         formatProjectPeopleCount(
