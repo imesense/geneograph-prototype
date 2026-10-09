@@ -4741,6 +4741,100 @@ button.albums-inspector-row-main:focus-visible {
     object-fit: contain;
 }
 
+.albums-lightbox-modal {
+    width: min(1120px, calc(100vw - 32px));
+    height: min(840px, calc(100vh - 32px));
+    max-height: calc(100vh - 32px);
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    overflow: hidden;
+}
+
+.albums-lightbox-body {
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
+}
+
+.albums-lightbox-people {
+    min-height: 0;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    border-right: 1px solid var(--border-default);
+}
+
+.albums-lightbox-people-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-4);
+    border-bottom: 1px solid var(--border-default);
+}
+
+.albums-lightbox-people-header h3 { margin: 0; font-size: 16px; }
+.albums-lightbox-people-header span { color: var(--text-secondary); }
+.albums-lightbox-people-list { min-height: 0; overflow: auto; padding: var(--space-3); }
+.albums-lightbox-empty { margin: var(--space-3); color: var(--text-secondary); }
+.albums-lightbox-person {
+    width: 100%;
+    min-height: 56px;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2);
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-primary);
+    text-align: left;
+    cursor: pointer;
+}
+.albums-lightbox-person:hover,
+.albums-lightbox-person[aria-pressed="true"] { background: var(--surface-card-hover); border-color: var(--border-default); }
+.albums-lightbox-person:focus-visible { outline: 2px solid var(--brand-green-400); outline-offset: -2px; }
+.albums-lightbox-person span:last-child { min-width: 0; overflow-wrap: anywhere; }
+.albums-lightbox-tag { margin: var(--space-3); justify-content: center; }
+.albums-lightbox-main { min-width: 0; min-height: 0; display: grid; grid-template-rows: minmax(0, 1fr) auto; }
+.albums-lightbox-stage { min-width: 0; min-height: 0; display: grid; place-items: center; padding: var(--space-4); container-type: size; }
+.albums-lightbox-image-wrap { position: relative; max-width: 100%; max-height: 100%; }
+.albums-lightbox-image { display: block; max-width: 100%; max-height: calc(100cqh - 32px); object-fit: contain; }
+.albums-lightbox-face {
+    position: absolute;
+    border: 2px solid var(--brand-green-300);
+    border-radius: 4px;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, .7);
+    pointer-events: none;
+}
+.albums-lightbox-face[hidden] { display: none; }
+.albums-lightbox-face-name {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    max-width: min(260px, 70vw);
+    padding: 4px 8px;
+    background: var(--surface-card);
+    border: 1px solid var(--brand-green-300);
+    border-radius: 0 0 4px 4px;
+    color: var(--text-primary);
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.albums-lightbox-face.label-above .albums-lightbox-face-name { top: auto; bottom: 100%; border-radius: 4px 4px 0 0; }
+.albums-lightbox-caption { margin: 0; padding: var(--space-3) var(--space-4); border-top: 1px solid var(--border-default); color: var(--text-secondary); }
+
+@media (max-width: 700px) {
+    .albums-lightbox-body { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) minmax(148px, 32%); }
+    .albums-lightbox-main { grid-row: 1; }
+    .albums-lightbox-people { grid-row: 2; border-right: 0; border-top: 1px solid var(--border-default); }
+    .albums-lightbox-people-header { padding: var(--space-2) var(--space-3); }
+    .albums-lightbox-people-list { display: flex; gap: var(--space-2); overflow: auto; }
+    .albums-lightbox-person { min-width: 150px; max-width: 220px; }
+    .albums-lightbox-tag { margin: var(--space-2); }
+}
+
 @media (max-width: 1500px) {
     .geneo-board-grid {
         grid-template-columns:

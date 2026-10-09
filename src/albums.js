@@ -7433,26 +7433,68 @@ function openPhotoLightbox(photoId)
 {
     const photo = getPhoto(photoId, { projectId: currentProjectId() });
     if (!photo) return;
-    openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="photoLightboxTitle"><div class="modal-header"><div><h2 id="photoLightboxTitle">${escapeHtml(photo.title || photo.filename)}</h2><p>${escapeHtml(formatPhotoDate(photo))}</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body">
-        ${
-            renderPhotoThumbnail(
-                photo,
-                {
-                    className:
-              'albums-lightbox-photo',
+    const tagged = (photo.personIds || [])
+        .map(id => getPerson(id))
+        .filter(person => person?.projectId === photo.projectId);
+    openModal(`<div class="modal albums-lightbox-modal" role="dialog" aria-modal="true" aria-labelledby="photoLightboxTitle">
+        <div class="modal-header"><div><h2 id="photoLightboxTitle">${escapeHtml(photo.title || photo.filename)}</h2><p>${escapeHtml(formatPhotoDate(photo))}</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div>
+        <div class="albums-lightbox-body">
+            <aside class="albums-lightbox-people" aria-label="${escapeHtml(t('Tagged people'))}">
+                <div class="albums-lightbox-people-header"><h3>${escapeHtml(t('Tagged people'))}</h3><span>${tagged.length}</span></div>
+                <div class="albums-lightbox-people-list">${tagged.length ? tagged.map(person => {
+                    const name = localizedDataFieldValue(connectPersonName(person));
+                    return `<button type="button" class="albums-lightbox-person" data-lightbox-person="${escapeHtml(person.id)}" aria-label="${escapeHtml(name)}" aria-pressed="false">
+                        ${renderPersonAvatar(person, 'small-avatar', { element: 'span' })}<span>${escapeHtml(name)}</span>
+                    </button>`;
+                }).join('') : `<p class="albums-lightbox-empty">${escapeHtml(t('No people tagged yet.'))}</p>`}</div>
+                <button type="button" class="button secondary albums-lightbox-tag" data-lightbox-tag>${icon.plus}<span>${escapeHtml(t('Tag people'))}</span></button>
+            </aside>
+            <div class="albums-lightbox-main">
+                <div class="albums-lightbox-stage">${photo.src ? `<div class="albums-lightbox-image-wrap"><img class="albums-lightbox-image" src="${escapeHtml(photo.src)}" alt="${escapeHtml(photo.title || photo.filename)}"><div class="albums-lightbox-face" data-lightbox-face hidden><span class="albums-lightbox-face-name" data-lightbox-face-name></span></div></div>` : renderPhotoThumbnail(photo, { className: 'albums-lightbox-photo', label: photo.title || photo.filename })}</div>
+                <p class="albums-lightbox-caption">${escapeHtml(photo.caption || t('No caption.'))}</p>
+            </div>
+        </div></div>`);
 
-                    label:
-              photo.title
-              || photo.filename,
-
-                    backdrop:
-              true
-                }
-            )
-        }<p>${escapeHtml(photo.caption || 'No caption.')}</p></div></div>`);
+    const modal = modalBackdrop.querySelector('.albums-lightbox-modal');
+    const highlight = modal.querySelector('[data-lightbox-face]');
+    const image = modal.querySelector('.albums-lightbox-image');
+    let activePersonId = null;
+    const showPerson = personId =>
+    {
+        activePersonId = personId;
+        modal.querySelectorAll('[data-lightbox-person]').forEach(row =>
+            row.setAttribute('aria-pressed', String(row.dataset.lightboxPerson === personId)));
+        const region = photoPersonRegion(photo, personId);
+        if (!highlight || !image?.complete || !image.naturalWidth || !region)
+        {
+            if (highlight) highlight.hidden = true;
+            return;
+        }
+        Object.assign(highlight.style, {
+            left: `${region.x * 100}%`, top: `${region.y * 100}%`,
+            width: `${region.width * 100}%`, height: `${region.height * 100}%`
+        });
+        const name = localizedDataFieldValue(connectPersonName(getPerson(personId)));
+        highlight.querySelector('[data-lightbox-face-name]').textContent = name;
+        highlight.classList.toggle('label-above', region.y + region.height > .82);
+        highlight.hidden = false;
+    };
+    const clearPerson = () => showPerson(null);
+    image?.addEventListener('load', () => { if (activePersonId) showPerson(activePersonId); });
+    modal.querySelectorAll('[data-lightbox-person]').forEach(row =>
+    {
+        const personId = row.dataset.lightboxPerson;
+        row.addEventListener('pointerenter', () => showPerson(personId));
+        row.addEventListener('pointerleave', () => { if (!row.matches(':focus')) clearPerson(); });
+        row.addEventListener('focus', () => showPerson(personId));
+        row.addEventListener('blur', () => { if (!row.matches(':hover')) clearPerson(); });
+        row.addEventListener('click', () => showPerson(personId));
+    });
+    modal.querySelector('[data-lightbox-tag]')?.addEventListener('click', () =>
+        openPhotoPeopleModal(photoId, { fromLightbox: true }));
 }
 
-function openPhotoPeopleModal(photoId)
+function openPhotoPeopleModal(photoId, { fromLightbox = false } = {})
 {
     const photo = getPhoto(
         photoId,
@@ -7901,7 +7943,7 @@ function openPhotoPeopleModal(photoId)
                 .join('');
         };
 
-    openModal(`
+    (fromLightbox ? openNestedModal : openModal)(`
         <div
           class="
             modal
@@ -8196,6 +8238,8 @@ function openPhotoPeopleModal(photoId)
         primaryPhotoPersonIds.forEach(personId =>
             setPersonPrimaryPhoto(personId, photo.id, null, { rerender: false, notify: false }));
         render();
+
+        if (fromLightbox) openPhotoLightbox(photo.id);
 
         showToast(
             'People tags updated.'

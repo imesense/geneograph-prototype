@@ -1766,6 +1766,7 @@ function handleModalKeydown(
     if (event.key === 'Escape')
     {
         event.preventDefault();
+        event.stopImmediatePropagation();
 
         if (modalBackdrop.querySelector('[data-place-duplicate-menu]'))
         {
