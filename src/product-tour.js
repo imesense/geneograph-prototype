@@ -1698,13 +1698,17 @@ function geneoTourPosition()
         ? toHole(secondaryRect) : null;
     const tertiaryRect = geneoTourRuntime.tertiaryTarget?.isConnected
         ? geneoTourRuntime.tertiaryTarget.getBoundingClientRect() : null;
-    const tertiary = !compactConnected && tertiaryRect?.width && tertiaryRect.bottom > 0 && tertiaryRect.top < innerHeight
+    let tertiary = !compactConnected && tertiaryRect?.width && tertiaryRect.bottom > 0 && tertiaryRect.top < innerHeight
         ? toHole(tertiaryRect) : null;
     const quaternaryRect = geneoTourRuntime.quaternaryTarget?.isConnected
         ? geneoTourRuntime.quaternaryTarget.getBoundingClientRect() : null;
-    const quaternary = !compactConnected && quaternaryRect?.width && quaternaryRect.bottom > 0 && quaternaryRect.top < innerHeight
+    let quaternary = !compactConnected && quaternaryRect?.width && quaternaryRect.bottom > 0 && quaternaryRect.top < innerHeight
         ? toHole(quaternaryRect) : null;
-    const holes = [primary, ...(secondary ? [secondary] : []), ...(tertiary ? [tertiary] : []),
+    const desktopConnected = stepId === 'people-connected' && innerWidth > 1280;
+    const meaningful = hole => hole && hole.right - hole.left >= 80 && hole.bottom - hole.top >= 80;
+    if (desktopConnected && (!meaningful(tertiary) || !meaningful(quaternary)))
+        tertiary = quaternary = null;
+    let holes = [primary, ...(secondary ? [secondary] : []), ...(tertiary ? [tertiary] : []),
         ...(quaternary ? [quaternary] : [])];
     geneoTourPaintScrims(root, holes);
     const { left: x, top: y, right, bottom } = primary;
@@ -1747,6 +1751,9 @@ function geneoTourPosition()
     const width = card.offsetWidth;
     const height = card.offsetHeight;
     const preferred = [];
+    if (desktopConnected && meaningful(primary) && meaningful(secondary))
+        preferred.push([Math.max(...holes.map(hole => hole.right)) + 12,
+            Math.max(12, Math.min(y, innerHeight - height - 12))]);
     if (['geneograph-sockets-intro', 'geneograph-sockets-children', 'geneograph-sockets-context'].includes(stepId) && innerWidth > 640)
         preferred.push([Math.min(...holes.map(hole => hole.left)) - width - 12,
             Math.max(12, Math.min(y, innerHeight - height - 12))]);
@@ -1772,10 +1779,23 @@ function geneoTourPosition()
         [right + 12, Math.min(y, innerHeight - height - 12)],
         [x - width - 12, Math.min(y, innerHeight - height - 12)]
     ];
-    const position = candidates.find(([left, top]) => left >= 12 && top >= 12
+    const fits = areas => ([left, top]) => left >= 12 && top >= 12
         && left + width <= innerWidth - 12 && top + height <= innerHeight - 12
-        && !holes.some(hole => left < hole.right && left + width > hole.left
-            && top < hole.bottom && top + height > hole.top));
+        && !areas.some(hole => left < hole.right && left + width > hole.left
+            && top < hole.bottom && top + height > hole.top);
+    let position = candidates.find(fits(holes));
+    if (!position && desktopConnected && tertiary && meaningful(primary) && meaningful(secondary))
+    {
+        tertiary = quaternary = null;
+        holes = [primary, secondary];
+        position = candidates.find(fits(holes));
+        if (position)
+        {
+            geneoTourPaintScrims(root, holes);
+            tertiaryBlock.hidden = true;
+            quaternaryBlock.hidden = true;
+        }
+    }
     if (!position)
     {
         if (stepId === 'notes-add-events' && innerWidth > 640)
@@ -1858,17 +1878,19 @@ function geneoTourPosition()
     card.style.top = `${position[1]}px`;
 }
 
-function geneoTourScrollTarget(target, delta, allowPartial = false)
+function geneoTourScrollTarget(target, delta, allowPartial = false, instant = false)
 {
     for (let parent = target.parentElement; parent; parent = parent.parentElement)
     {
         if (!/(auto|scroll)/.test(getComputedStyle(parent).overflowY)
             || parent.scrollHeight <= parent.clientHeight + 1) continue;
         const before = parent.scrollTop;
-        parent.scrollTop += delta;
+        if (instant) parent.scrollTo({ top: before + delta, behavior: 'instant' });
+        else parent.scrollTop += delta;
         if (Math.abs(parent.scrollTop - before) < Math.abs(delta) - 2 && !allowPartial)
         {
-            parent.scrollTop = before;
+            if (instant) parent.scrollTo({ top: before, behavior: 'instant' });
+            else parent.scrollTop = before;
             continue;
         }
         geneoTourQueuePosition();
@@ -1877,10 +1899,12 @@ function geneoTourScrollTarget(target, delta, allowPartial = false)
     const page = document.scrollingElement;
     if (!page || page.scrollHeight <= page.clientHeight + 1) return false;
     const before = page.scrollTop;
-    page.scrollTop += delta;
-    if (Math.abs(page.scrollTop - before) < Math.abs(delta) - 2)
+    if (instant) page.scrollTo({ top: before + delta, behavior: 'instant' });
+    else page.scrollTop += delta;
+    if (Math.abs(page.scrollTop - before) < Math.abs(delta) - 2 && !allowPartial)
     {
-        page.scrollTop = before;
+        if (instant) page.scrollTo({ top: before, behavior: 'instant' });
+        else page.scrollTop = before;
         return false;
     }
     geneoTourQueuePosition();
@@ -2274,7 +2298,8 @@ async function geneoTourMoveTo(index)
             else if (geneoTourSteps[index].id === 'people-connected')
             {
                 const last = main.querySelector('.profile-resource-card--places')?.getBoundingClientRect();
-                if (last) geneoTourScrollTarget(target, (rect.top + last.bottom) / 2 - innerHeight / 2, true);
+                if (last) geneoTourScrollTarget(target, (rect.top + last.bottom) / 2 - innerHeight / 2,
+                    true, true);
             }
         }
         else if (geneoTourSteps[index].id === 'albums-summary' || geneoTourSteps[index].id === 'albums-actions')
