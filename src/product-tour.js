@@ -1618,6 +1618,35 @@ function geneoTourPosition()
         return;
     }
     const stepId = geneoTourSteps[geneoTourRuntime.index]?.id;
+    if (stepId === 'people-columns' || stepId === 'people-filters')
+    {
+        const popover = target;
+        const anchor = geneoTourRuntime.secondaryTarget;
+        if (popover?.isConnected && anchor?.isConnected)
+        {
+            const anchorRect = anchor.getBoundingClientRect();
+            const top = anchorRect.bottom + 8;
+            if (innerWidth > 640)
+            {
+                const width = Math.min(stepId === 'people-columns' ? 360 : 560,
+                    innerWidth - card.offsetWidth - 44);
+                popover.style.width = `${width}px`;
+                popover.style.left = `${Math.max(card.offsetWidth + 24,
+                    Math.min(anchorRect.left, innerWidth - width - 12))}px`;
+            }
+            else
+            {
+                popover.style.width = '';
+                popover.style.left = `${Math.max(12,
+                    Math.min(anchorRect.left, innerWidth - popover.offsetWidth - 12))}px`;
+            }
+            popover.style.top = `${top}px`;
+            const space = innerWidth <= 640
+                ? innerHeight - card.offsetHeight - top - 24
+                : innerHeight - top - 12;
+            popover.style.maxHeight = `${Math.max(160, space)}px`;
+        }
+    }
     if (stepId === 'places-filters' && innerWidth > 640)
     {
         const popover = geneoTourRuntime.target;

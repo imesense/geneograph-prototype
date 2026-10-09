@@ -646,8 +646,8 @@ function renderProjectSettings(project)
               <button class="project-cover-reset" type="button" id="projectCoverReset" hidden>Reset position</button>
               <div class="project-cover-options" role="group" aria-label="Cover style">
                 <button class="project-cover-option ${coverStyle === 'paper' ? 'active' : ''}" type="button" data-cover-style="paper">Archival paper</button>
-                <button class="project-cover-option ${coverStyle === 'tree' ? 'active' : ''}" type="button" data-cover-style="tree">Family tree</button>
-                <button class="project-cover-option ${coverStyle === 'golden-tree' ? 'active' : ''}" type="button" data-cover-style="golden-tree">Golden family tree</button>
+                <button class="project-cover-option ${coverStyle === 'tree' ? 'active' : ''}" type="button" data-cover-style="tree">Tree branch</button>
+                <button class="project-cover-option ${coverStyle === 'golden-tree' ? 'active' : ''}" type="button" data-cover-style="golden-tree">Family tree</button>
                 <button class="project-cover-option ${coverStyle === 'photo' ? 'active' : ''}" type="button" data-cover-photo>Photo</button>
               </div>
             </div>

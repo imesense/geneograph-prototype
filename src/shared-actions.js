@@ -1453,7 +1453,7 @@ function openProjectCoverModal(
                         ? 'true'
                         : 'false'
                 }">
-                Family tree
+                Tree branch
               </button>
 
               <button
@@ -1461,7 +1461,7 @@ function openProjectCoverModal(
                 type="button"
                 data-project-cover-choice="golden-tree"
                 aria-pressed="${selectedCover === 'golden-tree'}">
-                Golden family tree
+                Family tree
               </button>
 
               <button
