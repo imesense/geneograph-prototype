@@ -13,9 +13,9 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
     });
     try
     {
-        for (const [width, language] of [[1280, 'en'], [1280, 'ru'], [390, 'en'], [320, 'ru']])
+        for (const [width, height, language] of [[1280, 720, 'en'], [1280, 900, 'en'], [1280, 900, 'ru'], [390, 720, 'en'], [320, 720, 'ru']])
         {
-            const page = await browser.newPage({ viewport: { width, height: 720 }, deviceScaleFactor: 1.5 });
+            const page = await browser.newPage({ viewport: { width, height }, deviceScaleFactor: 1.5 });
             const errors = [];
             page.on('pageerror', error => errors.push(error.message));
             await page.goto(`${url}?lang=${language}`, { waitUntil: 'domcontentloaded' });
@@ -38,10 +38,49 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
                     stage: rect('[data-face-region-selector]').toJSON(),
                     selected: element.querySelectorAll('[data-photo-people-region]').length,
                     suggestionHeight: rect('.photo-people-result').height,
+                    results: rect('.photo-people-results').toJSON(),
+                    resultsPanel: rect('.photo-people-results-panel').toJSON(),
                     overflow: element.scrollWidth > element.clientWidth + 1
                 };
             });
             assert.equal(initial.selected, 2, `${width} ${language}: sample tags missing`);
+            assert.equal(await modal.locator('[data-photo-people-choice]').count(), 3,
+                `${width} ${language}: suggestions should be capped at three`);
+            assert.ok(initial.results.height <= (width <= 760 ? 68 : 164),
+                `${width} ${language}: suggestions are taller than their row cap`);
+            assert.ok(initial.resultsPanel.height < initial.people.height / 2,
+                `${width} ${language}: suggestions still stretch down the sidebar`);
+            assert.match(await modal.locator('[data-photo-people-results-meta]').textContent(),
+                language === 'ru' ? /Показано 3 из/ : /Showing 3 of/,
+                `${width} ${language}: suggestion count is incorrect`);
+            const selectedRows = modal.locator('.photo-people-selected-chip');
+            const rowAppearance = async row => row.evaluate(element => ({
+                background: getComputedStyle(element).backgroundColor,
+                border: getComputedStyle(element).borderTopColor
+            }));
+            const activeAppearance = await rowAppearance(selectedRows.first());
+            const inactiveAppearance = await rowAppearance(selectedRows.last());
+            assert.notDeepEqual(inactiveAppearance, activeAppearance,
+                `${width} ${language}: inactive tag looks selected`);
+            await selectedRows.last().hover();
+            assert.notDeepEqual(await rowAppearance(selectedRows.last()), activeAppearance,
+                `${width} ${language}: hover looks selected`);
+            await modal.locator('[data-photo-people-region="luna"]').click();
+            assert.deepEqual(await rowAppearance(selectedRows.last()), activeAppearance,
+                `${width} ${language}: active tag is not green`);
+            await page.keyboard.press('Tab');
+            await modal.locator('[data-photo-people-region="silver"]').focus();
+            assert.equal(await modal.locator('[data-photo-people-region="silver"]')
+                .evaluate(element => getComputedStyle(element).outlineStyle), 'solid',
+                `${width} ${language}: keyboard focus is not visible`);
+            await modal.locator('[data-photo-people-region="silver"]').click();
+            await modal.locator('[data-photo-people-search]').fill('Whiskerfield');
+            assert.equal(await modal.locator('[data-photo-people-choice]').count(), 5,
+                `${width} ${language}: search results should retain five-item limit`);
+            assert.equal(await modal.locator('.photo-people-results').evaluate(element =>
+                element.scrollHeight > element.clientHeight), true,
+                `${width} ${language}: longer search results should scroll`);
+            await modal.locator('[data-photo-people-search]').fill('');
             assert.equal(await modal.locator('[data-face-region-other]').count(), 1,
                 `${width} ${language}: existing sample regions not shown`);
             assert.ok(initial.stage.width > 0 && initial.stage.height > 0, `${width}: photo hidden`);
@@ -52,6 +91,27 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             if (process.env.GENEO_SCREENSHOT_DIR)
                 await page.screenshot({ path: path.join(process.env.GENEO_SCREENSHOT_DIR,
                     `tag-people-${width}-${language}.png`) });
+
+            for (let index = 0; index < 4; index += 1)
+                await modal.locator('[data-photo-people-choice]').first().click();
+            const expanded = await modal.evaluate(element =>
+            {
+                const sidebar = element.querySelector('.photo-people-sidebar').getBoundingClientRect();
+                const list = element.querySelector('.photo-people-selected-list').getBoundingClientRect();
+                const suggestions = element.querySelector('.photo-people-results-panel').getBoundingClientRect();
+                return { listHeight: list.height, suggestionsBottom: suggestions.bottom, sidebarBottom: sidebar.bottom };
+            });
+            if (width > 760 && height > 720)
+                assert.ok(expanded.listHeight > 160,
+                    `${width} ${language}: tagged list did not use the available space (${JSON.stringify(expanded)})`);
+            else if (width <= 760)
+                assert.ok(expanded.listHeight <= 86,
+                    `${width} ${language}: tagged list exceeded its mobile cap`);
+            if (width > 760)
+                assert.ok(expanded.suggestionsBottom <= expanded.sidebarBottom + 1,
+                    `${width} ${language}: suggestions overflow the sidebar`);
+            await modal.locator('[data-close]').last().click();
+            await page.evaluate(() => openPhotoPeopleModal('photo-silver-luna-wedding'));
 
             await modal.locator('[data-photo-people-choice]').first().click();
             assert.equal(await modal.locator('[data-photo-people-region]').count(), 3);

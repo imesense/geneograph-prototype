@@ -11,6 +11,7 @@ const RU_UI_SHARED = Object.freeze({
     'Cover preview': 'Предпросмотр обложки',
     'Choose a JPEG, PNG, or WebP image under 20 MB.': 'Выберите изображение JPEG, PNG или WebP размером до 20 МБ.',
     'Select face area': 'Выберите область лица',
+    'Select face': 'Выбрать лицо',
     'Select face area for': 'Выберите область лица для',
     'Face area for': 'Область лица для',
     'Face area. Arrow keys move; Shift and arrow keys resize.': 'Область лица. Стрелки перемещают; Shift и стрелки изменяют размер.',

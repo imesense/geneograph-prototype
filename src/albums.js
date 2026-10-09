@@ -7494,7 +7494,7 @@ function openPhotoLightbox(photoId)
         openPhotoPeopleModal(photoId, { fromLightbox: true }));
 }
 
-function openPhotoPeopleModal(photoId, { fromLightbox = false } = {})
+function openPhotoPeopleModal(photoId, { fromLightbox = false, activePersonId = null } = {})
 {
     const photo = getPhoto(
         photoId,
@@ -7521,7 +7521,9 @@ function openPhotoPeopleModal(photoId, { fromLightbox = false } = {})
 
     const regions = { ...(photo.personRegions || {}) };
     const initialRegions = JSON.stringify(regions);
-    let activeRegionPersonId = initialSelectedIds.values().next().value || null;
+    let activeRegionPersonId = initialSelectedIds.has(activePersonId)
+        ? activePersonId
+        : initialSelectedIds.values().next().value || null;
     const primaryPhotoPersonIds = new Set();
 
     let query = '';
@@ -7783,7 +7785,7 @@ function openPhotoPeopleModal(photoId, { fromLightbox = false } = {})
             total: ranked.length,
 
             people: ranked
-                .slice(0, 5)
+                .slice(0, normalizedQuery ? 5 : 3)
                 .map(item =>
                     item.person
                 )
@@ -8541,11 +8543,13 @@ function openPhotoPeopleModal(photoId, { fromLightbox = false } = {})
 
     refresh();
 
-    modal
-        .querySelector(
-            '[data-photo-people-search]'
-        )
-        ?.focus({
+    const initialFocus = modal.querySelector(
+        activePersonId && initialSelectedIds.has(activePersonId)
+            ? `[data-photo-people-region="${CSS.escape(activePersonId)}"]`
+            : '[data-photo-people-search]'
+    );
+    initialFocus?.setAttribute('data-modal-initial-focus', '');
+    initialFocus?.focus({
             preventScroll: true
         });
 }
@@ -10107,6 +10111,9 @@ function openAlbumsPhotoPersonMenu(
         person.primaryPhotoId
           === photo.id;
 
+    const needsFaceRegion = (photo.personIds || []).includes(person.id)
+        && !photoPersonRegion(photo, person.id);
+
     mountAlbumsActionMenu(
         anchor,
         `
@@ -10123,6 +10130,14 @@ function openAlbumsPhotoPersonMenu(
             data-albums-person-action="profile">
             Open profile
           </button>
+
+          ${needsFaceRegion ? `
+          <button
+            type="button"
+            role="menuitem"
+            data-albums-person-action="select-face">
+            Select face
+          </button>` : ''}
 
           <button
             type="button"
@@ -10158,6 +10173,11 @@ function openAlbumsPhotoPersonMenu(
                 openPeopleProfileFromRow(
                     person.id
                 );
+            }
+
+            if (action === 'select-face')
+            {
+                openPhotoPeopleModal(photo.id, { activePersonId: person.id });
             }
 
             if (action === 'primary')
