@@ -4117,6 +4117,20 @@ button.app-chip:disabled,
     color: var(--text-primary);
 }
 
+.topbar-popover-row.help-center-unavailable,
+.topbar-popover-row.help-center-unavailable:hover {
+    background: transparent;
+    border-color: transparent;
+    color: var(--text-tertiary);
+    cursor: default;
+}
+
+.topbar-popover-row.help-center-unavailable .topbar-popover-icon {
+    color: var(--text-tertiary);
+    border-color: var(--border-default);
+    background: var(--surface-card);
+}
+
 .topbar-popover-icon {
     width: 34px;
     height: 34px;
@@ -4203,6 +4217,10 @@ button.app-chip:disabled,
     justify-content: space-between;
     gap: var(--space-2);
     background: rgba(255, 255, 255, .018);
+}
+
+.help-popover-footer {
+    justify-content: flex-end;
 }
 
 .topbar-popover-footer .button,
@@ -4430,6 +4448,7 @@ button.app-chip:disabled,
     border-radius: var(--radius-sm);
     padding: 0 12px;
     font-weight: 800;
+    text-decoration: none;
     letter-spacing: .01em;
     display: inline-flex;
     align-items: center;

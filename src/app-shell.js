@@ -214,14 +214,21 @@ function closeTopbarPopoverOnOutside(event)
 
 function renderHelpPopover()
 {
-    const rows = [
-        ['Getting started', 'Create, open, and import projects.', icon.compass],
-        ['Family Tree basics', 'Add relatives, edit people, and navigate the tree.', icon.tree],
-        ['Archive & sources', 'Organize files and connect evidence.', icon.file],
-        ['Albums and notes', 'Manage photos, captions, notes, and cases.', icon.image],
-        ['Keyboard shortcuts', 'Search, selection, overlays, and navigation.', icon.command]
-    ];
-    return `<div class="topbar-popover-header"><div><h2>Help center</h2><p>Find guides, shortcuts, and support for GeneoGraph.</p></div></div><div class="topbar-popover-list"><button class="topbar-popover-row" type="button" data-help-tour><span class="topbar-popover-icon topbar-topic-icon" aria-hidden="true">${icon.compass}</span><span class="topbar-popover-copy"><strong>Take the tour</strong><span>Explore the sample project across GeneoGraph.</span></span><span class="topbar-popover-arrow">${icon.chevron}</span></button>${rows.map(([title, copy, glyph]) => `<button class="topbar-popover-row" type="button" data-help-topic="${escapeHtml(title)}"><span class="topbar-popover-icon topbar-topic-icon" aria-hidden="true">${glyph}</span><span class="topbar-popover-copy"><strong>${escapeHtml(title)}</strong><span>${escapeHtml(copy)}</span></span><span class="topbar-popover-arrow">${icon.chevron}</span></button>`).join('')}</div><div class="topbar-popover-footer"><button class="topbar-text-button" type="button" data-help-open>Open Help Center</button><button class="topbar-text-button" type="button" data-help-support>Contact support</button></div>`;
+    return `<div class="topbar-popover-header"><div><h2>Help center</h2><p>Find guides, shortcuts, and support for GeneoGraph.</p></div></div>
+        <div class="topbar-popover-list">
+            <button class="topbar-popover-row" type="button" data-help-tour>
+                <span class="topbar-popover-icon topbar-topic-icon" aria-hidden="true">${icon.compass}</span>
+                <span class="topbar-popover-copy"><strong>Take the tour</strong><span>Explore the sample project across GeneoGraph.</span></span>
+                <span class="topbar-popover-arrow">${icon.chevron}</span>
+            </button>
+            <button class="topbar-popover-row help-center-unavailable" type="button" disabled>
+                <span class="topbar-popover-icon topbar-topic-icon" aria-hidden="true">${icon.file}</span>
+                <span class="topbar-popover-copy"><strong>Help center</strong><span>Coming later</span></span>
+            </button>
+        </div>
+        <div class="topbar-popover-footer help-popover-footer">
+            <a class="topbar-text-button" href="https://geneograph.com/contact.html" target="_blank" rel="noopener noreferrer" data-help-support>Contact support</a>
+        </div>`;
 }
 
 function renderNotificationsPopover()
@@ -306,9 +313,6 @@ function bindTopbarPopover(popover, type)
         closeTopbarPopover();
         startGeneoProductTour();
     });
-    popover.querySelectorAll('[data-help-topic]').forEach(button => button.addEventListener('click', () => showToast(`${button.dataset.helpTopic} help would open here.`)));
-    popover.querySelector('[data-help-open]')?.addEventListener('click', () => showToast('Help Center would open here.'));
-    popover.querySelector('[data-help-support]')?.addEventListener('click', () => showToast('Contact support flow is a placeholder.'));
     popover.querySelectorAll('[data-notification-id]').forEach(button => button.addEventListener('click', () => activateTopbarNotification(button.dataset.notificationId)));
     popover.querySelector('[data-notifications-read]')?.addEventListener('click', () =>
     {
