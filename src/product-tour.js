@@ -1887,7 +1887,9 @@ function geneoTourScrollTarget(target, delta, allowPartial = false, instant = fa
         const before = parent.scrollTop;
         if (instant) parent.scrollTo({ top: before + delta, behavior: 'instant' });
         else parent.scrollTop += delta;
-        if (Math.abs(parent.scrollTop - before) < Math.abs(delta) - 2 && !allowPartial)
+        const moved = Math.abs(parent.scrollTop - before);
+        if (instant && moved < 1) continue;
+        if (moved < Math.abs(delta) - 2 && !allowPartial)
         {
             if (instant) parent.scrollTo({ top: before, behavior: 'instant' });
             else parent.scrollTop = before;
@@ -1901,7 +1903,9 @@ function geneoTourScrollTarget(target, delta, allowPartial = false, instant = fa
     const before = page.scrollTop;
     if (instant) page.scrollTo({ top: before + delta, behavior: 'instant' });
     else page.scrollTop += delta;
-    if (Math.abs(page.scrollTop - before) < Math.abs(delta) - 2 && !allowPartial)
+    const moved = Math.abs(page.scrollTop - before);
+    if (instant && moved < 1) return false;
+    if (moved < Math.abs(delta) - 2 && !allowPartial)
     {
         if (instant) page.scrollTo({ top: before, behavior: 'instant' });
         else page.scrollTop = before;
@@ -2293,8 +2297,8 @@ async function geneoTourMoveTo(index)
             || geneoTourSteps[index].id === 'people-connected')
         {
             const rect = target.getBoundingClientRect();
-            if (innerWidth <= 1280)
-                geneoTourScrollTarget(target, rect.top - Math.max(80, innerHeight * .16), true);
+            if (geneoTourSteps[index].id === 'people-profile-card' || innerWidth <= 1280)
+                geneoTourScrollTarget(target, rect.top - Math.max(80, innerHeight * .16), true, true);
             else if (geneoTourSteps[index].id === 'people-connected')
             {
                 const last = main.querySelector('.profile-resource-card--places')?.getBoundingClientRect();
