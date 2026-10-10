@@ -2639,16 +2639,6 @@
     }
 }
 
-@container (max-width: 400px) {
-    .people-normal-toolbar {
-        flex-wrap: wrap;
-    }
-
-    .people-normal-toolbar .people-search-field {
-        flex: 0 0 100%;
-    }
-}
-
 @media (max-width: 900px) {
     .people-layout {
         grid-template-columns: 1fr;

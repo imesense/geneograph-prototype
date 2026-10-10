@@ -3277,6 +3277,8 @@ function renderPeopleActiveFilters()
       `;
 }
 
+let peopleMobileSearchOpen = false;
+
 function renderPeopleNormalToolbar()
 {
     const activeFilterCount =
@@ -3286,7 +3288,8 @@ function renderPeopleNormalToolbar()
         activeFilterCount > 0;
 
     return `
-        <div class="people-toolbar people-normal-toolbar">
+        <div class="people-toolbar people-normal-toolbar ${peopleMobileSearchOpen ? 'mobile-search-open' : ''}">
+          <button class="people-mobile-search-trigger" type="button" data-people-mobile-search aria-label="${escapeHtml(t('Search people'))}" title="${escapeHtml(t('Search people'))}">${icon.search}</button>
           <label class="app-search-field people-search-field">
             ${icon.search}
 
@@ -3296,6 +3299,7 @@ function renderPeopleNormalToolbar()
               placeholder="Search people..."
               value="${escapeHtml(state.peopleSearch)}">
           </label>
+          <button class="people-mobile-search-close" type="button" data-people-mobile-search-close aria-label="${escapeHtml(t('Close'))}" title="${escapeHtml(t('Close'))}">${icon.close}</button>
 
           <button
             class="button secondary people-columns-button ${
@@ -9804,6 +9808,18 @@ function deletePeopleRecords(personIds)
 }
 function bindPeopleToolbarControls(rows)
 {
+    main.querySelector('[data-people-mobile-search]')?.addEventListener('click', () =>
+    {
+        peopleMobileSearchOpen = true;
+        main.querySelector('.people-normal-toolbar')?.classList.add('mobile-search-open');
+        main.querySelector('#peopleSearch')?.focus();
+    });
+    main.querySelector('[data-people-mobile-search-close]')?.addEventListener('click', () =>
+    {
+        peopleMobileSearchOpen = false;
+        main.querySelector('.people-normal-toolbar')?.classList.remove('mobile-search-open');
+        main.querySelector('[data-people-mobile-search]')?.focus();
+    });
     bindSearchInput(main, '#peopleSearch', 'peopleSearch', () =>
     {
         clearPeopleSelection();

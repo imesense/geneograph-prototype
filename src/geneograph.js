@@ -2310,6 +2310,8 @@ function geneographBoardModifiedTime(
         : 0;
 }
 
+let geneoMobileBoardSearchOpen = false;
+
 function renderGeneographHome()
 {
     cancelGeneographPencilStroke();
@@ -2489,7 +2491,7 @@ function renderGeneographHome()
 
           <div
             class="
-              geneo-board-toolbar
+              geneo-board-toolbar ${geneoMobileBoardSearchOpen ? 'mobile-search-open' : ''}
             ">
 
             <div
@@ -2497,6 +2499,7 @@ function renderGeneographHome()
                 geneo-board-toolbar-left
               ">
 
+              <button class="geneo-mobile-search-trigger" type="button" data-geneo-mobile-search aria-label="${escapeHtml(t('Search boards'))}" title="${escapeHtml(t('Search boards'))}">${icon.search}</button>
               <label
                 class="
                   app-search-field
@@ -2513,6 +2516,7 @@ function renderGeneographHome()
                         state.geneoBoardSearch
                     )}">
               </label>
+              <button class="geneo-mobile-search-close" type="button" data-geneo-mobile-search-close aria-label="${escapeHtml(t('Close'))}" title="${escapeHtml(t('Close'))}">${icon.close}</button>
             </div>
 
             <div
@@ -4939,6 +4943,18 @@ function bindGeneographHome()
             );
         });
 
+    main.querySelector('[data-geneo-mobile-search]')?.addEventListener('click', () =>
+    {
+        geneoMobileBoardSearchOpen = true;
+        main.querySelector('.geneo-board-toolbar')?.classList.add('mobile-search-open');
+        main.querySelector('#geneoBoardSearch')?.focus();
+    });
+    main.querySelector('[data-geneo-mobile-search-close]')?.addEventListener('click', () =>
+    {
+        geneoMobileBoardSearchOpen = false;
+        main.querySelector('.geneo-board-toolbar')?.classList.remove('mobile-search-open');
+        main.querySelector('[data-geneo-mobile-search]')?.focus();
+    });
     bindSearchInput(
         main,
         '#geneoBoardSearch',
@@ -5680,6 +5696,7 @@ function renderGeneoConnectionSplitTool()
                     ? 'true'
                     : 'false'
             }"
+            ${window.innerWidth <= 900 ? 'aria-haspopup="menu" aria-expanded="false"' : ''}
             aria-label="${escapeHtml(title)}"
             title="${escapeHtml(title)}">
 
@@ -6555,16 +6572,16 @@ function bindGeneographToolbarDensity()
                     + Math.max(0, children.length - 1) * gap;
             };
             const fits = () => contentWidth(left) + contentWidth(right)
-                + (toolbar.querySelector('.geneo-tool-group.is-icon-only:not([data-geneo-icon-only]):not([data-geneo-hidden])')
+                + (width > 900 && toolbar.querySelector('.geneo-tool-group.is-icon-only:not([data-geneo-icon-only]):not([data-geneo-hidden])')
                     ? 84 : 0) <= available + 1;
             for (const id of GENEO_TOOLBAR_ORDER_RIGHT_TO_LEFT)
             {
                 if (fits()) break;
-                if (id === 'history') continue;
+                if (id === 'history' || (width <= 900 && id === 'connect')) continue;
                 geneoToolbarControl(toolbar, id)?.setAttribute('data-geneo-icon-only', '');
             }
-            const overflowOrder = width < 500
-                ? GENEO_TOOLBAR_ORDER_RIGHT_TO_LEFT.filter(id => id !== 'history' && id !== 'modes').concat('history', 'modes')
+            const overflowOrder = width <= 900
+                ? GENEO_TOOLBAR_ORDER_RIGHT_TO_LEFT.filter(id => !['history', 'modes', 'connect'].includes(id)).concat('history')
                 : GENEO_TOOLBAR_ORDER_RIGHT_TO_LEFT;
             for (const id of overflowOrder)
             {
@@ -25833,10 +25850,17 @@ function bindGeneographEditor()
         .querySelector(
             '[data-geneo-connection-main]'
         )
-        ?.addEventListener(
-            'click',
-            activateGeneographConnectionTool
-        );
+        ?.addEventListener('click', event =>
+        {
+            if (window.innerWidth <= 900 && state.geneoTool === 'connect')
+            {
+                openGeneoConnectionStyleMenu(event.currentTarget);
+            }
+            else
+            {
+                activateGeneographConnectionTool();
+            }
+        });
     const connectionMenuButton = main.querySelector('[data-geneo-connection-menu]');
     connectionMenuButton?.addEventListener('click', event =>
     {

@@ -77,8 +77,7 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             if (width <= 900)
             {
                 assert.equal(await page.locator('.geneo-tool-group').isVisible(), true);
-                if (width <= 400)
-                    assert.equal(await page.locator('.geneo-history-group').isVisible(), false);
+                assert.equal(await page.locator('[data-geneo-toolbar-item="connect"]').isVisible(), true);
             }
             assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
             assert.deepEqual(errors, []);

@@ -79,6 +79,7 @@ function closeMobileSurface(restoreFocus = true)
 function handleMobileSurfaceKeydown(event)
 {
     if (!mobileSurface) return;
+    if (modalBackdrop.classList.contains('open')) return;
     if (event.key === 'Escape')
     {
         event.preventDefault();

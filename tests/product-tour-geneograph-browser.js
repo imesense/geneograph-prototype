@@ -182,8 +182,12 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
                                 .length
                         };
                     });
-                    assert.deepEqual(layout.hidden, order.slice(0, layout.hidden.length),
+                    const expectedOrder = viewportWidth <= 900
+                        ? order.filter(id => !['connect', 'modes', 'history'].includes(id)).concat('history')
+                        : order;
+                    assert.deepEqual(layout.hidden, expectedOrder.slice(0, layout.hidden.length),
                         `${viewportWidth}: toolbar hiding is not right-to-left`);
+                    if (viewportWidth <= 900) assert.equal(layout.hidden.includes('connect'), false);
                     assert.equal(layout.more, layout.hidden.length > 0,
                         `${viewportWidth}: More visibility does not match hidden tools`);
                     assert.equal(layout.clipped, false, `${viewportWidth}: toolbar clips controls`);
@@ -205,9 +209,7 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
                 await page.keyboard.press('Escape');
                 await page.setViewportSize({ width: 320, height: 720 });
                 await page.waitForTimeout(80);
-                await page.locator('[data-geneo-toolbar-overflow]').focus();
-                await page.keyboard.press('Enter');
-                await page.locator('#projectMenu [data-geneo-toolbar-action="pan"]').click();
+                await page.locator('[data-geneo-tool="pan"]').click();
                 assert.equal(await page.evaluate(() => state.geneoTool), 'pan');
             }
             assert.deepEqual(errors, [], `${width}: browser errors`);
