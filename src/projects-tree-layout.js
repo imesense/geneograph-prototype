@@ -438,10 +438,12 @@ function renderOpenProject()
       `;
     sidebar.querySelector('#backToProjects').addEventListener('click', () =>
     {
+        projectSettingsDraft = null;
         state.projectOpen = false; state.currentProjectId = null; state.activeModule = 'Projects'; render();
     });
     sidebar.querySelectorAll('[data-open-side]').forEach(button => button.addEventListener('click', () =>
     {
+        if (button.dataset.openSide !== 'settings') projectSettingsDraft = null;
         state.openSide = button.dataset.openSide;
         persistProjectContinuation({ projectId: project.id, module: 'Projects', openedAt: new Date().toISOString() });
         renderOpenProject();
@@ -454,6 +456,8 @@ function renderOpenProject()
         bindToasts(main);
         return;
     }
+
+    projectSettingsDraft = null;
 
     main.innerHTML = state.openSide === 'settings' ? `
         <div class="page-grid open-project-page project-settings-page-grid">
@@ -571,20 +575,54 @@ function renderProjectGedcomDropzone()
     return `<div class="dropzone" id="openDropzone">${icon.import}<div><strong>Drop a GEDCOM file here to import</strong><span>Supports .ged files</span></div></div>`;
 }
 
+let projectSettingsDraft = null;
+
+function getProjectSettingsDraft(project)
+{
+    if (!projectSettingsDraft || projectSettingsDraft.projectId !== project.id)
+    {
+        projectSettingsDraft = {
+            projectId: project.id,
+            name: localizedDataFieldValue(project.name),
+            description: localizedDataFieldValue(project.desc),
+            cover: resolvedProjectCoverStyle(project),
+            coverSelection: {
+                photoId: project.coverPhotoId || '',
+                imageSrc: project.coverImageSrc || '',
+                position: normalizeProjectCoverPosition(project.coverPosition)
+            }
+        };
+    }
+    return projectSettingsDraft;
+}
+
+function projectSettingsCoverSource(draft)
+{
+    if (draft.cover === 'golden-tree') return GOLDEN_TREE_COVER_SRC;
+    if (draft.cover !== 'photo') return '';
+    return draft.coverSelection.uploadDraft?.src
+        || (draft.coverSelection.photoId
+            ? getPhoto(draft.coverSelection.photoId, { projectId: draft.projectId })?.src
+            : '')
+        || draft.coverSelection.imageSrc || '';
+}
+
+function captureProjectSettingsFields()
+{
+    if (!projectSettingsDraft) return;
+    projectSettingsDraft.name = main.querySelector('#settingsProjectName')?.value ?? projectSettingsDraft.name;
+    projectSettingsDraft.description = main.querySelector('#settingsProjectDescription')?.value ?? projectSettingsDraft.description;
+}
+
 function renderProjectSettings(project)
 {
+    const draft = getProjectSettingsDraft(project);
     const title = project.name;
 
-    const localizedTitle =
-        localizedDataFieldValue(
-            title
-        );
+    const localizedTitle = draft.name;
 
-    const localizedDescription =
-        localizedDataFieldValue(
-            project.desc
-        );
-    const coverStyle = resolvedProjectCoverStyle(project);
+    const localizedDescription = draft.description;
+    const coverStyle = draft.cover;
 
     const safeFileTitle =
         title
@@ -614,8 +652,8 @@ function renderProjectSettings(project)
     const coverStyleAttr =
         projectCoverStyleAttribute(
             coverStyle,
-            projectCoverImageSource(project),
-            project.coverPosition
+            projectSettingsCoverSource(draft),
+            draft.coverSelection.position
         );
     return `<div class="project-settings-page">
         <div class="project-settings-section-one">
@@ -657,7 +695,7 @@ function renderProjectSettings(project)
           <h3>Project location</h3>
           <div class="project-settings-section-body project-location-body">
             <div class="project-location-summary">
-              <span class="project-location-status">Local project</span>
+              <span class="project-location-status">Sample project</span>
               <span class="project-location-muted">Cloud backup disabled</span>
             </div>
             <div
@@ -675,20 +713,20 @@ function renderProjectSettings(project)
               <div class="project-settings-kv"><span>Cloud backup</span><span>Disabled</span></div>
             </div>
             <div class="project-location-actions">
-              <button class="button secondary" type="button" id="viewProjectFolder">${icon.folder} View in folder</button>
+              <button class="button secondary project-settings-unavailable" type="button" id="viewProjectFolder">${icon.folder} View in folder</button>
               <button class="button secondary" type="button" id="moveProjectLocation">${icon.movefolder} Move project</button>
-              <button class="button secondary" type="button" id="createProjectBackup">${icon.file} Create local backup</button>
-              <button class="button primary" type="button" id="enableProjectSync">${icon.sync} Sync now</button>
+              <button class="button secondary project-settings-unavailable" type="button" id="createProjectBackup">${icon.file} Create local backup</button>
+              <button class="button secondary project-settings-unavailable" type="button" id="enableProjectSync">${icon.sync} Sync now</button>
             </div>
           </div>
         </section>
         <section class="project-settings-section project-settings-full-card">
-          <h3>Data and privacy</h3>
+          <div class="project-settings-section-heading"><h3>Data and privacy</h3><span class="project-settings-coming-later">Coming later</span></div>
           <div class="project-settings-section-body">
             <div class="project-privacy-grid">
               <div class="project-settings-field project-settings-select-field">
                 <label for="settingsLivingProtection">Living-person protection</label>
-                <select id="settingsLivingProtection">
+                <select id="settingsLivingProtection" disabled>
                   <option selected>On</option>
                   <option>Off</option>
                 </select>
@@ -697,7 +735,7 @@ function renderProjectSettings(project)
 
               <div class="project-settings-field project-settings-select-field">
                 <label for="settingsPublishLiving">Publish living people</label>
-                <select id="settingsPublishLiving">
+                <select id="settingsPublishLiving" disabled>
                   <option selected>Hide by default</option>
                   <option>Anonymize names</option>
                   <option>Include with warning</option>
@@ -707,7 +745,7 @@ function renderProjectSettings(project)
 
               <div class="project-settings-field project-settings-select-field">
                 <label for="settingsPrivateNotes">Private notes in exports</label>
-                <select id="settingsPrivateNotes">
+                <select id="settingsPrivateNotes" disabled>
                   <option selected>Exclude by default</option>
                   <option>Include with warning</option>
                 </select>
@@ -716,7 +754,7 @@ function renderProjectSettings(project)
 
               <div class="project-settings-field project-settings-select-field">
                 <label for="settingsDateFormat">Date format</label>
-                <select id="settingsDateFormat">
+                <select id="settingsDateFormat" disabled>
                   <option selected>
                     DD MMM YYYY
                   </option>
@@ -741,48 +779,38 @@ function bindProjectSettingsControls()
 {
     if (state.openSide !== 'settings') return;
     main.querySelector('#saveProjectSettings')?.addEventListener('click', saveProjectSettings);
-    main.querySelector('#resetProjectSettings')?.addEventListener('click', () => renderOpenProject());
-    main.querySelector('#viewProjectFolder')?.addEventListener('click', () => showToast('This would open the project folder on your computer.'));
+    main.querySelector('#resetProjectSettings')?.addEventListener('click', () => { projectSettingsDraft = null; renderOpenProject(); });
+    main.querySelector('#viewProjectFolder')?.addEventListener('click', () => showToast('Opening a project folder is not available yet.'));
     main.querySelector('#moveProjectLocation')?.addEventListener('click', openMoveProjectModal);
-    main.querySelector('#createProjectBackup')?.addEventListener('click', () =>
-    {
-        const project = currentProject();
-        project.lastBackupAt =
-            new Date().toISOString();
-
-        delete project.lastBackup;
-        touchProjectModified(project);
-        renderOpenProject();
-        showToast('Local backup created.');
-    });
-    main.querySelector('#enableProjectSync')?.addEventListener('click', () => showToast('Cloud sync is optional. This project is currently stored locally.'));
+    main.querySelector('#createProjectBackup')?.addEventListener('click', () => showToast('Creating a local backup is not available yet.'));
+    main.querySelector('#enableProjectSync')?.addEventListener('click', () => showToast('Cloud sync is not available yet.'));
     const coverPreview = main.querySelector('#projectCoverPreview');
     bindProjectCoverPositioner(coverPreview, {
-        getSource: () => projectCoverImageSource(currentProject()),
-        getPosition: () => currentProject().coverPosition,
+        getSource: () => projectSettingsCoverSource(projectSettingsDraft),
+        getPosition: () => projectSettingsDraft.coverSelection.position,
         onChange: position =>
         {
-            const project = currentProject();
-            project.coverPosition = position;
-            touchProjectModified(project);
-            updateProjectCoverPreview(coverPreview, project.cover, projectCoverImageSource(project), position);
+            projectSettingsDraft.coverSelection.position = position;
+            updateProjectCoverPreview(coverPreview, projectSettingsDraft.cover, projectSettingsCoverSource(projectSettingsDraft), position);
         },
         resetButton: main.querySelector('#projectCoverReset')
     });
     main.querySelectorAll('[data-cover-style]').forEach(button => button.addEventListener('click', () =>
     {
-        const project = currentProject();
-        setProjectCover(project.id, button.dataset.coverStyle);
-        showToast('Cover style updated. Save settings to keep other changes.');
+        captureProjectSettingsFields();
+        projectSettingsDraft.cover = button.dataset.coverStyle;
+        projectSettingsDraft.coverSelection.position = { x: 50, y: 50 };
         renderOpenProject();
     }));
     main.querySelector('[data-cover-photo]')?.addEventListener('click', () =>
         openProjectCoverPhotoPicker(currentProjectId(), {
+            selection: projectSettingsDraft.coverSelection,
             onSelect: selection =>
             {
-                if (!commitProjectCoverSelection(currentProjectId(), selection)) return;
+                captureProjectSettingsFields();
+                projectSettingsDraft.cover = 'photo';
+                projectSettingsDraft.coverSelection = selection;
                 renderOpenProject();
-                showToast('Project cover updated.');
             }
         }));
 }
@@ -809,13 +837,7 @@ function saveProjectSettings()
             '#settingsProjectDescription'
         );
 
-    const name =
-        cleanEditFieldValue(
-            collectLocalizedDataFieldValue(
-                nameControl,
-                sourceName
-            )
-        );
+    const name = cleanEditFieldValue(collectLocalizedDataFieldValue(nameControl, sourceName));
 
     const description =
         cleanEditFieldValue(
@@ -834,14 +856,25 @@ function saveProjectSettings()
         return;
     }
 
+    const draft = projectSettingsDraft;
+    if (draft.cover === 'photo')
+    {
+        if (!commitProjectCoverSelection(project.id, draft.coverSelection))
+        {
+            showToast('Choose a cover photo before saving.');
+            return;
+        }
+    }
+    else setProjectCover(project.id, draft.cover, { position: draft.coverSelection.position });
+
     updateProjectName(
         project.id,
         name
     );
 
-    project.desc =
-        description
-        || project.desc;
+    project.desc = description;
+
+    projectSettingsDraft = null;
 
     renderOpenProject();
 
@@ -855,29 +888,17 @@ function openMoveProjectModal()
     const project = currentProject();
     if (!project) return;
     const title = project.name;
-    const currentPath = project.projectPath || `C:\\Users\\Silver\\Documents\\GeneoGraph\\${title}.ggproj`;
+    const safeTitle = title.replace(/[^a-zA-Z0-9\s-]/g, '').trim().replace(/\s+/g, ' ') || 'Family History';
+    const currentPath = project.projectPath || `C:\\Users\\Username\\Documents\\GeneoGraph\\${safeTitle}.ggproj`;
     openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="moveProjectTitle">
-        <div class="modal-header"><div><h2 id="moveProjectTitle">Move project</h2><p>Choose a new local folder for this project. This is simulated in the prototype.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div>
+        <div class="modal-header"><div><h2 id="moveProjectTitle">Move project</h2><p>Project files cannot be moved in this demo. The path below is an example only.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div>
         <div class="modal-body form-grid">
           <div class="field"><label>Current location</label><input value="${escapeHtml(currentPath)}" disabled></div>
-          <div class="field"><label for="newProjectLocation">New location</label><input id="newProjectLocation" value="C:\\Users\\Silver\\Documents\\GeneoGraph\\Moved projects\\${escapeHtml(title)}.geneograph"></div>
+          <div class="field"><label for="newProjectLocation">New location</label><input id="newProjectLocation" value="C:\\Users\\Username\\Documents\\GeneoGraph\\Moved projects\\${escapeHtml(safeTitle)}.ggproj" disabled></div>
           <div class="project-location-note">Moving a project would relocate the local project package and keep existing people, sources, photos, archive files, notes, boards, and settings together.</div>
         </div>
-        <div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="button" id="confirmMoveProject">Move project</button></div>
+        <div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="button" id="confirmMoveProject" disabled>Move project</button></div>
       </div>`);
-    modalBackdrop.querySelector('#confirmMoveProject')?.addEventListener('click', () =>
-    {
-        const nextPath = modalBackdrop.querySelector('#newProjectLocation')?.value.trim();
-        if (!nextPath)
-        {
-            showToast('Choose a project location.'); return;
-        }
-        project.projectPath = nextPath;
-        touchProjectModified(project);
-        closeModal();
-        renderOpenProject();
-        showToast('Project location updated.');
-    });
 }
 
 
