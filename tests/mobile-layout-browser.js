@@ -39,13 +39,19 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
 
                 await page.locator('[data-mobile-sections]').click();
                 assert.equal(await page.locator('#mobileSectionsHeader').isVisible(), true);
+                assert.equal(await page.locator('#mobileSectionsHeader strong').innerText(),
+                    await page.evaluate(() => t('Albums')));
+                assert.equal(await page.locator('.workspace .sidebar').getAttribute('aria-label'),
+                    await page.evaluate(() => `${t('Albums')} ${t('Navigation')}`));
                 await page.keyboard.press('Escape');
 
                 const albumDetails = page.locator('.album-photo-card .mobile-item-details').first();
                 assert.equal(await albumDetails.count() > 0, true);
                 await albumDetails.click();
                 assert.equal(await page.locator('.albums-detail').isVisible(), true);
+                assert.equal(await page.locator('.albums-detail [data-albums-detail-toggle]').isVisible(), false);
                 await page.locator('#mobileDetailsClose').click();
+                assert.equal(await albumDetails.evaluate(button => button === document.activeElement), true);
             }
 
             await page.evaluate(() =>
@@ -78,6 +84,67 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             assert.deepEqual(errors, []);
             await page.close();
         }
+
+        for (const [width, moduleName, selector] of [
+            [390, 'Family Tree', '#collapseInspector'],
+            [390, 'People', '#collapseInspector'],
+            [390, 'Archive', '[data-archive-inspector-collapse]'],
+            [390, 'Places', '[data-places-inspector-toggle]'],
+            [390, 'Geneograph', '[data-geneo-inspector-toggle]'],
+            [980, 'Albums', '[data-albums-detail-toggle]'],
+            [1100, 'Archive', '[data-archive-inspector-collapse]'],
+            [1180, 'People', '#collapseInspector']
+        ])
+        {
+            const page = await browser.newPage({ viewport: { width, height: 720 } });
+            await page.goto(url, { waitUntil: 'domcontentloaded' });
+            await page.waitForTimeout(250);
+            await page.evaluate(module =>
+            {
+                if (typeof geneoTourClose === 'function') geneoTourClose({ offerRestore: false });
+                state.projectOpen = true;
+                state.currentProjectId = 'p1';
+                state.activeModule = module;
+                if (module === 'Places') state.selectedPlaceId = 'place-meowbridge';
+                if (module === 'Geneograph')
+                {
+                    state.geneoView = 'home';
+                    render();
+                    openGeneographBoard('gb1');
+                }
+                else render();
+            }, moduleName);
+            await page.locator('[data-mobile-details]').click();
+            assert.equal(await page.locator(selector).first().isVisible(), false, `${moduleName} at ${width}px`);
+            assert.equal(await page.locator('#mobileDetailsClose').isVisible(), true);
+            await page.keyboard.press('Escape');
+            assert.equal(await page.locator('#mobileDetailsClose').count(), 0);
+            assert.equal(await page.locator('[data-mobile-details]').evaluate(button => button === document.activeElement), true);
+            if (width > 500)
+            {
+                await page.locator('[data-mobile-details]').click();
+                await page.locator('#mobileSurfaceBackdrop').click({ position: { x: 4, y: 100 } });
+                assert.equal(await page.locator('#mobileDetailsClose').count(), 0);
+                assert.equal(await page.locator('[data-mobile-details]').evaluate(button => button === document.activeElement), true);
+            }
+            await page.close();
+        }
+
+        const desktop = await browser.newPage({ viewport: { width: 1280, height: 720 } });
+        await desktop.goto(url, { waitUntil: 'domcontentloaded' });
+        await desktop.waitForTimeout(250);
+        await desktop.evaluate(() =>
+        {
+            if (typeof geneoTourClose === 'function') geneoTourClose({ offerRestore: false });
+            state.projectOpen = true;
+            state.currentProjectId = 'p1';
+            state.activeModule = 'Albums';
+            render();
+        });
+        assert.equal(await desktop.locator('.albums-detail [data-albums-detail-toggle]').isVisible(), true);
+        await desktop.locator('.albums-detail [data-albums-detail-toggle]').click();
+        assert.equal(await desktop.evaluate(() => state.albumsDetailCollapsed), true);
+        await desktop.close();
     }
     finally
     {

@@ -650,6 +650,17 @@
     height: 18px;
 }
 
+body.mobile-details-open .tree-inspector #collapseInspector,
+body.mobile-details-open .tree-inspector #restoreInspector,
+body.mobile-details-open .people-person-sidebar #collapseInspector,
+body.mobile-details-open .people-person-sidebar #restoreInspector,
+body.mobile-details-open .albums-detail [data-albums-detail-toggle],
+body.mobile-details-open .archive-inspector [data-archive-inspector-collapse],
+body.mobile-details-open .places-inspector [data-places-inspector-toggle],
+body.mobile-details-open .geneo-inspector [data-geneo-inspector-toggle] {
+    display: none !important;
+}
+
 .tree-mobile-search-trigger,
 .tree-mobile-search-close,
 .tree-mobile-more {

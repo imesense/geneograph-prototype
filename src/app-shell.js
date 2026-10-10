@@ -152,9 +152,9 @@ function openMobileSurface(kind)
         document.body.classList.add('mobile-sections-open');
         sidebar.setAttribute('role', 'dialog');
         sidebar.setAttribute('aria-modal', 'true');
-        const heading = `${t(state.activeModule)} · ${t('Sections')}`;
-        sidebar.setAttribute('aria-label', heading);
-        sidebar.insertAdjacentHTML('afterbegin', `<div class="mobile-drawer-heading" id="mobileSectionsHeader"><strong>${escapeHtml(heading)}</strong><button type="button" data-mobile-close aria-label="${escapeHtml(t('Close'))}">${icon.close}</button></div>`);
+        const moduleName = t(state.activeModule);
+        sidebar.setAttribute('aria-label', `${moduleName} ${t('Navigation')}`);
+        sidebar.insertAdjacentHTML('afterbegin', `<div class="mobile-drawer-heading" id="mobileSectionsHeader"><strong>${escapeHtml(moduleName)}</strong><button type="button" data-mobile-close aria-label="${escapeHtml(t('Close'))}">${icon.close}</button></div>`);
         sidebar.querySelector('[data-mobile-close]')?.addEventListener('click', () => closeMobileSurface());
         sidebar.querySelector('[data-mobile-close]')?.focus();
     }
