@@ -23515,6 +23515,7 @@ function updateGeneographConnectionPreview(event)
 
 function startGeneographObjectDrag(event)
 {
+    if (geneoPointerState || event.isPrimary === false) return;
     const nodeElement = event.target.closest('[data-geneo-node]'); if (!nodeElement || event.button !== 0 ||
       event.target.closest(
           [
@@ -23535,6 +23536,9 @@ function startGeneographObjectDrag(event)
     event.preventDefault();
     event.stopPropagation();
     if (geneoNodeEffectiveLocked(node)) return;
+    const beforeSnapshot = geneoSnapshot();
+    const undoLength = geneoHistoryRuntime.undo.length;
+    const redo = [...geneoHistoryRuntime.redo];
     geneoPushHistory(); const point = geneoPointerToCanvas(event);
     const selection = selectedGeneographNodes();
     const nodes = geneoGroupMoveSnapshot(selection);
@@ -23543,16 +23547,20 @@ function startGeneographObjectDrag(event)
     {
         geneoHistoryRuntime.undo.pop(); return;
     }
-    geneoPointerState = { kind: 'move-group', nodeId: node.id, start: point, x: node.x, y: node.y, nodes, connections, moved: false };
+    geneoPointerState = { kind: 'move-group', pointerId: event.pointerId, beforeSnapshot, undoLength, redo, nodeId: node.id, start: point, x: node.x, y: node.y, nodes, connections, moved: false };
 }
 
 function startGeneographConnectionDrag(event)
 {
+    if (geneoPointerState || event.isPrimary === false) return false;
     const path = event.target.closest('.geneo-connection-hit');
     if (!path || event.button !== 0 || !['select', 'pan'].includes(state.geneoTool) || event.shiftKey || event.ctrlKey || event.metaKey) return false;
     const connection = getGeneographConnection(path.dataset.geneoConnection);
     if (!connection) return false;
     if (!geneoSelectedConnectionIdSet().has(connection.id)) selectGeneographConnection(connection.id);
+    const beforeSnapshot = geneoSnapshot();
+    const undoLength = geneoHistoryRuntime.undo.length;
+    const redo = [...geneoHistoryRuntime.redo];
     geneoPushHistory();
     const nodes = geneoGroupMoveSnapshot(selectedGeneographNodes());
     const connections = geneoConnectionMoveSnapshot(nodes, selectedGeneographConnections());
@@ -23562,6 +23570,8 @@ function startGeneographConnectionDrag(event)
     }
     geneoPointerState = {
         kind: 'move-group',
+        pointerId: event.pointerId,
+        beforeSnapshot, undoLength, redo,
         nodeId: nodes[0]?.id || null,
         start: geneoPointerToCanvas(event),
         x: nodes[0]?.x || 0,
@@ -23592,6 +23602,8 @@ function startGeneographResize(
         return false;
     }
 
+    if (geneoPointerState || event.isPrimary === false) return true;
+
     const node =
         getGeneographNode(
             button.dataset.geneoNode
@@ -23607,10 +23619,15 @@ function startGeneographResize(
         return true;
     }
 
+    const beforeSnapshot = geneoSnapshot();
+    const undoLength = geneoHistoryRuntime.undo.length;
+    const redo = [...geneoHistoryRuntime.redo];
     geneoPushHistory();
 
     geneoPointerState = {
         kind: 'resize',
+        pointerId: event.pointerId,
+        beforeSnapshot, undoLength, redo,
 
         nodeId:
           node.id,
@@ -23655,6 +23672,7 @@ function moveGeneographObject(event)
 {
     updateGeneographConnectionPreview(event);
     if (!geneoPointerState) return;
+    if (geneoPointerState.pointerId !== undefined && event.pointerId !== geneoPointerState.pointerId) return;
     if (geneoPointerState.kind === 'pencil')
     {
         if (event.pointerId !== geneoPointerState.pointerId) return;
@@ -24121,7 +24139,17 @@ function updateGeneographLiveGeometry(
 
 function endGeneographObjectDrag(event)
 {
+    if (geneoPointerState?.pointerId !== undefined && event.pointerId !== geneoPointerState.pointerId) return;
     if (!geneoPointerState) return; const stateBefore = geneoPointerState; geneoPointerState = null;
+    if (event?.type === 'pointercancel' && stateBefore.beforeSnapshot)
+    {
+        const board = selectedGeneographBoard();
+        if (board) board.diagram = JSON.parse(stateBefore.beforeSnapshot);
+        geneoHistoryRuntime.undo.length = stateBefore.undoLength;
+        geneoHistoryRuntime.redo = stateBefore.redo;
+        renderGeneographEditorPreserveScroll();
+        return;
+    }
     if (stateBefore.kind === 'pencil')
     {
         updateGeneographPencilPreview();
@@ -26099,7 +26127,7 @@ function bindGeneographEditor()
     });
     wrap?.addEventListener('pointerdown', event =>
     {
-        if (event.button !== 0 || event.isPrimary === false)
+        if (geneoPointerState || event.button !== 0 || event.isPrimary === false)
         {
             return;
         }

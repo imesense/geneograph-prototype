@@ -2818,6 +2818,7 @@
 
 .geneo-node {
     position: absolute;
+    touch-action: none;
     min-width: 0;
     border:
         var(--geneo-node-stroke-width) var(--geneo-node-stroke-style, solid) var(--geneo-node-stroke);
@@ -2829,6 +2830,10 @@
     overflow: visible;
     cursor: move;
     outline: 0;
+}
+
+.geneo-node.is-rich-editing {
+    touch-action: auto;
 }
 
 .geneo-node:focus-visible,

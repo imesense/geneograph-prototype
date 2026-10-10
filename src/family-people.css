@@ -380,6 +380,7 @@
 
 .tree-canvas {
     position: relative;
+    touch-action: none;
     min-width: 0;
     min-height: 0;
     overflow: auto;

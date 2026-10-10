@@ -130,6 +130,103 @@ function bindTreeCanvasPan()
 
     let gesture = null;
     let suppressNextClick = false;
+    const touches = new Map();
+    let touchGesture = null;
+
+    const touchMidpoint = () =>
+    {
+        const [first, second] = [...touches.values()];
+        return {
+            x: (first.x + second.x) / 2,
+            y: (first.y + second.y) / 2,
+            distance: Math.hypot(first.x - second.x, first.y - second.y)
+        };
+    };
+
+    const beginTouchPinch = () =>
+    {
+        const midpoint = touchMidpoint();
+        touchGesture = {
+            kind: 'pinch',
+            zoom: state.treeZoom,
+            distance: Math.max(1, midpoint.distance),
+            anchor: treeViewportPointAtClient(midpoint.x, midpoint.y)
+        };
+        suppressNextClick = true;
+        canvas.classList.remove('is-panning');
+        touches.forEach((_, pointerId) => canvas.setPointerCapture?.(pointerId));
+    };
+
+    canvas.addEventListener('pointerdown', event =>
+    {
+        if (event.pointerType !== 'touch') return;
+        touches.set(event.pointerId, { x: event.clientX, y: event.clientY });
+        if (touches.size === 2)
+        {
+            beginTouchPinch();
+        }
+        else if (touches.size === 1 && !event.target.closest(interactiveSelector))
+        {
+            touchGesture = {
+                kind: 'pan', pointerId: event.pointerId,
+                x: event.clientX, y: event.clientY,
+                left: canvas.scrollLeft, top: canvas.scrollTop,
+                moved: false
+            };
+        }
+    });
+
+    canvas.addEventListener('pointermove', event =>
+    {
+        if (event.pointerType !== 'touch' || !touches.has(event.pointerId)) return;
+        touches.set(event.pointerId, { x: event.clientX, y: event.clientY });
+        if (touchGesture?.kind === 'pinch' && touches.size >= 2)
+        {
+            const midpoint = touchMidpoint();
+            setTreeZoom(touchGesture.zoom * midpoint.distance / touchGesture.distance, {
+                anchor: touchGesture.anchor,
+                clientX: midpoint.x,
+                clientY: midpoint.y
+            });
+            restoreTreeViewportAnchor(touchGesture.anchor, midpoint.x, midpoint.y);
+            event.preventDefault();
+        }
+        else if (touchGesture?.kind === 'pan' && touchGesture.pointerId === event.pointerId)
+        {
+            const dx = event.clientX - touchGesture.x;
+            const dy = event.clientY - touchGesture.y;
+            if (!touchGesture.moved && Math.hypot(dx, dy) < DRAG_THRESHOLD) return;
+            touchGesture.moved = true;
+            suppressNextClick = true;
+            canvas.classList.add('is-panning');
+            canvas.setPointerCapture?.(event.pointerId);
+            canvas.scrollLeft = touchGesture.left - dx;
+            canvas.scrollTop = touchGesture.top - dy;
+            event.preventDefault();
+        }
+    });
+
+    const endTouch = event =>
+    {
+        if (event.pointerType !== 'touch' || !touches.delete(event.pointerId)) return;
+        if (canvas.hasPointerCapture?.(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
+        if (touchGesture?.kind === 'pinch')
+        {
+            // Do not turn the remaining finger into a pan after a pinch.
+            if (!touches.size) touchGesture = null;
+        }
+        else if (touchGesture?.pointerId === event.pointerId)
+        {
+            touchGesture = null;
+            canvas.classList.remove('is-panning');
+        }
+        if (!touches.size && suppressNextClick)
+        {
+            setTimeout(() => { suppressNextClick = false; }, 500);
+        }
+    };
+    canvas.addEventListener('pointerup', endTouch);
+    canvas.addEventListener('pointercancel', endTouch);
 
     const finishGesture = event =>
     {
