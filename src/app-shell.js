@@ -152,8 +152,9 @@ function openMobileSurface(kind)
         document.body.classList.add('mobile-sections-open');
         sidebar.setAttribute('role', 'dialog');
         sidebar.setAttribute('aria-modal', 'true');
-        sidebar.setAttribute('aria-label', t('Sections'));
-        sidebar.insertAdjacentHTML('afterbegin', `<div class="mobile-drawer-heading" id="mobileSectionsHeader"><strong>${escapeHtml(t('Sections'))}</strong><button type="button" data-mobile-close aria-label="${escapeHtml(t('Close'))}">${icon.close}</button></div>`);
+        const heading = `${t(state.activeModule)} · ${t('Sections')}`;
+        sidebar.setAttribute('aria-label', heading);
+        sidebar.insertAdjacentHTML('afterbegin', `<div class="mobile-drawer-heading" id="mobileSectionsHeader"><strong>${escapeHtml(heading)}</strong><button type="button" data-mobile-close aria-label="${escapeHtml(t('Close'))}">${icon.close}</button></div>`);
         sidebar.querySelector('[data-mobile-close]')?.addEventListener('click', () => closeMobileSurface());
         sidebar.querySelector('[data-mobile-close]')?.focus();
     }
@@ -170,8 +171,7 @@ function openMobileSurface(kind)
             <nav aria-label="${escapeHtml(t('Modules'))}">
                 <button type="button" data-mobile-destination="library" ${!state.projectOpen ? 'aria-current="page"' : ''}>${icon.home}<span>${escapeHtml(t('All projects'))}</span></button>
                 ${state.projectOpen ? `<button type="button" data-mobile-destination="overview" ${state.activeModule === 'Projects' ? 'aria-current="page"' : ''}>${icon.grid}<span>${escapeHtml(t('Project overview'))}</span></button>
-                    ${modules.map(module => `<button type="button" data-mobile-destination="${escapeHtml(module)}" ${state.activeModule === module ? 'aria-current="page"' : ''}>${icons[module] || icon.grid}<span>${escapeHtml(t(module))}</span></button>`).join('')}
-                    <button type="button" class="mobile-drawer-utility" data-mobile-destination="notifications">${icon.bell}<span>${escapeHtml(t('Notifications'))}</span></button>` : ''}
+                    ${modules.map(module => `<button type="button" data-mobile-destination="${escapeHtml(module)}" ${state.activeModule === module ? 'aria-current="page"' : ''}>${icons[module] || icon.grid}<span>${escapeHtml(t(module))}</span></button>`).join('')}` : ''}
             </nav>`;
         document.body.appendChild(drawer);
         drawer.querySelector('[data-mobile-close]').addEventListener('click', () => closeMobileSurface());
@@ -179,11 +179,6 @@ function openMobileSurface(kind)
         {
             const destination = button.dataset.mobileDestination;
             closeMobileSurface(false);
-            if (destination === 'notifications')
-            {
-                openTopbarPopover('notifications', topbar.querySelector('[data-mobile-menu]'));
-                return;
-            }
             if (destination === 'library')
             {
                 if (state.activeModule === 'Family Tree') captureTreeCanvasScroll(currentProjectId());
@@ -224,6 +219,13 @@ sidebar.addEventListener('click', event =>
 
 main.addEventListener('click', event =>
 {
+    if (event.target.closest('[data-mobile-open-details]'))
+    {
+        event.preventDefault();
+        event.stopPropagation();
+        openMobileSurface('details');
+        return;
+    }
     if (mobileSurface !== 'details' || !mobileDetailTarget()?.contains(event.target)
         || !event.target.closest('button[aria-haspopup]')) return;
     requestAnimationFrame(() =>
@@ -361,8 +363,8 @@ function renderTopbar()
     topbar.innerHTML = `
         <button class="mobile-menu-trigger" type="button" data-mobile-menu aria-label="${escapeHtml(t('Modules'))}" title="${escapeHtml(t('Modules'))}" aria-haspopup="dialog" aria-expanded="false">${icon.menu}</button>
         <button class="home-tab ${state.activeModule === 'Projects' ? 'active' : ''}" type="button" data-home aria-label="Projects home">${icon.home}</button>
-        <button class="mobile-sections-trigger" type="button" data-mobile-sections aria-label="${escapeHtml(t('Sections'))}" title="${escapeHtml(t('Sections'))}" aria-haspopup="dialog" aria-expanded="false" ${showSections ? '' : 'hidden'}>${icon.panel}</button>
-        <button class="mobile-details-trigger" type="button" data-mobile-details data-mobile-detail-module="${escapeHtml(state.activeModule)}" aria-label="${escapeHtml(t('Details'))}" title="${escapeHtml(t('Details'))}" aria-haspopup="dialog" aria-expanded="false" ${showDetails ? '' : 'hidden'}>${icon.info}</button>
+        <button class="mobile-sections-trigger" type="button" data-mobile-sections aria-label="${escapeHtml(t('Sections'))}: ${escapeHtml(t(state.activeModule))}" title="${escapeHtml(t('Sections'))}" aria-haspopup="dialog" aria-expanded="false" ${showSections ? '' : 'hidden'}>${icon.sidebar}</button>
+        <button class="mobile-details-trigger" type="button" data-mobile-details data-mobile-detail-module="${escapeHtml(state.activeModule)}" aria-label="${escapeHtml(t('Details'))}: ${escapeHtml(t(state.activeModule))}" title="${escapeHtml(t('Details'))}" aria-haspopup="dialog" aria-expanded="false" ${showDetails ? '' : 'hidden'}>${icon.inspector}</button>
         ${showModules ? `<nav class="topnav" aria-label="Project modules">
           ${modules.map(module => `
             <button

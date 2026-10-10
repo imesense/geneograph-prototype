@@ -15841,7 +15841,7 @@ function selectedPlaceFromList(list)
         || null;
 }
 
-function setPlacesMapStatus(title = '', message = '', { retry = false } = {})
+function setPlacesMapStatus(title = '', message = '', { retry = false, list = false } = {})
 {
     const status = document.querySelector('[data-places-map-status]');
     if (!status) return;
@@ -15852,7 +15852,12 @@ function setPlacesMapStatus(title = '', message = '', { retry = false } = {})
         return;
     }
     status.hidden = false;
-    status.innerHTML = `<strong>${escapeHtml(title)}</strong><span>${escapeHtml(message)}</span>${retry ? `<button class="button secondary" type="button" data-places-map-retry>${escapeHtml(t('Retry'))}</button>` : ''}`;
+    status.innerHTML = `<strong>${escapeHtml(title)}</strong><span>${escapeHtml(message)}</span>${list ? `<button class="button primary" type="button" data-places-map-list>${escapeHtml(t('List view'))}</button>` : ''}${retry ? `<button class="button secondary" type="button" data-places-map-retry>${escapeHtml(t('Retry'))}</button>` : ''}`;
+    status.querySelector('[data-places-map-list]')?.addEventListener('click', () =>
+    {
+        state.placesViewMode = 'list';
+        renderPlaces();
+    });
     status.querySelector('[data-places-map-retry]')?.addEventListener('click', () =>
     {
         const places = [...(placesMapRuntime.currentPlaces || [])];

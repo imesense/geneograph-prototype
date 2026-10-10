@@ -13,6 +13,7 @@ function renderGeneograph()
         }
         const center = geneoCurrentViewportCenter()
           || geneoSavedViewport(board?.id)?.center
+          || geneoCanvasRuntime.initialMobileCenter
           || geneoContentCenter();
         renderGeneographEditor();
         scheduleGeneographViewportRestore(center);
@@ -5137,9 +5138,24 @@ function openGeneographBoard(id)
     cancelGeneographConnectionDraft();
     state.geneoTool = 'pan';
     state.geneoZoom = savedViewport?.zoom || 83;
+    if (!savedViewport && window.innerWidth <= 900)
+        state.geneoZoom = window.innerWidth <= 350 ? 42 : 50;
     state.geneoInlineEditNodeId = null;
     state.geneoLayerRename = null;
     geneoCanvasRuntime = createGeneoCanvasRuntime(id);
+    if (!savedViewport && window.innerWidth <= 900)
+    {
+        const nodes = selectedGeneographDiagram()?.nodes || [];
+        const panel = nodes.find(node => node.id === 'gn-panel') || nodes.find(node => node.type === 'panel');
+        const household = panel ? nodes.filter(node => node.parentPanelId === panel.id) : [];
+        const focus = household.length ? household : panel ? [panel] : [];
+        geneoCanvasRuntime.initialMobileCenter = focus.length
+            ? {
+                x: (Math.min(...focus.map(node => node.x)) + Math.max(...focus.map(node => node.x + node.width))) / 2,
+                y: (Math.min(...focus.map(node => node.y)) + Math.max(...focus.map(node => node.y + node.height))) / 2
+            }
+            : geneoContentCenter();
+    }
     geneoHistoryRuntime = {
         boardId: id,
         undo: [],
@@ -6547,7 +6563,10 @@ function bindGeneographToolbarDensity()
                 if (id === 'history') continue;
                 geneoToolbarControl(toolbar, id)?.setAttribute('data-geneo-icon-only', '');
             }
-            for (const id of GENEO_TOOLBAR_ORDER_RIGHT_TO_LEFT)
+            const overflowOrder = width < 500
+                ? GENEO_TOOLBAR_ORDER_RIGHT_TO_LEFT.filter(id => id !== 'history' && id !== 'modes').concat('history', 'modes')
+                : GENEO_TOOLBAR_ORDER_RIGHT_TO_LEFT;
+            for (const id of overflowOrder)
             {
                 if (fits()) break;
                 geneoToolbarControl(toolbar, id)?.setAttribute('data-geneo-hidden', '');

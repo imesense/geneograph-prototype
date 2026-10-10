@@ -5116,6 +5116,8 @@ function renderAlbumsPhotoCard(photo, selectedIds, width = 0)
                 )}
             </span>
 
+            ${state.selectedPhotoId === photo.id ? `<button class="mobile-item-details" type="button" data-mobile-open-details>${icon.info}<span>${escapeHtml(t('Details'))}</span></button>` : ''}
+
             <button
               class="albums-card-more"
               type="button"

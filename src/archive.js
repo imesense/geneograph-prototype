@@ -9464,6 +9464,7 @@ function renderArchiveFolderTableRow(
                   </strong>
                 </div>
               </div>
+              <button class="archive-mobile-open-folder" type="button" data-archive-mobile-open-folder="${escapeHtml(folder.id)}" aria-label="${escapeHtml(t('Open folder'))}: ${escapeHtml(folder.name)}">${escapeHtml(t('Open'))}</button>
             </div>
           </td>
 
@@ -11437,14 +11438,14 @@ function renderArchiveSourceTable(
                         archive-source-connections-cell
                       ">
 
-                      ${connectionCount}
+                      <span class="archive-mobile-cell-label">${escapeHtml(t('Connections'))}: </span>${connectionCount}
                     </td>
 
                     <td>
                       <span
                         class="archive-source-accessed-text"
                         title="${escapeHtml(accessedLabel)}">
-                        ${escapeHtml(accessedLabel)}
+                        <span class="archive-mobile-cell-label">${escapeHtml(t('Accessed'))}: </span>${escapeHtml(accessedLabel)}
                       </span>
                     </td>
 
@@ -23058,6 +23059,11 @@ function bindArchiveControls()
                 }
             );
         });
+    root.querySelectorAll('[data-archive-mobile-open-folder]').forEach(button => button.addEventListener('click', event =>
+    {
+        event.stopPropagation();
+        archiveOpenFolder(button.dataset.archiveMobileOpenFolder);
+    }));
     root.querySelectorAll('[data-archive-source-row]').forEach(row =>
     {
         const open = () =>

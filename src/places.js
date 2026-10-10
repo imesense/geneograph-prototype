@@ -134,7 +134,7 @@ function mountPlacesMap(places)
     if (!host || state.activeModule !== 'Places' || state.placesViewMode === 'list') return;
     if (!window.L)
     {
-        setPlacesMapStatus('Map library unavailable', 'Leaflet could not be loaded. The place list and editor remain available.', { retry: true });
+        setPlacesMapStatus('Map library unavailable', 'Leaflet could not be loaded. The place list and editor remain available.', { retry: true, list: true });
         return;
     }
     if (placesMapRuntime.map && placesMapRuntime.host === host)
@@ -3922,7 +3922,7 @@ function renderPlacesListPanel(list)
                 const reviewIndicator = issueCount
                     ? `<button class="places-list-review" type="button" data-place-review-link="${escapeHtml(place.id)}">${issueCount > 1 ? `${issueCount} issues` : 'Needs review'}</button>`
                     : '';
-                return `<div class="places-list-row ${place.id === state.selectedPlaceId ? 'active' : ''}" data-place-id="${escapeHtml(place.id)}" tabindex="0" role="row" aria-selected="${place.id === state.selectedPlaceId}"><div><strong>${escapeHtml(placePrimaryName(place))}</strong><span>${escapeHtml(placeSecondaryName(place) || 'No broader place recorded')}</span>${reviewIndicator}</div><span>${escapeHtml(placeCountry(place) || 'Unknown')}</span><span>${placeHasCoordinates(place) ? 'On map' : 'Not on map'}</span><span class="places-list-people"><span class="places-list-people-mobile-label">${escapeHtml(t('Linked people'))}: </span>${linkedPeople}</span><span>${escapeHtml(formatPlaceUpdatedAt(place.updatedAt))}</span><button class="places-row-more" type="button" data-place-menu="${escapeHtml(place.id)}" aria-label="More actions for ${escapeHtml(place.name)}" aria-haspopup="menu">${icon.more}</button></div>`;
+                return `<div class="places-list-row ${place.id === state.selectedPlaceId ? 'active' : ''}" data-place-id="${escapeHtml(place.id)}" tabindex="0" role="row" aria-selected="${place.id === state.selectedPlaceId}"><div><strong>${escapeHtml(placePrimaryName(place))}</strong><span>${escapeHtml(placeSecondaryName(place) || 'No broader place recorded')}</span>${reviewIndicator}</div><span>${escapeHtml(placeCountry(place) || 'Unknown')}</span><span>${placeHasCoordinates(place) ? 'On map' : 'Not on map'}</span><span class="places-list-people"><span class="places-list-people-mobile-label">${escapeHtml(t('Linked people'))}: </span>${linkedPeople}</span><span>${escapeHtml(formatPlaceUpdatedAt(place.updatedAt))}</span>${place.id === state.selectedPlaceId ? `<button class="mobile-item-details" type="button" data-mobile-open-details>${icon.info}<span>${escapeHtml(t('Details'))}</span></button>` : ''}<button class="places-row-more" type="button" data-place-menu="${escapeHtml(place.id)}" aria-label="More actions for ${escapeHtml(place.name)}" aria-haspopup="menu">${icon.more}</button></div>`;
             }).join('')}</div>`;
 }
 
