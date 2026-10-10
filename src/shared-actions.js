@@ -2386,6 +2386,7 @@ function openModal(
     html
 )
 {
+    closeMobileSurface();
     if (geneoTourRuntime.active && !geneoTourRuntime.openingPreview)
         geneoTourClose({ offerRestore: false });
     const activeBeforeMenuClose =

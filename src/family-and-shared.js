@@ -459,8 +459,59 @@ function bindTreeSearch()
     }, { signal });
 }
 
+let treeMobileMenuController = null;
+
+function closeTreeMobileMenu()
+{
+    treeMobileMenuController?.abort();
+    treeMobileMenuController = null;
+    document.querySelector('#treeMobileMenu')?.remove();
+    main.querySelector('[data-tree-mobile-more]')?.setAttribute('aria-expanded', 'false');
+}
+
+function openTreeMobileMenu(anchor)
+{
+    if (document.querySelector('#treeMobileMenu'))
+    {
+        closeTreeMobileMenu();
+        return;
+    }
+    const menu = document.createElement('div');
+    menu.id = 'treeMobileMenu';
+    menu.className = 'tree-mobile-menu';
+    menu.setAttribute('role', 'menu');
+    menu.innerHTML = `<button type="button" role="menuitem" data-tree-mobile-action="settings">${icon.settings}<span>${escapeHtml(t('Tree Settings'))}</span></button>
+        <button type="button" role="menuitem" data-tree-mobile-action="export">${icon.export}<span>${escapeHtml(t('Export'))}</span></button>
+        <button type="button" role="menuitem" data-tree-mobile-action="print">${icon.print}<span>${escapeHtml(t('Print'))}</span></button>`;
+    document.body.appendChild(menu);
+    const rect = anchor.getBoundingClientRect();
+    menu.style.top = `${rect.bottom + 6}px`;
+    menu.style.left = `${Math.max(8, Math.min(rect.right - menu.offsetWidth, window.innerWidth - menu.offsetWidth - 8))}px`;
+    anchor.setAttribute('aria-expanded', 'true');
+    const controller = new AbortController();
+    treeMobileMenuController = controller;
+    menu.addEventListener('click', event =>
+    {
+        const action = event.target.closest('[data-tree-mobile-action]')?.dataset.treeMobileAction;
+        if (!action) return;
+        closeTreeMobileMenu();
+        const original = action === 'settings' ? '[data-tree-settings]' : `[data-tree-mobile-original="${action}"]`;
+        main.querySelector(original)?.click();
+    });
+    document.addEventListener('pointerdown', event =>
+    {
+        if (!menu.contains(event.target) && !anchor.contains(event.target)) closeTreeMobileMenu();
+    }, { signal: controller.signal });
+    document.addEventListener('keydown', event =>
+    {
+        if (event.key === 'Escape') closeTreeMobileMenu();
+    }, { signal: controller.signal });
+    menu.querySelector('button')?.focus();
+}
+
 function renderFamilyTree()
 {
+    closeTreeMobileMenu();
     disposeTreeSearch();
     sidebar.innerHTML = '';
     const treeProjectId =
@@ -614,10 +665,13 @@ function renderFamilyTree()
             </span>
             </div>
             <div class="tree-toolbar-right">
+              <button class="tree-icon-button tree-mobile-search-trigger" type="button" data-tree-mobile-search aria-label="${escapeHtml(t('Search people'))}">${icon.search}</button>
               <label class="app-search-field">${icon.search}<input type="search" placeholder="Search people..." id="treeSearch" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-label="${escapeHtml(t('Search people'))}"></label>
-              <button class="tree-action" type="button" data-toast="Export is planned for the Publish iteration." aria-label="Export" title="Export">${icon.export}<span class="tree-action-label">Export</span></button>
-              <button class="tree-action" type="button" data-toast="Print preview will be added later." aria-label="Print" title="Print">${icon.print}<span class="tree-action-label">Print</span></button>
+              <button class="tree-icon-button tree-mobile-search-close" type="button" data-tree-mobile-search-close aria-label="${escapeHtml(t('Close'))}">${icon.close}</button>
+              <button class="tree-action" type="button" data-tree-mobile-original="export" data-toast="Export is planned for the Publish iteration." aria-label="Export" title="Export">${icon.export}<span class="tree-action-label">Export</span></button>
+              <button class="tree-action" type="button" data-tree-mobile-original="print" data-toast="Print preview will be added later." aria-label="Print" title="Print">${icon.print}<span class="tree-action-label">Print</span></button>
               <button class="tree-action" type="button" data-tree-settings aria-label="Tree Settings" title="Tree Settings">${icon.settings}<span class="tree-action-label">Tree Settings</span></button>
+              <button class="tree-icon-button tree-mobile-more" type="button" data-tree-mobile-more aria-label="${escapeHtml(t('More actions'))}" aria-haspopup="menu" aria-expanded="false">${icon.more}</button>
             </div>
           </div>
           <div class="tree-workspace ${state.treeInspectorCollapsed ? 'inspector-collapsed' : ''}">
@@ -780,6 +834,17 @@ function renderFamilyTree()
         openTreeRecentPeopleMenu(event.currentTarget);
     });
     main.querySelector('[data-tree-settings]')?.addEventListener('click', openTreeSettingsModal);
+    main.querySelector('[data-tree-mobile-more]')?.addEventListener('click', event => openTreeMobileMenu(event.currentTarget));
+    main.querySelector('[data-tree-mobile-search]')?.addEventListener('click', () =>
+    {
+        main.querySelector('.tree-toolbar')?.classList.add('mobile-search-open');
+        main.querySelector('#treeSearch')?.focus();
+    });
+    main.querySelector('[data-tree-mobile-search-close]')?.addEventListener('click', () =>
+    {
+        main.querySelector('.tree-toolbar')?.classList.remove('mobile-search-open');
+        main.querySelector('[data-tree-mobile-search]')?.focus();
+    });
     bindPersonSidebar(main, 'tree');
     const centerTargetId =
         state.treeCenterTargetId;

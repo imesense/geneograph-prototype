@@ -3481,6 +3481,7 @@ function renderPeople()
               ${renderPeopleTable(
                     visibleRows
                 )}
+              ${renderPeopleMobileList(visibleRows)}
             </div>
 
             ${renderPeopleTableFooter(
@@ -3651,6 +3652,25 @@ function renderPeopleTable(rows)
                 ${columns.living ? `<td>${escapeHtml(person.living)}</td>` : ''}${columns.birth ? `<td>${escapeHtml(person.birth)}</td>` : ''}${columns.birthPlace ? `<td>${escapeHtml(person.birthPlace)}</td>` : ''}${columns.death ? `<td>${escapeHtml(person.death)}</td>` : ''}${columns.deathPlace ? `<td>${escapeHtml(person.deathPlace)}</td>` : ''}${columns.updated ? `<td>${escapeHtml(person.updated)}</td>` : ''}<td class="people-actions-column"><button class="more-button people-row-action" type="button" aria-label="Actions for ${escapeHtml(person.name)}" aria-haspopup="menu" aria-expanded="false" data-people-row-menu="${person.id}">${icon.more}</button></td></tr>`;
         }).join('')}
       </tbody></table>`;
+}
+
+function renderPeopleMobileList(rows)
+{
+    const selectedIds = peopleSelectedIdSet();
+    return `<div class="people-mobile-list" aria-label="${escapeHtml(t('People'))}">
+        <label class="people-mobile-select-all"><input class="people-select-checkbox" type="checkbox" data-people-select-visible aria-label="${escapeHtml(t('Select all visible people'))}"><span>${escapeHtml(t('Select all visible people'))}</span></label>
+        ${rows.map(person => `<article class="people-mobile-row ${person.id === state.selectedPeopleId ? 'is-previewed' : ''}" data-people-row="${escapeHtml(person.id)}" tabindex="0" ${person.id === state.selectedPeopleId ? 'aria-current="true"' : ''}>
+            <input class="people-select-checkbox" type="checkbox" data-people-select-id="${escapeHtml(person.id)}" aria-label="${escapeHtml(t('Select'))} ${escapeHtml(person.name)}" ${selectedIds.has(person.id) ? 'checked' : ''}>
+            ${renderPersonAvatar(person, 'small-avatar')}
+            <div class="people-mobile-copy">
+                <strong>${escapeHtml(person.name)}</strong>
+                <span>${escapeHtml([person.relation, person.living].filter(Boolean).join(' · '))}</span>
+                <small>${escapeHtml([person.birth, person.death].filter(Boolean).join(' – '))}</small>
+            </div>
+            <button class="more-button people-row-action" type="button" data-people-row-menu="${escapeHtml(person.id)}" aria-label="${escapeHtml(t('Actions for'))} ${escapeHtml(person.name)}" aria-haspopup="menu">${icon.more}</button>
+            <button class="people-mobile-profile" type="button" data-people-open-profile="${escapeHtml(person.id)}">${escapeHtml(t('View profile'))}${icon.chevron}</button>
+        </article>`).join('')}
+    </div>`;
 }
 
 const PROFILE_CARD_SECTIONS = Object.freeze([
@@ -9830,9 +9850,7 @@ function bindPeopleToolbarControls(rows)
 function bindPeopleSelectionControls(rows)
 {
     const selectionState = peopleVisibleSelectionState(rows);
-    const headerCheckbox = main.querySelector('[data-people-select-visible]');
-
-    if (headerCheckbox)
+    main.querySelectorAll('[data-people-select-visible]').forEach(headerCheckbox =>
     {
         headerCheckbox.checked = selectionState.allVisibleSelected;
         headerCheckbox.indeterminate = selectionState.someVisibleSelected && !selectionState.allVisibleSelected;
@@ -9852,7 +9870,7 @@ function bindPeopleSelectionControls(rows)
             setPeopleSelection([...selectedIds]);
             renderPeople();
         });
-    }
+    });
 
     main.querySelectorAll('[data-people-select-id]').forEach(checkbox =>
     {
@@ -10019,6 +10037,7 @@ function bindPeopleTableNavigation(
 
 function bindPeopleRowActions(rows)
 {
+    main.querySelectorAll('[data-people-open-profile]').forEach(button => button.addEventListener('click', () => openPeopleProfileFromRow(button.dataset.peopleOpenProfile)));
     main.querySelectorAll('[data-people-row-menu]').forEach(button =>
     {
         button.addEventListener('click', event =>

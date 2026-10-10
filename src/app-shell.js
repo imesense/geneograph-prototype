@@ -1,5 +1,242 @@
+let mobileSurface = null;
+let mobileSurfaceReturnFocus = null;
+let mobileBodyOverflow = '';
+let mobileDetailModule = null;
+
+function mobileDetailTarget()
+{
+    const selectors = {
+        'Family Tree': '.tree-inspector',
+        People: '.people-person-sidebar',
+        Albums: '.albums-detail:not(.collapsed)',
+        Archive: '.archive-inspector',
+        Places: '.places-inspector',
+        Geneograph: '.geneo-inspector:not(.collapsed)'
+    };
+    return main.querySelector(selectors[state.activeModule] || '.no-mobile-detail');
+}
+
+function expandMobileDetailTarget()
+{
+    if (state.activeModule === 'Family Tree' && state.treeInspectorCollapsed)
+    {
+        state.treeInspectorCollapsed = false;
+        renderFamilyTreePreserveScroll();
+    }
+    else if (state.activeModule === 'People' && state.peoplePreviewCollapsed)
+    {
+        state.peoplePreviewCollapsed = false;
+        renderPeople();
+    }
+    else if (state.activeModule === 'Albums' && state.albumsDetailCollapsed)
+    {
+        state.albumsDetailCollapsed = false;
+        renderAlbumsPreserveViewport();
+    }
+    else if (state.activeModule === 'Archive' && state.archiveInspectorCollapsed)
+    {
+        state.archiveInspectorCollapsed = false;
+        renderArchive();
+    }
+    else if (state.activeModule === 'Places' && state.placesInspectorCollapsed)
+    {
+        state.placesInspectorCollapsed = false;
+        renderPlaces();
+    }
+    else if (state.activeModule === 'Geneograph' && state.geneoInspectorCollapsed)
+    {
+        state.geneoInspectorCollapsed = false;
+        renderGeneographEditorPreserveScroll();
+    }
+}
+
+function closeMobileSurface(restoreFocus = true)
+{
+    if (!mobileSurface) return;
+    const wasSections = mobileSurface === 'sections';
+    mobileSurface = null;
+    document.querySelector('#mobileSurfaceBackdrop')?.remove();
+    document.querySelector('#mobileModuleDrawer')?.remove();
+    document.querySelector('#mobileSectionsHeader')?.remove();
+    document.querySelector('#mobileDetailsClose')?.remove();
+    document.body.classList.remove('mobile-surface-open', 'mobile-sections-open', 'mobile-details-open');
+    mobileDetailModule = null;
+    topbar.querySelectorAll('[data-mobile-menu], [data-mobile-sections], [data-mobile-details]')
+        .forEach(button => button.setAttribute('aria-expanded', 'false'));
+    document.body.style.overflow = mobileBodyOverflow;
+    if (wasSections)
+    {
+        sidebar.removeAttribute('role');
+        sidebar.removeAttribute('aria-modal');
+        sidebar.removeAttribute('aria-label');
+    }
+    document.removeEventListener('keydown', handleMobileSurfaceKeydown, true);
+    if (restoreFocus && mobileSurfaceReturnFocus?.isConnected)
+        mobileSurfaceReturnFocus.focus({ preventScroll: true });
+    mobileSurfaceReturnFocus = null;
+}
+
+function handleMobileSurfaceKeydown(event)
+{
+    if (!mobileSurface) return;
+    if (event.key === 'Escape')
+    {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        closeMobileSurface();
+        return;
+    }
+    if (event.key !== 'Tab') return;
+    if (modalBackdrop.classList.contains('open')) return;
+    const surface = mobileSurface === 'sections' ? sidebar : mobileSurface === 'details' ? mobileDetailTarget() : document.querySelector('#mobileModuleDrawer');
+    if (!surface) return;
+    const focusable = [...surface.querySelectorAll('button:not(:disabled), a[href], input:not(:disabled), select:not(:disabled), [tabindex="0"]')]
+        .filter(item => item.getClientRects().length);
+    if (mobileSurface === 'details') focusable.unshift(document.querySelector('#mobileDetailsClose'));
+    if (!focusable.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first)
+    {
+        event.preventDefault(); last.focus();
+    }
+    else if (!event.shiftKey && document.activeElement === last)
+    {
+        event.preventDefault(); first.focus();
+    }
+}
+
+function openMobileSurface(kind)
+{
+    if (window.innerWidth > (kind === 'details' ? 1180 : 900)) return;
+    if (kind === 'details') expandMobileDetailTarget();
+    if (mobileSurface === kind)
+    {
+        closeMobileSurface();
+        return;
+    }
+    closeMobileSurface(false);
+    mobileSurface = kind;
+    mobileSurfaceReturnFocus = document.activeElement;
+    mobileSurfaceReturnFocus?.setAttribute?.('aria-expanded', 'true');
+    mobileBodyOverflow = document.body.style.overflow;
+    document.body.classList.add('mobile-surface-open');
+    document.body.style.overflow = 'hidden';
+
+    const backdrop = document.createElement('div');
+    backdrop.id = 'mobileSurfaceBackdrop';
+    backdrop.className = 'mobile-surface-backdrop';
+    backdrop.addEventListener('click', () => closeMobileSurface());
+    document.body.appendChild(backdrop);
+
+    if (kind === 'details')
+    {
+        if (!mobileDetailTarget())
+        {
+            closeMobileSurface();
+            return;
+        }
+        mobileDetailModule = state.activeModule;
+        document.body.classList.add('mobile-details-open');
+        const close = document.createElement('button');
+        close.id = 'mobileDetailsClose';
+        close.type = 'button';
+        close.setAttribute('aria-label', t('Close details'));
+        close.innerHTML = `${icon.close}<span>${escapeHtml(t('Close'))}</span>`;
+        close.addEventListener('click', () => closeMobileSurface());
+        document.body.appendChild(close);
+        close.focus();
+    }
+    else if (kind === 'sections')
+    {
+        document.body.classList.add('mobile-sections-open');
+        sidebar.setAttribute('role', 'dialog');
+        sidebar.setAttribute('aria-modal', 'true');
+        sidebar.setAttribute('aria-label', t('Sections'));
+        sidebar.insertAdjacentHTML('afterbegin', `<div class="mobile-drawer-heading" id="mobileSectionsHeader"><strong>${escapeHtml(t('Sections'))}</strong><button type="button" data-mobile-close aria-label="${escapeHtml(t('Close'))}">${icon.close}</button></div>`);
+        sidebar.querySelector('[data-mobile-close]')?.addEventListener('click', () => closeMobileSurface());
+        sidebar.querySelector('[data-mobile-close]')?.focus();
+    }
+    else
+    {
+        const drawer = document.createElement('div');
+        drawer.id = 'mobileModuleDrawer';
+        drawer.className = 'mobile-module-drawer';
+        drawer.setAttribute('role', 'dialog');
+        drawer.setAttribute('aria-modal', 'true');
+        drawer.setAttribute('aria-label', t('Modules'));
+        const icons = { 'Family Tree': icon.tree, People: icon.people, Geneograph: icon.whiteboard, Albums: icon.image, Archive: icon.archive, Notes: icon.note, Places: icon.mapPin };
+        drawer.innerHTML = `<div class="mobile-drawer-heading"><strong>${escapeHtml(t('Modules'))}</strong><button type="button" data-mobile-close aria-label="${escapeHtml(t('Close'))}">${icon.close}</button></div>
+            <nav aria-label="${escapeHtml(t('Modules'))}">
+                <button type="button" data-mobile-destination="library" ${!state.projectOpen ? 'aria-current="page"' : ''}>${icon.home}<span>${escapeHtml(t('All projects'))}</span></button>
+                ${state.projectOpen ? `<button type="button" data-mobile-destination="overview" ${state.activeModule === 'Projects' ? 'aria-current="page"' : ''}>${icon.grid}<span>${escapeHtml(t('Project overview'))}</span></button>
+                    ${modules.map(module => `<button type="button" data-mobile-destination="${escapeHtml(module)}" ${state.activeModule === module ? 'aria-current="page"' : ''}>${icons[module] || icon.grid}<span>${escapeHtml(t(module))}</span></button>`).join('')}
+                    <button type="button" class="mobile-drawer-utility" data-mobile-destination="notifications">${icon.bell}<span>${escapeHtml(t('Notifications'))}</span></button>` : ''}
+            </nav>`;
+        document.body.appendChild(drawer);
+        drawer.querySelector('[data-mobile-close]').addEventListener('click', () => closeMobileSurface());
+        drawer.querySelectorAll('[data-mobile-destination]').forEach(button => button.addEventListener('click', () =>
+        {
+            const destination = button.dataset.mobileDestination;
+            closeMobileSurface(false);
+            if (destination === 'notifications')
+            {
+                openTopbarPopover('notifications', topbar.querySelector('[data-mobile-menu]'));
+                return;
+            }
+            if (destination === 'library')
+            {
+                if (state.activeModule === 'Family Tree') captureTreeCanvasScroll(currentProjectId());
+                if (state.activeModule === 'Geneograph' && state.geneoView === 'board') captureGeneographViewport();
+                state.projectOpen = false;
+                state.currentProjectId = null;
+                state.activeModule = 'Projects';
+                render();
+            }
+            else navigateToProjectModule(currentProjectId(), destination === 'overview' ? 'Projects' : destination);
+            requestAnimationFrame(() =>
+            {
+                main.tabIndex = -1;
+                main.focus({ preventScroll: true });
+            });
+        }));
+        drawer.querySelector('[data-mobile-close]').focus();
+    }
+    document.addEventListener('keydown', handleMobileSurfaceKeydown, true);
+}
+
+window.addEventListener('resize', () =>
+{
+    if (window.innerWidth > (mobileSurface === 'details' ? 1180 : 900)) closeMobileSurface(false);
+});
+
+sidebar.addEventListener('click', event =>
+{
+    if (mobileSurface !== 'sections') return;
+    const button = event.target.closest('button');
+    if (!button || (button.hasAttribute('aria-expanded') && !button.hasAttribute('aria-haspopup'))) return;
+    requestAnimationFrame(() =>
+    {
+        if (mobileSurface === 'sections' && !modalBackdrop.classList.contains('open'))
+            closeMobileSurface(false);
+    });
+}, true);
+
+main.addEventListener('click', event =>
+{
+    if (mobileSurface !== 'details' || !mobileDetailTarget()?.contains(event.target)
+        || !event.target.closest('button[aria-haspopup]')) return;
+    requestAnimationFrame(() =>
+    {
+        if (mobileSurface === 'details' && !modalBackdrop.classList.contains('open'))
+            closeMobileSurface(false);
+    });
+}, true);
+
 function render()
 {
+    if (mobileSurface !== 'details' || mobileDetailModule !== state.activeModule)
+        closeMobileSurface(false);
     geneoProductTourOnRender();
     closeMenu();
     disposeTreeSearch();
@@ -25,6 +262,10 @@ function render()
     applyLanguage();
     main.classList.remove('people-profile-main');
     renderTopbar();
+    if (mobileSurface === 'details') requestAnimationFrame(() =>
+    {
+        if (mobileSurface === 'details' && !mobileDetailTarget()) closeMobileSurface(false);
+    });
     workspace.classList.toggle('no-sidebar', state.activeModule === 'Family Tree');
     if (state.activeModule === 'Family Tree')
     {
@@ -110,9 +351,18 @@ function bindSearchInput(root, selector, stateKey, render)
 function renderTopbar()
 {
     const showModules = state.projectOpen;
+    const showSections = showModules && state.activeModule !== 'Family Tree';
+    const showDetails = showModules && ['Family Tree', 'People', 'Albums', 'Archive', 'Places', 'Geneograph'].includes(state.activeModule)
+        && !(state.activeModule === 'Family Tree' && !currentTreePeople().length)
+        && !(state.activeModule === 'People' && !currentPeopleRecords().length)
+        && !(state.activeModule === 'People' && state.peopleView === 'profile')
+        && !(state.activeModule === 'Geneograph' && state.geneoView !== 'board');
     const signedLabel = state.userSignedIn ? 'SW' : 'IN';
     topbar.innerHTML = `
+        <button class="mobile-menu-trigger" type="button" data-mobile-menu aria-label="${escapeHtml(t('Modules'))}" title="${escapeHtml(t('Modules'))}" aria-haspopup="dialog" aria-expanded="false">${icon.menu}</button>
         <button class="home-tab ${state.activeModule === 'Projects' ? 'active' : ''}" type="button" data-home aria-label="Projects home">${icon.home}</button>
+        <button class="mobile-sections-trigger" type="button" data-mobile-sections aria-label="${escapeHtml(t('Sections'))}" title="${escapeHtml(t('Sections'))}" aria-haspopup="dialog" aria-expanded="false" ${showSections ? '' : 'hidden'}>${icon.panel}</button>
+        <button class="mobile-details-trigger" type="button" data-mobile-details data-mobile-detail-module="${escapeHtml(state.activeModule)}" aria-label="${escapeHtml(t('Details'))}" title="${escapeHtml(t('Details'))}" aria-haspopup="dialog" aria-expanded="false" ${showDetails ? '' : 'hidden'}>${icon.info}</button>
         ${showModules ? `<nav class="topnav" aria-label="Project modules">
           ${modules.map(module => `
             <button
@@ -144,6 +394,9 @@ function renderTopbar()
             state.activeModule = 'Projects'; render();
         }
     });
+    topbar.querySelector('[data-mobile-menu]')?.addEventListener('click', () => openMobileSurface('modules'));
+    topbar.querySelector('[data-mobile-sections]')?.addEventListener('click', () => openMobileSurface('sections'));
+    topbar.querySelector('[data-mobile-details]')?.addEventListener('click', () => openMobileSurface('details'));
     topbar.querySelectorAll('[data-module]').forEach(button => button.addEventListener('click', () =>
     {
         closeTopbarPopover();
