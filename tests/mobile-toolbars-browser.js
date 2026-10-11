@@ -48,11 +48,18 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             await page.locator('#familyMoreActions').tap();
             assert.equal(await page.locator('#projectMenu').isVisible(), true);
             assert.equal(await sheet.isVisible(), true);
+            assert.equal(await page.locator('#familyMoreActions').getAttribute('aria-expanded'), 'true');
+            await page.locator('#familyMoreActions').tap();
+            assert.equal(await page.locator('#projectMenu').count(), 0);
+            await page.locator('#familyMoreActions').tap();
             await page.keyboard.press('Escape');
             assert.equal(await page.locator('#projectMenu').count(), 0);
             assert.equal(await sheet.isVisible(), true);
             await page.locator('#addRelative').tap();
             assert.equal(await page.locator('#relativePopover').isVisible(), true);
+            await page.locator('#addRelative').tap();
+            assert.equal(await page.locator('#relativePopover').count(), 0);
+            await page.locator('#addRelative').tap();
             const popoverBox = await page.locator('#relativePopover').boundingBox();
             assert.ok(popoverBox.x >= 0 && popoverBox.x + popoverBox.width <= width);
             await page.keyboard.press('Escape');
@@ -68,18 +75,31 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
 
             await page.evaluate(() => { state.activeModule = 'People'; render(); });
             const peopleToolbar = page.locator('.people-normal-toolbar');
-            assert.equal(await page.locator('[data-people-mobile-search]').isVisible(), true);
+            assert.equal(await page.locator('[data-people-mobile-search]').isVisible(), width <= 540);
             assert.ok(await page.locator('#addPeoplePerson').evaluate(el => el.getBoundingClientRect().width > 44));
-            await page.locator('[data-people-mobile-search]').click();
+            if (width <= 540) await page.locator('[data-people-mobile-search]').click();
             await page.locator('#peopleSearch').fill('Silver');
             assert.equal(await page.locator('#peopleSearch').isVisible(), true);
-            await page.locator('[data-people-mobile-search-close]').click();
+            if (width <= 540) await page.locator('[data-people-mobile-search-close]').click();
             assert.equal(await peopleToolbar.evaluate(el => el.scrollWidth <= el.clientWidth + 1), true);
+            assert.ok(await peopleToolbar.evaluate(el =>
+            {
+                const rightmost = [...el.children].filter(child => child.getBoundingClientRect().width && getComputedStyle(child).display !== 'none').at(-1);
+                return Math.abs(rightmost.getBoundingClientRect().right - el.getBoundingClientRect().right) <= 2;
+            }));
             if (await page.locator('[data-mobile-details]').isVisible())
             {
                 await page.locator('[data-mobile-details]').click();
                 const peopleSheet = page.locator('.people-person-sidebar');
                 assert.equal(await peopleSheet.isVisible(), true);
+                await peopleSheet.locator('#familyMoreActions').click();
+                assert.equal(await page.locator('#projectMenu').isVisible(), true);
+                await peopleSheet.locator('#familyMoreActions').click();
+                assert.equal(await page.locator('#projectMenu').count(), 0);
+                await peopleSheet.locator('#addRelative').click();
+                assert.equal(await page.locator('#relativePopover').isVisible(), true);
+                await peopleSheet.locator('#addRelative').click();
+                assert.equal(await page.locator('#relativePopover').count(), 0);
                 await peopleSheet.locator('#quickEdit').click();
                 assert.equal(await page.locator('#modalBackdrop .modal').isVisible(), true);
                 await page.keyboard.press('Escape');
@@ -87,6 +107,11 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
                 await page.keyboard.press('Escape');
                 assert.equal(await page.locator('#mobileDetailsClose').count(), 0);
             }
+            await page.locator('[data-mobile-sections]').click();
+            await page.locator('[data-open-profile]').click();
+            assert.equal(await page.locator('[data-mobile-details]').isVisible(), false);
+            await page.locator('#backPeopleList').click();
+            assert.equal(await page.locator('[data-mobile-details]').isVisible(), true);
 
             await page.evaluate(() => { state.activeModule = 'Geneograph'; state.geneoView = 'home'; render(); });
             await page.locator('[data-geneo-mobile-search]').click();
@@ -114,6 +139,40 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             assert.equal(await page.locator('.geneo-editor-toolbar').evaluate(el => el.scrollWidth <= el.clientWidth + 1), true);
             assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
             assert.deepEqual(errors, []);
+            await page.close();
+        }
+        for (const language of ['en', 'ru'])
+        {
+            const page = await browser.newPage({ viewport: { width: 540, height: 720 } });
+            await page.goto(`${url}?lang=${language}`, { waitUntil: 'domcontentloaded' });
+            await page.evaluate(() =>
+            {
+                state.projectOpen = true;
+                state.currentProjectId = 'p1';
+                state.activeModule = 'People';
+                render();
+            });
+            const toolbar = page.locator('.people-normal-toolbar');
+            const checkFit = async () => assert.ok(await toolbar.evaluate(el =>
+            {
+                const visible = [...el.children].filter(child => getComputedStyle(child).display !== 'none');
+                const bounds = el.getBoundingClientRect();
+                return visible.every(child => child.getBoundingClientRect().right <= bounds.right + 1)
+                    && Math.abs(visible.at(-1).getBoundingClientRect().right - bounds.right) <= 2
+                    && el.scrollWidth <= el.clientWidth + 1;
+            }));
+            await checkFit();
+            await page.locator('[data-people-mobile-search]').click();
+            await page.locator('#peopleSearch').fill('Luna');
+            await page.setViewportSize({ width: 541, height: 720 });
+            assert.equal(await page.locator('#peopleSearch').isVisible(), true);
+            assert.equal(await page.locator('[data-people-mobile-search-close]').isVisible(), false);
+            assert.equal(await page.locator('#peopleSearch').inputValue(), 'Luna');
+            await checkFit();
+            await page.setViewportSize({ width: 540, height: 720 });
+            assert.equal(await page.locator('[data-people-mobile-search-close]').isVisible(), true);
+            await page.locator('[data-people-mobile-search-close]').click();
+            await checkFit();
             await page.close();
         }
     }

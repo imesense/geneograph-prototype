@@ -84,14 +84,13 @@
     }
 
     .people-normal-toolbar #addPeoplePerson {
-        flex: 1 1 120px;
+        flex: 0 0 auto;
         width: auto;
         min-width: 0;
-        max-width: 200px;
         height: 44px;
-        margin-left: auto;
-        padding-inline: 8px;
-        gap: 6px;
+        margin-left: 0;
+        padding-inline: 10px;
+        gap: 5px;
         font-size: 13px;
         white-space: nowrap;
     }
@@ -105,13 +104,11 @@
         display: none;
     }
 
-    .people-normal-toolbar.mobile-search-open > :not(.people-search-field, .people-mobile-search-close),
     .geneo-board-toolbar.mobile-search-open .geneo-board-toolbar-right,
     .geneo-board-toolbar.mobile-search-open .geneo-mobile-search-trigger {
         display: none;
     }
 
-    .people-normal-toolbar.mobile-search-open .people-search-field,
     .geneo-board-toolbar.mobile-search-open .app-search-field {
         display: flex;
         flex: 1 1 auto;
@@ -119,7 +116,6 @@
         min-width: 0;
     }
 
-    .people-normal-toolbar.mobile-search-open .people-mobile-search-close,
     .geneo-board-toolbar.mobile-search-open .geneo-mobile-search-close {
         display: inline-flex;
     }
@@ -182,7 +178,57 @@
     }
 }
 
-@media (max-width: 360px) {
+@media (min-width: 541px) and (max-width: 900px) {
+    .people-normal-toolbar .people-mobile-search-trigger {
+        display: none;
+    }
+
+    .people-normal-toolbar .people-search-field {
+        display: flex;
+        flex: 1 1 0;
+        width: auto;
+        min-width: 0;
+    }
+
+    .people-normal-toolbar.mobile-search-open .people-mobile-search-close {
+        display: none;
+    }
+}
+
+@media (max-width: 540px) {
+    .people-normal-toolbar {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(max-content, 1.55fr);
+    }
+
+    .people-normal-toolbar .people-mobile-search-trigger,
+    .people-normal-toolbar .people-filter-button,
+    .people-normal-toolbar .app-sort-field,
+    .people-normal-toolbar .app-sort-trigger,
+    .people-normal-toolbar #addPeoplePerson {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .people-normal-toolbar.mobile-search-open {
+        grid-template-columns: minmax(0, 1fr) 44px;
+    }
+
+    .people-normal-toolbar.mobile-search-open > :not(.people-search-field, .people-mobile-search-close) {
+        display: none;
+    }
+
+    .people-normal-toolbar.mobile-search-open .people-search-field {
+        display: flex;
+        width: 100%;
+        min-width: 0;
+    }
+
+    .people-normal-toolbar.mobile-search-open .people-mobile-search-close {
+        display: inline-flex;
+        width: 100%;
+    }
+
     .people-normal-toolbar #addPeoplePerson .people-add-person-full {
         display: none;
     }

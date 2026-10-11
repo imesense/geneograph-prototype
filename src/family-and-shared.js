@@ -5487,6 +5487,13 @@ function openRelativePopover(
     anchorPersonId
 )
 {
+    const openPopover = document.getElementById('relativePopover');
+    if (openPopover?.dataset.personId === anchorPersonId
+        && (menuLifecycleAnchor === anchor || (anchor.id && menuLifecycleAnchor?.id === anchor.id)))
+    {
+        closeMenu();
+        return;
+    }
     closeMenu();
 
     const person =
@@ -5497,6 +5504,7 @@ function openRelativePopover(
     const popover = document.createElement('div');
     popover.className = 'relative-popover';
     popover.id = 'relativePopover';
+    popover.dataset.personId = anchorPersonId;
 
     popover.innerHTML = `<div class="relative-popover-body"><h2>New relative</h2><p>to ${escapeHtml(person.name)}</p>
         <div class="relative-group">Parents</div><div class="relative-grid"><button class="relative-choice" data-rel="father"><span class="gender-icon">${icon.male}</span>Father</button><button class="relative-choice female" data-rel="mother"><span class="gender-icon">${icon.female}</span>Mother</button></div>
@@ -5555,6 +5563,19 @@ function positionRelativePopover(popover, anchor)
 
     const spaceRight = window.innerWidth - rect.right - margin;
     const spaceLeft = rect.left - margin;
+
+    if (spaceRight < popoverWidth + gap && spaceLeft < popoverWidth + gap)
+    {
+        const spaceBelow = window.innerHeight - rect.bottom - gap - margin;
+        const spaceAbove = rect.top - gap - margin;
+        const placeBelow = spaceBelow >= spaceAbove;
+        const availableHeight = Math.max(120, placeBelow ? spaceBelow : spaceAbove);
+        popover.querySelector('.relative-popover-body').style.maxHeight = `${availableHeight - 2}px`;
+        popover.style.left = `${clampNumber(anchorCenterX - popoverWidth / 2, margin, window.innerWidth - popoverWidth - margin)}px`;
+        popover.style.top = `${placeBelow ? rect.bottom + gap : rect.top - gap - popover.offsetHeight}px`;
+        popover.dataset.arrowSide = 'none';
+        return;
+    }
 
     let left;
     let arrowSide;

@@ -1779,6 +1779,7 @@ function bindMenuLifecycle(anchor = null)
         anchor instanceof HTMLElement
             ? anchor
             : null;
+    menuLifecycleAnchor?.setAttribute('aria-expanded', 'true');
 
     const activeMenu =
         document.getElementById(

@@ -6839,7 +6839,7 @@ function bindPeopleProfileControls(person)
     bindProfileCardTabs(profileCard);
     main.querySelector('#backPeopleList')?.addEventListener('click', () =>
     {
-        state.peopleView = 'directory'; state.peopleSide = 'people'; state.peopleProfileEditing = false; renderPeople();
+        state.peopleView = 'directory'; state.peopleSide = 'people'; state.peopleProfileEditing = false; renderPeople(); renderTopbar();
     });
     main
         .querySelector('#profileEditButton')
@@ -8592,6 +8592,13 @@ function openPeopleActionsMenu(
     } = {}
 )
 {
+    const openMenu = document.getElementById('projectMenu');
+    if (openMenu?.classList.contains('people-row-menu') && openMenu.dataset.personId === personId
+        && (menuLifecycleAnchor === anchor || (anchor.id && menuLifecycleAnchor?.id === anchor.id)))
+    {
+        closeMenu();
+        return;
+    }
     closeMenu();
     closePeopleFilterPopover();
     closePeopleColumnsPopover();
@@ -8610,6 +8617,7 @@ function openPeopleActionsMenu(
         'menu-popover people-row-menu';
 
     menu.id = 'projectMenu';
+    menu.dataset.personId = personId;
 
     menu.setAttribute(
         'role',
@@ -8720,19 +8728,7 @@ function openPeopleActionsMenu(
         }
     );
 
-    setTimeout(() =>
-    {
-        document.addEventListener(
-            'click',
-            closeMenu
-        );
-
-        document.addEventListener(
-            'scroll',
-            closeMenu,
-            true
-        );
-    }, 0);
+    bindMenuLifecycle(anchor);
 }
 
 function openPeopleProfileFromRow(personId)
@@ -10210,6 +10206,7 @@ function bindPeopleSidebar(root)
                 );
 
             renderPeople();
+            renderTopbar();
         });
 
     root
@@ -10219,6 +10216,7 @@ function bindPeopleSidebar(root)
             clearPeopleSelection();
             state.peopleView = 'profile';
             renderPeople();
+            renderTopbar();
         });
 
     root.querySelectorAll('[data-placeholder-view]').forEach(button =>
