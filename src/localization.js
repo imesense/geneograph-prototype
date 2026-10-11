@@ -1695,8 +1695,6 @@ const RU_UI_GENEO = {
     'Connect from right': 'Начать связь справа',
     'Connect from bottom': 'Начать связь снизу',
     'Connect from left': 'Начать связь слева',
-    'Place Text': 'Разместить текст',
-    'Place Sticky note': 'Разместить стикер',
     'Content': 'Содержимое',
     'Fill': 'Заливка',
     'Stroke': 'Обводка',

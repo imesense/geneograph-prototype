@@ -104,22 +104,6 @@
         display: none;
     }
 
-    .geneo-board-toolbar.mobile-search-open .geneo-board-toolbar-right,
-    .geneo-board-toolbar.mobile-search-open .geneo-mobile-search-trigger {
-        display: none;
-    }
-
-    .geneo-board-toolbar.mobile-search-open .app-search-field {
-        display: flex;
-        flex: 1 1 auto;
-        width: auto;
-        min-width: 0;
-    }
-
-    .geneo-board-toolbar.mobile-search-open .geneo-mobile-search-close {
-        display: inline-flex;
-    }
-
     .geneo-board-toolbar-left {
         flex: 1 1 auto;
     }
@@ -133,6 +117,26 @@
         width: 40px;
         min-width: 40px;
         padding: 0;
+        justify-content: center;
+    }
+
+    .geneo-board-toolbar .geneo-mobile-search-trigger svg,
+    .geneo-board-toolbar .geneo-mobile-search-close svg {
+        width: 18px;
+        height: 18px;
+        flex: 0 0 18px;
+        pointer-events: none;
+    }
+
+    .geneo-home-page .archive-page-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        width: 100%;
+    }
+
+    .geneo-home-page .archive-page-actions > .button {
+        width: 100%;
+        min-width: 0;
         justify-content: center;
     }
 
@@ -171,11 +175,67 @@
         width: 40px;
         min-width: 40px;
         padding: 0;
+        border-radius: var(--radius-sm);
     }
 
     .geneo-editor-toolbar [data-geneo-toolbar-item="connect"] .tool-split-main span {
         display: none;
     }
+
+    .geneo-editor-toolbar [data-tool-split="content"] {
+        gap: 6px;
+    }
+
+    .geneo-editor-toolbar [data-tool-split="content"] .tool-split-main,
+    .geneo-editor-toolbar [data-tool-split="content"] .tool-split-trigger,
+    .geneo-editor-toolbar [data-tool-split="shape"] .tool-split-trigger {
+        display: none;
+    }
+
+    .geneo-editor-toolbar [data-tool-split="content"] .geneo-mobile-content-tool {
+        display: inline-flex;
+    }
+
+    .geneo-editor-toolbar [data-tool-split="shape"] .tool-split-main {
+        width: 40px;
+        min-width: 40px;
+        padding: 0;
+        border-radius: var(--radius-sm);
+    }
+
+    .geneo-editor-toolbar [data-tool-split="shape"] .tool-split-main span {
+        display: none;
+    }
+}
+
+.geneo-mobile-content-tool {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    padding: 0;
+    color: var(--text-secondary);
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+}
+
+.geneo-mobile-content-tool svg {
+    width: 18px;
+    height: 18px;
+}
+
+.geneo-mobile-content-tool[aria-pressed="true"] {
+    color: var(--brand-green-300);
+    border-color: var(--brand-green-300);
+}
+
+.geneo-mobile-content-tool:focus-visible {
+    outline: 2px solid var(--brand-green-300);
+    outline-offset: 2px;
 }
 
 @media (min-width: 541px) and (max-width: 900px) {
@@ -193,9 +253,67 @@
     .people-normal-toolbar.mobile-search-open .people-mobile-search-close {
         display: none;
     }
+
+    .geneo-board-toolbar .geneo-mobile-search-trigger,
+    .geneo-board-toolbar.mobile-search-open .geneo-mobile-search-close {
+        display: none;
+    }
+
+    .geneo-board-toolbar .app-search-field {
+        display: flex;
+        flex: 1 1 0;
+        width: auto;
+        min-width: 0;
+    }
+
+    .geneo-board-toolbar .app-sort-field {
+        flex: 0 0 40px;
+        width: 40px;
+        max-width: 40px;
+    }
 }
 
 @media (max-width: 540px) {
+    .geneo-board-toolbar {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 6px;
+    }
+
+    .geneo-board-toolbar-left,
+    .geneo-board-toolbar-right {
+        display: contents;
+    }
+
+    .geneo-board-toolbar .geneo-mobile-search-trigger,
+    .geneo-board-toolbar .app-sort-field,
+    .geneo-board-toolbar .app-sort-trigger,
+    .geneo-board-toolbar [data-geneo-board-view] {
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .geneo-board-toolbar.mobile-search-open {
+        grid-template-columns: minmax(0, 1fr) 44px;
+    }
+
+    .geneo-board-toolbar.mobile-search-open .geneo-board-toolbar-right,
+    .geneo-board-toolbar.mobile-search-open .geneo-mobile-search-trigger {
+        display: none;
+    }
+
+    .geneo-board-toolbar.mobile-search-open .app-search-field {
+        display: flex;
+        width: 100%;
+        min-width: 0;
+    }
+
+    .geneo-board-toolbar.mobile-search-open .geneo-mobile-search-close {
+        display: inline-flex;
+        width: 100%;
+    }
+
     .people-normal-toolbar {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(max-content, 1.55fr);
@@ -208,6 +326,10 @@
     .people-normal-toolbar #addPeoplePerson {
         width: 100%;
         min-width: 0;
+    }
+
+    .people-normal-toolbar .app-sort-field {
+        max-width: 100%;
     }
 
     .people-normal-toolbar.mobile-search-open {
@@ -783,6 +905,81 @@ body.mobile-person-details-open .relative-popover-body {
 
 body.mobile-person-details-open .modal-backdrop.open {
     z-index: 1005;
+}
+
+@media (max-width: 900px) {
+    .mobile-choice-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 1004;
+        background: rgba(0, 0, 0, .68);
+    }
+
+    body .mobile-choice-sheet {
+        position: fixed !important;
+        top: auto !important;
+        bottom: 0 !important;
+        left: 50% !important;
+        right: auto !important;
+        width: min(100vw, 520px) !important;
+        max-height: min(80dvh, 620px);
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+        overflow: hidden;
+        transform: translateX(-50%);
+        border-radius: 8px 8px 0 0;
+        z-index: 1005 !important;
+    }
+
+    body .mobile-choice-sheet::before {
+        display: none;
+    }
+
+    .mobile-choice-heading {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 52px;
+        padding: 10px 16px;
+        border-bottom: 1px solid var(--border-default);
+    }
+
+    .mobile-choice-heading button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        color: var(--text-secondary);
+        background: transparent;
+        border: 0;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+    }
+
+    .mobile-choice-heading button svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    body .mobile-choice-sheet .mobile-choice-body,
+    body .mobile-choice-sheet .relative-popover-body {
+        flex: 1 1 auto;
+        min-height: 0;
+        max-height: none;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+    }
+
+    body .mobile-choice-sheet .relative-popover-body > h2 {
+        display: none;
+    }
+
+    body.mobile-person-details-open .modal-backdrop.open {
+        z-index: 1006;
+    }
 }
 
 .mobile-module-drawer {

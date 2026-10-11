@@ -5514,7 +5514,8 @@ function openRelativePopover(
         <button class="connect-choice" type="button" data-connect-existing><span class="connect-choice-main"><span class="connect-choice-icon">${icon.link}</span><span class="connect-choice-copy"><strong>Connect existing person</strong><span>Link someone already in this tree</span></span></span><span class="connect-choice-chevron" aria-hidden="true">${icon.chevron}</span></button></div>`;
 
     document.body.appendChild(popover);
-    positionRelativePopover(popover, anchor);
+    if (window.innerWidth <= 900) mountMobileChoiceSheet(popover, anchor, t('New relative'));
+    else positionRelativePopover(popover, anchor);
 
     popover.querySelectorAll('[data-rel]').forEach(button =>
     {

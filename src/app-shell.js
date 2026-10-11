@@ -84,6 +84,13 @@ function handleMobileSurfaceKeydown(event)
     {
         event.preventDefault();
         event.stopImmediatePropagation();
+        if (document.querySelector('.mobile-choice-sheet'))
+        {
+            const anchor = menuLifecycleAnchor;
+            closeMenu();
+            if (anchor?.isConnected) anchor.focus();
+            return;
+        }
         if (mobileSurface === 'details' && ['Family Tree', 'People'].includes(state.activeModule)
             && (document.getElementById('projectMenu') || document.getElementById('relativePopover')))
         {
@@ -94,6 +101,7 @@ function handleMobileSurfaceKeydown(event)
         return;
     }
     if (event.key !== 'Tab') return;
+    if (document.querySelector('.mobile-choice-sheet')) return;
     if (modalBackdrop.classList.contains('open')) return;
     const surface = mobileSurface === 'sections' ? sidebar : mobileSurface === 'details' ? mobileDetailTarget() : document.querySelector('#mobileModuleDrawer');
     if (!surface) return;

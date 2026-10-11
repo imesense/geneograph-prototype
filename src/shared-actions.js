@@ -1782,9 +1782,8 @@ function bindMenuLifecycle(anchor = null)
     menuLifecycleAnchor?.setAttribute('aria-expanded', 'true');
 
     const activeMenu =
-        document.getElementById(
-            'projectMenu'
-        );
+        document.getElementById('projectMenu')
+        || document.getElementById('relativePopover');
 
     const eventIsInsideMenu =
         event =>
@@ -1862,11 +1861,29 @@ function bindMenuLifecycle(anchor = null)
         'keydown',
         event =>
         {
+            const sheet = document.querySelector('.mobile-choice-sheet');
+            if (sheet && event.key === 'Tab')
+            {
+                const buttons = [...sheet.querySelectorAll('button:not(:disabled)')];
+                const first = buttons[0];
+                const last = buttons.at(-1);
+                if (event.shiftKey && document.activeElement === first)
+                {
+                    event.preventDefault();
+                    last?.focus();
+                }
+                else if (!event.shiftKey && document.activeElement === last)
+                {
+                    event.preventDefault();
+                    first?.focus();
+                }
+            }
             if (
                 event.key === 'Escape'
             )
             {
                 closeMenu();
+                if (sheet && anchor?.isConnected) anchor.focus();
             }
         },
         {
@@ -1909,6 +1926,7 @@ function closeMenu()
 
     menuLifecycleAnchor =
         null;
+    document.getElementById('mobileChoiceBackdrop')?.remove();
     document.getElementById('placesRouteMenu')?.setAttribute('aria-expanded', 'false');
     document.getElementById('projectMenu')?.remove();
     document.getElementById('relativePopover')?.remove();
@@ -1937,6 +1955,47 @@ function closeMenu()
     document.removeEventListener('click', closeMenu);
     document.removeEventListener('scroll', closeMenu, true);
     document.removeEventListener('click', closeTopbarPopoverOnOutside);
+}
+
+function mountMobileChoiceSheet(popover, anchor, title)
+{
+    if (window.innerWidth > 900) return;
+
+    const backdrop = document.createElement('div');
+    backdrop.id = 'mobileChoiceBackdrop';
+    backdrop.className = 'mobile-choice-backdrop';
+    backdrop.addEventListener('click', () =>
+    {
+        closeMenu();
+        if (anchor?.isConnected) anchor.focus();
+    });
+    document.body.insertBefore(backdrop, popover);
+
+    popover.classList.add('mobile-choice-sheet');
+    popover.setAttribute('role', 'dialog');
+    popover.setAttribute('aria-modal', 'true');
+    popover.setAttribute('aria-label', title);
+    popover.removeAttribute('data-arrow-side');
+
+    if (!popover.querySelector('.relative-popover-body'))
+    {
+        const body = document.createElement('div');
+        body.className = 'mobile-choice-body';
+        while (popover.firstChild) body.appendChild(popover.firstChild);
+        popover.appendChild(body);
+    }
+
+    const heading = document.createElement('div');
+    heading.className = 'mobile-choice-heading';
+    heading.innerHTML = `<strong>${escapeHtml(title)}</strong><button type="button" aria-label="${escapeHtml(t('Close'))}" title="${escapeHtml(t('Close'))}">${icon.close}</button>`;
+    popover.prepend(heading);
+    heading.querySelector('button').addEventListener('click', () =>
+    {
+        closeMenu();
+        if (anchor?.isConnected) anchor.focus();
+    });
+    if (!geneoTourRuntime.active)
+        requestAnimationFrame(() => heading.querySelector('button')?.focus({ preventScroll: true }));
 }
 
 function createBlankProject({ name, description = '' })

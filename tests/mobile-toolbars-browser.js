@@ -7,7 +7,8 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
 
 (async () =>
 {
-    const browser = await chromium.launch({ headless: true });
+    const browser = await chromium.launch({ headless: true, ...(process.env.GENEO_BROWSER_EXECUTABLE
+        ? { executablePath: process.env.GENEO_BROWSER_EXECUTABLE } : {}) });
     try
     {
         for (const [width, language] of [[320, 'en'], [390, 'ru'], [768, 'en'], [900, 'ru']])
@@ -57,11 +58,22 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             assert.equal(await sheet.isVisible(), true);
             await page.locator('#addRelative').tap();
             assert.equal(await page.locator('#relativePopover').isVisible(), true);
-            await page.locator('#addRelative').tap();
+            await page.locator('#relativePopover .mobile-choice-heading button').tap();
             assert.equal(await page.locator('#relativePopover').count(), 0);
             await page.locator('#addRelative').tap();
             const popoverBox = await page.locator('#relativePopover').boundingBox();
             assert.ok(popoverBox.x >= 0 && popoverBox.x + popoverBox.width <= width);
+            assert.equal(await page.locator('#relativePopover').getAttribute('role'), 'dialog');
+            assert.equal(await page.locator('#mobileChoiceBackdrop').isVisible(), true);
+            await page.locator('#relativePopover .relative-popover-body').evaluate(el => { el.scrollTop = el.scrollHeight; });
+            assert.equal(await page.locator('#relativePopover [data-connect-existing]').isVisible(), true);
+            assert.equal(await sheet.isVisible(), true);
+            await page.keyboard.press('Escape');
+            assert.equal(await page.locator('#relativePopover').count(), 0);
+            assert.equal(await sheet.isVisible(), true);
+            await page.locator('#addRelative').tap();
+            await page.locator('#relativePopover [data-rel="father"]').tap();
+            assert.equal(await page.locator('#modalBackdrop .modal').isVisible(), true);
             await page.keyboard.press('Escape');
             assert.equal(await sheet.isVisible(), true);
             await page.locator('#connectRelative').tap();
@@ -98,7 +110,7 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
                 assert.equal(await page.locator('#projectMenu').count(), 0);
                 await peopleSheet.locator('#addRelative').click();
                 assert.equal(await page.locator('#relativePopover').isVisible(), true);
-                await peopleSheet.locator('#addRelative').click();
+                await page.locator('#relativePopover .mobile-choice-heading button').click();
                 assert.equal(await page.locator('#relativePopover').count(), 0);
                 await peopleSheet.locator('#quickEdit').click();
                 assert.equal(await page.locator('#modalBackdrop .modal').isVisible(), true);
@@ -114,11 +126,32 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             assert.equal(await page.locator('[data-mobile-details]').isVisible(), true);
 
             await page.evaluate(() => { state.activeModule = 'Geneograph'; state.geneoView = 'home'; render(); });
-            await page.locator('[data-geneo-mobile-search]').click();
+            assert.ok(await page.locator('.geneo-home-page .archive-page-actions').evaluate(el =>
+            {
+                const [importButton, createButton] = el.querySelectorAll('.button');
+                const bounds = el.getBoundingClientRect();
+                const first = importButton.getBoundingClientRect();
+                const second = createButton.getBoundingClientRect();
+                return Math.abs(first.left - bounds.left) <= 1
+                    && Math.abs(second.right - bounds.right) <= 1
+                    && Math.abs(first.width - second.width) <= 1;
+            }));
+            assert.equal(await page.locator('[data-geneo-mobile-search]').isVisible(), width <= 540);
+            if (width <= 540)
+                assert.ok(await page.locator('[data-geneo-mobile-search] svg').evaluate(el => el.getBoundingClientRect().width <= 20));
+            if (width <= 540) await page.locator('[data-geneo-mobile-search]').click();
             await page.locator('#geneoBoardSearch').fill('family');
             assert.equal(await page.locator('#geneoBoardSearch').isVisible(), true);
-            await page.locator('[data-geneo-mobile-search-close]').click();
+            if (width <= 540) await page.locator('[data-geneo-mobile-search-close]').click();
             assert.equal(await page.locator('.geneo-board-toolbar').evaluate(el => el.scrollWidth <= el.clientWidth + 1), true);
+            assert.ok(await page.locator('.geneo-board-toolbar').evaluate(el =>
+            {
+                const controls = [...el.querySelectorAll('[data-geneo-mobile-search], .app-search-field, .app-sort-trigger, [data-geneo-board-view]')]
+                    .filter(child => getComputedStyle(child).display !== 'none');
+                const bounds = el.getBoundingClientRect();
+                return controls.every((child, index) => !index || child.getBoundingClientRect().left - controls[index - 1].getBoundingClientRect().right <= 8)
+                    && Math.abs(controls.at(-1).getBoundingClientRect().right - bounds.right) <= 2;
+            }));
 
             await page.evaluate(() => { state.geneoBoardSearch = ''; renderGeneographHome(); openGeneographBoard('gb1'); });
             const modeWidth = await page.locator('.geneo-tool-group').evaluate(el => el.getBoundingClientRect().width);
@@ -130,12 +163,42 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             const connect = page.locator('[data-geneo-connection-main]');
             assert.equal(await connect.isVisible(), true);
             assert.equal(await page.locator('[data-geneo-connection-menu]').isVisible(), false);
+            assert.equal(await connect.evaluate(el => getComputedStyle(el).borderTopRightRadius), '8px');
             await connect.click();
             assert.equal(await page.evaluate(() => state.geneoTool), 'connect');
             await page.locator('[data-geneo-connection-main]').click();
             assert.equal(await page.locator('[data-geneo-connector="dashed"]').isVisible(), true);
             await page.locator('[data-geneo-connector="dashed"]').click();
             assert.equal(await page.evaluate(() => state.geneoConnectorPattern), 'dashed');
+            const contentVisible = await page.locator('[data-geneo-mobile-content="sticky"]').isVisible();
+            if (contentVisible)
+            {
+                await page.locator('[data-geneo-mobile-content="sticky"]').click();
+                assert.equal(await page.evaluate(() => state.geneoTool), 'sticky');
+                await page.locator('[data-geneo-mobile-content="text"]').click();
+                assert.equal(await page.evaluate(() => state.geneoTool), 'text');
+            }
+            else
+            {
+                await page.locator('[data-geneo-toolbar-overflow]').click();
+                assert.equal(await page.locator('[data-geneo-toolbar-action="content-style"]').count(), 0);
+                assert.equal(await page.locator('[data-geneo-toolbar-action="sticky"]').count(), 1);
+                assert.equal(await page.locator('[data-geneo-toolbar-action="text"]').count(), 1);
+                await page.locator('[data-geneo-toolbar-action="sticky"]').click();
+                assert.equal(await page.evaluate(() => state.geneoTool), 'sticky');
+            }
+            if (await page.locator('[data-geneo-shape-main]').isVisible())
+                await page.locator('[data-geneo-shape-main]').click();
+            else
+            {
+                await page.locator('[data-geneo-toolbar-overflow]').click();
+                assert.equal(await page.locator('[data-geneo-toolbar-action="shape-style"]').count(), 0);
+                await page.locator('[data-geneo-toolbar-action="shape"]').click();
+            }
+            assert.equal(await page.locator('#projectMenu.mobile-choice-sheet').isVisible(), true);
+            await page.locator('#projectMenu [data-geneo-shape-kind="ellipse"]').click();
+            assert.equal(await page.evaluate(() => state.geneoTool), 'shape');
+            assert.equal(await page.evaluate(() => state.geneoShapeKind), 'ellipse');
             assert.equal(await page.locator('.geneo-editor-toolbar').evaluate(el => el.scrollWidth <= el.clientWidth + 1), true);
             assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
             assert.deepEqual(errors, []);
@@ -159,6 +222,8 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
                 const bounds = el.getBoundingClientRect();
                 return visible.every(child => child.getBoundingClientRect().right <= bounds.right + 1)
                     && Math.abs(visible.at(-1).getBoundingClientRect().right - bounds.right) <= 2
+                    && (visible.length !== 4 || visible.every((child, index) => !index || child.getBoundingClientRect().left - visible[index - 1].getBoundingClientRect().right <= 8))
+                    && (!visible[0]?.classList.contains('people-mobile-search-trigger') || visible.at(-1).getBoundingClientRect().width > visible[0].getBoundingClientRect().width)
                     && el.scrollWidth <= el.clientWidth + 1;
             }));
             await checkFit();
@@ -173,7 +238,78 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             assert.equal(await page.locator('[data-people-mobile-search-close]').isVisible(), true);
             await page.locator('[data-people-mobile-search-close]').click();
             await checkFit();
+            await page.evaluate(() =>
+            {
+                state.activeModule = 'Geneograph';
+                state.geneoView = 'home';
+                render();
+            });
+            const boards = page.locator('.geneo-board-toolbar');
+            const checkBoardFit = async () => assert.ok(await boards.evaluate(el =>
+            {
+                const controls = [...el.querySelectorAll('[data-geneo-mobile-search], .app-search-field, .app-sort-trigger, [data-geneo-board-view]')]
+                    .filter(child => getComputedStyle(child).display !== 'none');
+                return controls.every((child, index) => !index || child.getBoundingClientRect().left - controls[index - 1].getBoundingClientRect().right <= 8)
+                    && Math.abs(controls.at(-1).getBoundingClientRect().right - el.getBoundingClientRect().right) <= 2
+                    && el.scrollWidth <= el.clientWidth + 1;
+            }));
+            await checkBoardFit();
+            await page.locator('[data-geneo-mobile-search]').click();
+            await page.locator('#geneoBoardSearch').fill('family');
+            await page.setViewportSize({ width: 541, height: 720 });
+            assert.equal(await page.locator('#geneoBoardSearch').isVisible(), true);
+            assert.equal(await page.locator('[data-geneo-mobile-search-close]').isVisible(), false);
+            assert.equal(await page.locator('#geneoBoardSearch').inputValue(), 'family');
+            await checkBoardFit();
+            await page.locator('[data-geneo-board-view="list"]').click();
+            await page.locator('[data-geneo-board-view="grid"]').click();
+            await page.locator('#geneoBoardSort').click();
+            assert.equal(await page.locator('#geneoBoardSort').getAttribute('aria-expanded'), 'true');
+            await page.keyboard.press('Escape');
+            await page.setViewportSize({ width: 540, height: 720 });
+            assert.equal(await page.locator('[data-geneo-mobile-search-close]').isVisible(), true);
+            await page.locator('[data-geneo-mobile-search-close]').click();
+            await checkBoardFit();
             await page.close();
+        }
+        for (const language of ['en', 'ru'])
+        {
+            for (const width of [320, 390, 541, 768, 900, 901])
+            {
+                const page = await browser.newPage({ viewport: { width, height: 720 } });
+                const errors = [];
+                page.on('pageerror', error => errors.push(error.message));
+                await page.goto(`${url}?lang=${language}`, { waitUntil: 'domcontentloaded' });
+                await page.evaluate(() =>
+                {
+                    state.projectOpen = true;
+                    state.currentProjectId = 'p1';
+                    state.activeModule = 'Geneograph';
+                    state.geneoView = 'home';
+                    render();
+                });
+                assert.equal(await page.locator('[data-geneo-mobile-search]').isVisible(), width <= 540);
+                if (width <= 540)
+                    assert.ok(await page.locator('[data-geneo-mobile-search] svg').evaluate(el => el.getBoundingClientRect().width <= 20));
+                if (width <= 900)
+                    assert.ok(await page.locator('.geneo-home-page .archive-page-actions').evaluate(el =>
+                    {
+                        const [first, second] = el.querySelectorAll('.button');
+                        return Math.abs(first.getBoundingClientRect().left - el.getBoundingClientRect().left) <= 1
+                            && Math.abs(second.getBoundingClientRect().right - el.getBoundingClientRect().right) <= 1;
+                    }));
+                assert.ok(await page.locator('.geneo-board-toolbar').evaluate((el, mobile) =>
+                {
+                    const bounds = el.getBoundingClientRect();
+                    const controls = [...el.querySelectorAll('[data-geneo-mobile-search], .app-search-field, .app-sort-trigger, [data-geneo-board-view]')]
+                        .filter(child => getComputedStyle(child).display !== 'none');
+                    return el.scrollWidth <= el.clientWidth + 1
+                        && controls.every(child => child.getBoundingClientRect().right <= bounds.right + 1)
+                        && (!mobile || controls.every((child, index) => !index || child.getBoundingClientRect().left - controls[index - 1].getBoundingClientRect().right <= 8));
+                }, width <= 900));
+                assert.deepEqual(errors, []);
+                await page.close();
+            }
         }
     }
     finally

@@ -5802,8 +5802,8 @@ function renderGeneoContentSplitTool()
 
     const actionLabel =
         kind === 'text'
-            ? 'Place Text'
-            : 'Place Sticky note';
+            ? 'Text'
+            : 'Sticky note';
 
     const selectedIcon =
         kind === 'text'
@@ -5858,6 +5858,9 @@ function renderGeneoContentSplitTool()
 
             ${icon.chevron}
           </button>
+
+          <button class="geneo-mobile-content-tool" type="button" data-geneo-mobile-content="sticky" aria-label="${escapeHtml(t('Sticky note'))}" title="${escapeHtml(t('Sticky note'))}" aria-pressed="${state.geneoTool === 'sticky'}">${icon.note}</button>
+          <button class="geneo-mobile-content-tool" type="button" data-geneo-mobile-content="text" aria-label="${escapeHtml(t('Text'))}" title="${escapeHtml(t('Text'))}" aria-pressed="${state.geneoTool === 'text'}">${icon.text}</button>
         </div>
       `;
 }
@@ -6098,6 +6101,8 @@ function renderGeneoShapeSplitTool()
             class="tool-split-main"
             type="button"
             data-geneo-shape-main
+            aria-haspopup="${window.innerWidth <= 900 ? 'dialog' : 'false'}"
+            aria-expanded="false"
             aria-pressed="${
                 active
                     ? 'true'
@@ -6145,6 +6150,7 @@ function openGeneoShapeMenu(anchor)
     menu.style.left = `${Math.max(12, Math.min(rect.left - 118, window.innerWidth - 224))}px`;
     menu.innerHTML = GENEO_SHAPE_KINDS.map(shape => `<button type="button" role="menuitemradio" aria-checked="${selected === shape.id}" data-geneo-shape-kind="${escapeHtml(shape.id)}"><span class="geneo-shape-option-preview shape-${escapeHtml(shape.id)}" aria-hidden="true"></span><span>${escapeHtml(shape.label)}</span></button>`).join('');
     document.body.appendChild(menu);
+    if (window.innerWidth <= 900) mountMobileChoiceSheet(menu, anchor, t('Shapes'));
     anchor.setAttribute('aria-expanded', 'true');
     menu.addEventListener('click', event =>
     {
@@ -6152,7 +6158,11 @@ function openGeneoShapeMenu(anchor)
         if (!button) return;
         state.geneoShapeKind = normalizeGeneographShapeKind(button.dataset.geneoShapeKind);
         closeMenu();
-        activateGeneographPlacementTool('shape');
+        if (state.geneoTool === 'shape') renderGeneographEditorPreserveScroll();
+        else activateGeneographPlacementTool('shape');
+        requestAnimationFrame(() =>
+            (main.querySelector('[data-geneo-shape-main]:not([tabindex="-1"])')
+                || main.querySelector('[data-geneo-toolbar-overflow]'))?.focus({ preventScroll: true }));
     });
     menu.addEventListener('keydown', event =>
     {
@@ -6182,6 +6192,7 @@ function openGeneoShapeMenu(anchor)
 
 function geneoToolbarOverflowItems(toolbar)
 {
+    const mobile = window.innerWidth <= 900;
     const groups = [
         ['history', [['undo', 'Undo', icon.undo], ['redo', 'Redo', icon.redo]]],
         ['modes', [['select', 'Select', icon.cursorSelect], ['pan', 'Pan', icon.pan], ['pencil', 'Pencil', icon.edit]]],
@@ -6190,10 +6201,14 @@ function geneoToolbarOverflowItems(toolbar)
         ['place', [['place', 'Place', icon.mapPin]]],
         ['image', [['image', 'Image', icon.image]]],
         ['panel', [['panel', 'Panel', icon.panel]]],
-        ['content', [['content', state.geneoContentKind === 'text' ? 'Place Text' : 'Place Sticky note',
-            state.geneoContentKind === 'text' ? icon.text : icon.note],
-        ['content-style', 'Choose content type', icon.chevron]]],
-        ['shape', [['shape', 'Shapes', icon.shape], ['shape-style', 'Choose shape', icon.shape]]],
+        ['content', mobile
+            ? [['sticky', 'Sticky note', icon.note], ['text', 'Text', icon.text]]
+            : [['content', state.geneoContentKind === 'text' ? 'Text' : 'Sticky note',
+                state.geneoContentKind === 'text' ? icon.text : icon.note],
+            ['content-style', 'Choose content type', icon.chevron]]],
+        ['shape', mobile
+            ? [['shape', 'Shapes', icon.shape]]
+            : [['shape', 'Shapes', icon.shape], ['shape-style', 'Choose shape', icon.shape]]],
         ['export', [['export', 'Export board', icon.export]]]
     ];
     return groups.flatMap(([id, actions]) =>
@@ -6351,6 +6366,13 @@ function openGeneoToolbarOverflowMenu(
                 return;
             }
 
+            if (action === 'sticky' || action === 'text')
+            {
+                state.geneoContentKind = action;
+                activateGeneographPlacementTool(action);
+                return;
+            }
+
             if (action === 'panel')
             {
                 activateGeneographPlacementTool(
@@ -6368,7 +6390,8 @@ function openGeneoToolbarOverflowMenu(
 
             if (action === 'shape')
             {
-                activateGeneographPlacementTool('shape');
+                if (window.innerWidth <= 900) openGeneoShapeMenu(anchor);
+                else activateGeneographPlacementTool('shape');
                 return;
             }
 
@@ -25892,6 +25915,14 @@ function bindGeneographEditor()
             }
         );
 
+    main.querySelectorAll('[data-geneo-mobile-content]').forEach(button =>
+        button.addEventListener('click', () =>
+        {
+            const kind = normalizeGeneographContentKind(button.dataset.geneoMobileContent);
+            state.geneoContentKind = kind;
+            activateGeneographPlacementTool(kind);
+        }));
+
     /*
       * Notes & text dropdown.
       */
@@ -25924,11 +25955,10 @@ function bindGeneographEditor()
         )
         ?.addEventListener(
             'click',
-            () =>
+            event =>
             {
-                activateGeneographPlacementTool(
-                    'shape'
-                );
+                if (window.innerWidth <= 900) openGeneoShapeMenu(event.currentTarget);
+                else activateGeneographPlacementTool('shape');
             }
         );
 
