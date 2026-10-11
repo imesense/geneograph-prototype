@@ -10,6 +10,10 @@
     display: none;
 }
 
+.people-add-person-compact {
+    display: none;
+}
+
 .people-mobile-search-trigger:focus-visible,
 .people-mobile-search-close:focus-visible,
 .geneo-mobile-search-trigger:focus-visible,
@@ -45,6 +49,55 @@
     .people-mobile-search-trigger,
     .geneo-mobile-search-trigger {
         display: inline-flex;
+    }
+
+    .people-normal-toolbar {
+        width: 100%;
+    }
+
+    .people-normal-toolbar .people-mobile-search-trigger,
+    .people-normal-toolbar .people-mobile-search-close,
+    .people-normal-toolbar .people-columns-button,
+    .people-normal-toolbar .people-filter-button,
+    .people-normal-toolbar .app-sort-trigger {
+        width: 40px;
+        min-width: 40px;
+        height: 44px;
+        padding: 0;
+    }
+
+    .people-normal-toolbar .people-mobile-search-trigger svg,
+    .people-normal-toolbar .people-mobile-search-close svg,
+    .people-normal-toolbar .people-columns-button svg,
+    .people-normal-toolbar .people-filter-button svg,
+    .people-normal-toolbar .app-sort-trigger svg,
+    .people-normal-toolbar #addPeoplePerson svg {
+        width: 18px;
+        height: 18px;
+        flex: 0 0 18px;
+        pointer-events: none;
+    }
+
+    .people-normal-toolbar .people-filter-button > *,
+    .people-normal-toolbar .people-columns-button > * {
+        pointer-events: none;
+    }
+
+    .people-normal-toolbar #addPeoplePerson {
+        flex: 1 1 120px;
+        width: auto;
+        min-width: 0;
+        max-width: 200px;
+        height: 44px;
+        margin-left: auto;
+        padding-inline: 8px;
+        gap: 6px;
+        font-size: 13px;
+        white-space: nowrap;
+    }
+
+    .people-normal-toolbar #addPeoplePerson .people-add-person-full {
+        display: inline;
     }
 
     .people-normal-toolbar .people-search-field,
@@ -126,6 +179,16 @@
 
     .geneo-editor-toolbar [data-geneo-toolbar-item="connect"] .tool-split-main span {
         display: none;
+    }
+}
+
+@media (max-width: 360px) {
+    .people-normal-toolbar #addPeoplePerson .people-add-person-full {
+        display: none;
+    }
+
+    .people-normal-toolbar #addPeoplePerson .people-add-person-compact {
+        display: inline;
     }
 }
 
@@ -656,6 +719,24 @@
     inset: 0;
     z-index: 1000;
     background: rgba(0, 0, 0, .68);
+}
+
+body.mobile-person-details-open .menu-popover,
+body.mobile-person-details-open .relative-popover {
+    z-index: 1004;
+}
+
+body.mobile-person-details-open .relative-popover {
+    width: min(360px, calc(100vw - 24px));
+}
+
+body.mobile-person-details-open .relative-popover-body {
+    max-height: calc(100dvh - 24px);
+    overflow-y: auto;
+}
+
+body.mobile-person-details-open .modal-backdrop.open {
+    z-index: 1005;
 }
 
 .mobile-module-drawer {

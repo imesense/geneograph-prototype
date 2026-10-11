@@ -59,7 +59,7 @@ function closeMobileSurface(restoreFocus = true)
     document.querySelector('#mobileModuleDrawer')?.remove();
     document.querySelector('#mobileSectionsHeader')?.remove();
     document.querySelector('#mobileDetailsClose')?.remove();
-    document.body.classList.remove('mobile-surface-open', 'mobile-sections-open', 'mobile-details-open');
+    document.body.classList.remove('mobile-surface-open', 'mobile-sections-open', 'mobile-details-open', 'mobile-person-details-open');
     mobileDetailModule = null;
     topbar.querySelectorAll('[data-mobile-menu], [data-mobile-sections], [data-mobile-details]')
         .forEach(button => button.setAttribute('aria-expanded', 'false'));
@@ -84,6 +84,12 @@ function handleMobileSurfaceKeydown(event)
     {
         event.preventDefault();
         event.stopImmediatePropagation();
+        if (mobileSurface === 'details' && ['Family Tree', 'People'].includes(state.activeModule)
+            && (document.getElementById('projectMenu') || document.getElementById('relativePopover')))
+        {
+            closeMenu();
+            return;
+        }
         closeMobileSurface();
         return;
     }
@@ -127,7 +133,7 @@ function openMobileSurface(kind)
     const backdrop = document.createElement('div');
     backdrop.id = 'mobileSurfaceBackdrop';
     backdrop.className = 'mobile-surface-backdrop';
-    backdrop.addEventListener('click', () => closeMobileSurface());
+    bindIntentionalBackdropDismiss(backdrop, () => closeMobileSurface());
     document.body.appendChild(backdrop);
 
     if (kind === 'details')
@@ -139,6 +145,7 @@ function openMobileSurface(kind)
         }
         mobileDetailModule = state.activeModule;
         document.body.classList.add('mobile-details-open');
+        if (['Family Tree', 'People'].includes(state.activeModule)) document.body.classList.add('mobile-person-details-open');
         const close = document.createElement('button');
         close.id = 'mobileDetailsClose';
         close.type = 'button';
@@ -227,7 +234,7 @@ main.addEventListener('click', event =>
         openMobileSurface('details');
         return;
     }
-    if (mobileSurface !== 'details' || !mobileDetailTarget()?.contains(event.target)
+    if (mobileSurface !== 'details' || ['Family Tree', 'People'].includes(state.activeModule) || !mobileDetailTarget()?.contains(event.target)
         || !event.target.closest('button[aria-haspopup]')) return;
     requestAnimationFrame(() =>
     {
@@ -362,7 +369,7 @@ function renderTopbar()
         && !(state.activeModule === 'Geneograph' && state.geneoView !== 'board');
     const signedLabel = state.userSignedIn ? 'SW' : 'IN';
     topbar.innerHTML = `
-        <button class="mobile-menu-trigger" type="button" data-mobile-menu aria-label="${escapeHtml(t('Modules'))}" title="${escapeHtml(t('Modules'))}" aria-haspopup="dialog" aria-expanded="false">${icon.menu}</button>
+        ${showModules ? `<button class="mobile-menu-trigger" type="button" data-mobile-menu aria-label="${escapeHtml(t('Modules'))}" title="${escapeHtml(t('Modules'))}" aria-haspopup="dialog" aria-expanded="false">${icon.menu}</button>` : ''}
         <button class="home-tab ${state.activeModule === 'Projects' ? 'active' : ''}" type="button" data-home aria-label="Projects home">${icon.home}</button>
         <button class="mobile-sections-trigger" type="button" data-mobile-sections aria-label="${escapeHtml(t('Sections'))}: ${escapeHtml(t(state.activeModule))}" title="${escapeHtml(t('Sections'))}" aria-haspopup="dialog" aria-expanded="false" ${showSections ? '' : 'hidden'}>${icon.sidebar}</button>
         <button class="mobile-details-trigger" type="button" data-mobile-details data-mobile-detail-module="${escapeHtml(state.activeModule)}" aria-label="${escapeHtml(t('Details'))}: ${escapeHtml(t(state.activeModule))}" title="${escapeHtml(t('Details'))}" aria-haspopup="dialog" aria-expanded="false" ${showDetails ? '' : 'hidden'}>${icon.inspector}</button>

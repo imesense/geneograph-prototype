@@ -3368,7 +3368,8 @@ function renderPeopleNormalToolbar()
             aria-label="Add person"
             title="Add person">
             ${icon.plus}
-            <span>Add person</span>
+            <span class="people-add-person-full">Add person</span>
+            <span class="people-add-person-compact">${escapeHtml(t('Add'))}</span>
           </button>
         </div>
       `;

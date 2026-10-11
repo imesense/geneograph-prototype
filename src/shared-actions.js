@@ -2386,7 +2386,7 @@ function openModal(
     html
 )
 {
-    if (!(mobileSurface === 'details' && state.activeModule === 'Family Tree'))
+    if (!(mobileSurface === 'details' && ['Family Tree', 'People'].includes(state.activeModule)))
     {
         closeMobileSurface();
     }

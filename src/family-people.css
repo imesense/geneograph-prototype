@@ -3583,13 +3583,26 @@
     }
 
     .connect-person-layout {
-        grid-template-columns: 1fr;
+        display: block;
+        overflow-y: auto;
     }
 
     .connect-person-left {
         border-right: 0;
         border-bottom: 1px solid var(--border-default);
         overflow: visible;
+        padding: var(--space-3) var(--space-4);
+    }
+
+    .connect-person-main {
+        grid-template-rows: auto auto auto;
+        gap: var(--space-3);
+        padding: var(--space-3) var(--space-4);
+    }
+
+    .connect-person-results-panel {
+        height: min(300px, 44dvh);
+        min-height: 220px;
     }
 }
 
