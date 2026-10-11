@@ -37,6 +37,16 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             });
             await page.locator('#quickEdit').tap();
             assert.equal(await page.locator('#modalBackdrop .modal').isVisible(), true);
+            assert.ok(await page.locator('.add-person-relationship-grid').first().evaluate(grid =>
+            {
+                const card = grid.closest('.add-person-relationship-card').getBoundingClientRect();
+                const type = grid.querySelector('.add-person-relationship-type-field').getBoundingClientRect();
+                const person = grid.querySelector('.add-person-relationship-partner-field').getBoundingClientRect();
+                const controls = grid.querySelector('.genealogy-date-controls').getBoundingClientRect();
+                return (innerWidth > 820 || type.bottom <= person.top + 1)
+                    && [type, person, controls].every(rect => rect.left >= card.left - 1 && rect.right <= card.right + 1)
+                    && (innerWidth > 820 || controls.width > card.width * .75);
+            }), `relationship fields fit at ${width}`);
             await page.keyboard.press('Escape');
             assert.equal(await sheet.isVisible(), true, `Family Tree sheet survives modal at ${width}`);
             assert.equal(await sheet.evaluate(el => el.scrollTop), sheetScroll);

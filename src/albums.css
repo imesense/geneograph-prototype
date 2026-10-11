@@ -5077,3 +5077,103 @@ button.albums-inspector-row-main:focus-visible {
         justify-content: center;
     }
 }
+
+@media (max-width: 900px) {
+    .albums-shell {
+        height: calc(100dvh - var(--topbar-h));
+    }
+
+    .albums-content {
+        touch-action: pan-y;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .albums-toolbar {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--space-2);
+    }
+
+    .albums-toolbar-left,
+    .albums-toolbar-right,
+    .albums-toolbar-left .app-search-field {
+        width: 100%;
+        min-width: 0;
+        max-width: none;
+    }
+
+    .albums-toolbar-left .app-search-field {
+        flex: 1 1 auto;
+    }
+
+    .albums-toolbar-right {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: var(--space-2);
+        margin-left: 0;
+    }
+
+    .albums-filter-button,
+    .albums-toolbar .app-sort-field,
+    .albums-toolbar .app-sort-trigger,
+    .albums-view-switch,
+    .albums-view-button {
+        width: 100%;
+        min-width: 0;
+        max-width: none;
+    }
+
+    .albums-view-switch {
+        grid-column: span 2;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--space-2);
+    }
+
+    .albums-view-button {
+        justify-content: center;
+    }
+
+    .albums-card-footer:has(.mobile-item-details) {
+        grid-template-columns: minmax(0, 1fr) 36px 32px;
+    }
+
+    .albums-card-footer .mobile-item-details {
+        grid-column: 2;
+        width: 36px;
+        min-width: 36px;
+        padding: 0;
+    }
+
+    .albums-card-footer .mobile-item-details span {
+        display: none;
+    }
+
+    .albums-card-footer .albums-card-more {
+        grid-column: 3;
+    }
+}
+
+@media (max-width: 540px) {
+    .albums-filter-button {
+        position: relative;
+        padding-inline: 0;
+    }
+
+    .albums-filter-button > span:not(.albums-filter-icon):not(.albums-filter-count),
+    .albums-toolbar .app-sort-current,
+    .albums-toolbar .app-sort-chevron {
+        display: none;
+    }
+
+    .albums-filter-count {
+        position: absolute;
+        top: 2px;
+        right: 2px;
+    }
+
+    .albums-toolbar .app-sort-trigger {
+        justify-content: center;
+        padding-inline: 0;
+    }
+}

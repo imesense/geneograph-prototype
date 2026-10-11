@@ -4959,7 +4959,20 @@
 
 @media (max-width: 820px) {
     .add-person-relationship-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .add-person-relationship-card .add-person-relationship-type-field,
+    .add-person-relationship-card .add-person-relationship-partner-field {
+        grid-column: 1;
+    }
+
+    .add-person-relationship-card .genealogy-date-field:not(.is-between) .genealogy-date-controls {
+        grid-template-columns: minmax(0, 1fr) var(--control-icon-button-size);
+    }
+
+    .add-person-relationship-card .genealogy-date-field:not(.is-between) .genealogy-date-type-shell {
+        grid-column: 1 / -1;
     }
 }
 
