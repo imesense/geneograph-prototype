@@ -4850,6 +4850,9 @@ function renderAlbumsMainMarkup()
               value="${escapeHtml(state.albumsSearch || '')}"
               placeholder="Search photos...">
           </label>
+          <button class="button primary albums-mobile-add-photos" type="button" id="albumsMobileAddPhotos" aria-label="${escapeHtml(t('Add photos'))}" title="${escapeHtml(t('Add photos'))}">
+            ${icon.plus}<span class="albums-add-label-full">${escapeHtml(t('Add photos'))}</span><span class="albums-add-label-short">${escapeHtml(t('Add'))}</span>
+          </button>
         </div>
 
         <div class="albums-toolbar-right">
@@ -5172,9 +5175,7 @@ function renderAlbumsList(photos)
               Select all visible photos
             ">
 
-          <span
-            aria-hidden="true">
-          </span>
+          <span class="albums-mobile-select-all">${escapeHtml(t('Select all visible photos'))}</span>
 
           <span>Photo</span>
           <span>People</span>
@@ -5322,7 +5323,7 @@ function renderAlbumsList(photos)
                 class="
                   albums-list-title
                 ">
-                <strong>
+                <strong title="${escapeHtml(title)}">
                   ${escapeHtml(title)}
                 </strong>
 
@@ -5335,25 +5336,19 @@ function renderAlbumsList(photos)
                 </span>
               </span>
 
-              <span>
-                ${escapeHtml(people)}
-              </span>
+              <span class="albums-list-people"><span class="albums-mobile-cell-label">${escapeHtml(t('People'))}</span><span>${escapeHtml(people)}</span></span>
 
-              <span>
-                ${escapeHtml(
+              <span class="albums-list-date"><span class="albums-mobile-cell-label">${escapeHtml(t('Date'))}</span><span>${escapeHtml(
                     formatPhotoDate(photo)
-                )}
-              </span>
+                )}</span></span>
 
-              <span>
-                ${escapeHtml(
+              <span class="albums-list-place"><span class="albums-mobile-cell-label">${escapeHtml(t('Place'))}</span><span>${escapeHtml(
                     getPlaceDisplay(
                         photo.placeId
                     )
                   || photo.placeText
                   || 'Unknown'
-                )}
-              </span>
+                )}</span></span>
 
               ${favoriteControl}
 
@@ -12712,6 +12707,7 @@ function bindAlbumsControls()
           #albumsSort,
           [data-albums-mode],
           #albumsAddPhotos,
+          #albumsMobileAddPhotos,
           #albumsClearFilters,
           [data-albums-remove-filter],
           [data-albums-page],
@@ -12832,12 +12828,8 @@ function bindAlbumsControls()
                 );
             });
         bindAlbumsPaginationControls();
-        main
-            .querySelector('#albumsAddPhotos')
-            ?.addEventListener(
-                'click',
-                openAddPhotosModal
-            );
+        main.querySelectorAll('#albumsAddPhotos, #albumsMobileAddPhotos')
+            .forEach(button => button.addEventListener('click', openAddPhotosModal));
 
         main
             .querySelector('#albumsEmptyAction')

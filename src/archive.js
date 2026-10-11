@@ -9469,17 +9469,17 @@ function renderArchiveFolderTableRow(
           </td>
 
           <td>
-            Folder
+            <span class="archive-mobile-cell-label">${escapeHtml(t('Type'))}: </span>Folder
           </td>
 
           <td>
-            ${escapeHtml(
+            <span class="archive-mobile-cell-label">${escapeHtml(t('Size / Items'))}: </span>${escapeHtml(
                 itemLabel
             )}
           </td>
 
           <td>
-            ${escapeHtml(
+            <span class="archive-mobile-cell-label">${escapeHtml(t('Modified'))}: </span>${escapeHtml(
                 archiveFormatDate(
                     folder.updatedAt
                 || folder.createdAt
@@ -9682,6 +9682,7 @@ function renderArchiveFileTableRow(
     return `
         <tr
           class="
+            archive-table-file-row
             ${
                 detailSelected
                     ? 'selected-detail'
@@ -9764,7 +9765,7 @@ function renderArchiveFileTableRow(
           </td>
 
           <td>
-            ${escapeHtml(
+            <span class="archive-mobile-cell-label">${escapeHtml(t('Type'))}: </span>${escapeHtml(
                 archiveFileTypeLabel(
                     file
                 )
@@ -9772,14 +9773,14 @@ function renderArchiveFileTableRow(
           </td>
 
           <td>
-            ${escapeHtml(
+            <span class="archive-mobile-cell-label">${escapeHtml(t('Size / Items'))}: </span>${escapeHtml(
                 file.size
               || '—'
             )}
           </td>
 
           <td>
-            ${escapeHtml(
+            <span class="archive-mobile-cell-label">${escapeHtml(t('Modified'))}: </span>${escapeHtml(
                 archiveFormatDate(
                     file.updatedAt,
                     file.updated
@@ -9929,6 +9930,7 @@ function renderArchiveFileTable(
                   type="checkbox"
                   data-archive-select-all
                   aria-label="Select all visible files">
+                <span class="archive-mobile-select-all">${escapeHtml(t('Select all visible files'))}</span>
                 </th>
 
                 <th
@@ -10139,7 +10141,7 @@ function renderArchiveFilesView()
         'Change or clear the active filters and try again.';
 
     return `
-        <div class="archive-page">
+        <div class="archive-page archive-files-page">
           ${renderArchivePageHead({
                 title,
                 subtitle,
@@ -10264,6 +10266,8 @@ function archiveToolbarSearchPlaceholder()
         : 'Search this folder...';
 }
 
+let archiveMobileSearchOpen = false;
+
 function renderArchiveToolbar()
 {
     const sourcesView =
@@ -10278,7 +10282,7 @@ function renderArchiveToolbar()
     return `
         <div
           class="
-            archive-toolbar
+            archive-toolbar ${sourcesView ? '' : 'archive-files-toolbar'} ${archiveMobileSearchOpen ? 'mobile-search-open' : ''}
           "
           aria-label="${
                 sourcesView
@@ -10290,6 +10294,8 @@ function renderArchiveToolbar()
             class="
               archive-toolbar-left
             ">
+
+            ${sourcesView ? '' : `<button class="archive-mobile-search-trigger" type="button" data-archive-mobile-search-open aria-label="${escapeHtml(t('Search files'))}" title="${escapeHtml(t('Search files'))}">${icon.search}</button>`}
 
             <label
               class="
@@ -10315,6 +10321,7 @@ function renderArchiveToolbar()
                     searchPlaceholder
                 )}">
             </label>
+            ${sourcesView ? '' : `<button class="archive-mobile-search-close" type="button" data-archive-mobile-search-close aria-label="${escapeHtml(t('Close'))}" title="${escapeHtml(t('Close'))}">${icon.close}</button>`}
           </div>
 
           <div
@@ -10392,6 +10399,7 @@ function renderArchiveToolbar()
                     ? APP_SORT_OPTIONS.archiveSources
                     : APP_SORT_OPTIONS.archiveFiles
             })}
+            ${sourcesView ? '' : `<button class="archive-mobile-new-folder" type="button" data-archive-create-folder aria-label="${escapeHtml(t('New folder'))}" title="${escapeHtml(t('New folder'))}">${icon.folder}</button><button class="button primary archive-mobile-add-files" type="button" data-archive-add-files aria-label="${escapeHtml(t('Add files'))}" title="${escapeHtml(t('Add files'))}">${icon.plus}<span class="archive-add-full">${escapeHtml(t('Add files'))}</span><span class="archive-add-short">${escapeHtml(t('Add'))}</span></button>`}
           </div>
         </div>
       `;
@@ -22436,6 +22444,14 @@ function bindArchiveControls()
 
     root
         .querySelector(
+            '#archiveEditFile'
+        )
+        ?.addEventListener(
+            'click',
+            beginArchiveFileEdit
+        );
+    root
+        .querySelector(
             '#archiveCancelFileEdit'
         )
         ?.addEventListener(
@@ -22591,6 +22607,18 @@ function bindArchiveControls()
             const position = Math.min(selectionStart ?? value.length, input.value.length);
             input.setSelectionRange(position, position);
         });
+    });
+    root.querySelector('[data-archive-mobile-search-open]')?.addEventListener('click', () =>
+    {
+        archiveMobileSearchOpen = true;
+        renderArchiveMain();
+        main.querySelector('[data-archive-search]')?.focus({ preventScroll: true });
+    });
+    root.querySelector('[data-archive-mobile-search-close]')?.addEventListener('click', () =>
+    {
+        archiveMobileSearchOpen = false;
+        renderArchiveMain();
+        main.querySelector('[data-archive-mobile-search-open]')?.focus({ preventScroll: true });
     });
     const sortingSources =
         archiveToolbarIsSources();
@@ -22981,17 +23009,63 @@ function bindArchiveControls()
             const folderId =
                 row.dataset
                     .archiveFolderRow;
+            let holdTimer = null;
+            let holdOrigin = null;
+            let held = false;
+            const cancelHold = () => { clearTimeout(holdTimer); holdTimer = null; };
+            const showFolderDetails = () =>
+            {
+                selectArchiveFolderItem(folderId);
+                if (state.archiveSelectedFolderItemId === folderId) openMobileSurface('details');
+            };
+
+            row.addEventListener('pointerdown', event =>
+            {
+                if (innerWidth > 900 || event.pointerType !== 'touch'
+                    || event.target.closest('button,input,select,a')) return;
+                holdOrigin = { x: event.clientX, y: event.clientY };
+                held = false;
+                cancelHold();
+                holdTimer = setTimeout(() =>
+                {
+                    held = true;
+                    showFolderDetails();
+                }, 450);
+            });
+            row.addEventListener('pointermove', event =>
+            {
+                if (holdOrigin && Math.hypot(event.clientX - holdOrigin.x,
+                    event.clientY - holdOrigin.y) > 8) cancelHold();
+            });
+            row.addEventListener('pointerup', cancelHold);
+            row.addEventListener('pointercancel', cancelHold);
+            row.addEventListener('contextmenu', event =>
+            {
+                if (innerWidth <= 900 && held) event.preventDefault();
+            });
 
             row.addEventListener(
                 'click',
                 event =>
                 {
+                    if (held)
+                    {
+                        held = false;
+                        event.preventDefault();
+                        return;
+                    }
                     if (
                         event.target.closest(
                             'button,input,select,a'
                         )
                     )
                     {
+                        return;
+                    }
+
+                    if (innerWidth <= 900)
+                    {
+                        archiveOpenFolder(folderId);
                         return;
                     }
 
@@ -23052,9 +23126,8 @@ function bindArchiveControls()
 
                         resetArchiveFolderRowClick();
 
-                        selectArchiveFolderItem(
-                            folderId
-                        );
+                        if (innerWidth <= 900) showFolderDetails();
+                        else selectArchiveFolderItem(folderId);
                     }
                 }
             );

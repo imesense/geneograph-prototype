@@ -61,9 +61,9 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             });
             if (width <= 900)
             {
-                const openFolder = page.locator('[data-archive-mobile-open-folder]').first();
+                const openFolder = page.locator('[data-archive-folder-row]').first();
                 assert.equal(await openFolder.isVisible(), true);
-                await openFolder.click();
+                await openFolder.click({ position: { x: 20, y: 65 } });
                 assert.notEqual(await page.locator('.archive-breadcrumb-current').innerText(), 'All files');
             }
 
@@ -116,6 +116,27 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             await page.locator('[data-mobile-details]').click();
             assert.equal(await page.locator(selector).first().isVisible(), false, `${moduleName} at ${width}px`);
             assert.equal(await page.locator('#mobileDetailsClose').isVisible(), true);
+            if (moduleName === 'Archive')
+            {
+                assert.ok(await page.evaluate(() =>
+                {
+                    const close = document.querySelector('#mobileDetailsClose').getBoundingClientRect();
+                    const toolbar = document.querySelector('.archive-inspector-toolbar').getBoundingClientRect();
+                    return close.top >= toolbar.top && close.bottom <= toolbar.bottom
+                        && close.right <= toolbar.right;
+                }));
+            }
+            if (moduleName === 'Geneograph')
+            {
+                assert.ok(await page.evaluate(() =>
+                {
+                    const close = document.querySelector('#mobileDetailsClose').getBoundingClientRect();
+                    const header = document.querySelector('.geneo-inspector-header').getBoundingClientRect();
+                    const identity = document.querySelector('.geneo-inspector-identity').getBoundingClientRect();
+                    return close.top >= header.top && close.bottom <= header.bottom
+                        && close.right <= header.right && close.left > identity.right;
+                }));
+            }
             await page.keyboard.press('Escape');
             assert.equal(await page.locator('#mobileDetailsClose').count(), 0);
             assert.equal(await page.locator('[data-mobile-details]').evaluate(button => button === document.activeElement), true);
