@@ -1051,6 +1051,10 @@ body.mobile-surface-open:has(.archive-shell) .modal-backdrop.open {
     z-index: 1006;
 }
 
+body.mobile-surface-open:has(.places-shell) .modal-backdrop.open {
+    z-index: 1006;
+}
+
 body.mobile-surface-open:has(.albums-shell) .menu-popover {
     z-index: 1004;
 }
@@ -2028,4 +2032,151 @@ body.mobile-details-open .geneo-inspector [data-geneo-inspector-toggle] {
     .archive-files-toolbar .app-sort-trigger { width: auto; }
     .archive-files-toolbar .app-sort-trigger { gap: 6px; padding-inline: 10px; }
     .archive-files-toolbar .app-sort-current { display: inline; }
+}
+
+.places-mobile-add { display: none; }
+
+@media (max-width: 900px) {
+    .places-page-head {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        overflow: hidden;
+        clip-path: inset(50%);
+    }
+
+    .places-page-head .places-title p,
+    .places-page-head .places-header-actions { display: none; }
+
+    .places-toolbar {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 8px 6px;
+        min-height: 0;
+        padding: 12px 12px 16px;
+        align-items: stretch;
+    }
+
+    .places-toolbar-left {
+        grid-column: 1 / span 3;
+        grid-row: 1;
+        width: 100%;
+        min-width: 0;
+    }
+
+    .places-toolbar-left .app-search-field { width: 100%; min-width: 0; }
+    .places-toolbar-right { display: contents; }
+
+    .places-toolbar .places-filter-button {
+        grid-column: 4;
+        grid-row: 1;
+        position: relative;
+        width: 100%;
+        min-width: 0;
+        max-width: none;
+        min-height: 44px;
+        padding: 0;
+        justify-content: center;
+    }
+
+    .places-toolbar .places-filter-button > span:not(.people-filter-icon):not(.people-filter-count) { display: none; }
+    .places-toolbar .people-filter-count { position: absolute; top: 1px; right: 1px; }
+
+    .places-toolbar .places-mobile-add {
+        display: flex;
+        grid-column: 5 / span 2;
+        grid-row: 1;
+        width: 100%;
+        min-width: 0;
+        min-height: 44px;
+        padding: 0 4px;
+        justify-content: center;
+        gap: 4px;
+        font-size: 13px;
+        white-space: nowrap;
+    }
+
+    .places-mobile-add-full { display: none; }
+    .places-mobile-add-short { display: inline; }
+    .places-toolbar .places-mobile-add svg { flex: 0 0 18px; }
+
+    .places-toolbar .places-view-switch {
+        grid-column: 1 / span 4;
+        grid-row: 2;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        width: 100%;
+        min-width: 0;
+        gap: 6px;
+    }
+
+    .places-toolbar .places-view-button {
+        width: 100%;
+        min-width: 0;
+        max-width: none;
+        min-height: 44px;
+    }
+
+    .places-toolbar .places-route-toolbar-button,
+    .places-toolbar .app-sort-field {
+        grid-column: 5 / span 2;
+        grid-row: 2;
+        width: 100%;
+        min-width: 0;
+        max-width: none;
+        height: 44px;
+    }
+
+    .places-toolbar .places-route-toolbar-button,
+    .places-toolbar .app-sort-trigger {
+        width: 100%;
+        min-width: 0;
+        max-width: none;
+        justify-content: center;
+    }
+
+    body.mobile-details-open .places-shell .places-inspector { padding-top: 0 !important; }
+    body.mobile-details-open .places-inspector-toolbar {
+        position: static;
+        z-index: auto;
+        min-height: 56px;
+        padding: 8px 12px;
+        align-items: center;
+        gap: 8px;
+    }
+
+    body.mobile-details-open:has(.places-inspector) #mobileDetailsClose {
+        position: static;
+        z-index: auto;
+        width: 40px;
+        height: 40px;
+        min-height: 40px;
+        flex: 0 0 40px;
+        padding: 0;
+        margin-left: 4px;
+        justify-content: center;
+    }
+
+    body.mobile-details-open:has(.places-inspector) #mobileDetailsClose span { display: none; }
+}
+
+@media (max-width: 540px) {
+    .places-toolbar .places-route-toolbar-button span,
+    .places-toolbar .app-sort-current,
+    .places-toolbar .app-sort-chevron { display: none; }
+}
+
+@media (max-width: 360px), (min-width: 621px) and (max-width: 700px) {
+    .places-mobile-add-short { display: none; }
+}
+
+@media (min-width: 621px) and (max-width: 900px) {
+    .places-toolbar { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+    .places-toolbar-left { grid-column: 1 / span 9; }
+    .places-toolbar .places-filter-button { grid-column: 10; }
+    .places-toolbar .places-mobile-add { grid-column: 11 / span 2; }
+    .places-toolbar .places-view-switch { grid-column: 1 / span 8; }
+    .places-toolbar .places-route-toolbar-button,
+    .places-toolbar .app-sort-field { grid-column: 9 / span 4; }
 }

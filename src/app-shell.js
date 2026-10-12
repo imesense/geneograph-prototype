@@ -2,6 +2,20 @@ let mobileSurface = null;
 let mobileSurfaceReturnFocus = null;
 let mobileBodyOverflow = '';
 let mobileDetailModule = null;
+let mobileDetailsCloseButton = null;
+
+function mountPlacesMobileDetailsClose()
+{
+    if (mobileSurface !== 'details' || state.activeModule !== 'Places' || innerWidth > 900)
+    {
+        return;
+    }
+    const toolbar = main.querySelector('.places-inspector-toolbar');
+    if (toolbar && mobileDetailsCloseButton)
+    {
+        toolbar.appendChild(mobileDetailsCloseButton);
+    }
+}
 
 function mobileDetailTarget()
 {
@@ -58,7 +72,8 @@ function closeMobileSurface(restoreFocus = true)
     document.querySelector('#mobileSurfaceBackdrop')?.remove();
     document.querySelector('#mobileModuleDrawer')?.remove();
     document.querySelector('#mobileSectionsHeader')?.remove();
-    document.querySelector('#mobileDetailsClose')?.remove();
+    mobileDetailsCloseButton?.remove();
+    mobileDetailsCloseButton = null;
     document.body.classList.remove('mobile-surface-open', 'mobile-sections-open', 'mobile-details-open', 'mobile-person-details-open');
     mobileDetailModule = null;
     topbar.querySelectorAll('[data-mobile-menu], [data-mobile-sections], [data-mobile-details]')
@@ -165,7 +180,9 @@ function openMobileSurface(kind)
         close.setAttribute('aria-label', t('Close details'));
         close.innerHTML = `${icon.close}<span>${escapeHtml(t('Close'))}</span>`;
         close.addEventListener('click', () => closeMobileSurface());
+        mobileDetailsCloseButton = close;
         document.body.appendChild(close);
+        mountPlacesMobileDetailsClose();
         close.focus();
     }
     else if (kind === 'sections')

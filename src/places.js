@@ -3396,6 +3396,16 @@ function renderPlacesMain()
                             : ''
                     }
                   </button>
+                  <button
+                    class="button primary places-mobile-add"
+                    type="button"
+                    id="placesMobileAddPlace"
+                    aria-label="Add place"
+                    title="Add place">
+                    ${icon.plus}
+                    <span class="places-mobile-add-full">Add place</span>
+                    <span class="places-mobile-add-short">Add</span>
+                  </button>
                   ${
                         isPlacesListView
                             ? renderAppSortControl({
@@ -3509,6 +3519,7 @@ function renderPlacesMain()
         </div>
       `;
     bindPlacesControls(list);
+    mountPlacesMobileDetailsClose();
     if (state.placesViewMode === 'map') requestAnimationFrame(() => mountPlacesMap(list));
 }
 
@@ -6226,6 +6237,7 @@ function bindPlacesControls(list)
         renderPlaces
     );
     main.querySelector('#placesAddPlace')?.addEventListener('click', () => openPlaceModal());
+    main.querySelector('#placesMobileAddPlace')?.addEventListener('click', () => openPlaceModal());
     main.querySelector('#placesFilterButton')?.addEventListener('click', event =>
     {
         openPlacesFilterPopover(event.currentTarget);
