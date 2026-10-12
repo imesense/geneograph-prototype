@@ -1047,6 +1047,10 @@ body.mobile-surface-open:has(.albums-shell) .modal-backdrop.open {
     z-index: 1006;
 }
 
+body.mobile-surface-open:has(.archive-shell) .modal-backdrop.open {
+    z-index: 1006;
+}
+
 body.mobile-surface-open:has(.albums-shell) .menu-popover {
     z-index: 1004;
 }

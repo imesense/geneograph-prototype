@@ -1709,6 +1709,9 @@ function openSourcesForTargetModal({
     targetType,
     targetId,
 
+    autoFocusSearch =
+        true,
+
     projectId =
         currentProjectId(),
 
@@ -2668,7 +2671,7 @@ function openSourcesForTargetModal({
 
     requestAnimationFrame(() =>
     {
-        if (!((mobileNotesPicker || mobileAlbumsPicker) && innerWidth <= 900))
+        if (autoFocusSearch && !((mobileNotesPicker || mobileAlbumsPicker) && innerWidth <= 900))
         {
             searchInput.focus({
                 preventScroll: true
@@ -14644,6 +14647,9 @@ function openConnectedFilesModal({
     successMessage =
         null,
 
+    autoFocusSearch =
+        true,
+
     modalOpener =
         openModal
 } = {})
@@ -15627,7 +15633,8 @@ function openConnectedFilesModal({
         () =>
         {
             if (
-                sourceTab === 'archive'
+                autoFocusSearch
+                && sourceTab === 'archive'
             )
             {
                 searchInput?.focus({
@@ -19372,6 +19379,9 @@ function openArchiveFilesNoteModal(
           files[0].projectId
           || currentProjectId(),
 
+        autoFocusSearch:
+          false,
+
         title:
           singleFile
               ? 'Add note'
@@ -20113,6 +20123,9 @@ function openArchiveSourceEventsModal(
     openEventLinkModal({
         projectId,
 
+        autoFocusSearch:
+          false,
+
         title:
           'Add events',
 
@@ -20287,6 +20300,9 @@ function openArchiveSourceNotesModal(
 
     openNoteLinkPickerModal({
         projectId,
+
+        autoFocusSearch:
+          false,
 
         title:
           'Add notes',
@@ -21050,7 +21066,6 @@ function openArchiveConnectionPicker({ ownerType, ownerIds, entityType })
         }
     );
     refresh();
-    requestAnimationFrame(() => modal.querySelector('[data-archive-link-search]')?.focus());
 }
 
 function openArchiveFilesSourceModal(
@@ -21084,6 +21099,9 @@ function openArchiveFilesSourceModal(
         openSourcesForTargetModal({
             targetType:
             'file',
+
+            autoFocusSearch:
+            false,
 
             targetId:
             file.id,

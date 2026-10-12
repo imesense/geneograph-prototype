@@ -7346,6 +7346,19 @@
         min-height: 0;
         overflow-y: auto;
     }
+
+    .notes-places-modal .notes-place-result {
+        grid-template-columns: 32px minmax(0, 1fr) 20px;
+    }
+
+    .notes-places-modal .notes-place-result-icon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .notes-places-modal .notes-place-result .photo-people-result-copy {
+        min-width: 0;
+    }
 }
 
 @media (max-width: 540px) {

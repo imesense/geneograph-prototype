@@ -9035,15 +9035,6 @@ function openNotesPlacesModal(
     );
 
     refresh();
-
-    requestAnimationFrame(
-        () =>
-        {
-            searchInput?.focus({
-                preventScroll: true
-            });
-        }
-    );
 }
 
 function openEventLinkModal({
@@ -9064,6 +9055,8 @@ function openEventLinkModal({
     afterSave =
         () =>
         {},
+    autoFocusSearch =
+        true,
     successMessage =
         count =>
             `${count} ${
@@ -10471,9 +10464,9 @@ function openEventLinkModal({
         () =>
         {
             if (
-                window.innerWidth > 720
-            || mobilePane
-              === 'people'
+                autoFocusSearch
+                && (window.innerWidth > 720
+                    || mobilePane === 'people')
             )
             {
                 searchInput?.focus({
@@ -10653,6 +10646,9 @@ function openArchiveFilesEventsModal(
         projectId:
           files[0].projectId
           || currentProjectId(),
+
+        autoFocusSearch:
+          false,
 
         title:
           'Add events',
@@ -10888,7 +10884,10 @@ function openNoteFilesModal(
                   count === 1
                       ? 'file'
                       : 'files'
-              } added to note.`
+              } added to note.`,
+
+        autoFocusSearch:
+          false
     });
 }
 function openNotesLinkEntityModal(
@@ -11131,6 +11130,9 @@ function openNoteLinkPickerModal({
 
     successMessage =
         null,
+
+    autoFocusSearch =
+        true,
 
     modalOpener =
         openModal
@@ -12183,7 +12185,7 @@ function openNoteLinkPickerModal({
     requestAnimationFrame(
         () =>
         {
-            if (!((mobileNotesPicker || mobileAlbumsPicker) && innerWidth <= 900))
+            if (autoFocusSearch && !((mobileNotesPicker || mobileAlbumsPicker) && innerWidth <= 900))
             {
                 searchInput?.focus({
                     preventScroll: true
