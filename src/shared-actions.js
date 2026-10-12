@@ -2447,7 +2447,7 @@ function openModal(
 )
 {
     if (!(mobileSurface === 'details' && ['Family Tree', 'People', 'Albums', 'Archive', 'Places'].includes(state.activeModule))
-        && !(mobileSurface === 'sections' && ['Albums', 'Archive'].includes(state.activeModule)))
+        && !(mobileSurface === 'sections' && ['Albums', 'Archive', 'Places'].includes(state.activeModule)))
     {
         closeMobileSurface();
     }

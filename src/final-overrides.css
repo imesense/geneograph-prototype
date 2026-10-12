@@ -1059,6 +1059,10 @@ body.mobile-surface-open:has(.albums-shell) .menu-popover {
     z-index: 1004;
 }
 
+body.mobile-surface-open:has(.places-shell) .menu-popover {
+    z-index: 1004;
+}
+
 @media (max-width: 900px) {
     .mobile-choice-backdrop {
         position: fixed;
@@ -1359,6 +1363,18 @@ body.mobile-details-open .geneo-inspector [data-geneo-inspector-toggle] {
     display: none;
 }
 
+.places-list-mobile-status {
+    display: none;
+}
+
+.places-inspector-mobile-meta {
+    display: none;
+}
+
+.places-review-mobile-issues {
+    display: none;
+}
+
 @media (min-width: 901px) and (max-width: 1180px) {
     .mobile-details-trigger[data-mobile-detail-module="People"] {
         display: grid;
@@ -1547,32 +1563,203 @@ body.mobile-details-open .geneo-inspector [data-geneo-inspector-toggle] {
     .places-list-row {
         min-width: 0;
         display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
-        gap: 5px 10px;
-        padding: 12px;
+        grid-template-columns: minmax(0, 1fr) auto auto;
+        gap: 8px;
+        min-height: 76px;
+        padding: 10px 8px 10px 14px;
     }
 
     .places-list-row > div:first-child {
-        grid-column: 1 / -1;
+        grid-column: 1;
+        gap: 2px;
     }
 
-    .places-list-row > span {
-        min-width: 0;
+    .places-list-row > div:first-child strong {
+        white-space: normal;
+        overflow-wrap: anywhere;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+    }
+
+    .places-list-row > div:first-child > span {
         font-size: 12px;
     }
 
-    .places-list-people-mobile-label {
-        display: inline;
+    .places-list-row > :is(.places-list-country, .places-list-map-state, .places-list-people, .places-list-updated) {
+        display: none;
+    }
+
+    .places-list-row .places-list-mobile-status {
+        display: block;
+        width: fit-content;
+        color: var(--text-tertiary);
+        font-size: 12px;
+        line-height: 1.3;
     }
 
     .places-list-row .places-row-more {
-        grid-column: 2;
-        justify-self: end;
+        grid-column: 3;
     }
 
     .places-list-row .mobile-item-details {
-        grid-column: 1;
-        justify-self: start;
+        grid-column: 2;
+    }
+
+    .places-list-row :is(.places-row-more, .mobile-item-details) {
+        grid-row: 1;
+        align-self: center;
+        min-width: 40px;
+        min-height: 44px;
+        justify-self: end;
+    }
+
+    .places-list-row .mobile-item-details span {
+        display: none;
+    }
+
+    .places-shell:has(.places-review-shell),
+    .places-shell.inspector-collapsed:has(.places-review-shell) {
+        grid-template-rows: minmax(0, 1fr);
+    }
+
+    .places-review-shell {
+        overflow: hidden;
+    }
+
+    .places-review-head {
+        position: static;
+        display: flex;
+        width: auto;
+        height: auto;
+        min-height: 0;
+        padding: 12px 12px 0;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        overflow: visible;
+        clip-path: none;
+    }
+
+    .places-review-head .app-page-title {
+        font-size: 20px;
+        line-height: 1.2;
+    }
+
+    .places-review-head .places-review-total {
+        white-space: nowrap;
+    }
+
+    .places-review-controls {
+        flex: 0 0 auto;
+        min-height: 0;
+        padding: 12px;
+    }
+
+    .places-review-controls .app-search-field {
+        flex: 0 0 auto;
+        width: 100%;
+        height: 44px;
+        min-height: 44px;
+    }
+
+    .places-review-content {
+        overflow: hidden;
+    }
+
+    .places-review-list-panel {
+        height: calc(100% - 12px);
+        margin: 0 12px 12px;
+    }
+
+    .places-review-list-row {
+        display: block;
+        min-width: 0;
+        padding: 14px;
+    }
+
+    .places-review-list-row > div:first-child {
+        display: grid;
+        gap: 2px;
+        margin-bottom: 12px;
+    }
+
+    .places-review-list-row > div:first-child strong {
+        font-size: 15px;
+    }
+
+    .places-review-list-row > .places-review-issue-summary,
+    .places-review-list-row > .places-review-row-actions,
+    .places-review-list-row > span {
+        display: none;
+    }
+
+    .places-review-list-row .places-review-mobile-issues {
+        display: grid;
+        gap: 12px;
+    }
+
+    .places-review-mobile-issue {
+        display: grid;
+        gap: 4px;
+        min-width: 0;
+    }
+
+    .places-review-mobile-issue > strong {
+        color: var(--text-primary);
+        font-size: 13px;
+    }
+
+    .places-review-mobile-issue > span {
+        color: var(--text-tertiary);
+        font-size: 12px;
+        line-height: 1.4;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    .places-review-mobile-issue .places-review-row-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 6px;
+    }
+
+    .places-review-mobile-issue .places-review-row-actions .button {
+        width: 100%;
+        min-height: 44px;
+        padding-inline: 8px;
+        white-space: normal;
+        text-align: center;
+    }
+
+    .places-inspector-tags {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: none;
+        overscroll-behavior-inline: contain;
+        touch-action: pan-x;
+        scroll-padding-inline: var(--space-4);
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .places-inspector-tags::-webkit-scrollbar {
+        display: none;
+    }
+
+    .places-inspector-tags .app-chip {
+        flex: 0 0 auto;
+    }
+
+    .places-inspector-mobile-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 14px;
+        color: var(--text-tertiary);
+        font-size: 12px;
     }
 
     .places-shell,

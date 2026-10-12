@@ -3193,12 +3193,14 @@ function renderPlaceReviewListRow(place)
     const linked = placeReviewConnectionTotal(place);
     const issueSummary = issues.map(issue => `<span><strong>${escapeHtml(issue.title)}</strong><span>${escapeHtml(issue.description)}</span></span>`).join('');
     const quickActions = issues.map(issue => `<button class="button secondary" type="button" data-place-review-fix="${escapeHtml(place.id)}" data-place-review-type="${escapeHtml(issue.type)}">${escapeHtml(issue.actionLabel)}</button><button class="button ghost places-review-dismiss-button" type="button" data-place-review-dismiss="${escapeHtml(place.id)}" data-place-review-type="${escapeHtml(issue.type)}">Dismiss</button>`).join('');
+    const mobileIssues = issues.map(issue => `<div class="places-review-mobile-issue"><strong>${escapeHtml(issue.title)}</strong><span>${escapeHtml(issue.description)}</span><div class="places-review-row-actions"><button class="button secondary" type="button" data-place-review-fix="${escapeHtml(place.id)}" data-place-review-type="${escapeHtml(issue.type)}">${escapeHtml(issue.actionLabel)}</button><button class="button ghost places-review-dismiss-button" type="button" data-place-review-dismiss="${escapeHtml(place.id)}" data-place-review-type="${escapeHtml(issue.type)}">Dismiss</button></div></div>`).join('');
     return `<div class="places-list-row places-review-list-row ${place.id === state.selectedPlaceId ? 'active' : ''}" data-place-id="${escapeHtml(place.id)}" tabindex="0" role="row" aria-selected="${place.id === state.selectedPlaceId}">
         <div><strong>${escapeHtml(placePrimaryName(place))}</strong><span>${escapeHtml(placeSecondaryName(place) || 'No broader place recorded')}</span></div>
         <div class="places-review-issue-summary">${issueSummary}</div>
         <span>${linked} ${linked === 1 ? 'record' : 'records'}</span>
         <span>${escapeHtml(formatPlaceUpdatedAt(place.updatedAt))}</span>
         <div class="places-review-row-actions">${quickActions}</div>
+        <div class="places-review-mobile-issues">${mobileIssues}</div>
       </div>`;
 }
 
@@ -3259,8 +3261,22 @@ function bindPlacesNeedsReviewControls()
     }));
     main.querySelectorAll('[data-place-review-dismiss]').forEach(button => button.addEventListener('click', () =>
     {
+        const mobileReview = innerWidth <= 900;
+        const panel = mobileReview ? main.querySelector('.places-review-list-panel') : null;
+        const scrollTop = panel?.scrollTop || 0;
+        const rows = mobileReview ? [...main.querySelectorAll('.places-review-list-row')] : [];
+        const rowIndex = rows.findIndex(row => row.contains(button));
+        const placeId = button.dataset.placeReviewDismiss;
         if (!dismissPlaceReviewIssue(button.dataset.placeReviewDismiss, button.dataset.placeReviewType)) return;
         renderPlaces();
+        const nextPanel = mobileReview ? main.querySelector('.places-review-list-panel') : null;
+        if (nextPanel)
+        {
+            nextPanel.scrollTop = scrollTop;
+            const nextRows = [...nextPanel.querySelectorAll('.places-review-list-row')];
+            (nextRows.find(row => row.dataset.placeId === placeId)
+                || nextRows[Math.min(rowIndex, nextRows.length - 1)])?.focus({ preventScroll: true });
+        }
         showToast('Review item dismissed.');
     }));
     bindPlacesInspectorControls(main.querySelector('[data-places-inspector]') || main);
@@ -3933,7 +3949,7 @@ function renderPlacesListPanel(list)
                 const reviewIndicator = issueCount
                     ? `<button class="places-list-review" type="button" data-place-review-link="${escapeHtml(place.id)}">${issueCount > 1 ? `${issueCount} issues` : 'Needs review'}</button>`
                     : '';
-                return `<div class="places-list-row ${place.id === state.selectedPlaceId ? 'active' : ''}" data-place-id="${escapeHtml(place.id)}" tabindex="0" role="row" aria-selected="${place.id === state.selectedPlaceId}"><div><strong>${escapeHtml(placePrimaryName(place))}</strong><span>${escapeHtml(placeSecondaryName(place) || 'No broader place recorded')}</span>${reviewIndicator}</div><span>${escapeHtml(placeCountry(place) || 'Unknown')}</span><span>${placeHasCoordinates(place) ? 'On map' : 'Not on map'}</span><span class="places-list-people"><span class="places-list-people-mobile-label">${escapeHtml(t('Linked people'))}: </span>${linkedPeople}</span><span>${escapeHtml(formatPlaceUpdatedAt(place.updatedAt))}</span>${place.id === state.selectedPlaceId ? `<button class="mobile-item-details" type="button" data-mobile-open-details>${icon.info}<span>${escapeHtml(t('Details'))}</span></button>` : ''}<button class="places-row-more" type="button" data-place-menu="${escapeHtml(place.id)}" aria-label="More actions for ${escapeHtml(place.name)}" aria-haspopup="menu">${icon.more}</button></div>`;
+                return `<div class="places-list-row ${place.id === state.selectedPlaceId ? 'active' : ''}" data-place-id="${escapeHtml(place.id)}" tabindex="0" role="row" aria-selected="${place.id === state.selectedPlaceId}"><div><strong>${escapeHtml(placePrimaryName(place))}</strong><span>${escapeHtml(placeSecondaryName(place) || 'No broader place recorded')}</span><small class="places-list-mobile-status">${escapeHtml(t(placeHasCoordinates(place) ? 'On map' : 'Not on map'))}</small>${reviewIndicator}</div><span class="places-list-country">${escapeHtml(placeCountry(place) || 'Unknown')}</span><span class="places-list-map-state">${placeHasCoordinates(place) ? 'On map' : 'Not on map'}</span><span class="places-list-people"><span class="places-list-people-mobile-label">${escapeHtml(t('Linked people'))}: </span>${linkedPeople}</span><span class="places-list-updated">${escapeHtml(formatPlaceUpdatedAt(place.updatedAt))}</span>${place.id === state.selectedPlaceId ? `<button class="mobile-item-details" type="button" data-mobile-open-details aria-label="${escapeHtml(t('Details'))}">${icon.info}<span>${escapeHtml(t('Details'))}</span></button>` : ''}<button class="places-row-more" type="button" data-place-menu="${escapeHtml(place.id)}" aria-label="More actions for ${escapeHtml(place.name)}" aria-haspopup="menu">${icon.more}</button></div>`;
             }).join('')}</div>`;
 }
 
@@ -5592,6 +5608,11 @@ function renderPlacesInspector(
                 )}
             </p>
 
+            <div class="places-inspector-mobile-meta">
+              <span>${escapeHtml(t('Country'))}: ${escapeHtml(placeCountry(place) || 'Unknown')}</span>
+              <span>${escapeHtml(t('Updated'))}: ${escapeHtml(formatPlaceUpdatedAt(place.updatedAt))}</span>
+            </div>
+
             <div
               class="
                 places-inspector-tags
@@ -5947,11 +5968,16 @@ function bindPlacesInspectorControls(
             'click',
             event =>
             {
-                enterPlacesMapMoveMode(
-                    event.currentTarget
-                        .dataset
-                        .placesEditPosition
-                );
+                const placeId = event.currentTarget.dataset.placesEditPosition;
+                if (innerWidth <= 900)
+                {
+                    if (mobileSurface === 'details') closeMobileSurface(false);
+                    showPlaceOnMap(placeId, { editPosition: true });
+                }
+                else
+                {
+                    enterPlacesMapMoveMode(placeId);
+                }
             }
         );
 

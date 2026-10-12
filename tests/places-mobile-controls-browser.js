@@ -73,6 +73,16 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
 
                 await page.locator('[data-places-mode="list"]').click();
                 assert.ok(await page.locator('#placesSort').isVisible());
+                assert.ok(await page.locator('.places-list-row').first().evaluate(row =>
+                {
+                    const name = row.querySelector('strong');
+                    const more = row.querySelector('.places-row-more');
+                    const nameRect = name.getBoundingClientRect();
+                    const moreRect = more.getBoundingClientRect();
+                    return row.getBoundingClientRect().height < 115
+                        && nameRect.right < moreRect.left
+                        && document.documentElement.scrollWidth <= innerWidth;
+                }), `${width}px ${language} list rows`);
                 assert.equal(await page.locator('#placesRouteMenu').count(), 0);
                 assert.ok(await page.locator('#placesSort').evaluate(sort =>
                 {
@@ -128,6 +138,71 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
                 await page.close();
             }
         }
+
+        const page = await browser.newPage({ viewport: { width: 390, height: 720 } });
+        const errors = [];
+        page.on('pageerror', error => errors.push(error.message));
+        await page.goto(url);
+        await page.evaluate(() =>
+        {
+            geneoTourClose({ offerRestore: false });
+            state.projectOpen = true;
+            state.currentProjectId = 'p1';
+            state.activeModule = 'Places';
+            state.placesView = 'all';
+            state.placesViewMode = 'list';
+            render();
+        });
+        assert.ok(await page.locator('.places-list-row').first().isVisible());
+        assert.ok(await page.locator('.places-list-mobile-status').first().isVisible());
+        assert.equal(await page.locator('.places-list-country').first().isVisible(), false);
+        assert.ok(await page.locator('.places-list-row').first().evaluate(row =>
+            row.getBoundingClientRect().height < 115 && document.documentElement.scrollWidth <= innerWidth));
+
+        await page.locator('[data-mobile-sections]').click();
+        await page.locator('#placesSavedFilterPlus').click();
+        assert.equal(await page.evaluate(() => mobileSurface), 'sections');
+        assert.ok(await page.locator('#modalBackdrop.open .places-saved-filter-modal').isVisible());
+        await page.keyboard.press('Escape');
+        assert.equal(await page.evaluate(() => mobileSurface), 'sections');
+        await page.locator('[data-place-menu]').first().click();
+        assert.ok(await page.locator('#projectMenu').isVisible());
+        assert.equal(await page.evaluate(() => mobileSurface), 'sections');
+        await page.keyboard.press('Escape');
+        assert.equal(await page.evaluate(() => mobileSurface), 'sections');
+        await page.keyboard.press('Escape');
+        assert.equal(await page.evaluate(() => mobileSurface), null);
+
+        await page.locator('[data-mobile-details]').click();
+        await page.locator('.places-inspector-toolbar [data-place-menu]').click();
+        assert.equal(await page.evaluate(() => mobileSurface), 'details');
+        assert.ok(await page.locator('#projectMenu').isVisible());
+        await page.keyboard.press('Escape');
+        assert.equal(await page.evaluate(() => mobileSurface), 'details');
+        await page.locator('[data-places-inspector-edit]').click();
+        assert.ok(await page.locator('#modalBackdrop.open .modal').isVisible());
+        await page.keyboard.press('Escape');
+        assert.equal(await page.evaluate(() => mobileSurface), 'details');
+        assert.ok(await page.locator('.places-inspector-tags').evaluate(tags =>
+            getComputedStyle(tags).flexWrap === 'nowrap'
+            && getComputedStyle(tags).overflowX === 'auto'));
+
+        const hasLeaflet = await page.evaluate(() => Boolean(window.L));
+        await page.locator('[data-places-edit-position]').click();
+        assert.equal(await page.evaluate(() => mobileSurface), null);
+        assert.equal(await page.evaluate(() => state.placesViewMode), 'map');
+        if (hasLeaflet)
+        {
+            await page.waitForFunction(() => placesMapRuntime.mode === 'move');
+            assert.ok(await page.locator('[data-places-coordinate-bar]').isVisible());
+            await page.evaluate(() => cancelPlacesMapEditing());
+        }
+        else
+        {
+            assert.ok(await page.locator('#placesLeafletMap').count());
+        }
+        assert.deepEqual(errors, []);
+        await page.close();
     }
     finally
     {

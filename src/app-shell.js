@@ -106,7 +106,7 @@ function handleMobileSurfaceKeydown(event)
             if (anchor?.isConnected) anchor.focus();
             return;
         }
-        if (state.activeModule === 'Albums' && document.getElementById('projectMenu'))
+        if (['Albums', 'Places'].includes(state.activeModule) && document.getElementById('projectMenu'))
         {
             closeMenu();
             return;
@@ -248,6 +248,7 @@ sidebar.addEventListener('click', event =>
     if (mobileSurface !== 'sections') return;
     const button = event.target.closest('button');
     if (!button || (state.activeModule === 'Albums' && button.closest('[data-album-menu]'))
+        || (state.activeModule === 'Places' && button.matches('[data-place-menu], [data-place-saved-filter-menu], #placesSavedFilterPlus'))
         || (button.hasAttribute('aria-expanded') && !button.hasAttribute('aria-haspopup'))) return;
     requestAnimationFrame(() =>
     {
@@ -265,7 +266,7 @@ main.addEventListener('click', event =>
         openMobileSurface('details');
         return;
     }
-    if (mobileSurface !== 'details' || ['Family Tree', 'People', 'Albums'].includes(state.activeModule) || !mobileDetailTarget()?.contains(event.target)
+    if (mobileSurface !== 'details' || ['Family Tree', 'People', 'Albums', 'Places'].includes(state.activeModule) || !mobileDetailTarget()?.contains(event.target)
         || !event.target.closest('button[aria-haspopup]')) return;
     requestAnimationFrame(() =>
     {
