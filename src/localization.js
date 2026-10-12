@@ -2987,6 +2987,9 @@ const RU_UI_NOTES = {
     'Search notes':
         'Поиск заметок',
 
+    'Close search':
+        'Закрыть поиск',
+
     'Search notes...':
         'Поиск заметок...',
 

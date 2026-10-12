@@ -262,6 +262,7 @@ const state = {
     notesActiveCollectionId: null,
     selectedNoteId: null,
     notesSearch: '',
+    notesMobileSearchOpen: false,
     notesContext: null,
     notesMobilePane: 'browser',
     notesSaveStatus: 'Saved',

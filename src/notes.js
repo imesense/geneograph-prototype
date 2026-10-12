@@ -1,3 +1,5 @@
+let notesEditorScrollMemory = null;
+
 function renderNotes()
 {
     destroyNotesRichTextEditor();
@@ -389,7 +391,10 @@ function renderNotesBrowserPane(
 
             ${renderNotesContextFilterBar()}
 
-            <div class="notes-toolbar-line">
+            <div class="notes-toolbar-line ${state.notesMobileSearchOpen ? 'search-open' : ''}">
+              <button class="notes-mobile-search-toggle notes-control-button" type="button" id="notesMobileSearchToggle" aria-label="Search notes" title="Search notes">
+                ${icon.search}
+              </button>
               <div class="notes-toolbar-search">
                 <label
                   class="app-search-field"
@@ -462,6 +467,16 @@ function renderNotesBrowserPane(
                     options: APP_SORT_OPTIONS.notes
                 })}
               </div>
+
+              <button class="notes-mobile-search-close notes-control-button" type="button" id="notesMobileSearchClose" aria-label="Close search" title="Close search">
+                ${icon.close}
+              </button>
+
+              <button class="button primary notes-mobile-add" type="button" id="notesMobileNewNoteButton" aria-label="Add note" title="Add note">
+                ${icon.plus}
+                <span class="notes-mobile-add-full">Add note</span>
+                <span class="notes-mobile-add-short">Add</span>
+              </button>
             </div>
 
             ${renderNotesActiveFilters()}
@@ -2364,11 +2379,13 @@ function renderNoteCollectionsSection(
           <button
             class="link"
             type="button"
-            id="notesManageCollections">
-            ${renderPanelButtonLabel(
-                icon.plus,
-                'Add to collection'
-            )}
+            id="notesManageCollections"
+            aria-label="Add to collection">
+            <span class="panel-button-label">
+              <span class="panel-button-icon" aria-hidden="true">${icon.plus}</span>
+              <span class="panel-button-text notes-collection-add-full">Add to collection</span>
+              <span class="panel-button-text notes-collection-add-short">Add</span>
+            </span>
           </button>
         `,
 
@@ -12965,6 +12982,23 @@ function renderNotesPreservingInteraction(
 {
     const snapshot =
         captureNotesInteractionState();
+    const editor =
+        main.querySelector('.notes-right-pane');
+    const noteId =
+        state.selectedNoteId;
+
+    if (editor?.getClientRects().length && noteId)
+    {
+        notesEditorScrollMemory = {
+            noteId,
+            top: snapshot.editorScrollTop
+        };
+    }
+    else if (noteId && notesEditorScrollMemory?.noteId === noteId)
+    {
+        snapshot.editorScrollTop =
+            notesEditorScrollMemory.top;
+    }
 
     renderNotes();
 
@@ -13258,6 +13292,27 @@ function bindNotesBrowserControls()
         renderNotes
     );
 
+    const mobileSearchToggle =
+        main.querySelector('#notesMobileSearchToggle');
+    const mobileSearchClose =
+        main.querySelector('#notesMobileSearchClose');
+    const mobileToolbar =
+        main.querySelector('.notes-toolbar-line');
+
+    mobileSearchToggle?.addEventListener('click', () =>
+    {
+        state.notesMobileSearchOpen = true;
+        mobileToolbar?.classList.add('search-open');
+        main.querySelector('#notesSearch')?.focus();
+    });
+
+    mobileSearchClose?.addEventListener('click', () =>
+    {
+        state.notesMobileSearchOpen = false;
+        mobileToolbar?.classList.remove('search-open');
+        mobileSearchToggle?.focus();
+    });
+
     main
         .querySelector(
             '[data-clear-notes-context-filter]'
@@ -13364,6 +13419,10 @@ function bindNotesBrowserControls()
             () =>
                 createCentralNote()
         );
+
+    main
+        .querySelector('#notesMobileNewNoteButton')
+        ?.addEventListener('click', () => createCentralNote());
 
     main.querySelector('#notesEmptyCreate')?.addEventListener('click', createCentralNote);
 
