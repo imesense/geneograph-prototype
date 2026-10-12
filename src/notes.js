@@ -1,4 +1,5 @@
 let notesEditorScrollMemory = null;
+let notesBrowserScrollMemory = null;
 
 function renderNotes()
 {
@@ -11640,12 +11641,16 @@ function openNoteLinkPickerModal({
           `;
         };
 
+    const mobileNotesPicker =
+        state.activeModule === 'Notes';
+
     modalOpener(`
         <div
           class="
             modal
             notes-related-modal
             note-link-picker-modal
+            ${mobileNotesPicker ? 'notes-mobile-link-picker' : ''}
           "
           role="dialog"
           aria-modal="true"
@@ -12175,10 +12180,12 @@ function openNoteLinkPickerModal({
     requestAnimationFrame(
         () =>
         {
-            searchInput?.focus({
-                preventScroll:
-              true
-            });
+            if (!(mobileNotesPicker && innerWidth <= 900))
+            {
+                searchInput?.focus({
+                    preventScroll: true
+                });
+            }
         }
     );
 }
@@ -12684,7 +12691,9 @@ function captureNotesInteractionState()
 
     const browser =
         main.querySelector(
-            '.notes-browser-scroll'
+            window.matchMedia('(max-width: 900px)').matches
+                ? '.notes-browser-pane'
+                : '.notes-browser-scroll'
         );
 
     const richTextInstance =
@@ -12787,7 +12796,9 @@ function restoreNotesInteractionState(
 
     const browser =
         main.querySelector(
-            '.notes-browser-scroll'
+            window.matchMedia('(max-width: 900px)').matches
+                ? '.notes-browser-pane'
+                : '.notes-browser-scroll'
         );
 
     const editorScrollTop =
@@ -12982,6 +12993,16 @@ function renderNotesPreservingInteraction(
 {
     const snapshot =
         captureNotesInteractionState();
+    const mobileBrowser =
+        window.matchMedia('(max-width: 900px)').matches
+            ? main.querySelector('.notes-browser-pane')
+            : null;
+    const browserKey = [
+        currentProjectId(),
+        state.notesView,
+        state.notesActiveCollectionId || '',
+        state.notesSearch
+    ].join('|');
     const editor =
         main.querySelector('.notes-right-pane');
     const noteId =
@@ -12998,6 +13019,19 @@ function renderNotesPreservingInteraction(
     {
         snapshot.editorScrollTop =
             notesEditorScrollMemory.top;
+    }
+
+    if (mobileBrowser?.getClientRects().length)
+    {
+        notesBrowserScrollMemory = {
+            key: browserKey,
+            top: snapshot.browserScrollTop
+        };
+    }
+    else if (mobileBrowser && notesBrowserScrollMemory?.key === browserKey)
+    {
+        snapshot.browserScrollTop =
+            notesBrowserScrollMemory.top;
     }
 
     renderNotes();

@@ -228,7 +228,7 @@ function geneoTourCaptureOrigin()
     if (state.activeModule === 'Geneograph' && state.geneoView === 'board') captureGeneographViewport();
     const values = structuredClone(state);
     const scroll = {};
-    ['.main', '.tree-canvas', '.tree-inspector', '[data-geneo-canvas-wrap]', '.notes-browser-scroll',
+    ['.main', '.tree-canvas', '.tree-inspector', '[data-geneo-canvas-wrap]', '.notes-browser-pane', '.notes-browser-scroll',
         '.albums-sidebar', '.albums-detail', '.archive-sidebar', '.archive-inspector-scroll',
         '.places-sidebar', '.places-inspector'].forEach(selector =>
     {
@@ -316,7 +316,7 @@ function geneoTourPrepare(index)
             'selectedNoteId'
         ].map(key => [key, structuredClone(state[key])]));
         geneoTourRuntime.notesOriginScroll = Object.fromEntries(
-            ['.main', '.notes-browser-scroll', '.notes-right-pane'].map(selector =>
+            ['.main', '.notes-browser-pane', '.notes-browser-scroll', '.notes-right-pane'].map(selector =>
                 [selector, document.querySelector(selector)?.scrollTop || 0]));
         geneoTourRuntime.notesOriginScroll.page = document.scrollingElement?.scrollTop || 0;
     }
@@ -1932,9 +1932,8 @@ function geneoTourAlignNotesTarget(target)
     }
     else
     {
-        pane.scrollTop = 0;
-        const page = document.scrollingElement;
-        if (page) page.scrollTop += target.getBoundingClientRect().top - 90;
+        const boundary = pane.getBoundingClientRect().top + 12;
+        pane.scrollTop += target.getBoundingClientRect().top - boundary;
     }
 }
 

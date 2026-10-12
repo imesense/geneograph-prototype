@@ -7166,3 +7166,242 @@
         padding-inline: 16px;
     }
 }
+
+@media (max-width: 1100px) {
+    .notes-editor-header {
+        position: static;
+    }
+
+    .notes-summary-chips {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: none;
+        overscroll-behavior-inline: contain;
+        touch-action: pan-x;
+        scroll-padding-inline: var(--space-4);
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .notes-summary-chips::-webkit-scrollbar {
+        display: none;
+    }
+
+    .notes-summary-chips .app-chip {
+        flex: 0 0 auto;
+    }
+}
+
+@media (max-width: 900px) {
+    #modalBackdrop:has(.notes-mobile-link-picker) {
+        padding: 8px;
+    }
+
+    .notes-mobile-link-picker {
+        width: min(100%, calc(100vw - 16px));
+        height: min(760px, calc(100dvh - 16px));
+        max-height: calc(100dvh - 16px);
+    }
+
+    .notes-mobile-link-picker .notes-related-modal-body {
+        min-height: 0;
+        padding: var(--space-4);
+    }
+
+    .notes-mobile-link-picker .notes-related-toolbar {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .notes-mobile-link-picker .notes-related-toolbar .app-search-field,
+    .notes-mobile-link-picker .notes-related-toolbar .app-search-field input {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .notes-mobile-link-picker .note-link-picker-toolbar-actions {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .notes-mobile-link-picker .notes-related-selected-panel {
+        min-height: 0;
+        max-height: min(25%, 144px);
+        overflow-y: auto;
+    }
+
+    .notes-mobile-link-picker .notes-related-selected-list,
+    .notes-mobile-link-picker .source-picker-selected-list {
+        min-width: 0;
+    }
+
+    .notes-mobile-link-picker .notes-related-results-panel,
+    .notes-mobile-link-picker .notes-related-results {
+        min-height: 0;
+    }
+
+    .notes-mobile-link-picker .notes-related-results {
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .notes-mobile-link-picker .notes-related-choice,
+    .notes-mobile-link-picker .source-picker-choice {
+        min-width: 0;
+        grid-template-columns: 42px minmax(0, 1fr) 18px;
+    }
+
+    .notes-mobile-link-picker .notes-related-choice > input,
+    .notes-mobile-link-picker .source-picker-choice > input {
+        grid-column: 3;
+        grid-row: 1;
+    }
+
+    .notes-mobile-link-picker .notes-related-choice-status,
+    .notes-mobile-link-picker .source-picker-choice-status {
+        grid-column: 2 / -1;
+        grid-row: 2;
+        justify-self: start;
+    }
+
+    .notes-mobile-link-picker .notes-related-footer {
+        flex-wrap: wrap;
+    }
+
+    .notes-browser-pane {
+        display: block;
+        height: 100%;
+        overflow-y: auto;
+        overscroll-behavior-y: contain;
+        touch-action: pan-y;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .notes-browser-header {
+        position: static;
+    }
+
+    .notes-browser-scroll {
+        min-height: 0;
+        overflow: visible;
+    }
+
+    #modalBackdrop:has(.note-collection-picker-modal, .notes-people-modal, .notes-places-modal) {
+        padding: 8px;
+    }
+
+    .note-collection-picker-modal,
+    .notes-people-modal,
+    .notes-places-modal {
+        width: min(100%, calc(100vw - 16px));
+        height: min(760px, calc(100dvh - 16px));
+        max-height: calc(100dvh - 16px);
+    }
+
+    .note-collection-picker-modal .album-picker-body,
+    .notes-people-modal .photo-people-body,
+    .notes-places-modal .photo-people-body {
+        min-height: 0;
+        padding: var(--space-4);
+        overflow: hidden;
+    }
+
+    .note-collection-picker-modal .album-picker-results {
+        max-height: none;
+        height: 100%;
+        min-height: 0;
+        overflow-y: auto;
+    }
+
+    .notes-people-modal .photo-people-body,
+    .notes-places-modal .photo-people-body {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+    }
+
+    .notes-people-modal .photo-people-search-field,
+    .notes-places-modal .photo-people-search-field {
+        flex: 0 0 auto;
+    }
+
+    .notes-people-modal .photo-people-selected-panel,
+    .notes-places-modal .photo-people-selected-panel {
+        flex: 0 1 auto;
+        max-height: min(30%, 180px);
+        overflow-y: auto;
+    }
+
+    .notes-people-modal .photo-people-results-panel,
+    .notes-places-modal .photo-people-results-panel {
+        flex: 1 1 0;
+        min-height: 0;
+        align-self: stretch;
+        grid-template-rows: auto minmax(0, 1fr);
+    }
+
+    .notes-people-modal .photo-people-results,
+    .notes-places-modal .photo-people-results {
+        max-height: none;
+        height: 100%;
+        min-height: 0;
+        overflow-y: auto;
+    }
+}
+
+@media (max-width: 540px) {
+    .note-collection-picker-modal .album-picker-results-head {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .note-collection-picker-modal .album-picker-new-button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .notes-places-modal .notes-place-search-toolbar {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .notes-places-modal .notes-place-search-toolbar > .button {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 540px) and (max-height: 600px) {
+    .notes-mobile-link-picker .modal-header {
+        max-height: 132px;
+        overflow-y: auto;
+    }
+
+    .notes-mobile-link-picker .modal-header .close-button {
+        position: sticky;
+        top: 0;
+        flex: 0 0 auto;
+    }
+
+    .notes-mobile-link-picker .notes-related-modal-body,
+    .notes-mobile-link-picker .notes-related-footer {
+        padding: var(--space-3);
+    }
+
+    .notes-mobile-link-picker .notes-related-selected-panel {
+        max-height: 72px;
+    }
+
+    .notes-people-modal .photo-people-selected-panel {
+        max-height: 80px;
+    }
+
+    .notes-places-modal .photo-people-selected-panel {
+        max-height: 44px;
+    }
+
+    .notes-people-modal .photo-people-footer,
+    .notes-places-modal .photo-people-footer,
+    .note-collection-picker-modal .album-picker-footer {
+        padding: var(--space-3);
+        gap: var(--space-2);
+    }
+}

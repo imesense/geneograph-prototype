@@ -2145,12 +2145,17 @@ function openSourcesForTargetModal({
           `;
         };
 
+    const mobileNotesPicker =
+        targetType === 'note'
+        && state.activeModule === 'Notes';
+
     openModal(`
         <div
           class="
             modal
             notes-related-modal
             target-source-picker-modal
+            ${mobileNotesPicker ? 'notes-mobile-link-picker' : ''}
           "
           role="dialog"
           aria-modal="true"
@@ -2659,9 +2664,12 @@ function openSourcesForTargetModal({
 
     requestAnimationFrame(() =>
     {
-        searchInput.focus({
-            preventScroll: true
-        });
+        if (!(mobileNotesPicker && innerWidth <= 900))
+        {
+            searchInput.focus({
+                preventScroll: true
+            });
+        }
     });
 }
 
