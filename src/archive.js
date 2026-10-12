@@ -2148,6 +2148,8 @@ function openSourcesForTargetModal({
           `;
         };
 
+    const mobilePersonPicker = innerWidth <= 900 && mobileSurface === 'details'
+        && ['Family Tree', 'People'].includes(state.activeModule);
     const mobileNotesPicker =
         targetType === 'note'
         && state.activeModule === 'Notes';
@@ -2163,6 +2165,7 @@ function openSourcesForTargetModal({
             target-source-picker-modal
             ${mobileNotesPicker ? 'notes-mobile-link-picker' : ''}
             ${mobileAlbumsPicker ? 'albums-mobile-link-picker' : ''}
+            ${mobilePersonPicker ? 'person-mobile-link-picker' : ''}
           "
           role="dialog"
           aria-modal="true"
@@ -2671,7 +2674,8 @@ function openSourcesForTargetModal({
 
     requestAnimationFrame(() =>
     {
-        if (autoFocusSearch && !((mobileNotesPicker || mobileAlbumsPicker) && innerWidth <= 900))
+        if (autoFocusSearch && !((mobileNotesPicker || mobileAlbumsPicker) && innerWidth <= 900)
+            && !mobilePersonPicker)
         {
             searchInput.focus({
                 preventScroll: true
@@ -14654,6 +14658,8 @@ function openConnectedFilesModal({
         openModal
 } = {})
 {
+    const mobilePersonPicker = innerWidth <= 900 && mobileSurface === 'details'
+        && ['Family Tree', 'People'].includes(state.activeModule);
     const allFiles =
         connectedFilesForProject(
             projectId
@@ -15633,7 +15639,7 @@ function openConnectedFilesModal({
         () =>
         {
             if (
-                autoFocusSearch
+                autoFocusSearch && !mobilePersonPicker
                 && sourceTab === 'archive'
             )
             {

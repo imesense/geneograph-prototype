@@ -11643,6 +11643,8 @@ function openNoteLinkPickerModal({
           `;
         };
 
+    const mobilePersonPicker = innerWidth <= 900 && mobileSurface === 'details'
+        && ['Family Tree', 'People'].includes(state.activeModule);
     const mobileNotesPicker =
         state.activeModule === 'Notes';
     const mobileAlbumsPicker =
@@ -11656,6 +11658,7 @@ function openNoteLinkPickerModal({
             note-link-picker-modal
             ${mobileNotesPicker ? 'notes-mobile-link-picker' : ''}
             ${mobileAlbumsPicker ? 'albums-mobile-link-picker' : ''}
+            ${mobilePersonPicker ? 'person-mobile-link-picker' : ''}
           "
           role="dialog"
           aria-modal="true"
@@ -12185,7 +12188,8 @@ function openNoteLinkPickerModal({
     requestAnimationFrame(
         () =>
         {
-            if (autoFocusSearch && !((mobileNotesPicker || mobileAlbumsPicker) && innerWidth <= 900))
+            if (autoFocusSearch && !((mobileNotesPicker || mobileAlbumsPicker) && innerWidth <= 900)
+                && !mobilePersonPicker)
             {
                 searchInput?.focus({
                     preventScroll: true
