@@ -61,10 +61,10 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             });
             if (width <= 900)
             {
-                const openFolder = page.locator('[data-archive-folder-row]').first();
+                const openFolder = page.locator('[data-archive-mobile-folder]').first();
                 assert.equal(await openFolder.isVisible(), true);
-                await openFolder.click({ position: { x: 20, y: 65 } });
-                assert.notEqual(await page.locator('.archive-breadcrumb-current').innerText(), 'All files');
+                await openFolder.click();
+                assert.notEqual(await page.locator('.archive-mobile-location-name').innerText(), 'All files');
             }
 
             await page.evaluate(() =>

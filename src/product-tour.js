@@ -836,9 +836,13 @@ function geneoTourTarget(index)
         'geneograph-export': '.geneo-editor-toolbar [data-geneo-export]',
         'geneograph-to-albums': '.topnav [data-module="Albums"]'
     };
+    const mobileArchiveTarget = innerWidth <= 900 && {
+        'archive-location': '.archive-mobile-location',
+        'archive-table': '.archive-mobile-items'
+    }[id];
     const target = id === 'archive-folder-actions' && innerWidth <= 1100
         ? document.querySelector(geneoTourTertiarySelectors[id])
-        : document.querySelector(selectors[id]);
+        : document.querySelector(mobileArchiveTarget || selectors[id]);
     if (id === 'places-add-map' && (!window.L || !placesMapRuntime.map))
         return document.querySelector('[data-places-map-status]:not([hidden])');
     if (id === 'people-saved-filters') return target?.parentElement?.parentElement || null;
