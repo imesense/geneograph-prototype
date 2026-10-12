@@ -229,7 +229,7 @@ function geneoTourCaptureOrigin()
     const values = structuredClone(state);
     const scroll = {};
     ['.main', '.tree-canvas', '.tree-inspector', '[data-geneo-canvas-wrap]', '.notes-browser-pane', '.notes-browser-scroll',
-        '.albums-sidebar', '.albums-detail', '.archive-sidebar', '.archive-inspector-scroll',
+        '.albums-sidebar', '.albums-main', '.albums-detail', '.archive-sidebar', '.archive-inspector-scroll',
         '.places-sidebar', '.places-inspector'].forEach(selector =>
     {
         const element = document.querySelector(selector);
@@ -2022,7 +2022,7 @@ function geneoTourTargetRect(target)
             bottom: Math.min(rect.bottom, innerHeight - 64) };
     if (stepId === 'albums-photos')
     {
-        const viewport = main.querySelector('.albums-content')?.getBoundingClientRect();
+        const viewport = main.querySelector(innerWidth <= 900 ? '.albums-main' : '.albums-content')?.getBoundingClientRect();
         return viewport ? { left: Math.max(rect.left, viewport.left), top: Math.max(rect.top, viewport.top),
             right: Math.min(rect.right, viewport.right), bottom: Math.min(rect.bottom, viewport.bottom) } : rect;
     }

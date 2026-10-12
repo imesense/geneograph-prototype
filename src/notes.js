@@ -11643,6 +11643,8 @@ function openNoteLinkPickerModal({
 
     const mobileNotesPicker =
         state.activeModule === 'Notes';
+    const mobileAlbumsPicker =
+        state.activeModule === 'Albums';
 
     modalOpener(`
         <div
@@ -11651,6 +11653,7 @@ function openNoteLinkPickerModal({
             notes-related-modal
             note-link-picker-modal
             ${mobileNotesPicker ? 'notes-mobile-link-picker' : ''}
+            ${mobileAlbumsPicker ? 'albums-mobile-link-picker' : ''}
           "
           role="dialog"
           aria-modal="true"
@@ -12180,7 +12183,7 @@ function openNoteLinkPickerModal({
     requestAnimationFrame(
         () =>
         {
-            if (!(mobileNotesPicker && innerWidth <= 900))
+            if (!((mobileNotesPicker || mobileAlbumsPicker) && innerWidth <= 900))
             {
                 searchInput?.focus({
                     preventScroll: true

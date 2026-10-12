@@ -4437,10 +4437,13 @@ function renderAlbumsPreserveViewport({
     focusTarget = ''
 } = {})
 {
+    const scrollSelector =
+        innerWidth <= 900
+            ? '.albums-main'
+            : '.albums-content';
+
     const content =
-        main.querySelector(
-            '.albums-content'
-        );
+        main.querySelector(scrollSelector);
 
     const detail =
         main.querySelector(
@@ -4461,9 +4464,7 @@ function renderAlbumsPreserveViewport({
     requestAnimationFrame(() =>
     {
         const nextContent =
-            main.querySelector(
-                '.albums-content'
-            );
+            main.querySelector(scrollSelector);
 
         if (nextContent)
         {
@@ -4553,6 +4554,16 @@ function renderAlbums()
 {
     disconnectAlbumsGridResizeObserver();
 
+    const scrollKey =
+        `${state.albumsView}:${state.activeAlbumId || ''}`;
+    const previousMain =
+        main.querySelector('.albums-main');
+    const mobileScrollTop =
+        innerWidth <= 900
+        && previousMain?.dataset.albumsScrollKey === scrollKey
+            ? previousMain.scrollTop
+            : 0;
+
     ensureSelectedAlbumPhoto();
     ensureSelectedAlbumPhotoOnListPage();
 
@@ -4601,7 +4612,7 @@ function renderAlbums()
 
     const nextMainMarkup = `
         <div class="${shellClasses}">
-          <section class="albums-main">
+          <section class="albums-main" data-albums-scroll-key="${escapeHtml(scrollKey)}">
             ${renderAlbumsMainMarkup()}
           </section>
 
@@ -4620,6 +4631,11 @@ function renderAlbums()
 
     main.innerHTML =
         nextMainMarkup;
+
+    if (innerWidth <= 900 && mobileScrollTop)
+    {
+        main.querySelector('.albums-main').scrollTop = mobileScrollTop;
+    }
 
     bindAlbumsSidebar();
     bindAlbumsControls();
@@ -7947,6 +7963,7 @@ function openPhotoPeopleModal(photoId, { fromLightbox = false, activePersonId = 
           class="
             modal
             photo-people-modal
+            albums-tag-people-modal
           "
           role="dialog"
           aria-modal="true"
@@ -8543,7 +8560,9 @@ function openPhotoPeopleModal(photoId, { fromLightbox = false, activePersonId = 
     const initialFocus = modal.querySelector(
         activePersonId && initialSelectedIds.has(activePersonId)
             ? `[data-photo-people-region="${CSS.escape(activePersonId)}"]`
-            : '[data-photo-people-search]'
+            : innerWidth <= 900 && state.activeModule === 'Albums'
+                ? '[data-close]'
+                : '[data-photo-people-search]'
     );
     initialFocus?.setAttribute('data-modal-initial-focus', '');
     initialFocus?.focus({
@@ -9962,6 +9981,7 @@ function mountAlbumsActionMenu(
 
             if (!action) return;
 
+            anchor.focus({ preventScroll: true });
             closeMenu();
             onAction(action);
         }
@@ -12355,7 +12375,7 @@ function openAlbumSidebarMenu(albumId, anchor)
     document.body.appendChild(menu);
     menu.addEventListener('click', event =>
     {
-        const action = event.target.closest('[data-album-action]')?.dataset.albumAction; if (!action) return; closeMenu(); state.albumsView = 'album'; state.activeAlbumId = albumId; if (action === 'edit') openEditAlbumModal(); else if (action === 'delete') openDeleteAlbumConfirm(albumId); else renderAlbums();
+        const action = event.target.closest('[data-album-action]')?.dataset.albumAction; if (!action) return; anchor.focus({ preventScroll: true }); closeMenu(); state.albumsView = 'album'; state.activeAlbumId = albumId; if (action === 'edit') openEditAlbumModal(); else if (action === 'delete') openDeleteAlbumConfirm(albumId); else renderAlbums();
     });
     bindMenuLifecycle(anchor);
 }
@@ -12474,10 +12494,19 @@ function bindAlbumsCardControls(root = main)
                         state.selectedPhotoId =
                             photoId;
 
+                        const mobile = innerWidth <= 900;
+
                         renderAlbumsPreserveViewport({
-                            focusPhotoId: photoId,
+                            focusPhotoId: mobile ? '' : photoId,
                             focusTarget: 'card'
                         });
+
+                        if (mobile)
+                        {
+                            main.querySelector(`[data-photo-id="${CSS.escape(photoId)}"]`)
+                                ?.focus({ preventScroll: true });
+                            openMobileSurface('details');
+                        }
                     }
                 );
             };

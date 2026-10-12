@@ -91,7 +91,12 @@ function handleMobileSurfaceKeydown(event)
             if (anchor?.isConnected) anchor.focus();
             return;
         }
-        if (mobileSurface === 'details' && ['Family Tree', 'People'].includes(state.activeModule)
+        if (state.activeModule === 'Albums' && document.getElementById('projectMenu'))
+        {
+            closeMenu();
+            return;
+        }
+        if (mobileSurface === 'details' && ['Family Tree', 'People', 'Albums'].includes(state.activeModule)
             && (document.getElementById('projectMenu') || document.getElementById('relativePopover')))
         {
             closeMenu();
@@ -225,7 +230,8 @@ sidebar.addEventListener('click', event =>
 {
     if (mobileSurface !== 'sections') return;
     const button = event.target.closest('button');
-    if (!button || (button.hasAttribute('aria-expanded') && !button.hasAttribute('aria-haspopup'))) return;
+    if (!button || (state.activeModule === 'Albums' && button.closest('[data-album-menu]'))
+        || (button.hasAttribute('aria-expanded') && !button.hasAttribute('aria-haspopup'))) return;
     requestAnimationFrame(() =>
     {
         if (mobileSurface === 'sections' && !modalBackdrop.classList.contains('open'))
@@ -242,7 +248,7 @@ main.addEventListener('click', event =>
         openMobileSurface('details');
         return;
     }
-    if (mobileSurface !== 'details' || ['Family Tree', 'People'].includes(state.activeModule) || !mobileDetailTarget()?.contains(event.target)
+    if (mobileSurface !== 'details' || ['Family Tree', 'People', 'Albums'].includes(state.activeModule) || !mobileDetailTarget()?.contains(event.target)
         || !event.target.closest('button[aria-haspopup]')) return;
     requestAnimationFrame(() =>
     {

@@ -2148,6 +2148,9 @@ function openSourcesForTargetModal({
     const mobileNotesPicker =
         targetType === 'note'
         && state.activeModule === 'Notes';
+    const mobileAlbumsPicker =
+        targetType === 'photo'
+        && state.activeModule === 'Albums';
 
     openModal(`
         <div
@@ -2156,6 +2159,7 @@ function openSourcesForTargetModal({
             notes-related-modal
             target-source-picker-modal
             ${mobileNotesPicker ? 'notes-mobile-link-picker' : ''}
+            ${mobileAlbumsPicker ? 'albums-mobile-link-picker' : ''}
           "
           role="dialog"
           aria-modal="true"
@@ -2664,7 +2668,7 @@ function openSourcesForTargetModal({
 
     requestAnimationFrame(() =>
     {
-        if (!(mobileNotesPicker && innerWidth <= 900))
+        if (!((mobileNotesPicker || mobileAlbumsPicker) && innerWidth <= 900))
         {
             searchInput.focus({
                 preventScroll: true

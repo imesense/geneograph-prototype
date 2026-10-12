@@ -4085,6 +4085,50 @@ button.albums-inspector-row-main:focus-visible {
     .photo-people-workspace { min-height: 280px; overflow: visible; }
     .photo-people-region-panel { grid-template-rows: auto auto auto auto; }
     .photo-people-photo-stage { min-height: 180px; }
+
+    #modalBackdrop:has(.albums-tag-people-modal) {
+        padding: 8px;
+    }
+
+    .albums-tag-people-modal {
+        width: min(100%, calc(100vw - 16px));
+        height: min(760px, calc(100dvh - 16px));
+        max-height: calc(100dvh - 16px);
+    }
+
+    .albums-tag-people-modal .photo-people-body {
+        display: block;
+        overscroll-behavior-y: contain;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .albums-tag-people-modal .photo-people-sidebar {
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .albums-tag-people-modal .photo-people-selected-panel,
+    .albums-tag-people-modal .photo-people-results-panel {
+        display: flex;
+        flex-direction: column;
+        flex: none;
+    }
+
+    .albums-tag-people-modal .photo-people-selected-list,
+    .albums-tag-people-modal .photo-people-results {
+        max-height: none;
+        overflow: visible;
+    }
+
+    .albums-tag-people-modal .photo-people-workspace {
+        min-height: 0;
+        overflow: visible;
+    }
+
+    .albums-tag-people-modal .photo-people-photo-stage {
+        min-height: 220px;
+    }
 }
 
 /* Notes: person-first Add Events modal */
@@ -5089,8 +5133,83 @@ button.albums-inspector-row-main:focus-visible {
 }
 
 @media (max-width: 900px) {
+    #modalBackdrop:has(.album-picker-modal) {
+        padding: 8px;
+    }
+
+    .album-picker-modal {
+        width: min(100%, calc(100vw - 16px));
+        height: min(760px, calc(100dvh - 16px));
+        max-height: calc(100dvh - 16px);
+    }
+
+    .album-picker-modal .album-picker-body {
+        min-height: 0;
+        padding: var(--space-4);
+    }
+
+    .album-picker-modal .album-picker-browse,
+    .album-picker-modal .album-picker-results-panel {
+        min-height: 0;
+    }
+
+    .album-picker-modal .album-picker-results {
+        min-height: 0;
+        height: 100%;
+        max-height: none;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .album-picker-modal .album-picker-copy .album-picker-membership,
+    .album-picker-modal .album-picker-copy .album-picker-description {
+        overflow: visible;
+        text-overflow: clip;
+        white-space: normal;
+    }
+
+    .album-picker-modal .album-picker-create {
+        min-height: 0;
+        overflow-y: auto;
+    }
+
+    body.mobile-surface-open:has(.albums-shell) #modalBackdrop .modal:not(.photo-people-modal):not(.notes-related-modal):not(.albums-lightbox-modal) {
+        max-height: calc(100dvh - 16px);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    body.mobile-surface-open:has(.albums-shell) #modalBackdrop .modal:not(.photo-people-modal):not(.notes-related-modal):not(.albums-lightbox-modal) > form {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+    }
+
+    body.mobile-surface-open:has(.albums-shell) #modalBackdrop .modal:not(.photo-people-modal):not(.notes-related-modal):not(.albums-lightbox-modal) .modal-body {
+        min-height: 0;
+        overflow-y: auto;
+    }
+
+    body.mobile-surface-open:has(.albums-shell) #modalBackdrop .modal:not(.photo-people-modal):not(.notes-related-modal):not(.albums-lightbox-modal) .modal-footer {
+        flex: 0 0 auto;
+        flex-wrap: wrap;
+    }
+
+    .album-picker-modal.photo-people-modal .album-picker-results {
+        max-height: none;
+    }
+
     .albums-shell {
         height: calc(100dvh - var(--topbar-h));
+    }
+
+    .albums-main {
+        overflow-y: auto;
+        overscroll-behavior-y: contain;
+        touch-action: pan-y;
+        -webkit-overflow-scrolling: touch;
     }
 
     .albums-header-actions {
@@ -5098,6 +5217,9 @@ button.albums-inspector-row-main:focus-visible {
     }
 
     .albums-content {
+        flex: 0 0 auto;
+        overflow: visible;
+        scrollbar-gutter: auto;
         touch-action: pan-y;
         -webkit-overflow-scrolling: touch;
     }

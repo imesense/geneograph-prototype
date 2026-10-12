@@ -42,7 +42,7 @@ async function swipe(page, x, fromY, toY)
                     state.activeModule = 'Albums';
                     render();
                 });
-                assert.ok(await page.locator('.albums-content').evaluate(el => el.scrollHeight > el.clientHeight + 100));
+                assert.ok(await page.locator('.albums-main').evaluate(el => el.scrollHeight > el.clientHeight + 100));
                 assert.ok(await page.evaluate(() => document.documentElement.scrollHeight <= innerHeight + 2));
                 assert.equal(await page.locator('#albumsAddPhotos').isVisible(), false);
                 assert.equal(await page.locator('#albumsMobileAddPhotos').isVisible(), true);
@@ -70,22 +70,24 @@ async function swipe(page, x, fromY, toY)
                 const firstImage = await page.locator('.album-photo-card .albums-thumb').first().boundingBox();
                 await swipe(page, firstImage.x + firstImage.width / 2, firstImage.y + firstImage.height - 12,
                     firstImage.y + 12);
-                assert.ok(await page.locator('.albums-content').evaluate(el => el.scrollTop > 20),
+                assert.ok(await page.locator('.albums-main').evaluate(el => el.scrollTop > 20),
                     `photo swipe scrolls at ${width} (${language})`);
+                assert.ok(await page.locator('.albums-header').evaluate(el => el.getBoundingClientRect().top < 52),
+                    `Albums header scrolls with photos at ${width} (${language})`);
                 await page.waitForTimeout(250);
-                await page.locator('.albums-content').evaluate(el => { el.scrollTop = 0; });
+                await page.locator('.albums-main').evaluate(el => { el.scrollTop = 0; });
                 await page.locator('.albums-card-body').first().evaluate(el => el.scrollIntoView({ block: 'center' }));
                 const bodyBox = await page.locator('.albums-card-body').first().boundingBox();
-                const beforeTextSwipe = await page.locator('.albums-content').evaluate(el => el.scrollTop);
+                const beforeTextSwipe = await page.locator('.albums-main').evaluate(el => el.scrollTop);
                 await swipe(page, bodyBox.x + bodyBox.width / 2, bodyBox.y + bodyBox.height - 8,
                     bodyBox.y - 90);
-                assert.ok(await page.locator('.albums-content').evaluate((el, top) => el.scrollTop > top + 20,
+                assert.ok(await page.locator('.albums-main').evaluate((el, top) => el.scrollTop > top + 20,
                     beforeTextSwipe), `card text swipe scrolls at ${width} (${language})`);
                 await page.waitForTimeout(250);
-                await page.locator('.albums-content').evaluate(el => { el.scrollTop = 180; });
-                const contentBox = await page.locator('.albums-content').boundingBox();
-                await page.touchscreen.tap(contentBox.x + contentBox.width / 2, contentBox.y + 60);
-                const selectedScroll = await page.locator('.albums-content').evaluate(el => el.scrollTop);
+                await page.locator('.albums-main').evaluate(el => { el.scrollTop = 180; });
+                await page.locator('.albums-card-body').first().click();
+                assert.equal(await page.locator('#mobileDetailsClose').isVisible(), true);
+                const selectedScroll = await page.locator('.albums-main').evaluate(el => el.scrollTop);
                 assert.ok(Math.abs(selectedScroll - 180) <= 24,
                     `selection scroll ${selectedScroll} at ${width} (${language})`);
                 assert.ok(await page.locator('.album-photo-card.selected-detail .albums-card-footer').evaluate(footer =>
@@ -96,6 +98,7 @@ async function swipe(page, x, fromY, toY)
                     return details.width >= 32 && more.width >= 32 && details.right < more.left
                         && more.right <= bounds.right + 1 && details.top >= bounds.top - 1;
                 }), `selected photo actions fit at ${width} (${language})`);
+                await page.locator('#mobileDetailsClose').click();
                 await page.locator('.album-photo-card.selected-detail .albums-card-more').click();
                 assert.equal(await page.locator('#projectMenu').isVisible(), true);
                 await page.keyboard.press('Escape');
@@ -111,14 +114,62 @@ async function swipe(page, x, fromY, toY)
                         && close.right <= toolbar.right && actions.every(rect => rect.right < close.left);
                 }));
                 await closeInToolbar();
+                await page.locator('#albumsLinkAlbum').click();
+                assert.ok(await page.locator('.album-picker-results').evaluate(el =>
+                {
+                    const panel = el.closest('.album-picker-results-panel');
+                    return el.clientHeight > 100
+                        && panel.getBoundingClientRect().bottom - el.getBoundingClientRect().bottom < 2;
+                }));
+                assert.equal(await page.evaluate(() => document.activeElement?.matches('input[type="search"]')), false);
+                await page.locator('[data-album-picker-create]').click();
+                assert.equal(await page.locator('[data-album-picker-create-form]').isVisible(), true);
+                await page.locator('[data-album-picker-back]').click();
+                assert.equal(await page.locator('[data-album-picker-browse]').isVisible(), true);
+                await page.keyboard.press('Escape');
+                assert.equal(await page.evaluate(() => mobileSurface), 'details');
+                for (const trigger of ['#albumsTagPeople', '#albumsManagePhotoNotes', '#albumsManagePhotoSources'])
+                {
+                    await page.locator(trigger).click();
+                    assert.equal(await page.evaluate(() => document.activeElement?.matches('input[type="search"]')), false);
+                    if (trigger === '#albumsTagPeople' && width <= 760)
+                    {
+                        assert.ok(await page.locator('.albums-tag-people-modal').evaluate(modal =>
+                        {
+                            const body = modal.querySelector('.photo-people-body');
+                            const sidebar = modal.querySelector('.photo-people-sidebar');
+                            const results = modal.querySelector('.photo-people-results-panel');
+                            const workspace = modal.querySelector('.photo-people-workspace');
+                            return body.scrollHeight > body.clientHeight
+                                && sidebar.getBoundingClientRect().bottom <= workspace.getBoundingClientRect().top + 1
+                                && results.getBoundingClientRect().bottom <= workspace.getBoundingClientRect().top;
+                        }), `Tag people flows to photo at ${width} (${language})`);
+                    }
+                    await page.keyboard.press('Escape');
+                    assert.equal(await page.evaluate(() => mobileSurface), 'details');
+                }
+                await page.locator('#albumsInspectorMore').click();
+                assert.ok(await page.locator('#projectMenu').evaluate(menu =>
+                {
+                    const rect = menu.getBoundingClientRect();
+                    return document.elementFromPoint(rect.left + 20, rect.top + 20)?.closest('#projectMenu') === menu;
+                }));
+                await page.keyboard.press('Escape');
                 await page.locator('#albumsEditPhoto').click();
                 assert.equal(await page.locator('#albumsCancelPhotoEdit').isVisible(), true);
                 await closeInToolbar();
                 await page.locator('#albumsCancelPhotoEdit').click();
-                const beforeDetails = await page.locator('.albums-content').evaluate(el => el.scrollTop);
+                const beforeDetails = await page.locator('.albums-main').evaluate(el => el.scrollTop);
                 await page.locator('#mobileDetailsClose').click();
-                assert.ok(await page.locator('.albums-content').evaluate((el, top) => Math.abs(el.scrollTop - top) <= 8,
+                assert.ok(await page.locator('.albums-main').evaluate((el, top) => Math.abs(el.scrollTop - top) <= 8,
                     beforeDetails));
+                await page.locator('[data-mobile-sections]').click();
+                await page.locator('#albumsNewAlbum').click();
+                assert.equal(await page.locator('#newAlbumForm').isVisible(), true);
+                await page.keyboard.press('Escape');
+                assert.equal(await page.evaluate(() => mobileSurface), 'sections');
+                await page.keyboard.press('Escape');
+                assert.equal(await page.evaluate(() => mobileSurface), null);
                 await page.locator('#albumsFilterButton').click();
                 assert.equal(await page.locator('#albumsFilterButton').getAttribute('aria-expanded'), 'true');
                 await page.keyboard.press('Escape');
@@ -142,6 +193,15 @@ async function swipe(page, x, fromY, toY)
                 assert.equal(await page.locator('#projectMenu').isVisible(), true);
                 await page.keyboard.press('Escape');
                 await page.locator('[data-albums-mode="grid"]').click();
+                await page.locator('[data-mobile-sections]').click();
+                await page.locator('[data-album-menu]').first().click();
+                assert.equal(await page.evaluate(() => mobileSurface), 'sections');
+                await page.locator('[data-album-action="edit"]').click();
+                assert.equal(await page.locator('#editAlbumForm').isVisible(), true);
+                await page.keyboard.press('Escape');
+                assert.equal(await page.evaluate(() => mobileSurface), 'sections');
+                assert.equal(await page.locator('[data-album-menu]').first().evaluate(el => document.activeElement === el), true);
+                await page.keyboard.press('Escape');
                 assert.deepEqual(errors, []);
                 await page.close();
             }
