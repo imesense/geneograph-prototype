@@ -491,7 +491,9 @@ function normalizeGeneographPersonCardOverrides(
     });
 
     const radius =
-        Number(source.cornerRadius);
+        source.cornerRadius == null
+            ? NaN
+            : Number(source.cornerRadius);
 
     const enumOverride =
         key =>
@@ -623,6 +625,17 @@ function geneoPersonCardEffectiveSettings(
               ? boardSettings.cornerRadius
               : overrides.cornerRadius
     };
+}
+
+function geneoPersonCardHasOverrides(node)
+{
+    const overrides = normalizeGeneographPersonCardOverrides(node?.personCard);
+    return overrides.custom && (
+        ['style', 'nameFormat', 'dateFormat', 'photoSize', 'alignment', 'cornerRadius']
+            .some(key => overrides[key] !== null)
+        || Object.keys(overrides.fields).length > 0
+        || Object.keys(overrides.photoByStyle).length > 0
+    );
 }
 
 function geneoPersonCardFieldSupported(
@@ -13550,13 +13563,6 @@ function renderGeneographPersonCardControls({
         selectedGeneographDiagram()
             ?.canvas;
 
-    const overrides =
-        node
-            ? normalizeGeneographPersonCardOverrides(
-                node.personCard
-            )
-            : null;
-
     const settings =
         node
             ? geneoPersonCardEffectiveSettings(
@@ -13564,17 +13570,7 @@ function renderGeneographPersonCardControls({
             )
             : boardSettings;
 
-    const custom =
-        Boolean(
-            node
-          && overrides?.custom
-        );
-
-    const inherited =
-        Boolean(
-            node
-          && !custom
-        );
+    const hasOverrides = node && geneoPersonCardHasOverrides(node);
 
     const labels =
         geneoPersonCardFieldLabels();
@@ -13594,29 +13590,20 @@ function renderGeneographPersonCardControls({
               settings[key],
                 scope,
                 node,
-                disabled:
-              inherited
-              || dependentDisabled
+                disabled: dependentDisabled
             });
 
     return `
         ${
             node
                 ? `
-              <label class="geneo-check">
-                <input
-                  type="checkbox"
-                  data-geneo-person-card-use-defaults
-                  data-geneo-person-card-node="${escapeHtml(
-                        node.id
-                    )}"
-                  ${
-                        custom
-                            ? ''
-                            : 'checked'
-                    }>
-                Use board defaults
-              </label>
+              ${hasOverrides
+                    ? `<button class="button secondary compact" type="button"
+                         data-geneo-person-card-reset
+                         data-geneo-person-card-node="${escapeHtml(node.id)}">
+                         Reset to default
+                       </button>`
+                    : `<span class="geneo-selection-help">Board default</span>`}
             `
                 : ''
         }
@@ -13624,25 +13611,7 @@ function renderGeneographPersonCardControls({
         <div
           class="geneo-person-card-controls"
           data-geneo-person-card-controls
-          data-inherited="${
-                inherited
-                    ? 'true'
-                    : 'false'
-            }">
-          ${
-                inherited
-                    ? `
-                <p
-                  class="
-                    geneo-selection-help
-                    geneo-person-card-inheritance-note
-                  ">
-                  These values are inherited from the board.
-                  Uncheck “Use board defaults” to edit this card.
-                </p>
-              `
-                    : ''
-            }
+          >
 
           <div
             class="geneo-person-card-control-group">
@@ -13655,8 +13624,7 @@ function renderGeneographPersonCardControls({
                 scope,
                 node,
                 settings,
-                disabled:
-                inherited
+                disabled: false
             })}
           </div>
 
@@ -13718,7 +13686,7 @@ function renderGeneographPersonCardControls({
                 }
             </div>
 
-            <div
+            ${scope === 'board' ? `<div
               class="geneo-person-card-radius-row">
               <div class="geneo-field">
                 <label
@@ -13760,15 +13728,8 @@ function renderGeneographPersonCardControls({
                     `
                         : ''
                 }
-                ${
-                    inherited
-                        ? `
-                      disabled
-                      aria-disabled="true"
-                    `
-                        : ''
-                }>
-            </div>
+                >
+            </div>` : ''}
 
             ${
                 scope === 'board'
@@ -13862,8 +13823,7 @@ function renderGeneographPersonCardControls({
                                 : ''
                         }
                         ${
-                            inherited
-                          || !supported
+                            !supported
                                 ? `
                               disabled
                               aria-disabled="true"
@@ -15522,6 +15482,19 @@ function renderGeneographNodeInspector(
                 appearance
             })}
         </div>
+
+        ${node.type === 'person' ? `
+          <div class="geneo-person-card-radius-row">
+            <div class="geneo-field">
+              <label for="geneoPersonCardRadius">Corner radius</label>
+              <span class="geneo-selection-help">0–32 px</span>
+            </div>
+            <input class="geneo-input" id="geneoPersonCardRadius"
+              type="number" min="0" max="32" step="1"
+              value="${geneoPersonCardEffectiveSettings(node).cornerRadius}"
+              data-geneo-person-card-radius="node"
+              data-geneo-person-card-node="${escapeHtml(node.id)}">
+          </div>` : ''}
 
         ${
             node.type === 'text'
@@ -24751,11 +24724,7 @@ function bindGeneographPersonCardControls()
                                 .geneoPersonCardNode
                         );
 
-                    if (
-                        node?.type !== 'person'
-                || node.personCard
-                    ?.custom !== true
-                    )
+                    if (node?.type !== 'person')
                     {
                         return;
                     }
@@ -24780,6 +24749,7 @@ function bindGeneographPersonCardControls()
                         );
 
                     geneoPushHistory();
+                    ensureCustomNode(node);
 
                     const boardValue =
                         diagram
@@ -24798,10 +24768,10 @@ function bindGeneographPersonCardControls()
 
     main
         .querySelector(
-            '[data-geneo-person-card-use-defaults]'
+            '[data-geneo-person-card-reset]'
         )
         ?.addEventListener(
-            'change',
+            'click',
             event =>
             {
                 const node =
@@ -24817,18 +24787,12 @@ function bindGeneographPersonCardControls()
                     return;
                 }
 
-                const useDefaults =
-                    event.target.checked;
-
                 const current =
                     normalizeGeneographPersonCardOverrides(
                         node.personCard
                     );
 
-                if (
-                    useDefaults
-              && !current.custom
-                )
+                if (!geneoPersonCardHasOverrides(node))
                 {
                     return;
                 }
@@ -24843,7 +24807,7 @@ function bindGeneographPersonCardControls()
 
                 node.personCard =
                     geneoEmptyPersonCardOverrides(
-                        !useDefaults,
+                        false,
                         current.heightMode
                     );
 
@@ -24909,11 +24873,7 @@ function bindGeneographPersonCardControls()
                                 .geneoPersonCardNode
                         );
 
-                    if (
-                        node?.type !== 'person'
-                || node.personCard
-                    ?.custom !== true
-                    )
+                    if (node?.type !== 'person')
                     {
                         return;
                     }
@@ -24931,6 +24891,7 @@ function bindGeneographPersonCardControls()
                     }
 
                     geneoPushHistory();
+                    ensureCustomNode(node);
 
                     const boardValue =
                         diagram.personCardDefaults[
@@ -25020,11 +24981,7 @@ function bindGeneographPersonCardControls()
                                 .geneoPersonCardNode
                         );
 
-                    if (
-                        node?.type !== 'person'
-                || node.personCard
-                    ?.custom !== true
-                    )
+                    if (node?.type !== 'person')
                     {
                         return;
                     }
@@ -25043,6 +25000,7 @@ function bindGeneographPersonCardControls()
                     }
 
                     geneoPushHistory();
+                    ensureCustomNode(node);
 
                     node.personCard.fields =
                         node.personCard.fields
@@ -25158,11 +25116,7 @@ function bindGeneographPersonCardControls()
                                 .geneoPersonCardNode
                         );
 
-                    if (
-                        node?.type !== 'person'
-                || node.personCard
-                    ?.custom !== true
-                    )
+                    if (node?.type !== 'person')
                     {
                         return;
                     }
@@ -25178,6 +25132,7 @@ function bindGeneographPersonCardControls()
                     }
 
                     geneoPushHistory();
+                    ensureCustomNode(node);
 
                     const boardRadius =
                         diagram

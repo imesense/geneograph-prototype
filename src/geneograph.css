@@ -2246,10 +2246,6 @@
     gap: var(--space-4);
 }
 
-.geneo-person-card-inheritance-note {
-    margin: 0;
-}
-
 .geneo-person-card-controls :disabled {
     cursor: default;
 }

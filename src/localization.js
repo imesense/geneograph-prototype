@@ -1482,8 +1482,11 @@ const RU_UI_GENEO = {
     'Use board defaults':
         'Использовать настройки холста',
 
-    'These values are inherited from the board. Uncheck “Use board defaults” to edit this card.':
-        'Эти значения наследуются от холста. Снимите флажок «Использовать настройки холста», чтобы изменить эту карточку.',
+    'Board default':
+        'Настройка холста',
+
+    'Reset to default':
+        'Сбросить к настройкам холста',
 
     'Formatting':
         'Форматирование',
