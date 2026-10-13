@@ -2220,10 +2220,12 @@ function openSourcesForTargetModal({
                 <button
                   class="button secondary"
                   type="button"
+                  aria-label="Create source"
                   data-target-source-create>
 
                   ${icon.plus}
-                  Create source
+                  <span class="source-create-full">Create source</span>
+                  <span class="source-create-short">Create</span>
                 </button>
               </div>
 
@@ -20848,7 +20850,7 @@ function openArchiveConnectionPicker({ ownerType, ownerIds, entityType })
     const linkedToAll = recordId => existingSets.every(set => set.has(recordId));
     let query = '';
     const selected = new Set();
-    openModal(`<div class="modal notes-related-modal archive-link-picker-modal" role="dialog" aria-modal="true" aria-labelledby="archiveLinkPickerTitle"><div class="modal-header"><div><h2 id="archiveLinkPickerTitle">${escapeHtml(config.addLabel)}</h2><p>Choose existing ${escapeHtml(config.title.toLowerCase())} to link. Linking does not move or duplicate records.</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><div class="modal-body form-grid"><div class="archive-link-picker-toolbar"><label class="app-search-field archive-link-picker-search" aria-label="Search ${escapeHtml(config.title.toLowerCase())}">${icon.search}<input type="search" data-archive-link-search placeholder="Search ${escapeHtml(config.title.toLowerCase())}..." aria-label="Search ${escapeHtml(config.title.toLowerCase())}" autocomplete="off"></label>${entityType === 'source' ? `<button class="button secondary" type="button" data-archive-create-source-from-picker>${icon.plus} Create source</button>` : ''}</div><div class="archive-modal-list" data-archive-link-results></div></div><div class="modal-footer"><span class="archive-link-picker-status" data-archive-link-count aria-live="polite">0 selected</span><div class="archive-modal-actions"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="button" data-archive-link-save disabled>Add links</button></div></div></div>`);
+    openModal(`<div class="modal notes-related-modal archive-link-picker-modal" role="dialog" aria-modal="true" aria-labelledby="archiveLinkPickerTitle"><div class="modal-header"><div><h2 id="archiveLinkPickerTitle">${escapeHtml(config.addLabel)}</h2><p>Choose existing ${escapeHtml(config.title.toLowerCase())} to link. Linking does not move or duplicate records.</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><div class="modal-body form-grid"><div class="archive-link-picker-toolbar"><label class="app-search-field archive-link-picker-search" aria-label="Search ${escapeHtml(config.title.toLowerCase())}">${icon.search}<input type="search" data-archive-link-search placeholder="Search ${escapeHtml(config.title.toLowerCase())}..." aria-label="Search ${escapeHtml(config.title.toLowerCase())}" autocomplete="off"></label>${entityType === 'source' ? `<button class="button secondary" type="button" aria-label="Create source" data-archive-create-source-from-picker>${icon.plus}<span class="source-create-full">Create source</span><span class="source-create-short">Create</span></button>` : ''}</div><div class="archive-modal-list" data-archive-link-results></div></div><div class="modal-footer"><span class="archive-link-picker-status" data-archive-link-count aria-live="polite">0 selected</span><div class="archive-modal-actions"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="button" data-archive-link-save disabled>Add links</button></div></div></div>`);
     const modal = modalBackdrop.querySelector('.modal');
     const results = modal.querySelector('[data-archive-link-results]');
     const count = modal.querySelector('[data-archive-link-count]');

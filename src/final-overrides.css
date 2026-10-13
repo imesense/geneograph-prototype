@@ -2743,3 +2743,48 @@ body.mobile-details-open .geneo-inspector [data-geneo-inspector-toggle] {
         padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
     }
 }
+
+.source-create-short {
+    display: none;
+}
+
+@media (max-width: 900px) {
+    #modalBackdrop .target-source-picker-modal .notes-related-toolbar {
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 8px;
+    }
+
+    #modalBackdrop .archive-link-picker-modal .archive-link-picker-toolbar {
+        flex-direction: row;
+        align-items: center;
+        gap: 8px;
+    }
+
+    #modalBackdrop :is(.target-source-picker-modal, .archive-link-picker-modal) :is(.notes-related-toolbar, .archive-link-picker-toolbar) .app-search-field {
+        min-width: 0;
+        width: 100%;
+    }
+
+    #modalBackdrop :is(.target-source-picker-modal, .archive-link-picker-modal) :is(.notes-related-toolbar, .archive-link-picker-toolbar) input[type="search"] {
+        min-width: 0;
+        width: 100%;
+    }
+
+    #modalBackdrop :is(.target-source-picker-modal, .archive-link-picker-modal) :is(.notes-related-toolbar, .archive-link-picker-toolbar) > .button {
+        flex: 0 0 auto;
+        width: auto;
+        min-height: 44px;
+        padding-inline: 10px;
+        white-space: nowrap;
+    }
+}
+
+@media (max-width: 540px) {
+    #modalBackdrop :is(.target-source-picker-modal, .archive-link-picker-modal) .source-create-full {
+        display: none;
+    }
+
+    #modalBackdrop :is(.target-source-picker-modal, .archive-link-picker-modal) .source-create-short {
+        display: inline;
+    }
+}

@@ -9551,6 +9551,11 @@ function bindPersonSidebar(root, context = 'tree')
 
                     if (!personId) return;
 
+                    if (state.activeModule === 'Family Tree')
+                    {
+                        captureTreeCanvasScroll(currentProjectId());
+                    }
+
                     if (
                         resource === 'photos'
                     )
