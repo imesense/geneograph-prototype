@@ -542,7 +542,7 @@ function renderPersonAvatar(
               centralPerson?.projectId
               || ''
             }
-        );
+        ) || person?.embeddedPhoto || null;
 
     const label =
         centralPerson?.names?.display

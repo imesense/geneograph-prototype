@@ -1566,6 +1566,30 @@
     min-width: 180px;
 }
 
+.geneo-export-menu {
+    width: min(280px, calc(100vw - 16px));
+}
+
+.geneo-export-menu button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+}
+
+.geneo-export-menu button svg {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 18px;
+}
+
+.geneo-export-menu p {
+    margin: 6px 10px 8px;
+    color: var(--text-tertiary);
+    font-size: 12px;
+    line-height: 1.4;
+}
+
 .tool-options-menu button {
     min-height: 38px;
     display: flex;

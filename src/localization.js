@@ -1223,6 +1223,75 @@ const RU_UI_GENEO = {
     'Export board':
         'Экспортировать холст',
 
+    'Editable board file':
+        'Редактируемый файл холста',
+
+    'PNG image':
+        'Изображение PNG',
+
+    'Boards stay in this demo until reload. Export again after making changes.':
+        'Холсты сохраняются в демо только до перезагрузки. После изменений экспортируйте их снова.',
+
+    'Editable board file downloaded. Export again after making changes.':
+        'Файл холста загружен. После изменений экспортируйте его снова.',
+
+    'Board imported. Export again after making changes.':
+        'Холст импортирован. После изменений экспортируйте его снова.',
+
+    'Choose a .ggboard file smaller than 100 MB.':
+        'Выберите файл .ggboard размером менее 100 МБ.',
+
+    'Board export failed.':
+        'Не удалось экспортировать холст.',
+
+    'Board import failed.':
+        'Не удалось импортировать холст.',
+
+    'Open a board before exporting it.':
+        'Откройте холст перед экспортом.',
+    'Board images must be JPEG, PNG, or WebP.':
+        'Изображения холста должны быть в формате JPEG, PNG или WebP.',
+    'A board image exceeds the 20 MB image limit.':
+        'Изображение холста превышает лимит 20 МБ.',
+    'A board image has invalid data.':
+        'Данные изображения холста повреждены.',
+    'An image could not be read.':
+        'Не удалось прочитать изображение.',
+    'A board image is unavailable or exceeds 20 MB.':
+        'Изображение холста недоступно или превышает 20 МБ.',
+    'A board image could not be embedded.':
+        'Не удалось включить изображение в файл холста.',
+    'A linked project photo is unavailable.':
+        'Связанная фотография проекта недоступна.',
+    'A board image is unavailable.':
+        'Изображение холста недоступно.',
+    'This board exceeds the 100 MB file limit.':
+        'Холст превышает лимит файла 100 МБ.',
+    'This is not a supported Geneograph board file.':
+        'Этот файл холста Генеографа не поддерживается.',
+    'The board file is incomplete.':
+        'Файл холста неполный.',
+    'The board file contains too many objects.':
+        'В файле холста слишком много объектов.',
+    'The board has invalid identifiers.':
+        'В холсте есть недопустимые идентификаторы.',
+    'An image type does not match its data.':
+        'Тип изображения не соответствует его данным.',
+    'A board person has invalid data.':
+        'Данные человека на холсте повреждены.',
+    'A family connection is invalid.':
+        'Семейная связь повреждена.',
+    'A board object has invalid geometry or references.':
+        'У объекта холста недопустимая геометрия или ссылки.',
+    'A board image reference is invalid.':
+        'Ссылка на изображение холста повреждена.',
+    'A board connection is invalid.':
+        'Связь на холсте повреждена.',
+    'The board viewport is invalid.':
+        'Положение холста повреждено.',
+    'Open a project before importing a board.':
+        'Откройте проект перед импортом холста.',
+
     'Preparing PNG…':
         'Подготовка PNG…',
 
@@ -5872,7 +5941,7 @@ const RU_TOUR_CARD_COPY = Object.freeze({
     'geneograph-welcome': { title: "Добро пожаловать в раздел «Генеограф»", body: "Используйте холсты, чтобы визуализировать исследования, объединять данные и развивать идеи." },
     'geneograph-navigation': { title: "Навигация по холстам", body: "Используйте меню навигации, чтобы открыть все холсты, избранное, холсты вне коллекций или архивные работы." },
     'geneograph-collections': { title: "Упорядочьте холсты по коллекциям", body: "Объединяйте холсты в коллекции, не меняя их содержимое." },
-    'geneograph-create-actions': { title: "Создайте холст", body: "Новый холст можно создать здесь. Импорт холстов в демоверсии недоступен." },
+    'geneograph-create-actions': { title: "Создайте холст", body: "Создайте здесь новый холст или импортируйте редактируемый файл .ggboard, чтобы продолжить работу с сохранённым холстом." },
     'geneograph-create-modal': { title: "Настройте новый холст", body: "Укажите название, при желании добавьте описание и добавьте его в коллекции." },
     'geneograph-card': { title: "Откройте пример холста", body: "Карточка показывает пример холста и сведения о нём. Откройте его, чтобы познакомиться с редактором." },
     'geneograph-editor-welcome': { title: "Изучите редактор холста", body: "Размещайте людей, связи и материалы исследования так, как удобно вам." },

@@ -2468,12 +2468,12 @@ function renderGeneographHome()
                 "
                 type="button"
                 data-geneo-import
-                disabled
                 aria-label="${escapeHtml(t('Import board'))}">
 
                 ${icon.import}
                 <span>${escapeHtml(t('Import board'))}</span>
               </button>
+              <input type="file" accept=".ggboard" data-geneo-import-file hidden>
 
               <button
                 class="
@@ -4856,6 +4856,14 @@ function openGeneographCollectionMenu(
 
 function bindGeneographHome()
 {
+    main.querySelector('[data-geneo-import]')?.addEventListener('click', () =>
+        main.querySelector('[data-geneo-import-file]')?.click());
+    main.querySelector('[data-geneo-import-file]')?.addEventListener('change', event =>
+    {
+        const file = event.currentTarget.files?.[0];
+        event.currentTarget.value = '';
+        if (file) importGeneographBoardFile(file);
+    });
     bindGeneographBoardMetaModes();
     main
         .querySelectorAll(
@@ -5579,9 +5587,10 @@ function activateGeneographConnectionTool()
     renderGeneographEditorPreserveScroll();
 }
 
-function exportGeneographBoard()
+function exportGeneographBoard(anchor = null)
 {
-    runGeneographPngExport();
+    openGeneographExportMenu(anchor || main.querySelector('[data-geneo-export]')
+        || main.querySelector('[data-geneo-toolbar-overflow]'));
 }
 
 function renderGeneoToolbarObjectButton(
@@ -6404,7 +6413,7 @@ function openGeneoToolbarOverflowMenu(
 
             if (action === 'export')
             {
-                exportGeneographBoard();
+                exportGeneographBoard(anchor);
             }
         }
     );
@@ -8327,6 +8336,10 @@ function pruneGeneographBoardAssets(
             )
             .map(node => node.imageRef.id)
     );
+    diagram.people?.forEach(person =>
+    {
+        if (person.photoAssetId) referencedIds.add(person.photoAssetId);
+    });
 
     const assets = Array.isArray(diagram.assets)
         ? diagram.assets
@@ -8456,7 +8469,16 @@ function normalizeGeneographRuntimeData()
         description: String(collection.description || '').trim()
     })).filter(collection => collection.id && projects.has(collection.projectId));
     sampleData.boards = (sampleData.boards || []).filter(Boolean).map(board =>
+        normalizeGeneographBoardRecord(board, projectPeople));
+    const boardIds = new Set(sampleData.boards.map(board => board.id));
+    Object.keys(state.geneoBoardViewports || {}).forEach(boardId =>
     {
+        if (!boardIds.has(boardId)) clearGeneographViewport(boardId);
+    });
+}
+
+function normalizeGeneographBoardRecord(board, projectPeople)
+{
         board.id = String(board.id || createRuntimeId('board'));
         board.projectId = String(board.projectId || '');
         board.title = String(board.title || 'Untitled board').trim() || 'Untitled board';
@@ -8531,6 +8553,7 @@ function normalizeGeneographRuntimeData()
                     ? normalizeGeneographPersonVital(person.death, board.projectId)
                     : { ...emptyGenealogyDate('Exact date'), placeId: null, placeText: '' },
                 photoId: person.photoId || null,
+                photoAssetId: assetIds.has(person.photoAssetId) ? person.photoAssetId : null,
                 photoCrop:
               person.photoCrop
                   ? normalizePersonPhotoCrop(
@@ -8860,13 +8883,7 @@ function normalizeGeneographRuntimeData()
         delete board.people;
         delete board.evidence;
         delete board.questions;
-        return board;
-    });
-    const boardIds = new Set(sampleData.boards.map(board => board.id));
-    Object.keys(state.geneoBoardViewports || {}).forEach(boardId =>
-    {
-        if (!boardIds.has(boardId)) clearGeneographViewport(boardId);
-    });
+    return board;
 }
 
 function geneoNodeDefaults(type)
@@ -10138,6 +10155,10 @@ function geneoPersonAvatarModel(person)
     const displayName =
         geneoPersonDisplayName(person);
 
+    const embeddedPhoto = person?.photoAssetId
+        ? getGeneographBoardAsset(person.photoAssetId, board?.diagram)
+        : null;
+
     return {
         id:
           `geneo-avatar-${person?.id || 'unknown'}`,
@@ -10152,6 +10173,7 @@ function geneoPersonAvatarModel(person)
             geneoPersonInitials(person)
         },
         primaryPhotoId: photoId,
+        embeddedPhoto,
         primaryPhotoCrop:
           usesTreePhoto
               ? treePerson.primaryPhotoCrop
@@ -26399,7 +26421,7 @@ function bindGeneographEditor()
         )
         ?.addEventListener(
             'click',
-            exportGeneographBoard
+            event => exportGeneographBoard(event.currentTarget)
         );
     main
         .querySelectorAll('[data-geneo-node-field]')

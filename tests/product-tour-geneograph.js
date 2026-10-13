@@ -129,7 +129,7 @@ assert.equal(chapter[0].presentation, 'centered');
 assert.equal(chapter[6].presentation, 'centered');
 const byId = id => chapter.find(step => step.id === id);
 assert.equal(byId('geneograph-create-modal').title, 'Set up a board');
-assert.match(byId('geneograph-create-actions').body, /Import board is not available/);
+assert.match(byId('geneograph-create-actions').body, /import an editable \.ggboard file/);
 assert.match(byId('geneograph-all-boards').body, /^All Boards opens/);
 assert.equal(byId('geneograph-current-board').title, 'Current board');
 assert.match(byId('geneograph-editor-welcome').body, /arranging people/);
@@ -145,7 +145,8 @@ for (const step of chapter)
 }
 assert.ok(russianCopy['people-to-geneograph'].body);
 assert.ok(!geneograph.includes('function openGeneographImportBoardModal('));
-assert.match(geneograph, /data-geneo-import\s+disabled/);
+assert.match(geneograph, /data-geneo-import\b/);
+assert.doesNotMatch(geneograph, /data-geneo-import\s+disabled/);
 assert.match(geneograph, /data-geneo-tour-target="library-navigation"/);
 assert.match(geneograph, /data-geneo-tour-target="library-collections"/);
 assert.match(css, /geneo-tour-geneo-toolbar/);
@@ -236,4 +237,4 @@ assert.ok(!mapClasses.has('is-module-map'));
 assert.equal(stepView.hidden, false);
 assert.equal(mapView.hidden, true);
 assert.ok(browseFocused);
-console.log('Geneograph tour route, Russian copy, editor preparation, modal cleanup, and disabled import passed.');
+console.log('Geneograph tour route, Russian copy, editor preparation, modal cleanup, and enabled import passed.');

@@ -41,7 +41,7 @@ const geneoTourSteps = [
     { id: 'geneograph-welcome', module: 'Geneograph', presentation: 'centered', title: "Welcome to Geneograph", body: "Use visual boards to explore family relationships, connect evidence, and work through research ideas." },
     { id: 'geneograph-navigation', module: 'Geneograph', title: "Board navigation", body: "Use the navigation menu to view all boards, favourites, boards not in collection, or archived boards." },
     { id: 'geneograph-collections', module: 'Geneograph', title: "Organize boards", body: "Create collections to group related boards without changing what is on them." },
-    { id: 'geneograph-create-actions', module: 'Geneograph', title: "Create a board", body: "Create board is ready to use. Import board is not available in this demo." },
+    { id: 'geneograph-create-actions', module: 'Geneograph', title: "Create a board", body: "Create a new board here, or import an editable .ggboard file to continue working on a saved board." },
     { id: 'geneograph-create-modal', module: 'Geneograph', title: "Set up a board", body: "Give the board a name, add an optional description, and choose its collections." },
     { id: 'geneograph-card', module: 'Geneograph', title: "Open the sample board", body: "This card shows the sample board and its details. Open it to explore the editor." },
     { id: 'geneograph-editor-welcome', module: 'Geneograph', presentation: 'centered', title: "Explore the board editor", body: "Build out your board by arranging people, connections, and research materials however you need." },
