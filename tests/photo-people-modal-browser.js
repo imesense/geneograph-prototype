@@ -46,10 +46,20 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             assert.equal(initial.selected, 2, `${width} ${language}: sample tags missing`);
             assert.equal(await modal.locator('[data-photo-people-choice]').count(), 3,
                 `${width} ${language}: suggestions should be capped at three`);
-            assert.ok(initial.results.height <= (width <= 760 ? 68 : 164),
-                `${width} ${language}: suggestions are taller than their row cap`);
-            assert.ok(initial.resultsPanel.height < initial.people.height / 2,
-                `${width} ${language}: suggestions still stretch down the sidebar`);
+            if (width <= 760)
+            {
+                assert.ok(initial.results.height >= initial.suggestionHeight * 3 - 2,
+                    `${width} ${language}: suggestions should be part of the continuous modal scroll`);
+                assert.ok(initial.photo.top >= initial.people.bottom - 1,
+                    `${width} ${language}: photo overlaps the people list`);
+            }
+            else
+            {
+                assert.ok(initial.results.height <= 164,
+                    `${width} ${language}: suggestions are taller than their row cap`);
+                assert.ok(initial.resultsPanel.height < initial.people.height / 2,
+                    `${width} ${language}: suggestions still stretch down the sidebar`);
+            }
             assert.match(await modal.locator('[data-photo-people-results-meta]').textContent(),
                 language === 'ru' ? /Показано 3 из/ : /Showing 3 of/,
                 `${width} ${language}: suggestion count is incorrect`);
@@ -77,9 +87,18 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             await modal.locator('[data-photo-people-search]').fill('Whiskerfield');
             assert.equal(await modal.locator('[data-photo-people-choice]').count(), 5,
                 `${width} ${language}: search results should retain five-item limit`);
-            assert.equal(await modal.locator('.photo-people-results').evaluate(element =>
-                element.scrollHeight > element.clientHeight), true,
+            if (width > 760)
+            {
+                assert.equal(await modal.locator('.photo-people-results').evaluate(element =>
+                    element.scrollHeight > element.clientHeight), true,
                 `${width} ${language}: longer search results should scroll`);
+            }
+            else
+            {
+                assert.ok(await modal.locator('.photo-people-body').evaluate(element =>
+                    element.scrollHeight > element.clientHeight),
+                `${width} ${language}: mobile content should scroll as one body`);
+            }
             await modal.locator('[data-photo-people-search]').fill('');
             assert.equal(await modal.locator('[data-face-region-other]').count(), 1,
                 `${width} ${language}: existing sample regions not shown`);
@@ -105,8 +124,9 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
                 assert.ok(expanded.listHeight > 160,
                     `${width} ${language}: tagged list did not use the available space (${JSON.stringify(expanded)})`);
             else if (width <= 760)
-                assert.ok(expanded.listHeight <= 86,
-                    `${width} ${language}: tagged list exceeded its mobile cap`);
+                assert.ok(expanded.listHeight > 86
+                    && expanded.suggestionsBottom <= expanded.sidebarBottom + 1,
+                    `${width} ${language}: tagged people and suggestions should expand in the mobile scroller`);
             if (width > 760)
                 assert.ok(expanded.suggestionsBottom <= expanded.sidebarBottom + 1,
                     `${width} ${language}: suggestions overflow the sidebar`);

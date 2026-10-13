@@ -2472,3 +2472,102 @@ body.mobile-details-open .geneo-inspector [data-geneo-inspector-toggle] {
     .places-toolbar .places-route-toolbar-button,
     .places-toolbar .app-sort-field { grid-column: 9 / span 4; }
 }
+
+@media (max-width: 540px) {
+    body #modalBackdrop.modal-backdrop.open {
+        padding: 0;
+        align-items: stretch;
+        justify-items: stretch;
+    }
+
+    #modalBackdrop > .modal {
+        box-sizing: border-box;
+        width: 100%;
+        min-width: 0;
+        max-width: none;
+        height: 100dvh;
+        min-height: 0;
+        max-height: 100dvh;
+        margin: 0;
+        border-radius: 0;
+    }
+
+    #modalBackdrop > .modal .modal-header {
+        padding-top: max(var(--space-4), env(safe-area-inset-top));
+    }
+
+    #modalBackdrop > .modal .modal-footer {
+        padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
+    }
+
+    #modalBackdrop > .modal:has(> form > .modal-body):has(> form > .modal-footer) {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    #modalBackdrop > .modal > form:has(> .modal-body):has(> .modal-footer) {
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    #modalBackdrop > .modal > form > .modal-body {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #modalBackdrop > .modal > form > .modal-footer {
+        flex: 0 0 auto;
+    }
+
+    #modalBackdrop > .modal:has(> .modal-header + .modal-body + .modal-footer) {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    #modalBackdrop > .modal > .modal-body:has(+ .modal-footer) {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #modalBackdrop > .modal > .modal-footer {
+        flex: 0 0 auto;
+    }
+
+    #modalBackdrop > .connected-files-modal {
+        display: grid;
+        grid-template-rows: auto minmax(0, 1fr) auto;
+    }
+
+    #modalBackdrop > .connected-files-modal > .connected-files-modal-body {
+        overflow: hidden;
+    }
+
+    #modalBackdrop > .person-photos-adder-modal {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    #modalBackdrop > .person-photos-adder-modal .person-photos-adder-body {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #modalBackdrop > .person-photos-adder-modal .person-photos-adder-footer {
+        flex: 0 0 auto;
+        padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
+    }
+}

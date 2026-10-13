@@ -3576,15 +3576,41 @@
     justify-content: flex-end;
 }
 
-@media (max-width: 760px) {
+@media (max-width: 900px) {
+    #modalBackdrop:has(.connect-person-modal) {
+        padding: 8px;
+    }
+
     .connect-person-modal {
-        height: min(760px, calc(100vh - 24px));
-        max-height: calc(100vh - 24px);
+        width: min(100%, calc(100vw - 16px));
+        height: min(760px, calc(100dvh - 16px));
+        max-height: calc(100dvh - 16px);
+    }
+
+    .connect-person-header {
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: start;
+        padding: 12px 16px;
+    }
+
+    .connect-person-header-icon {
+        display: none;
+    }
+
+    .connect-person-header h2 {
+        font-size: 18px;
+    }
+
+    .connect-person-header p {
+        font-size: 13px;
+        line-height: 1.35;
     }
 
     .connect-person-layout {
         display: block;
         overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
     }
 
     .connect-person-left {
@@ -3595,14 +3621,31 @@
     }
 
     .connect-person-main {
+        display: grid;
         grid-template-rows: auto auto auto;
         gap: var(--space-3);
         padding: var(--space-3) var(--space-4);
     }
 
     .connect-person-results-panel {
-        height: min(300px, 44dvh);
-        min-height: 220px;
+        display: block;
+        height: auto;
+        min-height: 0;
+    }
+
+    .connect-person-results {
+        height: auto;
+        overflow: visible;
+        margin-top: var(--space-2);
+    }
+
+    .connect-person-footer {
+        padding: 12px 16px max(12px, env(safe-area-inset-bottom));
+    }
+
+    .connect-person-footer .button {
+        flex: 1 1 0;
+        min-width: 0;
     }
 }
 

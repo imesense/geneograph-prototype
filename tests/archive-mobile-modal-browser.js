@@ -95,7 +95,10 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
                     const createFolder = page.locator('.sidebar [data-archive-create-folder]');
                     await createFolder.click();
                     await page.locator('#modalBackdrop.open .modal').waitFor();
-                    await page.locator('#modalBackdrop').click({ position: { x: 2, y: 2 } });
+                    if (width <= 540)
+                        await page.locator('#modalBackdrop.open [data-close]').first().click();
+                    else
+                        await page.locator('#modalBackdrop').click({ position: { x: 2, y: 2 } });
                     await page.locator('#modalBackdrop.open').waitFor({ state: 'hidden' });
                     assert.equal(await page.evaluate(() => mobileSurface), 'sections');
                     await page.waitForFunction(() => document.activeElement === document.querySelector('.sidebar [data-archive-create-folder]'));

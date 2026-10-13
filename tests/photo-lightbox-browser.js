@@ -55,8 +55,16 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             await page.locator('.photo-people-modal [data-close]').first().click();
             assert.equal(await lightbox.count(), 1, `${width}: close did not return to preview`);
             await lightbox.locator('[data-lightbox-tag]').click();
-            await page.mouse.click(2, 2);
-            assert.equal(await lightbox.count(), 1, `${width}: backdrop did not return to preview`);
+            if (width <= 540)
+            {
+                await page.locator('.photo-people-modal [data-close]').first().click();
+                assert.equal(await lightbox.count(), 1, `${width}: full-screen Close did not return to preview`);
+            }
+            else
+            {
+                await page.mouse.click(2, 2);
+                assert.equal(await lightbox.count(), 1, `${width}: backdrop did not return to preview`);
+            }
             await lightbox.locator('[data-lightbox-tag]').click();
             await page.locator('.photo-people-modal [data-photo-people-choice]').first().click();
             await page.locator('.photo-people-modal [data-photo-people-save]').click();

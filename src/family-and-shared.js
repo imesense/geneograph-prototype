@@ -5305,16 +5305,21 @@ function renderConnectPersonModalHtml()
 
 function refreshConnectPersonModal()
 {
+    const previousLayout = modalBackdrop.querySelector('.connect-person-layout');
+    const scrollTop = previousLayout?.scrollTop || 0;
+    const searchWasFocused = document.activeElement?.matches('[data-connect-search]');
+    const selectionStart = searchWasFocused ? document.activeElement.selectionStart : null;
     modalBackdrop.innerHTML = renderConnectPersonModalHtml();
     modalBackdrop.querySelectorAll('[data-close]').forEach(button => button.addEventListener('click', closeModal));
     bindConnectPersonModalControls();
 
+    const layout = modalBackdrop.querySelector('.connect-person-layout');
+    if (layout) layout.scrollTop = scrollTop;
     const input = modalBackdrop.querySelector('[data-connect-search]');
-    if (input)
+    if (input && searchWasFocused)
     {
-        const length = input.value.length;
-        input.focus();
-        input.setSelectionRange(length, length);
+        input.focus({ preventScroll: true });
+        input.setSelectionRange(selectionStart, selectionStart);
     }
 
     localizeUI(modalBackdrop);
@@ -5479,7 +5484,10 @@ function openConnectRelativeModal(anchorPersonId, options = {})
 
     openModal(renderConnectPersonModalHtml());
     bindConnectPersonModalControls();
-    modalBackdrop.querySelector('[data-connect-search]')?.focus();
+    if (window.innerWidth > 900)
+    {
+        modalBackdrop.querySelector('[data-connect-search]')?.focus();
+    }
 }
 
 function openRelativePopover(
