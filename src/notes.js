@@ -8528,7 +8528,8 @@ function openNotesPlacesModal(
               ">
 
               <label
-                for="notesPlacesSearch">
+                for="notesPlacesSearch"
+                class="notes-place-search-label">
                 Find places
               </label>
 
@@ -8556,10 +8557,12 @@ function openNotesPlacesModal(
                     compact
                   "
                   type="button"
+                  aria-label="${escapeHtml(t('New place'))}"
                   data-notes-place-create>
 
                   ${icon.plus}
-                  New place
+                  <span class="notes-place-new-full">New place</span>
+                  <span class="notes-place-new-short">${escapeHtml(t('New'))}</span>
                 </button>
               </div>
             </div>
@@ -11751,15 +11754,17 @@ function openNoteLinkPickerModal({
                               <label
                                 class="
                                   notes-related-archived-toggle
-                                ">
+                                "
+                                aria-label="${escapeHtml(t('Show archived'))}">
 
                                 <input
                                   type="checkbox"
                                   data-note-picker-show-archived>
 
-                                <span>
+                                <span class="notes-picker-label-full">
                                   Show archived
                                 </span>
+                                <span class="notes-picker-label-short">${escapeHtml(t('Archived'))}</span>
                               </label>
                             `
                                 : ''
@@ -11772,13 +11777,15 @@ function openNoteLinkPickerModal({
                               <button
                                 class="button secondary"
                                 type="button"
+                                aria-label="${escapeHtml(createLabel)}"
                                 data-note-picker-create>
 
                                 ${icon.plus}
 
-                                ${escapeHtml(
+                                <span class="notes-picker-label-full">${escapeHtml(
                                     createLabel
-                                )}
+                                )}</span>
+                                <span class="notes-picker-label-short">${escapeHtml(t('Create'))}</span>
                               </button>
                             `
                                 : ''

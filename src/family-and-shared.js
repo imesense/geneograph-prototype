@@ -10477,7 +10477,7 @@ function renderRelationshipEditModal(context)
 
     return `
         <div
-          class="modal"
+          class="modal relationship-edit-modal"
           role="dialog"
           aria-modal="true"
           aria-labelledby="relationshipEditTitle">

@@ -2,6 +2,7 @@ const SUPPORTED_LANGUAGES = ['en', 'ru'];
 const LANGUAGE_STORAGE_KEY = 'geneograph.language';
 const PROJECT_CONTINUATION_STORAGE_KEY = 'geneograph.projectContinuation';
 const RU_UI_SHARED = Object.freeze({
+    'New': 'Новое',
     'Choose cover photo': 'Выбрать фото обложки',
     'Select a project photo or upload a new image.': 'Выберите фото проекта или загрузите новое изображение.',
     'Search photos': 'Поиск фотографий',
