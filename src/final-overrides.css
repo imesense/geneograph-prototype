@@ -153,6 +153,8 @@
 
     :is(.relationship-edit-modal, .unlink-relationship-modal) > .modal-body {
         min-height: 0;
+        align-content: start;
+        align-items: start;
         overflow-y: auto;
         overscroll-behavior: contain;
         -webkit-overflow-scrolling: touch;
@@ -1260,7 +1262,7 @@ body.mobile-surface-open:has(.places-shell) .menu-popover {
         z-index: 1005 !important;
     }
 
-    body.mobile-person-details-open .mobile-choice-sheet.relative-popover {
+    body .mobile-choice-sheet.relative-popover {
         width: 100vw !important;
         height: 100dvh !important;
         max-height: 100dvh !important;

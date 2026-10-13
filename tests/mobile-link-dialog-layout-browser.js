@@ -56,11 +56,22 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
                 await open('Family Tree', `openRelationshipEditModal({kind:'${kind}',personId:'silver',relatedPersonId:'${relatedPersonId}'})`);
                 assert.ok(await page.locator('.relationship-edit-modal').isVisible());
                 await fits('.relationship-edit-modal .modal-body');
+                assert.ok(await page.locator('.relationship-edit-modal .add-person-select-field').first().evaluate(field =>
+                {
+                    const select = field.querySelector('select').getBoundingClientRect();
+                    const chevron = field.querySelector('.add-person-select-chevron').getBoundingClientRect();
+                    const bounds = field.getBoundingClientRect();
+                    return bounds.height < 120 && chevron.top >= select.top
+                        && chevron.bottom <= select.bottom;
+                }), `${width}px edit selector stays compact and aligned`);
                 await snapshot(`edit-${kind}`);
                 await page.keyboard.press('Escape');
                 await open('Family Tree', `openUnlinkRelationshipModal({kind:'${kind}',personId:'silver',relatedPersonId:'${relatedPersonId}'})`);
                 assert.ok(await page.locator('.unlink-relationship-modal').isVisible());
                 await fits('.unlink-relationship-modal .modal-body');
+                assert.ok(await page.locator('.unlink-relationship-warning').evaluate(warning =>
+                    warning.getBoundingClientRect().height < 240),
+                `${width}px unlink warning stays content-sized`);
                 if (kind === 'partner') assert.ok(await page.locator('.unlink-relationship-children').isVisible());
                 await snapshot(`remove-${kind}`);
                 await page.keyboard.press('Escape');

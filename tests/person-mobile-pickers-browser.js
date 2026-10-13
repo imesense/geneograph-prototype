@@ -95,6 +95,20 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
                 }
                 await page.keyboard.press('Escape');
                 assert.equal(await page.evaluate(() => mobileSurface), null);
+                if (module === 'Family Tree')
+                {
+                    await page.locator('.tree-person-card[data-person-id="silver"] [data-card-add="relative"]').click();
+                    assert.ok(await page.locator('#relativePopover').evaluate(sheet =>
+                    {
+                        const rect = sheet.getBoundingClientRect();
+                        const body = sheet.querySelector('.relative-popover-body');
+                        body.scrollTop = body.scrollHeight;
+                        return Math.abs(rect.top) < 1 && Math.abs(rect.height - innerHeight) < 1
+                            && body.scrollTop + body.clientHeight >= body.scrollHeight - 1;
+                    }), `${width}px tree-card Add relative fills the viewport`);
+                    await page.locator('#relativePopover .mobile-choice-heading button').click();
+                    assert.equal(await page.locator('#relativePopover').count(), 0);
+                }
                 assert.deepEqual(errors, [], `${module} ${width}px console`);
                 await page.close();
             }
