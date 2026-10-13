@@ -15595,6 +15595,13 @@ function renderGeneographNodeInspector(
                     : ''
             }
 
+            ${renderGeneographInspectorSection({
+                context,
+                id: 'appearance',
+                title: 'Appearance',
+                content: appearanceContent
+            })}
+
             ${
                 node.type === 'person'
                     ? renderGeneographPersonCardSection(
@@ -15602,13 +15609,6 @@ function renderGeneographNodeInspector(
                     )
                     : ''
             }
-
-            ${renderGeneographInspectorSection({
-                context,
-                id: 'appearance',
-                title: 'Appearance',
-                content: appearanceContent
-            })}
 
             ${renderGeneographNodeLayoutSection(
                 node
