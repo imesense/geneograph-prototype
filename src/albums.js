@@ -994,7 +994,7 @@ function renderPersonPhotoRegionMedia(
       `;
 }
 
-function renderFaceRegionSelector(photo, region, label = 'Select face area', otherRegions = [])
+function renderFaceRegionSelector(photo, region, label = 'Select face area', otherRegions = [], boxLabel = 'Face area. Arrow keys move; Shift and arrow keys resize.')
 {
     const rect = normalizeFaceRegion(region);
     const aspect = (Number(photo.width) || 1) / (Number(photo.height) || 1);
@@ -1004,11 +1004,11 @@ function renderFaceRegionSelector(photo, region, label = 'Select face area', oth
             const bounds = normalizeFaceRegion(other);
             return bounds ? `<span class="face-region-other" data-face-region-other aria-hidden="true" title="${escapeHtml(localizedDataFieldValue(name))}" style="left:${bounds.x * 100}%;top:${bounds.y * 100}%;width:${bounds.width * 100}%;height:${bounds.height * 100}%"></span>` : '';
         }).join('')}
-        ${rect ? `<div class="face-region-box" data-face-region-box tabindex="0" role="group" aria-label="${escapeHtml(t('Face area. Arrow keys move; Shift and arrow keys resize.'))}" style="left:${rect.x * 100}%;top:${rect.y * 100}%;width:${rect.width * 100}%;height:${rect.height * 100}%"><span class="face-region-handle" data-face-region-resize aria-hidden="true"></span></div>` : ''}
+        ${rect ? `<div class="face-region-box" data-face-region-box tabindex="0" role="group" aria-label="${escapeHtml(t(boxLabel))}" style="left:${rect.x * 100}%;top:${rect.y * 100}%;width:${rect.width * 100}%;height:${rect.height * 100}%"><span class="face-region-handle" data-face-region-resize aria-hidden="true"></span></div>` : ''}
       </div>`;
 }
 
-function bindFaceRegionSelector(root, getRegion, setRegion)
+function bindFaceRegionSelector(root, getRegion, setRegion, boxLabel = 'Face area. Arrow keys move; Shift and arrow keys resize.')
 {
     const stage = root.querySelector('[data-face-region-selector]');
     if (!stage) return;
@@ -1025,7 +1025,7 @@ function bindFaceRegionSelector(root, getRegion, setRegion)
             box.dataset.faceRegionBox = '';
             box.tabIndex = 0;
             box.setAttribute('role', 'group');
-            box.setAttribute('aria-label', t('Face area. Arrow keys move; Shift and arrow keys resize.'));
+            box.setAttribute('aria-label', t(boxLabel));
             box.innerHTML = '<span class="face-region-handle" data-face-region-resize aria-hidden="true"></span>';
             stage.appendChild(box);
         }

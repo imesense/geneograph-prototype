@@ -445,7 +445,7 @@ sampleData.archiveFiles = [
     },
     {
         id: 'af7', projectId: 'p1', folderId: 'albums-origin', name: 'whiskerfield_family_reference_cover.jpg', kind: 'img', type: 'Image', mimeType: 'image/jpeg', size: '2.6 MB', sizeBytes: 2726298,
-        favorite: false, description: 'Reference image stored in Archive; it is not duplicated into Albums.',
+        favorite: false, previewUrl: 'assets/young-whiskerfield-family.jpg', description: 'Reference image stored in Archive; it is not duplicated into Albums.',
         documentDate: { type: 'Unknown', value: '' }, linkedPersonIds: ['silver'], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: [], placeIds: [],
         addedAt: '2026-03-29T10:00:00Z', updatedAt: '2026-03-29T10:00:00Z', added: 'Mar 29, 2026', updated: 'Mar 29, 2026'
     },
@@ -6030,6 +6030,7 @@ function archiveSetConnection(
 
         file[field] =
             [...ids];
+
 
         if (entityType === 'note')
         {
@@ -12948,7 +12949,7 @@ function renderArchiveFilePeople(
 
           ${people
                 .map(person =>
-                    renderArchiveFileConnectionRow({
+                    `${renderArchiveFileConnectionRow({
                         file,
                         entityType:
                   'person',
@@ -12964,7 +12965,7 @@ function renderArchiveFilePeople(
                       }
                   ),
                         readOnly
-                    })
+                    })}${normalizeFaceRegion(file.personRegions?.[person.id]) ? `<span class="archive-person-mark">${escapeHtml(t('Area marked in image'))}</span>` : ''}`
                 )
                 .join('')}
         </div>
@@ -21608,6 +21609,17 @@ function openArchiveUnlinkConfirm({
                     );
 
                     return;
+                }
+
+                if (ownerType === 'file' && entityType === 'person')
+                {
+                    const file = archiveFileById(ownerId);
+                    if (file?.personRegions)
+                    {
+                        const regions = { ...file.personRegions };
+                        delete regions[entityId];
+                        file.personRegions = regions;
+                    }
                 }
 
                 closeModal();

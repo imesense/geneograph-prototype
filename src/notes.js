@@ -5118,6 +5118,13 @@ function setArchiveFileConnectionIds(
         savedIds.size === normalizedNextIds.size
         && [...normalizedNextIds].every(id => savedIds.has(id));
 
+    if (saved && entityType === 'person' && file.personRegions)
+    {
+        file.personRegions = Object.fromEntries(
+            Object.entries(file.personRegions).filter(([personId]) => savedIds.has(personId))
+        );
+    }
+
     return saved;
 }
 
@@ -5189,6 +5196,9 @@ function openPeopleLinkModal({
     selectedHeading =
         'Linked people',
 
+    imageArea =
+        null,
+
     saveLabel =
         'Save people',
 
@@ -5255,6 +5265,16 @@ function openPeopleLinkModal({
         new Set(
             initialSelectedIds
         );
+
+    const initialRegions = imageArea ? { ...(imageArea.regions || {}) } : null;
+    const regions = imageArea ? { ...initialRegions } : null;
+    let activeAreaPersonId = imageArea ? [...selectedIds][0] || null : null;
+
+    const areaChanged = () => imageArea && JSON.stringify(
+        Object.fromEntries([...selectedIds].map(id => [id, normalizeFaceRegion(regions[id])]).filter(([, region]) => region))
+    ) !== JSON.stringify(
+        Object.fromEntries([...selectedIds].map(id => [id, normalizeFaceRegion(initialRegions[id])]).filter(([, region]) => region))
+    );
 
     let query = '';
 
@@ -5689,6 +5709,7 @@ function openPeopleLinkModal({
             modal
             photo-people-modal
             notes-people-modal
+            ${imageArea ? 'archive-person-area-modal' : ''}
           "
           role="dialog"
           aria-modal="true"
@@ -5726,6 +5747,7 @@ function openPeopleLinkModal({
           </div>
 
           <div class="photo-people-body">
+            ${imageArea ? '<div class="archive-person-area-list">' : ''}
 
             <div
               class="
@@ -5775,6 +5797,7 @@ function openPeopleLinkModal({
                 data-notes-people-choices>
               </div>
             </section>
+            ${imageArea ? '</div><section class="archive-person-area-workspace" data-archive-person-area-workspace></section>' : ''}
           </div>
 
           <div
@@ -5825,6 +5848,36 @@ function openPeopleLinkModal({
     {
         return;
     }
+
+    const renderAreaWorkspace = () =>
+    {
+        if (!imageArea) return;
+        if (!selectedIds.has(activeAreaPersonId)) activeAreaPersonId = [...selectedIds][0] || null;
+        const workspace = modal.querySelector('[data-archive-person-area-workspace]');
+        const activePerson = activeAreaPersonId ? getPerson(activeAreaPersonId) : null;
+        const otherRegions = [...selectedIds]
+            .filter(id => id !== activeAreaPersonId && regions[id])
+            .map(id => ({ name: personName(getPerson(id)), region: regions[id] }));
+        workspace.innerHTML = `<div class="archive-person-area-heading">
+            <strong>${escapeHtml(t('Mark area in image'))}</strong>
+            ${activePerson ? `<button class="link" type="button" data-archive-person-area-clear ${regions[activeAreaPersonId] ? '' : 'disabled'}>${escapeHtml(t('Clear area'))}</button>` : ''}
+          </div>
+          ${activePerson ? `<label class="archive-person-area-choice"><span>${escapeHtml(t('Person'))}</span>
+            <select data-archive-person-area-person>${[...selectedIds].map(id => `<option value="${escapeHtml(id)}" ${id === activeAreaPersonId ? 'selected' : ''}>${escapeHtml(personName(getPerson(id)))}</option>`).join('')}</select></label>` : `<p>${escapeHtml(t('Choose a person to mark an area.'))}</p>`}
+          <div class="archive-person-area-stage">${renderFaceRegionSelector(imageArea,
+              activePerson ? regions[activeAreaPersonId] : null,
+              activePerson ? `${t('Marked area for')} ${personName(activePerson)}` : t('Archive image'), otherRegions,
+              'Image area. Arrow keys move; Shift and arrow keys resize.')}</div>
+          <p class="archive-person-area-hint">${escapeHtml(t('Drag on the image to mark a name or other evidence. Move or resize the box to adjust it.'))}</p>`;
+        if (activePerson) bindFaceRegionSelector(workspace,
+            () => normalizeFaceRegion(regions[activeAreaPersonId]),
+            region => {
+                if (region) regions[activeAreaPersonId] = region;
+                else delete regions[activeAreaPersonId];
+                modal.querySelector('[data-notes-people-save]').disabled = !(selectionChanged() || areaChanged());
+                workspace.querySelector('[data-archive-person-area-clear]').disabled = !region;
+            }, 'Image area. Arrow keys move; Shift and arrow keys resize.');
+    };
 
     const refresh = () =>
     {
@@ -5908,7 +5961,9 @@ function openPeopleLinkModal({
                 '[data-notes-people-save]'
             )
             .disabled =
-                !selectionChanged();
+                !(selectionChanged() || areaChanged());
+
+        renderAreaWorkspace();
 
         localizeUI(
             modal
@@ -5934,6 +5989,12 @@ function openPeopleLinkModal({
         'change',
         event =>
         {
+            if (event.target.matches('[data-archive-person-area-person]'))
+            {
+                activeAreaPersonId = event.target.value;
+                renderAreaWorkspace();
+                return;
+            }
             const input =
                 event.target.closest(
                     '[data-notes-people-choice]'
@@ -5956,6 +6017,8 @@ function openPeopleLinkModal({
             selectedIds.add(
                 input.value
             );
+
+            if (imageArea) activeAreaPersonId = input.value;
 
             refresh();
 
@@ -5989,6 +6052,15 @@ function openPeopleLinkModal({
                         .notesPeopleRemove
                 );
 
+                if (imageArea) delete regions[remove.dataset.notesPeopleRemove];
+
+                refresh();
+                return;
+            }
+
+            if (event.target.closest('[data-archive-person-area-clear]'))
+            {
+                delete regions[activeAreaPersonId];
                 refresh();
                 return;
             }
@@ -6000,7 +6072,7 @@ function openPeopleLinkModal({
             )
             {
                 if (
-                    !selectionChanged()
+                    !(selectionChanged() || areaChanged())
                 )
                 {
                     return;
@@ -6013,7 +6085,8 @@ function openPeopleLinkModal({
 
                 const saved =
                     onSave(
-                        nextIds
+                        nextIds,
+                        imageArea ? Object.fromEntries(nextIds.map(id => [id, normalizeFaceRegion(regions[id])]).filter(([, region]) => region)) : null
                     );
 
                 if (
@@ -6048,13 +6121,10 @@ function openPeopleLinkModal({
 
     refresh();
 
-    modal
-        .querySelector(
-            '[data-notes-people-search]'
-        )
-        ?.focus({
-            preventScroll: true
-        });
+    if (!imageArea)
+    {
+        modal.querySelector('[data-notes-people-search]')?.focus({ preventScroll: true });
+    }
 }
 
 function openNotesPeopleModal()
@@ -6186,8 +6256,10 @@ function openArchiveFilesPeopleModal(
                 'person'
             );
 
-    openPeopleLinkModal({
+    const launchPicker = imageArea => openPeopleLinkModal({
         projectId,
+
+        imageArea,
 
         title:
           'Add people',
@@ -6223,7 +6295,7 @@ function openArchiveFilesPeopleModal(
               : 'Add people',
 
         onSave:
-          nextPersonIds =>
+          (nextPersonIds, nextRegions) =>
           {
               if (singleFile)
               {
@@ -6241,11 +6313,16 @@ function openArchiveFilesPeopleModal(
                       return false;
                   }
 
-                  return setArchiveFileConnectionIds(
+                  const saved = setArchiveFileConnectionIds(
                       currentFile.id,
                       'person',
                       nextPersonIds
                   );
+                  if (saved && nextRegions)
+                  {
+                      currentFile.personRegions = nextRegions;
+                  }
+                  return saved;
               }
 
               const result =
@@ -6292,6 +6369,22 @@ function openArchiveFilesPeopleModal(
                           : 'links were'
                   } added to ${files.length} files.`
     });
+
+    const imageSource = singleFile && archiveFileKind(singleFile) === 'img'
+        ? singleFile.previewUrl || singleFile.src : '';
+    if (!imageSource)
+    {
+        launchPicker(null);
+        return;
+    }
+    const image = new Image();
+    image.onload = () => {
+        if (archiveFileById(singleFile.id) !== singleFile || currentProjectId() !== projectId) return;
+        launchPicker({ src: imageSource, width: image.naturalWidth,
+            height: image.naturalHeight, regions: singleFile.personRegions || {} });
+    };
+    image.onerror = () => launchPicker(null);
+    image.src = imageSource;
 }
 
 function openArchiveFilePeopleModal(
