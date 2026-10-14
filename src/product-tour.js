@@ -59,7 +59,7 @@ const geneoTourSteps = [
     { id: 'geneograph-sockets-children', module: 'Geneograph', title: "Connect parents and children", body: "Connect from a person’s bottom socket to another person’s top socket to create a parent-child relationship. The person at the top becomes the parent. The same rule applies when connecting from a couple’s socket." },
     { id: 'geneograph-sockets-context', module: 'Geneograph', title: "Connect research context", body: "Images, notes and other objects can connect through any of their sockets." },
     { id: 'geneograph-inspector', module: 'Geneograph', title: "Adjust the canvas and objects", body: "Use this panel to change canvas settings. When you select an object, the panel switches to settings for that object." },
-    { id: 'geneograph-export', module: 'Geneograph', title: "Export your board", body: "Export downloads the visible board content as a PNG image." },
+    { id: 'geneograph-export', module: 'Geneograph', title: "Export your board", body: "Choose Editable board file to save a .ggboard copy you can import and edit later. PNG image saves a picture only. In this demo, export again after making changes to keep them across reloads." },
     { id: 'geneograph-to-albums', module: 'Geneograph', title: "Continue to Albums", body: "Next, see how photos become part of your family research." },
     { id: 'albums-welcome', module: 'Albums', presentation: 'centered', title: "Welcome to Albums", body: "Explore project photos, organize them into albums, and add the details that make each image meaningful." },
     { id: 'albums-photos', module: 'Albums', title: "Inspect photos", body: "Select a photo to view the image and its details." },
@@ -148,6 +148,7 @@ const geneoTourSecondarySelectors = {
     'places-add-coordinates': '#modalBackdrop [data-place-coordinate-details]',
     'places-add-map': '[data-places-coordinate-bar]',
     'places-outro': '[data-topbar-help]',
+    'geneograph-export': '.geneo-editor-toolbar [data-geneo-export]',
     'geneograph-sockets-intro': '[data-geneo-family-junction="gf-whiskerfield"]',
     'geneograph-sockets-partners': '[data-geneo-port-node="gn-daisy"][data-geneo-port="right"]',
     'geneograph-sockets-children': '[data-geneo-port-node="gn-daisy"][data-geneo-port="bottom"]',
@@ -834,7 +835,7 @@ function geneoTourTarget(index)
         'geneograph-sockets-children': '[data-geneo-port-node="gn-daisy"][data-geneo-port="top"]',
         'geneograph-sockets-context': '[data-geneo-node="gn-image"]',
         'geneograph-inspector': '.geneo-inspector:not(.collapsed)',
-        'geneograph-export': '.geneo-editor-toolbar [data-geneo-export]',
+        'geneograph-export': '#projectMenu.geneo-export-menu',
         'geneograph-to-albums': '.topnav [data-module="Albums"]'
     };
     const mobileArchiveTarget = innerWidth <= 900 && {
@@ -926,6 +927,7 @@ function geneoTourClosePreview()
     if (geneoTourRuntime.ownedPreview === 'albums-filters') closeAlbumsFilterPopover();
     if (geneoTourRuntime.ownedPreview === 'archive-filters') closeArchiveFilterPopover();
     if (geneoTourRuntime.ownedPreview === 'notes-filters') closeMenu();
+    if (geneoTourRuntime.ownedPreview === 'geneograph-export') closeMenu();
     if (geneoTourRuntime.ownedPreview === 'places-filters') closePlacesFilterPopover();
     if (geneoTourRuntime.ownedPreview === 'places-routes') closeMenu();
     if (geneoTourRuntime.ownedPreview === 'places-help') closeTopbarPopover();
@@ -947,6 +949,19 @@ function geneoTourExamplePlaceCoordinates()
 
 function geneoTourOpenPreview(step)
 {
+    if (step.id === 'geneograph-export')
+    {
+        const anchor = main.querySelector('[data-geneo-export]');
+        if (!anchor) return;
+        openGeneographExportMenu(anchor);
+        const menu = document.querySelector('#projectMenu.geneo-export-menu');
+        if (menu)
+        {
+            menuLifecycleController?.abort();
+            menu.inert = true;
+            geneoTourRuntime.ownedPreview = 'geneograph-export';
+        }
+    }
     if (step.id === 'archive-filters')
     {
         const anchor = document.getElementById('archiveFilterButton');

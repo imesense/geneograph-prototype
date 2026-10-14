@@ -24,6 +24,11 @@ let boardOpens = 0;
 let renders = 0;
 let modalOpens = 0;
 let modalCloses = 0;
+let exportMenuOpens = 0;
+let exportMenuCloses = 0;
+const exportAnchor = {};
+const exportMenu = { inert: false };
+let menuLifecycleAborts = 0;
 const classes = new Set();
 const stageClasses = new Set();
 const stage = { dataset: {}, classList: {
@@ -39,7 +44,12 @@ const modalBackdrop = { inert: false, classList: {
 } };
 const context = vm.createContext({
     state, structuredClone, console, modalBackdrop, innerWidth: 1440,
-    document: { body: { classList: {
+    menuLifecycleController: { abort() { menuLifecycleAborts++; } },
+    document: { querySelector(selector)
+    {
+        return selector === '#projectMenu.geneo-export-menu' && exportMenuOpens > exportMenuCloses
+            ? exportMenu : null;
+    }, body: { classList: {
         add(value)
         {
             classes.add(value);
@@ -56,6 +66,7 @@ const context = vm.createContext({
     main: { querySelector(selector)
     {
         if (selector === '.geneo-canvas-stage' && state.geneoView === 'board') return stage;
+        if (selector === '[data-geneo-export]' && state.geneoView === 'board') return exportAnchor;
         return selector === '.geneo-editor' && state.geneoView === 'board' ? {} : null;
     }, querySelectorAll(selector)
     {
@@ -93,6 +104,15 @@ const context = vm.createContext({
     closeModal()
     {
         modalCloses++;
+    },
+    openGeneographExportMenu(anchor)
+    {
+        assert.equal(anchor, exportAnchor);
+        exportMenuOpens++;
+    },
+    closeMenu()
+    {
+        exportMenuCloses++;
     }
 });
 vm.runInContext(tour, context);
@@ -135,6 +155,8 @@ assert.equal(byId('geneograph-current-board').title, 'Current board');
 assert.match(byId('geneograph-editor-welcome').body, /arranging people/);
 assert.match(byId('geneograph-inspector').body, /canvas settings/);
 assert.equal(byId('geneograph-export').title, 'Export your board');
+assert.match(byId('geneograph-export').body, /Editable board file.*\.ggboard.*PNG image/s);
+assert.match(russianCopy['geneograph-export'].body, /Редактируемый файл холста.*\.ggboard.*Изображение PNG/s);
 assert.ok(!chapter.some(step => /canvases|current canvas|new canvas|sample canvas/i.test(`${step.title} ${step.body}`)));
 for (const step of chapter)
 {
@@ -170,6 +192,13 @@ assert.equal(stage.dataset.geneoTourSockets, 'true');
 prepare('geneograph-export');
 assert.equal(boardOpens, 1, 'Adjacent editor stops must preserve the board viewport');
 assert.ok(classes.has('geneo-tour-geneo-toolbar'));
+evaluate("geneoTourOpenPreview({ id: 'geneograph-export' })");
+assert.equal(exportMenuOpens, 1);
+assert.equal(menuLifecycleAborts, 1);
+assert.equal(exportMenu.inert, true);
+assert.equal(evaluate('geneoTourRuntime.ownedPreview'), 'geneograph-export');
+evaluate('geneoTourClosePreview()');
+assert.equal(exportMenuCloses, 1);
 context.main.querySelector = selector => selector === '[data-geneo-toolbar-item="shape"]'
     ? { getBoundingClientRect: () => ({ left: 230, top: 10, right: 360, bottom: 50 }) }
     : selector === '.geneo-editor-toolbar-left'
