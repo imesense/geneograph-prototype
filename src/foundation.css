@@ -2400,6 +2400,23 @@ button.app-chip:disabled,
         #F1CE94;
 }
 
+.app-chip--sources {
+    --app-chip-border:
+        rgba(122, 169, 216, .32);
+
+    --app-chip-background:
+        rgba(69, 112, 157, .2);
+
+    --app-chip-color:
+        #A7CAE9;
+
+    --app-chip-on-accent-border:
+        rgba(167, 202, 233, .42);
+
+    --app-chip-on-accent-color:
+        #BDDDF5;
+}
+
 .app-chip--notes,
 .app-chip--related {
     --app-chip-border:

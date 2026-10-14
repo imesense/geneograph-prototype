@@ -417,6 +417,14 @@ function renderOpenProject()
         getProjectNotes(
             project.id
         ).length;
+    const projectPlaceCount =
+        projectPlaces(
+            project.id
+        ).length;
+    const projectSourceCount =
+        (sampleData.sources || [])
+            .filter(source => source.projectId === project.id)
+            .length;
     sidebar.innerHTML = `
         <div class="logo-lockup">
           <div class="large-logo">${icon.logo}</div>
@@ -488,28 +496,38 @@ function renderOpenProject()
                       app-chip-row
                       app-chip-row--on-accent
                     ">
-                    <span class="app-chip app-chip--people">
+                    <button class="app-chip app-chip--people" type="button" data-open-project-module="People">
                       ${escapeHtml(
                             formatProjectPeopleCount(
                                 project.id
                             )
                         )}
-                    </span>
+                    </button>
 
-                    <span class="app-chip app-chip--photos">
+                    <button class="app-chip app-chip--photos" type="button" data-open-project-module="Albums">
                       ${projectPhotoCount}
                       ${projectPhotoCount === 1 ? 'photo' : 'photos'}
-                    </span>
+                    </button>
 
-                    <span class="app-chip app-chip--files">
+                    <button class="app-chip app-chip--files" type="button" data-open-project-module="Archive" data-open-project-archive-view="files">
                       ${projectFileCount}
                       ${projectFileCount === 1 ? 'file' : 'files'}
-                    </span>
+                    </button>
 
-                    <span class="app-chip app-chip--notes">
+                    <button class="app-chip app-chip--notes" type="button" data-open-project-module="Notes">
                       ${projectNoteCount}
                       ${projectNoteCount === 1 ? 'note' : 'notes'}
-                    </span>
+                    </button>
+
+                    <button class="app-chip app-chip--places" type="button" data-open-project-module="Places">
+                      ${projectPlaceCount}
+                      ${projectPlaceCount === 1 ? 'place' : 'places'}
+                    </button>
+
+                    <button class="app-chip app-chip--sources" type="button" data-open-project-module="Archive" data-open-project-archive-view="sources">
+                      ${projectSourceCount}
+                      ${projectSourceCount === 1 ? 'source' : 'sources'}
+                    </button>
                   </div>
                 </div>
                 <div class="project-hero-actions" aria-label="Project actions">
@@ -534,6 +552,7 @@ function renderOpenProject()
     document.getElementById('editProjectTitle')?.addEventListener('click', event => openProjectNameOverlay(event.currentTarget, project));
     bindOpenProjectRightColumn();
     bindToasts(main);
+    localizeUI(main, { suppressObserverReplay: true });
 }
 
 function renderOpenProjectBody()
@@ -1286,6 +1305,11 @@ function bindOpenProjectRightColumn()
     {
         const moduleName = element.dataset.openProjectModule;
         if (!moduleName) return;
+        const archiveView = element.dataset.openProjectArchiveView;
+        if (moduleName === 'Archive' && (archiveView === 'files' || archiveView === 'sources'))
+        {
+            state.archiveView = archiveView;
+        }
         navigateToProjectModule(currentProjectId(), moduleName);
     };
     main.querySelectorAll('[data-open-project-module]').forEach(element =>
