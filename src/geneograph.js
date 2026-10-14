@@ -3112,13 +3112,9 @@ function renderGeneographBoardCard(
           <div
             class="
               geneo-thumb
-              ${
-                    board.thumb === 'map'
-                        ? 'map'
-                        : ''
-                }
             "
             aria-hidden="true">
+            ${renderGeneographBoardPreview(board, state.geneoBoardViewMode === 'list' ? 'square' : 'wide')}
           </div>
 
           <div
@@ -5217,6 +5213,8 @@ function deleteGeneographBoard(
     );
 
     if (index < 0) return false;
+
+    invalidateGeneographBoardPreview(boardId);
 
     const ownsEditorState =
         state.selectedGeneoBoardId === boardId
@@ -9162,6 +9160,7 @@ function touchGeneographBoard(board = selectedGeneographBoard())
     if (!board) return;
     board.modifiedAt = new Date().toISOString();
     board.modified = 'Just now';
+    invalidateGeneographBoardPreview(board.id);
 }
 
 function geneoEnsureHistory()

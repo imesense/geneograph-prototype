@@ -147,11 +147,7 @@
     border-bottom:
         1px solid var(--border-default);
 
-    background:
-        radial-gradient(circle at 20% 20%,
-            rgba(98, 217, 154, .14),
-            transparent 22%),
-        #101615;
+    background: #111a17;
 
     position:
         relative;
@@ -160,89 +156,10 @@
         hidden;
 }
 
-.geneo-thumb::before {
-    content:
-        "";
-
-    position:
-        absolute;
-
-    inset:
-        0;
-
-    opacity:
-        .72;
-
-    background-image:
-        linear-gradient(90deg,
-            rgba(98, 217, 154, .08) 1px,
-            transparent 1px),
-        linear-gradient(rgba(98, 217, 154, .08) 1px,
-            transparent 1px);
-
-    background-size:
-        22px 22px;
-}
-
-.geneo-thumb::after {
-    content:
-        "";
-
-    position:
-        absolute;
-
-    left:
-        20px;
-
-    right:
-        20px;
-
-    top:
-        22px;
-
-    bottom:
-        18px;
-
-    opacity:
-        .92;
-
-    background:
-        linear-gradient(90deg,
-            transparent 0 7%,
-            rgba(212, 170, 107, .72) 7% 8%,
-            transparent 8% 36%,
-            rgba(141, 108, 232, .65) 36% 37%,
-            transparent 37% 70%,
-            rgba(47, 174, 116, .66) 70% 71%,
-            transparent 71%),
-        radial-gradient(circle at 10% 34%,
-            #273337 0 12px,
-            transparent 13px),
-        radial-gradient(circle at 40% 62%,
-            #243827 0 14px,
-            transparent 15px),
-        radial-gradient(circle at 73% 38%,
-            #3a2f21 0 14px,
-            transparent 15px),
-        radial-gradient(circle at 91% 67%,
-            #2d2847 0 12px,
-            transparent 13px);
-}
-
-.geneo-thumb.map::after {
-    background:
-        radial-gradient(circle at 26% 34%,
-            rgba(93, 173, 236, .55) 0 18px,
-            transparent 19px),
-        radial-gradient(circle at 62% 52%,
-            rgba(212, 170, 107, .55) 0 15px,
-            transparent 16px),
-        linear-gradient(130deg,
-            transparent 0 30%,
-            rgba(93, 173, 236, .35) 31% 33%,
-            transparent 34% 60%,
-            rgba(47, 174, 116, .35) 61% 62%,
-            transparent 63%);
+.geneo-thumb .geneo-preview-art {
+    display: block;
+    width: 100%;
+    height: 100%;
 }
 
 .geneo-board-body {
