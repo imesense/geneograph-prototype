@@ -77,7 +77,7 @@ const geneoTourSteps = [
     { id: 'archive-navigation', module: 'Archive', title: "Browse Archive", body: "Use the left navigation to open all files, favourites, or sources." },
     { id: 'archive-folders', module: 'Archive', title: "Organize with folders", body: "Build your own folder structure and use the folder tree to move through it." },
     { id: 'archive-location', module: 'Archive', title: "Move between folders", body: "The path shows your current folder. Use Back, Forward, Up, or the path to navigate." },
-    { id: 'archive-table', module: 'Archive', title: "Explore folder contents", body: "The main table shows the folders and files in your current location, so you can open them and move through your archive." },
+    { id: 'archive-table', module: 'Archive', title: "Explore folder contents", body: "The main area shows folders and files in your current location. Open folders and select files to explore your archive." },
     { id: 'archive-filters', module: 'Archive', title: "Filter your files", body: "Use filters to narrow the file list and find the materials you need faster." },
     { id: 'archive-folder-actions', module: 'Archive', title: "Create a folder", body: "Use the sidebar or top button to create a folder. Subfolder button will create a folder in current location." },
     { id: 'archive-folder-modal', module: 'Archive', title: "Choose a name and location", body: "Enter a name and choose the parent folder. The folder appears after you confirm." },
@@ -416,6 +416,7 @@ function geneoTourPrepare(index)
     if (step.module === 'Archive')
     {
         state.archiveView = 'files';
+        state.archiveFileLayout = 'details';
         const fileStop = ['archive-inspector', 'archive-file-actions', 'archive-to-notes'].includes(step.id);
         const folderStop = ['archive-location', 'archive-table', 'archive-filters',
             'archive-folder-actions', 'archive-folder-modal'].includes(step.id);

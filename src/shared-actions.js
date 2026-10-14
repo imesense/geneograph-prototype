@@ -779,11 +779,13 @@ function resetProjectModuleState(projectId)
     state.albumsDetailDraft = null;
 
     state.archiveView = 'files';
+    state.archiveFileLayout = 'details';
     state.archiveSelectedFolderId = null;
     state.archiveSelectedFolderItemId = null;
     state.archiveSelectedFileId = null;
     state.archiveSelectedSourceId = null;
     state.archiveSelectedFileIds = [];
+    state.archiveSelectedFolderIds = [];
     state.archiveSearch = '';
     state.archiveFileFilters = {
         scope: 'all',

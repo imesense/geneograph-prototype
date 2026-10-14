@@ -4050,6 +4050,9 @@ function archiveApplyLocationSnapshot(
     state.archiveSelectedFileIds =
         [];
 
+    state.archiveSelectedFolderIds =
+        [];
+
     state.archiveInspectorCollapsed =
         normalized.inspectorCollapsed;
 }
@@ -4454,14 +4457,16 @@ function archiveOpenFolder(
 
     archiveNavigateToLocation(
         {
-            view:
-            state.archiveView
-              === 'favorites'
-                ? 'favorites'
-                : 'files',
+            view: 'files',
 
             folderId:
             folder.id,
+
+            fileFilters: state.archiveView === 'favorites'
+                ? { ...archiveFileFiltersWithDefaults(), favouriteOnly: false }
+                : archiveFileFiltersWithDefaults(),
+
+            filterPresentation: 'folders',
 
             selectedFileId:
             null,
@@ -4620,7 +4625,7 @@ function archiveFileTypeLabel(file)
 function archiveFileIcon(file)
 {
     const kind = archiveFileKind(file);
-    if (kind === 'folder') return `<span class="archive-file-icon folder" aria-hidden="true">${icon.folder}</span>`;
+    if (kind === 'folder') return `<span class="archive-file-icon folder" aria-hidden="true">${icon.folderyellow}</span>`;
     const label = ({ pdf: 'PDF', img: 'IMG', audio: 'AUD', sheet: 'XLS', doc: 'DOC', archive: 'ZIP', file: 'FILE' })[kind];
     return `<span class="archive-file-icon ${kind}" aria-hidden="true">${escapeHtml(label)}</span>`;
 }
@@ -7584,6 +7589,14 @@ function archiveVisibleChildFolders(
         archiveMatchingFiles()
 )
 {
+    if (state.archiveView === 'favorites' && !state.archiveSelectedFolderId)
+    {
+        const query = String(state.archiveSearch || '').trim().toLocaleLowerCase();
+        return (sampleData.archiveFolders || []).filter(folder =>
+            folder.projectId === currentProjectId() && folder.favorite
+            && (!query || folder.name.toLocaleLowerCase().includes(query)));
+    }
+
     if (
         !archiveFileFilteringActive()
     )
@@ -7866,6 +7879,11 @@ function ensureArchiveSelection()
                     id
                 )
             );
+
+    state.archiveSelectedFolderIds = archiveUniqueIds(state.archiveSelectedFolderIds || [])
+        .filter(id => archiveFolderById(id));
+
+    if (state.archiveView === 'sources') state.archiveSelectedFolderIds = [];
 
     if (
         (
@@ -8739,6 +8757,14 @@ function renderArchiveSidebar()
         sidebar
     );
 
+    if (innerWidth > 900)
+    {
+        sidebar.querySelectorAll('[data-archive-folder]').forEach(button =>
+            archiveBindDropTarget(button, button.dataset.archiveFolder));
+        archiveBindDropTarget(sidebar.querySelector('[data-archive-view="files"]'), null);
+        archiveBindDragAutoscroll(sidebar.querySelector('.archive-sidebar-folder-tree'));
+    }
+
     archiveRevealPendingFolderInSidebar();
 }
 
@@ -8801,6 +8827,10 @@ function ensureArchiveVisibleSelection()
                 )
         );
 
+    const visibleFolderIds = new Set(archiveVisibleChildFolders().map(folder => folder.id));
+    state.archiveSelectedFolderIds = (state.archiveSelectedFolderIds || [])
+        .filter(id => visibleFolderIds.has(id));
+
     if (
         state.archiveSelectedFileId
         && !visibleFileIds.has(
@@ -8822,6 +8852,7 @@ function renderArchiveMain()
     {
         archiveMobileSelectMode = false;
         state.archiveSelectedFileIds = [];
+        state.archiveSelectedFolderIds = [];
     }
     ensureArchiveVisibleSelection();
     const previousScroll = main.querySelector('.archive-main')?.scrollTop || 0;
@@ -9333,17 +9364,37 @@ function renderArchiveFilterResultsBar(
       `;
 }
 
+function archiveSelectedBulkItems()
+{
+    return {
+        folders: (state.archiveSelectedFolderIds || []).map(id => archiveFolderById(id)).filter(Boolean),
+        files: (state.archiveSelectedFileIds || []).map(id => archiveFileById(id)).filter(Boolean)
+    };
+}
+
+function archiveBulkSelectionLabel()
+{
+    const { folders, files } = archiveSelectedBulkItems();
+    const count = folders.length + files.length;
+    if (state.language === 'ru') return `${t('Selected')}: ${count}`;
+    const noun = folders.length && files.length ? (count === 1 ? 'item' : 'items')
+        : folders.length ? (count === 1 ? 'folder' : 'folders')
+            : (count === 1 ? 'file' : 'files');
+    return `${count} ${noun} selected`;
+}
+
 function renderArchiveSelectionBar(files)
 {
-    const selected = state.archiveSelectedFileIds.filter(id => archiveFileById(id));
-    if (!selected.length) return '';
-    const allFavorite = selected.every(id => archiveFileById(id)?.favorite);
-    return `<div class="archive-selection-bar"><strong>${selected.length} ${selected.length === 1 ? 'file' : 'files'} selected</strong><div class="archive-selection-actions">
-        <button class="button secondary" type="button" data-archive-selection-action="move">Move</button>
-        <button class="button secondary" type="button" data-archive-selection-action="links">Add links</button>
-        <button class="button secondary" type="button" data-archive-selection-action="favorite">${allFavorite ? 'Remove from favourites' : 'Add to favourites'}</button>
-        <button class="button danger" type="button" data-archive-selection-action="delete">Delete permanently</button>
-        <button class="button ghost" type="button" data-archive-selection-action="clear">Cancel</button>
+    const { folders, files: selectedFiles } = archiveSelectedBulkItems();
+    if (!folders.length && !selectedFiles.length) return '';
+    const allFavorite = [...folders, ...selectedFiles].every(item => item.favorite);
+    return `<div class="archive-selection-bar"><strong>${escapeHtml(archiveBulkSelectionLabel())}</strong><div class="archive-selection-actions">
+        <button class="button secondary" type="button" data-archive-selection-action="move">${escapeHtml(t('Move'))}</button>
+        <button class="button secondary" type="button" data-archive-selection-action="favorite">${escapeHtml(t(allFavorite ? 'Remove from favourites' : 'Add to favourites'))}</button>
+        <button class="button secondary archive-selection-more" type="button" data-archive-selection-more aria-label="${escapeHtml(t('More actions'))}" aria-expanded="false">${icon.more}</button>
+        <button class="button ghost archive-selection-clear" type="button" data-archive-selection-action="clear" aria-label="${escapeHtml(t('Clear selection'))}">${icon.close}</button>
+        ${!folders.length ? `<button hidden type="button" data-archive-selection-action="links">${escapeHtml(t('Add links'))}</button>` : ''}
+        <button hidden type="button" data-archive-selection-action="delete">${escapeHtml(t('Delete permanently'))}</button>
       </div></div>`;
 }
 
@@ -9466,6 +9517,7 @@ function renderArchiveFolderTableRow(
     const detailSelected =
         state.archiveSelectedFolderItemId
           === folder.id;
+    const checked = (state.archiveSelectedFolderIds || []).includes(folder.id);
 
     return `
         <tr
@@ -9477,13 +9529,16 @@ function renderArchiveFolderTableRow(
                     ? 'selected-detail'
                     : ''
             }
+            ${checked ? 'is-checked' : ''}
           "
           data-archive-folder-row="${escapeHtml(
                 folder.id
             )}"
-          tabindex="0">
+          tabindex="0" aria-selected="${String(checked)}">
 
-          <td></td>
+          <td class="archive-col-check"><input class="albums-select-checkbox" type="checkbox"
+            data-archive-folder-checkbox="${escapeHtml(folder.id)}" ${checked ? 'checked' : ''}
+            aria-label="${escapeHtml(t('Select'))}: ${escapeHtml(folder.name)}"></td>
 
           <td>
             <div
@@ -9539,7 +9594,9 @@ function renderArchiveFolderTableRow(
             )}
           </td>
 
-          <td></td>
+          <td style="text-align:center"><button class="archive-row-icon-button ${folder.favorite ? 'active' : ''}"
+            type="button" data-archive-toggle-folder-favorite="${escapeHtml(folder.id)}"
+            aria-label="${escapeHtml(t(folder.favorite ? 'Remove from favourites' : 'Add to favourites'))}">${icon.star}</button></td>
 
           <td>
             <button
@@ -9565,31 +9622,15 @@ function archiveVisibleSelectionState(
         archiveVisibleFiles()
 )
 {
-    const visibleIds =
-        (
-            Array.isArray(
-                files
-            )
-                ? files
-                : []
-        )
-            .map(file =>
-                file?.id
-            )
-            .filter(Boolean);
-
-    const selectedIds =
-        new Set(
-            state.archiveSelectedFileIds
-          || []
-        );
-
-    const selectedVisibleIds =
-        visibleIds.filter(id =>
-            selectedIds.has(
-                id
-            )
-        );
+    const folderIds = archiveVisibleChildFolders().map(folder => folder.id);
+    const fileIds = (Array.isArray(files) ? files : []).map(file => file?.id).filter(Boolean);
+    const selectedFolders = new Set(state.archiveSelectedFolderIds || []);
+    const selectedFiles = new Set(state.archiveSelectedFileIds || []);
+    const visibleIds = [...folderIds.map(id => `folder:${id}`), ...fileIds.map(id => `file:${id}`)];
+    const selectedVisibleIds = visibleIds.filter(key => {
+        const [kind, id] = key.split(':');
+        return kind === 'folder' ? selectedFolders.has(id) : selectedFiles.has(id);
+    });
 
     return {
         visibleIds,
@@ -9616,34 +9657,20 @@ function toggleAllVisibleArchiveFiles(
             files
         );
 
-    const selectedIds =
-        new Set(
-            state.archiveSelectedFileIds
-          || []
-        );
+    const selectedFiles = new Set(state.archiveSelectedFileIds || []);
+    const selectedFolders = new Set(state.archiveSelectedFolderIds || []);
 
     selection.visibleIds
-        .forEach(id =>
+        .forEach(key =>
         {
-            if (
-                selection.allVisibleSelected
-            )
-            {
-                selectedIds.delete(
-                    id
-                );
-            }
-            else
-            {
-                selectedIds.add(
-                    id
-                );
-            }
+            const [kind, id] = key.split(':');
+            const set = kind === 'folder' ? selectedFolders : selectedFiles;
+            if (selection.allVisibleSelected) set.delete(id);
+            else set.add(id);
         });
 
-    state.archiveSelectedFileIds = [
-        ...selectedIds
-    ];
+    state.archiveSelectedFileIds = [...selectedFiles];
+    state.archiveSelectedFolderIds = [...selectedFolders];
 
     renderArchiveMain();
 }
@@ -9704,6 +9731,19 @@ function toggleArchiveFileSelection(
     renderArchiveMain();
 }
 
+function toggleArchiveFolderSelection(folderId)
+{
+    if (!archiveFolderById(folderId)) return;
+    const selected = new Set(state.archiveSelectedFolderIds || []);
+    if (selected.has(folderId)) selected.delete(folderId);
+    else selected.add(folderId);
+    state.archiveSelectedFolderIds = [...selected];
+    state.archiveSelectedFolderItemId = folderId;
+    state.archiveSelectedFileId = null;
+    state.archiveInspectorCollapsed = false;
+    renderArchiveMain();
+}
+
 function renderArchiveFileTableRow(
     file,
     showPath = false
@@ -9719,17 +9759,7 @@ function renderArchiveFileTableRow(
                 file.id
             );
 
-    const secondaryLabel =
-        showPath
-            ? archiveFolderPath(
-                file.folderId
-            )
-            : (
-                file.description
-              || archiveFolderPath(
-                  file.folderId
-              )
-            );
+    const secondaryLabel = showPath ? archiveFolderPath(file.folderId) : '';
 
     return `
         <tr
@@ -9807,11 +9837,7 @@ function renderArchiveFileTableRow(
                     )}
                 </strong>
 
-                <span>
-                  ${escapeHtml(
-                        secondaryLabel
-                    )}
-                </span>
+                ${secondaryLabel ? `<span>${escapeHtml(secondaryLabel)}</span>` : ''}
               </div>
             </div>
           </td>
@@ -9889,22 +9915,19 @@ function renderArchiveFileTableRow(
       `;
 }
 
-function renderArchiveFileTable(
+function renderArchiveFileTableDesktop(
     files,
     folders,
-    {
-        showPaths =
-            false,
-
-        matchingCountByFolder =
-            new Map()
-    } = {}
+    showPaths = false,
+    matchingCountByFolder = new Map()
 )
 {
     const sortedFolders =
         archiveSortFoldersForTable(
             folders
         );
+
+    const sortHeader = (field, label) => `<button type="button" class="archive-column-sort ${state.archiveFileSort === field ? 'is-active' : ''}" data-archive-column-sort="${field}" aria-label="${escapeHtml(t(`Sort by ${label}`))}">${escapeHtml(t(label))}</button>`;
 
     const showGroupLabels =
         Boolean(
@@ -9957,7 +9980,6 @@ function renderArchiveFileTable(
       `;
 
     return `
-        ${renderArchiveMobileItems(files, sortedFolders, showPaths)}
         <div
           class="
             archive-table-wrap
@@ -9982,22 +10004,22 @@ function renderArchiveFileTable(
                   "
                   type="checkbox"
                   data-archive-select-all
-                  aria-label="Select all visible files">
-                <span class="archive-mobile-select-all">${escapeHtml(t('Select all visible files'))}</span>
+                  aria-label="${escapeHtml(t('Select all visible items'))}">
+                <span class="archive-mobile-select-all">${escapeHtml(t('Select all visible items'))}</span>
                 </th>
 
                 <th
                   class="
                     archive-col-name
-                  ">
-                  Name
+                  " ${state.archiveFileSort === 'name' ? `aria-sort="${state.archiveFileSortDirection === 'ascending' ? 'ascending' : 'descending'}"` : ''}>
+                  ${sortHeader('name', 'Name')}
                 </th>
 
                 <th
                   class="
                     archive-col-type
-                  ">
-                  Type
+                  " ${state.archiveFileSort === 'type' ? `aria-sort="${state.archiveFileSortDirection === 'ascending' ? 'ascending' : 'descending'}"` : ''}>
+                  ${sortHeader('type', 'Type')}
                 </th>
 
                 <th
@@ -10010,8 +10032,8 @@ function renderArchiveFileTable(
                 <th
                   class="
                     archive-col-modified
-                  ">
-                  Modified
+                  " ${state.archiveFileSort === 'updated' ? `aria-sort="${state.archiveFileSortDirection === 'ascending' ? 'ascending' : 'descending'}"` : ''}>
+                  ${sortHeader('updated', 'Modified')}
                 </th>
 
                 <th
@@ -10042,12 +10064,15 @@ function renderArchiveFileTable(
 
 function renderArchiveMobileItems(files, folders, showPaths)
 {
-    const selecting = archiveMobileSelectMode || state.archiveSelectedFileIds.length > 0;
+    const selecting = archiveMobileSelectMode || state.archiveSelectedFileIds.length > 0
+        || (state.archiveSelectedFolderIds || []).length > 0;
     const folderRows = folders.map(folder => {
-        return `<li class="archive-mobile-item archive-mobile-folder">
+        const checked = (state.archiveSelectedFolderIds || []).includes(folder.id);
+        return `<li class="archive-mobile-item archive-mobile-folder ${checked ? 'is-checked' : ''}">
+            ${selecting ? `<input class="albums-select-checkbox" type="checkbox" data-archive-folder-checkbox="${escapeHtml(folder.id)}" ${checked ? 'checked' : ''} aria-label="${escapeHtml(t('Select'))}: ${escapeHtml(folder.name)}">` : ''}
             <button type="button" class="archive-mobile-item-main" data-archive-mobile-folder="${escapeHtml(folder.id)}" title="${escapeHtml(folder.name)}">
                 ${archiveFileIcon({ kind: 'folder' })}
-                <span class="archive-mobile-item-copy"><strong>${escapeHtml(folder.name)}</strong></span>
+                <span class="archive-mobile-item-copy"><strong>${escapeHtml(folder.name)}</strong>${folder.favorite ? `<small>${escapeHtml(t('Favourite'))}</small>` : ''}</span>
             </button>
             <button type="button" class="archive-mobile-item-more" data-archive-row-actions="folder" data-archive-row-id="${escapeHtml(folder.id)}" aria-label="${escapeHtml(t('Folder actions'))}: ${escapeHtml(folder.name)}">${icon.more}</button>
         </li>`;
@@ -10066,8 +10091,49 @@ function renderArchiveMobileItems(files, folders, showPaths)
         </li>`;
     }).join('');
     return `<div class="archive-mobile-items" aria-label="${escapeHtml(t('Archive files and folders'))}">
+        ${folders.length || files.length ? `<div class="archive-mobile-section-head"><button type="button" data-archive-mobile-select>${escapeHtml(t(selecting ? 'Cancel' : 'Select'))}</button></div>${selecting ? `<label class="archive-mobile-select-all"><input type="checkbox" class="albums-select-checkbox" data-archive-select-all> ${escapeHtml(t('Select all'))}</label>` : ''}` : ''}
         ${folders.length ? `<section aria-label="${escapeHtml(t('Folders'))}"><h2>${escapeHtml(t('Folders'))}</h2><ul>${folderRows}</ul></section>` : ''}
-        ${files.length ? `<section aria-label="${escapeHtml(t('Files'))}"><div class="archive-mobile-section-head"><h2>${escapeHtml(t('Files'))}</h2><button type="button" data-archive-mobile-select>${escapeHtml(t(selecting ? 'Cancel' : 'Select'))}</button></div>${selecting ? `<label class="archive-mobile-select-all"><input type="checkbox" class="albums-select-checkbox" data-archive-select-all> ${escapeHtml(t('Select all'))}</label>` : ''}<ul>${fileRows}</ul></section>` : ''}
+        ${files.length ? `<section aria-label="${escapeHtml(t('Files'))}"><h2>${escapeHtml(t('Files'))}</h2><ul>${fileRows}</ul></section>` : ''}
+    </div>`;
+}
+
+function renderArchiveFileTiles(files, folders, showPaths, matchingCountByFolder)
+{
+    const folderTiles = archiveSortFoldersForTable(folders).map(folder => {
+        const checked = (state.archiveSelectedFolderIds || []).includes(folder.id);
+        const count = matchingCountByFolder.get(folder.id);
+        const itemCount = Number.isFinite(count) ? count
+            : archiveProjectFiles().filter(file => archiveFileFolderId(file) === folder.id).length
+                + archiveFolderChildren(folder.id).length;
+        return `<div class="archive-tile ${checked ? 'is-checked' : ''} ${state.archiveSelectedFolderItemId === folder.id ? 'selected-detail' : ''}"
+            data-archive-folder-row="${escapeHtml(folder.id)}" tabindex="0" aria-label="${escapeHtml(folder.name)}">
+            <input class="albums-select-checkbox archive-tile-select" type="checkbox" data-archive-folder-checkbox="${escapeHtml(folder.id)}" ${checked ? 'checked' : ''} aria-label="${escapeHtml(t('Select'))}: ${escapeHtml(folder.name)}">
+            <button class="archive-row-icon-button archive-tile-more" type="button" data-archive-row-actions="folder" data-archive-row-id="${escapeHtml(folder.id)}" aria-label="${escapeHtml(t('Folder actions'))}: ${escapeHtml(folder.name)}">${icon.more}</button>
+            <div class="archive-tile-art">${archiveFileIcon({ kind: 'folder' })}</div>
+            <div class="archive-tile-copy"><strong title="${escapeHtml(folder.name)}">${escapeHtml(folder.name)}</strong>
+                <span>${itemCount} ${escapeHtml(t(Number.isFinite(count) ? (itemCount === 1 ? 'matching file' : 'matching files') : (itemCount === 1 ? 'item' : 'items')))}</span></div>
+            ${folder.favorite ? `<span class="archive-tile-favorite" aria-label="${escapeHtml(t('Favourite'))}">${icon.star}</span>` : ''}
+        </div>`;
+    }).join('');
+    const fileTiles = files.map(file => {
+        const checked = state.archiveSelectedFileIds.includes(file.id);
+        const source = archiveFileKind(file) === 'img'
+            ? file.previewUrl || file.thumbnailUrl || file.src : '';
+        const art = `${archiveFileIcon(file)}${source ? `<img src="${escapeHtml(source)}" alt="" loading="lazy">` : ''}`;
+        const meta = showPaths ? archiveFolderPath(file.folderId)
+            : [archiveFileTypeLabel(file), file.size].filter(Boolean).join(' · ');
+        return `<div class="archive-tile ${checked ? 'is-checked' : ''} ${state.archiveSelectedFileId === file.id ? 'selected-detail' : ''}"
+            data-archive-file-row="${escapeHtml(file.id)}" tabindex="0" aria-label="${escapeHtml(file.name)}">
+            <input class="albums-select-checkbox archive-tile-select" type="checkbox" data-archive-file-checkbox="${escapeHtml(file.id)}" ${checked ? 'checked' : ''} aria-label="${escapeHtml(t('Select'))}: ${escapeHtml(file.name)}">
+            <button class="archive-row-icon-button archive-tile-more" type="button" data-archive-row-actions="file" data-archive-row-id="${escapeHtml(file.id)}" aria-label="${escapeHtml(t('File actions'))}: ${escapeHtml(file.name)}">${icon.more}</button>
+            <div class="archive-tile-art">${art}</div>
+            <div class="archive-tile-copy"><strong title="${escapeHtml(file.name)}">${escapeHtml(file.name)}</strong><span>${escapeHtml(meta)}</span></div>
+            ${file.favorite ? `<span class="archive-tile-favorite" aria-label="${escapeHtml(t('Favourite'))}">${icon.star}</span>` : ''}
+        </div>`;
+    }).join('');
+    return `<div class="archive-tiles" aria-label="${escapeHtml(t('Archive files and folders'))}">
+        ${folders.length ? `<section><h2>${escapeHtml(t('Folders'))}</h2><div class="archive-tile-grid">${folderTiles}</div></section>` : ''}
+        ${files.length ? `<section><h2>${escapeHtml(t('Files'))}</h2><div class="archive-tile-grid">${fileTiles}</div></section>` : ''}
     </div>`;
 }
 
@@ -10252,22 +10318,13 @@ function renderArchiveFilesView()
                 files
             )}
 
-          ${archiveMobileSelectMode || state.archiveSelectedFileIds.length ? `<div class="archive-mobile-bulk"><strong>${state.archiveSelectedFileIds.length} ${escapeHtml(t('selected'))}</strong><button type="button" data-archive-mobile-bulk-actions ${state.archiveSelectedFileIds.length ? '' : 'disabled'}>${escapeHtml(t('Actions'))}</button><button type="button" data-archive-mobile-select aria-label="${escapeHtml(t('Cancel'))}">${icon.close}</button></div>` : ''}
+          ${archiveMobileSelectMode || state.archiveSelectedFileIds.length || (state.archiveSelectedFolderIds || []).length ? `<div class="archive-mobile-bulk"><strong>${escapeHtml(archiveBulkSelectionLabel())}</strong><button type="button" data-archive-mobile-bulk-actions ${state.archiveSelectedFileIds.length || (state.archiveSelectedFolderIds || []).length ? '' : 'disabled'}>${escapeHtml(t('Actions'))}</button><button type="button" data-archive-mobile-select aria-label="${escapeHtml(t('Cancel'))}">${icon.close}</button></div>` : ''}
 
           ${
                 hasRows
-                    ? renderArchiveFileTable(
-                        files,
-                        folders,
-                        {
-                            showPaths:
-                      flatResults,
-
-                            matchingCountByFolder:
-                      projection
-                          .matchingCountByFolder
-                        }
-                    )
+                    ? `${renderArchiveMobileItems(files, archiveSortFoldersForTable(folders), flatResults)}${state.archiveFileLayout === 'tiles'
+                        ? renderArchiveFileTiles(files, folders, flatResults, projection.matchingCountByFolder)
+                        : renderArchiveFileTableDesktop(files, folders, flatResults, projection.matchingCountByFolder)}`
                     : filtering
                         ? renderArchiveEmpty(
                             emptyTitle,
@@ -10487,6 +10544,10 @@ function renderArchiveToolbar()
                     ? APP_SORT_OPTIONS.archiveSources
                     : APP_SORT_OPTIONS.archiveFiles
             })}
+            ${sourcesView ? '' : `<div class="archive-layout-switch" role="group" aria-label="${escapeHtml(t('File view'))}">
+                <button class="toolbar-button archive-layout-button ${state.archiveFileLayout !== 'tiles' ? 'active' : ''}" type="button" data-archive-file-layout="details" aria-label="${escapeHtml(t('Details view'))}" title="${escapeHtml(t('Details view'))}" aria-pressed="${state.archiveFileLayout !== 'tiles'}">${icon.list}</button>
+                <button class="toolbar-button archive-layout-button ${state.archiveFileLayout === 'tiles' ? 'active' : ''}" type="button" data-archive-file-layout="tiles" aria-label="${escapeHtml(t('Icons view'))}" title="${escapeHtml(t('Icons view'))}" aria-pressed="${state.archiveFileLayout === 'tiles'}">${icon.grid}</button>
+            </div>`}
             ${sourcesView ? '' : `<button class="button primary archive-mobile-add-files" type="button" data-archive-mobile-add-menu aria-label="${escapeHtml(t('Add'))}" aria-expanded="false">${icon.plus}<span>${escapeHtml(t('Add'))}</span></button>`}
           </div>
         </div>
@@ -11716,10 +11777,10 @@ function archiveInspectorToolbarContext()
             'selected',
 
             favorite:
-            false,
+            Boolean(selectedFolder.favorite),
 
             supportsFavourite:
-            false
+            true
         };
     }
 
@@ -11745,10 +11806,10 @@ function archiveInspectorToolbarContext()
             'current',
 
             favorite:
-            false,
+            Boolean(currentFolder.favorite),
 
             supportsFavourite:
-            false
+            true
         };
     }
 
@@ -11891,6 +11952,8 @@ function renderArchiveInspectorFavouriteButton(
                     context.id
                 )}"
             `
+            : context.type === 'folder'
+              ? `data-archive-toggle-folder-favorite="${escapeHtml(context.id)}"`
             : `
               data-archive-toggle-favorite="${escapeHtml(
                     context.id
@@ -15704,6 +15767,8 @@ function createArchiveFolderRecord(
 
         projectId,
 
+        favorite: false,
+
         parentId:
           normalizedParentId,
 
@@ -17150,6 +17215,17 @@ let archiveLastFolderRowClick = {
     at:
         0
 };
+
+let archiveLastFileRowClick = { fileId: null, at: 0 };
+
+function archiveFileRowWasDoubleClick(fileId)
+{
+    const now = performance.now();
+    const repeated = archiveLastFileRowClick.fileId === fileId
+        && now - archiveLastFileRowClick.at <= ARCHIVE_FOLDER_DOUBLE_CLICK_MS;
+    archiveLastFileRowClick = { fileId, at: now };
+    return repeated;
+}
 
 function archiveFolderRowWasDoubleClick(
     folderId
@@ -21679,6 +21755,112 @@ function openArchiveDeleteFolderConfirm(folderId)
         );
 }
 
+function archiveEffectiveBulkItems(folderIds, fileIds)
+{
+    const selectedFolders = archiveUniqueIds(folderIds).map(id => archiveFolderById(id)).filter(Boolean);
+    const descendantIds = new Set(selectedFolders.flatMap(folder => archiveFolderDescendantIds(folder.id)));
+    const folders = selectedFolders.filter(folder => !selectedFolders.some(parent =>
+        parent.id !== folder.id && archiveFolderDescendantIds(parent.id).includes(folder.id)));
+    const files = archiveUniqueIds(fileIds).map(id => archiveFileById(id))
+        .filter(file => file && !descendantIds.has(archiveFileFolderId(file)));
+    return { folders, files };
+}
+
+function archiveCanMoveBulkItems(items, destinationId)
+{
+    if (destinationId && !archiveFolderById(destinationId)) return false;
+    if (items.folders.some(folder => archiveFolderDescendantIds(folder.id).includes(destinationId))) return false;
+    return items.folders.some(folder => archiveFolderParentId(folder) !== destinationId)
+        || items.files.some(file => archiveFileFolderId(file) !== destinationId);
+}
+
+function archiveMoveBulkItems(items, destinationId)
+{
+    if (!archiveCanMoveBulkItems(items, destinationId)) return false;
+    const folderSnapshots = items.folders.map(folder => ({ id: folder.id,
+        parentId: archiveFolderParentId(folder), updatedAt: folder.updatedAt }));
+    const fileSnapshots = items.files.map(file => ({ id: file.id,
+        folderId: archiveFileFolderId(file), updatedAt: file.updatedAt, updated: file.updated }));
+    const now = new Date().toISOString();
+    items.folders.forEach(folder => { folder.parentId = destinationId; folder.updatedAt = now; });
+    items.files.forEach(file => { file.folderId = destinationId; file.updatedAt = now; file.updated = 'Just now'; });
+    state.archiveSelectedFolderIds = [];
+    state.archiveSelectedFileIds = [];
+    state.archiveSelectedFolderItemId = null;
+    state.archiveSelectedFileId = null;
+    renderArchive();
+    showActionToast({
+        message: `${t('Moved selected items to')} ${archiveMoveFolderPath(destinationId)}.`,
+        actions: [{ label: 'Undo', onClick: () => {
+            folderSnapshots.forEach(snapshot => {
+                const folder = archiveFolderById(snapshot.id);
+                if (folder) { folder.parentId = snapshot.parentId; folder.updatedAt = snapshot.updatedAt; }
+            });
+            fileSnapshots.forEach(snapshot => {
+                const file = archiveFileById(snapshot.id);
+                if (file) { file.folderId = snapshot.folderId; file.updatedAt = snapshot.updatedAt; file.updated = snapshot.updated; }
+            });
+            renderArchive();
+            showToast('Move undone.');
+        }}]
+    });
+    return true;
+}
+
+function openArchiveBulkMoveModal(folderIds, fileIds)
+{
+    const items = archiveEffectiveBulkItems(folderIds, fileIds);
+    if (!items.folders.length && !items.files.length) return;
+    const choices = [{ id: null, label: t(ARCHIVE_ROOT_LABEL) },
+        ...archiveFlattenFolders().map(({ folder }) => ({ id: folder.id, label: archiveFolderPath(folder.id) }))];
+    openModal(`<div class="modal archive-bulk-move-modal" role="dialog" aria-modal="true" aria-labelledby="archiveBulkMoveTitle">
+        <div class="modal-header"><div><h2 id="archiveBulkMoveTitle">${escapeHtml(t('Move selected items'))}</h2>
+        <p>${escapeHtml(archiveBulkSelectionLabel())}</p></div>
+        <button class="close-button" type="button" data-close aria-label="${escapeHtml(t('Close'))}">${icon.close}</button></div>
+        <div class="modal-body"><label class="form-field"><span>${escapeHtml(t('Destination folder'))}</span>
+        <select data-archive-bulk-destination size="8">${choices.map(choice =>
+            `<option value="${escapeHtml(choice.id || '')}" ${archiveCanMoveBulkItems(items, choice.id) ? '' : 'disabled'}>${escapeHtml(choice.label)}</option>`).join('')}</select></label></div>
+        <div class="modal-footer"><button class="button secondary" type="button" data-close>${escapeHtml(t('Cancel'))}</button>
+        <button class="button primary" type="button" data-archive-bulk-move-confirm disabled>${escapeHtml(t('Move'))}</button></div></div>`);
+    const select = modalBackdrop.querySelector('[data-archive-bulk-destination]');
+    const confirm = modalBackdrop.querySelector('[data-archive-bulk-move-confirm]');
+    select?.addEventListener('change', () => { confirm.disabled = !archiveCanMoveBulkItems(items, select.value || null); });
+    confirm?.addEventListener('click', () => {
+        if (!archiveCanMoveBulkItems(items, select.value || null)) return;
+        closeModal();
+        archiveMoveBulkItems(items, select.value || null);
+    });
+}
+
+function openArchiveBulkDeleteConfirm(folderIds, fileIds)
+{
+    const items = archiveEffectiveBulkItems(folderIds, fileIds);
+    const deletedFolderIds = new Set(items.folders.flatMap(folder => archiveFolderDescendantIds(folder.id)));
+    const deletedFiles = new Set([...items.files.map(file => file.id),
+        ...archiveProjectFiles().filter(file => deletedFolderIds.has(archiveFileFolderId(file))).map(file => file.id)]);
+    if (!deletedFolderIds.size && !deletedFiles.size) return;
+    openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="archiveBulkDeleteTitle">
+        <div class="modal-header"><div><h2 id="archiveBulkDeleteTitle">${escapeHtml(t('Delete permanently?'))}</h2>
+        <p>${deletedFolderIds.size} ${escapeHtml(t('folders'))}, ${deletedFiles.size} ${escapeHtml(t('files'))}</p></div>
+        <button class="close-button" type="button" data-close aria-label="${escapeHtml(t('Close'))}">${icon.close}</button></div>
+        <div class="modal-body"><div class="archive-delete-summary"><strong>${escapeHtml(t('This action cannot be undone.'))}</strong>
+        <span>${escapeHtml(t('Selected folders, their contents, selected files, and file links will be removed. Connected genealogy records will remain.'))}</span></div></div>
+        <div class="modal-footer"><button class="button secondary" type="button" data-close>${escapeHtml(t('Cancel'))}</button>
+        <button class="button danger" type="button" data-archive-bulk-delete-confirm>${escapeHtml(t('Delete permanently'))}</button></div></div>`);
+    modalBackdrop.querySelector('[data-archive-bulk-delete-confirm]')?.addEventListener('click', () => {
+        deleteArchiveFilesPermanently([...deletedFiles]);
+        sampleData.archiveFolders = (sampleData.archiveFolders || []).filter(folder => !deletedFolderIds.has(folder.id));
+        state.archiveSelectedFolderIds = [];
+        state.archiveSelectedFileIds = [];
+        state.archiveSelectedFolderItemId = null;
+        const current = state.archiveSelectedFolderId;
+        if (current && deletedFolderIds.has(current)) state.archiveSelectedFolderId = null;
+        closeModal();
+        renderArchive();
+        showToast(t('Selected Archive items permanently deleted.'));
+    });
+}
+
 function openArchiveDeleteSourceConfirm(sourceId)
 {
     const source = archiveSourceById(sourceId);
@@ -21805,6 +21987,7 @@ function openArchiveItemActionsPopover(
     if (file)
     {
         menu.innerHTML = `
+          <button type="button" role="menuitem" data-archive-item-action="favorite">${escapeHtml(t(file.favorite ? 'Remove from favourites' : 'Add to favourites'))}</button>
           <button
             type="button"
             role="menuitem"
@@ -21836,6 +22019,7 @@ function openArchiveItemActionsPopover(
     {
         menu.innerHTML = `
           ${innerWidth <= 900 ? `<button type="button" role="menuitem" data-archive-item-action="details">${escapeHtml(t('Details'))}</button>` : ''}
+          <button type="button" role="menuitem" data-archive-item-action="favorite">${escapeHtml(t(folder.favorite ? 'Remove from favourites' : 'Add to favourites'))}</button>
           ${
                 folderIsCurrentLocation
                     ? ''
@@ -22005,6 +22189,12 @@ function openArchiveItemActionsPopover(
 
             if (file)
             {
+                if (action === 'favorite')
+                {
+                    file.favorite = !file.favorite;
+                    renderArchive();
+                    return;
+                }
                 if (
                     action === 'rename'
                 )
@@ -22047,6 +22237,12 @@ function openArchiveItemActionsPopover(
 
             if (folder)
             {
+                if (action === 'favorite')
+                {
+                    folder.favorite = !folder.favorite;
+                    renderArchive();
+                    return;
+                }
                 if (action === 'details')
                 {
                     selectArchiveFolderItem(folder.id);
@@ -22164,9 +22360,14 @@ function openArchiveMobileChoiceMenu(anchor, kind)
     menu.id = 'projectMenu';
     menu.className = 'menu-popover';
     menu.setAttribute('role', 'menu');
+    const { folders, files } = archiveSelectedBulkItems();
+    const allFavorite = [...folders, ...files].every(item => item.favorite);
+    const bulkChoices = `${kind === 'bulk' ? `<button type="button" role="menuitem" data-archive-mobile-choice="move">${escapeHtml(t('Move'))}</button><button type="button" role="menuitem" data-archive-mobile-choice="favorite">${escapeHtml(t(allFavorite ? 'Remove from favourites' : 'Add to favourites'))}</button>` : ''}
+        ${!folders.length ? `<button type="button" role="menuitem" data-archive-mobile-choice="links">${escapeHtml(t('Add links'))}</button>` : ''}
+        <button class="danger" type="button" role="menuitem" data-archive-mobile-choice="delete">${escapeHtml(t('Delete permanently'))}</button>`;
     menu.innerHTML = kind === 'add'
         ? `<button type="button" role="menuitem" data-archive-mobile-choice="files">${escapeHtml(t('Add files'))}</button><button type="button" role="menuitem" data-archive-mobile-choice="folder">${escapeHtml(t('New folder'))}</button>`
-        : `<button type="button" role="menuitem" data-archive-mobile-choice="move">${escapeHtml(t('Move'))}</button><button type="button" role="menuitem" data-archive-mobile-choice="links">${escapeHtml(t('Add links'))}</button><button type="button" role="menuitem" data-archive-mobile-choice="favorite">${escapeHtml(t('Add to favourites'))}</button><button type="button" role="menuitem" data-archive-mobile-choice="delete">${escapeHtml(t('Delete permanently'))}</button>`;
+        : bulkChoices;
     document.body.appendChild(menu);
     const rect = anchor.getBoundingClientRect();
     menu.style.left = `${Math.max(12, Math.min(rect.right - menu.offsetWidth, innerWidth - menu.offsetWidth - 12))}px`;
@@ -22419,21 +22620,147 @@ function openSourceConnectedItems(sourceId, entityType)
     }
 }
 
+let archiveDragItem = null;
+let archiveDragExpandTimer = null;
+
+function archiveBindDragAutoscroll(scroller)
+{
+    if (!scroller) return;
+    scroller.addEventListener('dragover', event => {
+        if (!archiveDragItem) return;
+        const bounds = scroller.getBoundingClientRect();
+        if (event.clientY < bounds.top + 36) scroller.scrollTop -= 16;
+        else if (event.clientY > bounds.bottom - 36) scroller.scrollTop += 16;
+    });
+}
+
+function archiveClearDragExpandTimer()
+{
+    clearTimeout(archiveDragExpandTimer);
+    archiveDragExpandTimer = null;
+}
+
+function archiveCanDropInto(folderId)
+{
+    return Boolean(archiveDragItem) && archiveCanMoveBulkItems(
+        archiveEffectiveBulkItems(archiveDragItem.folderIds, archiveDragItem.fileIds), folderId);
+}
+
+function archiveMoveDraggedItems(folderId)
+{
+    if (!archiveCanDropInto(folderId)) return;
+    const items = archiveEffectiveBulkItems(archiveDragItem.folderIds, archiveDragItem.fileIds);
+    archiveDragItem = null;
+    archiveMoveBulkItems(items, folderId);
+}
+
+function archiveBindDropTarget(element, folderId)
+{
+    if (!element) return;
+    element.addEventListener('dragover', event => {
+        if (!archiveDragItem) return;
+        event.preventDefault();
+        const valid = archiveCanDropInto(folderId);
+        event.dataTransfer.dropEffect = valid ? 'move' : 'none';
+        element.classList.toggle('archive-drop-target', valid);
+        element.classList.toggle('archive-drop-invalid', !valid);
+        if (valid && element.matches('[data-archive-folder]')
+            && !state.archiveExpandedFolders[folderId]
+            && archiveFolderChildren(folderId).length && !archiveDragExpandTimer)
+        {
+            archiveDragExpandTimer = setTimeout(() => {
+                archiveDragExpandTimer = null;
+                if (!archiveDragItem) return;
+                state.archiveExpandedFolders[folderId] = true;
+                renderArchiveSidebar();
+            }, 650);
+        }
+    });
+    element.addEventListener('dragleave', event => {
+        if (!element.contains(event.relatedTarget))
+        {
+            element.classList.remove('archive-drop-target', 'archive-drop-invalid');
+            archiveClearDragExpandTimer();
+        }
+    });
+    element.addEventListener('drop', event => {
+        if (!archiveDragItem) return;
+        event.preventDefault();
+        event.stopPropagation();
+        archiveClearDragExpandTimer();
+        element.classList.remove('archive-drop-target', 'archive-drop-invalid');
+        archiveMoveDraggedItems(folderId);
+    });
+}
+
 function bindArchiveControls()
 {
     const root = main.querySelector('.archive-shell');
     if (!root) return;
+    if (innerWidth > 900 && state.archiveView !== 'sources')
+    {
+        archiveBindDragAutoscroll(root.querySelector('.archive-main'));
+        root.querySelectorAll('[data-archive-file-row], [data-archive-folder-row]').forEach(row => {
+            row.draggable = true;
+            row.addEventListener('dragstart', event => {
+                if (event.target.closest('button,input,select,a')) { event.preventDefault(); return; }
+                const fileId = row.dataset.archiveFileRow;
+                const folderId = row.dataset.archiveFolderRow;
+                const inSelection = fileId ? state.archiveSelectedFileIds.includes(fileId)
+                    : (state.archiveSelectedFolderIds || []).includes(folderId);
+                archiveDragItem = inSelection
+                    ? { fileIds: state.archiveSelectedFileIds.slice(), folderIds: (state.archiveSelectedFolderIds || []).slice() }
+                    : { fileIds: fileId ? [fileId] : [], folderIds: folderId ? [folderId] : [] };
+                event.dataTransfer.effectAllowed = 'move';
+                event.dataTransfer.setData('text/plain', 'Geneograph Archive item');
+                row.classList.add('archive-is-dragging');
+            });
+            row.addEventListener('dragend', () => {
+                archiveDragItem = null;
+                archiveClearDragExpandTimer();
+                document.querySelectorAll('.archive-drop-target, .archive-drop-invalid, .archive-is-dragging')
+                    .forEach(item => item.classList.remove('archive-drop-target', 'archive-drop-invalid', 'archive-is-dragging'));
+            });
+        });
+        root.querySelectorAll('[data-archive-folder-row]').forEach(row =>
+            archiveBindDropTarget(row, row.dataset.archiveFolderRow));
+        root.querySelectorAll('[data-archive-breadcrumb]').forEach(button =>
+            archiveBindDropTarget(button, button.dataset.archiveBreadcrumb));
+        archiveBindDropTarget(root.querySelector('[data-archive-breadcrumb-root]'), null);
+    }
+    root.querySelectorAll('.archive-tile-art img').forEach(image => image.addEventListener('error', () => image.remove()));
+    root.querySelectorAll('[data-archive-file-layout]').forEach(button => button.addEventListener('click', () => {
+        resetArchiveFolderRowClick();
+        state.archiveFileLayout = button.dataset.archiveFileLayout;
+        renderArchiveMain();
+        main.querySelector(`[data-archive-file-layout="${state.archiveFileLayout}"]`)?.focus({ preventScroll: true });
+    }));
+    root.querySelectorAll('[data-archive-column-sort]').forEach(button => button.addEventListener('click', () => {
+        const field = button.dataset.archiveColumnSort;
+        state.archiveFileSortDirection = state.archiveFileSort === field && state.archiveFileSortDirection === 'ascending'
+            ? 'descending' : 'ascending';
+        state.archiveFileSort = field;
+        renderArchiveMain();
+        main.querySelector(`[data-archive-column-sort="${field}"]`)?.focus({ preventScroll: true });
+    }));
     root.querySelector('[data-archive-mobile-add-menu]')?.addEventListener('click', event =>
         openArchiveMobileChoiceMenu(event.currentTarget, 'add'));
     root.querySelector('[data-archive-mobile-bulk-actions]')?.addEventListener('click', event =>
         openArchiveMobileChoiceMenu(event.currentTarget, 'bulk'));
+    root.querySelector('[data-archive-selection-more]')?.addEventListener('click', event =>
+        openArchiveMobileChoiceMenu(event.currentTarget, 'bulk-desktop'));
     root.querySelectorAll('[data-archive-mobile-select]').forEach(button => button.addEventListener('click', () => {
         archiveMobileSelectMode = !archiveMobileSelectMode;
-        if (!archiveMobileSelectMode) state.archiveSelectedFileIds = [];
+        if (!archiveMobileSelectMode) {
+            state.archiveSelectedFileIds = [];
+            state.archiveSelectedFolderIds = [];
+        }
         renderArchiveMain();
     }));
-    root.querySelectorAll('[data-archive-mobile-folder]').forEach(button => button.addEventListener('click', () =>
-        archiveOpenFolder(button.dataset.archiveMobileFolder)));
+    root.querySelectorAll('[data-archive-mobile-folder]').forEach(button => button.addEventListener('click', () => {
+        if (archiveMobileSelectMode) toggleArchiveFolderSelection(button.dataset.archiveMobileFolder);
+        else archiveOpenFolder(button.dataset.archiveMobileFolder);
+    }));
     root.querySelectorAll('[data-archive-mobile-file]').forEach(button => button.addEventListener('click', () => {
         const id = button.dataset.archiveMobileFile;
         if (archiveMobileSelectMode)
@@ -23173,7 +23500,10 @@ function bindArchiveControls()
                         )
                     )
                     {
-                        open();
+                        if (innerWidth > 900 && !event.shiftKey && !event.ctrlKey && !event.metaKey
+                            && archiveFileRowWasDoubleClick(row.dataset.archiveFileRow))
+                            showToast('Opening the original file is simulated.');
+                        else open();
                     }
                 }
             );
@@ -23185,6 +23515,11 @@ function bindArchiveControls()
                     if (
                         event.key === 'Enter'
                     )
+                    {
+                        event.preventDefault();
+                        open();
+                    }
+                    else if (innerWidth > 900 && (event.key === ' ' || event.key === 'Spacebar'))
                     {
                         event.preventDefault();
                         open();
@@ -23268,7 +23603,7 @@ function bindArchiveControls()
                 Second quick click on the same folder:
                 open the folder.
               */
-                    if (
+                    if (!event.shiftKey && !event.ctrlKey && !event.metaKey &&
                         archiveFolderRowWasDoubleClick(
                             folderId
                         )
@@ -23283,9 +23618,7 @@ function bindArchiveControls()
                         return;
                     }
 
-                    selectArchiveFolderItem(
-                        folderId
-                    );
+                    selectArchiveFolderItem(folderId);
                 }
             );
 
@@ -23319,7 +23652,7 @@ function bindArchiveControls()
                         resetArchiveFolderRowClick();
 
                         if (innerWidth <= 900) showFolderDetails();
-                        else selectArchiveFolderItem(folderId);
+                        else showFolderDetails();
                     }
                 }
             );
@@ -23376,6 +23709,10 @@ function bindArchiveControls()
                 }
             );
         });
+    root.querySelectorAll('[data-archive-folder-checkbox]').forEach(input => {
+        input.addEventListener('click', event => event.stopPropagation());
+        input.addEventListener('change', () => toggleArchiveFolderSelection(input.dataset.archiveFolderCheckbox));
+    });
     const visibleSelection =
         archiveVisibleSelectionState();
 
@@ -23415,6 +23752,11 @@ function bindArchiveControls()
             file.favorite = !file.favorite; renderArchive();
         }
     }));
+    root.querySelectorAll('[data-archive-toggle-folder-favorite]').forEach(button => button.addEventListener('click', event => {
+        event.stopPropagation();
+        const folder = archiveFolderById(button.dataset.archiveToggleFolderFavorite);
+        if (folder) { folder.favorite = !folder.favorite; renderArchive(); }
+    }));
     root.querySelectorAll('[data-archive-source-favorite]').forEach(button => button.addEventListener('click', event =>
     {
         event.stopPropagation();
@@ -23451,23 +23793,38 @@ function bindArchiveControls()
     root.querySelectorAll('[data-archive-selection-action]').forEach(button => button.addEventListener('click', () =>
     {
         const ids = state.archiveSelectedFileIds.slice();
+        const folderIds = (state.archiveSelectedFolderIds || []).slice();
         if (button.dataset.archiveSelectionAction === 'clear')
         {
-            state.archiveSelectedFileIds = []; renderArchiveMain();
+            state.archiveSelectedFileIds = [];
+            state.archiveSelectedFolderIds = [];
+            renderArchiveMain();
         }
-        if (button.dataset.archiveSelectionAction === 'move') openArchiveMoveModal({ fileIds: ids });
-        if (button.dataset.archiveSelectionAction === 'links') openArchiveAddLinksMenu(ids);
+        if (button.dataset.archiveSelectionAction === 'move') {
+            if (folderIds.length) openArchiveBulkMoveModal(folderIds, ids);
+            else openArchiveMoveModal({ fileIds: ids });
+        }
+        if (button.dataset.archiveSelectionAction === 'links' && !folderIds.length) openArchiveAddLinksMenu(ids);
         if (button.dataset.archiveSelectionAction === 'favorite')
         {
-            const allFavorite = ids.every(id => archiveFileById(id)?.favorite);
+            const records = [...ids.map(id => archiveFileById(id)),
+                ...folderIds.map(id => archiveFolderById(id))].filter(Boolean);
+            const allFavorite = records.every(record => record.favorite);
             ids.forEach(id =>
             {
                 const file = archiveFileById(id); if (file) file.favorite = !allFavorite;
             });
+            folderIds.forEach(id => {
+                const folder = archiveFolderById(id); if (folder) folder.favorite = !allFavorite;
+            });
             state.archiveSelectedFileIds = [];
+            state.archiveSelectedFolderIds = [];
             renderArchive();
         }
-        if (button.dataset.archiveSelectionAction === 'delete') openArchiveDeleteFileConfirm(ids);
+        if (button.dataset.archiveSelectionAction === 'delete') {
+            if (folderIds.length) openArchiveBulkDeleteConfirm(folderIds, ids);
+            else openArchiveDeleteFileConfirm(ids);
+        }
     }));
     root
         .querySelectorAll(

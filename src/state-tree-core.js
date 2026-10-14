@@ -205,11 +205,13 @@ const state = {
         uploadErrors: []
     },
     archiveView: 'files',
+    archiveFileLayout: 'details',
     archiveSelectedFolderId: null,
     archiveSelectedFolderItemId: null,
     archiveSelectedFileId: null,
     archiveSelectedSourceId: 'as1',
     archiveSelectedFileIds: [],
+    archiveSelectedFolderIds: [],
     archiveSearch: '',
     archiveFileFilters: {
         scope: 'all',
@@ -357,8 +359,8 @@ const state = {
     albumsSort: 'updated',
     albumsSortDirection: 'descending',
 
-    archiveFileSort: 'updated',
-    archiveFileSortDirection: 'descending',
+    archiveFileSort: 'name',
+    archiveFileSortDirection: 'ascending',
 
     archiveSourceSort: 'updated',
     archiveSourceSortDirection: 'descending',
