@@ -133,25 +133,50 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             assert.deepEqual(errors, [], `${width}px console`);
             await page.close();
         }
-        const desktop = await browser.newPage({ viewport: { width: 1280, height: 800 } });
-        await desktop.goto(url);
-        await desktop.evaluate(() =>
+        for (const width of [1280, 1920])
         {
-            state.projectOpen = true;
-            state.currentProjectId = 'p1';
-            state.activeModule = 'Notes';
-            render();
-            state.selectedNoteId = document.querySelector('[data-note-id]')?.dataset.noteId;
-            openNotesPlacesModal();
-        });
-        assert.ok(await desktop.locator('.notes-place-new-full').isVisible());
-        assert.equal(await desktop.locator('.notes-place-new-short').isVisible(), false);
-        assert.ok(await desktop.locator('.notes-places-modal').evaluate(modal =>
-        {
-            const box = modal.getBoundingClientRect();
-            return box.left > 0 && box.right < innerWidth;
-        }));
-        await desktop.close();
+            const desktop = await browser.newPage({ viewport: { width, height: 800 } });
+            await desktop.goto(url);
+            for (const [module, action, selector] of [
+                ['Archive', "openArchiveFilesPeopleModal(['af1'])", '.notes-people-modal'],
+                ['Notes', 'openNotesPeopleModal()', '.notes-people-modal'],
+                ['Notes', 'openNotesPlacesModal()', '.notes-places-modal']
+            ])
+            {
+                await desktop.evaluate(({ module, action }) =>
+                {
+                    closeModal();
+                    state.projectOpen = true;
+                    state.currentProjectId = 'p1';
+                    state.activeModule = module;
+                    render();
+                    if (module === 'Notes') state.selectedNoteId = document.querySelector('[data-note-id]')?.dataset.noteId;
+                    eval(action);
+                }, { module, action });
+                assert.ok(await desktop.locator(selector).evaluate(modal =>
+                {
+                    const box = modal.getBoundingClientRect();
+                    const search = modal.querySelector('.photo-people-search-field').getBoundingClientRect();
+                    const results = modal.querySelector('.photo-people-results-panel').getBoundingClientRect();
+                    const footer = modal.querySelector('.modal-footer').getBoundingClientRect();
+                    const selected = modal.querySelector('.photo-people-selected-panel');
+                    const wasHidden = selected.hidden;
+                    selected.hidden = true;
+                    const hiddenPanelCollapsed = getComputedStyle(selected).display === 'none';
+                    selected.hidden = wasHidden;
+                    return box.width <= 760 && box.left > 0 && box.right < innerWidth
+                        && results.width >= search.width - 2 && Math.abs(results.left - search.left) <= 2
+                        && results.top >= search.bottom && results.height > 100
+                        && footer.bottom <= innerHeight + 1 && hiddenPanelCollapsed;
+                }), `${width}px ${module} picker uses one full-width column`);
+                if (selector === '.notes-places-modal')
+                {
+                    assert.ok(await desktop.locator('.notes-place-new-full').isVisible());
+                    assert.equal(await desktop.locator('.notes-place-new-short').isVisible(), false);
+                }
+            }
+            await desktop.close();
+        }
     }
     finally
     {

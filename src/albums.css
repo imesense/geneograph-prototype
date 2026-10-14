@@ -3426,6 +3426,18 @@ button.albums-inspector-row-main:focus-visible {
     overflow: hidden;
 }
 
+@media (min-width: 761px) {
+    .albums-tag-people-modal .photo-people-sidebar {
+        grid-template-rows: max-content max-content max-content;
+        align-content: start;
+        overflow-y: auto;
+    }
+
+    .albums-tag-people-modal .photo-people-selected-panel {
+        max-height: min(40vh, 260px);
+    }
+}
+
 .photo-people-workspace {
     min-width: 0;
     min-height: 0;
