@@ -23,7 +23,7 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
                 const items = files.filter(file => file.folderId === folder.id).length;
                 return { name: folder.name, subfolders, items };
             });
-            const images = await Promise.all(files.map(file => new Promise(resolve => {
+            const images = await Promise.all(files.filter(file => file.previewUrl).map(file => new Promise(resolve => {
                 const image = new Image();
                 image.onload = () => resolve({ id: file.id, ok: true, width: image.naturalWidth });
                 image.onerror = () => resolve({ id: file.id, ok: false });
@@ -42,7 +42,7 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
                 kinds, images
             };
         });
-        assert.equal(result.files, 7);
+        assert.equal(result.files, 11);
         for (const key of ['invalidParents', 'invalidFolders', 'danglingNotes', 'danglingSources', 'invalidPeople', 'invalidRegions'])
             assert.deepEqual(result[key], [], key);
         assert.ok(result.kinds.some(folder => folder.subfolders && folder.items), 'mixed folder');

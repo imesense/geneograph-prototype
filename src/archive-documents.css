@@ -1,0 +1,132 @@
+.archive-document-modal,
+.archive-document-import {
+    width: min(940px, calc(100vw - 32px));
+    height: min(800px, calc(100dvh - 32px));
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.archive-document-modal .modal-header,
+.archive-document-import .modal-header,
+.archive-document-modal .modal-footer,
+.archive-document-import .modal-footer {
+    flex: none;
+}
+
+.archive-document-modal .modal-header h2 {
+    overflow-wrap: anywhere;
+}
+
+.archive-document-body,
+.archive-document-import .modal-body {
+    min-height: 0;
+    flex: 1;
+    overflow: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+}
+
+.archive-document-text {
+    margin: 0;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    font: inherit;
+    line-height: 1.6;
+    max-width: 75ch;
+}
+
+.archive-document-table {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+    min-width: max-content;
+}
+
+.archive-document-table th,
+.archive-document-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border-color, #35403e);
+    text-align: left;
+    max-width: 35ch;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+.archive-document-table th {
+    position: sticky;
+    top: 0;
+    background: var(--surface-2, #1c2523);
+    z-index: 1;
+}
+
+.archive-document-article {
+    max-width: 75ch;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.archive-document-article table {
+    display: block;
+    overflow-x: auto;
+    border-collapse: collapse;
+    max-width: 100%;
+}
+
+.archive-document-article td,
+.archive-document-article th {
+    border: 1px solid var(--border-color, #35403e);
+    padding: 8px;
+}
+
+.archive-document-pdf-tools {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 8px 0;
+    background: var(--surface-1, #19211f);
+}
+
+.archive-document-pdf-tools .button { min-width: 42px; }
+.archive-document-pdf-canvas { display: block; max-width: none; margin: 16px auto; background: white; }
+
+.archive-document-drop {
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    border: 1px dashed var(--border-color, #63726d);
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.archive-document-drop.dragging,
+.archive-document-drop:focus-visible {
+    outline: 2px solid var(--accent, #2ba779);
+    outline-offset: 2px;
+}
+
+.archive-document-import-results p { margin: 10px 0; overflow-wrap: anywhere; }
+
+@media (max-width: 540px) {
+    .archive-document-modal,
+    .archive-document-import {
+        width: 100vw;
+        height: 100dvh;
+        max-width: none;
+        max-height: none;
+        border-radius: 0;
+    }
+
+    .archive-document-modal .modal-footer,
+    .archive-document-import .modal-footer {
+        padding-bottom: max(16px, env(safe-area-inset-bottom));
+    }
+}

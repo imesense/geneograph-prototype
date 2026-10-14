@@ -458,6 +458,26 @@ sampleData.archiveFiles = [
         documentDate: { type: 'Exact date', value: '03 Jun 1949' }, linkedPersonIds: ['daisy'], personRegions: { daisy: { x: 0.14, y: 0.36, width: 0.72, height: 0.12 } },
         linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: ['place-pawford'], placeIds: ['place-pawford'],
         addedAt: '2026-06-02T09:25:00Z', updatedAt: '2026-06-02T09:25:00Z', added: 'Jun 2, 2026', updated: 'Jun 2, 2026'
+    },
+    {
+        id: 'af-letter-transcription', projectId: 'p1', folderId: 'interviews', name: 'daisy_letter_transcription.txt', kind: 'doc', type: 'Text', mimeType: 'text/plain', assetUrl: 'assets/daisy_letter_transcription.txt', size: '1 KB', favorite: false,
+        description: 'Transcription of Daisy’s letter to Luna.', linkedPersonIds: ['daisy', 'luna'], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: ['place-pawford'], placeIds: ['place-pawford'],
+        addedAt: '2026-06-02T09:30:00Z', updatedAt: '2026-06-02T09:30:00Z'
+    },
+    {
+        id: 'af-pawford-trip', projectId: 'p1', folderId: 'opis3', name: 'pawford_visit_notes.docx', kind: 'doc', type: 'Document', mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', assetUrl: 'assets/pawford_visit_notes.docx', size: '37 KB', sizeBytes: 37210, favorite: false,
+        description: 'Research notes from a visit to Pawford.', linkedPersonIds: ['barnaby', 'daisy'], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: ['place-pawford'], placeIds: ['place-pawford'],
+        addedAt: '2026-06-02T09:31:00Z', updatedAt: '2026-06-02T09:31:00Z'
+    },
+    {
+        id: 'af-household-csv', projectId: 'p1', folderId: 'delo44', name: 'pawford_household_index.csv', kind: 'sheet', type: 'CSV', mimeType: 'text/csv', assetUrl: 'assets/pawford_household_index.csv', size: '1 KB', favorite: false,
+        description: 'Searchable transcription of the household register index.', linkedPersonIds: ['barnaby', 'daisy', 'silver', 'luna'], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: ['place-pawford'], placeIds: ['place-pawford'],
+        addedAt: '2026-06-02T09:32:00Z', updatedAt: '2026-06-02T09:32:00Z'
+    },
+    {
+        id: 'af-marriage-packet', projectId: 'p1', folderId: 'certificates', name: 'silver_luna_marriage_packet.pdf', kind: 'pdf', type: 'PDF', mimeType: 'application/pdf', assetUrl: 'assets/silver_luna_marriage_packet.pdf', size: '4 KB', sizeBytes: 3229, favorite: false,
+        description: 'Research packet for Silver and Luna’s marriage.', linkedPersonIds: ['silver', 'luna'], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: ['place-meowbridge'], placeIds: ['place-meowbridge'],
+        addedAt: '2026-06-02T09:33:00Z', updatedAt: '2026-06-02T09:33:00Z'
     }
 ];
 
@@ -14623,7 +14643,7 @@ function renderArchiveSourceInspector()
 
 function openArchiveAddFilesModal()
 {
-    showToast('File adding will be available in the working MVP.');
+    openArchiveDocumentImport();
 }
 
 function connectedFilesForProject(
@@ -14757,6 +14777,15 @@ function openConnectedFilesModal({
 
     let query =
         '';
+
+    const importNewFiles = files => openArchiveDocumentImport({
+        files,
+        onImported: ids => {
+            const result = typeof onSave === 'function' ? onSave(ids) : false;
+            if (result !== false && result?.ok !== false) afterSave?.(ids, result);
+            else showToast('Files were added, but could not be linked to this record.');
+        }
+    });
 
     let sourceTab =
         allFiles.length
@@ -14916,10 +14945,10 @@ function openConnectedFilesModal({
                   </strong>
 
                   <p>
-                    Add new files to Archive,
-                    then connect them to this
-                    record. File upload is
-                    simulated in this prototype.
+                    ${escapeHtml(archiveDocumentLabel(
+                        'Add files to Archive and connect them to this record. Files remain available until reload.',
+                        'Добавьте файлы в Архив и свяжите их с этой записью. Файлы доступны до перезагрузки.'
+                    ))}
                   </p>
 
                   <button
@@ -15511,7 +15540,7 @@ function openConnectedFilesModal({
                 event.preventDefault();
                 event.stopPropagation();
 
-                openArchiveAddFilesModal();
+                importNewFiles();
 
                 return;
             }
@@ -15533,7 +15562,7 @@ function openConnectedFilesModal({
                     return;
                 }
 
-                openArchiveAddFilesModal();
+                importNewFiles();
             }
         );
 
@@ -15564,7 +15593,7 @@ function openConnectedFilesModal({
 
                 event.preventDefault();
 
-                openArchiveAddFilesModal();
+                importNewFiles();
             }
         );
 
@@ -15610,9 +15639,9 @@ function openConnectedFilesModal({
 
         dropzone.addEventListener(
             'drop',
-            () =>
+            event =>
             {
-                openArchiveAddFilesModal();
+                importNewFiles(event.dataTransfer?.files);
             }
         );
     }
@@ -23595,7 +23624,7 @@ function bindArchiveControls()
                     {
                         if (innerWidth > 900 && !event.shiftKey && !event.ctrlKey && !event.metaKey
                             && archiveFileRowWasDoubleClick(row.dataset.archiveFileRow))
-                            showToast('Opening the original file is simulated.');
+                            openArchiveDocumentViewer(row.dataset.archiveFileRow);
                         else open();
                     }
                 }
@@ -23946,7 +23975,7 @@ function bindArchiveControls()
                 }
             );
         });
-    root.querySelectorAll('[data-archive-open-file]').forEach(button => button.addEventListener('click', () => showToast('Opening the original file is simulated.')));
+    root.querySelectorAll('[data-archive-open-file]').forEach(button => button.addEventListener('click', () => openArchiveDocumentViewer(button.dataset.archiveOpenFile)));
     root.querySelectorAll('[data-archive-delete-source]').forEach(button => button.addEventListener('click', () => openArchiveDeleteSourceConfirm(button.dataset.archiveDeleteSource)));
     root.querySelectorAll('[data-archive-edit-source]').forEach(button => button.addEventListener('click', () => openArchiveSourceModal(button.dataset.archiveEditSource)));
     root

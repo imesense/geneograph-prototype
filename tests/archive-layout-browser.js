@@ -3,7 +3,7 @@ const path = require('node:path');
 const { pathToFileURL } = require('node:url');
 const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
 
-const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
+const url = process.env.GENEO_TEST_URL || pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
 
 (async () => {
     const browser = await chromium.launch({ headless: true,
@@ -76,8 +76,8 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
                 if (width === 1280) {
                     const fileId = await page.locator('.archive-tile[data-archive-file-row]').first().getAttribute('data-archive-file-row');
                     await page.locator(`.archive-tile[data-archive-file-row="${fileId}"]`).click();
-                    await page.locator(`.archive-tile[data-archive-file-row="${fileId}"]`).click();
-                    assert.match(await page.locator('.toast-message').last().innerText(), /simulated/i);
+                    await page.locator('.archive-document-modal').waitFor();
+                    await page.locator('.archive-document-modal [data-close]').click();
                 }
                 await page.locator('.archive-tile[data-archive-file-row] input[type="checkbox"]').first().check();
                 assert.equal(await page.evaluate(() => state.archiveSelectedFileIds.length), 1);
