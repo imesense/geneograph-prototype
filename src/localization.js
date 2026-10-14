@@ -27,7 +27,6 @@ const RU_UI_SHARED = Object.freeze({
     'Marked area for': 'Отмеченная область для',
     'Archive image': 'Изображение из архива',
     'Drag on the image to mark a name or other evidence. Move or resize the box to adjust it.': 'Выделите имя или другое свидетельство на изображении. Переместите рамку или измените её размер.',
-    'Area marked in image': 'Область отмечена на изображении',
     'Add area': 'Добавить область',
     'Area selected': 'Область выбрана',
     'No area': 'Область не выбрана',

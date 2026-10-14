@@ -431,7 +431,7 @@ function geneoTourPrepare(index)
         state.archiveFilterPresentation = 'folders';
         state.archiveFilterScopeFolderId = null;
         state.archiveExpandedFolders = { ...state.archiveExpandedFolders,
-            pawford: true, fond12: true, opis3: true };
+            documents: true, opis3: true };
         state.archiveNavigationBackStack = folderStop || fileStop
             ? [archiveNormalizeLocationSnapshot({ view: 'files', folderId: null })] : [];
         state.archiveNavigationForwardStack = [];

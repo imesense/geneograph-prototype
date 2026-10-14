@@ -3893,21 +3893,23 @@ function peopleProfileAssets(person)
 {
     const archiveMap = {
         silver: [
-            { type: 'PDF', name: 'Pawford household register', meta: 'Added Mar 03 2016 - Source assigned', fileId: 'af1' },
+            { type: 'PNG', name: 'Pawford household register', meta: 'Four linked people - Source assigned', fileId: 'af1' },
             { type: 'JPG', name: 'Silver kitten portrait', meta: 'Added Feb 20 2021 - Personal album', fileId: null },
-            { type: 'PDF', name: 'Meowbridge marriage record', meta: 'Added May 7 2026 - Linked to relationship', fileId: 'af5' },
-            { type: 'JPG', name: 'Fishmarket Row census extract', meta: 'Added Today - Needs review', fileId: 'af2' }
+            { type: 'PNG', name: 'Silver birth announcement', meta: 'Name marked in image', fileId: 'af7' },
+            { type: 'PNG', name: 'Meowbridge marriage record', meta: 'Linked to Luna', fileId: 'af5' }
         ],
         luna: [
             { type: 'JPG', name: 'Luna Purrington portrait', meta: 'Added Apr 30 2026 - Personal album', fileId: null },
-            { type: 'PDF', name: 'Meowbridge marriage record', meta: 'Added May 7 2026 - Linked to relationship', fileId: 'af5' }
+            { type: 'PNG', name: 'Meowbridge marriage record', meta: 'Name marked in image', fileId: 'af5' },
+            { type: 'PNG', name: 'Daisy letter to Luna', meta: 'Family correspondence', fileId: 'af4' }
         ],
         barnaby: [
-            { type: 'PDF', name: 'Pawford household register', meta: 'Added May 19 2026 - Source assigned', fileId: 'af5' },
-            { type: 'JPG', name: 'Old Cattery burial index', meta: 'Added Apr 3 2026 - Needs review', fileId: 'af6' }
+            { type: 'PNG', name: 'Pawford household register', meta: 'Name marked in image', fileId: 'af1' },
+            { type: 'PNG', name: 'Pawford register index', meta: 'Page reference', fileId: 'af3' }
         ],
         daisy: [
-            { type: 'PDF', name: 'Meowbridge marriage record', meta: 'Added Today - Source assigned', fileId: 'af1' },
+            { type: 'PNG', name: 'Daisy birth record', meta: 'Name marked in image', fileId: 'af-birth-sample' },
+            { type: 'PNG', name: 'Daisy letter to Luna', meta: 'Family correspondence', fileId: 'af4' },
             { type: 'JPG', name: 'Daisy Milkpaw scan', meta: 'Added May 2 2026 - Family album', fileId: null }
         ]
     };

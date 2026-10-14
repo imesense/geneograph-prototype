@@ -23,6 +23,8 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             const modal = page.locator('.archive-person-area-modal');
             await modal.waitFor();
             assert.equal(await modal.locator('[data-notes-people-search]').evaluate(input => document.activeElement === input), false);
+            assert.equal(await modal.locator('[data-archive-person-area-person]').evaluate(select =>
+                select.classList.contains('common-select') && getComputedStyle(select).appearance === 'none'), true);
             const stage = modal.locator('[data-face-region-selector]');
             const box = await stage.boundingBox();
             assert.ok(box && box.width > 100 && box.height > 100);
@@ -45,7 +47,33 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             await modal.locator('[data-notes-people-save]').click();
             const region = await page.evaluate(() => archiveFileById('af7').personRegions?.silver);
             assert.ok(region && region.width > .2 && region.height > .1);
-            assert.match(await page.evaluate(() => renderArchiveFilePeople(archiveFileById('af7'), false)), /archive-person-mark/);
+            assert.match(await page.evaluate(() => renderArchiveFilePeople(archiveFileById('af7'), false)), /data-archive-person-region="silver"/);
+            assert.doesNotMatch(await page.evaluate(() => renderArchiveFilePeople(archiveFileById('af7'), false)), /Area marked in image/);
+            if (width === 1280) {
+                await page.evaluate(() => {
+                    archiveNavigateToLocation({ view: 'files', folderId: 'fond12', search: '', filterPresentation: 'folders' });
+                    state.archiveSelectedFileId = 'af-birth-sample';
+                    state.archiveSelectedFolderItemId = null;
+                    state.archiveInspectorCollapsed = false;
+                    renderArchiveMain();
+                });
+                const sampleImage = page.locator('.archive-file-preview > .archive-file-preview-image');
+                await sampleImage.evaluate(image => image.decode());
+                assert.equal(await sampleImage.getAttribute('src'), 'assets/daisy-birth-record-sample.png');
+                if (!await page.locator('[data-archive-person-region="daisy"]').isVisible())
+                    await page.locator('[data-archive-section-toggle="people"]').click();
+                await page.locator('[data-archive-person-region="daisy"]').hover();
+                const floatingHighlight = page.locator('[data-archive-floating-region-highlight]');
+                const inlineHighlight = page.locator('[data-archive-person-region-highlight]');
+                const highlight = await floatingHighlight.isVisible() ? floatingHighlight : inlineHighlight;
+                assert.equal(await highlight.isVisible(), true);
+                const bounds = await highlight.boundingBox();
+                assert.ok(bounds.width > 40 && bounds.height > 10);
+                if (process.env.GENEO_SCREENSHOT_DIR)
+                    await page.screenshot({ path: path.join(process.env.GENEO_SCREENSHOT_DIR, 'archive-person-region-hover.png') });
+                await page.mouse.move(0, 0);
+                assert.equal(await highlight.isVisible(), false);
+            }
             await page.evaluate(() => openArchiveFilePeopleModal('af7'));
             await modal.waitFor();
             assert.equal(await modal.locator('[data-face-region-box]').count(), 1);
@@ -59,11 +87,17 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             assert.equal(await modal.locator('[data-archive-person-area-person]').inputValue(), addedPersonId);
             await modal.locator('[data-notes-people-save]').click();
             assert.ok(await page.evaluate(id => archiveFileById('af7').linkedPersonIds.includes(id), addedPersonId));
-            await page.evaluate(() => openArchiveFilePeopleModal('af1'));
+            await page.evaluate(() => {
+                sampleData.archiveFiles.push({ id: 'test-pdf', projectId: 'p1', folderId: 'delo44',
+                    name: 'fallback.pdf', kind: 'pdf', mimeType: 'application/pdf', linkedPersonIds: [] });
+                openArchiveFilePeopleModal('test-pdf');
+            });
             assert.equal(await page.locator('.archive-person-area-modal').count(), 0);
             assert.equal(await page.locator('.notes-people-modal').count(), 1);
+            await page.evaluate(() => closeModal());
             await page.evaluate(() => openArchiveFilePeopleModal('af2'));
-            assert.equal(await page.locator('.archive-person-area-modal').count(), 0);
+            await page.locator('.archive-person-area-modal').waitFor();
+            await page.evaluate(() => closeModal());
             await page.evaluate(() => openArchiveFilesPeopleModal(['af7', 'af1']));
             assert.equal(await page.locator('.archive-person-area-modal').count(), 0);
             await page.evaluate(() => {

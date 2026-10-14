@@ -1,17 +1,16 @@
 // ---------- Archive: genealogy file manager MVP ----------
 
 sampleData.archiveFolders = [
-    { id: 'pawford', projectId: 'p1', parentId: 'null', name: 'Archives', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-06-02T10:00:00Z' },
-    { id: 'fond12', projectId: 'p1', parentId: 'pawford', name: 'United Kingdom', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-06-02T10:00:00Z' },
-    { id: 'opis3', projectId: 'p1', parentId: 'fond12', name: 'North Yorkshire', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-06-02T10:00:00Z' },
-    { id: 'delo44', projectId: 'p1', parentId: 'opis3', name: 'Pawford registers', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-06-02T10:00:00Z' },
-    { id: 'delo45', projectId: 'p1', parentId: 'opis3', name: 'Household books', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-05-28T10:00:00Z' },
-    { id: 'documents', projectId: 'p1', parentId: 'null', name: 'Family documents', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-05-19T10:00:00Z' },
-    { id: 'certificates', projectId: 'p1', parentId: 'documents', name: 'Certificates', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-05-19T10:00:00Z' },
-    { id: 'interviews', projectId: 'p1', parentId: 'null', name: 'Interviews and correspondence', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-04-05T10:00:00Z' },
-    { id: 'albums-origin', projectId: 'p1', parentId: 'null', name: 'Books and reference', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-03-29T10:00:00Z' },
-    { id: 'unsorted', projectId: 'p1', parentId: 'null', name: 'Scanned material', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-06-02T10:00:00Z' },
-    { id: 'inbox', projectId: 'p1', parentId: 'null', name: 'Unfiled', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-06-01T10:00:00Z' }
+    { id: 'pawford', projectId: 'p1', parentId: 'null', name: 'Family records', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-06-02T10:00:00Z' },
+    { id: 'fond12', projectId: 'p1', parentId: 'pawford', name: 'Births', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-06-02T10:00:00Z' },
+    { id: 'certificates', projectId: 'p1', parentId: 'pawford', name: 'Marriages', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-05-19T10:00:00Z' },
+    { id: 'interviews', projectId: 'p1', parentId: 'pawford', name: 'Correspondence', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-04-05T10:00:00Z' },
+    { id: 'documents', projectId: 'p1', parentId: 'null', name: 'Research trips', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-05-19T10:00:00Z' },
+    { id: 'opis3', projectId: 'p1', parentId: 'documents', name: 'Pawford', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-06-02T10:00:00Z' },
+    { id: 'delo44', projectId: 'p1', parentId: 'opis3', name: 'Register extracts', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-06-02T10:00:00Z' },
+    { id: 'delo45', projectId: 'p1', parentId: 'documents', name: 'Meowbridge', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-05-28T10:00:00Z' },
+    { id: 'albums-origin', projectId: 'p1', parentId: 'null', name: 'To identify', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-03-29T10:00:00Z' },
+    { id: 'unsorted', projectId: 'p1', parentId: 'null', name: 'Future research', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-06-02T10:00:00Z' }
 ];
 
 const SOURCE_CATEGORIES =
@@ -172,7 +171,7 @@ sampleData.sources = [
           'p1',
 
         title:
-          'Pawford household register continuation, 1947–1952',
+          'Pawford birth announcements, 1990–2000',
 
         category:
           'institution',
@@ -184,7 +183,7 @@ sampleData.sources = [
           'Pawford, North Yorkshire, England',
 
         reference:
-          'Household series 3, continuation volume',
+          'Birth notices collection, 1990–2000',
 
         url:
           '',
@@ -193,7 +192,7 @@ sampleData.sources = [
           '2026-05-28',
 
         notes:
-          'Continuation volume for Pawford household entries after 1946.',
+          'Announcement extracts used to verify names and birth dates.',
 
         favorite:
           false,
@@ -399,67 +398,66 @@ function localizedSourceCategoryShortLabel(
         : '';
 }
 
-const archiveMarriageEventId =
-    (sampleData.events || []).find(event =>
-        event.type === 'marriage'
-        && (event.personIds || []).includes('barnaby')
-        && (event.personIds || []).includes('luna')
-    )?.id || '';
-
 sampleData.archiveFiles = [
     {
-        id: 'af1', projectId: 'p1', folderId: 'delo44', name: 'pawford_household_register_1946.pdf', kind: 'pdf', type: 'PDF document', mimeType: 'application/pdf', size: '3.2 MB', sizeBytes: 3355443,
-        favorite: true, description: 'Household register extract supporting Daisy Milkpaw’s birth and household context.',
-        documentDate: { type: 'Exact date', value: '1946' }, linkedPersonIds: ['daisy'], linkedEventIds: ['event-daisy-birth'], linkedNoteIds: [], linkedPlaceIds: ['place-old-cattery'], placeIds: ['place-old-cattery'],
+        id: 'af1', projectId: 'p1', folderId: 'delo44', name: 'pawford_household_register_2004.png', kind: 'img', type: 'Image', mimeType: 'image/png', size: '2.7 MB', sizeBytes: 2782928,
+        previewUrl: 'assets/pawford-household-register-sample.png', favorite: true,
+        description: 'Sample register table with four family names on separate lines.',
+        documentDate: { type: 'Exact date', value: '2004' }, linkedPersonIds: ['barnaby', 'daisy', 'silver', 'luna'],
+        personRegions: { barnaby: { x: 0.05, y: 0.43, width: 0.29, height: 0.06 }, daisy: { x: 0.05, y: 0.54, width: 0.28, height: 0.06 }, silver: { x: 0.05, y: 0.66, width: 0.29, height: 0.06 }, luna: { x: 0.05, y: 0.78, width: 0.27, height: 0.06 } },
+        linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: ['place-pawford'], placeIds: ['place-pawford'],
         addedAt: '2026-06-02T09:20:00Z', updatedAt: '2026-06-02T09:20:00Z', added: 'Jun 2, 2026', updated: 'Jun 2, 2026'
     },
     {
-        id: 'af2', projectId: 'p1', folderId: 'delo44', name: 'pawford_household_1940_scan.jpg', kind: 'img', type: 'Image', mimeType: 'image/jpeg', size: '4.8 MB', sizeBytes: 5033165,
-        favorite: false, description: 'Household scan that may connect members of the Whiskerfield family in Pawford.',
-        documentDate: { type: 'Exact date', value: '1940' }, linkedPersonIds: ['barnaby'], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: ['place-pawford'], placeIds: ['place-pawford'],
+        id: 'af2', projectId: 'p1', folderId: 'albums-origin', name: 'unidentified_studio_portrait.jpg', kind: 'img', type: 'Image', mimeType: 'image/jpeg', size: '153 KB', sizeBytes: 156569,
+        previewUrl: 'assets/unidentified-studio-portrait.jpg', favorite: false,
+        description: 'Unidentified studio portrait awaiting a person link and date.',
+        documentDate: { type: 'Unknown', value: '' }, linkedPersonIds: [], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: [], placeIds: [],
         addedAt: '2026-06-02T08:40:00Z', updatedAt: '2026-06-02T08:40:00Z', added: 'Jun 2, 2026', updated: 'Jun 2, 2026'
     },
     {
-        id: 'af3', projectId: 'p1', folderId: 'delo44', name: 'index_page_044_12.jpg', kind: 'img', type: 'Image', mimeType: 'image/jpeg', size: '1.7 MB', sizeBytes: 1782579,
-        favorite: false, description: 'Index page from the Pawford register collection.',
-        documentDate: { type: 'Unknown', value: '' }, linkedPersonIds: [], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: [], placeIds: [],
+        id: 'af3', projectId: 'p1', folderId: 'opis3', name: 'pawford_register_index_page_12.png', kind: 'img', type: 'Image', mimeType: 'image/png', size: '2.5 MB', sizeBytes: 2592368,
+        previewUrl: 'assets/pawford-register-index-sample.png', favorite: false,
+        description: 'Name index pointing to the household register page.',
+        documentDate: { type: 'Unknown', value: '' }, linkedPersonIds: ['barnaby', 'silver'],
+        personRegions: { barnaby: { x: 0.14, y: 0.47, width: 0.55, height: 0.06 }, silver: { x: 0.14, y: 0.66, width: 0.55, height: 0.06 } },
+        linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: ['place-pawford'], placeIds: ['place-pawford'],
         addedAt: '2026-06-01T14:10:00Z', updatedAt: '2026-06-01T14:10:00Z', added: 'Jun 1, 2026', updated: 'Jun 1, 2026'
     },
     {
-        id: 'af4', projectId: 'p1', folderId: 'delo45', name: 'family_register_1951.pdf', kind: 'pdf', type: 'PDF document', mimeType: 'application/pdf', size: '5.1 MB', sizeBytes: 5347738,
-        favorite: false, description: 'Continuation register containing entries connected to Luna Purrington’s family.',
-        documentDate: { type: 'Exact date', value: '1951' }, linkedPersonIds: ['luna'], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: ['place-pawford'], placeIds: ['place-pawford'],
+        id: 'af4', projectId: 'p1', folderId: 'interviews', name: 'daisy_letter_to_luna_2006.png', kind: 'img', type: 'Image', mimeType: 'image/png', size: '2.5 MB', sizeBytes: 2619679,
+        previewUrl: 'assets/daisy-letter-sample.png', favorite: false,
+        description: 'Sample family letter from Daisy to Luna about preserving photographs.',
+        documentDate: { type: 'Exact date', value: '12 Apr 2006' }, linkedPersonIds: ['daisy', 'luna'],
+        personRegions: { daisy: { x: 0.07, y: 0.71, width: 0.48, height: 0.15 }, luna: { x: 0.07, y: 0.24, width: 0.14, height: 0.05 } },
+        linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: ['place-pawford'], placeIds: ['place-pawford'],
         addedAt: '2026-05-28T12:00:00Z', updatedAt: '2026-05-28T12:00:00Z', added: 'May 28, 2026', updated: 'May 28, 2026'
     },
     {
-        id: 'af5', projectId: 'p1', folderId: 'certificates', name: 'meowbridge_marriage_record.pdf', kind: 'pdf', type: 'PDF document', mimeType: 'application/pdf', size: '2.1 MB', sizeBytes: 2202009,
-        favorite: true, description: 'Marriage certificate linked to the family relationship and Meowbridge.',
-        documentDate: { type: 'Exact date', value: '1989' }, linkedPersonIds: ['barnaby', 'luna'], linkedEventIds: archiveMarriageEventId ? [archiveMarriageEventId] : [], linkedNoteIds: [], linkedPlaceIds: ['place-meowbridge'], placeIds: ['place-meowbridge'],
+        id: 'af5', projectId: 'p1', folderId: 'certificates', name: 'silver_luna_marriage_record_2023.png', kind: 'img', type: 'Image', mimeType: 'image/png', size: '2.3 MB', sizeBytes: 2427635,
+        previewUrl: 'assets/silver-luna-marriage-record-sample.png', favorite: true,
+        description: 'Sample marriage extract for Silver and Luna in Meowbridge.',
+        documentDate: { type: 'Exact date', value: '18 Aug 2023' }, linkedPersonIds: ['silver', 'luna'],
+        personRegions: { silver: { x: 0.065, y: 0.56, width: 0.22, height: 0.06 }, luna: { x: 0.32, y: 0.56, width: 0.2, height: 0.06 } },
+        linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: ['place-meowbridge'], placeIds: ['place-meowbridge'],
         addedAt: '2026-05-19T10:00:00Z', updatedAt: '2026-05-19T10:00:00Z', added: 'May 19, 2026', updated: 'May 19, 2026'
     },
     {
-        id: 'af6', projectId: 'p1', folderId: 'interviews', name: 'luna_family_memories_2026_04_02.mp3', kind: 'audio', type: 'Audio', mimeType: 'audio/mpeg', size: '28 MB', sizeBytes: 29360128,
-        favorite: true, description: 'Recorded oral-history interview with Luna Purrington.',
-        documentDate: { type: 'Exact date', value: '2 Apr 2026' }, linkedPersonIds: ['luna'], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: [], placeIds: [],
-        addedAt: '2026-04-03T10:00:00Z', updatedAt: '2026-04-05T10:00:00Z', added: 'Apr 3, 2026', updated: 'Apr 5, 2026'
-    },
-    {
-        id: 'af7', projectId: 'p1', folderId: 'albums-origin', name: 'whiskerfield_family_reference_cover.jpg', kind: 'img', type: 'Image', mimeType: 'image/jpeg', size: '2.6 MB', sizeBytes: 2726298,
-        favorite: false, previewUrl: 'assets/young-whiskerfield-family.jpg', description: 'Reference image stored in Archive; it is not duplicated into Albums.',
-        documentDate: { type: 'Unknown', value: '' }, linkedPersonIds: ['silver'], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: [], placeIds: [],
+        id: 'af7', projectId: 'p1', folderId: 'fond12', name: 'silver_birth_announcement_1998.png', kind: 'img', type: 'Image', mimeType: 'image/png', size: '2.3 MB', sizeBytes: 2379200,
+        previewUrl: 'assets/silver-birth-announcement-sample-v2.png', favorite: false,
+        description: 'Sample birth announcement for Silver Whiskerfield.',
+        documentDate: { type: 'Exact date', value: '03 Mar 1998' }, linkedPersonIds: ['silver'],
+        personRegions: { silver: { x: 0.23, y: 0.36, width: 0.54, height: 0.13 } },
+        linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: ['place-pawford'], placeIds: ['place-pawford'],
         addedAt: '2026-03-29T10:00:00Z', updatedAt: '2026-03-29T10:00:00Z', added: 'Mar 29, 2026', updated: 'Mar 29, 2026'
     },
     {
-        id: 'af8', projectId: 'p1', folderId: 'unsorted', name: 'scan_0007_unknown_record.jpg', kind: 'img', type: 'Image', mimeType: 'image/jpeg', size: '1.9 MB', sizeBytes: 1992294,
-        favorite: false, description: 'Unidentified scan retained for later organization.',
-        documentDate: { type: 'Unknown', value: '' }, linkedPersonIds: [], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: [], placeIds: [],
-        addedAt: '2026-06-02T11:00:00Z', updatedAt: '2026-06-02T11:00:00Z', added: 'Jun 2, 2026', updated: 'Jun 2, 2026'
-    },
-    {
-        id: 'af9', projectId: 'p1', folderId: 'inbox', name: 'online_extract_pawford_records.pdf', kind: 'pdf', type: 'PDF document', mimeType: 'application/pdf', size: '900 KB', sizeBytes: 921600,
-        favorite: false, description: 'Downloaded extract from the regional Pawford records database.',
-        documentDate: { type: 'Between', value: '1900–1950' }, linkedPersonIds: [], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: ['place-pawford'], placeIds: ['place-pawford'],
-        addedAt: '2026-06-01T10:00:00Z', updatedAt: '2026-06-01T10:00:00Z', added: 'Jun 1, 2026', updated: 'Jun 1, 2026'
+        id: 'af-birth-sample', projectId: 'p1', folderId: 'fond12', name: 'daisy_birth_record_1949.png', kind: 'img', type: 'Image', mimeType: 'image/png', size: '2.2 MB', sizeBytes: 2347971,
+        previewUrl: 'assets/daisy-birth-record-sample.png', favorite: false,
+        description: 'Illustrative birth-record extract for Daisy Whiskerfield.',
+        documentDate: { type: 'Exact date', value: '03 Jun 1949' }, linkedPersonIds: ['daisy'], personRegions: { daisy: { x: 0.14, y: 0.36, width: 0.72, height: 0.12 } },
+        linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: ['place-pawford'], placeIds: ['place-pawford'],
+        addedAt: '2026-06-02T09:25:00Z', updatedAt: '2026-06-02T09:25:00Z', added: 'Jun 2, 2026', updated: 'Jun 2, 2026'
     }
 ];
 
@@ -12374,6 +12372,11 @@ function renderArchivePreview(
                     imageSource
                 )}"
               alt="">
+            <span class="archive-person-region-highlight" data-archive-person-region-highlight hidden aria-hidden="true"></span>
+            <span class="archive-person-floating-preview" data-archive-person-floating hidden aria-hidden="true">
+              <img class="archive-file-preview-image" src="${escapeHtml(imageSource)}" alt="">
+              <span class="archive-person-region-highlight" data-archive-floating-region-highlight hidden></span>
+            </span>
           </div>
         `;
     }
@@ -12845,7 +12848,7 @@ function renderArchiveFileConnectionRow({
         <div
           class="
             relation-row
-          ">
+          " ${entityType === 'person' && normalizeFaceRegion(file.personRegions?.[record.id]) ? `data-archive-person-region="${escapeHtml(record.id)}"` : ''}>
 
           ${
                 readOnly
@@ -12949,7 +12952,7 @@ function renderArchiveFilePeople(
 
           ${people
                 .map(person =>
-                    `${renderArchiveFileConnectionRow({
+                    renderArchiveFileConnectionRow({
                         file,
                         entityType:
                   'person',
@@ -12965,7 +12968,7 @@ function renderArchiveFilePeople(
                       }
                   ),
                         readOnly
-                    })}${normalizeFaceRegion(file.personRegions?.[person.id]) ? `<span class="archive-person-mark">${escapeHtml(t('Area marked in image'))}</span>` : ''}`
+                    })
                 )
                 .join('')}
         </div>
@@ -22709,6 +22712,84 @@ function bindArchiveControls()
 {
     const root = main.querySelector('.archive-shell');
     if (!root) return;
+    const regionHighlight = root.querySelector('[data-archive-person-region-highlight]');
+    const regionPreview = regionHighlight?.closest('.archive-file-preview');
+    const regionImage = regionPreview?.querySelector(':scope > .archive-file-preview-image');
+    const floatingPreview = regionPreview?.querySelector('[data-archive-person-floating]');
+    const floatingImage = floatingPreview?.querySelector('.archive-file-preview-image');
+    const floatingHighlight = floatingPreview?.querySelector('[data-archive-floating-region-highlight]');
+    let activeRegionPersonId = null;
+    const clearPersonRegion = () => {
+        activeRegionPersonId = null;
+        if (regionHighlight) regionHighlight.hidden = true;
+        if (floatingHighlight) floatingHighlight.hidden = true;
+        if (floatingPreview) floatingPreview.hidden = true;
+    };
+    const positionPersonRegion = (highlight, preview, image, region) => {
+        if (!highlight || !image?.naturalWidth || !image?.naturalHeight) return false;
+        const imageBounds = image.getBoundingClientRect();
+        const previewBounds = preview.getBoundingClientRect();
+        const scale = Math.min(imageBounds.width / image.naturalWidth,
+            imageBounds.height / image.naturalHeight);
+        const imageWidth = image.naturalWidth * scale;
+        const imageHeight = image.naturalHeight * scale;
+        Object.assign(highlight.style, {
+            left: `${imageBounds.left - previewBounds.left + (imageBounds.width - imageWidth) / 2 + region.x * imageWidth}px`,
+            top: `${imageBounds.top - previewBounds.top + (imageBounds.height - imageHeight) / 2 + region.y * imageHeight}px`,
+            width: `${region.width * imageWidth}px`,
+            height: `${region.height * imageHeight}px`
+        });
+        highlight.hidden = false;
+        return true;
+    };
+    const showPersonRegion = personId => {
+        activeRegionPersonId = personId;
+        const file = archiveFileById(state.archiveSelectedFileId);
+        const region = normalizeFaceRegion(file?.personRegions?.[personId]);
+        if (!region || !regionPreview)
+        {
+            clearPersonRegion();
+            return;
+        }
+        const inspector = regionPreview.closest('.archive-inspector');
+        const scroll = inspector?.querySelector('.archive-inspector-scroll');
+        const previewBounds = regionPreview.getBoundingClientRect();
+        const scrollBounds = scroll?.getBoundingClientRect();
+        const useFloating = Boolean(floatingPreview && scrollBounds
+            && previewBounds.bottom < scrollBounds.top + 80);
+        if (useFloating)
+        {
+            const inspectorBounds = inspector.getBoundingClientRect();
+            Object.assign(floatingPreview.style, {
+                left: `${inspectorBounds.left + 16}px`,
+                top: `${scrollBounds.top + 12}px`,
+                width: `${inspectorBounds.width - 32}px`
+            });
+            floatingPreview.hidden = false;
+            regionHighlight.hidden = true;
+            positionPersonRegion(floatingHighlight, floatingPreview, floatingImage, region);
+        }
+        else
+        {
+            floatingPreview.hidden = true;
+            positionPersonRegion(regionHighlight, regionPreview, regionImage, region);
+        }
+    };
+    regionImage?.addEventListener('load', () => {
+        if (activeRegionPersonId) showPersonRegion(activeRegionPersonId);
+    });
+    floatingImage?.addEventListener('load', () => {
+        if (activeRegionPersonId) showPersonRegion(activeRegionPersonId);
+    });
+    root.querySelectorAll('[data-archive-person-region]').forEach(row => {
+        const personId = row.dataset.archivePersonRegion;
+        row.addEventListener('pointerenter', () => showPersonRegion(personId));
+        row.addEventListener('pointerleave', clearPersonRegion);
+        row.addEventListener('focusin', () => showPersonRegion(personId));
+        row.addEventListener('focusout', event => {
+            if (!row.contains(event.relatedTarget)) clearPersonRegion();
+        });
+    });
     if (innerWidth > 900 && state.archiveView !== 'sources')
     {
         archiveBindDragAutoscroll(root.querySelector('.archive-main'));
@@ -24280,8 +24361,7 @@ sampleData.notes = (() =>
             ],
 
             linkedArchiveFileIds: [
-                'af1',
-                'af2'
+                'af-birth-sample'
             ],
 
             relatedNoteIds: [
@@ -24350,7 +24430,7 @@ sampleData.notes = (() =>
                 'The record names Meowbridge and confirms the event location. Several handwritten details remain uncertain.',
                 '',
                 'Interpretation',
-                'The place is consistent with other records connected to Daisy and the later Whiskerfield family.',
+                'The place and date agree with Silver and Luna’s other marriage records.',
                 '',
                 'Questions',
                 'Confirm the witnesses and compare their names with household records.'
@@ -24361,7 +24441,8 @@ sampleData.notes = (() =>
             ],
 
             linkedPersonIds: [
-                'daisy'
+                'silver',
+                'luna'
             ],
 
             linkedPlaceIds: [
@@ -24450,7 +24531,7 @@ sampleData.notes = (() =>
 
             linkedArchiveFileIds: [
                 'af1',
-                'af2'
+                'af3'
             ],
 
             relatedNoteIds: [
@@ -24503,7 +24584,7 @@ sampleData.notes = (() =>
             ],
 
             linkedArchiveFileIds: [
-                'af7'
+                'af2'
             ],
 
             relatedNoteIds: [
@@ -24547,7 +24628,7 @@ sampleData.notes = (() =>
             ],
 
             linkedArchiveFileIds: [
-                'af9'
+                'af3'
             ],
 
             relatedNoteIds: [
@@ -24611,9 +24692,7 @@ sampleData.notes = (() =>
                 'place-fishmarket-row'
             ],
 
-            linkedArchiveFileIds: [
-                'af9'
-            ],
+            linkedArchiveFileIds: [],
 
             createdAt:
             '2026-06-10T13:30:00Z',
@@ -24831,9 +24910,7 @@ sampleData.notes = (() =>
                 'place-meowbridge'
             ],
 
-            linkedArchiveFileIds: [
-                'af6'
-            ],
+            linkedArchiveFileIds: [],
 
             relatedNoteIds: [
                 'note-whiskerfield-album'
@@ -24917,7 +24994,7 @@ sampleData.notes = (() =>
 
             linkedArchiveFileIds: [
                 'af1',
-                'af4'
+                'af3'
             ],
 
             createdAt:
@@ -24933,7 +25010,7 @@ sampleData.sourceLinks = [
     // Source → People
     ['as1', 'person', 'barnaby'],
     ['as1', 'person', 'daisy'],
-    ['as2', 'person', 'luna'],
+    ['as2', 'person', 'silver'],
     ['as3', 'person', 'barnaby'],
     ['as3', 'person', 'luna'],
     ['as4', 'person', 'luna'],
@@ -24949,13 +25026,11 @@ sampleData.sourceLinks = [
 
     // Source → Archive files
     ['as1', 'file', 'af1'],
-    ['as1', 'file', 'af2'],
     ['as1', 'file', 'af3'],
-    ['as2', 'file', 'af4'],
+    ['as1', 'file', 'af-birth-sample'],
+    ['as2', 'file', 'af7'],
     ['as3', 'file', 'af5'],
-    ['as4', 'file', 'af6'],
-    ['as5', 'file', 'af7'],
-    ['as6', 'file', 'af9'],
+    ['as5', 'file', 'af4'],
 
     // Source → Notes
     ['as1', 'note', 'note-daisy-parentage'],
