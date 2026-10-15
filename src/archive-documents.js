@@ -1,6 +1,7 @@
 const archiveDocumentBytes = new Map();
 const archiveDocumentExtensions = new Set(['txt', 'csv', 'pdf', 'docx']);
 const archiveImageExtensions = new Set(['png', 'jpg', 'jpeg', 'webp']);
+const archiveUploadedImageUrls = new Map();
 const archiveDocumentMaxBytes = 20 * 1024 * 1024;
 let archiveShowMarkedAreas = true;
 
@@ -56,6 +57,28 @@ function archiveDocumentDownload(file, blob) {
     link.click();
     link.remove();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function archiveReleaseDocument(fileId) {
+    const url = archiveUploadedImageUrls.get(fileId);
+    if (url) URL.revokeObjectURL(url);
+    archiveUploadedImageUrls.delete(fileId);
+    archiveDocumentBytes.delete(fileId);
+}
+
+async function archiveValidateImage(source, extension) {
+    const bytes = new Uint8Array(await source.slice(0, 12).arrayBuffer());
+    const png = extension === 'png' && [137, 80, 78, 71, 13, 10, 26, 10].every((value, index) => bytes[index] === value);
+    const jpeg = ['jpg', 'jpeg'].includes(extension) && bytes[0] === 255 && bytes[1] === 216 && bytes[2] === 255;
+    const webp = extension === 'webp' && String.fromCharCode(...bytes.slice(0, 4)) === 'RIFF'
+        && String.fromCharCode(...bytes.slice(8, 12)) === 'WEBP';
+    if (!png && !jpeg && !webp) throw new Error(archiveDocumentLabel('Invalid image file', 'Недопустимый файл изображения'));
+    const bitmap = await createImageBitmap(source);
+    try {
+        if (!bitmap.width || !bitmap.height) throw new Error('Empty image');
+    } finally {
+        bitmap.close();
+    }
 }
 
 async function archiveDocumentRenderPdf(blob, host, modal) {
@@ -164,13 +187,10 @@ function archiveDocumentRenderCsv(text, host) {
 function openArchiveImagePeopleModal(fileId, { mode = 'preview' } = {}) {
     const file = archiveFileById(fileId);
     if (!file || !archiveCanViewFile(file)) return;
-    const blob = archiveDocumentBytes.get(file.id);
-    const objectUrl = blob ? URL.createObjectURL(blob) : null;
     openUnifiedImagePeopleModal(file.id, {
         mode,
         archiveFile: file,
-        imageSrc: objectUrl || archiveImageSource(file),
-        onClose: objectUrl ? () => URL.revokeObjectURL(objectUrl) : null
+        imageSrc: archiveImageSource(file)
     });
 }
 
@@ -221,7 +241,7 @@ async function openArchiveDocumentViewer(fileId) {
 function openArchiveDocumentImport({ files = null, onImported = null } = {}) {
     const folderId = state.activeModule === 'Archive' ? state.archiveSelectedFolderId || null : null;
     const projectId = currentProjectId();
-    openModal(`<div class="modal archive-document-import" role="dialog" aria-modal="true" aria-labelledby="archiveImportTitle"><div class="modal-header"><div><h2 id="archiveImportTitle">${escapeHtml(archiveDocumentLabel('Add files', 'Добавить файлы'))}</h2><p>${escapeHtml(archiveDocumentLabel('Files remain available until this page reloads. Maximum 20 MB per file.', 'Файлы доступны до перезагрузки страницы. Не более 20 МБ на файл.'))}</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><div class="modal-body"><div class="archive-document-drop" data-document-drop tabindex="0" role="button"><strong>${escapeHtml(archiveDocumentLabel('Drop files here or choose files', 'Перетащите файлы сюда или выберите'))}</strong><span>TXT, CSV, PDF, DOCX</span></div><input type="file" multiple accept=".txt,.csv,.pdf,.docx" data-document-input hidden><div class="archive-document-import-results" data-import-results data-user-content role="status"></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>${escapeHtml(archiveDocumentLabel('Done', 'Готово'))}</button><button class="button primary" type="button" data-document-choose>${escapeHtml(archiveDocumentLabel('Choose files', 'Выбрать файлы'))}</button></div></div>`);
+    openModal(`<div class="modal archive-document-import" role="dialog" aria-modal="true" aria-labelledby="archiveImportTitle"><div class="modal-header"><div><h2 id="archiveImportTitle">${escapeHtml(archiveDocumentLabel('Add files', 'Добавить файлы'))}</h2><p>${escapeHtml(archiveDocumentLabel('Files remain available until this page reloads. Maximum 20 MB per file.', 'Файлы доступны до перезагрузки страницы. Не более 20 МБ на файл.'))}</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><div class="modal-body"><div class="archive-document-drop" data-document-drop tabindex="0" role="button"><strong>${escapeHtml(archiveDocumentLabel('Drop files here or choose files', 'Перетащите файлы сюда или выберите'))}</strong><span>PNG, JPEG, WebP, TXT, CSV, PDF, DOCX</span></div><input type="file" multiple accept=".png,.jpg,.jpeg,.webp,.txt,.csv,.pdf,.docx" data-document-input hidden><div class="archive-document-import-results" data-import-results data-user-content role="status"></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>${escapeHtml(archiveDocumentLabel('Done', 'Готово'))}</button><button class="button primary" type="button" data-document-choose>${escapeHtml(archiveDocumentLabel('Choose files', 'Выбрать файлы'))}</button></div></div>`);
     const modal = modalBackdrop.querySelector('.archive-document-import');
     if (!modal) return;
     const input = modal.querySelector('[data-document-input]');
@@ -239,7 +259,7 @@ function openArchiveDocumentImport({ files = null, onImported = null } = {}) {
             const row = document.createElement('p');
             result.append(row);
             const extension = archiveDocumentExtension(source.name);
-            if (!archiveDocumentExtensions.has(extension) || source.size > archiveDocumentMaxBytes || source.size === 0) {
+            if (!(archiveDocumentExtensions.has(extension) || archiveImageExtensions.has(extension)) || source.size > archiveDocumentMaxBytes || source.size === 0) {
                 row.textContent = `${source.name}: ${archiveDocumentLabel('Unsupported, empty, or over 20 MB.', 'Неподдерживаемый, пустой или больше 20 МБ.')}`;
                 continue;
             }
@@ -257,11 +277,15 @@ function openArchiveDocumentImport({ files = null, onImported = null } = {}) {
                     if (parsed.errors.length) throw new Error(parsed.errors[0].message);
                 }
                 if (extension === 'docx') await mammoth.convertToHtml({ arrayBuffer: await source.arrayBuffer() }, { externalFileAccess: false });
+                if (archiveImageExtensions.has(extension)) await archiveValidateImage(source, extension);
                 const id = `af-upload-${crypto.randomUUID()}`;
                 const now = new Date().toISOString();
-                const kind = extension === 'pdf' ? 'pdf' : extension === 'csv' ? 'sheet' : 'doc';
-                sampleData.archiveFiles.push({ id, projectId, folderId, name: source.name, kind, type: extension.toUpperCase(), mimeType: source.type, size: `${Math.max(1, Math.ceil(source.size / 1024))} KB`, sizeBytes: source.size, favorite: false, description: '', linkedPersonIds: [], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: [], placeIds: [], addedAt: now, updatedAt: now });
+                const image = archiveImageExtensions.has(extension);
+                const kind = image ? 'img' : extension === 'pdf' ? 'pdf' : extension === 'csv' ? 'sheet' : 'doc';
+                const previewUrl = image ? URL.createObjectURL(source) : '';
+                sampleData.archiveFiles.push({ id, projectId, folderId, name: source.name, kind, type: image ? 'Image' : extension.toUpperCase(), mimeType: source.type, size: `${Math.max(1, Math.ceil(source.size / 1024))} KB`, sizeBytes: source.size, favorite: false, description: '', previewUrl, linkedPersonIds: [], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: [], placeIds: [], addedAt: now, updatedAt: now });
                 archiveDocumentBytes.set(id, source);
+                if (image) archiveUploadedImageUrls.set(id, previewUrl);
                 ids.push(id);
                 row.textContent = `${source.name}: ${archiveDocumentLabel('Added', 'Добавлен')}`;
             } catch (error) {

@@ -1,5 +1,6 @@
 const assert = require('node:assert/strict');
 const path = require('node:path');
+const fs = require('node:fs');
 const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
 const { Document, Paragraph, Packer } = require('docx');
 
@@ -59,9 +60,52 @@ const assets = path.resolve(__dirname, '../src/assets');
             await page.waitForFunction(() => document.querySelectorAll('[data-import-results] p').length === 4);
             await page.locator('[data-document-input]').setInputFiles({ name: 'bad.pdf', mimeType: 'application/pdf', buffer: Buffer.from('not a pdf') });
             await page.waitForFunction(() => document.querySelectorAll('[data-import-results] p').length === 5);
-            assert.equal(await page.evaluate(() => sampleData.archiveFiles.filter(file => file.id.startsWith('af-upload-')).length), 4);
+            await page.locator('[data-document-input]').setInputFiles([
+                { name: 'uploaded-record.png', mimeType: 'image/png', buffer: fs.readFileSync(path.join(assets, 'daisy-birth-record-sample.png')) },
+                { name: 'bad-image.png', mimeType: 'image/png', buffer: Buffer.from('not a png') },
+                { name: 'uploaded-portrait.jpg', mimeType: 'image/jpeg', buffer: fs.readFileSync(path.join(assets, 'unidentified-studio-portrait.jpg')) },
+            ]);
+            await page.waitForFunction(() => document.querySelectorAll('[data-import-results] p').length === 8);
+            const webp = await page.evaluate(() => {
+                const canvas = document.createElement('canvas');
+                canvas.width = 2; canvas.height = 2;
+                canvas.getContext('2d').fillRect(0, 0, 2, 2);
+                return canvas.toDataURL('image/webp').split(',')[1];
+            });
+            await page.locator('[data-document-input]').setInputFiles({ name: 'uploaded-image.webp', mimeType: 'image/webp', buffer: Buffer.from(webp, 'base64') });
+            await page.waitForFunction(() => document.querySelectorAll('[data-import-results] p').length === 9);
+            assert.equal(await page.evaluate(() => sampleData.archiveFiles.filter(file => file.id.startsWith('af-upload-')).length), 7);
             assert.ok((await page.locator('[data-import-results]').innerText()).includes('bad.pdf'));
+            assert.ok((await page.locator('[data-import-results]').innerText()).includes('bad-image.png'));
             await page.locator('.archive-document-import [data-close]').first().click();
+            const imageId = await page.evaluate(() => sampleData.archiveFiles.find(file => file.name === 'uploaded-record.png')?.id);
+            const imageState = await page.evaluate(id => {
+                const file = archiveFileById(id);
+                return { kind: archiveFileKind(file), url: file.previewUrl, bytes: archiveDocumentBytes.has(id) };
+            }, imageId);
+            assert.equal(imageState.kind, 'img');
+            assert.ok(imageState.url.startsWith('blob:') && imageState.bytes);
+            await page.evaluate(id => { state.archiveSelectedFileId = id; renderArchiveMain(); }, imageId);
+            await page.locator('.archive-file-preview-image').first().evaluate(image => image.decode());
+            await page.evaluate(id => openArchiveDocumentViewer(id), imageId);
+            await page.locator('.archive-unified-image-modal .albums-lightbox-image').evaluate(image => image.decode());
+            const imageDownload = page.waitForEvent('download');
+            await page.locator('[data-archive-image-download]').click();
+            assert.equal((await imageDownload).suggestedFilename(), 'uploaded-record.png');
+            await page.locator('.archive-unified-image-modal [data-lightbox-tag]').click();
+            const taggedId = await page.locator('.archive-unified-image-modal [data-photo-people-choice]').first().getAttribute('data-photo-people-choice');
+            await page.locator(`.archive-unified-image-modal [data-photo-people-choice="${taggedId}"]`).first().click();
+            await page.locator('.archive-unified-image-modal [data-photo-people-add-region]').click();
+            assert.ok(await page.evaluate(({ imageId, taggedId }) => archiveFileById(imageId).personRegions?.[taggedId], { imageId, taggedId }));
+            await page.locator('.archive-unified-image-modal .albums-preview-done').click();
+            for (const name of ['uploaded-portrait.jpg', 'uploaded-image.webp']) {
+                const id = await page.evaluate(name => sampleData.archiveFiles.find(file => file.name === name)?.id, name);
+                await page.evaluate(id => openArchiveDocumentViewer(id), id);
+                await page.locator('.archive-unified-image-modal .albums-lightbox-image').evaluate(image => image.decode());
+                await page.locator('.archive-unified-image-modal .albums-preview-done').click();
+            }
+            await page.evaluate(id => deleteArchiveFilesPermanently([id]), imageId);
+            assert.equal(await page.evaluate(id => archiveDocumentBytes.has(id) || archiveUploadedImageUrls.has(id), imageId), false);
             const uploadedId = await page.evaluate(() => sampleData.archiveFiles.find(file => file.id.startsWith('af-upload-') && file.name.endsWith('.txt'))?.id);
             await page.evaluate(id => openArchiveDocumentViewer(id), uploadedId);
             assert.ok((await page.locator('.archive-document-body').innerText()).includes('Dear Luna'));

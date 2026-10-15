@@ -21586,6 +21586,7 @@ function openArchiveUnlinkConfirm({
 function deleteArchiveFilesPermanently(fileIds)
 {
     const ids = new Set(fileIds);
+    ids.forEach(archiveReleaseDocument);
     removeSourceLinksForTargets(
         'file',
         [...ids]
