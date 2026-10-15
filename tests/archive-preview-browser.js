@@ -27,8 +27,10 @@ const url = process.env.GENEO_TEST_URL || 'http://localhost:8766/index.html';
             await page.locator('.archive-file-preview-image').first().waitFor();
             await page.waitForFunction(() => [...document.querySelectorAll('.archive-file-preview > [data-archive-region-box]')].every(box => box.dataset.archiveRegionReady === 'true'));
             assert.equal(await page.locator('.archive-file-preview > [data-archive-region-box]').count(), 4);
-            assert.equal(await page.locator('.archive-file-preview > [data-archive-region-box]:not([hidden])').count(), 4);
-            const regionGeometry = await page.locator('.archive-file-preview > [data-archive-region-box]').first().evaluate(box => {
+            assert.equal(await page.locator('.archive-file-hero [data-archive-region-toggle]').count(), 0);
+            assert.equal(await page.locator('.archive-file-preview > [data-archive-region-box]:not([hidden])').count(), 0);
+            await page.evaluate(() => document.querySelector('[data-archive-person-region="barnaby"]').dispatchEvent(new PointerEvent('pointerenter')));
+            const regionGeometry = await page.locator('.archive-file-preview > [data-archive-region-box="barnaby"]').evaluate(box => {
                 const preview = box.closest('.archive-file-preview').getBoundingClientRect();
                 const region = box.getBoundingClientRect();
                 return { inside: region.left >= preview.left && region.top >= preview.top
@@ -38,39 +40,38 @@ const url = process.env.GENEO_TEST_URL || 'http://localhost:8766/index.html';
             assert.ok(regionGeometry.inside && regionGeometry.sized, JSON.stringify(regionGeometry));
             if (process.env.GENEO_CAPTURE_DIR && [390, 1280].includes(width))
                 await page.screenshot({ path: path.join(process.env.GENEO_CAPTURE_DIR, `archive-sidebar-regions-${width}.png`) });
-            await page.locator('.archive-file-hero [data-archive-region-toggle]').uncheck();
-            assert.equal(await page.locator('.archive-file-preview > [data-archive-region-box]:not([hidden])').count(), 0);
-            await page.evaluate(() => document.querySelector('[data-archive-person-region="barnaby"]').dispatchEvent(new PointerEvent('pointerenter')));
             assert.equal(await page.locator('.archive-file-preview > [data-archive-region-box]:not([hidden])').count(), 1);
             await page.evaluate(() => document.querySelector('[data-archive-person-region="barnaby"]').dispatchEvent(new PointerEvent('pointerleave')));
             assert.equal(await page.locator('.archive-file-preview > [data-archive-region-box]:not([hidden])').count(), 0);
             await page.locator('[data-archive-person-region="barnaby"] .relation-row-main').evaluate(el => el.dispatchEvent(new FocusEvent('focusin', { bubbles: true })));
             assert.equal(await page.locator('.archive-file-preview > [data-archive-region-box]:not([hidden])').count(), 1);
+            await page.locator('[data-archive-person-region="barnaby"] .relation-row-main').evaluate(el => el.dispatchEvent(new FocusEvent('focusout', { bubbles: true, relatedTarget: document.body })));
             await page.locator('[data-archive-open-file="af1"]').click();
-            await page.locator('.archive-document-image').waitFor();
+            await page.locator('.archive-unified-image-modal .albums-lightbox-image').waitFor();
             if (process.env.GENEO_CAPTURE_DIR && [390, 1280].includes(width))
                 await page.screenshot({ path: path.join(process.env.GENEO_CAPTURE_DIR, `archive-image-${width}.png`) });
-            assert.equal(await page.locator('.archive-document-region').count(), 4);
-            assert.equal(await page.locator('.archive-document-tools [data-archive-region-toggle]').isChecked(), false);
-            await page.locator('[data-document-region-person="barnaby"]').focus();
-            assert.equal(await page.locator('.archive-document-region:not([hidden])').count(), 1);
-            await page.locator('.archive-document-tools [data-archive-region-toggle]').check();
-            assert.equal(await page.locator('.archive-document-region:not([hidden])').count(), 4);
+            assert.equal(await page.locator('.archive-unified-image-modal [data-lightbox-face]').count(), 4);
+            await page.locator('.archive-unified-image-modal [data-albums-show-marked]').uncheck();
+            assert.equal(await page.locator('.archive-unified-image-modal [data-lightbox-face]:not(.is-concealed)').count(), 0);
+            await page.locator('.archive-unified-image-modal [data-lightbox-person="barnaby"]').hover();
+            assert.equal(await page.locator('.archive-unified-image-modal [data-lightbox-face="barnaby"].is-active').count(), 1);
             const download = page.waitForEvent('download');
-            await page.locator('[data-document-download]').click();
+            await page.locator('.archive-unified-image-modal [data-archive-image-download]').click();
             assert.match((await download).suggestedFilename(), /\.png$/);
             await page.keyboard.press('Escape');
-            assert.equal(await page.locator('.archive-file-hero [data-archive-region-toggle]').isChecked(), true);
+            assert.equal(await page.locator('.archive-unified-image-modal').count(), 0);
+            if (width <= 900) assert.equal(await page.locator('.archive-inspector').isVisible(), true);
+            await page.evaluate(() => document.activeElement?.blur());
+            assert.equal(await page.locator('.archive-file-preview > [data-archive-region-box]:not([hidden])').count(), 0);
             assert.equal(await page.evaluate(() => state.archiveSelectedFileId), 'af1');
 
             await page.evaluate(() => openArchiveDocumentViewer('af2'));
-            await page.locator('.archive-document-image').waitFor();
-            assert.equal(await page.locator('.archive-document-region').count(), 0);
-            assert.equal(await page.locator('.archive-document-tools:not([hidden])').count(), 0);
+            await page.locator('.archive-unified-image-modal .albums-lightbox-image').waitFor();
+            assert.equal(await page.locator('.archive-unified-image-modal [data-lightbox-face]').count(), 0);
             await page.keyboard.press('Escape');
             await page.evaluate(() => openArchiveDocumentViewer('af-birth-sample'));
-            await page.locator('.archive-document-image').waitFor();
-            assert.equal(await page.locator('.archive-document-region').count(), 1);
+            await page.locator('.archive-unified-image-modal .albums-lightbox-image').waitFor();
+            assert.equal(await page.locator('.archive-unified-image-modal [data-lightbox-face]').count(), 1);
             await page.keyboard.press('Escape');
 
             for (const id of ['af-letter-transcription', 'af-household-csv', 'af-pawford-trip', 'af-marriage-packet']) {
@@ -109,7 +110,7 @@ const url = process.env.GENEO_TEST_URL || 'http://localhost:8766/index.html';
             if (width === 1280) {
                 await page.evaluate(() => { state.archiveSelectedFolderId = 'delo44'; renderArchiveMain(); });
                 await page.locator('[data-archive-file-row="af1"]').dblclick();
-                await page.locator('.archive-document-image').waitFor();
+                await page.locator('.archive-unified-image-modal .albums-lightbox-image').waitFor();
                 await page.keyboard.press('Escape');
             }
             assert.deepEqual(errors, [], `${width}px ${language} console`);

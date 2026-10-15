@@ -130,60 +130,6 @@
 
 .archive-document-pdf-canvas { display: block; max-width: none; background: white; }
 
-.archive-document-image-stage {
-    position: relative;
-    width: 100%;
-    margin: 0 auto;
-}
-
-.archive-document-image { display: block; width: 100%; height: auto; }
-
-.archive-document-image-tools { display: grid; gap: 8px; }
-
-.archive-region-toggle {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    width: fit-content;
-    min-height: 32px;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-secondary);
-    cursor: pointer;
-}
-
-.archive-region-toggle input { width: 18px; height: 18px; margin: 0; accent-color: var(--brand-green-400); }
-
-.archive-document-region-names {
-    display: flex;
-    gap: 6px;
-    overflow-x: auto;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-}
-
-.archive-document-region-names::-webkit-scrollbar { display: none; }
-
-.archive-document-person {
-    flex: 0 0 auto;
-    min-height: 36px;
-    padding: 6px 10px;
-    border: 1px solid var(--border-default);
-    border-radius: 6px;
-    background: var(--surface-input);
-    color: var(--text-primary);
-    cursor: pointer;
-}
-
-.archive-document-person:hover,
-.archive-document-person.is-active,
-.archive-document-person:focus-visible {
-    border-color: var(--brand-green-400);
-    background: var(--surface-card-hover);
-}
-
-.archive-document-region { box-sizing: border-box; }
-
 .archive-document-drop {
     min-height: 150px;
     display: flex;

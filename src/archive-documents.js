@@ -23,23 +23,12 @@ function archiveMarkedRegions(file) {
     }).filter(Boolean);
 }
 
-function archiveRegionToggleMarkup() {
-    return `<label class="archive-region-toggle"><input type="checkbox" data-archive-region-toggle ${archiveShowMarkedAreas ? 'checked' : ''}><span>${escapeHtml(archiveDocumentLabel('Show marked areas', 'Показать отмеченные области'))}</span></label>`;
-}
-
 function archiveUpdateRegionVisibility() {
-    document.querySelectorAll('[data-archive-region-toggle]').forEach(input => { input.checked = archiveShowMarkedAreas; });
     document.querySelectorAll('[data-archive-region-box]').forEach(box => {
         box.hidden = box.dataset.archiveRegionReady === 'false'
-            || (!archiveShowMarkedAreas && !box.classList.contains('is-active'));
+            || !box.classList.contains('is-active');
     });
 }
-
-document.addEventListener('change', event => {
-    if (!event.target.matches('[data-archive-region-toggle]')) return;
-    archiveShowMarkedAreas = event.target.checked;
-    archiveUpdateRegionVisibility();
-});
 
 function archiveDocumentExtension(name) {
     return String(name || '').split('.').pop().toLowerCase();
@@ -172,69 +161,28 @@ function archiveDocumentRenderCsv(text, host) {
     }, { passive: true });
 }
 
-async function archiveDocumentRenderImage(blob, file, host, modal) {
-    const url = URL.createObjectURL(blob);
-    const image = document.createElement('img');
-    image.className = 'archive-document-image';
-    image.alt = file.name;
-    const loaded = new Promise((resolve, reject) => {
-        image.onload = resolve;
-        image.onerror = () => reject(new Error(archiveDocumentLabel('Image could not be displayed.', 'Не удалось показать изображение.')));
+function openArchiveImagePeopleModal(fileId, { mode = 'preview' } = {}) {
+    const file = archiveFileById(fileId);
+    if (!file || !archiveCanViewFile(file)) return;
+    const blob = archiveDocumentBytes.get(file.id);
+    const objectUrl = blob ? URL.createObjectURL(blob) : null;
+    openUnifiedImagePeopleModal(file.id, {
+        mode,
+        archiveFile: file,
+        imageSrc: objectUrl || archiveImageSource(file),
+        onClose: objectUrl ? () => URL.revokeObjectURL(objectUrl) : null
     });
-    image.src = url;
-    try { await loaded; } catch (error) { URL.revokeObjectURL(url); throw error; }
-    if (!modal.isConnected) { URL.revokeObjectURL(url); return; }
-    const cleanup = new MutationObserver(() => {
-        if (modal.isConnected) return;
-        URL.revokeObjectURL(url);
-        cleanup.disconnect();
-    });
-    cleanup.observe(modalBackdrop, { childList: true });
-    const stage = document.createElement('div');
-    stage.className = 'archive-document-image-stage';
-    stage.style.maxWidth = `${image.naturalWidth}px`;
-    stage.append(image);
-    const regions = archiveMarkedRegions(file);
-    for (const { personId, region, name } of regions) {
-        const box = document.createElement('span');
-        box.className = 'archive-person-region-highlight archive-document-region';
-        box.dataset.archiveRegionBox = personId;
-        box.setAttribute('aria-hidden', 'true');
-        box.title = name;
-        Object.assign(box.style, {
-            left: `${region.x * 100}%`, top: `${region.y * 100}%`,
-            width: `${region.width * 100}%`, height: `${region.height * 100}%`
-        });
-        stage.append(box);
-    }
-    const toolbar = modal.querySelector('[data-document-tools]');
-    if (regions.length) {
-        toolbar.hidden = false;
-        toolbar.className = 'archive-document-tools archive-document-image-tools';
-        toolbar.innerHTML = `${archiveRegionToggleMarkup()}<div class="archive-document-region-names" aria-label="${escapeHtml(archiveDocumentLabel('Marked people', 'Отмеченные люди'))}">${regions.map(({ personId, name }) => `<button type="button" class="archive-document-person" data-document-region-person="${escapeHtml(personId)}" data-user-content>${escapeHtml(name)}</button>`).join('')}</div>`;
-        const setActive = id => {
-            stage.querySelectorAll('[data-archive-region-box]').forEach(box => box.classList.toggle('is-active', box.dataset.archiveRegionBox === id));
-            toolbar.querySelectorAll('[data-document-region-person]').forEach(button => button.classList.toggle('is-active', button.dataset.documentRegionPerson === id));
-            archiveUpdateRegionVisibility();
-        };
-        toolbar.querySelectorAll('[data-document-region-person]').forEach(button => {
-            button.addEventListener('pointerenter', () => setActive(button.dataset.documentRegionPerson));
-            button.addEventListener('pointerleave', () => setActive(null));
-            button.addEventListener('focus', () => {
-                button.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-                setActive(button.dataset.documentRegionPerson);
-            });
-            button.addEventListener('blur', () => setActive(null));
-        });
-    }
-    host.replaceChildren(stage);
-    archiveUpdateRegionVisibility();
 }
 
 async function openArchiveDocumentViewer(fileId) {
     const file = archiveFileById(fileId);
     if (!file) return;
     const extension = archiveDocumentExtension(file.name);
+    if (archiveImageExtensions.has(extension)) {
+        if (archiveCanViewFile(file)) openArchiveImagePeopleModal(fileId);
+        else showToast(archiveDocumentLabel('No in-app viewer is available for this file.', 'Этот файл пока нельзя открыть в приложении.'));
+        return;
+    }
     if (!archiveCanViewFile(file)) {
         showToast(archiveDocumentLabel('No in-app viewer is available for this file.', 'Этот файл пока нельзя открыть в приложении.'));
         return;
@@ -248,9 +196,7 @@ async function openArchiveDocumentViewer(fileId) {
         if (!modal.isConnected) return;
         modal.querySelector('[data-document-download]').addEventListener('click', () => archiveDocumentDownload(file, blob));
         host.replaceChildren();
-        if (archiveImageExtensions.has(extension)) {
-            await archiveDocumentRenderImage(blob, file, host, modal);
-        } else if (extension === 'txt') {
+        if (extension === 'txt') {
             const pre = document.createElement('pre');
             pre.className = 'archive-document-text';
             pre.textContent = await blob.text();

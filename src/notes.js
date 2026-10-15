@@ -6235,6 +6235,11 @@ function openArchiveFilesPeopleModal(
             ? files[0]
             : null;
 
+    if (singleFile && archiveFileKind(singleFile) === 'img' && archiveCanViewFile(singleFile)) {
+        openArchiveImagePeopleModal(singleFile.id, { mode: 'tag' });
+        return;
+    }
+
     const projectId =
         files[0].projectId
         || currentProjectId();
@@ -6262,7 +6267,7 @@ function openArchiveFilesPeopleModal(
         imageArea,
 
         title:
-          'Add people',
+          singleFile ? 'Tag person' : 'Add people',
 
         subtitle:
           archiveBulkLinkSubtitle(

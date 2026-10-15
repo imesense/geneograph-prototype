@@ -12366,7 +12366,6 @@ function renderArchivePreview(
     if (archiveFileKind(file) !== 'img' || !imageSource) return '';
     const regions = archiveMarkedRegions(file);
     return `
-          ${regions.length ? archiveRegionToggleMarkup() : ''}
           <div
             class="
               archive-file-preview
@@ -14177,7 +14176,7 @@ function renderArchiveFileInspector(
             ),
             renderArchiveFileSectionAction(
                 'person',
-                'Add person',
+                'Tag person',
                 editing
             ),
             `${peopleCount} ${

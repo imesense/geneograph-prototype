@@ -44,6 +44,7 @@ const RU_UI_SHARED = Object.freeze({
     'Keep editing': 'Продолжить редактирование',
     'No area': 'Область не выбрана',
     'No people tagged yet.': 'На фото пока никто не отмечен.',
+    'No people tagged to this file yet.': 'В этом файле пока никто не отмечен.',
     'Select a person to mark on the photo': 'Выберите человека, чтобы отметить его на фото',
     'Choose a person on the left to mark their area.': 'Выберите человека слева, чтобы отметить его область.',
     'Photo and face areas': 'Фото и области лиц',

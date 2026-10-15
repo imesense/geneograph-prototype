@@ -1294,7 +1294,6 @@
     box-shadow: inset 0 0 0 1px #16865c, 0 0 0 1px #16865c;
 }
 
-.archive-file-hero > .archive-region-toggle { margin-bottom: var(--space-2); }
 
 .archive-person-floating-preview:not([hidden]) {
     position: fixed;
