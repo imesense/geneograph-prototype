@@ -241,12 +241,20 @@ async function openArchiveDocumentViewer(fileId) {
 function openArchiveDocumentImport({ files = null, onImported = null } = {}) {
     const folderId = state.activeModule === 'Archive' ? state.archiveSelectedFolderId || null : null;
     const projectId = currentProjectId();
-    openModal(`<div class="modal archive-document-import" role="dialog" aria-modal="true" aria-labelledby="archiveImportTitle"><div class="modal-header"><div><h2 id="archiveImportTitle">${escapeHtml(archiveDocumentLabel('Add files', 'Добавить файлы'))}</h2><p>${escapeHtml(archiveDocumentLabel('Files remain available until this page reloads. Maximum 20 MB per file.', 'Файлы доступны до перезагрузки страницы. Не более 20 МБ на файл.'))}</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><div class="modal-body"><div class="archive-document-drop" data-document-drop tabindex="0" role="button"><strong>${escapeHtml(archiveDocumentLabel('Drop files here or choose files', 'Перетащите файлы сюда или выберите'))}</strong><span>PNG, JPEG, WebP, TXT, CSV, PDF, DOCX</span></div><input type="file" multiple accept=".png,.jpg,.jpeg,.webp,.txt,.csv,.pdf,.docx" data-document-input hidden><div class="archive-document-import-results" data-import-results data-user-content role="status"></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>${escapeHtml(archiveDocumentLabel('Done', 'Готово'))}</button><button class="button primary" type="button" data-document-choose>${escapeHtml(archiveDocumentLabel('Choose files', 'Выбрать файлы'))}</button></div></div>`);
+    const destination = folderId ? archiveFolderById(folderId, projectId)?.name : archiveDocumentLabel('All files', 'Все файлы');
+    openModal(`<div class="modal archive-document-import" role="dialog" aria-modal="true" aria-labelledby="archiveImportTitle"><div class="modal-header"><div><h2 id="archiveImportTitle">${escapeHtml(archiveDocumentLabel('Add files', 'Добавить файлы'))}</h2><p>${escapeHtml(archiveDocumentLabel('Adding to', 'Папка'))} <strong>${escapeHtml(destination || archiveDocumentLabel('All files', 'Все файлы'))}</strong> · ${escapeHtml(archiveDocumentLabel('Available until page reload', 'Доступны до перезагрузки страницы'))}</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><div class="modal-body"><div class="archive-document-drop" data-document-drop tabindex="0" role="button" aria-label="${escapeHtml(archiveDocumentLabel('Choose files or drop them here', 'Выберите файлы или перетащите их сюда'))}"><strong>${escapeHtml(archiveDocumentLabel('Drop files here or choose files', 'Перетащите файлы сюда или выберите'))}</strong><span>${escapeHtml(archiveDocumentLabel('Up to 20 MB each', 'До 20 МБ каждый'))}</span></div><p class="archive-document-formats">PNG, JPEG, WebP, TXT, CSV, PDF, DOCX</p><input type="file" multiple accept=".png,.jpg,.jpeg,.webp,.txt,.csv,.pdf,.docx" data-document-input hidden><div class="archive-document-import-results" data-import-results data-user-content hidden><h3>${escapeHtml(archiveDocumentLabel('Import results', 'Результаты добавления'))}</h3><div data-import-rows></div></div></div><div class="modal-footer"><span class="archive-document-import-summary" data-import-summary role="status" aria-live="polite"></span><button class="button secondary" type="button" data-close>${escapeHtml(archiveDocumentLabel('Done', 'Готово'))}</button><button class="button primary" type="button" data-document-choose>${escapeHtml(archiveDocumentLabel('Choose files', 'Выбрать файлы'))}</button></div></div>`);
     const modal = modalBackdrop.querySelector('.archive-document-import');
     if (!modal) return;
     const input = modal.querySelector('[data-document-input]');
     const drop = modal.querySelector('[data-document-drop]');
     const result = modal.querySelector('[data-import-results]');
+    const rows = modal.querySelector('[data-import-rows]');
+    const summary = modal.querySelector('[data-import-summary]');
+    let added = 0;
+    let failed = 0;
+    const updateSummary = () => {
+        summary.textContent = `${added} ${archiveDocumentLabel('added', 'добавлено')}${failed ? ` · ${failed} ${archiveDocumentLabel('not added', 'не добавлено')}` : ''}`;
+    };
     const choose = () => input.click();
     modal.querySelector('[data-document-choose]').addEventListener('click', choose);
     drop.addEventListener('click', choose);
@@ -257,10 +265,23 @@ function openArchiveDocumentImport({ files = null, onImported = null } = {}) {
         const ids = [];
         for (const source of Array.from(selected || [])) {
             const row = document.createElement('p');
-            result.append(row);
+            result.hidden = false;
+            rows.append(row);
+            const setResult = (status, message) => {
+                row.className = `archive-document-import-row ${status}`;
+                row.replaceChildren();
+                const name = document.createElement('strong');
+                name.textContent = source.name;
+                const detail = document.createElement('span');
+                detail.textContent = message;
+                row.append(name, detail);
+                if (status === 'success') added++;
+                else failed++;
+                updateSummary();
+            };
             const extension = archiveDocumentExtension(source.name);
             if (!(archiveDocumentExtensions.has(extension) || archiveImageExtensions.has(extension)) || source.size > archiveDocumentMaxBytes || source.size === 0) {
-                row.textContent = `${source.name}: ${archiveDocumentLabel('Unsupported, empty, or over 20 MB.', 'Неподдерживаемый, пустой или больше 20 МБ.')}`;
+                setResult('error', archiveDocumentLabel('Unsupported, empty, or over 20 MB.', 'Неподдерживаемый, пустой или больше 20 МБ.'));
                 continue;
             }
             try {
@@ -287,9 +308,9 @@ function openArchiveDocumentImport({ files = null, onImported = null } = {}) {
                 archiveDocumentBytes.set(id, source);
                 if (image) archiveUploadedImageUrls.set(id, previewUrl);
                 ids.push(id);
-                row.textContent = `${source.name}: ${archiveDocumentLabel('Added', 'Добавлен')}`;
+                setResult('success', archiveDocumentLabel('Added', 'Добавлен'));
             } catch (error) {
-                row.textContent = `${source.name}: ${archiveDocumentLabel('Could not read file', 'Не удалось прочитать файл')} (${error.message})`;
+                setResult('error', `${archiveDocumentLabel('Could not read file', 'Не удалось прочитать файл')} (${error.message})`);
             }
         }
         if (ids.length) {

@@ -7,6 +7,18 @@
     overflow: hidden;
 }
 
+.archive-document-import {
+    width: min(680px, calc(100vw - 32px));
+    height: auto;
+    max-height: min(720px, calc(100dvh - 32px));
+}
+
+.archive-document-import .modal-header p { overflow-wrap: anywhere; }
+.archive-document-import .modal-header p strong { color: var(--text-primary); }
+.archive-document-import .modal-body { flex: 0 1 auto; }
+.archive-document-import .modal-footer { display: flex; gap: 10px; flex-wrap: wrap; }
+.archive-document-import-summary { margin-right: auto; align-self: center; color: var(--text-secondary); }
+
 .archive-document-modal .modal-header,
 .archive-document-import .modal-header,
 .archive-document-modal .modal-footer,
@@ -131,7 +143,7 @@
 .archive-document-pdf-canvas { display: block; max-width: none; background: white; }
 
 .archive-document-drop {
-    min-height: 150px;
+    min-height: 116px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -142,6 +154,28 @@
     text-align: center;
     cursor: pointer;
 }
+
+.archive-document-drop:hover,
+.archive-document-drop.dragging { border-color: var(--accent, #2ba779); background: var(--surface-hover, #202b28); }
+.archive-document-drop span,
+.archive-document-formats { color: var(--text-secondary); }
+.archive-document-formats { margin: 10px 0 0; font-size: 13px; }
+.archive-document-import-results { margin-top: 22px; }
+.archive-document-import-results[hidden] { display: none; }
+.archive-document-import-results h3 { margin: 0 0 8px; font-size: 14px; }
+.archive-document-import-results p.archive-document-import-row {
+    margin: 0;
+    padding: 10px 0;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    border-top: 1px solid var(--border-default);
+}
+.archive-document-import-row strong { min-width: 0; font-weight: 500; overflow-wrap: anywhere; }
+.archive-document-import-row span { flex: none; color: var(--text-secondary); }
+.archive-document-import-row.success span { color: var(--accent, #2ba779); }
+.archive-document-import-row.error span { color: var(--danger, #ed8b89); overflow-wrap: anywhere; }
 
 .archive-document-drop.dragging,
 .archive-document-drop:focus-visible {
@@ -160,6 +194,9 @@
         max-height: none;
         border-radius: 0;
     }
+
+    .archive-document-import .modal-body { flex: 1 1 auto; }
+    .archive-document-import-results p.archive-document-import-row { align-items: flex-start; flex-direction: column; gap: 3px; }
 
     .archive-document-modal .modal-footer,
     .archive-document-import .modal-footer {
