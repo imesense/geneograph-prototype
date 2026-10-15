@@ -23,9 +23,11 @@ const evaluate = expression => vm.runInContext(expression, context);
 
 assert.equal(evaluate('normalizeFaceRegion(null)'), null);
 assert.equal(evaluate('normalizeFaceRegion({ x: 0, y: 0, width: NaN, height: 1 })'), null);
+assert.equal(evaluate('normalizeFaceRegion({ x: .2, y: .2, width: 0, height: .01 })'), null);
 assert.deepEqual(JSON.parse(JSON.stringify(evaluate('normalizeFaceRegion({ x: .9, y: -.2, width: .4, height: .01 })'))), {
-    x: .6, y: 0, width: .4, height: .06
+    x: .6, y: 0, width: .4, height: .01
 });
+assert.equal(evaluate('normalizeFaceRegion({ x: .2, y: .2, width: .01, height: .01 }, FACE_REGION_MIN).height'), .06);
 assert.equal(evaluate('setPhotoPersonRegion(sampleData.media[0], "person", { x: .2, y: .3, width: .25, height: .3 })'), true);
 assert.equal(evaluate('photoPersonRegion(sampleData.media[0], "person").x'), .2);
 assert.equal(evaluate('setPhotoPersonRegion(sampleData.media[0], "other", { x: .1, y: .1, width: .2, height: .2 })'), false);
@@ -47,7 +49,6 @@ assert.equal(evaluate('setPersonPhotoIds("person", [], { rerender: false })'), t
 assert.equal(evaluate('photoPersonRegion(sampleData.media[0], "person")'), null);
 
 assert.match(albumsSource, /renderFaceRegionSelector\(photo, region\)/);
-assert.match(albumsSource, /renderFaceRegionSelector\(photo, activePerson \? regions\[activePerson\.id\] : null/);
-assert.match(albumsSource, /otherRegions = \[\.\.\.selectedIds\]/);
-assert.match(albumsSource, /data-albums-person-region/);
-console.log('Face regions: normalization, tagging, primary-photo cleanup, and shared selector checks passed.');
+assert.match(albumsSource, /const projectImageRegions = \(\) =>/);
+assert.match(albumsSource, /data-image-region=/);
+console.log('Face regions: normalization, tagging, primary-photo cleanup, and preview projection passed.');

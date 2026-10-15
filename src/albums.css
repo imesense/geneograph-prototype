@@ -4891,6 +4891,32 @@ button.albums-inspector-row-main:focus-visible {
 .albums-tag-people-modal .photo-people-workspace { min-height: 0; min-width: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: auto; padding: 0; }
 .albums-tag-people-modal .photo-people-region-panel { grid-row: 1; }
 .albums-tag-people-modal .albums-unified-preview-stage { grid-row: 2; min-height: 0; display: grid; place-items: center; padding: var(--space-3); overflow: hidden; container-type: size; }
+.albums-tag-people-modal .photo-image-viewport { position: relative; width: 100%; height: 100%; min-height: 200px; overflow: hidden; touch-action: none; background: #101513; }
+.albums-tag-people-modal .photo-image-viewport.is-panning { cursor: grab; }
+.albums-tag-people-modal .photo-image-viewport.is-panning:active { cursor: grabbing; }
+.albums-tag-people-modal .photo-image-viewport.is-drawing,
+.albums-tag-people-modal .photo-image-viewport.is-drawing [data-face-region-selector] { cursor: crosshair; }
+.albums-tag-people-modal .photo-image-viewport.is-panning [data-face-region-selector],
+.albums-tag-people-modal .photo-image-viewport.is-panning .albums-lightbox-image-wrap { cursor: grab; }
+.albums-tag-people-modal .photo-image-surface { position: absolute; left: 50%; top: 50%; transform-origin: center; will-change: transform; }
+.albums-tag-people-modal .photo-image-surface .face-region-selector,
+.albums-tag-people-modal .photo-image-surface .albums-lightbox-image-wrap { width: 100% !important; height: 100%; max-width: none; max-height: none !important; aspect-ratio: auto !important; border: 0; }
+.albums-tag-people-modal .photo-image-surface img.albums-lightbox-image,
+.albums-tag-people-modal .photo-image-surface .face-region-selector > img { width: 100%; height: 100%; max-width: none; max-height: none; object-fit: fill; }
+.albums-tag-people-modal .photo-image-regions { position: absolute; z-index: 2; inset: 0; pointer-events: none; }
+.albums-tag-people-modal .photo-image-regions > [data-image-region] { position: absolute; box-sizing: border-box; pointer-events: auto; }
+.albums-tag-people-modal .photo-image-regions .face-region-box { box-shadow: 0 0 0 1px rgba(0,0,0,.7); }
+.albums-tag-people-modal .photo-image-regions .face-region-name,
+.albums-tag-people-modal .photo-image-regions .albums-lightbox-face-name { font-size: 13px; line-height: 1.3; max-width: min(260px, 70vw); }
+.albums-tag-people-modal .photo-image-regions .face-region-handle { right: auto; bottom: auto; width: 28px; height: 28px; border: 0; border-radius: 0; background: transparent; transform: none; touch-action: none; }
+.albums-tag-people-modal .photo-image-regions .face-region-handle::after { content: ''; position: absolute; width: 12px; height: 12px; left: 8px; top: 8px; border: 2px solid white; border-radius: 50%; background: var(--brand-green-500); }
+.albums-tag-people-modal .photo-image-tools { position: absolute; z-index: 8; right: 12px; bottom: 12px; display: flex; align-items: center; gap: 4px; padding: 4px; border: 1px solid var(--border-default); border-radius: 6px; background: var(--surface-card); box-shadow: 0 6px 18px rgba(0,0,0,.3); }
+.albums-tag-people-modal .photo-image-tools button { display: inline-grid; place-items: center; min-width: 36px; min-height: 36px; padding: 4px 7px; border: 0; border-radius: 4px; background: transparent; color: var(--text-primary); cursor: pointer; }
+.albums-tag-people-modal .photo-image-tools button:hover,
+.albums-tag-people-modal .photo-image-tools button[aria-pressed="true"] { background: var(--surface-card-hover); }
+.albums-tag-people-modal .photo-image-tools button:focus-visible { outline: 2px solid var(--brand-green-400); }
+.albums-tag-people-modal .photo-image-tools button svg { width: 18px; height: 18px; }
+.albums-tag-people-modal .photo-image-tools output { min-width: 42px; text-align: center; font-size: 12px; font-variant-numeric: tabular-nums; }
 .albums-tag-people-modal .albums-lightbox-caption { grid-row: 3; }
 .albums-tag-people-modal .albums-unified-preview-stage .face-region-selector { width: min(100%, calc((100cqh - 24px) * var(--photo-aspect))) !important; max-height: calc(100cqh - 24px); }
 .albums-tag-people-modal .albums-lightbox-image-wrap { width: fit-content; max-width: 100%; }
@@ -4964,12 +4990,14 @@ button.albums-inspector-row-main:focus-visible {
     .albums-tag-people-modal .photo-people-body { display: flex; flex-direction: column; overflow-y: auto; overscroll-behavior: contain; }
     .albums-tag-people-modal .photo-people-workspace { order: -1; display: flex; flex-direction: column; flex: none; overflow: visible; border-bottom: 1px solid var(--border-default); }
     .albums-tag-people-modal .photo-people-sidebar { flex: none; overflow: visible; border: 0; padding: var(--space-3); }
-    .albums-tag-people-modal .albums-unified-preview-stage { min-height: 200px; container-type: normal; }
+    .albums-tag-people-modal .albums-unified-preview-stage { min-height: 250px; height: 42dvh; container-type: normal; }
     .albums-tag-people-modal .albums-lightbox-image { max-height: 42dvh; }
     .albums-tag-people-modal .photo-people-region-panel { padding: var(--space-3); }
     .albums-tag-people-modal .photo-people-region-heading { padding: var(--space-2) 0; }
     .albums-tag-people-modal .photo-people-region-actions { width: 100%; justify-content: space-between; margin-left: 0; }
-    .albums-tag-people-modal .albums-unified-preview-stage .face-region-selector { width: min(100%, calc(42dvh * var(--photo-aspect))) !important; max-height: 42dvh; }
+    .albums-tag-people-modal .albums-unified-preview-stage .photo-image-surface .face-region-selector { width: 100% !important; max-height: none; }
+    .albums-tag-people-modal .photo-image-tools { right: 8px; bottom: 8px; }
+    .albums-tag-people-modal .photo-image-tools button { min-width: 34px; }
     .albums-tag-people-modal.is-tagging .person-photo-crop-hint { display: none; }
     .albums-tag-people-modal .photo-people-results,
     .albums-tag-people-modal .photo-people-selected-list { max-height: none; overflow: visible; }

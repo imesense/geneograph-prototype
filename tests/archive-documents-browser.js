@@ -50,6 +50,19 @@ const assets = path.resolve(__dirname, '../src/assets');
             assert.equal(await page.evaluate(() => state.archiveSelectedFileId), 'af-letter-transcription');
             assert.equal(await page.evaluate(() => state.archiveSelectedFolderId), 'interviews');
             await page.evaluate(() => openArchiveDocumentImport());
+            const footerActions = () => page.locator('.archive-document-import .modal-footer button').evaluateAll(buttons =>
+                buttons.map(button => ({ action: button.hasAttribute('data-document-choose') ? 'choose' : 'done', primary: button.classList.contains('primary') })));
+            assert.deepEqual(await footerActions(), [{ action: 'done', primary: false }, { action: 'choose', primary: true }]);
+            const fileChooser = page.waitForEvent('filechooser');
+            await page.locator('.archive-document-import [data-document-choose]').click();
+            assert.ok(await fileChooser);
+            await page.locator('[data-document-drop]').evaluate(drop => {
+                const transfer = new DataTransfer();
+                transfer.items.add(new File(['invalid'], 'invalid.mp3', { type: 'audio/mpeg' }));
+                drop.dispatchEvent(new DragEvent('drop', { bubbles: true, dataTransfer: transfer }));
+            });
+            await page.waitForFunction(() => document.querySelectorAll('[data-import-results] p').length === 1);
+            assert.deepEqual(await footerActions(), [{ action: 'done', primary: false }, { action: 'choose', primary: true }]);
             await page.locator('[data-document-input]').setInputFiles([
                 path.join(assets, 'daisy_letter_transcription.txt'),
                 path.join(assets, 'pawford_household_index.csv'),
@@ -57,15 +70,17 @@ const assets = path.resolve(__dirname, '../src/assets');
                 path.join(assets, 'silver_luna_marriage_packet.pdf'),
             ]);
             await page.locator('[data-import-results] p').last().waitFor();
-            await page.waitForFunction(() => document.querySelectorAll('[data-import-results] p').length === 4);
-            await page.locator('[data-document-input]').setInputFiles({ name: 'bad.pdf', mimeType: 'application/pdf', buffer: Buffer.from('not a pdf') });
             await page.waitForFunction(() => document.querySelectorAll('[data-import-results] p').length === 5);
+            assert.deepEqual(await footerActions(), [{ action: 'choose', primary: false }, { action: 'done', primary: true }]);
+            await page.locator('[data-document-input]').setInputFiles({ name: 'bad.pdf', mimeType: 'application/pdf', buffer: Buffer.from('not a pdf') });
+            await page.waitForFunction(() => document.querySelectorAll('[data-import-results] p').length === 6);
+            assert.deepEqual(await footerActions(), [{ action: 'choose', primary: false }, { action: 'done', primary: true }]);
             await page.locator('[data-document-input]').setInputFiles([
                 { name: 'uploaded-record.png', mimeType: 'image/png', buffer: fs.readFileSync(path.join(assets, 'daisy-birth-record-sample.png')) },
                 { name: 'bad-image.png', mimeType: 'image/png', buffer: Buffer.from('not a png') },
                 { name: 'uploaded-portrait.jpg', mimeType: 'image/jpeg', buffer: fs.readFileSync(path.join(assets, 'unidentified-studio-portrait.jpg')) },
             ]);
-            await page.waitForFunction(() => document.querySelectorAll('[data-import-results] p').length === 8);
+            await page.waitForFunction(() => document.querySelectorAll('[data-import-results] p').length === 9);
             const webp = await page.evaluate(() => {
                 const canvas = document.createElement('canvas');
                 canvas.width = 2; canvas.height = 2;
@@ -73,7 +88,7 @@ const assets = path.resolve(__dirname, '../src/assets');
                 return canvas.toDataURL('image/webp').split(',')[1];
             });
             await page.locator('[data-document-input]').setInputFiles({ name: 'uploaded-image.webp', mimeType: 'image/webp', buffer: Buffer.from(webp, 'base64') });
-            await page.waitForFunction(() => document.querySelectorAll('[data-import-results] p').length === 9);
+            await page.waitForFunction(() => document.querySelectorAll('[data-import-results] p').length === 10);
             assert.equal(await page.evaluate(() => sampleData.archiveFiles.filter(file => file.id.startsWith('af-upload-')).length), 7);
             assert.ok((await page.locator('[data-import-results]').innerText()).includes('bad.pdf'));
             assert.ok((await page.locator('[data-import-results]').innerText()).includes('bad-image.png'));

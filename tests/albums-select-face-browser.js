@@ -42,7 +42,7 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             assert.equal(await modal.locator('[data-photo-people-region="luna"]').getAttribute('aria-pressed'), 'true');
             assert.equal(await modal.locator('[data-photo-people-add-region]').evaluate(element => element === document.activeElement), true);
             assert.equal(await modal.locator('[data-photo-people-primary]').isChecked(), false);
-            assert.equal(await modal.locator('[data-face-region-box]').count(), 0);
+            assert.equal(await modal.locator('[data-face-region-box]:visible').count(), 0);
             await modal.locator('[data-close]').last().click();
             assert.equal(await page.evaluate(() => photoPersonRegion(getPhoto('photo-silver-luna-wedding'), 'luna')), null);
 

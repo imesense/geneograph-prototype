@@ -689,13 +689,14 @@ const PERSON_PHOTO_CROP_DEFAULT = Object.freeze({
 const FACE_REGION_DEFAULT = Object.freeze({ x: 0.3, y: 0.3, width: 0.4, height: 0.4 });
 const FACE_REGION_MIN = 0.06;
 
-function normalizeFaceRegion(region)
+function normalizeFaceRegion(region, minimum = 0)
 {
     if (!region) return null;
     const values = ['x', 'y', 'width', 'height'].map(key => Number(region[key]));
     if (values.some(value => !Number.isFinite(value))) return null;
-    const width = Math.min(1, Math.max(FACE_REGION_MIN, values[2]));
-    const height = Math.min(1, Math.max(FACE_REGION_MIN, values[3]));
+    const width = Math.min(1, Math.max(minimum, values[2]));
+    const height = Math.min(1, Math.max(minimum, values[3]));
+    if (width <= 0 || height <= 0) return null;
     return {
         x: Math.min(1 - width, Math.max(0, values[0])),
         y: Math.min(1 - height, Math.max(0, values[1])),

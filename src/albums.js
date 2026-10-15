@@ -996,12 +996,12 @@ function renderPersonPhotoRegionMedia(
 
 function renderFaceRegionSelector(photo, region, label = 'Select face area', otherRegions = [], boxLabel = 'Face area. Arrow keys move; Shift and arrow keys resize.', activeName = '')
 {
-    const rect = normalizeFaceRegion(region);
+    const rect = normalizeFaceRegion(region, FACE_REGION_MIN);
     const aspect = (Number(photo.width) || 1) / (Number(photo.height) || 1);
     return `<div class="face-region-selector" data-face-region-selector style="--photo-aspect:${aspect};aspect-ratio:${aspect};width:min(100%,calc(52vh * ${aspect}),${520 * aspect}px)" aria-label="${escapeHtml(t(label))}">
         ${photo.src ? `<img src="${escapeHtml(photo.src)}" alt="" draggable="false">` : renderPhotoThumbnail(photo)}
         ${otherRegions.map(({ region: other, name, personId }) => {
-            const bounds = normalizeFaceRegion(other);
+            const bounds = normalizeFaceRegion(other, FACE_REGION_MIN);
             return bounds ? `<span class="face-region-other${bounds.y + bounds.height > .8 ? ' label-above' : ''}" data-face-region-other ${personId ? `data-person-id="${escapeHtml(personId)}" tabindex="0" role="button" aria-label="${escapeHtml(localizedDataFieldValue(name))}"` : 'aria-hidden="true"'} title="${escapeHtml(localizedDataFieldValue(name))}" style="left:${bounds.x * 100}%;top:${bounds.y * 100}%;width:${bounds.width * 100}%;height:${bounds.height * 100}%">${personId ? `<span class="face-region-name">${escapeHtml(localizedDataFieldValue(name))}</span>` : ''}</span>` : '';
         }).join('')}
         ${rect ? `<div class="face-region-box${rect.y + rect.height > .8 ? ' label-above' : ''}" data-face-region-box tabindex="0" role="group" aria-label="${escapeHtml(t(boxLabel))}" style="left:${rect.x * 100}%;top:${rect.y * 100}%;width:${rect.width * 100}%;height:${rect.height * 100}%">${activeName ? `<span class="face-region-name">${escapeHtml(localizedDataFieldValue(activeName))}</span>` : ''}<span class="face-region-handle" data-face-region-resize aria-hidden="true"></span></div>` : ''}
@@ -1015,7 +1015,7 @@ function bindFaceRegionSelector(root, getRegion, setRegion, boxLabel = 'Face are
     let drag = null;
     const update = region =>
     {
-        const normalized = normalizeFaceRegion(region);
+        const normalized = normalizeFaceRegion(region, FACE_REGION_MIN);
         setRegion(normalized);
         let box = stage.querySelector('[data-face-region-box]');
         if (!box && normalized)
@@ -1091,7 +1091,7 @@ function renderPersonPhotoAdjustStage()
 {
     const photo = personPhotoPickerSourcePhoto();
     if (!photo) return '<div class="panel-muted">The selected photo is no longer available.</div>';
-    const region = normalizeFaceRegion(state.personPhotoPicker.region) || FACE_REGION_DEFAULT;
+    const region = normalizeFaceRegion(state.personPhotoPicker.region, FACE_REGION_MIN) || FACE_REGION_DEFAULT;
     return `<div class="person-photo-adjust-layout">
         <div class="person-photo-crop-column">
           ${renderFaceRegionSelector(photo, region)}
@@ -1301,7 +1301,7 @@ function initializePersonPhotoRegion()
     const person = personPhotoPickerPerson();
     const source = personPhotoPickerSourcePhoto();
     if (!person || !source) return false;
-    state.personPhotoPicker.region = photoPersonRegion(source, person.id) || { ...FACE_REGION_DEFAULT };
+    state.personPhotoPicker.region = normalizeFaceRegion(photoPersonRegion(source, person.id), FACE_REGION_MIN) || { ...FACE_REGION_DEFAULT };
     state.personPhotoPicker.step = 'adjust';
     return true;
 }
@@ -7919,6 +7919,232 @@ function openUnifiedImagePeopleModal(photoId, { mode = 'tag', activePersonId = n
 
     if (!modal) return;
 
+    const imageView = { zoom: 1, x: 0, y: 0, drawing: false, space: false, pointers: new Map(), drag: null, regionDrag: null };
+    const viewLabel = (english, russian) => archiveDocumentLabel(english, russian);
+    const viewTools = `<div class="photo-image-tools" role="toolbar" aria-label="${escapeHtml(viewLabel('Image view', 'Просмотр изображения'))}">
+        <button type="button" data-image-zoom-out title="${escapeHtml(viewLabel('Zoom out', 'Уменьшить'))}" aria-label="${escapeHtml(viewLabel('Zoom out', 'Уменьшить'))}">${icon.zoomOut}</button>
+        <output data-image-zoom aria-live="polite">100%</output>
+        <button type="button" data-image-zoom-in title="${escapeHtml(viewLabel('Zoom in', 'Увеличить'))}" aria-label="${escapeHtml(viewLabel('Zoom in', 'Увеличить'))}">${icon.zoomIn}</button>
+        <button type="button" data-image-fit title="${escapeHtml(viewLabel('Fit image', 'Вписать изображение'))}" aria-label="${escapeHtml(viewLabel('Fit image', 'Вписать изображение'))}">${escapeHtml(viewLabel('Fit', 'Вписать'))}</button>
+    </div>`;
+    const imageViewport = () => modal.querySelector('[data-image-viewport]');
+    const imagePoint = (clientX, clientY) => {
+        const rect = imageViewport()?.querySelector('[data-image-surface]')?.getBoundingClientRect();
+        return rect?.width && rect?.height ? { x: (clientX - rect.left) / rect.width, y: (clientY - rect.top) / rect.height } : null;
+    };
+    const imagePixel = () => {
+        const image = imageViewport()?.querySelector('[data-image-surface] img');
+        return { width: 1 / Math.max(1, image?.naturalWidth || 1), height: 1 / Math.max(1, image?.naturalHeight || 1) };
+    };
+    const projectImageRegions = () => {
+        const viewport = imageViewport();
+        const rect = viewport?.querySelector('[data-image-surface]')?.getBoundingClientRect();
+        if (!rect) return;
+        const bounds = viewport.getBoundingClientRect();
+        viewport.querySelectorAll('[data-image-region]').forEach(box => {
+            const id = box.dataset.imageRegion;
+            const region = normalizeFaceRegion(regions[id]);
+            if (!region) { box.hidden = true; return; }
+            box.hidden = false;
+            Object.assign(box.style, {
+                left: `${rect.left - bounds.left + region.x * rect.width}px`,
+                top: `${rect.top - bounds.top + region.y * rect.height}px`,
+                width: `${region.width * rect.width}px`,
+                height: `${region.height * rect.height}px`
+            });
+            const label = box.querySelector('.face-region-name, .albums-lightbox-face-name');
+            if (label) {
+                label.style.left = '0px';
+                const display = label.style.display;
+                const visibility = label.style.visibility;
+                label.style.display = 'block';
+                label.style.visibility = 'hidden';
+                const labelWidth = label.getBoundingClientRect().width;
+                label.style.display = display;
+                label.style.visibility = visibility;
+                const left = rect.left - bounds.left + region.x * rect.width;
+                const top = rect.top - bounds.top + (region.y + region.height) * rect.height;
+                label.style.left = `${Math.max(-left + 4, Math.min(0, bounds.width - left - labelWidth - 4))}px`;
+                box.classList.toggle('label-above', top + 42 > bounds.height);
+            }
+            const handle = box.querySelector('[data-face-region-resize]');
+            if (handle) {
+                const left = rect.left - bounds.left + (region.x + region.width) * rect.width;
+                const top = rect.top - bounds.top + (region.y + region.height) * rect.height;
+                handle.style.left = `${left + 34 <= bounds.width ? region.width * rect.width + 6 : -34}px`;
+                handle.style.top = `${top + 34 <= bounds.height ? region.height * rect.height + 6 : -34}px`;
+            }
+        });
+    };
+    const syncImageMode = () => {
+        const viewport = imageViewport();
+        if (!viewport) return;
+        viewport.classList.toggle('is-panning', imageView.space || (imageView.zoom > 1 && !imageView.drawing));
+        viewport.classList.toggle('is-drawing', imageView.drawing);
+        const mark = modal.querySelector('[data-photo-people-add-region]');
+        if (mark) mark.setAttribute('aria-pressed', String(imageView.drawing));
+    };
+    const syncImageView = () => {
+        const viewport = imageViewport();
+        const surface = viewport?.querySelector('[data-image-surface]');
+        const image = surface?.querySelector('img');
+        if (!image?.naturalWidth || !image.naturalHeight) return;
+        const bounds = viewport.getBoundingClientRect();
+        const fit = Math.min(bounds.width / image.naturalWidth, bounds.height / image.naturalHeight);
+        if (!Number.isFinite(fit) || fit <= 0) return;
+        const width = image.naturalWidth * fit;
+        const height = image.naturalHeight * fit;
+        imageView.x = Math.max(-Math.max(0, (width * imageView.zoom - bounds.width) / 2), Math.min(Math.max(0, (width * imageView.zoom - bounds.width) / 2), imageView.x));
+        imageView.y = Math.max(-Math.max(0, (height * imageView.zoom - bounds.height) / 2), Math.min(Math.max(0, (height * imageView.zoom - bounds.height) / 2), imageView.y));
+        surface.style.width = `${width}px`;
+        surface.style.height = `${height}px`;
+        surface.style.transform = `translate(-50%, -50%) translate(${imageView.x}px, ${imageView.y}px) scale(${imageView.zoom})`;
+        modal.querySelector('[data-image-zoom]').textContent = `${Math.round(imageView.zoom * 100)}%`;
+        syncImageMode();
+        projectImageRegions();
+    };
+    const zoomImage = (next, clientX, clientY) => {
+        const viewport = imageViewport();
+        if (!viewport) return;
+        const bounds = viewport.getBoundingClientRect();
+        const zoom = Math.max(1, Math.min(8, next));
+        const cx = clientX - bounds.left - bounds.width / 2;
+        const cy = clientY - bounds.top - bounds.height / 2;
+        const ratio = zoom / imageView.zoom;
+        imageView.x = cx - (cx - imageView.x) * ratio;
+        imageView.y = cy - (cy - imageView.y) * ratio;
+        imageView.zoom = zoom;
+        if (zoom === 1) { imageView.x = imageView.y = 0; imageView.drawing = false; }
+        syncImageView();
+    };
+    const fitImageView = () => { imageView.zoom = 1; imageView.x = imageView.y = 0; imageView.drawing = false; syncImageView(); };
+    const viewResize = new ResizeObserver(syncImageView);
+    const bindImageView = () => {
+        const viewport = imageViewport();
+        if (!viewport) return;
+        viewResize.disconnect();
+        viewResize.observe(viewport);
+        const image = viewport.querySelector('img');
+        if (image?.complete) syncImageView();
+        else image?.addEventListener('load', syncImageView, { once: true });
+    };
+    modal.addEventListener('wheel', event => {
+        if (!event.target.closest('[data-image-viewport]')) return;
+        event.preventDefault();
+        if (imageView.regionDrag) return;
+        zoomImage(imageView.zoom * Math.exp(-event.deltaY * 0.002), event.clientX, event.clientY);
+    }, { passive: false });
+    modal.addEventListener('pointerdown', event => {
+        const viewport = event.target.closest('[data-image-viewport]');
+        if (!viewport || event.target.closest('.photo-image-tools')) return;
+        if (event.pointerType === 'touch') {
+            imageView.pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+            if (imageView.pointers.size === 2) {
+                const firstId = [...imageView.pointers.keys()][0];
+                if (imageView.regionDrag) {
+                    const previous = imageView.regionDrag.previous;
+                    if (previous) regions[activeRegionPersonId] = previous;
+                    else delete regions[activeRegionPersonId];
+                    imageView.regionDrag = null;
+                    imageView.drawing = false;
+                    projectImageRegions();
+                    syncImageMode();
+                }
+                const points = [...imageView.pointers.values()];
+                imageView.pinch = { distance: Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y), zoom: imageView.zoom };
+            }
+        }
+        const activeBox = event.target.closest('[data-face-region-box]');
+        const otherBox = event.target.closest('[data-face-region-other], [data-lightbox-face]');
+        const forcePan = event.button === 1 || imageView.space || imageView.pointers.size > 1;
+        const canEdit = modalMode === 'preview' && selectedIds.has(activeRegionPersonId);
+        if (!forcePan && canEdit && !otherBox && (activeBox || imageView.zoom === 1 || imageView.drawing)) {
+            const point = imagePoint(event.clientX, event.clientY);
+            if (!point) return;
+            const current = normalizeFaceRegion(regions[activeRegionPersonId]);
+            const mode = event.target.closest('[data-face-region-resize]') ? 'resize' : activeBox ? 'move' : 'draw';
+            imageView.regionDrag = { id: event.pointerId, mode, point, start: current, previous: current, moved: false };
+            if (mode === 'draw') {
+                const pixel = imagePixel();
+                regions[activeRegionPersonId] = normalizeFaceRegion({ x: point.x, y: point.y, width: pixel.width, height: pixel.height });
+            }
+            projectImageRegions();
+            viewport.setPointerCapture(event.pointerId);
+            event.preventDefault();
+            event.stopPropagation();
+            return;
+        }
+        if (!forcePan && !(imageView.zoom > 1 && !otherBox)) return;
+        event.preventDefault();
+        event.stopPropagation();
+        imageView.drag = { id: event.pointerId, x: event.clientX, y: event.clientY };
+        viewport.setPointerCapture(event.pointerId);
+    }, true);
+    modal.addEventListener('pointermove', event => {
+        if (!imageView.pointers.has(event.pointerId) && imageView.drag?.id !== event.pointerId && imageView.regionDrag?.id !== event.pointerId) return;
+        if (imageView.pointers.has(event.pointerId)) imageView.pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+        if (imageView.pointers.size === 2 && imageView.pinch) {
+            const points = [...imageView.pointers.values()];
+            const distance = Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y);
+            zoomImage(imageView.zoom * distance / (imageView.pinch.distance || distance), (points[0].x + points[1].x) / 2, (points[0].y + points[1].y) / 2);
+            imageView.pinch.distance = distance;
+            return;
+        }
+        if (imageView.regionDrag?.id === event.pointerId) {
+            const drag = imageView.regionDrag;
+            const point = imagePoint(event.clientX, event.clientY);
+            if (!point) return;
+            const pixel = imagePixel();
+            drag.moved ||= Math.abs(point.x - drag.point.x) >= pixel.width && Math.abs(point.y - drag.point.y) >= pixel.height;
+            const start = drag.start || FACE_REGION_DEFAULT;
+            const next = drag.mode === 'move' ? { ...start, x: start.x + point.x - drag.point.x, y: start.y + point.y - drag.point.y }
+                : drag.mode === 'resize' ? { ...start, width: Math.max(pixel.width, point.x - start.x), height: Math.max(pixel.height, point.y - start.y) }
+                : { x: Math.min(drag.point.x, point.x), y: Math.min(drag.point.y, point.y), width: Math.max(pixel.width, Math.abs(point.x - drag.point.x)), height: Math.max(pixel.height, Math.abs(point.y - drag.point.y)) };
+            regions[activeRegionPersonId] = normalizeFaceRegion(next);
+            projectImageRegions();
+            return;
+        }
+        if (!imageView.drag || imageView.drag.id !== event.pointerId) return;
+        imageView.x += event.clientX - imageView.drag.x;
+        imageView.y += event.clientY - imageView.drag.y;
+        imageView.drag.x = event.clientX;
+        imageView.drag.y = event.clientY;
+        syncImageView();
+    });
+    const endImagePointer = event => {
+        if (imageView.regionDrag?.id === event.pointerId) {
+            const drag = imageView.regionDrag;
+            imageView.regionDrag = null;
+            imageView.drawing = false;
+            if (event.type === 'pointercancel') {
+                if (drag.previous) regions[activeRegionPersonId] = drag.previous;
+                else delete regions[activeRegionPersonId];
+                projectImageRegions();
+            } else if (drag.moved || drag.mode !== 'draw') commitRegion();
+            else {
+                if (drag.previous) regions[activeRegionPersonId] = drag.previous;
+                else delete regions[activeRegionPersonId];
+                projectImageRegions();
+            }
+            syncImageMode();
+        }
+        imageView.pointers.delete(event.pointerId);
+        if (imageView.pointers.size < 2) imageView.pinch = null;
+        if (imageView.drag?.id === event.pointerId) imageView.drag = null;
+    };
+    modal.addEventListener('pointerup', endImagePointer);
+    modal.addEventListener('pointercancel', endImagePointer);
+    const imageKeyDown = event => {
+        if (event.code === 'Space' && !/^(INPUT|TEXTAREA)$/.test(event.target.tagName)) {
+            imageView.space = true;
+            syncImageView();
+            if (event.target.closest('[data-image-viewport]')) event.preventDefault();
+        }
+    };
+    const imageKeyUp = event => { if (event.code === 'Space') { imageView.space = false; syncImageView(); } };
+    window.addEventListener('keydown', imageKeyDown);
+    window.addEventListener('keyup', imageKeyUp);
+
     const renderPersonRow = (person, tagged) => {
         const id = escapeHtml(person.id);
         const name = localizedDataFieldValue(personName(person));
@@ -7954,37 +8180,25 @@ function openUnifiedImagePeopleModal(photoId, { mode = 'tag', activePersonId = n
         modal.querySelector('[data-albums-preview-panel]').innerHTML = `<button type="button" class="button secondary albums-search-people" data-albums-search-people>${icon.search}<span>${escapeHtml(t('Search people'))}</span></button><div class="albums-lightbox-people-header"><h3>${escapeHtml(t('Tagged people'))}</h3><span>${selectedIds.size}</span></div><div class="albums-lightbox-people-list">${previewRows()}</div>`;
         const stage = modal.querySelector('[data-albums-preview-stage]');
         const active = modalMode === 'preview' && selectedIds.has(activeRegionPersonId);
-        const otherRegions = [...selectedIds]
-            .filter(personId => personId !== activeRegionPersonId && regions[personId])
-            .map(personId => ({ personId, region: regions[personId], name: personName(getPerson(personId)) }));
-        stage.innerHTML = imageLoadError
+        const imageContent = imageLoadError
             ? `<p class="photo-people-image-error" role="alert">${escapeHtml(archiveDocumentLabel('Image could not be displayed.', 'Не удалось показать изображение.'))}</p>`
             : active && photo.src
-            ? renderFaceRegionSelector(photo, regions[activeRegionPersonId] || null,
-                `${t('Marked area for')} ${localizedDataFieldValue(personName(getPerson(activeRegionPersonId)))}`, otherRegions,
-                'Face area. Arrow keys move; Shift and arrow keys resize.', personName(getPerson(activeRegionPersonId)))
-            : photo.src ? `<div class="albums-lightbox-image-wrap"><img class="albums-lightbox-image" src="${escapeHtml(photo.src)}" alt="${escapeHtml(photo.title || photo.filename)}">${[...selectedIds].map(id => {
+            ? `<div class="face-region-selector" data-face-region-selector><img src="${escapeHtml(photo.src)}" alt="" draggable="false"></div>`
+            : photo.src ? `<div class="albums-lightbox-image-wrap"><img class="albums-lightbox-image" src="${escapeHtml(photo.src)}" alt="${escapeHtml(photo.title || photo.filename)}" draggable="false"></div>`
+            : renderPhotoThumbnail(photo, { className: 'albums-lightbox-photo', label: photo.title || photo.filename });
+        const regionBoxes = [...selectedIds].map(id => {
             const region = normalizeFaceRegion(regions[id]);
-            return region ? `<span class="albums-lightbox-face${highlightedPersonId === id ? ' is-active' : ''}${!markedAreasVisible() && highlightedPersonId !== id ? ' is-concealed' : ''}" data-lightbox-face="${escapeHtml(id)}" style="left:${region.x * 100}%;top:${region.y * 100}%;width:${region.width * 100}%;height:${region.height * 100}%" role="img" tabindex="0" aria-label="${escapeHtml(localizedDataFieldValue(personName(getPerson(id))))}"><span class="albums-lightbox-face-name" data-lightbox-face-name>${escapeHtml(localizedDataFieldValue(personName(getPerson(id))))}</span></span>` : '';
-        }).join('')}</div>` : renderPhotoThumbnail(photo, { className: 'albums-lightbox-photo', label: photo.title || photo.filename });
-        if (active && photo.src) {
-            const selector = stage.querySelector('[data-face-region-selector]');
-            const image = selector?.querySelector('img');
-            const fitImage = () => {
-                if (!image?.naturalWidth || !image.naturalHeight || !selector.isConnected) return;
-                const aspect = image.naturalWidth / image.naturalHeight;
-                selector.style.setProperty('--photo-aspect', String(aspect));
-                selector.style.aspectRatio = String(aspect);
-            };
-            if (image?.complete) fitImage();
-            else image?.addEventListener('load', fitImage, { once: true });
-            bindFaceRegionSelector(stage,
-            () => normalizeFaceRegion(regions[activeRegionPersonId]),
-            region => {
-                if (region) regions[activeRegionPersonId] = region;
-                else delete regions[activeRegionPersonId];
-            }, 'Face area. Arrow keys move; Shift and arrow keys resize.', commitRegion);
-        }
+            if (!region && !(active && id === activeRegionPersonId)) return '';
+            const name = escapeHtml(localizedDataFieldValue(personName(getPerson(id))));
+            if (active && id === activeRegionPersonId) return `<div class="face-region-box" data-face-region-box data-image-region="${escapeHtml(id)}" tabindex="0" role="group" aria-label="${escapeHtml(viewLabel('Area. Arrows move; Shift resizes; Alt adjusts one image pixel.', 'Область. Стрелки перемещают; Shift изменяет размер; Alt изменяет на один пиксель изображения.'))}"><span class="face-region-name">${name}</span><span class="face-region-handle" data-face-region-resize aria-hidden="true"></span></div>`;
+            if (active) return `<span class="face-region-other${!markedAreasVisible() && highlightedPersonId !== id ? ' is-concealed' : ''}" data-face-region-other data-image-region="${escapeHtml(id)}" data-person-id="${escapeHtml(id)}" tabindex="0" role="button" aria-label="${name}"><span class="face-region-name">${name}</span></span>`;
+            return `<span class="albums-lightbox-face${highlightedPersonId === id ? ' is-active' : ''}${!markedAreasVisible() && highlightedPersonId !== id ? ' is-concealed' : ''}" data-lightbox-face="${escapeHtml(id)}" data-image-region="${escapeHtml(id)}" role="img" tabindex="0" aria-label="${name}"><span class="albums-lightbox-face-name" data-lightbox-face-name>${name}</span></span>`;
+        }).join('');
+        stage.innerHTML = photo.src && !imageLoadError
+            ? `<div class="photo-image-viewport" data-image-viewport tabindex="-1"><div class="photo-image-surface" data-image-surface>${imageContent}</div><div class="photo-image-regions" data-image-regions>${regionBoxes}</div>${viewTools}</div>`
+            : imageContent;
+        bindImageView();
+        syncImageMode();
         if (archiveMode) {
             stage.querySelector('img')?.addEventListener('error', () => {
                 if (!modal.isConnected) return;
@@ -8108,16 +8322,20 @@ function openUnifiedImagePeopleModal(photoId, { mode = 'tag', activePersonId = n
             ?.focus({ preventScroll: true });
     };
     const onSearchEscape = event => {
-        if (event.key !== 'Escape' || modalMode !== 'tag' || !modal.isConnected) return;
+        if (event.key !== 'Escape' || !modal.isConnected || (modalMode !== 'tag' && !imageView.drawing)) return;
         event.preventDefault();
         event.stopImmediatePropagation();
-        returnFromSearch();
+        if (imageView.drawing) { imageView.drawing = false; syncImageMode(); }
+        else returnFromSearch();
     };
     const observer = new MutationObserver(() => {
         if (!modal.isConnected) cleanupEscape();
     });
     const cleanupEscape = () => {
         window.removeEventListener('keydown', onSearchEscape, true);
+        window.removeEventListener('keydown', imageKeyDown);
+        window.removeEventListener('keyup', imageKeyUp);
+        viewResize.disconnect();
         observer.disconnect();
         onClose?.();
         if (albumsPhotoEscapeCleanup === cleanupEscape) albumsPhotoEscapeCleanup = null;
@@ -8180,6 +8398,17 @@ function openUnifiedImagePeopleModal(photoId, { mode = 'tag', activePersonId = n
         'click',
         event =>
         {
+            if (event.target.closest('[data-image-zoom-out], [data-image-zoom-in], [data-image-fit]')) {
+                const viewport = imageViewport();
+                if (!viewport) return;
+                const bounds = viewport.getBoundingClientRect();
+                const cx = bounds.left + bounds.width / 2;
+                const cy = bounds.top + bounds.height / 2;
+                if (event.target.closest('[data-image-zoom-out]')) zoomImage(imageView.zoom / 1.25, cx, cy);
+                else if (event.target.closest('[data-image-zoom-in]')) zoomImage(imageView.zoom * 1.25, cx, cy);
+                else fitImageView();
+                return;
+            }
             if (event.target.closest('[data-archive-image-download]')) {
                 archiveDocumentBlob(archiveFile)
                     .then(blob => archiveDocumentDownload(archiveFile, blob))
@@ -8261,6 +8490,12 @@ function openUnifiedImagePeopleModal(photoId, { mode = 'tag', activePersonId = n
             }
             if (event.target.closest('[data-photo-people-add-region]'))
             {
+                if (imageView.zoom > 1 && event.detail !== 0) {
+                    imageView.drawing = true;
+                    syncImageMode();
+                    imageViewport()?.focus({ preventScroll: true });
+                    return;
+                }
                 regions[activeRegionPersonId] = { ...FACE_REGION_DEFAULT };
                 saveRegion(activeRegionPersonId, regions[activeRegionPersonId]);
                 refreshOwner();
@@ -8290,6 +8525,22 @@ function openUnifiedImagePeopleModal(photoId, { mode = 'tag', activePersonId = n
         if (target && !target.matches(':hover')) highlightPerson(null);
     });
     modal.addEventListener('keydown', event => {
+        if (event.target.matches('[data-face-region-box]') && event.key.startsWith('Arrow')) {
+            const region = normalizeFaceRegion(regions[activeRegionPersonId]);
+            if (!region) return;
+            const pixel = imagePixel();
+            const stepX = event.altKey ? pixel.width : event.ctrlKey ? .01 : .025;
+            const stepY = event.altKey ? pixel.height : event.ctrlKey ? .01 : .025;
+            const dx = event.key === 'ArrowLeft' ? -stepX : event.key === 'ArrowRight' ? stepX : 0;
+            const dy = event.key === 'ArrowUp' ? -stepY : event.key === 'ArrowDown' ? stepY : 0;
+            regions[activeRegionPersonId] = normalizeFaceRegion(event.shiftKey
+                ? { ...region, width: Math.max(pixel.width, region.width + dx), height: Math.max(pixel.height, region.height + dy) }
+                : { ...region, x: region.x + dx, y: region.y + dy });
+            projectImageRegions();
+            commitRegion({ keyboard: true });
+            event.preventDefault();
+            return;
+        }
         const region = event.target.closest('[data-face-region-other][data-person-id], [data-lightbox-face]');
         if (region && (event.key === 'Enter' || event.key === ' ')) {
             event.preventDefault();

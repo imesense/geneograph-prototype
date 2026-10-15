@@ -250,13 +250,20 @@ function openArchiveDocumentImport({ files = null, onImported = null } = {}) {
     const result = modal.querySelector('[data-import-results]');
     const rows = modal.querySelector('[data-import-rows]');
     const summary = modal.querySelector('[data-import-summary]');
+    const chooseButton = modal.querySelector('[data-document-choose]');
+    const doneButton = modal.querySelector('.modal-footer [data-close]');
     let added = 0;
     let failed = 0;
     const updateSummary = () => {
         summary.textContent = `${added} ${archiveDocumentLabel('added', 'добавлено')}${failed ? ` · ${failed} ${archiveDocumentLabel('not added', 'не добавлено')}` : ''}`;
+        if (added > 0 && !doneButton.classList.contains('primary')) {
+            chooseButton.classList.replace('primary', 'secondary');
+            doneButton.classList.replace('secondary', 'primary');
+            chooseButton.after(doneButton);
+        }
     };
     const choose = () => input.click();
-    modal.querySelector('[data-document-choose]').addEventListener('click', choose);
+    chooseButton.addEventListener('click', choose);
     drop.addEventListener('click', choose);
     drop.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); choose(); } });
     drop.addEventListener('dragover', event => { event.preventDefault(); drop.classList.add('dragging'); });
