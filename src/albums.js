@@ -994,7 +994,7 @@ function renderPersonPhotoRegionMedia(
       `;
 }
 
-function renderFaceRegionSelector(photo, region, label = 'Select face area', otherRegions = [], boxLabel = 'Face area. Arrow keys move; Shift and arrow keys resize.')
+function renderFaceRegionSelector(photo, region, label = 'Select face area', otherRegions = [], boxLabel = 'Face area. Arrow keys move; Shift and arrow keys resize.', activeName = '')
 {
     const rect = normalizeFaceRegion(region);
     const aspect = (Number(photo.width) || 1) / (Number(photo.height) || 1);
@@ -1002,9 +1002,9 @@ function renderFaceRegionSelector(photo, region, label = 'Select face area', oth
         ${photo.src ? `<img src="${escapeHtml(photo.src)}" alt="" draggable="false">` : renderPhotoThumbnail(photo)}
         ${otherRegions.map(({ region: other, name, personId }) => {
             const bounds = normalizeFaceRegion(other);
-            return bounds ? `<span class="face-region-other" data-face-region-other ${personId ? `data-person-id="${escapeHtml(personId)}" tabindex="0" role="button" aria-label="${escapeHtml(localizedDataFieldValue(name))}"` : 'aria-hidden="true"'} title="${escapeHtml(localizedDataFieldValue(name))}" style="left:${bounds.x * 100}%;top:${bounds.y * 100}%;width:${bounds.width * 100}%;height:${bounds.height * 100}%"></span>` : '';
+            return bounds ? `<span class="face-region-other${bounds.y + bounds.height > .8 ? ' label-above' : ''}" data-face-region-other ${personId ? `data-person-id="${escapeHtml(personId)}" tabindex="0" role="button" aria-label="${escapeHtml(localizedDataFieldValue(name))}"` : 'aria-hidden="true"'} title="${escapeHtml(localizedDataFieldValue(name))}" style="left:${bounds.x * 100}%;top:${bounds.y * 100}%;width:${bounds.width * 100}%;height:${bounds.height * 100}%">${personId ? `<span class="face-region-name">${escapeHtml(localizedDataFieldValue(name))}</span>` : ''}</span>` : '';
         }).join('')}
-        ${rect ? `<div class="face-region-box" data-face-region-box tabindex="0" role="group" aria-label="${escapeHtml(t(boxLabel))}" style="left:${rect.x * 100}%;top:${rect.y * 100}%;width:${rect.width * 100}%;height:${rect.height * 100}%"><span class="face-region-handle" data-face-region-resize aria-hidden="true"></span></div>` : ''}
+        ${rect ? `<div class="face-region-box${rect.y + rect.height > .8 ? ' label-above' : ''}" data-face-region-box tabindex="0" role="group" aria-label="${escapeHtml(t(boxLabel))}" style="left:${rect.x * 100}%;top:${rect.y * 100}%;width:${rect.width * 100}%;height:${rect.height * 100}%">${activeName ? `<span class="face-region-name">${escapeHtml(localizedDataFieldValue(activeName))}</span>` : ''}<span class="face-region-handle" data-face-region-resize aria-hidden="true"></span></div>` : ''}
       </div>`;
 }
 
@@ -7800,7 +7800,7 @@ function openPhotoPeopleModal(photoId, { mode = 'tag', activePersonId = null } =
             ">
             <div class="photo-people-sidebar">
             <section class="albums-unified-preview" data-albums-preview-panel></section>
-            <div class="photo-people-search-head"><button type="button" class="button secondary" data-albums-search-back>${escapeHtml(t('Back to photo'))}</button><h3>${escapeHtml(t('Tag a person'))}</h3></div>
+            <div class="photo-people-search-head"><h3>${escapeHtml(t('Tag a person'))}</h3></div>
             <div
               class="
                 field
@@ -7859,12 +7859,16 @@ function openPhotoPeopleModal(photoId, { mode = 'tag', activePersonId = null } =
               photo-people-footer
             ">
 
-            <label class="albums-marked-toggle"><input type="checkbox" data-albums-show-marked ${albumsShowMarkedAreas ? 'checked' : ''}><span>${escapeHtml(t('Show marked areas'))}</span></label>
+            <div class="albums-preview-footer-tools">
+              <button type="button" class="button primary albums-lightbox-tag" data-lightbox-tag>${icon.plus}<span>${escapeHtml(t('Tag people'))}</span></button>
+              <label class="albums-marked-toggle"><input type="checkbox" data-albums-show-marked ${albumsShowMarkedAreas ? 'checked' : ''}><span>${escapeHtml(t('Show marked areas'))}</span></label>
+            </div>
             <div
               class="
                 photo-people-footer-actions
               ">
-              <button type="button" class="button primary albums-lightbox-tag" data-lightbox-tag>${icon.plus}<span>${escapeHtml(t('Tag people'))}</span></button>
+              <button type="button" class="button secondary albums-search-cancel" data-albums-search-back>${escapeHtml(t('Cancel'))}</button>
+              <button type="button" class="button secondary albums-preview-done" data-close>${escapeHtml(t('Done'))}</button>
             </div>
           </div>
         </div>
@@ -7917,7 +7921,8 @@ function openPhotoPeopleModal(photoId, { mode = 'tag', activePersonId = null } =
             .map(personId => ({ personId, region: regions[personId], name: personName(getPerson(personId)) }));
         stage.innerHTML = active && photo.src
             ? renderFaceRegionSelector(photo, regions[activeRegionPersonId] || null,
-                `${t('Marked area for')} ${localizedDataFieldValue(personName(getPerson(activeRegionPersonId)))}`, otherRegions)
+                `${t('Marked area for')} ${localizedDataFieldValue(personName(getPerson(activeRegionPersonId)))}`, otherRegions,
+                'Face area. Arrow keys move; Shift and arrow keys resize.', personName(getPerson(activeRegionPersonId)))
             : photo.src ? `<div class="albums-lightbox-image-wrap"><img class="albums-lightbox-image" src="${escapeHtml(photo.src)}" alt="${escapeHtml(photo.title || photo.filename)}">${[...selectedIds].map(id => {
             const region = normalizeFaceRegion(regions[id]);
             return region ? `<span class="albums-lightbox-face${highlightedPersonId === id ? ' is-active' : ''}${!albumsShowMarkedAreas && highlightedPersonId !== id ? ' is-concealed' : ''}" data-lightbox-face="${escapeHtml(id)}" style="left:${region.x * 100}%;top:${region.y * 100}%;width:${region.width * 100}%;height:${region.height * 100}%" role="img" tabindex="0" aria-label="${escapeHtml(localizedDataFieldValue(personName(getPerson(id))))}"><span class="albums-lightbox-face-name" data-lightbox-face-name>${escapeHtml(localizedDataFieldValue(personName(getPerson(id))))}</span></span>` : '';

@@ -4905,18 +4905,21 @@ button.albums-inspector-row-main:focus-visible {
 .albums-tag-people-modal .albums-unified-group > strong { padding: var(--space-2); color: var(--text-secondary); font-size: 12px; }
 .albums-tag-people-modal .albums-lightbox-people-list { display: block; padding: 0; overflow: visible; }
 .albums-tag-people-modal .albums-lightbox-person { min-width: 0; max-width: none; }
+.albums-tag-people-modal .albums-preview-footer-tools { display: flex; align-items: center; gap: var(--space-3); min-width: 0; }
 .albums-tag-people-modal .albums-marked-toggle { display: flex; align-items: center; gap: var(--space-2); min-height: 44px; padding: var(--space-2); }
 .albums-tag-people-modal.is-preview .photo-people-search-head,
 .albums-tag-people-modal.is-preview .photo-people-search-field,
 .albums-tag-people-modal.is-preview .photo-people-results-panel,
 .albums-tag-people-modal.is-tagging .photo-people-region-panel,
-.albums-tag-people-modal.is-tagging .photo-people-footer,
 .albums-tag-people-modal.is-preview .albums-search-people { display: none; }
+.albums-tag-people-modal.is-preview .albums-search-cancel,
+.albums-tag-people-modal.is-tagging .albums-preview-footer-tools,
+.albums-tag-people-modal.is-tagging .albums-preview-done { display: none; }
 .albums-tag-people-modal.is-searching .albums-unified-preview { display: none; }
 .albums-tag-people-modal .albums-lightbox-tag { margin: 0; }
 .albums-tag-people-modal .photo-people-search-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
 .albums-tag-people-modal .photo-people-search-head h3 { margin: 0; font-size: 16px; }
-.albums-tag-people-modal .photo-people-search-head .button { min-height: 40px; }
+.albums-tag-people-modal.is-tagging .photo-people-footer { justify-content: flex-end; }
 .albums-tag-people-modal .albums-search-people { width: 100%; margin-bottom: var(--space-3); }
 .albums-tag-people-modal .albums-unified-person-row { display: flex; align-items: stretch; min-width: 0; border: 1px solid var(--border-default); border-radius: 6px; }
 .albums-tag-people-modal .albums-unified-person-row + .albums-unified-person-row { margin-top: 4px; }
@@ -4946,6 +4949,12 @@ button.albums-inspector-row-main:focus-visible {
 .albums-tag-people-modal .face-region-other.is-hovered,
 .albums-tag-people-modal .face-region-box.is-hovered { border-color: var(--brand-green-400); border-width: 3px; background: rgba(32, 174, 118, .12); z-index: 2; }
 .albums-tag-people-modal .face-region-other:focus-visible { outline: 2px solid var(--brand-green-400); outline-offset: 2px; }
+.albums-tag-people-modal .face-region-name { display: none; position: absolute; top: 100%; left: -2px; max-width: min(260px, 70vw); padding: 4px 8px; background: var(--surface-card); border: 1px solid var(--brand-green-300); border-radius: 0 0 4px 4px; color: var(--text-primary); font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; z-index: 4; }
+.albums-tag-people-modal .label-above > .face-region-name { top: auto; bottom: 100%; border-radius: 4px 4px 0 0; }
+.albums-tag-people-modal .face-region-other.is-hovered > .face-region-name,
+.albums-tag-people-modal .face-region-box.is-hovered > .face-region-name,
+.albums-tag-people-modal .face-region-other:focus > .face-region-name,
+.albums-tag-people-modal .face-region-box:focus > .face-region-name { display: block; }
 
 @media (max-width: 760px) {
     .albums-tag-people-modal .photo-people-body { display: flex; flex-direction: column; overflow-y: auto; overscroll-behavior: contain; }
@@ -4967,9 +4976,13 @@ button.albums-inspector-row-main:focus-visible {
 @media (max-width: 540px) {
     #modalBackdrop:has(.albums-tag-people-modal) { padding: 0; }
     .albums-tag-people-modal.albums-lightbox-modal { width: 100vw; height: 100dvh; max-height: 100dvh; border-radius: 0; }
-    .albums-tag-people-modal .photo-people-footer-actions { width: 100%; }
-    .albums-tag-people-modal .photo-people-footer-actions > button { flex: 1; min-width: 0; }
-    .albums-tag-people-modal .albums-marked-toggle { min-width: 0; }
+    .albums-tag-people-modal.is-preview .photo-people-footer { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    .albums-tag-people-modal.is-preview .albums-preview-footer-tools { display: contents; }
+    .albums-tag-people-modal.is-preview .albums-marked-toggle { grid-column: 1 / -1; grid-row: 1; min-width: 0; }
+    .albums-tag-people-modal.is-preview .albums-lightbox-tag { grid-column: 1; grid-row: 2; width: 100%; }
+    .albums-tag-people-modal.is-preview .photo-people-footer-actions { grid-column: 2; grid-row: 2; min-width: 0; }
+    .albums-tag-people-modal.is-preview .albums-preview-done { width: 100%; }
+    .albums-tag-people-modal.is-tagging .photo-people-footer-actions { width: 100%; justify-content: flex-end; }
 }
 
 @media (max-width: 700px) {
