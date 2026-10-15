@@ -4894,6 +4894,63 @@ button.albums-inspector-row-main:focus-visible {
 .albums-lightbox-face.label-above .albums-lightbox-face-name { top: auto; bottom: 100%; border-radius: 4px 4px 0 0; }
 .albums-lightbox-caption { margin: 0; padding: var(--space-3) var(--space-4); border-top: 1px solid var(--border-default); color: var(--text-secondary); }
 
+/* One photo workspace for viewing and tagging. */
+.albums-tag-people-modal.albums-lightbox-modal { width: min(1120px, calc(100vw - 32px)); height: min(840px, calc(100dvh - 32px)); max-height: calc(100dvh - 32px); grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; }
+.albums-tag-people-modal .photo-people-body { grid-template-columns: minmax(230px, 280px) minmax(0, 1fr); padding: 0; }
+.albums-tag-people-modal .photo-people-sidebar { min-height: 0; overflow: auto; padding: var(--space-3); }
+.albums-tag-people-modal .photo-people-workspace { min-height: 0; min-width: 0; display: grid; grid-template-rows: minmax(0, 1fr) auto; overflow: auto; padding: 0; }
+.albums-tag-people-modal .albums-unified-preview-stage { min-height: 0; display: grid; place-items: center; padding: var(--space-3); overflow: hidden; container-type: size; }
+.albums-tag-people-modal .albums-lightbox-image-wrap { width: fit-content; max-width: 100%; }
+.albums-tag-people-modal .albums-lightbox-image { max-height: calc(100cqh - 24px); }
+.albums-tag-people-modal .albums-lightbox-face.is-active { border-width: 3px; border-color: var(--brand-green-400); background: rgba(32, 174, 118, .12); z-index: 1; }
+.albums-tag-people-modal .albums-lightbox-face-name { display: none; }
+.albums-tag-people-modal .albums-lightbox-face.is-active .albums-lightbox-face-name { display: block; }
+.albums-tag-people-modal .albums-unified-group { display: grid; gap: 2px; padding: var(--space-2) 0; }
+.albums-tag-people-modal .albums-unified-group > strong { padding: var(--space-2); color: var(--text-secondary); font-size: 12px; }
+.albums-tag-people-modal .albums-lightbox-people-list { display: block; padding: 0; overflow: visible; }
+.albums-tag-people-modal .albums-lightbox-person { min-width: 0; max-width: none; }
+.albums-tag-people-modal .albums-marked-toggle { display: flex; align-items: center; gap: var(--space-2); min-height: 44px; padding: var(--space-2); }
+.albums-tag-people-modal .albums-unified-tabs { display: flex; gap: 4px; }
+.albums-tag-people-modal .albums-unified-tabs button { min-height: 44px; flex: 1; border: 1px solid var(--border-default); border-radius: var(--radius-sm); background: transparent; color: var(--text-primary); cursor: pointer; }
+.albums-tag-people-modal .albums-unified-tabs button[aria-selected="true"] { background: var(--surface-card-hover); border-color: var(--brand-green-400); }
+.albums-tag-people-modal.is-preview .albums-unified-tabs,
+.albums-tag-people-modal.is-preview .photo-people-search-field,
+.albums-tag-people-modal.is-preview .photo-people-selected-panel,
+.albums-tag-people-modal.is-preview .photo-people-results-panel,
+.albums-tag-people-modal.is-preview .photo-people-region-panel,
+.albums-tag-people-modal.is-preview .photo-people-selection-count,
+.albums-tag-people-modal.is-preview [data-albums-cancel-edit],
+.albums-tag-people-modal.is-preview [data-photo-people-save] { display: none; }
+.albums-tag-people-modal.is-tagging .albums-unified-preview,
+.albums-tag-people-modal.is-tagging .albums-unified-preview-stage,
+.albums-tag-people-modal.is-tagging .albums-lightbox-caption,
+.albums-tag-people-modal.is-tagging [data-lightbox-tag] { display: none; }
+.albums-tag-people-modal.is-tagging.is-tagged-tab .photo-people-search-field,
+.albums-tag-people-modal.is-tagging.is-tagged-tab .photo-people-results-panel { display: none; }
+.albums-tag-people-modal.is-tagging:not(.is-tagged-tab) .photo-people-selected-panel { display: none; }
+.albums-tag-people-modal .albums-lightbox-tag { margin: 0; }
+
+@media (max-width: 760px) {
+    .albums-tag-people-modal .photo-people-body { display: flex; flex-direction: column; overflow-y: auto; overscroll-behavior: contain; }
+    .albums-tag-people-modal .photo-people-workspace { order: -1; display: flex; flex-direction: column; flex: none; overflow: visible; border-bottom: 1px solid var(--border-default); }
+    .albums-tag-people-modal .photo-people-sidebar { flex: none; overflow: visible; border: 0; padding: var(--space-3); }
+    .albums-tag-people-modal .albums-unified-preview-stage { min-height: 200px; container-type: normal; }
+    .albums-tag-people-modal .albums-lightbox-image { max-height: 42dvh; }
+    .albums-tag-people-modal .photo-people-region-panel { padding: var(--space-3); }
+    .albums-tag-people-modal.is-tagging .face-region-selector { width: min(100%, calc(32dvh * var(--photo-aspect))) !important; }
+    .albums-tag-people-modal.is-tagging .person-photo-crop-hint { display: none; }
+    .albums-tag-people-modal .photo-people-results,
+    .albums-tag-people-modal .photo-people-selected-list { max-height: none; overflow: visible; }
+    .albums-tag-people-modal .photo-people-footer { flex: 0 0 auto; }
+}
+
+@media (max-width: 540px) {
+    #modalBackdrop:has(.albums-tag-people-modal) { padding: 0; }
+    .albums-tag-people-modal.albums-lightbox-modal { width: 100vw; height: 100dvh; max-height: 100dvh; border-radius: 0; }
+    .albums-tag-people-modal .photo-people-footer-actions { width: 100%; }
+    .albums-tag-people-modal .photo-people-footer-actions > button { flex: 1; min-width: 0; }
+}
+
 @media (max-width: 700px) {
     .albums-lightbox-body { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) minmax(148px, 32%); }
     .albums-lightbox-main { grid-row: 1; }

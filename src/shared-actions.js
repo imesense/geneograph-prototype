@@ -2499,6 +2499,7 @@ function openModal(
 
     modalBackdrop.innerHTML =
         html;
+    modalBackdrop.beforeClose = null;
 
     normalizeRenderedSemanticAttributes(
         modalBackdrop
@@ -2656,6 +2657,8 @@ function openPersonPhotoDiscardConfirm()
 
 function closeModal(options = {})
 {
+    if (!options?.force && modalBackdrop.beforeClose?.() === false) return;
+    modalBackdrop.beforeClose = null;
     if (document.querySelector('[data-place-duplicate-menu]'))
     {
         closeMenu();

@@ -57,6 +57,8 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             }));
             assert.ok(saved.region);
             assert.notEqual(saved.primary, 'photo-silver-luna-wedding');
+            assert.equal(await modal.locator('[data-lightbox-person="luna"]').count(), 1);
+            await modal.locator('[data-close]').first().click();
             await page.locator('[data-albums-person-region="luna"]').hover();
             assert.equal(await page.locator('[data-albums-face-highlight]')
                 .evaluateAll(elements => elements.some(element => !element.hidden)), true);

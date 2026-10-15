@@ -35,7 +35,7 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
                     modal: modalRect.toJSON(),
                     people: rect('.photo-people-sidebar').toJSON(),
                     photo: rect('.photo-people-workspace').toJSON(),
-                    stage: rect('[data-face-region-selector]').toJSON(),
+                    stage: rect('.photo-people-workspace').toJSON(),
                     selected: element.querySelectorAll('[data-photo-people-region]').length,
                     suggestionHeight: rect('.photo-people-result').height,
                     results: rect('.photo-people-results').toJSON(),
@@ -50,8 +50,8 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             {
                 assert.ok(initial.results.height >= initial.suggestionHeight * 3 - 2,
                     `${width} ${language}: suggestions should be part of the continuous modal scroll`);
-                assert.ok(initial.photo.top >= initial.people.bottom - 1,
-                    `${width} ${language}: photo overlaps the people list`);
+                assert.ok(initial.people.top >= initial.photo.bottom - 1,
+                    `${width} ${language}: image workspace must precede the people list`);
             }
             else
             {
@@ -63,6 +63,7 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             assert.match(await modal.locator('[data-photo-people-results-meta]').textContent(),
                 language === 'ru' ? /Показано 3 из/ : /Showing 3 of/,
                 `${width} ${language}: suggestion count is incorrect`);
+            await modal.locator('[data-albums-panel-tab="tagged"]').click();
             const selectedRows = modal.locator('.photo-people-selected-chip');
             const rowAppearance = async row => row.evaluate(element => ({
                 background: getComputedStyle(element).backgroundColor,
@@ -84,6 +85,7 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
                 .evaluate(element => getComputedStyle(element).outlineStyle), 'solid',
                 `${width} ${language}: keyboard focus is not visible`);
             await modal.locator('[data-photo-people-region="silver"]').click();
+            await modal.locator('[data-albums-panel-tab="search"]').click();
             await modal.locator('[data-photo-people-search]').fill('Whiskerfield');
             assert.equal(await modal.locator('[data-photo-people-choice]').count(), 5,
                 `${width} ${language}: search results should retain five-item limit`);
@@ -100,19 +102,22 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
                 `${width} ${language}: mobile content should scroll as one body`);
             }
             await modal.locator('[data-photo-people-search]').fill('');
+            await modal.locator('[data-albums-panel-tab="tagged"]').click();
             assert.equal(await modal.locator('[data-face-region-other]').count(), 1,
                 `${width} ${language}: existing sample regions not shown`);
             assert.ok(initial.stage.width > 0 && initial.stage.height > 0, `${width}: photo hidden`);
             assert.ok(initial.suggestionHeight <= 56, `${width}: suggestions are not compact`);
             assert.equal(initial.overflow, false, `${width}: modal overflows horizontally`);
             if (width > 760) assert.ok(initial.people.right <= initial.photo.left, `${width}: photo not on right`);
-            else assert.ok(initial.people.bottom <= initial.photo.top, `${width}: mobile photo not below people`);
+            else assert.ok(initial.photo.bottom <= initial.people.top + 1, `${width}: mobile photo not above people`);
             if (process.env.GENEO_SCREENSHOT_DIR)
                 await page.screenshot({ path: path.join(process.env.GENEO_SCREENSHOT_DIR,
                     `tag-people-${width}-${language}.png`) });
 
-            for (let index = 0; index < 4; index += 1)
+            for (let index = 0; index < 4; index += 1) {
+                await modal.locator('[data-albums-panel-tab="search"]').click();
                 await modal.locator('[data-photo-people-choice]').first().click();
+            }
             const expanded = await modal.evaluate(element =>
             {
                 const sidebar = element.querySelector('.photo-people-sidebar').getBoundingClientRect();
@@ -131,8 +136,10 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
                 assert.ok(expanded.suggestionsBottom <= expanded.sidebarBottom + 1,
                     `${width} ${language}: suggestions overflow the sidebar`);
             await modal.locator('[data-close]').last().click();
+            await page.locator('#albumsTagDiscardOverlay [data-albums-discard]').click();
             await page.evaluate(() => openPhotoPeopleModal('photo-silver-luna-wedding'));
 
+            await modal.locator('[data-albums-panel-tab="search"]').click();
             await modal.locator('[data-photo-people-choice]').first().click();
             assert.equal(await modal.locator('[data-photo-people-region]').count(), 3);
             const firstAddedId = await modal.locator('[data-photo-people-region][aria-pressed="true"]')
@@ -143,6 +150,7 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             await page.keyboard.press('ArrowRight');
             const firstRegion = await modal.locator('[data-face-region-box]').evaluate(box =>
                 [box.style.left, box.style.top, box.style.width, box.style.height]);
+            await modal.locator('[data-albums-panel-tab="search"]').click();
             await modal.locator('[data-photo-people-choice]').first().click();
             const secondAddedId = await modal.locator('[data-photo-people-region][aria-pressed="true"]')
                 .getAttribute('data-photo-people-region');
@@ -156,15 +164,18 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             assert.deepEqual(await modal.locator('[data-face-region-box]').evaluate(box =>
                 [box.style.left, box.style.top, box.style.width, box.style.height]), firstRegion);
             await modal.locator('[data-close]').last().click();
+            await page.locator('#albumsTagDiscardOverlay [data-albums-discard]').click();
             assert.equal(await page.evaluate(() => getPhoto('photo-silver-luna-wedding').personIds.length), 2,
                 `${width}: Cancel changed photo tags`);
             await page.evaluate(() => openPhotoPeopleModal('photo-silver-luna-wedding'));
+            await modal.locator('[data-albums-panel-tab="tagged"]').click();
             await modal.locator('[data-photo-people-remove]').first().click();
             await modal.locator('[data-photo-people-remove]').first().click();
             assert.equal(await modal.locator('[data-photo-people-region]').count(), 0);
             assert.ok(await modal.locator('[data-face-region-selector]').isVisible(),
                 `${width}: photo disappears when no person is selected`);
             await modal.locator('[data-close]').last().click();
+            await page.locator('#albumsTagDiscardOverlay [data-albums-discard]').click();
             await page.evaluate(() => openPhotoPeopleModal('photo-silver-luna-wedding'));
             await modal.locator(`[data-photo-people-choice="${firstAddedId}"]`).click();
             assert.equal(await modal.locator('[data-photo-people-primary]').isChecked(), false);
