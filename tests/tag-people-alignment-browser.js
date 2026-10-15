@@ -15,7 +15,7 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             const page = await browser.newPage({ viewport: { width, height: 720 } });
             const errors = [];
             page.on('pageerror', error => errors.push(error.message));
-            await page.goto(url, { waitUntil: 'domcontentloaded' });
+            await page.goto(url, { waitUntil: 'load' });
             await page.evaluate(() => {
                 if (geneoTourRuntime.active) geneoTourClose();
                 activateProject('p1', { moduleName: 'Albums' });
@@ -26,12 +26,14 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             await modal.waitFor();
             const search = await modal.locator('.photo-people-search-field').boundingBox();
             const results = await modal.locator('.photo-people-results-panel').boundingBox();
+            const initialTagged = await modal.locator('.albums-unified-preview .albums-unified-person-row').count();
             assert.ok(search && results);
             assert.ok(results.y - (search.y + search.height) < 40, `${width}px: gap after search`);
-            await modal.locator('[data-albums-panel-tab="tagged"]').click();
-            const selected = await modal.locator('.photo-people-selected-panel').boundingBox();
+            await modal.locator('[data-photo-people-choice]').first().click();
+            const selected = await modal.locator('.albums-unified-preview').boundingBox();
             assert.ok(selected && selected.height > 40, `${width}px: tagged list is inaccessible`);
-            assert.equal(await modal.locator('.photo-people-photo-stage').isVisible(), true);
+            assert.equal(await modal.locator('.albums-unified-preview .albums-unified-person-row').count(), initialTagged + 1);
+            assert.equal(await modal.locator('.albums-unified-preview-stage [data-face-region-selector]').isVisible(), true);
             assert.deepEqual(errors, [], `${width}px browser errors`);
             await page.close();
         }

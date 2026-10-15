@@ -60,7 +60,7 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             const preview = await page.evaluate(() => ({
                 owned: geneoTourRuntime.ownedPreview,
                 inert: modalBackdrop.inert,
-                photoVisible: Boolean(document.querySelector('.photo-people-modal [data-face-region-selector]')
+                photoVisible: Boolean(document.querySelector('.photo-people-modal .albums-lightbox-image')
                     ?.getBoundingClientRect().width),
                 focusVisible: !document.querySelector('[data-geneo-tour-block]')?.hidden
             }));

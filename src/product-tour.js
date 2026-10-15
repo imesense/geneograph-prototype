@@ -69,7 +69,7 @@ const geneoTourSteps = [
     { id: 'albums-summary', module: 'Albums', title: "Explore photo details", body: "Use the right panel to view the selected photo and learn more about it." },
     { id: 'albums-actions', module: 'Albums', title: "Manage the photo", body: "Use these controls to update and manage the selected photo." },
     { id: 'albums-connections', module: 'Albums', title: "People in this photo", body: "See who is tagged in the photo. Hover over a name to highlight that person in the preview." },
-    { id: 'albums-tag-person-modal', module: 'Albums', title: "Tag people in a photo", body: "Search for people, mark their areas on the photo, then save your changes. Preview and tagging share one workspace." },
+    { id: 'albums-tag-person-modal', module: 'Albums', title: "Tag people in a photo", body: "Choose a person to tag them immediately. You can mark their area directly in the photo preview." },
     { id: 'albums-add-to-album-action', module: 'Albums', title: "Albums for this photo", body: "See which albums include the photo, add it to another album, or remove it from one." },
     { id: 'albums-add-to-album', module: 'Albums', title: "Choose an album", body: "Add photo to an existing album or create a new one." },
     { id: 'albums-to-archive', module: 'Albums', title: "Continue to Archive", body: "Next, move to Archive to explore the files and sources behind your research." },

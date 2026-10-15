@@ -18,7 +18,7 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
             const errors = [];
             page.on('pageerror', error => errors.push(error.message));
-            await page.goto(`${url}?lang=${language}`, { waitUntil: 'domcontentloaded' });
+            await page.goto(`${url}?lang=${language}`, { waitUntil: 'load' });
             await page.evaluate(() =>
             {
                 if (geneoTourRuntime.active) geneoTourClose();
@@ -40,7 +40,7 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             const modal = page.locator('.photo-people-modal');
             await modal.waitFor();
             assert.equal(await modal.locator('[data-photo-people-region="luna"]').getAttribute('aria-pressed'), 'true');
-            assert.equal(await modal.locator('[data-photo-people-region="luna"]').evaluate(element => element === document.activeElement), true);
+            assert.equal(await modal.locator('[data-photo-people-add-region]').evaluate(element => element === document.activeElement), true);
             assert.equal(await modal.locator('[data-photo-people-primary]').isChecked(), false);
             assert.equal(await modal.locator('[data-face-region-box]').count(), 0);
             await modal.locator('[data-close]').last().click();
@@ -50,7 +50,6 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             await menuButton.click();
             await selectFace.click();
             await modal.locator('[data-photo-people-add-region]').click();
-            await modal.locator('[data-photo-people-save]').click();
             const saved = await page.evaluate(() => ({
                 region: photoPersonRegion(getPhoto('photo-silver-luna-wedding'), 'luna'),
                 primary: getPerson('luna').primaryPhotoId

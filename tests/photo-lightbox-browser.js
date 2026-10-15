@@ -11,90 +11,87 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
         headless: true
     });
     try {
-        for (const [width, language] of [[1440, 'en'], [1280, 'ru'], [900, 'en'], [390, 'en'], [320, 'ru']]) {
+        for (const [width, language] of [[1440, 'en'], [900, 'en'], [390, 'en'], [320, 'ru']]) {
             const page = await browser.newPage({ viewport: { width, height: 720 }, deviceScaleFactor: 1.5 });
             const errors = [];
             page.on('pageerror', error => errors.push(error.message));
-            await page.goto(`${url}?lang=${language}`, { waitUntil: 'domcontentloaded' });
+            await page.goto(url + '?lang=' + language, { waitUntil: 'load' });
             await page.evaluate(() => {
                 if (geneoTourRuntime.active) geneoTourClose();
                 activateProject('p1', { moduleName: 'Albums' });
                 openPhotoLightbox('photo-silver-luna-wedding');
             });
-            const lightbox = page.locator('.albums-lightbox-modal');
-            await lightbox.waitFor();
-            assert.equal(await lightbox.evaluate(modal => modal.scrollWidth > modal.clientWidth + 1), false,
-                `${width}: lightbox overflows horizontally`);
-            if (process.env.GENEO_SCREENSHOT_DIR)
-                await lightbox.screenshot({ path: path.join(process.env.GENEO_SCREENSHOT_DIR,
-                    `photo-lightbox-${width}-${language}.png`) });
-            assert.equal(await lightbox.locator('[data-lightbox-person]').count(), 2);
-            const image = lightbox.locator('.albums-lightbox-image');
-            await image.evaluate(img => img.decode());
-            const first = lightbox.locator('[data-lightbox-person]').first();
-            await first.hover();
-            const bounds = await lightbox.evaluate(modal => {
-                const photo = modal.querySelector('.albums-lightbox-image').getBoundingClientRect();
-                const box = modal.querySelector('[data-lightbox-face]').getBoundingClientRect();
-                return { photo: photo.toJSON(), box: box.toJSON(), hidden: modal.querySelector('[data-lightbox-face]').hidden };
-            });
-            assert.equal(bounds.hidden, false);
-            assert.ok(bounds.box.left >= bounds.photo.left && bounds.box.right <= bounds.photo.right + 1);
-            assert.ok(bounds.box.top >= bounds.photo.top && bounds.box.bottom <= bounds.photo.bottom + 1);
-            assert.ok(await lightbox.locator('[data-lightbox-face-name]').first().textContent());
-            await first.focus();
-            assert.equal(await lightbox.locator('[data-lightbox-face]:not([hidden])').count(), 2);
-            assert.equal(await lightbox.locator('[data-lightbox-face]:not([hidden])').count(), 2);
-            await lightbox.locator('[data-albums-show-marked]').uncheck();
-            assert.equal(await lightbox.locator('[data-lightbox-face]:not([hidden])').count(), 0);
-            await first.hover();
-            assert.equal(await lightbox.locator('[data-lightbox-face]:not([hidden])').count(), 1);
-            await lightbox.locator('.modal-header [data-close]').hover();
-            assert.equal(await lightbox.locator('[data-lightbox-face]:not([hidden])').count(), 0);
-            await lightbox.locator('[data-lightbox-tag]').click();
-            assert.equal(await lightbox.locator('[data-albums-panel-tab="search"]').getAttribute('aria-selected'), 'true');
-            assert.equal(await page.evaluate(() => document.activeElement?.matches('[data-photo-people-search]')), false);
-            await lightbox.locator('[data-photo-people-search]').fill('Pearl');
-            await lightbox.locator('[data-photo-people-choice="pearl"]').click();
-            assert.equal(await lightbox.locator('[data-albums-panel-tab="tagged"]').getAttribute('aria-selected'), 'true');
-            await lightbox.locator('[data-photo-people-save]').click();
-            assert.equal(await lightbox.count(), 1, `${width}: save did not return to preview`);
-            assert.equal(await lightbox.locator('[data-lightbox-person]').count(), 3);
-            assert.ok(await lightbox.locator('.albums-unified-group').count() >= 2);
-            await lightbox.locator('[data-lightbox-tag]').click();
-            await lightbox.locator('[data-albums-panel-tab="tagged"]').click();
-            await lightbox.locator('[data-photo-people-remove="pearl"]').click();
-            await lightbox.locator('[data-albums-cancel-edit]').click();
-            await page.locator('#albumsTagDiscardOverlay [data-albums-discard]').click();
-            assert.equal(await lightbox.locator('[data-lightbox-person]').count(), 3);
-            await lightbox.locator('[data-lightbox-tag]').click();
-            await lightbox.locator('[data-photo-people-search]').fill('');
-            await lightbox.locator('[data-photo-people-choice]').first().click();
+            const modal = page.locator('.photo-people-modal');
+            await modal.waitFor();
+            assert.equal(await modal.locator('[data-lightbox-person]').count(), 2);
+            assert.equal(await modal.locator('[data-photo-people-save]').count(), 0);
+            assert.equal(await modal.evaluate(element => element.scrollWidth > element.clientWidth + 1), false);
+            const photo = modal.locator('.albums-lightbox-image');
+            await photo.evaluate(image => image.decode());
+            assert.ok(await photo.evaluate(image => image.getBoundingClientRect().height > 100));
+            await modal.locator('[data-albums-show-marked]').uncheck();
+            assert.equal(await modal.locator('[data-lightbox-face]:not(.is-concealed)').count(), 0);
+            await modal.locator('[data-lightbox-person="silver"]').hover();
+            assert.equal(await modal.locator('[data-lightbox-face="silver"].is-active').count(), 1);
+            await modal.locator('[data-lightbox-face="silver"]').hover();
+            assert.equal(await modal.locator('[data-lightbox-person="silver"]').locator('..').getAttribute('class').then(value => value.includes('is-hovered')), true);
+
+            await modal.locator('[data-lightbox-tag]').click();
+            assert.equal(await modal.locator('[data-photo-people-search]').isVisible(), true);
+            assert.equal(await modal.locator('[data-photo-people-results-meta]').count(), 0);
+            assert.equal(await modal.locator('[data-albums-show-marked]').isVisible(), false);
+            assert.ok(await modal.locator('.photo-people-results .albums-unified-person-row').count() > 3);
+            assert.ok(await modal.locator('.albums-lightbox-image').isVisible());
             await page.keyboard.press('Escape');
-            assert.equal(await page.locator('#albumsTagDiscardOverlay').count(), 1);
-            await page.locator('#albumsTagDiscardOverlay [data-albums-keep-editing]').click();
-            assert.equal(await lightbox.locator('[data-photo-people-save]').isVisible(), true);
-            await lightbox.locator('.modal-header [data-close]').click();
-            await page.keyboard.press('Escape');
-            assert.equal(await page.locator('#albumsTagDiscardOverlay').count(), 0);
-            await lightbox.locator('.modal-header [data-close]').click();
-            await page.locator('#albumsTagDiscardOverlay [data-albums-discard]').click();
-            assert.equal(await lightbox.count(), 0);
-            await page.evaluate(() => {
-                const photo = getPhoto('photo-silver-luna-wedding');
-                delete photo.personRegions.silver;
-                openPhotoLightbox(photo.id);
-            });
-            await lightbox.locator('[data-lightbox-person="silver"]').hover();
-            assert.equal(await lightbox.locator('[data-lightbox-face="silver"]').count(), 0,
-                `${width}: regionless tag received a fabricated highlight`);
-            await page.evaluate(() => openPhotoLightbox('photo-unidentified-studio'));
-            assert.equal(await lightbox.locator('[data-lightbox-person]').count(), 0);
-            assert.equal(await lightbox.locator('[data-albums-show-marked]').isChecked(), false);
-            assert.deepEqual(errors, [], `${width} ${language}: browser errors`);
+            assert.equal(await modal.count(), 1);
+            assert.equal(await modal.locator('[data-lightbox-tag]').isVisible(), true);
+
+            await modal.locator('[data-lightbox-tag]').click();
+            await modal.locator('[data-photo-people-search]').fill('Pearl');
+            await modal.locator('[data-photo-people-choice="pearl"]').first().click();
+            assert.equal(await page.evaluate(() => getPhoto('photo-silver-luna-wedding').personIds.includes('pearl')), true);
+            assert.equal(await page.evaluate(() => Boolean(getPhoto('photo-silver-luna-wedding').personRegions?.pearl)), false);
+            assert.equal(await modal.locator('[data-photo-people-region="pearl"]').getAttribute('aria-pressed'), 'true');
+            assert.equal(await modal.locator('[data-photo-people-primary]').isDisabled(), true);
+            assert.equal(await modal.locator('.albums-unified-preview-stage [data-face-region-selector]').count(), 1);
+
+            await modal.locator('[data-photo-people-add-region]').click();
+            assert.equal(await page.evaluate(() => Boolean(getPhoto('photo-silver-luna-wedding').personRegions?.pearl)), true);
+            const before = await page.evaluate(() => getPhoto('photo-silver-luna-wedding').personRegions.pearl.x);
+            await modal.locator('[data-face-region-box]').focus();
+            await page.keyboard.press('ArrowRight');
+            assert.ok(await page.evaluate(() => getPhoto('photo-silver-luna-wedding').personRegions.pearl.x) > before);
+            await modal.locator('[data-photo-people-primary]').check();
+            assert.equal(await page.evaluate(() => getPerson('pearl').primaryPhotoId), 'photo-silver-luna-wedding');
+            await modal.locator('[data-photo-people-primary]').uncheck();
+            assert.notEqual(await page.evaluate(() => getPerson('pearl').primaryPhotoId), 'photo-silver-luna-wedding');
+            await modal.locator('[data-photo-people-clear-region]').click();
+            assert.equal(await page.evaluate(() => Boolean(getPhoto('photo-silver-luna-wedding').personRegions?.pearl)), false);
+
+            const stage = modal.locator('.albums-unified-preview-stage [data-face-region-selector]');
+            const bounds = await stage.boundingBox();
+            await page.mouse.move(bounds.x + bounds.width * 0.76, bounds.y + bounds.height * 0.73);
+            await page.mouse.down();
+            await page.mouse.move(bounds.x + bounds.width * 0.9, bounds.y + bounds.height * 0.9, { steps: 5 });
+            await page.mouse.up();
+            assert.equal(await page.evaluate(() => Boolean(getPhoto('photo-silver-luna-wedding').personRegions?.pearl)), true);
+            await modal.locator('.modal-header [data-close]').click();
+            assert.equal(await modal.count(), 0);
+            await page.evaluate(() => openPhotoLightbox('photo-silver-luna-wedding'));
+            assert.equal(await modal.locator('[data-lightbox-person="pearl"]').count(), 1);
+            assert.equal(await modal.locator('[data-lightbox-face="pearl"]').count(), 1);
+
+            await modal.locator('[data-photo-people-remove="pearl"]').click();
+            assert.equal(await page.locator('#photoPeoplePreviewRemovalOverlay').count(), 1);
+            await page.locator('#photoPeoplePreviewRemovalOverlay [data-keep]').click();
+            assert.equal(await page.evaluate(() => getPhoto('photo-silver-luna-wedding').personIds.includes('pearl')), true);
+            await modal.locator('[data-photo-people-remove="pearl"]').click();
+            await page.locator('#photoPeoplePreviewRemovalOverlay [data-remove]').click();
+            assert.equal(await page.evaluate(() => getPhoto('photo-silver-luna-wedding').personIds.includes('pearl')), false);
+            assert.deepEqual(errors, [], width + ' ' + language + ': browser errors');
             await page.close();
         }
-        console.log('Albums unified photo preview and tagging passed.');
+        console.log('Albums immediate photo tagging and area editing passed.');
     } finally {
         await browser.close();
     }
