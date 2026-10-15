@@ -1,6 +1,45 @@
 const archiveDocumentBytes = new Map();
 const archiveDocumentExtensions = new Set(['txt', 'csv', 'pdf', 'docx']);
+const archiveImageExtensions = new Set(['png', 'jpg', 'jpeg', 'webp']);
 const archiveDocumentMaxBytes = 20 * 1024 * 1024;
+let archiveShowMarkedAreas = true;
+
+function archiveImageSource(file) {
+    return file?.assetUrl || file?.previewUrl || file?.src || file?.thumbnailUrl || '';
+}
+
+function archiveCanViewFile(file) {
+    if (!file) return false;
+    const extension = archiveDocumentExtension(file.name);
+    if (archiveImageExtensions.has(extension)) return Boolean(archiveImageSource(file) || archiveDocumentBytes.has(file.id));
+    return archiveDocumentExtensions.has(extension) && Boolean(file.assetUrl || archiveDocumentBytes.has(file.id));
+}
+
+function archiveMarkedRegions(file) {
+    return Object.entries(file?.personRegions || {}).map(([personId, raw]) => {
+        const region = normalizeFaceRegion(raw);
+        const person = sampleData.people.find(item => item.id === personId && item.projectId === file.projectId);
+        return region && person ? { personId, region, name: personResourceDisplayName(person) } : null;
+    }).filter(Boolean);
+}
+
+function archiveRegionToggleMarkup() {
+    return `<label class="archive-region-toggle"><input type="checkbox" data-archive-region-toggle ${archiveShowMarkedAreas ? 'checked' : ''}><span>${escapeHtml(archiveDocumentLabel('Show marked areas', 'Показать отмеченные области'))}</span></label>`;
+}
+
+function archiveUpdateRegionVisibility() {
+    document.querySelectorAll('[data-archive-region-toggle]').forEach(input => { input.checked = archiveShowMarkedAreas; });
+    document.querySelectorAll('[data-archive-region-box]').forEach(box => {
+        box.hidden = box.dataset.archiveRegionReady === 'false'
+            || (!archiveShowMarkedAreas && !box.classList.contains('is-active'));
+    });
+}
+
+document.addEventListener('change', event => {
+    if (!event.target.matches('[data-archive-region-toggle]')) return;
+    archiveShowMarkedAreas = event.target.checked;
+    archiveUpdateRegionVisibility();
+});
 
 function archiveDocumentExtension(name) {
     return String(name || '').split('.').pop().toLowerCase();
@@ -12,8 +51,9 @@ function archiveDocumentLabel(english, russian) {
 
 async function archiveDocumentBlob(file) {
     if (archiveDocumentBytes.has(file.id)) return archiveDocumentBytes.get(file.id);
-    if (!file.assetUrl) throw new Error(archiveDocumentLabel('This file has no viewable original.', 'У этого файла нет доступного оригинала.'));
-    const response = await fetch(file.assetUrl);
+    const source = archiveImageExtensions.has(archiveDocumentExtension(file.name)) ? archiveImageSource(file) : file.assetUrl;
+    if (!source) throw new Error(archiveDocumentLabel('This file has no viewable original.', 'У этого файла нет доступного оригинала.'));
+    const response = await fetch(source);
     if (!response.ok) throw new Error(archiveDocumentLabel('The sample file could not be loaded.', 'Не удалось загрузить образец файла.'));
     return response.blob();
 }
@@ -36,21 +76,36 @@ async function archiveDocumentRenderPdf(blob, host, modal) {
     const pdf = await pdfjs.getDocument({ data: bytes, isEvalSupported: false, useSystemFonts: true }).promise;
     if (!pdf.numPages) throw new Error('Empty PDF');
     host.replaceChildren();
-    const toolbar = document.createElement('div');
-    toolbar.className = 'archive-document-pdf-tools';
-    toolbar.innerHTML = `<button class="button secondary" type="button" data-pdf-prev aria-label="Previous page">&#8592;</button><span data-pdf-page></span><button class="button secondary" type="button" data-pdf-next aria-label="Next page">&#8594;</button><button class="button secondary" type="button" data-pdf-out aria-label="Zoom out">&#8722;</button><span data-pdf-zoom></span><button class="button secondary" type="button" data-pdf-in aria-label="Zoom in">+</button>`;
+    const toolbar = modal.querySelector('[data-document-tools]');
+    toolbar.hidden = false;
+    toolbar.className = 'archive-document-tools archive-document-pdf-tools';
+    toolbar.innerHTML = `<div class="archive-document-tool-group"><button class="button secondary" type="button" data-pdf-prev aria-label="${escapeHtml(archiveDocumentLabel('Previous page', 'Предыдущая страница'))}" title="${escapeHtml(archiveDocumentLabel('Previous page', 'Предыдущая страница'))}">${icon.arrow}</button><span data-pdf-page aria-live="polite"></span><button class="button secondary archive-pdf-next" type="button" data-pdf-next aria-label="${escapeHtml(archiveDocumentLabel('Next page', 'Следующая страница'))}" title="${escapeHtml(archiveDocumentLabel('Next page', 'Следующая страница'))}">${icon.arrow}</button></div><div class="archive-document-tool-group"><button class="button secondary" type="button" data-pdf-out aria-label="${escapeHtml(archiveDocumentLabel('Zoom out', 'Уменьшить'))}" title="${escapeHtml(archiveDocumentLabel('Zoom out', 'Уменьшить'))}">${icon.zoomOut}</button><span data-pdf-zoom aria-live="polite"></span><button class="button secondary" type="button" data-pdf-in aria-label="${escapeHtml(archiveDocumentLabel('Zoom in', 'Увеличить'))}" title="${escapeHtml(archiveDocumentLabel('Zoom in', 'Увеличить'))}">${icon.zoomIn}</button></div>`;
     const canvas = document.createElement('canvas');
     canvas.className = 'archive-document-pdf-canvas';
-    host.append(toolbar, canvas);
+    const stage = document.createElement('div');
+    stage.className = 'archive-document-pdf-stage';
+    stage.append(canvas);
+    host.append(stage);
     let pageNumber = 1;
     let zoom = 1;
     let renderSerial = 0;
+    let renderTask = null;
     const render = async () => {
         const serial = ++renderSerial;
         const page = await pdf.getPage(pageNumber);
-        const available = Math.max(240, host.clientWidth - 32);
+        if (serial !== renderSerial || !modal.isConnected) return;
+        if (renderTask) {
+            renderTask.cancel();
+            try { await renderTask.promise; } catch (error) {
+                if (error.name !== 'RenderingCancelledException') throw error;
+            }
+        }
+        if (serial !== renderSerial || !modal.isConnected) return;
+        const hostStyle = getComputedStyle(host);
+        const available = Math.max(160, host.clientWidth
+            - parseFloat(hostStyle.paddingLeft) - parseFloat(hostStyle.paddingRight) - 32);
         const natural = page.getViewport({ scale: 1 });
-        const viewport = page.getViewport({ scale: Math.min(1.8, available / natural.width) * zoom });
+        const viewport = page.getViewport({ scale: available / natural.width * zoom });
         if (serial !== renderSerial || !modal.isConnected) return;
         const ratio = Math.min(devicePixelRatio || 1, 2);
         canvas.width = Math.round(viewport.width * ratio);
@@ -59,7 +114,9 @@ async function archiveDocumentRenderPdf(blob, host, modal) {
         canvas.style.height = `${Math.round(viewport.height)}px`;
         const context = canvas.getContext('2d');
         context.setTransform(ratio, 0, 0, ratio, 0, 0);
-        await page.render({ canvasContext: context, viewport }).promise;
+        renderTask = page.render({ canvasContext: context, viewport });
+        await renderTask.promise;
+        if (serial !== renderSerial || !modal.isConnected) return;
         toolbar.querySelector('[data-pdf-page]').textContent = `${pageNumber} / ${pdf.numPages}`;
         toolbar.querySelector('[data-pdf-zoom]').textContent = `${Math.round(zoom * 100)}%`;
         toolbar.querySelector('[data-pdf-prev]').disabled = pageNumber === 1;
@@ -72,9 +129,22 @@ async function archiveDocumentRenderPdf(blob, host, modal) {
         if (button.hasAttribute('data-pdf-next')) pageNumber = Math.min(pdf.numPages, pageNumber + 1);
         if (button.hasAttribute('data-pdf-out')) zoom = Math.max(0.5, +(zoom - 0.25).toFixed(2));
         if (button.hasAttribute('data-pdf-in')) zoom = Math.min(2, +(zoom + 0.25).toFixed(2));
-        render().catch(error => { host.textContent = error.message; });
+        render().catch(error => { if (modal.isConnected && error.name !== 'RenderingCancelledException') host.textContent = error.message; });
+    });
+    const observer = new ResizeObserver(() => {
+        if (!modal.isConnected) { observer.disconnect(); return; }
+        render().catch(error => { if (modal.isConnected && error.name !== 'RenderingCancelledException') host.textContent = error.message; });
     });
     await render();
+    observer.observe(host);
+    const cleanup = new MutationObserver(() => {
+        if (modal.isConnected) return;
+        observer.disconnect();
+        renderTask?.cancel();
+        pdf.destroy();
+        cleanup.disconnect();
+    });
+    cleanup.observe(modalBackdrop, { childList: true });
 }
 
 function archiveDocumentRenderCsv(text, host) {
@@ -102,15 +172,74 @@ function archiveDocumentRenderCsv(text, host) {
     }, { passive: true });
 }
 
+async function archiveDocumentRenderImage(blob, file, host, modal) {
+    const url = URL.createObjectURL(blob);
+    const image = document.createElement('img');
+    image.className = 'archive-document-image';
+    image.alt = file.name;
+    const loaded = new Promise((resolve, reject) => {
+        image.onload = resolve;
+        image.onerror = () => reject(new Error(archiveDocumentLabel('Image could not be displayed.', 'Не удалось показать изображение.')));
+    });
+    image.src = url;
+    try { await loaded; } catch (error) { URL.revokeObjectURL(url); throw error; }
+    if (!modal.isConnected) { URL.revokeObjectURL(url); return; }
+    const cleanup = new MutationObserver(() => {
+        if (modal.isConnected) return;
+        URL.revokeObjectURL(url);
+        cleanup.disconnect();
+    });
+    cleanup.observe(modalBackdrop, { childList: true });
+    const stage = document.createElement('div');
+    stage.className = 'archive-document-image-stage';
+    stage.style.maxWidth = `${image.naturalWidth}px`;
+    stage.append(image);
+    const regions = archiveMarkedRegions(file);
+    for (const { personId, region, name } of regions) {
+        const box = document.createElement('span');
+        box.className = 'archive-person-region-highlight archive-document-region';
+        box.dataset.archiveRegionBox = personId;
+        box.setAttribute('aria-hidden', 'true');
+        box.title = name;
+        Object.assign(box.style, {
+            left: `${region.x * 100}%`, top: `${region.y * 100}%`,
+            width: `${region.width * 100}%`, height: `${region.height * 100}%`
+        });
+        stage.append(box);
+    }
+    const toolbar = modal.querySelector('[data-document-tools]');
+    if (regions.length) {
+        toolbar.hidden = false;
+        toolbar.className = 'archive-document-tools archive-document-image-tools';
+        toolbar.innerHTML = `${archiveRegionToggleMarkup()}<div class="archive-document-region-names" aria-label="${escapeHtml(archiveDocumentLabel('Marked people', 'Отмеченные люди'))}">${regions.map(({ personId, name }) => `<button type="button" class="archive-document-person" data-document-region-person="${escapeHtml(personId)}" data-user-content>${escapeHtml(name)}</button>`).join('')}</div>`;
+        const setActive = id => {
+            stage.querySelectorAll('[data-archive-region-box]').forEach(box => box.classList.toggle('is-active', box.dataset.archiveRegionBox === id));
+            toolbar.querySelectorAll('[data-document-region-person]').forEach(button => button.classList.toggle('is-active', button.dataset.documentRegionPerson === id));
+            archiveUpdateRegionVisibility();
+        };
+        toolbar.querySelectorAll('[data-document-region-person]').forEach(button => {
+            button.addEventListener('pointerenter', () => setActive(button.dataset.documentRegionPerson));
+            button.addEventListener('pointerleave', () => setActive(null));
+            button.addEventListener('focus', () => {
+                button.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+                setActive(button.dataset.documentRegionPerson);
+            });
+            button.addEventListener('blur', () => setActive(null));
+        });
+    }
+    host.replaceChildren(stage);
+    archiveUpdateRegionVisibility();
+}
+
 async function openArchiveDocumentViewer(fileId) {
     const file = archiveFileById(fileId);
     if (!file) return;
     const extension = archiveDocumentExtension(file.name);
-    if (!archiveDocumentExtensions.has(extension)) {
+    if (!archiveCanViewFile(file)) {
         showToast(archiveDocumentLabel('No in-app viewer is available for this file.', 'Этот файл пока нельзя открыть в приложении.'));
         return;
     }
-    openModal(`<div class="modal archive-document-modal" role="dialog" aria-modal="true" aria-labelledby="archiveDocumentTitle"><div class="modal-header"><div><h2 id="archiveDocumentTitle" data-user-content>${escapeHtml(file.name)}</h2><p>${escapeHtml(extension.toUpperCase())}</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><div class="modal-body archive-document-body" data-document-body data-user-content><p>${escapeHtml(archiveDocumentLabel('Loading document…', 'Загрузка документа…'))}</p></div><div class="modal-footer"><button class="button secondary" type="button" data-document-download>${escapeHtml(archiveDocumentLabel('Download', 'Скачать'))}</button></div></div>`);
+    openModal(`<div class="modal archive-document-modal" role="dialog" aria-modal="true" aria-labelledby="archiveDocumentTitle"><div class="modal-header"><div><h2 id="archiveDocumentTitle" data-user-content>${escapeHtml(file.name)}</h2><p>${escapeHtml(extension.toUpperCase())}</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><div class="archive-document-tools" data-document-tools hidden></div><div class="modal-body archive-document-body" data-document-body data-user-content><p>${escapeHtml(archiveDocumentLabel('Loading document…', 'Загрузка документа…'))}</p></div><div class="modal-footer"><button class="button secondary" type="button" data-document-download>${escapeHtml(archiveDocumentLabel('Download', 'Скачать'))}</button></div></div>`);
     const modal = modalBackdrop.querySelector('.archive-document-modal');
     const host = modal?.querySelector('[data-document-body]');
     if (!host) return;
@@ -119,7 +248,9 @@ async function openArchiveDocumentViewer(fileId) {
         if (!modal.isConnected) return;
         modal.querySelector('[data-document-download]').addEventListener('click', () => archiveDocumentDownload(file, blob));
         host.replaceChildren();
-        if (extension === 'txt') {
+        if (archiveImageExtensions.has(extension)) {
+            await archiveDocumentRenderImage(blob, file, host, modal);
+        } else if (extension === 'txt') {
             const pre = document.createElement('pre');
             pre.className = 'archive-document-text';
             pre.textContent = await blob.text();

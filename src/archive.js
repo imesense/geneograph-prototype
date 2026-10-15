@@ -12362,23 +12362,11 @@ function renderArchivePreview(
     file
 )
 {
-    const kind =
-        archiveFileKind(
-            file
-        );
-
-    const imageSource =
-        file.previewUrl
-        || file.thumbnailUrl
-        || file.src
-        || '';
-
-    if (
-        kind === 'img'
-        && imageSource
-    )
-    {
-        return `
+    const imageSource = archiveImageSource(file);
+    if (archiveFileKind(file) !== 'img' || !imageSource) return '';
+    const regions = archiveMarkedRegions(file);
+    return `
+          ${regions.length ? archiveRegionToggleMarkup() : ''}
           <div
             class="
               archive-file-preview
@@ -12392,91 +12380,20 @@ function renderArchivePreview(
                     imageSource
                 )}"
               alt="">
-            <span class="archive-person-region-highlight" data-archive-person-region-highlight hidden aria-hidden="true"></span>
+            ${regions.map(({ personId, name }) => `<span class="archive-person-region-highlight" data-archive-region-box="${escapeHtml(personId)}" data-archive-region-ready="false" title="${escapeHtml(name)}" aria-hidden="true" hidden></span>`).join('')}
             <span class="archive-person-floating-preview" data-archive-person-floating hidden aria-hidden="true">
               <img class="archive-file-preview-image" src="${escapeHtml(imageSource)}" alt="">
               <span class="archive-person-region-highlight" data-archive-floating-region-highlight hidden></span>
             </span>
           </div>
         `;
-    }
-
-    const previewIcon =
-        kind === 'img'
-            ? icon.image
-            : kind === 'audio'
-                ? icon.note
-                : icon.file;
-
-    const title =
-        {
-            pdf:
-            'PDF preview',
-
-            img:
-            'Image preview',
-
-            audio:
-            'Audio preview',
-
-            sheet:
-            'Spreadsheet preview',
-
-            doc:
-            'Document preview',
-
-            archive:
-            'Archive-file preview',
-
-            file:
-            'File preview'
-        }[kind]
-        || 'File preview';
-
-    const description =
-        [
-            'pdf',
-            'img',
-            'audio'
-        ].includes(
-            kind
-        )
-            ? 'The file preview is represented conceptually in this prototype.'
-            : 'Preview is not available for this file type. Open the original file to view it.';
-
-    return `
-        <div
-          class="
-            archive-file-preview
-          ">
-
-          <div
-            class="
-              archive-file-preview-content
-            ">
-
-            ${previewIcon}
-
-            <strong>
-              ${escapeHtml(
-                    title
-                )}
-            </strong>
-
-            <span>
-              ${escapeHtml(
-                    description
-                )}
-            </span>
-          </div>
-        </div>
-      `;
 }
 
 function renderArchiveFileOpenAction(
     file
 )
 {
+    if (!archiveCanViewFile(file)) return '';
     return `
         <button
           class="
@@ -12583,24 +12500,15 @@ function renderArchiveFileHero(
     editing
 )
 {
+    const preview = renderArchivePreview(file);
+    const openAction = renderArchiveFileOpenAction(file);
+    const identity = renderArchiveFileIdentity(file, editing);
     return `
         <div
           class="
-            archive-file-hero
+            archive-file-hero ${preview ? '' : 'no-preview'}
           ">
-
-          ${renderArchivePreview(
-                file
-            )}
-
-          ${renderArchiveFileOpenAction(
-                file
-            )}
-
-          ${renderArchiveFileIdentity(
-                file,
-                editing
-            )}
+          ${preview ? `${preview}${openAction}${identity}` : `${identity}${openAction}`}
         </div>
       `;
 }
@@ -12876,7 +12784,7 @@ function renderArchiveFileConnectionRow({
                 <div
                   class="
                     relation-row-main
-                  ">
+                  " ${entityType === 'person' && normalizeFaceRegion(file.personRegions?.[record.id]) ? `tabindex="0" aria-label="${escapeHtml(record.name || '')}"` : ''}>
 
                   ${mainContent}
                 </div>
@@ -22737,12 +22645,15 @@ function archiveBindDropTarget(element, folderId)
     });
 }
 
+let archiveRegionResizeObserver = null;
+
 function bindArchiveControls()
 {
     const root = main.querySelector('.archive-shell');
     if (!root) return;
-    const regionHighlight = root.querySelector('[data-archive-person-region-highlight]');
-    const regionPreview = regionHighlight?.closest('.archive-file-preview');
+    archiveRegionResizeObserver?.disconnect();
+    const regionBoxes = [...root.querySelectorAll('.archive-file-preview > [data-archive-region-box]')];
+    const regionPreview = regionBoxes[0]?.closest('.archive-file-preview');
     const regionImage = regionPreview?.querySelector(':scope > .archive-file-preview-image');
     const floatingPreview = regionPreview?.querySelector('[data-archive-person-floating]');
     const floatingImage = floatingPreview?.querySelector('.archive-file-preview-image');
@@ -22750,7 +22661,8 @@ function bindArchiveControls()
     let activeRegionPersonId = null;
     const clearPersonRegion = () => {
         activeRegionPersonId = null;
-        if (regionHighlight) regionHighlight.hidden = true;
+        regionBoxes.forEach(box => box.classList.remove('is-active'));
+        archiveUpdateRegionVisibility();
         if (floatingHighlight) floatingHighlight.hidden = true;
         if (floatingPreview) floatingPreview.hidden = true;
     };
@@ -22780,6 +22692,8 @@ function bindArchiveControls()
             clearPersonRegion();
             return;
         }
+        regionBoxes.forEach(box => box.classList.toggle('is-active', box.dataset.archiveRegionBox === personId));
+        archiveUpdateRegionVisibility();
         const inspector = regionPreview.closest('.archive-inspector');
         const scroll = inspector?.querySelector('.archive-inspector-scroll');
         const previewBounds = regionPreview.getBoundingClientRect();
@@ -22795,18 +22709,28 @@ function bindArchiveControls()
                 width: `${inspectorBounds.width - 32}px`
             });
             floatingPreview.hidden = false;
-            regionHighlight.hidden = true;
             positionPersonRegion(floatingHighlight, floatingPreview, floatingImage, region);
         }
         else
         {
             floatingPreview.hidden = true;
-            positionPersonRegion(regionHighlight, regionPreview, regionImage, region);
         }
     };
-    regionImage?.addEventListener('load', () => {
+    const positionAllRegions = () => {
+        const file = archiveFileById(state.archiveSelectedFileId);
+        regionBoxes.forEach(box => {
+            const region = normalizeFaceRegion(file?.personRegions?.[box.dataset.archiveRegionBox]);
+            if (region && positionPersonRegion(box, regionPreview, regionImage, region)) box.dataset.archiveRegionReady = 'true';
+        });
+        archiveUpdateRegionVisibility();
         if (activeRegionPersonId) showPersonRegion(activeRegionPersonId);
-    });
+    };
+    regionImage?.addEventListener('load', positionAllRegions);
+    if (regionImage?.complete) positionAllRegions();
+    if (regionPreview) {
+        archiveRegionResizeObserver = new ResizeObserver(positionAllRegions);
+        archiveRegionResizeObserver.observe(regionPreview);
+    }
     floatingImage?.addEventListener('load', () => {
         if (activeRegionPersonId) showPersonRegion(activeRegionPersonId);
     });
