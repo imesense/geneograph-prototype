@@ -14569,35 +14569,6 @@ function connectedFilesForProject(
         );
 }
 
-function connectedFilePickerSearchText(
-    file
-)
-{
-    if (!file)
-    {
-        return '';
-    }
-
-    return [
-        archiveSearchText(
-            file
-        ),
-
-        archiveFileTypeLabel(
-            file
-        ),
-
-        archiveFolderPath(
-            file.folderId
-        ),
-
-        file.size
-    ]
-        .filter(Boolean)
-        .join(' ')
-        .toLowerCase();
-}
-
 function connectedFilesSelectionLabel(
     count
 )
@@ -14685,20 +14656,6 @@ function openConnectedFilesModal({
     let query =
         '';
 
-    const importNewFiles = files => openArchiveDocumentImport({
-        files,
-        onImported: ids => {
-            const result = typeof onSave === 'function' ? onSave(ids) : false;
-            if (result !== false && result?.ok !== false) afterSave?.(ids, result);
-            else showToast('Files were added, but could not be linked to this record.');
-        }
-    });
-
-    let sourceTab =
-        allFiles.length
-            ? 'archive'
-            : 'new';
-
     const compactTitle = translateText('Add files');
     const contextTitle = String(title || '').trim();
 
@@ -14746,57 +14703,27 @@ function openConnectedFilesModal({
               connected-files-modal-body
             ">
 
-            <div
-              class="
-                connected-files-tabs
-              "
-              role="tablist"
-              aria-label="File source">
+            <section class="connected-files-panel connected-files-archive-panel">
 
-              <button
-                class="
-                  connected-files-tab
-                "
-                type="button"
-                role="tab"
-                data-connected-files-tab="archive"
-                aria-selected="${
-                    sourceTab === 'archive'
-                }">
+              <div class="connected-files-toolbar">
+                <label
+                  class="app-search-field connected-files-search"
+                  aria-label="${escapeHtml(translateText('Search files'))}">
+                  ${icon.search}
+                  <input
+                    type="search"
+                    data-connected-files-search
+                    placeholder="${escapeHtml(innerWidth <= 540 ? archiveDocumentLabel('Search', 'Поиск') : translateText('Search files'))}"
+                    autocomplete="off">
+                </label>
+                <button class="button secondary" type="button" data-connected-files-add-new
+                  aria-label="${escapeHtml(archiveDocumentLabel('Add new files to this folder', 'Добавить новые файлы в эту папку'))}">
+                  ${icon.plus}<span>${escapeHtml(archiveDocumentLabel('Add new', 'Добавить'))}</span>
+                </button>
+              </div>
 
-                Archive files
-              </button>
-
-              <button
-                class="
-                  connected-files-tab
-                "
-                type="button"
-                role="tab"
-                data-connected-files-tab="new"
-                aria-selected="${
-                    sourceTab === 'new'
-                }">
-
-                Add new
-              </button>
-            </div>
-
-            <section
-              class="connected-files-panel connected-files-archive-panel"
-              data-connected-files-panel="archive"
-              ${sourceTab === 'archive' ? '' : 'hidden'}>
-
-              <label
-                class="app-search-field connected-files-search"
-                aria-label="${escapeHtml(translateText('Search files'))}">
-                ${icon.search}
-                <input
-                  type="search"
-                  data-connected-files-search
-                  placeholder="${escapeHtml(translateText('Search files'))}"
-                  autocomplete="off">
-              </label>
+              <nav class="connected-files-breadcrumbs" data-connected-files-breadcrumbs
+                aria-label="${escapeHtml(archiveDocumentLabel('Folder path', 'Путь к папке'))}"></nav>
 
               <section
                 class="notes-related-selected-panel"
@@ -14807,7 +14734,7 @@ function openConnectedFilesModal({
               <section class="notes-related-results-panel">
                 <div class="notes-related-results-head">
                   <div>
-                    <strong data-connected-files-results-title></strong>
+                    <strong data-connected-files-results-title data-user-content></strong>
                     <span data-connected-files-results-meta></span>
                   </div>
                 </div>
@@ -14819,58 +14746,6 @@ function openConnectedFilesModal({
               </section>
             </section>
 
-            <section
-              class="
-                connected-files-panel
-                connected-files-add-new-panel
-              "
-              data-connected-files-panel="new"
-              ${
-                    sourceTab === 'new'
-                        ? ''
-                        : 'hidden'
-                }>
-
-              <div
-                class="
-                  connected-files-dropzone
-                "
-                data-connected-files-dropzone
-                role="button"
-                tabindex="0"
-                aria-label="Add new files">
-
-                <div
-                  class="
-                    connected-files-dropzone-content
-                  ">
-
-                  ${icon.import}
-
-                  <strong>
-                    Drop files here
-                  </strong>
-
-                  <p>
-                    ${escapeHtml(archiveDocumentLabel(
-                        'Add files to Archive and connect them to this record. Files remain available until reload.',
-                        'Добавьте файлы в Архив и свяжите их с этой записью. Файлы доступны до перезагрузки.'
-                    ))}
-                  </p>
-
-                  <button
-                    class="
-                      button
-                      primary
-                    "
-                    type="button"
-                    data-connected-files-add-new>
-
-                    Add files
-                  </button>
-                </div>
-              </div>
-            </section>
           </div>
 
           <div
@@ -14943,11 +14818,11 @@ function openConnectedFilesModal({
         modal.querySelector(
             '[data-connected-files-save]'
         );
+    const cancelButton = modal.querySelector('.connected-files-footer [data-close]');
 
-    const dropzone =
-        modal.querySelector(
-            '[data-connected-files-dropzone]'
-        );
+    const browseBreadcrumbs = modal.querySelector('[data-connected-files-breadcrumbs]');
+    let browseFolderId = null;
+    let visibleLimit = 100;
 
     const pickerText = (english, russian) =>
         state.language === 'ru' ? russian : english;
@@ -14970,16 +14845,48 @@ function openConnectedFilesModal({
             'Файл без названия'
         );
 
+    const folders = (parentId = null) => (sampleData.archiveFolders || [])
+        .filter(folder => folder.projectId === projectId && archiveFolderParentId(folder) === parentId)
+        .sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''), state.language === 'ru' ? 'ru' : 'en'));
+
+    const ancestors = folderId => {
+        const path = [];
+        const visited = new Set();
+        let folder = folderId ? archiveFolderById(folderId, projectId) : null;
+        while (folder && !visited.has(folder.id)) {
+            path.unshift(folder);
+            visited.add(folder.id);
+            folder = archiveFolderById(archiveFolderParentId(folder), projectId);
+        }
+        return path;
+    };
+
+    const folderName = folderId => folderId
+        ? ancestors(folderId).map(folder => folder.name).join(' / ')
+        : pickerText('All files', 'Все файлы');
+
+    const fileSearchText = file => [
+        archiveSearchText(file),
+        archiveFileTypeLabel(file),
+        folderName(file.folderId),
+        file.size
+    ].filter(Boolean).join(' ').toLowerCase();
+
+    const renderBreadcrumbs = folderId => {
+        browseBreadcrumbs.innerHTML = `<span class="connected-files-location-icon" aria-hidden="true">${icon.folderyellow}</span><button type="button" data-connected-files-folder-path="" ${folderId ? '' : 'aria-current="location"'}>${escapeHtml(pickerText('All files', 'Все файлы'))}</button>${ancestors(folderId).map((folder, index, path) =>
+            `<span class="connected-files-path-separator" aria-hidden="true">${icon.chevron}</span><button type="button" data-user-content data-connected-files-folder-path="${escapeHtml(folder.id)}" title="${escapeHtml(folder.name)}" ${index === path.length - 1 ? 'aria-current="location"' : ''}>${escapeHtml(folder.name)}</button>`).join('')}`;
+        browseBreadcrumbs.querySelector('[aria-current="location"]')?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    };
+
     const visibleFiles = () =>
     {
         const normalizedQuery = query.trim().toLowerCase();
 
         return allFiles
-            .filter(file => !existingIds.has(file.id))
             .filter(file =>
-                !normalizedQuery
-            || connectedFilePickerSearchText(file)
-                .includes(normalizedQuery)
+                normalizedQuery
+                    ? fileSearchText(file).includes(normalizedQuery)
+                    : archiveFileFolderId(file) === browseFolderId
             )
             .sort((a, b) =>
                 fileLabel(a).localeCompare(
@@ -14992,13 +14899,14 @@ function openConnectedFilesModal({
     const renderChoice = file =>
     {
         const selected = selectedIds.has(file.id);
+        const existing = existingIds.has(file.id);
         const name = fileLabel(file);
-        const path = archiveFolderPath(file.folderId);
+        const path = folderName(file.folderId);
 
         return `
           <label class="connected-files-choice ${
                 selected ? 'is-selected' : ''
-            }">
+            } ${existing ? 'is-existing' : ''}">
             ${archiveFileIcon(file)}
 
             <span class="connected-files-choice-copy">
@@ -15008,10 +14916,12 @@ function openConnectedFilesModal({
 
               <span class="connected-files-choice-meta">
                 ${escapeHtml(translateText(connectedFileMeta(file)))}
+                ${existing ? ` · ${escapeHtml(pickerText('Already linked', 'Уже связано'))}` : ''}
               </span>
 
               <span
                 class="connected-files-choice-path"
+                data-user-content
                 title="${escapeHtml(path)}">
                 ${escapeHtml(path)}
               </span>
@@ -15023,6 +14933,7 @@ function openConnectedFilesModal({
               data-connected-files-choice
               value="${escapeHtml(file.id)}"
               ${selected ? 'checked' : ''}
+              ${existing ? 'disabled' : ''}
               aria-label="${escapeHtml(
                     pickerText('Select file: ', 'Выбрать файл: ') + name
                 )}">
@@ -15079,25 +14990,33 @@ function openConnectedFilesModal({
         const scrollTop = resultsHost.scrollTop;
         const files = visibleFiles();
         const searching = Boolean(query.trim());
+        const childFolders = searching ? [] : folders(browseFolderId);
+        const availableCount = files.filter(file => !existingIds.has(file.id)).length;
+
+        renderBreadcrumbs(browseFolderId);
 
         resultsTitle.textContent = searching
             ? pickerText('Search results', 'Результаты поиска')
-            : pickerText('Suggested files', 'Предлагаемые файлы');
+            : browseFolderId
+                ? archiveFolderById(browseFolderId, projectId)?.name || folderName(null)
+                : folderName(null);
 
         resultsMeta.textContent = pickerText(
-            `${files.length} ${
-                files.length === 1 ? 'file' : 'files'
-            } available · ${existingIds.size} already linked`,
-            `Доступно файлов: ${files.length} · Уже связано: ${existingIds.size}`
+            `${availableCount} ${
+                availableCount === 1 ? 'file' : 'files'
+            }${searching ? ' found' : ''} · ${existingIds.size} already linked`,
+            `Доступно файлов: ${availableCount} · Уже связано: ${existingIds.size}`
         );
 
         renderSelectedFiles();
 
-        if (files.length)
+        if (files.length || childFolders.length)
         {
             resultsHost.innerHTML = `
             <div class="connected-files-choice-list">
-              ${files.map(renderChoice).join('')}
+              ${childFolders.map(folder => `<button class="connected-files-folder-row" type="button" data-connected-files-open-folder="${escapeHtml(folder.id)}">${icon.folderyellow}<span data-user-content>${escapeHtml(folder.name)}</span>${icon.chevron}</button>`).join('')}
+              ${files.slice(0, visibleLimit).map(renderChoice).join('')}
+              ${files.length > visibleLimit ? `<button class="button secondary connected-files-more" type="button" data-connected-files-more>${escapeHtml(pickerText(`Show more files (${files.length - visibleLimit} remaining)`, `Показать ещё (${files.length - visibleLimit})`))}</button>` : ''}
             </div>
           `;
         }
@@ -15105,18 +15024,15 @@ function openConnectedFilesModal({
         {
             const message = !allFiles.length
                 ? pickerText(
-                    'No Archive files yet. Open Add new to add files.',
-                    'В архиве пока нет файлов. Откройте вкладку «Добавить новые».'
+                    'No Archive files yet. Use Add new to add files.',
+                    'В архиве пока нет файлов. Используйте «Добавить».'
                 )
                 : searching
                     ? pickerText(
                         'No files match this search.',
                         'По вашему запросу файлы не найдены.'
                     )
-                    : pickerText(
-                        'All available files are already linked.',
-                        'Все доступные файлы уже связаны.'
-                    );
+                    : pickerText('No files in this folder.', 'В этой папке нет файлов.');
 
             resultsHost.innerHTML = `
             <div class="connected-files-empty">
@@ -15140,35 +15056,12 @@ function openConnectedFilesModal({
         resultsHost.scrollTop = scrollTop;
     };
 
-    const refreshFooter =
-        () =>
-        {
-            const count =
-                selectedIds.size;
-
-            if (countElement)
-            {
-                countElement.textContent =
-                    translateText(
-                        connectedFilesSelectionLabel(
-                            count
-                        )
-                    );
-            }
-
-            if (saveButton)
-            {
-                saveButton.disabled =
-                    count === 0;
-
-                saveButton.textContent =
-                    translateText(
-                        connectedFilesActionLabel(
-                            count
-                        )
-                    );
-            }
-        };
+    const refreshFooter = () => {
+        const count = selectedIds.size;
+        countElement.textContent = translateText(connectedFilesSelectionLabel(count));
+        saveButton.disabled = count === 0;
+        saveButton.textContent = translateText(connectedFilesActionLabel(count));
+    };
     modal.addEventListener('click', event =>
     {
         const button = event.target.closest(
@@ -15190,163 +15083,6 @@ function openConnectedFilesModal({
             refreshFooter();
         };
 
-    const setTab =
-        (
-            nextTab,
-            {
-                focus =
-                    true
-            } = {}
-        ) =>
-        {
-            if (
-                ![
-                    'archive',
-                    'new'
-                ].includes(
-                    nextTab
-                )
-            )
-            {
-                return;
-            }
-
-            sourceTab =
-                nextTab;
-
-            modal
-                .querySelectorAll(
-                    '[data-connected-files-tab]'
-                )
-                .forEach(button =>
-                {
-                    const selected =
-                        button.dataset
-                            .connectedFilesTab
-                  === sourceTab;
-
-                    button.setAttribute(
-                        'aria-selected',
-                        String(
-                            selected
-                        )
-                    );
-                });
-
-            modal
-                .querySelectorAll(
-                    '[data-connected-files-panel]'
-                )
-                .forEach(panel =>
-                {
-                    panel.hidden =
-                        panel.dataset
-                            .connectedFilesPanel
-                  !== sourceTab;
-                });
-
-            if (!focus)
-            {
-                return;
-            }
-
-            requestAnimationFrame(
-                () =>
-                {
-                    if (
-                        sourceTab === 'archive'
-                    )
-                    {
-                        searchInput?.focus({
-                            preventScroll:
-                    true
-                        });
-
-                        return;
-                    }
-
-                    dropzone?.focus({
-                        preventScroll:
-                  true
-                    });
-                }
-            );
-        };
-
-    modal
-        .querySelectorAll(
-            '[data-connected-files-tab]'
-        )
-        .forEach(
-            (
-                tab,
-                index,
-                tabs
-            ) =>
-            {
-                tab.addEventListener(
-                    'click',
-                    () =>
-                    {
-                        setTab(
-                            tab.dataset
-                                .connectedFilesTab
-                        );
-                    }
-                );
-
-                tab.addEventListener(
-                    'keydown',
-                    event =>
-                    {
-                        if (
-                            ![
-                                'ArrowLeft',
-                                'ArrowRight'
-                            ].includes(
-                                event.key
-                            )
-                        )
-                        {
-                            return;
-                        }
-
-                        event.preventDefault();
-
-                        const direction =
-                            event.key
-                    === 'ArrowRight'
-                                ? 1
-                                : -1;
-
-                        const nextIndex =
-                            (
-                                index
-                    + direction
-                    + tabs.length
-                            )
-                  % tabs.length;
-
-                        const next =
-                            tabs[
-                                nextIndex
-                            ];
-
-                        setTab(
-                            next.dataset
-                                .connectedFilesTab,
-                            {
-                                focus:
-                      false
-                            }
-                        );
-
-                        next.focus();
-                    }
-                );
-            }
-        );
-
     searchInput
         ?.addEventListener(
             'input',
@@ -15355,6 +15091,8 @@ function openConnectedFilesModal({
                 query =
                     event.currentTarget
                         .value;
+
+                visibleLimit = 100;
 
                 renderResults();
             }
@@ -15377,6 +15115,8 @@ function openConnectedFilesModal({
                 return;
             }
 
+            const restoreFocus = document.activeElement === input;
+
             if (
                 input.checked
             )
@@ -15393,6 +15133,7 @@ function openConnectedFilesModal({
             }
 
             refreshSelection();
+            if (restoreFocus) modal.querySelector(`[data-connected-files-choice=""][value="${CSS.escape(input.value)}"]`)?.focus({ preventScroll: true });
         }
     );
 
@@ -15400,6 +15141,26 @@ function openConnectedFilesModal({
         'click',
         event =>
         {
+            const openFolder = event.target.closest('[data-connected-files-open-folder]');
+            const browsePath = event.target.closest('[data-connected-files-folder-path]');
+            if (openFolder || browsePath) {
+                const keyboard = event.detail === 0;
+                browseFolderId = openFolder?.dataset.connectedFilesOpenFolder || browsePath?.dataset.connectedFilesFolderPath || null;
+                query = '';
+                visibleLimit = 100;
+                searchInput.value = '';
+                resultsHost.scrollTop = 0;
+                renderResults();
+                if (keyboard) browseBreadcrumbs.querySelector('[aria-current="location"]')?.focus({ preventScroll: true });
+                return;
+            }
+
+            if (event.target.closest('[data-connected-files-more]')) {
+                visibleLimit += 100;
+                renderResults();
+                return;
+            }
+
             if (
                 event.target.closest(
                     '[data-connected-files-clear-search]'
@@ -15408,6 +15169,7 @@ function openConnectedFilesModal({
             {
                 query =
                     '';
+                visibleLimit = 100;
 
                 if (searchInput)
                 {
@@ -15427,19 +15189,6 @@ function openConnectedFilesModal({
 
             if (
                 event.target.closest(
-                    '[data-connected-files-show-new]'
-                )
-            )
-            {
-                setTab(
-                    'new'
-                );
-
-                return;
-            }
-
-            if (
-                event.target.closest(
                     '[data-connected-files-add-new]'
                 )
             )
@@ -15447,116 +15196,54 @@ function openConnectedFilesModal({
                 event.preventDefault();
                 event.stopPropagation();
 
-                importNewFiles();
+                const destinationFolderId = browseFolderId;
+                const browseScrollTop = resultsHost.scrollTop;
+                const restoreScroll = new MutationObserver(() => {
+                    if (!modal.isConnected) return;
+                    resultsHost.scrollTop = browseScrollTop;
+                    restoreScroll.disconnect();
+                });
+                restoreScroll.observe(modalBackdrop, { childList: true });
+                openArchiveDocumentImport({
+                    projectId,
+                    folderId: destinationFolderId,
+                    destinationLabel: folderName(destinationFolderId),
+                    modalOpener: openNestedModal,
+                    onImported: ids => {
+                        const result = typeof onSave === 'function' ? onSave(ids) : false;
+                        if (result === false || result?.ok === false) {
+                            return {
+                                ok: false,
+                                message: pickerText('Files could not be linked. Please try again.', 'Не удалось связать файлы. Повторите попытку.')
+                            };
+                        }
+                        connectedFilesForProject(projectId).forEach(file => {
+                            if (!validFileIds.has(file.id)) {
+                                allFiles.push(file);
+                                validFileIds.add(file.id);
+                            }
+                        });
+                        ids.forEach(id => existingIds.add(id));
+                        renderResults();
+                        refreshFooter();
+                        afterSave?.(ids, result);
+                        const message = typeof successMessage === 'function'
+                            ? successMessage(ids.length, result)
+                            : successMessage;
+                        if (message) showToast(message);
+                        return { ok: true };
+                    }
+                });
 
                 return;
             }
         }
     );
 
-    if (dropzone)
-    {
-        dropzone.addEventListener(
-            'click',
-            event =>
-            {
-                if (
-                    event.target.closest(
-                        '[data-connected-files-add-new]'
-                    )
-                )
-                {
-                    return;
-                }
-
-                importNewFiles();
-            }
-        );
-
-        dropzone.addEventListener(
-            'keydown',
-            event =>
-            {
-                if (
-                    ![
-                        'Enter',
-                        ' '
-                    ].includes(
-                        event.key
-                    )
-                )
-                {
-                    return;
-                }
-
-                if (
-                    event.target.closest(
-                        'button'
-                    )
-                )
-                {
-                    return;
-                }
-
-                event.preventDefault();
-
-                importNewFiles();
-            }
-        );
-
-        [
-            'dragenter',
-            'dragover'
-        ].forEach(type =>
-        {
-            dropzone.addEventListener(
-                type,
-                event =>
-                {
-                    event.preventDefault();
-
-                    dropzone
-                        .classList
-                        .add(
-                            'is-dragging'
-                        );
-                }
-            );
-        });
-
-        [
-            'dragleave',
-            'drop'
-        ].forEach(type =>
-        {
-            dropzone.addEventListener(
-                type,
-                event =>
-                {
-                    event.preventDefault();
-
-                    dropzone
-                        .classList
-                        .remove(
-                            'is-dragging'
-                        );
-                }
-            );
-        });
-
-        dropzone.addEventListener(
-            'drop',
-            event =>
-            {
-                importNewFiles(event.dataTransfer?.files);
-            }
-        );
-    }
-
     saveButton
         ?.addEventListener(
             'click',
-            () =>
+            async () =>
             {
                 const fileIds = [
                     ...selectedIds
@@ -15632,20 +15319,12 @@ function openConnectedFilesModal({
 
     renderResults();
     refreshFooter();
-    setTab(
-        sourceTab,
-        {
-            focus:
-            false
-        }
-    );
 
     requestAnimationFrame(
         () =>
         {
             if (
                 autoFocusSearch && !mobilePersonPicker
-                && sourceTab === 'archive'
             )
             {
                 searchInput?.focus({

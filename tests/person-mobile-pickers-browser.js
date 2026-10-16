@@ -70,9 +70,10 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
                     const search = modal.locator('input[type="search"]').first();
                     if (kind === 'files')
                     {
-                        await modal.locator('[data-connected-files-tab="new"]').click();
-                        assert.ok(await modal.locator('[data-connected-files-panel="new"]').isVisible());
-                        await modal.locator('[data-connected-files-tab="archive"]').click();
+                        await modal.locator('[data-connected-files-add-new]').click();
+                        assert.ok(await page.locator('.archive-document-import').isVisible());
+                        await page.locator('.archive-document-import [data-close]').first().click();
+                        assert.ok(await modal.isVisible());
                     }
                     else
                     {
