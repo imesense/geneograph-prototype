@@ -1841,6 +1841,7 @@
 /* Related Note rows inside the Note editor */
 
 .notes-related-list {
+    min-width: 0;
     gap: 2px;
 }
 
@@ -1849,7 +1850,18 @@
 }
 
 .notes-related-item {
+    min-width: 0;
     background: transparent;
+}
+
+.notes-related-item .relation-actions {
+    flex: 0 0 auto;
+    padding-right: 4px;
+}
+
+.notes-related-item .relation-action-button {
+    width: 40px;
+    height: 40px;
 }
 
 .notes-related-main {

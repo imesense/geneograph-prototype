@@ -5459,7 +5459,7 @@ function renderProfileConnectedFiles(
     });
 }
 
-function renderProfileNoteTiles(
+function renderProfileNoteRows(
     person,
     notes =
         getNotesForPerson(
@@ -5480,151 +5480,12 @@ function renderProfileNoteTiles(
         );
     }
 
-    const personLabel =
-        person?.names?.display
-        || person?.name
-        || 'this person';
-
-    return `
-        <div
-          class="
-            profile-note-tile-grid
-          "
-          role="list"
-          aria-label="Notes linked to ${escapeHtml(
-                personLabel
-            )}">
-
-          ${preview
-                .map(note =>
-                {
-                    const noteTitle =
-                        note.title
-                || 'Untitled note';
-
-                    const previewText =
-                        noteExcerpt(
-                            note,
-                            120
-                        )
-                || 'No note content';
-
-                    const collectionLabel =
-                        formatNoteCollectionSummary(
-                            note
-                        )
-                || 'Research note';
-
-                    const updatedLabel =
-                        formatNoteRelativeUpdatedAt(
-                            note
-                        )
-                || 'Updated date unknown';
-
-                    return `
-                <div
-                  class="
-                    profile-note-tile
-                  "
-                  role="listitem">
-
-                  <button
-                    class="
-                      profile-note-tile__open
-                    "
-                    type="button"
-                    data-connected-note-id="${escapeHtml(
-                        note.id
-                    )}"
-                    data-connected-note-context-type="person"
-                    data-connected-note-context-id="${escapeHtml(
-                        person.id
-                    )}"
-                    aria-label="Open note: ${escapeHtml(
-                        noteTitle
-                    )}">
-
-                    <strong
-                      class="
-                        profile-note-tile__title
-                      "
-                      title="${escapeHtml(
-                            noteTitle
-                        )}">
-
-                      ${escapeHtml(
-                            noteTitle
-                        )}
-                    </strong>
-
-                    <span
-                      class="
-                        profile-note-tile__preview
-                      "
-                      title="${escapeHtml(
-                            previewText
-                        )}">
-
-                      ${escapeHtml(
-                            previewText
-                        )}
-                    </span>
-
-                    <span
-                      class="
-                        profile-note-tile__collection
-                      "
-                      title="${escapeHtml(
-                            collectionLabel
-                        )}">
-
-                      ${escapeHtml(
-                            collectionLabel
-                        )}
-                    </span>
-
-                    <span
-                      class="
-                        profile-note-tile__updated
-                      "
-                      title="${escapeHtml(
-                            updatedLabel
-                        )}">
-
-                      ${escapeHtml(
-                            updatedLabel
-                        )}
-                    </span>
-                  </button>
-
-                  <button
-                    class="
-                      connected-note-unlink
-                      profile-note-tile__unlink
-                    "
-                    type="button"
-                    data-connected-note-unlink="${escapeHtml(
-                        note.id
-                    )}"
-                    data-connected-note-context-type="person"
-                    data-connected-note-context-id="${escapeHtml(
-                        person.id
-                    )}"
-                    aria-label="Unlink ${escapeHtml(
-                        noteTitle
-                    )} from ${escapeHtml(
-                        personLabel
-                    )}"
-                    title="Unlink note">
-
-                    ${icon.unlink}
-                  </button>
-                </div>
-              `;
-                })
-                .join('')}
-        </div>
-      `;
+    return renderConnectedNoteList({
+        notes: preview,
+        contextType: 'person',
+        contextId: person.id,
+        limit: 3
+    });
 }
 
 function renderProfileConnectedNotes(
@@ -5662,7 +5523,7 @@ function renderProfileConnectedNotes(
           'add-note',
 
         body:
-          renderProfileNoteTiles(
+          renderProfileNoteRows(
               person,
               notes
           )

@@ -2689,109 +2689,37 @@ button.timeline-evidence-name:hover, button.timeline-evidence-name:focus-visible
     gap: var(--space-2);
 }
 
-.connected-note-item {
-    position: relative;
-
-    min-width: 0;
-}
-
-.connected-note-item.can-unlink .connected-note-card {
-    /*
-    Reserve space so the hover action does not
-    cover the Note title.
-    */
-    padding-right: 50px;
-}
-
-.connected-note-unlink {
+.connected-photo-unlink {
     position: absolute;
     z-index: 1;
-
+    top: 50%;
+    right: 8px;
     width: 32px;
     height: 32px;
     padding: 0;
-
-    border:
-        1px solid transparent;
-
-    border-radius:
-        var(--radius-sm);
-
-    background:
-        rgba(15, 20, 19, .9);
-
-    color:
-        var(--text-tertiary);
-
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    background: rgba(15, 20, 19, .9);
+    color: var(--text-tertiary);
     display: grid;
     place-items: center;
-
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    top: 50%;
-    right: 8px;
-
-    transform:
-        translateY(-50%) scale(.96);
-    transition:
-        opacity var(--ease),
-        visibility var(--ease),
-        transform var(--ease),
-        background var(--ease),
-        border-color var(--ease),
-        color var(--ease);
-
+    transform: translateY(-50%) scale(.96);
+    transition: opacity var(--ease), visibility var(--ease), transform var(--ease),
+        background var(--ease), border-color var(--ease), color var(--ease);
     cursor: pointer;
 }
 
-.connected-note-unlink svg {
+.connected-photo-unlink svg {
     width: 17px;
     height: 17px;
 }
 
-.connected-note-item:hover .connected-note-unlink,
-.connected-note-item:focus-within .connected-note-unlink {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-
-    transform:
-        translateY(-50%) scale(1);
-}
-
-.connected-note-unlink:hover,
-.connected-note-unlink:focus-visible {
-    border-color:
-        rgba(212, 107, 107, .32);
-
-    background:
-        rgba(212, 107, 107, .12);
-
-    color:
-        var(--red);
-}
-
-.connected-note-unlink:focus-visible {
-    outline:
-        2px solid var(--brand-green-300);
-
+.connected-photo-unlink:focus-visible {
+    outline: 2px solid var(--brand-green-300);
     outline-offset: 2px;
-}
-
-/*
-    Hover is unavailable on touch-only devices,
-    so keep the action discoverable.
-*/
-@media (hover: none) {
-    .connected-note-item.can-unlink .connected-note-unlink {
-        opacity: 1;
-        visibility: visible;
-        pointer-events: auto;
-
-        transform:
-            translateY(-50%) scale(1);
-    }
 }
 
 .connected-note-unlink-warning {
@@ -2805,125 +2733,6 @@ button.timeline-evidence-name:hover, button.timeline-evidence-name:focus-visible
 
 .connected-note-unlink-warning span {
     color: var(--text-secondary);
-}
-
-.connected-note-card {
-    width: 100%;
-    min-width: 0;
-    padding: var(--space-3);
-
-    display: grid;
-    gap: 4px;
-
-    border:
-        1px solid var(--border-default);
-
-    border-radius:
-        var(--radius-sm);
-
-    background:
-        var(--surface-card);
-
-    color:
-        var(--text-secondary);
-
-    text-align: left;
-
-    transition:
-        background var(--ease),
-        border-color var(--ease),
-        transform var(--ease);
-}
-
-.connected-note-card:hover,
-.connected-note-card:focus-visible {
-    border-color:
-        var(--border-strong);
-
-    background:
-        var(--surface-card-hover);
-
-    transform:
-        translateY(-1px);
-}
-
-.connected-note-card:focus-visible {
-    outline:
-        2px solid var(--brand-green-300);
-
-    outline-offset:
-        2px;
-}
-
-.connected-note-title {
-    min-width: 0;
-    overflow: hidden;
-
-    color:
-        var(--text-primary);
-
-    font-size:
-        13px;
-
-    font-weight:
-        900;
-
-    line-height:
-        1.35;
-
-    text-overflow:
-        ellipsis;
-
-    white-space:
-        nowrap;
-}
-
-.connected-note-excerpt {
-    min-width: 0;
-    overflow: hidden;
-
-    display: -webkit-box;
-
-    color:
-        var(--text-secondary);
-
-    font-size:
-        12px;
-
-    line-height:
-        1.45;
-
-    -webkit-box-orient:
-        vertical;
-
-    -webkit-line-clamp:
-        2;
-
-    line-clamp:
-        2;
-}
-
-.connected-note-meta {
-    min-width: 0;
-    overflow: hidden;
-
-    color:
-        var(--text-tertiary);
-
-    font-size:
-        11px;
-
-    font-weight:
-        700;
-
-    line-height:
-        1.35;
-
-    text-overflow:
-        ellipsis;
-
-    white-space:
-        nowrap;
 }
 
 .connected-note-empty {

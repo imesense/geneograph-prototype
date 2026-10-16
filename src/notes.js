@@ -634,74 +634,6 @@ function noteEntityCountItems(
         );
 }
 
-function noteBrowserEntitySummary(
-    note
-)
-{
-    const entityItems =
-        noteEntityCountItems(
-            note
-        );
-
-    const relatedCount =
-        new Set(
-            note?.relatedNoteIds
-          || []
-        ).size;
-
-    const items = [
-        ...entityItems.map(item => ({
-            count:
-            item.count,
-
-            label:
-            item.count === 1
-                ? item.config.singular
-                : item.config.plural
-        })),
-
-        ...(relatedCount
-            ? [{
-                count:
-                relatedCount,
-
-                label:
-                relatedCount === 1
-                    ? 'note'
-                    : 'notes'
-            }]
-            : [])
-    ];
-
-    if (!items.length)
-    {
-        return '';
-    }
-
-    if (items.length <= 2)
-    {
-        return items
-            .map(item =>
-                `${item.count} ${
-                    item.label
-                }`
-            )
-            .join(' · ');
-    }
-
-    const total =
-        items.reduce(
-            (
-                sum,
-                item
-            ) =>
-                sum + item.count,
-            0
-        );
-
-    return `${total} linked records`;
-}
-
 function renderNoteBrowserCollectionChips(
     note
 )
@@ -781,17 +713,7 @@ function noteBrowserMetadata(
     note
 )
 {
-    return [
-        noteBrowserEntitySummary(
-            note
-        ),
-
-        formatNoteRelativeUpdatedAt(
-            note
-        )
-    ]
-        .filter(Boolean)
-        .join(' · ');
+    return formatNoteRelativeUpdatedAt(note);
 }
 
 const defaultNotesFilters = Object.freeze({
@@ -1083,121 +1005,21 @@ function renderConnectedNoteList({
         ).toLowerCase();
 
     return `
-        <div class="connected-note-list">
-
-          ${visible
-                .map(note =>
-                {
-                    const noteTitle =
-                        note.title
-                || 'Untitled note';
-
-                    const metadata =
-                        formatConnectedNoteMetadata(
-                            note
-                        );
-
-                    return `
-                <div
-                  class="
-                    connected-note-item
-                    ${
-                        unlinkSupported
-                            ? 'can-unlink'
-                            : ''
-                    }
-                  ">
-
-                  <button
-                    class="connected-note-card"
-                    type="button"
-                    data-connected-note-id="${escapeHtml(
-                        note.id
-                    )}"
-                    data-connected-note-context-type="${escapeHtml(
-                        contextType
-                    )}"
-                    data-connected-note-context-id="${escapeHtml(
-                        contextId
-                    )}"
-                    aria-label="Open ${escapeHtml(
-                        noteTitle
-                    )}">
-
-                    <strong
-                      class="
-                        connected-note-title
-                      "
-                      title="${escapeHtml(
-                            noteTitle
-                        )}">
-
-                      ${escapeHtml(
-                            noteTitle
-                        )}
-                    </strong>
-
-                    <span
-                      class="
-                        connected-note-excerpt
-                      ">
-
-                      ${escapeHtml(
-                            noteExcerpt(
-                                note,
-                                120
-                            )
-                        || 'No note content'
-                        )}
-                    </span>
-
-                    <span
-                      class="
-                        connected-note-meta
-                      "
-                      title="${escapeHtml(
-                            metadata
-                        )}">
-
-                      ${escapeHtml(
-                            metadata
-                        )}
-                    </span>
-                  </button>
-
-                  ${
-                        unlinkSupported
-                            ? `
-                        <button
-                          class="
-                            connected-note-unlink
-                          "
-                          type="button"
-                          data-connected-note-unlink="${escapeHtml(
-                                note.id
-                            )}"
-                          data-connected-note-context-type="${escapeHtml(
-                                contextType
-                            )}"
-                          data-connected-note-context-id="${escapeHtml(
-                                contextId
-                            )}"
-                          aria-label="Unlink ${escapeHtml(
-                                noteTitle
-                            )} from this ${escapeHtml(
-                                contextNoun
-                            )}"
-                          title="Unlink note">
-
-                          ${icon.unlink}
-                        </button>
-                      `
-                            : ''
-                    }
-                </div>
-              `;
-                })
-                .join('')}
+        <div class="relationship-list notes-related-list connected-note-list">
+          ${visible.map(note => renderRelatedNoteRelationItem({
+              note,
+              openAttributes: `
+                data-connected-note-id="${escapeHtml(note.id)}"
+                data-connected-note-context-type="${escapeHtml(contextType)}"
+                data-connected-note-context-id="${escapeHtml(contextId)}"
+              `,
+              removeAttributes: unlinkSupported ? `
+                data-connected-note-unlink="${escapeHtml(note.id)}"
+                data-connected-note-context-type="${escapeHtml(contextType)}"
+                data-connected-note-context-id="${escapeHtml(contextId)}"
+              ` : '',
+              removeContextLabel: contextNoun
+          })).join('')}
         </div>
       `;
 }
@@ -3461,7 +3283,8 @@ function renderRelatedNoteRelationItem({
             <strong
               class="
                 notes-related-title
-              ">
+              "
+              title="${escapeHtml(title)}">
 
               ${escapeHtml(
                     title
@@ -3496,7 +3319,8 @@ function renderRelatedNoteRelationItem({
           <span
             class="
               notes-related-meta
-            ">
+            "
+            title="${escapeHtml(metadata)}">
 
             ${escapeHtml(
                 metadata
@@ -3632,48 +3456,7 @@ function relatedNotePermanentMetadata(
     note
 )
 {
-    const collections =
-        getCollectionsForNote(
-            note.id,
-            {
-                projectId:
-              note.projectId
-            }
-        );
-
-    const collectionLabel =
-        collections.length
-            ? [
-                collections[0].name,
-
-                collections.length > 1
-                    ? `+${collections.length - 1}`
-                    : ''
-            ]
-                .filter(Boolean)
-                .join(' ')
-            : '';
-
-    const linkedCount =
-        noteExternalEntityCount(
-            note
-        );
-
-    return [
-        collectionLabel,
-
-        `${linkedCount} ${
-            linkedCount === 1
-                ? 'linked record'
-                : 'linked records'
-        }`,
-
-        formatNoteRelativeUpdatedAt(
-            note
-        )
-    ]
-        .filter(Boolean)
-        .join(' · ');
+    return formatConnectedNoteMetadata(note);
 }
 
 function renderNoteRelatedSection(
