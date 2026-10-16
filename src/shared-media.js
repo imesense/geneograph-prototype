@@ -5434,6 +5434,16 @@ function rebuildSampleEventsAndPruneSourceLinks()
     sampleData.events =
         buildSampleEvents();
 
+    const eventProjects = new Map(
+        sampleData.events.map(event => [event.id, event.projectId])
+    );
+
+    (sampleData.archiveFiles || []).forEach(file =>
+    {
+        file.linkedEventIds = (file.linkedEventIds || [])
+            .filter(eventId => eventProjects.get(eventId) === file.projectId);
+    });
+
     /*
         Source links are populated later than the
         first generated-event build during startup.

@@ -439,7 +439,7 @@ sampleData.archiveFiles = [
         description: 'Sample marriage extract for Silver and Luna in Meowbridge.',
         documentDate: { type: 'Exact date', value: '18 Aug 2023' }, linkedPersonIds: ['silver', 'luna'],
         personRegions: { silver: { x: 0.065, y: 0.56, width: 0.22, height: 0.06 }, luna: { x: 0.32, y: 0.56, width: 0.2, height: 0.06 } },
-        linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: ['place-meowbridge'], placeIds: ['place-meowbridge'],
+        linkedEventIds: ['event-rel-silver-luna-partner-rel-silver-luna-partner-marriage'], linkedNoteIds: [], linkedPlaceIds: ['place-meowbridge'], placeIds: ['place-meowbridge'],
         addedAt: '2026-05-19T10:00:00Z', updatedAt: '2026-05-19T10:00:00Z', added: 'May 19, 2026', updated: 'May 19, 2026'
     },
     {
@@ -448,7 +448,7 @@ sampleData.archiveFiles = [
         description: 'Sample birth announcement for Silver Whiskerfield.',
         documentDate: { type: 'Exact date', value: '03 Mar 1998' }, linkedPersonIds: ['silver'],
         personRegions: { silver: { x: 0.23, y: 0.36, width: 0.54, height: 0.13 } },
-        linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: ['place-pawford'], placeIds: ['place-pawford'],
+        linkedEventIds: ['event-silver-birth'], linkedNoteIds: [], linkedPlaceIds: ['place-pawford'], placeIds: ['place-pawford'],
         addedAt: '2026-03-29T10:00:00Z', updatedAt: '2026-03-29T10:00:00Z', added: 'Mar 29, 2026', updated: 'Mar 29, 2026'
     },
     {
@@ -456,7 +456,7 @@ sampleData.archiveFiles = [
         previewUrl: 'assets/daisy-birth-record-sample.png', favorite: false,
         description: 'Illustrative birth-record extract for Daisy Whiskerfield.',
         documentDate: { type: 'Exact date', value: '03 Jun 1949' }, linkedPersonIds: ['daisy'], personRegions: { daisy: { x: 0.14, y: 0.36, width: 0.72, height: 0.12 } },
-        linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: ['place-pawford'], placeIds: ['place-pawford'],
+        linkedEventIds: ['event-daisy-birth'], linkedNoteIds: [], linkedPlaceIds: ['place-pawford'], placeIds: ['place-pawford'],
         addedAt: '2026-06-02T09:25:00Z', updatedAt: '2026-06-02T09:25:00Z', added: 'Jun 2, 2026', updated: 'Jun 2, 2026'
     },
     {
@@ -476,7 +476,7 @@ sampleData.archiveFiles = [
     },
     {
         id: 'af-marriage-packet', projectId: 'p1', folderId: 'certificates', name: 'silver_luna_marriage_packet.pdf', kind: 'pdf', type: 'PDF', mimeType: 'application/pdf', assetUrl: 'assets/silver_luna_marriage_packet.pdf', size: '4 KB', sizeBytes: 3229, favorite: false,
-        description: 'Research packet for Silver and Luna’s marriage.', linkedPersonIds: ['silver', 'luna'], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: ['place-meowbridge'], placeIds: ['place-meowbridge'],
+        description: 'Research packet for Silver and Luna’s marriage.', linkedPersonIds: ['silver', 'luna'], linkedEventIds: ['event-rel-silver-luna-partner-rel-silver-luna-partner-marriage'], linkedNoteIds: [], linkedPlaceIds: ['place-meowbridge'], placeIds: ['place-meowbridge'],
         addedAt: '2026-06-02T09:33:00Z', updatedAt: '2026-06-02T09:33:00Z'
     }
 ];
@@ -911,6 +911,59 @@ function openArchiveSourcesForTarget({
     render();
 }
 
+function archiveEventEvidencePeople(event, projectId)
+{
+    if (!event || event.projectId !== projectId || !Array.isArray(event.personIds))
+    {
+        return null;
+    }
+
+    const people = [...new Set(event.personIds)].map(personId => getPerson(personId));
+    return people.every(person => person && person.projectId === projectId)
+        ? people
+        : null;
+}
+
+function backfillEventEvidencePeople()
+{
+    (sampleData.archiveFiles || []).forEach(file =>
+    {
+        (file.linkedEventIds || []).forEach(eventId =>
+        {
+            const event = archiveConnectionRecord('event', eventId);
+            const people = archiveEventEvidencePeople(event, file.projectId);
+            if (people)
+            {
+                file.linkedPersonIds = [...new Set([
+                    ...(file.linkedPersonIds || []),
+                    ...people.map(person => person.id)
+                ])];
+            }
+        });
+    });
+
+    (sampleData.sourceLinks || []).filter(link => link.targetType === 'event').forEach(link =>
+    {
+        const source = archiveSourceById(link.sourceId, link.projectId);
+        const event = archiveConnectionRecord('event', link.targetId);
+        const people = source && archiveEventEvidencePeople(event, link.projectId);
+        if (!people) return;
+        people.forEach(person =>
+        {
+            if (!sourceIdsForTarget('person', person.id, link.projectId).includes(link.sourceId))
+            {
+                sampleData.sourceLinks.push({
+                    id: createRuntimeId('source-link'),
+                    projectId: link.projectId,
+                    sourceId: link.sourceId,
+                    targetType: 'person',
+                    targetId: person.id
+                });
+            }
+        });
+    });
+}
+
 function setSourceIdsForTarget(
     targetType,
     targetId,
@@ -941,6 +994,15 @@ function setSourceIdsForTarget(
         archiveUniqueIds(
             nextSourceIds
         );
+
+    const eventPeople = targetType === 'event'
+        ? archiveEventEvidencePeople(target, targetProjectId)
+        : null;
+
+    if (targetType === 'event' && !eventPeople)
+    {
+        return null;
+    }
 
     const sources =
         normalizedSourceIds.map(
@@ -1010,6 +1072,8 @@ function setSourceIdsForTarget(
             )
         );
 
+    const newlyLinkedSourceIds = normalizedSourceIds.filter(sourceId => !retainedIds.has(sourceId));
+
     normalizedSourceIds.forEach(
         sourceId =>
         {
@@ -1037,6 +1101,23 @@ function setSourceIdsForTarget(
             });
         }
     );
+
+    if (eventPeople)
+    {
+        newlyLinkedSourceIds.forEach(sourceId => eventPeople.forEach(person =>
+        {
+            if (!sourceIdsForTarget('person', person.id, targetProjectId).includes(sourceId))
+            {
+                sampleData.sourceLinks.push({
+                    id: createRuntimeId('source-link'),
+                    projectId: targetProjectId,
+                    sourceId,
+                    targetType: 'person',
+                    targetId: person.id
+                });
+            }
+        }));
+    }
 
     const now =
         new Date().toISOString();
@@ -1726,6 +1807,9 @@ function bindConnectedSourceLinks(
 function openSourcesForTargetModal({
     targetType,
     targetId,
+    draftSourceIds = null,
+    onDraftSave = null,
+    modalOpener = openModal,
 
     autoFocusSearch =
         true,
@@ -1743,7 +1827,8 @@ function openSourcesForTargetModal({
         null
 })
 {
-    const target =
+    const draftMode = Array.isArray(draftSourceIds);
+    const target = draftMode ? { projectId } :
         sourceTargetRecord(
             targetType,
             targetId,
@@ -1789,11 +1874,11 @@ function openSourcesForTargetModal({
       */
     const existingIds =
         new Set(
-            sourceIdsForTarget(
+            (draftMode ? draftSourceIds : sourceIdsForTarget(
                 targetType,
                 targetId,
                 projectId
-            ).filter(sourceId =>
+            )).filter(sourceId =>
                 recordIds.has(sourceId)
             )
         );
@@ -1959,7 +2044,7 @@ function openSourcesForTargetModal({
                         ? `
                     <span
                       class="source-picker-choice-status">
-                      Already linked
+                      ${draftMode ? 'Selected for fact' : 'Already linked'}
                     </span>
                   `
                         : ''
@@ -1978,7 +2063,7 @@ function openSourcesForTargetModal({
                 }
                 aria-label="${
                     alreadyLinked
-                        ? `Already linked: ${escapeHtml(
+                        ? `${draftMode ? 'Selected for fact' : 'Already linked'}: ${escapeHtml(
                             sourceTitle
                         )}`
                         : `Select ${escapeHtml(
@@ -2175,7 +2260,7 @@ function openSourcesForTargetModal({
         targetType === 'photo'
         && state.activeModule === 'Albums';
 
-    openModal(`
+    modalOpener(`
         <div
           class="
             modal
@@ -2394,7 +2479,7 @@ function openSourcesForTargetModal({
                         sourceCountText(
                             availableCount
                         )
-                    } · Уже связано: ${
+                    } · ${draftMode ? 'Выбрано для факта' : 'Уже связано'}: ${
                         sourceCountText(
                             existingIds.size
                         )
@@ -2407,7 +2492,7 @@ function openSourcesForTargetModal({
                         sourceCountText(
                             existingIds.size
                         )
-                    } already linked`;
+                    } ${draftMode ? 'selected for fact' : 'already linked'}`;
 
             resultsHost.innerHTML =
                 visible.length
@@ -2563,6 +2648,13 @@ function openSourcesForTargetModal({
                     ...selectedIds
                 ]);
 
+            if (draftMode)
+            {
+                onDraftSave?.([...selectedIds]);
+                closeModal();
+                return;
+            }
+
             const savedIds =
                 setSourceIdsForTarget(
                     targetType,
@@ -2623,14 +2715,26 @@ function openSourcesForTargetModal({
                 const pendingSourceIds =
                     [...selectedIds];
 
+                if (draftMode && pendingSourceIds.length)
+                {
+                    onDraftSave?.(pendingSourceIds);
+                }
+
                 closeModal();
 
                 openArchiveSourceModal(
                     '',
                     {
+                        modalOpener: draftMode ? openNestedModal : openModal,
+                        targetProjectId: projectId,
                         onCreated:
                   createdSource =>
                   {
+                      if (draftMode)
+                      {
+                          onDraftSave?.([...pendingSourceIds, createdSource.id]);
+                          return;
+                      }
                       const nextSourceIds =
                           archiveUniqueIds([
                               ...existingIds,
@@ -5962,6 +6066,10 @@ function archiveSetConnection(
             entityId
         );
 
+    const eventPeople = entityType === 'event' && shouldLink
+        ? archiveEventEvidencePeople(record, file?.projectId)
+        : null;
+
     if (
         !file
         || (
@@ -5974,6 +6082,7 @@ function archiveSetConnection(
           && record.projectId
             !== file.projectId
         )
+        || (entityType === 'event' && shouldLink && !eventPeople)
     )
     {
         return false;
@@ -6049,6 +6158,14 @@ function archiveSetConnection(
         file[field] =
             [...ids];
 
+        if (entityType === 'event' && shouldLink && eventPeople)
+        {
+            file.linkedPersonIds = [...new Set([
+                ...(file.linkedPersonIds || []),
+                ...eventPeople.map(person => person.id)
+            ])];
+        }
+
 
         if (entityType === 'note')
         {
@@ -6087,6 +6204,11 @@ function archiveSetConnectionsAtomically(
     writes = []
 )
 {
+    const beforePeople = (sampleData.archiveFiles || []).map(file => [
+        file,
+        [...(file.linkedPersonIds || [])]
+    ]);
+    const beforeSourceLinks = [...(sampleData.sourceLinks || [])];
     const normalizedWrites =
         writes.map(write => ({
             ownerType:
@@ -6240,6 +6362,9 @@ function archiveSetConnectionsAtomically(
                         );
                     }
                 });
+
+            beforePeople.forEach(([file, ids]) => { file.linkedPersonIds = ids; });
+            sampleData.sourceLinks = beforeSourceLinks;
 
             return {
                 ok: false,
@@ -14608,6 +14733,7 @@ function openConnectedFilesModal({
 
     existingFileIds =
         [],
+    draftMode = false,
 
     onSave =
         null,
@@ -14916,7 +15042,7 @@ function openConnectedFilesModal({
 
               <span class="connected-files-choice-meta">
                 ${escapeHtml(translateText(connectedFileMeta(file)))}
-                ${existing ? ` · ${escapeHtml(pickerText('Already linked', 'Уже связано'))}` : ''}
+                ${existing ? ` · ${escapeHtml(draftMode ? pickerText('Selected for fact', 'Выбрано для факта') : pickerText('Already linked', 'Уже связано'))}` : ''}
               </span>
 
               <span
@@ -15004,8 +15130,8 @@ function openConnectedFilesModal({
         resultsMeta.textContent = pickerText(
             `${availableCount} ${
                 availableCount === 1 ? 'file' : 'files'
-            }${searching ? ' found' : ''} · ${existingIds.size} already linked`,
-            `Доступно файлов: ${availableCount} · Уже связано: ${existingIds.size}`
+            }${searching ? ' found' : ''} · ${existingIds.size} ${draftMode ? 'selected for fact' : 'already linked'}`,
+            `Доступно файлов: ${availableCount} · ${draftMode ? 'Выбрано для факта' : 'Уже связано'}: ${existingIds.size}`
         );
 
         renderSelectedFiles();
@@ -16027,7 +16153,9 @@ function openArchiveSourceModal(
     sourceId = '',
     {
         onCreated =
-            null
+            null,
+        modalOpener = openModal,
+        targetProjectId = null
     } = {}
 )
 {
@@ -16057,7 +16185,7 @@ function openArchiveSourceModal(
           `)
             .join('');
 
-    openModal(`
+    modalOpener(`
         <div
           class="modal archive-source-modal"
           role="dialog"
@@ -16348,6 +16476,7 @@ function openArchiveSourceModal(
 
             const projectId =
                 source?.projectId
+            || targetProjectId
             || requireActiveProjectId();
 
             if (!projectId)
@@ -24721,6 +24850,8 @@ function createRuntimeId(
         randomPart
     }`;
 }
+
+backfillEventEvidencePeople();
 
 function noteTimestamp(
     note,

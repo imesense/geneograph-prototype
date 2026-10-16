@@ -2,6 +2,19 @@ const SUPPORTED_LANGUAGES = ['en', 'ru'];
 const LANGUAGE_STORAGE_KEY = 'geneograph.language';
 const PROJECT_CONTINUATION_STORAGE_KEY = 'geneograph.projectContinuation';
 const RU_UI_SHARED = Object.freeze({
+    'Evidence': 'Подтверждения',
+    'Evidence files': 'Файлы-подтверждения',
+    'Citations': 'Ссылки на источники',
+    'Add evidence file': 'Добавить файл-подтверждение',
+    'Add evidence files': 'Добавить файлы-подтверждения',
+    'No files linked': 'Нет связанных файлов',
+    'No citations linked': 'Нет связанных источников',
+    'No files selected': 'Файлы не выбраны',
+    'No sources selected': 'Источники не выбраны',
+    'Selected for fact': 'Выбрано для факта',
+    'New files and sources are created in Archive immediately. Their links to this fact are saved only with the fact.': 'Новые файлы и источники сразу появляются в Архиве. Связи с этим фактом сохраняются только вместе с фактом.',
+    'Choose files for this fact. Links are saved with the fact.': 'Выберите файлы для факта. Связи сохранятся вместе с фактом.',
+    'Choose citations for this fact. Links are saved with the fact.': 'Выберите источники для факта. Связи сохранятся вместе с фактом.',
     'New': 'Новое',
     'Choose cover photo': 'Выбрать фото обложки',
     'Select a project photo or upload a new image.': 'Выберите фото проекта или загрузите новое изображение.',

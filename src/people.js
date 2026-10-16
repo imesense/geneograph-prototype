@@ -7257,6 +7257,16 @@ function openAddFactOverlay(person)
           || centralPerson.names?.display
           || 'this person';
 
+    const factEventId = `event-${existingFact?.id || `fact-${personId}`}`;
+    const selectedFileIds = new Set(existingFact
+        ? (sampleData.archiveFiles || []).filter(file =>
+            file.projectId === centralPerson.projectId
+            && (file.linkedEventIds || []).includes(factEventId)).map(file => file.id)
+        : []);
+    const selectedSourceIds = new Set(existingFact
+        ? sourceIdsForTarget('event', factEventId, centralPerson.projectId)
+        : []);
+
     openModal(`
         <form
           class="modal"
@@ -7298,6 +7308,14 @@ function openAddFactOverlay(person)
                     existingFact
                 )}
             </div>
+            <section class="fact-evidence" aria-label="Evidence">
+              <h3>Evidence</h3>
+              <p>New files and sources are created in Archive immediately. Their links to this fact are saved only with the fact.</p>
+              <div class="fact-evidence-heading"><strong>Files</strong><button type="button" class="button secondary" data-fact-add-file>${icon.plus} Add file</button></div>
+              <div data-fact-files></div>
+              <div class="fact-evidence-heading"><strong>Sources</strong><button type="button" class="button secondary" data-fact-add-source>${icon.plus} Add source</button></div>
+              <div data-fact-sources></div>
+            </section>
           </div>
 
           <div class="modal-footer">
@@ -7328,6 +7346,42 @@ function openAddFactOverlay(person)
         modalBackdrop
     );
 
+    const factForm = modalBackdrop.querySelector('#timelineCustomFactForm');
+    const renderEvidence = () =>
+    {
+        const fileHost = factForm.querySelector('[data-fact-files]');
+        const sourceHost = factForm.querySelector('[data-fact-sources]');
+        fileHost.innerHTML = [...selectedFileIds].map(id => archiveFileById(id, centralPerson.projectId))
+            .filter(Boolean).map(file => `<div class="fact-evidence-row"><span data-user-content>${escapeHtml(file.name)}</span><button type="button" class="relation-action-button" data-fact-remove-file="${escapeHtml(file.id)}" aria-label="Remove ${escapeHtml(file.name)}">${icon.close}</button></div>`).join('') || '<span class="panel-muted">No files selected</span>';
+        sourceHost.innerHTML = [...selectedSourceIds].map(id => archiveSourceById(id, centralPerson.projectId))
+            .filter(Boolean).map(source => `<div class="fact-evidence-row"><span data-user-content>${escapeHtml(source.title)}</span><button type="button" class="relation-action-button" data-fact-remove-source="${escapeHtml(source.id)}" aria-label="Remove ${escapeHtml(source.title)}">${icon.close}</button></div>`).join('') || '<span class="panel-muted">No sources selected</span>';
+        localizeUI(factForm, { suppressObserverReplay: true });
+    };
+    factForm.addEventListener('click', event =>
+    {
+        const fileRemove = event.target.closest('[data-fact-remove-file]');
+        const sourceRemove = event.target.closest('[data-fact-remove-source]');
+        if (fileRemove) { selectedFileIds.delete(fileRemove.dataset.factRemoveFile); renderEvidence(); return; }
+        if (sourceRemove) { selectedSourceIds.delete(sourceRemove.dataset.factRemoveSource); renderEvidence(); return; }
+        if (event.target.closest('[data-fact-add-file]'))
+        {
+            openConnectedFilesModal({ projectId: centralPerson.projectId,
+                title: 'Add evidence files', subtitle: 'Choose files for this fact. Links are saved with the fact.',
+                existingFileIds: [...selectedFileIds], draftMode: true,
+                modalOpener: openNestedModal, autoFocusSearch: false,
+                onSave: ids => { ids.forEach(id => selectedFileIds.add(id)); renderEvidence(); return { ok: true }; } });
+        }
+        if (event.target.closest('[data-fact-add-source]'))
+        {
+            openSourcesForTargetModal({ projectId: centralPerson.projectId,
+                title: 'Add sources', subtitle: 'Choose citations for this fact. Links are saved with the fact.',
+                draftSourceIds: [...selectedSourceIds], modalOpener: openNestedModal,
+                autoFocusSearch: false,
+                onDraftSave: ids => { ids.forEach(id => selectedSourceIds.add(id)); renderEvidence(); } });
+        }
+    });
+    renderEvidence();
+
     modalBackdrop
         .querySelector(
             '#timelineCustomFactForm'
@@ -7354,17 +7408,51 @@ function openAddFactOverlay(person)
                     return;
                 }
 
-                applyPersonCustomFact(
-                    centralPerson,
-                    result.value
-                );
-
-                markPersonUpdated(
-                    centralPerson
-                );
-
-                sampleData.events =
+                const projectId = centralPerson.projectId;
+                const validFiles = [...selectedFileIds].every(id => archiveFileById(id, projectId));
+                const validSources = [...selectedSourceIds].every(id => archiveSourceById(id, projectId));
+                if (!validFiles || !validSources)
+                {
+                    showToast('An evidence record is no longer available.');
+                    return;
+                }
+                const beforeAttributes = structuredClone(centralPerson.attributes);
+                const beforeFileLinks = (sampleData.archiveFiles || []).map(file => [
+                    file,
+                    [...(file.linkedEventIds || [])],
+                    [...(file.linkedPersonIds || [])]
+                ]);
+                const beforeSourceLinks = structuredClone(sampleData.sourceLinks || []);
+                const beforeUpdatedAt = centralPerson.updatedAt;
+                try
+                {
+                    applyPersonCustomFact(centralPerson, result.value);
+                    const savedFact = personAttributeByTag(centralPerson, 'FACT');
+                    const eventId = `event-${savedFact.id}`;
                     rebuildSampleEventsAndPruneSourceLinks();
+                    if (!sourceTargetRecord('event', eventId, projectId)) throw new Error('Fact event was not created');
+                    const writes = (sampleData.archiveFiles || []).filter(file => file.projectId === projectId
+                        && (selectedFileIds.has(file.id) || (file.linkedEventIds || []).includes(eventId)))
+                        .map(file => ({ ownerType: 'file', ownerId: file.id, entityType: 'event', entityId: eventId, shouldLink: selectedFileIds.has(file.id) }));
+                    if (archiveSetConnectionsAtomically(writes)?.ok === false) throw new Error('File links could not be saved');
+                    const savedSources = setSourceIdsForTarget('event', eventId, [...selectedSourceIds], { projectId });
+                    if (!Array.isArray(savedSources) || selectedSourceIds.size !== savedSources.length) throw new Error('Source links could not be saved');
+                    markPersonUpdated(centralPerson);
+                }
+                catch (error)
+                {
+                    centralPerson.attributes = beforeAttributes;
+                    centralPerson.updatedAt = beforeUpdatedAt;
+                    beforeFileLinks.forEach(([file, eventIds, personIds]) =>
+                    {
+                        file.linkedEventIds = eventIds;
+                        file.linkedPersonIds = personIds;
+                    });
+                    sampleData.sourceLinks = beforeSourceLinks;
+                    rebuildSampleEventsAndPruneSourceLinks();
+                    showToast(error.message || 'Fact and evidence could not be saved.');
+                    return;
+                }
 
                 closeModal();
 

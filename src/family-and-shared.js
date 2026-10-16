@@ -4234,17 +4234,38 @@ function timelineEventDetail(event, personId)
     return timelineDetailLines(datePlaceLines);
 }
 
+const timelineExpandedEvidence = new Set();
+
+function timelineEvidenceFiles(event)
+{
+    return (sampleData.archiveFiles || []).filter(file =>
+        file.projectId === event.projectId
+        && (file.linkedEventIds || []).includes(event.id));
+}
+
+function timelineEvidenceCount(count, singular, plural, ruForms)
+{
+    if (state.language !== 'ru') return `${count} ${count === 1 ? singular : plural}`;
+    const form = count % 10 === 1 && count % 100 !== 11 ? 0
+        : count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 12 || count % 100 > 14) ? 1 : 2;
+    return `${count} ${ruForms[form]}`;
+}
+
 function renderTimelineItem(
     event,
     personId
 )
 {
-    const sourceCount =
+    const sources =
         sourcesForTarget(
             'event',
             event.id,
             event.projectId
-        ).length;
+        );
+    const files = timelineEvidenceFiles(event);
+    const key = `${event.projectId}:${event.id}`;
+    const expanded = timelineExpandedEvidence.has(key);
+    const panelId = `timeline-evidence-${escapeHtml(event.id)}`;
 
     return `
         <div class="timeline-item">
@@ -4275,11 +4296,13 @@ function renderTimelineItem(
           </div>
 
           <div class="timeline-copy">
-            <strong>
-              ${escapeHtml(
-                    event.title
-                )}
-            </strong>
+            <button class="timeline-evidence-toggle" type="button"
+              data-timeline-evidence-toggle="${escapeHtml(event.id)}"
+              data-event-project="${escapeHtml(event.projectId)}"
+              aria-expanded="${expanded}" aria-controls="${panelId}">
+              <strong>${escapeHtml(event.title)}</strong>
+              <span class="timeline-evidence-chevron" aria-hidden="true">${icon.chevron}</span>
+            </button>
 
             <span>
               ${String(
@@ -4291,34 +4314,13 @@ function renderTimelineItem(
                 )}
             </span>
 
-            <button
-              class="
-                link
-                timeline-source-action
-              "
-              type="button"
-              data-event-manage-sources="${escapeHtml(
-                    event.id
-                )}"
-              data-event-source-project="${escapeHtml(
-                    event.projectId
-                || currentProjectId()
-                )}">
-
-              ${icon.archive}
-
-              <span>
-                ${
-                    sourceCount
-                        ? `${sourceCount} ${
-                            sourceCount === 1
-                                ? 'source'
-                                : 'sources'
-                        }`
-                        : 'Add source'
-                }
-              </span>
-            </button>
+            ${files.length || sources.length ? `<span class="timeline-evidence-summary">${files.length ? timelineEvidenceCount(files.length, 'file', 'files', ['файл', 'файла', 'файлов']) : ''}${files.length && sources.length ? ' · ' : ''}${sources.length ? timelineEvidenceCount(sources.length, 'citation', 'citations', ['источник', 'источника', 'источников']) : ''}</span>` : ''}
+            <div id="${panelId}" class="timeline-evidence" ${expanded ? '' : 'hidden'}>
+              <div class="timeline-evidence-heading"><strong>Evidence files</strong><button type="button" class="link" data-event-add-file="${escapeHtml(event.id)}" data-event-project="${escapeHtml(event.projectId)}">${icon.plus} Add file</button></div>
+              ${files.length ? files.map(file => `<div class="timeline-evidence-row"><span class="timeline-evidence-file-icon" aria-hidden="true">${icon.file}</span>${archiveCanViewFile(file) ? `<button type="button" class="link timeline-evidence-name" data-user-content data-event-open-file="${escapeHtml(file.id)}" title="${escapeHtml(file.name)}" aria-label="${escapeHtml(file.name)}">${escapeHtml(file.name)}</button>` : `<span class="timeline-evidence-name" data-user-content tabindex="0" title="${escapeHtml(file.name)}">${escapeHtml(file.name)}</span>`}<button type="button" class="relation-action-button" data-event-unlink-file="${escapeHtml(file.id)}" data-event-id="${escapeHtml(event.id)}" aria-label="Unlink ${escapeHtml(file.name)}" title="${escapeHtml(state.language === 'ru' ? 'Убрать связь' : 'Unlink file')}">${icon.close}</button></div>`).join('') : '<span class="timeline-evidence-empty">No files linked</span>'}
+              <div class="timeline-evidence-heading"><strong>Citations</strong><button type="button" class="link" data-event-manage-sources="${escapeHtml(event.id)}" data-event-source-project="${escapeHtml(event.projectId)}">${icon.plus} Add source</button></div>
+              ${sources.length ? sources.map(source => `<div class="timeline-evidence-row"><span class="timeline-evidence-file-icon" aria-hidden="true">${icon.archive}</span><span class="timeline-evidence-name" data-user-content tabindex="0" title="${escapeHtml(source.title || 'Untitled source')}">${escapeHtml(source.title || 'Untitled source')}</span><button type="button" class="relation-action-button" data-event-unlink-source="${escapeHtml(source.id)}" data-event-id="${escapeHtml(event.id)}" data-event-project="${escapeHtml(event.projectId)}" aria-label="Unlink ${escapeHtml(source.title || 'source')}" title="${escapeHtml(state.language === 'ru' ? 'Убрать связь' : 'Unlink source')}">${icon.close}</button></div>`).join('') : '<span class="timeline-evidence-empty">No citations linked</span>'}
+            </div>
           </div>
         </div>
       `;
@@ -4332,6 +4334,38 @@ function bindTimelineSourceControls(
     } = {}
 )
 {
+    root?.querySelectorAll('[data-timeline-evidence-toggle]').forEach(button =>
+        button.addEventListener('click', () => {
+            const key = `${button.dataset.eventProject}:${button.dataset.timelineEvidenceToggle}`;
+            const expanded = !timelineExpandedEvidence.has(key);
+            if (expanded) timelineExpandedEvidence.add(key);
+            else timelineExpandedEvidence.delete(key);
+            button.setAttribute('aria-expanded', String(expanded));
+            const panel = button.closest('.timeline-item')?.querySelector('.timeline-evidence');
+            if (panel) panel.hidden = !expanded;
+        }));
+    root?.querySelectorAll('[data-event-add-file]').forEach(button =>
+        button.addEventListener('click', () => {
+            const eventId = button.dataset.eventAddFile;
+            const projectId = button.dataset.eventProject;
+            const event = sourceTargetRecord('event', eventId, projectId);
+            if (!event) return showToast('The event is no longer available.');
+            openConnectedFilesModal({ projectId, title: 'Add evidence file',
+                subtitle: `Connect Archive files to ${event.title}.`,
+                existingFileIds: timelineEvidenceFiles(event).map(file => file.id),
+                onSave: ids => archiveSetConnectionsAtomically(ids.map(id => ({ ownerType: 'file', ownerId: id, entityType: 'event', entityId: eventId, shouldLink: true }))),
+                afterSave } );
+        }));
+    root?.querySelectorAll('[data-event-open-file]').forEach(button =>
+        button.addEventListener('click', () => openArchiveDocumentViewer(button.dataset.eventOpenFile)));
+    root?.querySelectorAll('[data-event-unlink-file]').forEach(button =>
+        button.addEventListener('click', () => {
+            if (archiveSetConnection('file', button.dataset.eventUnlinkFile, 'event', button.dataset.eventId, false)) afterSave?.();
+        }));
+    root?.querySelectorAll('[data-event-unlink-source]').forEach(button =>
+        button.addEventListener('click', () => {
+            if (setSourceLink(button.dataset.eventUnlinkSource, 'event', button.dataset.eventId, false, { projectId: button.dataset.eventProject })) afterSave?.();
+        }));
     root
         ?.querySelectorAll(
             '[data-event-manage-sources]'
