@@ -2926,6 +2926,33 @@ body.mobile-details-open .geneo-inspector [data-geneo-inspector-toggle] {
 .geneo-transfer-modal .button:disabled { opacity: .5; cursor: not-allowed; }
 @media (max-width: 390px) { .geneo-transfer-create > div { flex-wrap: wrap; } .geneo-transfer-create input { flex-basis: 100%; } }
 @media (max-width: 540px) { .geneo-transfer-modal { width: 100%; max-height: 100dvh; height: 100dvh; } .geneo-transfer-body { padding: 16px; } }
+.geneo-board-chooser-modal { width: min(660px, calc(100vw - 24px)); max-height: min(760px, calc(100dvh - 24px)); }
+.geneo-board-chooser-modal .geneo-transfer-body { gap: 12px; padding: 20px 24px 24px; }
+.geneo-transfer-search { display: grid; gap: 8px; }
+.geneo-transfer-search > label { font-weight: 600; }
+.geneo-board-chooser-modal .geneo-transfer-list { max-height: min(42dvh, 408px); gap: 8px; padding: 2px; margin: -2px; }
+.geneo-board-chooser-modal .geneo-transfer-choice { min-height: 86px; gap: 14px; padding: 10px 12px; background: var(--surface-card); transition: border-color .15s, background .15s; }
+.geneo-board-chooser-modal .geneo-transfer-choice:hover { border-color: var(--border-strong); background: var(--surface-card-hover); }
+.geneo-board-chooser-modal .geneo-transfer-choice.selected { border-color: var(--brand-green-500); background: var(--surface-selected); }
+.geneo-board-chooser-modal .geneo-transfer-choice:focus-within:not(.selected) { outline: 2px solid var(--brand-green-500); outline-offset: 2px; }
+.geneo-board-chooser-modal .geneo-transfer-choice input:focus-visible { outline: 2px solid var(--brand-green-500); outline-offset: 3px; }
+.geneo-board-chooser-modal .geneo-transfer-preview { width: 62px; height: 62px; }
+.geneo-board-chooser-modal .geneo-transfer-copy { gap: 5px; }
+.geneo-board-chooser-modal .geneo-transfer-copy strong { display: -webkit-box; overflow: hidden; white-space: normal; -webkit-box-orient: vertical; -webkit-line-clamp: 2; font-size: 15px; line-height: 1.3; }
+.geneo-board-chooser-modal .geneo-transfer-copy small { display: -webkit-box; overflow: hidden; white-space: normal; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-height: 1.35; }
+.geneo-board-chooser-modal .geneo-transfer-choice input[type="radio"] { flex: none; width: 18px; height: 18px; margin: 0 2px 0 0; accent-color: var(--brand-green-500); }
+.geneo-transfer-empty { margin: 0; padding: 28px 12px; color: var(--text-secondary); text-align: center; }
+.geneo-transfer-create-toggle { display: flex; align-items: center; gap: 9px; width: 100%; min-height: 44px; padding: 10px 2px; border: 0; border-top: 1px solid var(--border-default); background: transparent; color: var(--brand-green-500); text-align: left; font: inherit; font-weight: 650; cursor: pointer; }
+.geneo-transfer-create-toggle svg { width: 17px; height: 17px; flex: none; }
+.geneo-transfer-create-toggle svg:last-child { margin-left: auto; transform: rotate(90deg); transition: transform .15s; }
+.geneo-transfer-create-toggle.active svg:last-child { transform: rotate(-90deg); }
+.geneo-transfer-create-toggle:hover { color: var(--text-primary); }
+.geneo-transfer-create-toggle:focus-visible { outline: 2px solid var(--brand-green-500); outline-offset: 2px; }
+.geneo-board-chooser-modal .geneo-transfer-create { margin-top: -8px; padding: 0 0 4px; border: 0; }
+.geneo-board-chooser-modal .geneo-transfer-create[hidden] { display: none; }
+.geneo-board-chooser-modal .geneo-transfer-create input { width: 100%; }
+.geneo-transfer-summary { min-width: 0; margin-right: auto; color: var(--text-secondary); font-size: 13px; }
+@media (max-width: 540px) { .geneo-board-chooser-modal { width: 100%; max-height: 100dvh; height: 100dvh; } .geneo-board-chooser-modal .geneo-transfer-body { flex: 1; padding: 16px; align-content: start; } .geneo-board-chooser-modal .geneo-transfer-list { max-height: none; } .geneo-board-chooser-modal .geneo-transfer-summary { display: none; } .geneo-board-chooser-modal .modal-footer { gap: 8px; } .geneo-board-chooser-modal .modal-footer .button.primary { flex: 1; } }
 .geneo-import-action { width: 100%; margin-top: 12px; }
 .geneo-tree-import-modal { width: min(880px, 100%); }
 .geneo-tree-import-modal .geneo-transfer-body { display: block; }

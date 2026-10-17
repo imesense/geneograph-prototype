@@ -22,12 +22,22 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 const before = board.diagram.nodes.length;
                 openGeneographBoardChooser(['cleo']);
                 const chooserWidth = document.querySelector('.geneo-transfer-modal').getBoundingClientRect().width;
+                document.querySelector('[data-geneo-toggle-create]').click();
+                const nameInput = document.querySelector('#geneoNewBoardName');
+                nameInput.value = 'Test board';
+                nameInput.dispatchEvent(new Event('input', { bubbles: true }));
+                const createReady = !document.querySelector('[data-geneo-add-to-board]').disabled
+                    && document.querySelector('[data-geneo-add-to-board]').textContent === 'Create and add';
+                document.querySelector('input[name="geneoBoardChoice"]').click();
+                const createCollapsed = document.querySelector('#geneoTransferCreate').hidden;
                 geneoBoardChooserDraft.boardId = 'gb1';
                 geneoAddPeopleToBoard('gb1');
                 const after = board.diagram.nodes.length;
                 const undo = geneoHistoryRuntime.undo.length;
                 openGeneographBoardChooser(['cleo']);
                 geneoBoardChooserDraft.boardId = 'gb1';
+                document.querySelector('input[name="geneoBoardChoice"]').click();
+                const openAction = document.querySelector('[data-geneo-add-to-board]').textContent;
                 geneoAddPeopleToBoard('gb1');
                 const repeat = board.diagram.nodes.length;
 
@@ -47,7 +57,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 const linked = board.diagram.people.find(person => person.id === 'gp-iris').treePersonId;
                 openGeneographTreeImport();
                 const repeatImport = geneoTreeImportPreview(geneoTreeImportDraft);
-                return { before, after, repeat, undo, chooserWidth, importWidth, group,
+                return { before, after, repeat, undo, chooserWidth, createReady, createCollapsed, openAction, importWidth, group,
                     conflict: conflict.error, clean: clean.error, peopleBefore, unchanged, imported,
                     linked, repeatError: repeatImport.error, pageOverflow: document.documentElement.scrollWidth - innerWidth };
             });
@@ -55,6 +65,9 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             assert.equal(result.repeat, result.after);
             assert.equal(result.undo, 1);
             assert.ok(result.chooserWidth <= width);
+            assert.equal(result.createReady, true);
+            assert.equal(result.createCollapsed, true);
+            assert.equal(result.openAction, 'Open board');
             assert.ok(result.importWidth <= width);
             assert.ok(result.group.includes('gp-iris'));
             assert.ok(result.conflict);
