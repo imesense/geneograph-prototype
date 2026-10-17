@@ -10933,6 +10933,11 @@ function renderGeneographObject(node)
                 node
             )
             : null;
+    const boardPerson = node.type === 'person' ? getGeneographPerson(node.personId) : null;
+    const treeMatch = boardPerson?.treePersonId ? getPerson(boardPerson.treePersonId) : null;
+    const personLinked = Boolean(treeMatch && !treeMatch.deleted && treeMatch.projectId === currentProjectId());
+    const highlight = geneoCanvasRuntime.peopleHighlight || 'all';
+    const dimmed = boardPerson && highlight !== 'all' && (highlight === 'linked' ? !personLinked : personLinked);
     const visibleAppearance =
         geneoResolveVisibleNodeAppearance(
             node
@@ -11058,12 +11063,14 @@ function renderGeneographObject(node)
                     : 'stroke-none'
             }
             ${genderColorClass}
+            ${dimmed ? 'geneo-person-dimmed' : ''}
           "
           style="${style}"
           data-geneo-node="${escapeHtml(
                 node.id
             )}"
           ${node.type === 'shape' ? `data-geneo-shape-kind="${escapeHtml(normalizeGeneographShapeKind(node.shapeKind))}"` : ''}
+          ${boardPerson ? `data-geneo-person-link-status="${personLinked ? 'linked' : boardPerson.treePersonId ? 'attention' : 'board'}"` : ''}
           ${
                 personSettings
                     ? `
@@ -11085,7 +11092,7 @@ function renderGeneographObject(node)
           tabindex="0"
           aria-label="${escapeHtml(
                 geneoNodeTitle(node)
-            )}">
+            )}${boardPerson ? `, ${personLinked ? 'Linked to Family Tree' : boardPerson.treePersonId ? 'Link needs attention' : 'Board only'}` : ''}">
           <div
             class="geneo-node-content">
             ${renderGeneographNodeContent(
@@ -14123,6 +14130,11 @@ function renderGeneographInspector()
 
     const canvas =
         selectedGeneographDiagram().canvas;
+    const people = selectedGeneographDiagram().people;
+    const linkedCount = people.filter(person => {
+        const tree = person.treePersonId && getPerson(person.treePersonId);
+        return tree && !tree.deleted && tree.projectId === currentProjectId();
+    }).length;
     const appearanceContent = `
         ${renderGeneoPaintControl({
             scope: 'canvas',
@@ -14204,6 +14216,13 @@ function renderGeneographInspector()
                 content: appearanceContent
             })}
 
+
+            ${renderGeneographInspectorSection({
+                context: 'canvas',
+                id: 'peopleStatus',
+                title: 'People links',
+                content: `<div class="geneo-field"><label for="geneoPeopleHighlight">Highlight people</label><div class="common-select-shell"><select class="common-select" id="geneoPeopleHighlight" data-geneo-people-highlight><option value="all" ${geneoCanvasRuntime.peopleHighlight === 'all' ? 'selected' : ''}>All</option><option value="board" ${geneoCanvasRuntime.peopleHighlight === 'board' ? 'selected' : ''}>Board only</option><option value="linked" ${geneoCanvasRuntime.peopleHighlight === 'linked' ? 'selected' : ''}>Linked</option></select><span class="common-select-chevron" aria-hidden="true">${icon.chevron}</span></div><small class="panel-muted">${linkedCount} ${t('linked')} · ${people.length - linkedCount} ${t('board only')}</small></div>`
+            })}
 
             ${renderGeneographInspectorSection({
                 context: 'canvas',
@@ -14657,9 +14676,10 @@ function renderGeneographPersonTreeLinkSection(
                 person.treePersonId
             )
             : null;
+    const validLink = linkedPerson && !linkedPerson.deleted && linkedPerson.projectId === currentProjectId();
 
     const content =
-        linkedPerson
+        validLink
             ? (() =>
             {
                 const name =
@@ -14745,7 +14765,7 @@ function renderGeneographPersonTreeLinkSection(
                 </div>
               `;
             })()
-            : `
+            : person?.treePersonId ? `<div class="relation-row geneo-tree-link-row is-warning"><button class="relation-row-main" type="button" data-geneo-link-person><span class="geneo-tree-link-warning-icon" aria-hidden="true">${icon.warning}</span><span class="relation-row-copy"><strong>Link needs attention</strong><span>Tree person is unavailable. Choose another match.</span></span></button></div>` : `
             <div
               class="
                 relation-row
@@ -14787,7 +14807,7 @@ function renderGeneographPersonTreeLinkSection(
         context: 'person',
         id: 'familyTreeLink',
         title: 'Family Tree link',
-        content: `${content}<button class="button secondary geneo-import-action" type="button" data-geneo-import-family>Add to Family Tree</button>`
+        content: `${content}<button class="button secondary geneo-import-action" type="button" data-geneo-import-family>${validLink ? 'Review changes' : person?.treePersonId ? 'Repair Tree link' : 'Add to Family Tree'}</button>`
     });
 }
 
@@ -22472,7 +22492,8 @@ function openGeneographTreePersonPicker()
         boardPerson.treePersonId
         && getPerson(
             boardPerson.treePersonId
-        )
+        )?.projectId === currentProjectId()
+        && !getPerson(boardPerson.treePersonId)?.deleted
             ? boardPerson.treePersonId
             : '';
 
@@ -26789,7 +26810,12 @@ function bindGeneographEditor()
             });
         });
     main.querySelector('[data-geneo-link-person]')?.addEventListener('click', openGeneographTreePersonPicker);
-    main.querySelector('[data-geneo-import-family]')?.addEventListener('click', () => openGeneographTreeImport());
+    main.querySelector('[data-geneo-import-family]')?.addEventListener('click', () => {
+        const person = getGeneographPerson(selectedGeneographNode()?.personId);
+        const tree = person?.treePersonId ? getPerson(person.treePersonId) : null;
+        if (person?.treePersonId && (!tree || tree.deleted || tree.projectId !== currentProjectId())) openGeneographTreePersonPicker();
+        else openGeneographTreeImport();
+    });
     main.querySelector('[data-geneo-edit-person]')?.addEventListener('click', () =>
     {
         const person = getGeneographPerson(selectedGeneographNode()?.personId); if (person) openGeneographPersonModal(person.id);
@@ -26965,6 +26991,10 @@ function bindGeneographEditor()
     main.querySelectorAll('[data-geneo-background-pattern]').forEach(button => button.addEventListener('click', () => updateGeneoCanvasSetting('backgroundPattern', button.dataset.geneoBackgroundPattern)));
     main.querySelector('[data-geneo-sockets]')?.addEventListener('change', event => updateGeneoCanvasSetting('alwaysShowSockets', event.target.checked));
     main.querySelector('[data-geneo-snap]')?.addEventListener('change', event => updateGeneoCanvasSetting('snapToGrid', event.target.checked));
+    main.querySelector('[data-geneo-people-highlight]')?.addEventListener('change', event => {
+        geneoCanvasRuntime.peopleHighlight = event.target.value;
+        renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true });
+    });
     main.querySelector('[data-geneo-person-gender-colors]')?.addEventListener('change', event => updateGeneoCanvasSetting('colorPersonCardsByGender', event.target.checked));
     bindGeneographInspectorNameField();
     bindGeneographPersonCardControls();

@@ -75,7 +75,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                     count: sampleData.people.length };
                 openGeneographTreeImport();
                 geneoTreeImportDraft.choices.set('gp-iris', 'cleo');
-                geneoTreeImportDraft.fields.set('gp-iris', new Set(['names.first']));
+                geneoTreeImportDraft.fields.set('gp-iris', new Map([['names.first', 'tree']]));
                 geneoTreeImportDraft.relations.forEach(relation => geneoTreeImportDraft.skippedRelations.add(relation.id));
                 const preview = geneoTreeImportPreview(geneoTreeImportDraft);
                 geneoTreeImportCommit();
@@ -88,6 +88,21 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             assert.equal(merge.after.last, merge.before.last);
             assert.equal(merge.after.count, merge.before.count);
             assert.equal(merge.link, 'cleo');
+            const reverse = await page.evaluate(() =>
+            {
+                const board = getGeneographBoard('gb1');
+                const person = board.diagram.people.find(item => item.id === 'gp-iris');
+                const tree = getPerson('cleo');
+                openGeneographTreeImport();
+                geneoTreeImportDraft.choices.set('gp-iris', 'cleo');
+                geneoTreeImportDraft.fields.set('gp-iris', new Map([['names.last', 'board']]));
+                geneoTreeImportDraft.relations.forEach(relation => geneoTreeImportDraft.skippedRelations.add(relation.id));
+                const error = geneoTreeImportPreview(geneoTreeImportDraft).error;
+                geneoTreeImportCommit();
+                return { error, boardLast: person.names.last, treeLast: tree.names.last };
+            });
+            assert.equal(reverse.error, undefined);
+            assert.equal(reverse.boardLast, reverse.treeLast);
             assert.deepEqual(errors, []);
             await page.close();
         }
