@@ -47,6 +47,36 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 const importWidth = document.querySelector('.geneo-tree-import-modal').getBoundingClientRect().width;
                 const draft = geneoTreeImportDraft;
                 const group = draft.people.map(person => person.id);
+                const modal = document.querySelector('.geneo-tree-import-modal');
+                const photoAvatar = Boolean(modal.querySelector('.geneo-review-rail .geneo-review-avatar.has-photo'));
+                const noFamilyDestination = !modal.querySelector('[data-geneo-review-person="family"]');
+                let inlineRelations = 0;
+                for (const person of draft.people)
+                {
+                    modal.querySelector(`[data-geneo-review-person="${person.id}"]`).click();
+                    inlineRelations += modal.querySelectorAll('[data-geneo-import-skip-relation]').length;
+                }
+                modal.querySelector('[data-geneo-review-person="gp-iris"]').click();
+                const relationControl = modal.querySelector('[data-geneo-import-skip-relation]');
+                const relationId = relationControl?.dataset.geneoImportSkipRelation;
+                relationControl?.click();
+                const inlineSkipWorks = Boolean(relationId && draft.skippedRelations.has(relationId));
+                modal.querySelector(`[data-geneo-import-skip-relation="${relationId}"]`)?.click();
+                modal.querySelector('[data-geneo-import-mode="skip"]')?.click();
+                const autoSkippedRelation = Boolean(modal.querySelector('.geneo-import-relation small')?.textContent.includes('A connected person is skipped.'))
+                    && !modal.querySelector('[data-geneo-import-skip-relation]');
+                modal.querySelector('[data-geneo-import-mode="create"]')?.click();
+                const createChoice = Boolean(modal.querySelector('[data-geneo-import-mode="create"]'));
+                const searchHiddenForCreate = !modal.querySelector('[data-geneo-import-match-search]');
+                modal.querySelector('[data-geneo-import-mode="match"]')?.click();
+                const searchShownForMatch = Boolean(modal.querySelector('[data-geneo-import-match-search]'));
+                const onlyMatchSelected = modal.querySelector('[data-geneo-import-mode="match"]')?.getAttribute('aria-pressed') === 'true'
+                    && modal.querySelector('[data-geneo-import-mode="create"]')?.getAttribute('aria-pressed') === 'false';
+                const pendingMatchBlocksApply = modal.querySelector('[data-geneo-import-commit]').disabled;
+                const pendingMatchCopy = modal.querySelector('.geneo-review-empty-target')?.textContent === 'Choose a Tree person';
+                modal.querySelector('[data-geneo-import-mode="create"]')?.click();
+                const createRestored = modal.querySelector('[data-geneo-import-mode="create"]')?.getAttribute('aria-pressed') === 'true'
+                    && !modal.querySelector('[data-geneo-import-commit]').disabled;
                 draft.choices.set('gp-iris', 'barnaby');
                 const conflict = geneoTreeImportPreview(draft);
                 const unchanged = sampleData.people.length;
@@ -58,6 +88,10 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 openGeneographTreeImport();
                 const repeatImport = geneoTreeImportPreview(geneoTreeImportDraft);
                 return { before, after, repeat, undo, chooserWidth, createReady, createCollapsed, openAction, importWidth, group,
+                    photoAvatar, noFamilyDestination, inlineRelations, inlineSkipWorks, autoSkippedRelation,
+                    relationCount: draft.relations.length,
+                    createChoice, searchHiddenForCreate, searchShownForMatch,
+                    onlyMatchSelected, pendingMatchBlocksApply, pendingMatchCopy, createRestored,
                     conflict: conflict.error, clean: clean.error, peopleBefore, unchanged, imported,
                     linked, repeatError: repeatImport.error, pageOverflow: document.documentElement.scrollWidth - innerWidth };
             });
@@ -70,6 +104,18 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             assert.equal(result.openAction, 'Open board');
             assert.ok(result.importWidth <= width);
             assert.ok(result.group.includes('gp-iris'));
+            assert.equal(result.photoAvatar, true);
+            assert.equal(result.noFamilyDestination, true);
+            assert.equal(result.inlineRelations, result.relationCount);
+            assert.equal(result.inlineSkipWorks, true);
+            assert.equal(result.autoSkippedRelation, true);
+            assert.equal(result.createChoice, true);
+            assert.equal(result.searchHiddenForCreate, true);
+            assert.equal(result.searchShownForMatch, true);
+            assert.equal(result.onlyMatchSelected, true);
+            assert.equal(result.pendingMatchBlocksApply, true);
+            assert.equal(result.pendingMatchCopy, true);
+            assert.equal(result.createRestored, true);
             assert.ok(result.conflict);
             assert.equal(result.unchanged, result.peopleBefore);
             assert.equal(result.clean, undefined);
@@ -138,6 +184,22 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             assert.equal(review.reset, true);
             assert.equal(review.matchOpen, true);
             assert.equal(review.modalOverflow, 0);
+            const russian = await page.evaluate(() =>
+            {
+                setLanguage('ru');
+                openGeneographTreeImport();
+                const modal = document.querySelector('.geneo-tree-import-modal');
+                const owner = geneoTreeImportDraft.relations.find(relation => relation.type === 'child');
+                if (owner) modal.querySelector(`[data-geneo-review-person="${geneoTreeImportRelationOwner(owner)}"]`)?.click();
+                return {
+                    relation: modal.querySelector('.geneo-import-relation strong')?.textContent || '',
+                    footer: modal.querySelector('[data-geneo-import-commit]')?.textContent || '',
+                    overflow: modal.querySelector('[data-geneo-import-body]').scrollWidth - modal.querySelector('[data-geneo-import-body]').clientWidth
+                };
+            });
+            assert.ok(russian.relation.includes('Ребёнок'));
+            assert.ok(russian.footer.includes('Применить'));
+            assert.equal(russian.overflow, 0);
             if (process.env.GENEO_REVIEW_SCREENSHOT_DIR)
                 await page.screenshot({ path: path.join(process.env.GENEO_REVIEW_SCREENSHOT_DIR, `review-${width}.png`) });
             assert.deepEqual(errors, []);
