@@ -8609,6 +8609,13 @@ function openPeopleActionsMenu(
         <button
           type="button"
           role="menuitem"
+          data-people-action="board">
+          Add to Geneograph board
+        </button>
+
+        <button
+          type="button"
+          role="menuitem"
           class="danger"
           data-people-action="delete">
           Delete person
@@ -8668,6 +8675,11 @@ function openPeopleActionsMenu(
                 showPersonInFamilyTree(
                     person.id
                 );
+            }
+
+            if (action === 'board')
+            {
+                openGeneographBoardChooser([person.id]);
             }
 
             if (action === 'delete')
@@ -9807,7 +9819,7 @@ function bindPeopleToolbarControls(rows)
     });
     main.querySelector('#addPeoplePerson')?.addEventListener('click', () => openAddPersonModal('Add person', 'Create a new person in this project'));
     main.querySelector('[data-people-bulk-export]')?.addEventListener('click', () => showToast('Export selected people'));
-    main.querySelector('[data-people-bulk-add-board]')?.addEventListener('click', () => showToast('Add selected people to a Geneograph board'));
+    main.querySelector('[data-people-bulk-add-board]')?.addEventListener('click', () => openGeneographBoardChooser(state.peopleSelectedIds));
     main.querySelector('[data-people-bulk-delete]')?.addEventListener('click', () => openDeletePeopleConfirm(state.peopleSelectedIds));
     main.querySelector('[data-people-bulk-clear]')?.addEventListener('click', () =>
     {

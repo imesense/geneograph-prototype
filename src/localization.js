@@ -1055,6 +1055,31 @@ const RU_UI_PEOPLE = {
     'Save relationship': 'Сохранить связь'
 };
 const RU_UI_GENEO = {
+    'Choose a board': 'Выбрать холст',
+    'Add to Geneograph board': 'Добавить на холст Генеографа',
+    'Add to board': 'Добавить на холст',
+    'Include archived boards': 'Показать архивные холсты',
+    'Create and add': 'Создать и добавить',
+    'Add to Family Tree': 'Добавить в Семейное древо',
+    'Add family to Family Tree': 'Добавить семью в Семейное древо',
+    'Review people, possible matches, facts, and relationships before importing.': 'Проверьте людей, возможные совпадения, факты и родственные связи перед импортом.',
+    'People to review': 'Люди для проверки',
+    'Match board people to Tree records, create new people, or skip them. Suggested matches are never chosen automatically.': 'Сопоставьте людей с записями древа, создайте новых или пропустите. Совпадения не выбираются автоматически.',
+    'Tree action': 'Действие в древе',
+    'Find existing person': 'Найти человека в древе',
+    'Search by name, date, or place': 'Поиск по имени, дате или месту',
+    'Create new person': 'Создать человека',
+    'Skip person': 'Пропустить человека',
+    'Fact differences': 'Различия в фактах',
+    'Family links': 'Родственные связи',
+    'Keep Tree value': 'Оставить значение древа',
+    'Use board value': 'Взять значение с холста',
+    'Only family links are included. Decorative connections stay on the board.': 'Переносятся только родственные связи. Декоративные линии остаются на холсте.',
+    'Needs resolution': 'Требует решения',
+    'Already in Tree': 'Уже есть в древе',
+    'Will add': 'Будет добавлено',
+    'Skipped': 'Пропущено',
+    'Import': 'Импортировать',
     // ========================================
     // Module
     // ========================================

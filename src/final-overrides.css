@@ -2907,3 +2907,44 @@ body.mobile-details-open .geneo-inspector [data-geneo-inspector-toggle] {
     body #modalBackdrop.modal-backdrop.open:has(.archive-person-area-modal) { padding: 0; }
     #modalBackdrop .archive-person-area-modal { width: 100%; height: 100dvh; max-height: 100dvh; }
 }
+
+.geneo-transfer-modal { width: min(720px, 100%); max-height: min(760px, 100dvh); display: flex; flex-direction: column; }
+.geneo-transfer-body { min-height: 0; overflow-y: auto; padding: 24px; display: grid; gap: 16px; }
+.geneo-transfer-list { display: grid; gap: 6px; max-height: 320px; overflow-y: auto; }
+.geneo-transfer-choice { display: flex; align-items: center; gap: 12px; min-width: 0; padding: 12px; border: 1px solid var(--border-default); border-radius: 6px; cursor: pointer; }
+.geneo-transfer-choice:has(input:checked) { border-color: var(--brand-green-500); background: var(--surface-selected); }
+.geneo-transfer-choice span { min-width: 0; display: grid; gap: 3px; }
+.geneo-transfer-preview { width: 48px; height: 48px; flex: none; overflow: hidden; border: 1px solid var(--border-default); border-radius: 4px; }
+.geneo-transfer-preview svg { display: block; width: 100%; height: 100%; }
+.geneo-transfer-copy { flex: 1; }
+.geneo-transfer-choice strong, .geneo-transfer-choice small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.geneo-transfer-choice small { color: var(--text-secondary); }
+.geneo-transfer-check { display: flex; align-items: center; gap: 8px; }
+.geneo-transfer-create { border-top: 1px solid var(--border-default); padding-top: 16px; display: grid; gap: 8px; }
+.geneo-transfer-create > div { display: flex; gap: 8px; }
+.geneo-transfer-create input { min-width: 0; flex: 1; }
+.geneo-transfer-modal .button:disabled { opacity: .5; cursor: not-allowed; }
+@media (max-width: 390px) { .geneo-transfer-create > div { flex-wrap: wrap; } .geneo-transfer-create input { flex-basis: 100%; } }
+@media (max-width: 540px) { .geneo-transfer-modal { width: 100%; max-height: 100dvh; height: 100dvh; } .geneo-transfer-body { padding: 16px; } }
+.geneo-import-action { width: 100%; margin-top: 12px; }
+.geneo-tree-import-modal { width: min(880px, 100%); }
+.geneo-tree-import-modal .geneo-transfer-body { display: block; }
+.geneo-tree-import-modal section + section { margin-top: 28px; }
+.geneo-tree-import-modal h3 { display: flex; justify-content: space-between; gap: 12px; margin: 0 0 6px; }
+.geneo-import-people, .geneo-import-relations { display: grid; gap: 8px; margin-top: 16px; }
+.geneo-import-person { display: grid; gap: 12px; padding: 14px; border: 1px solid var(--border-default); border-radius: 6px; }
+.geneo-import-person-heading { display: flex; justify-content: space-between; gap: 10px; min-width: 0; }
+.geneo-import-person-heading strong { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.geneo-import-person-heading small { color: var(--text-secondary); }
+.geneo-import-person label { display: grid; gap: 6px; min-width: 0; }
+.geneo-import-person select { width: 100%; min-width: 0; }
+.geneo-import-facts { display: grid; gap: 8px; padding-top: 12px; border-top: 1px solid var(--border-default); }
+.geneo-import-facts label { display: grid; grid-template-columns: minmax(0, 1fr) minmax(140px, 190px); align-items: center; gap: 12px; }
+.geneo-import-facts small { display: block; color: var(--text-secondary); overflow-wrap: anywhere; }
+.geneo-import-relation { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border-default); }
+.geneo-import-relation > span { min-width: 0; display: grid; gap: 3px; overflow-wrap: anywhere; }
+.geneo-import-relation small { color: var(--text-secondary); }
+.geneo-import-relation.is-conflict small, .geneo-import-error { color: var(--red); }
+.geneo-import-relation label { display: flex; align-items: center; gap: 6px; flex: none; }
+.geneo-import-error { margin-right: auto; }
+@media (max-width: 540px) { .geneo-tree-import-modal { width: 100%; } .geneo-import-person-heading { display: grid; } .geneo-import-facts label { grid-template-columns: 1fr; } .geneo-tree-import-modal .modal-footer { flex-wrap: wrap; } .geneo-import-error { flex-basis: 100%; } }

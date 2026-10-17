@@ -14787,7 +14787,7 @@ function renderGeneographPersonTreeLinkSection(
         context: 'person',
         id: 'familyTreeLink',
         title: 'Family Tree link',
-        content
+        content: `${content}<button class="button secondary geneo-import-action" type="button" data-geneo-import-family>Add to Family Tree</button>`
     });
 }
 
@@ -26789,6 +26789,7 @@ function bindGeneographEditor()
             });
         });
     main.querySelector('[data-geneo-link-person]')?.addEventListener('click', openGeneographTreePersonPicker);
+    main.querySelector('[data-geneo-import-family]')?.addEventListener('click', () => openGeneographTreeImport());
     main.querySelector('[data-geneo-edit-person]')?.addEventListener('click', () =>
     {
         const person = getGeneographPerson(selectedGeneographNode()?.personId); if (person) openGeneographPersonModal(person.id);
