@@ -116,6 +116,30 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             });
             assert.equal(reverse.error, undefined);
             assert.equal(reverse.boardLast, reverse.treeLast);
+            const review = await page.evaluate(() =>
+            {
+                openGeneographTreeImport();
+                const modal = document.querySelector('.geneo-tree-import-modal');
+                const decision = modal.querySelector('[data-geneo-import-field][data-value="tree"]');
+                if (!decision) return { missingDecision: true };
+                decision.click();
+                const selected = modal.querySelector('[data-geneo-import-field][data-value="tree"][aria-pressed="true"]') !== null;
+                const staged = geneoTreeImportDraft.fields.get(geneoTreeImportDraft.activePersonId)?.size || 0;
+                modal.querySelector('[data-geneo-import-field][data-value="none"]')?.click();
+                const reset = (geneoTreeImportDraft.fields.get(geneoTreeImportDraft.activePersonId)?.size || 0) === 0;
+                modal.querySelector('[data-geneo-import-match-toggle]')?.click();
+                const matchOpen = Boolean(modal.querySelector('[data-geneo-import-match-search]'));
+                const modalOverflow = modal.querySelector('[data-geneo-import-body]').scrollWidth - modal.querySelector('[data-geneo-import-body]').clientWidth;
+                return { selected, staged, reset, matchOpen, modalOverflow };
+            });
+            assert.equal(review.missingDecision, undefined);
+            assert.equal(review.selected, true);
+            assert.equal(review.staged, 1);
+            assert.equal(review.reset, true);
+            assert.equal(review.matchOpen, true);
+            assert.equal(review.modalOverflow, 0);
+            if (process.env.GENEO_REVIEW_SCREENSHOT_DIR)
+                await page.screenshot({ path: path.join(process.env.GENEO_REVIEW_SCREENSHOT_DIR, `review-${width}.png`) });
             assert.deepEqual(errors, []);
             await page.close();
         }

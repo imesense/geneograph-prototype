@@ -287,6 +287,10 @@ function geneoTreeImportRender()
         const status = skipped ? 'Skipped' : conflict ? 'Needs resolution' : preview.statuses?.get(relation.id) || (preview.error ? 'Pending' : 'Will add');
         return `<div class="geneo-import-relation ${conflict ? 'is-conflict' : ''}"><span><strong>${escapeHtml(geneoTreeImportRelationLabel(relation, draft.people))}</strong><small>${escapeHtml(status)}${conflict ? ` · ${escapeHtml(preview.error)}` : ''}</small></span><label><input type="checkbox" data-geneo-import-skip-relation="${escapeHtml(relation.id)}" ${draft.skippedRelations.has(relation.id) ? 'checked' : ''}> Skip</label></div>`;
     }).join('');
+    const personLinks = active ? draft.relations.filter(relation => relation.ids.includes(active.id) && !draft.skippedRelations.has(relation.id)).slice(0, 2) : [];
+    const linkedPreview = personLinks.map(relation => `<span>${escapeHtml(geneoTreeImportRelationLabel(relation, draft.people))}</span>`).join('');
+    const matchEditorOpen = draft.matchEditorOpenId === active?.id;
+    const matchPicker = active && (!active.treePersonId || matchEditorOpen) ? `<div class="geneo-review-match"><label>${escapeHtml(t('Find existing person'))}<input class="common-input" type="search" data-geneo-import-match-search="${escapeHtml(active.id)}" value="${escapeHtml(query)}" placeholder="${escapeHtml(t('Search by name, date, or place'))}" autocomplete="off"></label><label>${escapeHtml(t('Tree action'))}<span class="common-select-shell"><select class="common-select" data-geneo-import-person="${escapeHtml(active.id)}">${active.treePersonId ? '' : `<option value="create" ${choice === 'create' ? 'selected' : ''}>${escapeHtml(t('Create new person'))}</option><option value="skip" ${choice === 'skip' ? 'selected' : ''}>${escapeHtml(t('Skip person'))}</option>`}${matches.map(({ person, score }) => `<option value="${escapeHtml(person.id)}" ${choice === person.id ? 'selected' : ''}>${score >= 50 ? `${escapeHtml(t('Possible match'))}: ` : ''}${escapeHtml(connectPersonName(person))} · ${escapeHtml(connectPersonLifeLine(person))}</option>`).join('')}</select><span class="common-select-chevron" aria-hidden="true">${icon.chevron}</span></span></label>${matchEditorOpen ? `<button class="button secondary" type="button" data-geneo-import-match-cancel>${escapeHtml(t('Done'))}</button>` : ''}</div>` : '';
     body.innerHTML = `<div class="geneo-review-layout"><nav class="geneo-review-rail" aria-label="People to review"><div class="geneo-review-rail-title">People to review <span>${draft.people.length}</span></div>
         ${draft.people.map(person =>
         {
@@ -294,17 +298,18 @@ function geneoTreeImportRender()
             const linked = Boolean(person.treePersonId);
             const match = target !== 'skip' && target !== 'create' ? getPerson(target) : null;
             const changes = match ? geneoTreeImportFields(person, match).length : 0;
-            const status = target === 'skip' ? 'Skipped' : linked ? 'Linked' : target === 'create' ? 'New person' : 'Matched';
-            return `<button type="button" class="geneo-review-person ${draft.activePersonId === person.id ? 'active' : ''}" data-geneo-review-person="${escapeHtml(person.id)}" aria-current="${draft.activePersonId === person.id ? 'true' : 'false'}"><strong>${escapeHtml(geneoPersonDisplayName(person))}</strong><small>${escapeHtml(t(status))}${changes ? ` · ${changes} ${escapeHtml(t('differences'))}` : ''}</small></button>`;
+            const status = target === 'skip' ? t('Skipped') : target === 'create' ? t('Creating in Tree') : changes ? `${changes} ${t(changes === 1 ? 'difference to review' : 'differences to review')}` : linked ? t('Linked') : t('Matched');
+            return `<button type="button" class="geneo-review-person ${draft.activePersonId === person.id ? 'active' : ''}" data-geneo-review-person="${escapeHtml(person.id)}" aria-current="${draft.activePersonId === person.id ? 'true' : 'false'}"><span class="geneo-review-avatar" aria-hidden="true">${escapeHtml(geneoPersonInitials(person))}</span><span class="geneo-review-person-copy"><strong>${escapeHtml(geneoPersonDisplayName(person))}</strong><small>${escapeHtml(status)}</small></span></button>`;
         }).join('')}
-        <button type="button" class="geneo-review-family ${draft.activePersonId === 'family' ? 'active' : ''}" data-geneo-review-person="family" aria-current="${draft.activePersonId === 'family' ? 'true' : 'false'}">Family links <span>${draft.relations.length}</span></button></nav>
+        <button type="button" class="geneo-review-family ${draft.activePersonId === 'family' ? 'active' : ''}" data-geneo-review-person="family" aria-current="${draft.activePersonId === 'family' ? 'true' : 'false'}"><span class="geneo-review-family-mark" aria-hidden="true">${icon.people || icon.users || icon.link}</span><span class="geneo-review-person-copy"><strong>${escapeHtml(t('Family links'))}</strong><small>${draft.relations.length} ${escapeHtml(t('to review'))}</small></span></button></nav>
         <div class="geneo-review-main">${draft.activePersonId === 'family'
         ? `<section><h3>Family links</h3><p class="panel-muted">Only family links are included. Decorative connections stay on the board.</p><div class="geneo-import-relations">${relationshipRows || '<p class="panel-muted">No family links to review.</p>'}</div></section>`
         : `<section><div class="geneo-review-heading"><h3>${escapeHtml(geneoPersonDisplayName(active))}</h3><span>${escapeHtml(geneoPersonLifeDates(active))}</span></div>
-          <div class="geneo-review-columns"><div class="geneo-review-card"><h4>On board</h4><strong>${escapeHtml(geneoPersonDisplayName(active))}</strong><small>${escapeHtml(geneoPersonLifeDates(active))}</small></div>
-          <div class="geneo-review-card"><h4>In Family Tree</h4>${treePerson ? `<strong>${escapeHtml(connectPersonName(treePerson))}</strong><small>${escapeHtml(connectPersonLifeLine(treePerson))}</small>` : `<span class="panel-muted">${choice === 'skip' ? 'This person will be skipped.' : 'A new Tree person will be created.'}</span>`}</div></div>
-          ${!active.treePersonId ? `<div class="geneo-review-match"><label>Find existing person<input class="common-input" type="search" data-geneo-import-match-search="${escapeHtml(active.id)}" value="${escapeHtml(query)}" placeholder="Search by name, date, or place" autocomplete="off"></label><label>Tree action<span class="common-select-shell"><select class="common-select" data-geneo-import-person="${escapeHtml(active.id)}"><option value="create" ${choice === 'create' ? 'selected' : ''}>Create new person</option><option value="skip" ${choice === 'skip' ? 'selected' : ''}>Skip person</option>${matches.map(({ person, score }) => `<option value="${escapeHtml(person.id)}" ${choice === person.id ? 'selected' : ''}>${score >= 50 ? 'Possible match: ' : ''}${escapeHtml(connectPersonName(person))} · ${escapeHtml(connectPersonLifeLine(person))}</option>`).join('')}</select><span class="common-select-chevron" aria-hidden="true">${icon.chevron}</span></span></label></div>` : '<p class="geneo-review-locked">Linked Tree person · Change link from the inspector</p>'}
-          ${treePerson ? `<div class="geneo-review-facts"><h4>Fact differences <span>${fields.length}</span></h4>${fields.length ? fields.map(([key, label, boardValue, treeValue]) => `<div class="geneo-review-fact"><strong>${escapeHtml(label)}</strong><div class="geneo-review-values"><span><small>On board</small>${escapeHtml(String(boardValue || 'Not recorded'))}</span><span><small>In Family Tree</small>${escapeHtml(String(treeValue || 'Not recorded'))}</span></div><fieldset class="geneo-review-decisions" data-geneo-import-field="${escapeHtml(active.id)}" data-field="${escapeHtml(key)}" aria-label="${escapeHtml(label)}"><label><input type="radio" name="geneo-${escapeHtml(active.id)}-${escapeHtml(key)}" value="none" ${!decisions.has(key) ? 'checked' : ''}> Leave unchanged</label><label><input type="radio" name="geneo-${escapeHtml(active.id)}-${escapeHtml(key)}" value="tree" ${decisions.get(key) === 'tree' ? 'checked' : ''}> Use board value in Tree</label><label><input type="radio" name="geneo-${escapeHtml(active.id)}-${escapeHtml(key)}" value="board" ${decisions.get(key) === 'board' ? 'checked' : ''}> Use Tree value on board</label></fieldset></div>`).join('') : '<p class="panel-muted">Supported facts match.</p>'}</div>` : ''}
+          <div class="geneo-review-columns"><div class="geneo-review-card"><h4>${escapeHtml(t('On board'))}</h4><div class="geneo-review-identity"><span class="geneo-review-avatar" aria-hidden="true">${escapeHtml(geneoPersonInitials(active))}</span><span><strong>${escapeHtml(geneoPersonDisplayName(active))}</strong><small>${escapeHtml(geneoPersonLifeDates(active))}</small></span></div></div>
+          <div class="geneo-review-card"><div class="geneo-review-card-head"><h4>${escapeHtml(t('In Family Tree'))}</h4>${active.treePersonId ? `<button type="button" class="geneo-review-text-action" data-geneo-import-match-toggle>${escapeHtml(t('Change match'))}</button>` : ''}</div>${treePerson ? `<div class="geneo-review-identity"><span class="geneo-review-avatar" aria-hidden="true">${escapeHtml(connectPersonName(treePerson).split(' ').map(part => part[0]).slice(0, 2).join(''))}</span><span><strong>${escapeHtml(connectPersonName(treePerson))}</strong><small>${escapeHtml(connectPersonLifeLine(treePerson))}</small></span></div>` : `<span class="geneo-review-empty-target">${escapeHtml(t(choice === 'skip' ? 'This person will be skipped.' : 'A new Tree person will be created.'))}</span>`}</div></div>
+          ${matchPicker}
+          ${treePerson ? `<div class="geneo-review-facts"><h4>${escapeHtml(t('Fact differences'))} <span>${fields.length}</span></h4>${fields.length ? fields.map(([key, label, boardValue, treeValue]) => { const decision = decisions.get(key); return `<div class="geneo-review-fact"><div class="geneo-review-fact-head"><strong>${escapeHtml(t(label))}</strong><span>${decision === 'tree' ? escapeHtml(t('Use on Tree')) : decision === 'board' ? escapeHtml(t('Use on board')) : escapeHtml(t('Leave unchanged'))}</span></div><div class="geneo-review-values"><button type="button" class="geneo-review-value ${decision === 'tree' ? 'is-selected' : ''}" data-geneo-import-field="${escapeHtml(active.id)}" data-field="${escapeHtml(key)}" data-value="tree" aria-pressed="${decision === 'tree'}" aria-label="${escapeHtml(`${t('Use board value in Tree')}: ${label}, ${boardValue || t('Not recorded')}`)}"><small>${escapeHtml(t('On board'))}</small><strong>${escapeHtml(String(boardValue || t('Not recorded')))}</strong></button><button type="button" class="geneo-review-value ${decision === 'board' ? 'is-selected' : ''}" data-geneo-import-field="${escapeHtml(active.id)}" data-field="${escapeHtml(key)}" data-value="board" aria-pressed="${decision === 'board'}" aria-label="${escapeHtml(`${t('Use Tree value on board')}: ${label}, ${treeValue || t('Not recorded')}`)}"><small>${escapeHtml(t('In Family Tree'))}</small><strong>${escapeHtml(String(treeValue || t('Not recorded')))}</strong></button></div>${decision ? `<button type="button" class="geneo-review-reset" data-geneo-import-field="${escapeHtml(active.id)}" data-field="${escapeHtml(key)}" data-value="none">${escapeHtml(t('Leave unchanged'))}</button>` : ''}</div>`; }).join('') : `<p class="panel-muted">${escapeHtml(t('Supported facts match.'))}</p>`}</div>` : ''}
+          ${linkedPreview ? `<button class="geneo-review-link-preview" type="button" data-geneo-review-person="family"><span class="geneo-review-family-mark" aria-hidden="true">${icon.people || icon.users || icon.link}</span><span><strong>${escapeHtml(t('Family links'))}</strong><small>${linkedPreview}</small></span><span class="geneo-review-link-cta">${escapeHtml(t('Review'))} ${icon.chevron}</span></button>` : ''}
         </section>`}</div></div>`;
     localizeUI(body);
     body.scrollTop = oldScroll;
@@ -321,8 +326,12 @@ function geneoTreeImportRender()
     }).length;
     const factCount = [...draft.fields.values()].reduce((count, values) => count + values.size, 0);
     const linkCount = [...(preview.statuses?.values() || [])].filter(status => status === 'Will add').length;
-    modal.querySelector('[data-geneo-import-summary]').textContent = `${newCount} ${t('new people')} · ${matchCount} ${t('matches')} · ${factCount} ${t('fact changes')} · ${linkCount} ${t('family links')}`;
-    modal.querySelector('[data-geneo-import-commit]').disabled = Boolean(preview.error) || newCount + matchCount + factCount + linkCount === 0;
+    const summaryParts = [[newCount, 'new person', 'new people'], [matchCount, 'match', 'matches'], [factCount, 'fact change', 'fact changes'], [linkCount, 'family link', 'family links']].filter(([count]) => count).map(([count, singular, plural]) => `${count} ${t(count === 1 ? singular : plural)}`);
+    modal.querySelector('[data-geneo-import-summary]').textContent = summaryParts.join(' · ') || t('No changes selected');
+    const commit = modal.querySelector('[data-geneo-import-commit]');
+    const total = newCount + matchCount + factCount + linkCount;
+    commit.textContent = summaryParts.length ? `${t('Apply')} ${total} ${t(total === 1 ? 'change' : 'changes')}` : t('Done');
+    commit.disabled = Boolean(preview.error);
 }
 
 function openGeneographTreeImport()
@@ -347,13 +356,40 @@ function openGeneographTreeImport()
         fields: new Map(), skippedRelations: new Set(), matchQueries: new Map()
     };
     openModal(`<div class="modal geneo-transfer-modal geneo-tree-import-modal" role="dialog" aria-modal="true" aria-labelledby="geneoTreeImportTitle">
-        <div class="modal-header"><div><h2 id="geneoTreeImportTitle">Review board and Family Tree</h2><p>Choose people, facts, and family links to apply.</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div>
+        <div class="modal-header"><div><h2 id="geneoTreeImportTitle">Review board and Family Tree</h2><p>${people.length} ${t('people')} · ${geneoTreeImportDraft.relations.length} ${t(geneoTreeImportDraft.relations.length === 1 ? 'family link' : 'family links')}</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div>
         <div class="geneo-transfer-body" data-geneo-import-body></div>
         <div class="modal-footer"><div class="geneo-review-footer-copy"><span data-geneo-import-summary></span><span class="geneo-import-error" role="alert" data-geneo-import-error></span></div><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="button" data-geneo-import-commit>Apply reviewed changes</button></div>
       </div>`);
     const modal = modalBackdrop.querySelector('.geneo-tree-import-modal');
     modal.addEventListener('click', event =>
     {
+        const field = event.target.closest('[data-geneo-import-field]');
+        if (field)
+        {
+            const draft = geneoTreeImportDraft;
+            const { geneoImportField: id, field: key, value } = field.dataset;
+            if (!draft.fields.has(id)) draft.fields.set(id, new Map());
+            const choices = draft.fields.get(id);
+            if (value === 'none' || choices.get(key) === value) choices.delete(key);
+            else choices.set(key, value);
+            geneoTreeImportRender();
+            modal.querySelector(`[data-geneo-import-field="${CSS.escape(id)}"][data-field="${CSS.escape(key)}"][data-value="${value}"]`)?.focus({ preventScroll: true });
+            return;
+        }
+        if (event.target.closest('[data-geneo-import-match-toggle]'))
+        {
+            geneoTreeImportDraft.matchEditorOpenId = geneoTreeImportDraft.activePersonId;
+            geneoTreeImportRender();
+            modal.querySelector('[data-geneo-import-match-search]')?.focus({ preventScroll: true });
+            return;
+        }
+        if (event.target.closest('[data-geneo-import-match-cancel]'))
+        {
+            geneoTreeImportDraft.matchEditorOpenId = null;
+            geneoTreeImportRender();
+            modal.querySelector('[data-geneo-import-match-toggle]')?.focus({ preventScroll: true });
+            return;
+        }
         const person = event.target.closest('[data-geneo-review-person]');
         if (!person) return;
         geneoTreeImportDraft.activePersonId = person.dataset.geneoReviewPerson;
@@ -375,32 +411,12 @@ function openGeneographTreeImport()
     {
         const draft = geneoTreeImportDraft;
         if (!draft) return;
-        const fieldGroup = event.target.closest('[data-geneo-import-field]');
-        const fieldPersonId = fieldGroup?.dataset.geneoImportField;
-        const fieldKey = fieldGroup?.dataset.field;
-        const fieldValue = event.target.value;
         const personChoiceId = event.target.dataset.geneoImportPerson;
         const relationId = event.target.dataset.geneoImportSkipRelation;
         if (event.target.matches('[data-geneo-import-person]'))
         {
             draft.choices.set(event.target.dataset.geneoImportPerson, event.target.value);
             draft.fields.delete(event.target.dataset.geneoImportPerson);
-        }
-        else if (event.target.matches('[data-geneo-import-field]'))
-        {
-            const personId = event.target.dataset.geneoImportField;
-            if (!draft.fields.has(personId)) draft.fields.set(personId, new Map());
-            const fields = draft.fields.get(personId);
-            if (event.target.value === 'none') fields.delete(event.target.dataset.field);
-            else fields.set(event.target.dataset.field, event.target.value);
-        }
-        else if (event.target.closest('[data-geneo-import-field]'))
-        {
-            const group = event.target.closest('[data-geneo-import-field]');
-            if (!draft.fields.has(group.dataset.geneoImportField)) draft.fields.set(group.dataset.geneoImportField, new Map());
-            const fields = draft.fields.get(group.dataset.geneoImportField);
-            if (event.target.value === 'none') fields.delete(group.dataset.field);
-            else fields.set(group.dataset.field, event.target.value);
         }
         else if (event.target.matches('[data-geneo-import-skip-relation]'))
         {
@@ -410,16 +426,20 @@ function openGeneographTreeImport()
         }
         else return;
         geneoTreeImportRender();
-        const focusTarget = fieldGroup
-            ? [...modal.querySelectorAll('[data-geneo-import-field]')].find(item => item.dataset.geneoImportField === fieldPersonId && item.dataset.field === fieldKey)?.querySelector(`input[value="${fieldValue}"]`)
-            : personChoiceId
-                ? modal.querySelector(`[data-geneo-import-person="${CSS.escape(personChoiceId)}"]`)
-                : relationId
-                    ? modal.querySelector(`[data-geneo-import-skip-relation="${CSS.escape(relationId)}"]`)
-                    : null;
+        const focusTarget = personChoiceId
+            ? modal.querySelector(`[data-geneo-import-person="${CSS.escape(personChoiceId)}"]`)
+            : relationId
+                ? modal.querySelector(`[data-geneo-import-skip-relation="${CSS.escape(relationId)}"]`)
+                : null;
         focusTarget?.focus({ preventScroll: true });
     });
-    modal.querySelector('[data-geneo-import-commit]').addEventListener('click', geneoTreeImportCommit);
+    modal.querySelector('[data-geneo-import-commit]').addEventListener('click', () => {
+        const draft = geneoTreeImportDraft;
+        const preview = draft && geneoTreeImportPreview(draft);
+        const pending = draft && ([...draft.choices.values()].some(value => value === 'create') || draft.people.some(person => { const choice = draft.choices.get(person.id); return choice !== 'skip' && choice !== 'create' && choice !== person.treePersonId; }) || [...draft.fields.values()].some(values => values.size) || [...(preview.statuses?.values() || [])].some(status => status === 'Will add'));
+        if (!pending && !preview.error) closeModal();
+        else geneoTreeImportCommit();
+    });
     geneoTreeImportRender();
 }
 
