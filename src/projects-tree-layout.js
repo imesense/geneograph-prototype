@@ -1283,10 +1283,10 @@ function renderOpenProjectInsightsCard(project)
         unsortedPhotos ? { module: 'Albums', icon: icon.image, tone: 'red', title: 'Unsorted photos', detail: `${unsortedPhotos} ${unsortedPhotos === 1 ? 'photo is' : 'photos are'} not assigned to an album.` } : null,
         placeCleanup ? { module: 'Places', icon: icon.mapPin, tone: 'blue', title: 'Place cleanup', detail: `${placeCleanup} ${placeCleanup === 1 ? 'place needs' : 'places need'} review.` } : null
     ].filter(Boolean);
-    return `<div class="right-card"><h2>Project insights</h2><div class="startup-action-list">
+    return `<div class="right-card"><h2 class="project-insights-heading"><span aria-hidden="true">${icon.tip}</span>Project insights</h2><div class="startup-action-list">
         ${items.length ? items.map(item => `<button class="startup-action-row project-insight-row" type="button" data-open-project-module="${item.module}" aria-label="Open ${escapeHtml(item.module)} for ${escapeHtml(item.title)}">
           <div class="startup-action-icon ${item.tone}">${item.icon}</div>
-          <div class="startup-action-copy"><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(project.name)} · ${escapeHtml(item.detail)}</span></div>
+          <div class="startup-action-copy"><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(item.detail)}</span></div>
           <span class="project-insight-chevron" aria-hidden="true">${icon.chevron}</span>
         </button>`).join('') : `<div class="panel-muted" style="padding:16px">${escapeHtml(t('Start by adding a person or opening a project module.'))}</div>`}
       </div></div>`;
