@@ -82,6 +82,21 @@ async function runGeneographExportChecks()
         app.__exportTestDiagram = app.eval('structuredClone(selectedGeneographBoard().diagram)');
         const restore = () => app.eval('selectedGeneographBoard().diagram = structuredClone(window.__exportTestDiagram); renderGeneographEditorPreserveScroll();');
 
+        await check('Connection-status dots are omitted from the PNG clone only', async () =>
+        {
+            const result = app.eval(`(() => {
+                const live = main.querySelector('[data-geneo-stage]');
+                const before = live.querySelectorAll('[data-geneo-person-link-status]').length;
+                const clone = live.cloneNode(true);
+                geneoPngRemoveEditorContent(clone);
+                return { before, exported: clone.querySelectorAll('[data-geneo-person-link-status]').length,
+                    live: live.querySelectorAll('[data-geneo-person-link-status]').length };
+            })()`);
+            exportTestAssert(result.before > 0, 'No live person status to test');
+            exportTestAssert(result.exported === 0, 'Status dots remain in the export clone');
+            exportTestAssert(result.live === result.before, 'Live board status changed');
+        });
+
         await check('PNG logo sits in a bottom-right badge without a full-width strip', async () =>
         {
             const blob = await exportOnce();

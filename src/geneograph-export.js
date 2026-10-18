@@ -81,6 +81,8 @@ function geneoPngRemoveEditorContent(stage)
 {
     stage.className = 'geneo-canvas-stage';
     stage.style.transform = 'none';
+    stage.querySelectorAll('[data-geneo-person-link-status]')
+        .forEach(person => person.removeAttribute('data-geneo-person-link-status'));
     stage.querySelectorAll(
         '.geneo-panel-draft, .geneo-selection-marquee, '
         + '.geneo-connection-hit, .geneo-segment-hit, '
