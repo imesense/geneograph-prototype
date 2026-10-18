@@ -7083,7 +7083,7 @@ function createPersonIdFromName(firstName, lastName)
     return id;
 }
 
-function createPersonFromAddPersonModal(options = {}, additionalFacts = {})
+function createPersonFromAddPersonModal(options = {}, additionalFacts = {}, dates = {})
 {
     const projectId = requireActiveProjectId();
     if (!projectId) return null;
@@ -7095,8 +7095,8 @@ function createPersonFromAddPersonModal(options = {}, additionalFacts = {})
     const id = createPersonIdFromName( firstName, lastName);
     const genderValue = readAddPersonModalValue('#addPersonGender');
     const livingStatus = normalizeLivingStatus(readAddPersonModalValue('#addPersonLivingStatus'));
-    const birthDate = collectGenealogyDateField('addPersonBirth') || emptyGenealogyDate('Exact date');
-    const deathDate = livingStatus === 'Deceased' ? collectGenealogyDateField('addPersonDeath') || emptyGenealogyDate('Exact date') : emptyGenealogyDate('Exact date');
+    const birthDate = dates.birth;
+    const deathDate = livingStatus === 'Deceased' ? dates.death : emptyGenealogyDate('Exact date');
     const display = [firstName, middleName, lastName].filter(Boolean).join(' ');
     const initials = `${firstName[0] || 'U'}${lastName[0] || ''}`.toUpperCase();
     const birthPlace = resolvePlaceInputSelector('#addPersonBirthPlace');
@@ -8693,6 +8693,24 @@ function commitAddPersonModalCreate(title, subtitle, options = {})
         return null;
     }
 
+    const birthDate = collectGenealogyDateField('addPersonBirth');
+    if (!birthDate)
+    {
+        showToast('Check the birth date before saving.');
+        modalBackdrop.querySelector('#addPersonBirthDate')?.focus({ preventScroll: true });
+        return null;
+    }
+
+    const livingStatus = readAddPersonModalValue('#addPersonLivingStatus');
+    const deathDate = livingStatus === 'Deceased'
+        ? collectGenealogyDateField('addPersonDeath') : emptyGenealogyDate('Exact date');
+    if (!deathDate)
+    {
+        showToast('Check the death date before saving.');
+        modalBackdrop.querySelector('#addPersonDeathDate')?.focus({ preventScroll: true });
+        return null;
+    }
+
     const relationshipValues = collectAddPersonRelationshipBlock();
 
     if (relationshipValues.invalid)
@@ -8719,7 +8737,10 @@ function commitAddPersonModalCreate(title, subtitle, options = {})
     }
 
     const projectPeopleBeforeCreate = getPeople(currentProjectId()).length;
-    const newPerson = createPersonFromAddPersonModal(options, additionalFacts);
+    const newPerson = createPersonFromAddPersonModal(options, additionalFacts, {
+        birth: birthDate,
+        death: deathDate
+    });
     if (!newPerson) return null;
     applyAddPersonAttachmentDrafts(
         newPerson.id
