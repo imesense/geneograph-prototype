@@ -577,6 +577,11 @@ button {
     gap: 4px;
 }
 
+.project-library-nav {
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--border-default);
+}
+
 .side-link {
     min-height: 44px;
     width: 100%;

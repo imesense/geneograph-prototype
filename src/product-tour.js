@@ -8,7 +8,7 @@ const geneoTourSteps = [
     { id: 'projects-card', module: 'Projects', projectView: 'library', title: "Open the sample project", body: "The Whiskerfield Family Tree card introduces the sample project. Open it to explore the research inside." },
     { id: 'projects-hero', module: 'Projects', projectView: 'overview', title: "Your project at a glance", body: "The project overview shows its name, description, status, dates, and main actions." },
     { id: 'projects-tags', module: 'Projects', projectView: 'overview', title: "Research in numbers", body: "These counts show the people, photos, files, and notes in the project." },
-    { id: 'projects-back', module: 'Projects', projectView: 'overview', title: "Back to all projects", body: "Back to all projects returns to the project library. Your changes save automatically." },
+    { id: 'projects-back', module: 'Projects', projectView: 'overview', title: "All projects", body: "All projects in Navigation returns to the project library. Your changes save automatically." },
     { id: 'projects-tabs', module: 'Projects', projectView: 'overview', title: "Move between modules", body: "The top tabs open the project's connected modules. The tour continues in Family Tree." },
     { id: 'tree-welcome', module: 'Family Tree', presentation: 'centered', title: "Welcome to Family Tree", body: "See family members across generations, discover how people are related, and explore different branches of the tree." },
     { id: 'tree-person-card', module: 'Family Tree', title: "Meet a person in the tree", body: "The card shows a photo, name, and key life dates. Select a card to learn more about that person." },

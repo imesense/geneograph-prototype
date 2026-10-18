@@ -433,6 +433,12 @@ function renderOpenProject()
             <span>Family history workspace</span>
           </div>
         </div>
+        <nav class="project-library-nav" aria-label="${escapeHtml(t('Navigation'))}">
+          <div class="side-section-title">Navigation</div>
+          <div class="side-nav">
+            <button class="side-link" type="button" id="backToProjects">${icon.arrow}<span>All projects</span></button>
+          </div>
+        </nav>
         <div>
           <div class="side-section-title">Project</div>
           <div class="side-nav">
@@ -442,7 +448,6 @@ function renderOpenProject()
           </div>
         </div>
         <div class="sidebar-spacer"></div>
-        <button class="side-link" type="button" id="backToProjects">${icon.arrow}<span>Back to all projects</span></button>
       `;
     sidebar.querySelector('#backToProjects').addEventListener('click', () =>
     {
@@ -617,6 +622,7 @@ function getProjectSettingsDraft(project)
 
 function projectSettingsCoverSource(draft)
 {
+    if (!draft) return '';
     if (draft.cover === 'golden-tree') return GOLDEN_TREE_COVER_SRC;
     if (draft.cover !== 'photo') return '';
     return draft.coverSelection.uploadDraft?.src
@@ -806,9 +812,10 @@ function bindProjectSettingsControls()
     const coverPreview = main.querySelector('#projectCoverPreview');
     bindProjectCoverPositioner(coverPreview, {
         getSource: () => projectSettingsCoverSource(projectSettingsDraft),
-        getPosition: () => projectSettingsDraft.coverSelection.position,
+        getPosition: () => projectSettingsDraft?.coverSelection?.position,
         onChange: position =>
         {
+            if (!projectSettingsDraft || !coverPreview?.isConnected) return;
             projectSettingsDraft.coverSelection.position = position;
             updateProjectCoverPreview(coverPreview, projectSettingsDraft.cover, projectSettingsCoverSource(projectSettingsDraft), position);
         },
