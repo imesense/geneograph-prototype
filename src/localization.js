@@ -691,6 +691,14 @@ const RU_DATA_ALBUMS = Object.freeze({
 });
 
 const RU_DATA_ARCHIVE = Object.freeze({
+    'Family records': 'Семейные записи',
+    'Births': 'Рождения',
+    'Marriages': 'Браки',
+    'Correspondence': 'Переписка',
+    'Research trips': 'Исследовательские поездки',
+    'Register extracts': 'Выписки из реестров',
+    'To identify': 'Требуют опознания',
+    'Future research': 'Будущие исследования',
     'Pawford household register': 'Домовая ведомость Поуфорда',
     'Archives': 'Архивы',
     'Family documents': 'Семейные документы',
@@ -897,6 +905,9 @@ const RU_UI_FAMILY_TREE = {
 
     'No insights found for this person.':
         'Для этого человека пока нет подсказок.',
+
+    'No immediate relationships recorded for this person.':
+        'Для этого человека пока не указаны ближайшие родственники.',
 
     'Find person':
         'Найти человека',
@@ -1108,6 +1119,16 @@ const RU_UI_GENEO = {
     'needs resolution': 'требует решения',
     'to add': 'будет добавлено',
     'Create new Tree person': 'Создать человека в древе',
+    'Middle name': 'Второе имя / отчество',
+    'Not recorded': 'Не указано',
+    'Possible match': 'Возможное совпадение',
+    'Choose a Tree person': 'Выберите человека в древе',
+    'Tree match unavailable for': 'Недоступен человек в древе:',
+    'Two board people cannot use the same Tree person.': 'Нельзя сопоставить двух людей на холсте с одним человеком в древе.',
+    'That Tree person is already represented elsewhere on this board.': 'Этот человек из древа уже представлен на другом месте холста.',
+    'Relationship conflict.': 'Конфликт родственной связи.',
+    'Import could not be validated.': 'Не удалось проверить перенос.',
+    'Import failed. No changes were kept.': 'Перенос не удался. Изменения не сохранены.',
     'Match existing': 'Сопоставить с существующим',
     'Select Tree person': 'Выберите человека в древе',
     'Choose a person': 'Выберите человека',
@@ -2466,14 +2487,8 @@ const RU_UI_ARCHIVE = {
     'Document where your research files and information came from.':
         'Укажите, откуда получены ваши исследовательские файлы и сведения.',
 
-    'Files marked as favourites.':
-        'Файлы, добавленные в избранное.',
-
-    'No favourite files':
-        'Нет избранных файлов',
-
-    'Mark frequently used files as favourites to find them here.':
-        'Добавляйте часто используемые файлы в избранное, чтобы быстро находить их здесь.',
+    'Files and folders marked as favourites.':
+        'Файлы и папки, добавленные в избранное.',
 
     'No files match this search':
         'По этому запросу файлы не найдены',
@@ -2508,8 +2523,6 @@ const RU_UI_ARCHIVE = {
     'Archive files and folders':
         'Файлы и папки Архива',
 
-    'Select all visible files':
-        'Выбрать все видимые файлы',
     'Select all visible items': 'Выбрать все видимые элементы',
     'Clear selection': 'Снять выделение',
     'Move selected items': 'Переместить выбранные элементы',
@@ -2528,7 +2541,6 @@ const RU_UI_ARCHIVE = {
 
     'File view': 'Вид файлов',
     'Details view': 'Подробный вид',
-    'Tiles view': 'Плитки',
     'Icons view': 'Значки',
     'Sort by Name': 'Сортировать по названию',
     'Sort by Type': 'Сортировать по типу',
@@ -2556,8 +2568,8 @@ const RU_UI_ARCHIVE = {
     'Search sources...':
         'Поиск источников...',
 
-    'Search favourite files':
-        'Поиск среди избранных файлов',
+    'Search favourites':
+        'Поиск в избранном',
 
     'Search favourites in this folder':
         'Поиск избранных файлов в этой папке',
@@ -2588,12 +2600,6 @@ const RU_UI_ARCHIVE = {
 
     'Go to All Files root':
         'Перейти в корень «Все файлы»',
-
-    'Add Person':
-        'Добавить человека',
-
-    'Add Event':
-        'Добавить событие',
 
     'Find people':
         'Найти людей',
@@ -2854,32 +2860,10 @@ const RU_UI_ARCHIVE = {
     // File preview / inspector
     // ========================================
 
-    'PDF preview':
-        'Предпросмотр PDF',
-
-    'Image preview':
-        'Предпросмотр изображения',
-
-    'Audio preview':
-        'Предпросмотр аудио',
-
-    'Spreadsheet preview':
-        'Предпросмотр таблицы',
-
-    'Document preview':
-        'Предпросмотр документа',
-
-    'Archive-file preview':
-        'Предпросмотр архивного файла',
-
-    'File preview':
-        'Предпросмотр файла',
-
-    'The file preview is represented conceptually in this prototype.':
-        'Предпросмотр файла представлен в этом прототипе условно.',
-
-    'Preview is not available for this file type. Open the original file to view it.':
-        'Предпросмотр недоступен для этого типа файла. Откройте исходный файл, чтобы просмотреть его.',
+    'File': 'Файл',
+    'Document': 'Документ',
+    'Spreadsheet': 'Таблица',
+    'Add links': 'Добавить связи',
 
     'Open file':
         'Открыть файл',
@@ -2959,7 +2943,7 @@ const RU_UI_ARCHIVE = {
         'Верхний уровень',
 
     'Parent folder':
-        'Корневая папка',
+        'Родительская папка',
 
     // ========================================
     // Create folder
@@ -3199,20 +3183,8 @@ const RU_UI_ARCHIVE = {
     // Prototype states
     // ========================================
 
-    'File adding will be available in the working MVP.':
-        'Добавление файлов будет доступно в рабочей версии MVP.',
-
     'Opening this event is simulated.':
-        'Открытие этого события смоделировано.',
-
-    'Select a file or folder to view its details.':
-        'Выберите файл или папку, чтобы просмотреть сведения.',
-
-    'Collapse folder':
-        'Свернуть папку',
-
-    'Expand folder':
-        'Развернуть папку'
+        'Открытие этого события смоделировано.'
 };
 const RU_UI_NOTES = {
     'No collections yet': 'Коллекций пока нет',
@@ -6335,6 +6307,20 @@ const RU_PLURALS = {
         other: 'файла'
     },
 
+    folder: {
+        one: 'папка',
+        few: 'папки',
+        many: 'папок',
+        other: 'папки'
+    },
+
+    folders: {
+        one: 'папка',
+        few: 'папки',
+        many: 'папок',
+        other: 'папки'
+    },
+
     file: {
         one: 'файл',
         few: 'файла',
@@ -6811,7 +6797,7 @@ function translateCountPhrase(
     }
 
     return String(text).replace(
-        /(\d[\d\s.,]*)\s+(people|person|places|place|stops|stop|photos|photo|albums|album|files|file|notes|note|events|event|sources|source|questions|question|projects|project|objects|object|boards|board|connections|connection|relationships|relationship|items|item|names|name|years|year|records|record|collections|collection|subfolders|subfolder)\b/gi,
+        /(\d[\d\s.,]*)\s+(people|person|places|place|stops|stop|photos|photo|albums|album|files|file|folders|folder|notes|note|events|event|sources|source|questions|question|projects|project|objects|object|boards|board|connections|connection|relationships|relationship|items|item|names|name|years|year|records|record|collections|collection|subfolders|subfolder)\b/gi,
         (
             match,
             rawNumber,
@@ -6882,7 +6868,7 @@ function translateDynamicPhrase(core)
     {
         const folderName = folderDropMessage[1];
 
-        return `Перетащите файлы сюда, чтобы добавить их в папку «${folderName}», или нажмите, чтобы выбрать файлы.`;
+        return `Перетащите файлы сюда, чтобы добавить их в папку «${translateExact(folderName)}», или нажмите, чтобы выбрать файлы.`;
     }
 
     const movePlaceInstruction = String(core).trim().match(
@@ -8016,6 +8002,12 @@ function translateDynamicPhrase(core)
         /^Browse files and subfolders in\s+(.+)\.$/i,
         (_, value) =>
             `Файлы и вложенные папки: ${translateValue(value)}.`
+    );
+
+    repl(
+        /^Favourites in\s+(.+)\.$/i,
+        (_, value) =>
+            `Избранное в папке «${translateValue(value)}».`
     );
 
     repl(

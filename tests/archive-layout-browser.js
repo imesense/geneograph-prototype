@@ -21,6 +21,28 @@ const url = process.env.GENEO_TEST_URL || pathToFileURL(path.resolve(__dirname, 
                 state.archiveView = 'files';
                 render();
             }, language);
+            if (language === 'ru') {
+                const translated = await page.evaluate(() => {
+                    const root = document.querySelector('.archive-files-page').innerText;
+                    state.archiveSelectedFolderId = 'delo45';
+                    renderArchiveMain();
+                    const emptyFolder = document.querySelector('.archive-empty-dropzone')?.innerText || '';
+                    state.archiveSelectedFolderId = null;
+                    renderArchiveMain();
+                    return { root, emptyFolder, path: archiveFolderPath('delo44'),
+                        document: translateText(archiveFileTypeLabel(archiveFileById('af-pawford-trip'))),
+                        spreadsheet: translateText(archiveFileTypeLabel(archiveFileById('af-household-csv'))),
+                        links: t('Add links'), count: translateCountPhrase('2 folders, 5 files') };
+                });
+                assert.match(translated.root, /Семейные записи/);
+                assert.match(translated.root, /Исследовательские поездки/);
+                assert.match(translated.emptyFolder, /папку «Мяубридж»/);
+                assert.equal(translated.path, 'Исследовательские поездки / Поуфорд / Выписки из реестров');
+                assert.equal(translated.document, 'Документ');
+                assert.equal(translated.spreadsheet, 'Таблица');
+                assert.equal(translated.links, 'Добавить связи');
+                assert.equal(translated.count, '2 папки, 5 файлов');
+            }
             if (width <= 900) {
                 assert.equal(await page.locator('.archive-mobile-items').isVisible(), true);
                 assert.equal(await page.locator('.archive-layout-switch').isVisible(), false);

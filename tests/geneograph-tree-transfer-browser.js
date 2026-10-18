@@ -192,13 +192,18 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 const modal = document.querySelector('.geneo-tree-import-modal');
                 const owner = geneoTreeImportDraft.relations.find(relation => relation.type === 'child');
                 if (owner) modal.querySelector(`[data-geneo-review-person="${geneoTreeImportRelationOwner(owner)}"]`)?.click();
+                const factRow = geneoTreeImportFactRows('test-person', [['names.middle', 'Middle name', 'Иванович', '']], new Map());
                 return {
+                    factTranslated: factRow.includes('Второе имя / отчество') && factRow.includes('Не указано'),
+                    matchTranslated: t('Possible match') === 'Возможное совпадение',
                     relation: modal.querySelector('.geneo-review-relation-kind')?.textContent || '',
                     footer: modal.querySelector('[data-geneo-import-commit]')?.textContent || '',
                     footerRect: (() => { const rect = modal.querySelector('[data-geneo-import-commit]').getBoundingClientRect(); return { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom }; })(),
                     overflow: modal.querySelector('[data-geneo-import-body]').scrollWidth - modal.querySelector('[data-geneo-import-body]').clientWidth
                 };
             });
+            assert.equal(russian.factTranslated, true);
+            assert.equal(russian.matchTranslated, true);
             assert.ok(russian.relation.includes('Ребёнок'));
             assert.ok(russian.footer.includes('Применить'));
             assert.equal(russian.overflow, 0);

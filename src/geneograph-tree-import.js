@@ -302,7 +302,7 @@ function geneoTreeImportApply(draft)
         const treeId = choice === 'create' ? draft.newIds.get(boardPerson.id) : choice;
         const existing = getPerson(treeId);
         if (choice !== 'create' && (!existing || existing.deleted || existing.projectId !== draft.projectId))
-            return { error: `Tree match unavailable for ${geneoPersonDisplayName(boardPerson)}.` };
+            return { error: `${t('Tree match unavailable for')} ${geneoPersonDisplayName(boardPerson)}.` };
         if (choice !== 'create')
         {
             const available = new Map(geneoTreeImportFields(boardPerson, existing).map(field => [field[0], field]));
@@ -313,9 +313,9 @@ function geneoTreeImportApply(draft)
                     return { error: t('A selected fact value is no longer available. Review the fact choices.') };
             }
         }
-        if ([...mapping.values()].includes(treeId)) return { error: 'Two board people cannot use the same Tree person.' };
+        if ([...mapping.values()].includes(treeId)) return { error: t('Two board people cannot use the same Tree person.') };
         if (board.diagram.people.some(other => other.id !== boardPerson.id && other.treePersonId === treeId && !draft.people.some(person => person.id === other.id)))
-            return { error: 'That Tree person is already represented elsewhere on this board.' };
+            return { error: t('That Tree person is already represented elsewhere on this board.') };
         if (choice === 'create') sampleData.people.push(geneoTreeImportNewPerson(boardPerson, treeId, draft.projectId));
         else geneoTreeImportApplyFields(boardPerson, existing, draft.fields.get(boardPerson.id));
         mapping.set(boardPerson.id, treeId);
@@ -385,7 +385,7 @@ function geneoTreeImportApply(draft)
                 else result = connectSiblingsThroughFamily(ids[0], ids[1], family.id);
             }
         }
-        if (!result.ok) return { error: result.message || result.title || 'Relationship conflict.', relationId: relation.id, statuses };
+        if (!result.ok) return { error: result.message || result.title || t('Relationship conflict.'), relationId: relation.id, statuses };
         statuses.set(relation.id, already ? 'Already in Tree' : 'Will add');
     }
     syncFamilyReciprocalLinks();
@@ -397,7 +397,7 @@ function geneoTreeImportPreview(draft)
 {
     const snapshot = geneoTreeImportSnapshot();
     try { return geneoTreeImportApply(draft); }
-    catch (error) { console.error(error); return { error: 'Import could not be validated.' }; }
+    catch (error) { console.error(error); return { error: t('Import could not be validated.') }; }
     finally { geneoTreeImportRestore(snapshot); }
 }
 
@@ -745,7 +745,7 @@ function geneoTreeImportCommit()
             if (linkChanges.length || boardFactChanges.length || draft.relationEdits.size) touchGeneographBoard(board);
         }
     }
-    catch (error) { console.error(error); result = { error: 'Import failed. No changes were kept.' }; }
+    catch (error) { console.error(error); result = { error: t('Import failed. No changes were kept.') }; }
     if (result.error)
     {
         geneoTreeImportRestore(snapshot);

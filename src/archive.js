@@ -3107,7 +3107,7 @@ function archiveFolderPath(
 
     return folders
         .map(folder =>
-            folder.name
+            translateText(folder.name)
         )
         .join(' / ');
 }
@@ -9117,10 +9117,10 @@ function archiveFilesViewSubtitle(
     )
     {
         return currentFolder
-            ? `Favourite files in ${
+            ? `Favourites in ${
                 currentFolder.name
             }.`
-            : 'Files marked as favourites.';
+            : 'Files and folders marked as favourites.';
     }
 
     if (!currentFolder)
@@ -10544,7 +10544,7 @@ function archiveToolbarSearchPlaceholder()
     {
         return state.archiveSearchScope
           === 'all'
-            ? 'Search favourite files'
+            ? 'Search favourites'
             : 'Search favourites in this folder';
     }
 
@@ -21601,7 +21601,7 @@ function openArchiveBulkDeleteConfirm(folderIds, fileIds)
     if (!deletedFolderIds.size && !deletedFiles.size) return;
     openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="archiveBulkDeleteTitle">
         <div class="modal-header"><div><h2 id="archiveBulkDeleteTitle">${escapeHtml(t('Delete permanently?'))}</h2>
-        <p>${deletedFolderIds.size} ${escapeHtml(t('folders'))}, ${deletedFiles.size} ${escapeHtml(t('files'))}</p></div>
+        <p>${escapeHtml(translateCountPhrase(`${deletedFolderIds.size} ${deletedFolderIds.size === 1 ? 'folder' : 'folders'}`))}, ${escapeHtml(translateCountPhrase(`${deletedFiles.size} ${deletedFiles.size === 1 ? 'file' : 'files'}`))}</p></div>
         <button class="close-button" type="button" data-close aria-label="${escapeHtml(t('Close'))}">${icon.close}</button></div>
         <div class="modal-body"><div class="archive-delete-summary"><strong>${escapeHtml(t('This action cannot be undone.'))}</strong>
         <span>${escapeHtml(t('Selected folders, their contents, selected files, and file links will be removed. Connected genealogy records will remain.'))}</span></div></div>
