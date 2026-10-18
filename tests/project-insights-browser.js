@@ -35,6 +35,36 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
         assert(result.strokes.every(stroke => stroke === 'rgb(255, 255, 255)'));
         assert(result.metadata.every(text => !text.includes(result.projectName)));
         assert.equal(result.overflow, false);
+        await page.evaluate(() =>
+        {
+            sampleData.projects.push({ id: 'empty-overview-test', name: 'Empty overview test', status: 'Local project' });
+            activateProject('empty-overview-test', { moduleName: 'Projects' });
+        });
+        for (const width of [390, 1440])
+        {
+            await page.setViewportSize({ width, height: 900 });
+            const empty = await page.evaluate(() =>
+            {
+                const activityHeading = document.querySelector('.activity-panel h2');
+                const activity = document.querySelector('.project-activity-empty');
+                const insights = document.querySelector('.project-insights-empty');
+                const x = element => element.getBoundingClientRect().left;
+                return {
+                    activity: Boolean(activity), insights: Boolean(insights),
+                    headingX: x(activityHeading) + parseFloat(getComputedStyle(activityHeading).paddingLeft),
+                    messageX: x(activity),
+                    titleSize: parseFloat(getComputedStyle(activity.querySelector('strong')).fontSize),
+                    bodySize: parseFloat(getComputedStyle(activity.querySelector('span')).fontSize),
+                    insightsSize: parseFloat(getComputedStyle(insights).fontSize),
+                    overflow: document.documentElement.scrollWidth > innerWidth
+                };
+            });
+            assert.equal(empty.activity, true);
+            assert.equal(empty.insights, true);
+            assert(Math.abs(empty.headingX - empty.messageX) <= 1);
+            assert(empty.titleSize >= 16 && empty.bodySize >= 14 && empty.insightsSize >= 14);
+            assert.equal(empty.overflow, false);
+        }
         assert.deepEqual(errors, []);
         console.log('Project insights browser check passed.');
     }

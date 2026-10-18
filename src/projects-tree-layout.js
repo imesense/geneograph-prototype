@@ -1288,7 +1288,7 @@ function renderOpenProjectInsightsCard(project)
           <div class="startup-action-icon ${item.tone}">${item.icon}</div>
           <div class="startup-action-copy"><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(item.detail)}</span></div>
           <span class="project-insight-chevron" aria-hidden="true">${icon.chevron}</span>
-        </button>`).join('') : `<div class="panel-muted" style="padding:16px">${escapeHtml(t('Start by adding a person or opening a project module.'))}</div>`}
+        </button>`).join('') : `<div class="project-insights-empty">${escapeHtml(t('Start by adding a person or opening a project module.'))}</div>`}
       </div></div>`;
 }
 
@@ -1372,7 +1372,7 @@ function renderActivityRows(count)
         .sort((first, second) => Date.parse(second.occurredAt || '') - Date.parse(first.occurredAt || ''));
     if (!rows.length)
     {
-        return `<div class="panel-muted" style="padding:20px"><strong>${escapeHtml(t('No project activity yet'))}</strong><span style="display:block;margin-top:4px">${escapeHtml(t('Activity will appear as you add and edit project records.'))}</span></div>`;
+        return `<div class="project-activity-empty"><strong>${escapeHtml(t('No project activity yet'))}</strong><span>${escapeHtml(t('Activity will appear as you add and edit project records.'))}</span></div>`;
     }
     return `<div class="project-activity-list">${rows.slice(0,count).map(row => `<button class="project-activity-row" type="button" data-open-project-module="${row.module}">
         <span class="project-activity-icon ${row.tone || ''}">${activityIcons[row.module] || icon.clock}</span>
