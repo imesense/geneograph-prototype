@@ -1353,15 +1353,14 @@ function uniquePlaceIdFromText(text)
     return id;
 }
 
-function createPlaceFromText(text)
+function createPlaceFromText(text, { projectId = currentProjectId(), coordinates = null } = {})
 {
     const display = cleanEditFieldValue(text);
     if (!display) return null;
 
-    const projectId = requireActiveProjectId();
-    if (!projectId) return null;
+    if (!projectId || projectId !== currentProjectId()) return null;
 
-    const exact = findExactPlaceMatch(display);
+    const exact = findExactPlaceMatch(display, projectId);
     if (exact) return exact;
 
     const now =
@@ -1371,7 +1370,9 @@ function createPlaceFromText(text)
         projectId,
         name: display,
         alternativeNames: [],
-        coordinates: null,
+        coordinates: coordinates && validLatitude(coordinates.lat) && validLongitude(coordinates.lng)
+            ? { lat: Number(coordinates.lat), lng: Number(coordinates.lng) }
+            : null,
         createdAt: now,
         updatedAt: now,
         deleted: false
@@ -1381,10 +1382,13 @@ function createPlaceFromText(text)
     return place;
 }
 
-function resolvePlaceInputValue(text, selectedPlaceId = '', address = '')
+function resolvePlaceInputValue(text, selectedPlaceId = '', address = '', options = {})
 {
     const placeText = cleanEditFieldValue(text);
     const normalizedAddress = cleanEditFieldValue(address);
+    const projectId = options.projectId === currentProjectId()
+        ? options.projectId
+        : currentProjectId();
 
     if (!placeText)
     {
@@ -1398,7 +1402,7 @@ function resolvePlaceInputValue(text, selectedPlaceId = '', address = '')
 
     const selectedPlace = selectedPlaceId ? getPlace(selectedPlaceId) : null;
     if (
-        selectedPlace &&
+        selectedPlace && !selectedPlace.deleted && selectedPlace.projectId === projectId &&
         normalizePlaceLookupText(placeText) === normalizePlaceLookupText(placeDisplayText(selectedPlace))
     )
     {
@@ -1410,7 +1414,7 @@ function resolvePlaceInputValue(text, selectedPlaceId = '', address = '')
         };
     }
 
-    const exact = findExactPlaceMatch(placeText);
+    const exact = findExactPlaceMatch(placeText, projectId);
     if (exact)
     {
         return {
@@ -1421,7 +1425,10 @@ function resolvePlaceInputValue(text, selectedPlaceId = '', address = '')
         };
     }
 
-    const created = createPlaceFromText(placeText);
+    const created = createPlaceFromText(placeText, {
+        projectId,
+        coordinates: options.coordinates
+    });
 
     return {
         placeId: created?.id || null,
@@ -1443,19 +1450,28 @@ function resolvePlaceInputSelector(selector, root = modalBackdrop)
         addressInput,
         addressInput?.dataset.sourceValue || ''
     );
-    return resolvePlaceInputValue(value, input?.dataset.placeId || '', address);
+    let coordinates = null;
+    try { coordinates = JSON.parse(input?.dataset.placeCoordinates || 'null'); } catch (_) {}
+    return resolvePlaceInputValue(value, input?.dataset.placeId || '', address, {
+        projectId: input?.dataset.placeProjectId || currentProjectId(),
+        coordinates
+    });
 }
 
 function readPlaceInputValue(selector, root = document)
 {
     const input = root?.querySelector(selector);
 
+    let coordinates = null;
+    try { coordinates = JSON.parse(input?.dataset.placeCoordinates || 'null'); } catch (_) {}
     return {
         text: collectLocalizedDataFieldValue(
             input,
             input?.dataset.sourceValue || ''
         ).trim(),
         selectedPlaceId: input?.dataset.placeId || '',
+        coordinates,
+        projectId: input?.dataset.placeProjectId || currentProjectId(),
         address: (() =>
         {
             const addressInput = input?.closest('[data-place-combobox]')?.querySelector('[data-place-address]');
@@ -1474,7 +1490,8 @@ function resolvePlaceAssignment(value, currentPlaceId = '')
         return resolvePlaceInputValue(
             value.text || '',
             value.selectedPlaceId || currentPlaceId || '',
-            value.address || ''
+            value.address || '',
+            { projectId: value.projectId || currentProjectId(), coordinates: value.coordinates }
         );
     }
 

@@ -5756,7 +5756,8 @@ function saveAlbumsPhotoEdit()
     const place = resolvePlaceInputValue(
         placeInput.text,
         placeInput.selectedPlaceId,
-        placeInput.address
+        placeInput.address,
+        { projectId: placeInput.projectId, coordinates: placeInput.coordinates }
     );
     photo.placeId = place.placeId || null;
     photo.placeText = place.placeText || '';

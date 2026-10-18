@@ -6728,7 +6728,10 @@ function collectArchiveFileEditDraft({
 
         documentPlaceText:
           place.text
-          || ''
+          || '',
+
+        documentPlaceCoordinates:
+          place.coordinates
     };
 }
 
@@ -6898,7 +6901,9 @@ function saveArchiveFileEdit()
     const resolvedPlace =
         resolvePlaceInputValue(
             draft.documentPlaceText,
-            draft.documentPlaceId
+            draft.documentPlaceId,
+            '',
+            { projectId: file.projectId, coordinates: draft.documentPlaceCoordinates }
         );
 
     archiveApplyDocumentPlace(
@@ -19368,14 +19373,6 @@ function openArchiveFilesPlaceModal(
         return;
     }
 
-    const config =
-        archiveEntityConfig(
-            'place'
-        );
-
-    const records =
-        config.records();
-
     const currentPlaceIds =
         files.map(file =>
             archiveDocumentPlace(
@@ -19392,11 +19389,10 @@ function openArchiveFilesPlaceModal(
             ? currentPlaceIds[0]
             : '';
 
-    let query =
-        '';
-
     let selectedPlaceId =
         commonPlaceId;
+
+    let selectedDraft = null;
 
     openModal(`
         <div
@@ -19411,7 +19407,7 @@ function openArchiveFilesPlaceModal(
                 ${files.length === 1 ? 'Set file place' : 'Set place for files'}
               </h2>
               <p>
-                Choose one project place. It will replace the current place in File details${files.length === 1 ? '.' : ' for every selected file.'}
+                ${escapeHtml(t('Choose or create one project place.'))} ${escapeHtml(t('It will replace the current file place.'))}
               </p>
             </div>
 
@@ -19425,24 +19421,14 @@ function openArchiveFilesPlaceModal(
           </div>
 
           <div class="modal-body form-grid">
-            <label
-              class="app-search-field archive-link-picker-search"
-              aria-label="Search places">
-              ${icon.search}
-              <input
-                type="search"
-                data-archive-place-search
-                placeholder="Search places..."
-                autocomplete="off"
-                aria-label="Search places">
-            </label>
-
-            <div
-              class="archive-modal-list"
-              data-archive-place-results
-              role="radiogroup"
-              aria-label="Project places">
-            </div>
+            ${renderPlaceCombobox({
+                id: 'archiveBulkPlaceInput',
+                label: 'Find or create a place',
+                value: getPlace(commonPlaceId)?.name || '',
+                selectedPlaceId: commonPlaceId,
+                showAddress: false,
+                inputAttrs: `data-place-project-id="${escapeHtml(files[0].projectId)}"`
+            })}
           </div>
 
           <div class="modal-footer">
@@ -19476,11 +19462,6 @@ function openArchiveFilesPlaceModal(
             '.archive-link-picker-modal'
         );
 
-    const results =
-        modal.querySelector(
-            '[data-archive-place-results]'
-        );
-
     const status =
         modal.querySelector(
             '[data-archive-place-status]'
@@ -19505,112 +19486,41 @@ function openArchiveFilesPlaceModal(
                 ? changedFiles
                     ? `${changedFiles} ${changedFiles === 1 ? 'file' : 'files'} will be updated`
                     : 'This place is already linked'
-                : 'Select one place';
+                : selectedDraft?.text
+                    ? `${files.length} ${files.length === 1 ? 'file' : 'files'} will be updated`
+                    : 'Select one place';
 
         save.disabled =
-            !selectedPlaceId
-          || changedFiles === 0;
+            (!selectedPlaceId && !selectedDraft?.text)
+          || (selectedPlaceId && changedFiles === 0);
     };
 
-    const refresh = () =>
+    bindPlaceComboboxes(modal);
+    const placeInput = modal.querySelector('#archiveBulkPlaceInput');
+    placeInput?.addEventListener('input', () =>
     {
-        const normalizedQuery =
-            query.trim().toLowerCase();
-
-        const visible =
-            records.filter(record =>
-                [
-                    config.label(record),
-                    config.meta(record),
-                    ...(record.alternativeNames || [])
-                ]
-                    .join(' ')
-                    .toLowerCase()
-                    .includes(normalizedQuery)
-            );
-
-        results.innerHTML =
-            visible.length
-                ? visible.map(record =>
-                {
-                    const selected =
-                        record.id === selectedPlaceId;
-
-                    const current =
-                        currentPlaceIds.includes(
-                            record.id
-                        );
-
-                    return `
-                  <label class="archive-modal-choice">
-                    <input
-                      type="radio"
-                      name="archiveFilePlace"
-                      data-archive-place-choice
-                      value="${escapeHtml(record.id)}"
-                      ${selected ? 'checked' : ''}>
-
-                    <span class="archive-modal-choice-copy">
-                      <strong>${escapeHtml(config.label(record))}</strong>
-                      <span>${escapeHtml(config.meta(record))}</span>
-                    </span>
-
-                    <span>${current ? 'Current' : ''}</span>
-                  </label>
-                `;
-                }).join('')
-                : '<div class="archive-section-empty">No matching places.</div>';
-
+        selectedDraft = readPlaceInputValue('#archiveBulkPlaceInput', modal);
+        selectedPlaceId = selectedDraft.selectedPlaceId || '';
         updateStatus();
-    };
-
-    modal
-        .querySelector(
-            '[data-archive-place-search]'
-        )
-        ?.addEventListener(
-            'input',
-            event =>
-            {
-                query =
-                    event.currentTarget.value;
-
-                refresh();
-            }
-        );
-
-    modal.addEventListener(
-        'change',
-        event =>
-        {
-            const input =
-                event.target.closest(
-                    '[data-archive-place-choice]'
-                );
-
-            if (!input)
-            {
-                return;
-            }
-
-            selectedPlaceId =
-                input.value;
-
-            updateStatus();
-        }
-    );
+    });
 
     save.addEventListener(
         'click',
         () =>
         {
-            if (
-                !selectedPlaceId
-            || save.disabled
-            )
+            if (save.disabled)
             {
                 return;
             }
+
+            let createdPlace = null;
+            if (!selectedPlaceId && selectedDraft?.text)
+            {
+                const resolved = resolvePlaceAssignment(selectedDraft);
+                selectedPlaceId = resolved.placeId;
+                if (resolved.created) createdPlace = getPlace(resolved.placeId);
+            }
+            if (!selectedPlaceId) return;
 
             const changedFiles =
                 files.filter(file =>
@@ -19654,6 +19564,11 @@ function openArchiveFilesPlaceModal(
 
             if (!committed.ok)
             {
+                if (createdPlace)
+                {
+                    const index = sampleData.places.indexOf(createdPlace);
+                    if (index >= 0) sampleData.places.splice(index, 1);
+                }
                 showToast(
                     'The place could not be linked to every file.'
                 );
@@ -19679,12 +19594,12 @@ function openArchiveFilesPlaceModal(
         }
     );
 
-    refresh();
+    updateStatus();
 
     requestAnimationFrame(() =>
         modal
             .querySelector(
-                '[data-archive-place-search]'
+                '#archiveBulkPlaceInput'
             )
             ?.focus()
     );

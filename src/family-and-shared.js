@@ -5846,7 +5846,7 @@ function renderPlaceCombobox({
     placeholder = 'Search or type a place',
     className = '',
     inputAttrs = '',
-    createOptionLabel = 'Create new place'
+    createOptionLabel = 'Create place from entered text'
 } = {})
 {
     const listId =

@@ -8613,21 +8613,6 @@ function placeEditorExistingMatches(query)
     }).filter(result => result.rank < 9).sort((a, b) => a.rank - b.rank || a.place.name.localeCompare(b.place.name)).slice(0, 6).map(result => result.place);
 }
 
-function placeEditorMapResult(feature, index)
-{
-    const center = Array.isArray(feature?.center) ? feature.center : [];
-    const lng = Number(center[0]);
-    const lat = Number(center[1]);
-    if (!validLatitude(lat) || !validLongitude(lng)) return null;
-    const name = cleanEditFieldValue(feature.place_name || feature.text);
-    if (!name) return null;
-    const primary = cleanEditFieldValue(feature.text || name.split(',')[0]);
-    const context = Array.isArray(feature.context)
-        ? feature.context.map(item => cleanEditFieldValue(item.text)).filter(Boolean).join(', ')
-        : cleanEditFieldValue(name.split(',').slice(1).join(','));
-    return { id: `map-result-${index}`, kind: 'map', name, primary: primary || name, context, coordinates: { lat, lng } };
-}
-
 function closePlaceEditorSuggestions()
 {
     const input = modalBackdrop.querySelector('#placeNameInput');
@@ -8737,15 +8722,6 @@ async function searchPlaceEditorMapResults(query, { retry = false } = {})
     const normalizedQuery = String(query || '').trim();
     if (!draft || normalizedQuery.length < PLACE_EDITOR_GEOCODER_MIN_LENGTH) return;
     if (!retry && draft.lastExternalQuery === normalizedQuery && ['ready', 'empty'].includes(draft.externalState)) return;
-    const key = placesMaptilerKey();
-    if (!key)
-    {
-        draft.externalState = 'unavailable';
-        draft.externalError = 'Map search is unavailable because no MapTiler browser key is configured.';
-        draft.externalQuery = normalizedQuery;
-        renderPlaceEditorSuggestions();
-        return;
-    }
     placeGeocoderController?.abort();
     const controller = new AbortController();
     placeGeocoderController = controller;
@@ -8755,11 +8731,9 @@ async function searchPlaceEditorMapResults(query, { retry = false } = {})
     renderPlaceEditorSuggestions();
     try
     {
-        const response = await fetch(`https://api.maptiler.com/geocoding/${encodeURIComponent(normalizedQuery)}.json?key=${encodeURIComponent(key)}&limit=5`, { signal: controller.signal });
-        if (!response.ok) throw new Error('Map search could not be completed.');
-        const data = await response.json();
+        const results = await searchSharedPlaceMapResults(normalizedQuery, controller.signal);
         if (placeEditorDraft !== draft || controller.signal.aborted || draft.query.trim() !== normalizedQuery) return;
-        draft.externalResults = (Array.isArray(data.features) ? data.features : []).map(placeEditorMapResult).filter(Boolean);
+        draft.externalResults = results;
         draft.externalState = draft.externalResults.length ? 'ready' : 'empty';
         draft.externalQuery = normalizedQuery;
         draft.lastExternalQuery = normalizedQuery;

@@ -4209,6 +4209,18 @@ const RU_UI_PLACES = Object.freeze({
     'Map results':
         'Результаты на карте',
 
+    'Create place from entered text':
+        'Создать место из введённого текста',
+
+    'Find or create a place':
+        'Найти или создать место',
+
+    'Choose or create one project place.':
+        'Выберите или создайте одно место проекта.',
+
+    'It will replace the current file place.':
+        'Оно заменит текущее место файла.',
+
     'Searching map results...':
         'Поиск результатов на карте...',
 

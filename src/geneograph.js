@@ -18090,6 +18090,11 @@ function renderGeneographPlacePickerModal({
                 </div>
               </section>
 
+              <section class="geneo-place-picker-results-section" aria-label="${escapeHtml(t('Map results'))}">
+                <h3>${escapeHtml(t('Map results'))}</h3>
+                <div class="geneo-place-picker-results" data-geneo-place-map-results></div>
+              </section>
+
               <div
                 class="geneo-place-board-choice-host"
                 data-geneo-place-board-choice-host>
@@ -18251,6 +18256,12 @@ function openGeneographPlaceModal(
             '[data-geneo-place-board-choice-host]'
         );
 
+    const mapHost = form?.querySelector('[data-geneo-place-map-results]');
+    let mapResults = [];
+    let mapState = 'idle';
+    let mapTimer = null;
+    let mapController = null;
+
     const countElement =
         form?.querySelector(
             '[data-geneo-place-picker-count]'
@@ -18324,6 +18335,12 @@ function openGeneographPlaceModal(
                       .geneoBoardPlaceName
               )
             );
+        }
+
+        if (type === 'map')
+        {
+            return pickerState.choice?.type === 'map'
+                && pickerState.choice.name === mapResults[Number(button.dataset.geneoPlaceMapIndex)]?.name;
         }
 
         return false;
@@ -18404,6 +18421,60 @@ function openGeneographPlaceModal(
         updateChoiceUi();
     };
 
+    const renderMapResults = () =>
+    {
+        if (!mapHost) return;
+        mapHost.closest('section').hidden = mapState === 'idle' && !mapResults.length;
+        mapHost.innerHTML = mapState === 'loading'
+            ? `<div class="place-combobox-status">${escapeHtml(t('Searching map results...'))}</div>`
+            : mapState === 'unavailable'
+                ? `<div class="place-combobox-status">${escapeHtml(t('Map search is unavailable. You can retry or use the entered text.'))} <button type="button" data-geneo-place-map-retry>${escapeHtml(t('Retry'))}</button></div>`
+                : mapState === 'empty'
+                    ? `<div class="place-combobox-status">${escapeHtml(t('No matching map results. You can still use the entered text.'))}</div>`
+                    : mapResults.map((result, index) => `<button class="geneo-place-picker-option" type="button" data-geneo-place-picker-choice="map" data-geneo-place-map-index="${index}" aria-pressed="false" aria-label="${escapeHtml(`${t('Select')} ${result.name}`)}"><span class="geneo-place-picker-option-copy"><strong>${escapeHtml(result.primary)}</strong><span>${escapeHtml(result.context || result.name)}</span></span><span class="geneo-place-picker-check" data-geneo-place-picker-check aria-hidden="true" hidden>${icon.check}</span></button>`).join('');
+        updateChoiceUi();
+    };
+
+    const scheduleMapSearch = (immediate = false) =>
+    {
+        clearTimeout(mapTimer);
+        mapController?.abort();
+        const query = searchInput.value.trim();
+        mapResults = [];
+        if (query && findExactPlaceMatch(query, board.projectId))
+        {
+            mapState = 'idle';
+            renderMapResults();
+            return;
+        }
+        if (query.length < PLACE_EDITOR_GEOCODER_MIN_LENGTH)
+        {
+            mapState = 'idle';
+            renderMapResults();
+            return;
+        }
+        mapState = 'loading';
+        renderMapResults();
+        mapTimer = setTimeout(async () =>
+        {
+            const controller = new AbortController();
+            mapController = controller;
+            try
+            {
+                const results = await searchSharedPlaceMapResults(query, controller.signal);
+                if (controller.signal.aborted || !form.isConnected || searchInput.value.trim() !== query) return;
+                mapResults = results;
+                mapState = results.length ? 'ready' : 'empty';
+            }
+            catch (error)
+            {
+                if (controller.signal.aborted || !form.isConnected || searchInput.value.trim() !== query) return;
+                mapState = 'unavailable';
+            }
+            renderMapResults();
+        }, immediate ? 0 : PLACE_EDITOR_GEOCODER_DEBOUNCE_MS);
+    };
+
     searchInput.addEventListener(
         'input',
         () =>
@@ -18420,8 +18491,17 @@ function openGeneographPlaceModal(
 
             clearError();
             refreshResults();
+            scheduleMapSearch();
         }
     );
+
+    renderMapResults();
+    if (searchInput.value.trim()) scheduleMapSearch();
+
+    form.addEventListener('click', event =>
+    {
+        if (event.target.closest('[data-geneo-place-map-retry]')) scheduleMapSearch(true);
+    });
 
     form.addEventListener(
         'click',
@@ -18489,6 +18569,12 @@ function openGeneographPlaceModal(
                     name
                 };
             }
+            else if (choiceType === 'map')
+            {
+                const result = mapResults[Number(choiceButton.dataset.geneoPlaceMapIndex)];
+                if (!result) return;
+                pickerState.choice = { type: 'map', name: result.name, coordinates: result.coordinates };
+            }
             else
             {
                 return;
@@ -18511,6 +18597,7 @@ function openGeneographPlaceModal(
             event.preventDefault();
 
             let nextRef = null;
+            let createdPlace = null;
 
             if (
                 pickerState.choice?.type
@@ -18569,8 +18656,29 @@ function openGeneographPlaceModal(
                 }
             }
 
+            else if (pickerState.choice?.type === 'map')
+            {
+                const resolvedPlace = resolvePlaceInputValue(
+                    pickerState.choice.name,
+                    '',
+                    '',
+                    { projectId: board.projectId, coordinates: pickerState.choice.coordinates }
+                );
+                const place = getPlace(resolvedPlace.placeId);
+                if (resolvedPlace.created) createdPlace = place;
+                if (place && place.projectId === board.projectId)
+                {
+                    nextRef = { scope: 'project', id: place.id, fallbackName: placePrimaryName(place) || place.name };
+                }
+            }
+
             if (!nextRef)
             {
+                if (createdPlace)
+                {
+                    const index = sampleData.places.indexOf(createdPlace);
+                    if (index >= 0) sampleData.places.splice(index, 1);
+                }
                 if (errorElement)
                 {
                     errorElement.textContent =
@@ -18599,6 +18707,11 @@ function openGeneographPlaceModal(
 
             if (!target)
             {
+                if (createdPlace)
+                {
+                    const index = sampleData.places.indexOf(createdPlace);
+                    if (index >= 0) sampleData.places.splice(index, 1);
+                }
                 geneoHistoryRuntime
                     .undo
                     .pop();

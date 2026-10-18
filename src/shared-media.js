@@ -3990,6 +3990,32 @@ function setPlaceAddressDisclosureState(
     }
 }
 
+function placeEditorMapResult(feature, index)
+{
+    const center = Array.isArray(feature?.center) ? feature.center : [];
+    const lng = Number(center[0]);
+    const lat = Number(center[1]);
+    if (!validLatitude(lat) || !validLongitude(lng)) return null;
+    const name = cleanEditFieldValue(feature.place_name || feature.text);
+    if (!name) return null;
+    const primary = cleanEditFieldValue(feature.text || name.split(',')[0]);
+    const context = Array.isArray(feature.context)
+        ? feature.context.map(item => cleanEditFieldValue(item.text)).filter(Boolean).join(', ')
+        : cleanEditFieldValue(name.split(',').slice(1).join(','));
+    return { id: `map-result-${index}`, kind: 'map', name, primary: primary || name, context, coordinates: { lat, lng } };
+}
+
+async function searchSharedPlaceMapResults(query, signal)
+{
+    const key = placesMaptilerKey();
+    if (!key) throw new Error('Map search is unavailable because no MapTiler browser key is configured.');
+    const response = await fetch(`https://api.maptiler.com/geocoding/${encodeURIComponent(query)}.json?key=${encodeURIComponent(key)}&limit=5`, { signal });
+    if (!response.ok) throw new Error('Map search could not be completed.');
+    const data = await response.json();
+    return (Array.isArray(data.features) ? data.features : [])
+        .map(placeEditorMapResult).filter(Boolean);
+}
+
 function bindPlaceComboboxes(root = document)
 {
     if (!root || typeof root.querySelectorAll !== 'function') return;
@@ -4054,8 +4080,17 @@ function bindPlaceComboboxes(root = document)
         if (!input || !list) return;
 
         let activeIndex = -1;
-        let currentOptions = []; // [{type:'place'|'create', place?, text?}]
+        let currentOptions = [];
         let openBeforePointer = null;
+        let mapResults = [];
+        let mapQuery = '';
+        let mapState = 'idle';
+        let mapError = '';
+        let searchTimer = null;
+        let searchController = null;
+        let choosingOption = false;
+        const projectId = String(input.dataset.placeProjectId || currentProjectId() || '').trim();
+        input.dataset.placeProjectId = projectId;
 
         function placeMatchScore(place, q)
         {
@@ -4075,7 +4110,6 @@ function bindPlaceComboboxes(root = document)
 
         function buildOptions(query)
         {
-            const projectId = String(input.dataset.placeProjectId || '').trim();
             const pool = projectId
                 ? (sampleData.places || []).filter(p => !p.deleted && p.projectId === projectId)
                 : [];
@@ -4087,6 +4121,10 @@ function bindPlaceComboboxes(root = document)
                 .slice(0, 8)
                 .map(x => ({ type: 'place', place: x.place }));
             const opts = scored;
+            if (trimmed.length >= PLACE_EDITOR_GEOCODER_MIN_LENGTH && mapQuery === trimmed)
+            {
+                mapResults.forEach(result => opts.push({ type: 'map', result }));
+            }
             if (trimmed)
             {
                 const nq = normalizePlaceLookupText(trimmed);
@@ -4105,25 +4143,40 @@ function bindPlaceComboboxes(root = document)
                 input.setAttribute('aria-expanded', 'false');
                 return;
             }
+            let previousGroup = '';
+            const mapStatus = mapState === 'loading'
+                ? `<div class="place-combobox-status">${escapeHtml(t('Searching map results...'))}</div>`
+                : mapState === 'empty'
+                    ? `<div class="place-combobox-status">${escapeHtml(t('No matching map results. You can still use the entered text.'))}</div>`
+                    : mapState === 'unavailable'
+                        ? `<div class="place-combobox-status">${escapeHtml(t(mapError || 'Map search is unavailable.'))} <button type="button" data-place-map-retry>${escapeHtml(t('Retry'))}</button></div>`
+                        : '';
             list.innerHTML = currentOptions.map((opt, i) =>
             {
                 const active = i === activeIndex ? ' active' : '';
+                const group = opt.type === 'place' ? 'Project places' : opt.type === 'map' ? 'Map results' : 'Use entered text';
+                const heading = group === previousGroup ? '' : `<div class="place-combobox-group" role="presentation">${escapeHtml(t(group))}</div>`;
+                previousGroup = group;
                 if (opt.type === 'create')
                 {
-                    const createLabel = field.dataset.placeCreateLabel || 'Create new place';
-                    return `<div class="place-combobox-option${active}" role="option" data-place-opt="${i}" data-place-create="1">
-                <div class="place-combobox-copy"><strong>${escapeHtml(createLabel)}</strong><span>${escapeHtml(opt.text)}</span></div>
-              </div>`;
+                    const createLabel = field.dataset.placeCreateLabel || 'Create place from entered text';
+                    return `${mapStatus ? `<div class="place-combobox-group" role="presentation">${escapeHtml(t('Map results'))}</div>${mapStatus}` : ''}${heading}<div class="place-combobox-option${active}" id="${list.id}Option${i}" role="option" aria-selected="${i === activeIndex}" data-place-opt="${i}" data-place-create="1"><div class="place-combobox-copy"><strong>${escapeHtml(t(createLabel))}</strong><span>${escapeHtml(opt.text)}</span></div></div>`;
+                }
+                if (opt.type === 'map')
+                {
+                    const result = opt.result;
+                    return `${heading}<div class="place-combobox-option${active}" id="${list.id}Option${i}" role="option" aria-selected="${i === activeIndex}" data-place-opt="${i}"><div class="place-combobox-copy"><strong>${escapeHtml(result.primary)}</strong><span>${escapeHtml(result.context || result.name)}</span></div></div>`;
                 }
                 const p = opt.place;
                 const primary = placePrimaryName(p) || 'Place';
                 const secondary = placeSecondaryName(p);
-                return `<div class="place-combobox-option${active}" role="option" data-place-opt="${i}" data-place-id="${escapeHtml(p.id)}">
+                return `${heading}<div class="place-combobox-option${active}" id="${list.id}Option${i}" role="option" aria-selected="${i === activeIndex}" data-place-opt="${i}" data-place-id="${escapeHtml(p.id)}">
               <div class="place-combobox-copy"><strong>${escapeHtml(primary)}</strong>${secondary ? `<span>${escapeHtml(secondary)}</span>` : ''}</div>
             </div>`;
             }).join('');
             list.hidden = false;
             input.setAttribute('aria-expanded', 'true');
+            input.setAttribute('aria-activedescendant', activeIndex >= 0 ? `${list.id}Option${activeIndex}` : '');
         }
 
         function refresh()
@@ -4133,11 +4186,57 @@ function bindPlaceComboboxes(root = document)
             renderList();
         }
 
+        function scheduleMapSearch(query, immediate = false)
+        {
+            clearTimeout(searchTimer);
+            searchController?.abort();
+            const trimmed = query.trim();
+            if (trimmed && findExactPlaceMatch(trimmed, projectId))
+            {
+                mapState = 'idle'; mapResults = []; mapQuery = '';
+                refresh();
+                return;
+            }
+            if (trimmed.length < PLACE_EDITOR_GEOCODER_MIN_LENGTH)
+            {
+                mapState = 'idle'; mapResults = []; mapQuery = '';
+                refresh();
+                return;
+            }
+            if (!immediate && mapQuery === trimmed && ['ready', 'empty'].includes(mapState)) return;
+            mapQuery = trimmed;
+            mapResults = [];
+            mapState = 'loading';
+            refresh();
+            searchTimer = setTimeout(async () =>
+            {
+                const controller = new AbortController();
+                searchController = controller;
+                try
+                {
+                    const results = await searchSharedPlaceMapResults(trimmed, controller.signal);
+                    if (controller.signal.aborted || input.value.trim() !== trimmed || !field.isConnected) return;
+                    mapResults = results;
+                    mapState = results.length ? 'ready' : 'empty';
+                }
+                catch (error)
+                {
+                    if (controller.signal.aborted || input.value.trim() !== trimmed || !field.isConnected) return;
+                    mapState = 'unavailable';
+                    mapError = error.message;
+                }
+                if (document.activeElement === input) refresh();
+            }, immediate ? 0 : PLACE_EDITOR_GEOCODER_DEBOUNCE_MS);
+        }
+
         function close()
         {
+            clearTimeout(searchTimer);
+            searchController?.abort();
             list.hidden = true;
             list.innerHTML = '';
             input.setAttribute('aria-expanded', 'false');
+            input.removeAttribute('aria-activedescendant');
             activeIndex = -1;
             currentOptions = [];
         }
@@ -4145,24 +4244,38 @@ function bindPlaceComboboxes(root = document)
         function chooseOption(opt)
         {
             if (!opt) return;
+            clearTimeout(searchTimer);
+            searchController?.abort();
+            mapState = 'idle';
             if (opt.type === 'place')
             {
                 const source = placeDisplayText(opt.place) || opt.place.name || '';
                 input.dataset.sourceValue = source;
                 input.value = localizedDataFieldValue(source);
                 input.dataset.placeId = opt.place.id;
+                delete input.dataset.placeCoordinates;
+            }
+            else if (opt.type === 'map')
+            {
+                input.dataset.sourceValue = opt.result.name;
+                input.value = localizedDataFieldValue(opt.result.name);
+                input.dataset.placeId = '';
+                input.dataset.placeCoordinates = JSON.stringify(opt.result.coordinates);
             }
             else
             {
             // create: keep typed text; clear selection so save-time creates the record
                 input.dataset.placeId = '';
+                delete input.dataset.placeCoordinates;
             }
+            choosingOption = true;
             input.dispatchEvent(new Event('input', { bubbles: true }));
             input.dispatchEvent(new Event('change', { bubbles: true }));
+            choosingOption = false;
             close();
         }
 
-        input.addEventListener('focus', refresh);
+        input.addEventListener('focus', () => { refresh(); scheduleMapSearch(input.value); });
         input.addEventListener('pointerdown', () =>
         {
             openBeforePointer = !list.hidden;
@@ -4188,6 +4301,8 @@ function bindPlaceComboboxes(root = document)
                     input.dataset.placeId = '';
                 }
             }
+            if (input.dataset.placeCoordinates && normalizePlaceLookupText(input.value) !== normalizePlaceLookupText(input.dataset.sourceValue || '')) delete input.dataset.placeCoordinates;
+            if (!choosingOption) scheduleMapSearch(input.value);
             refresh();
         });
         input.addEventListener('keydown', event =>
@@ -4233,13 +4348,23 @@ function bindPlaceComboboxes(root = document)
         {
             setTimeout(close, 120);
         });
-        list.addEventListener('mousedown', event =>
+        list.addEventListener('pointerdown', event =>
         {
+            if (event.target.closest('[data-place-map-retry]'))
+            {
+                event.preventDefault();
+                scheduleMapSearch(input.value, true);
+                return;
+            }
             const opt = event.target.closest('[data-place-opt]');
             if (!opt) return;
             event.preventDefault();
             const idx = Number(opt.dataset.placeOpt);
             chooseOption(currentOptions[idx]);
+        });
+        list.addEventListener('click', event =>
+        {
+            if (event.detail === 0 && event.target.closest('[data-place-map-retry]')) scheduleMapSearch(input.value, true);
         });
     });
 }
