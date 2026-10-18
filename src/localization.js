@@ -426,6 +426,7 @@ const RU_UI_SHARED = Object.freeze({
     'The file will remain available in Archive and keep all its other connections.':'Файл останется доступен в архиве и сохранит остальные связи.',
     'The note will remain available in Notes and keep all its other links.':'Заметка останется доступна в Заметках и сохранит остальные связи.',
     'Similar people in this project': 'Похожие люди в этом проекте',
+    'No strong matches found in this project.': 'В этом проекте не найдено достаточно близких совпадений.',
     'Enter a name, date, or place to check for existing people.': 'Введите имя, дату или место для запуска проверки.',
     'on': 'вкл.'
 });

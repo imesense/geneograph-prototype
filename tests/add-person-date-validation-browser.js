@@ -24,6 +24,24 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             });
             await page.locator('#addPersonFirstName').fill('Date');
             await page.locator('#addPersonLastName').fill('Validation');
+            const labels = await page.evaluate(() =>
+            {
+                const select = document.createElement('select');
+                select.innerHTML = genealogyMonthOptions('02');
+                return { months: [...select.options].slice(1).map(option => ({ value: option.value, label: option.textContent })),
+                    selected: select.value, noMatches: t('No strong matches found in this project.') };
+            });
+            assert.equal(labels.months.length, 12);
+            assert.equal(labels.selected, '02');
+            assert.deepEqual(labels.months.map(month => month.value), Array.from({ length: 12 }, (_, index) => String(index + 1).padStart(2, '0')));
+            assert.equal(labels.months[0].label, language === 'ru' ? '01 - январь' : '01 - January');
+            assert.equal(labels.months[11].label, language === 'ru' ? '12 - декабрь' : '12 - December');
+            assert.equal(labels.noMatches, language === 'ru'
+                ? 'В этом проекте не найдено достаточно близких совпадений.'
+                : 'No strong matches found in this project.');
+            await page.waitForFunction(expected =>
+                document.querySelector('.add-person-match-empty')?.textContent.trim() === expected,
+            labels.noMatches);
             await page.locator('#addPersonBirthDate').fill('31 Feb 2000');
             await page.locator('[data-create-person]').click();
             assert.equal(await page.evaluate(() => getPeople(currentProjectId()).length), initial);

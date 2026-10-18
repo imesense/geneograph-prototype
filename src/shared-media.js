@@ -2952,7 +2952,7 @@ function genealogyDateTypeOptions(
 function genealogyMonthOptions(selected = '')
 {
     const active = String(selected || '').padStart(2, '0');
-    return `<option value="">${t('Month')}</option>${GENEALOGY_MONTHS.map(([value, short, long, shortRu, longRu]) => `<option value="${value}" ${value === active ? 'selected' : ''}>${state.language === 'ru' ? `${shortRu} - ${longRu}` : `${short} - ${long}`}</option>`).join('')}`;
+    return `<option value="">${t('Month')}</option>${GENEALOGY_MONTHS.map(([value, , long, , longRu]) => `<option value="${value}" ${value === active ? 'selected' : ''}>${value} - ${state.language === 'ru' ? longRu : long}</option>`).join('')}`;
 }
 
 function normalizeGenealogyDateType(type)
