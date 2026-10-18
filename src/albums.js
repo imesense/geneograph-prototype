@@ -5565,13 +5565,19 @@ function collectAlbumsPhotoEditDraft()
     }
 
     const place =
-        resolvePlaceInputSelector(
+        readPlaceInputValue(
             '#albumPhotoPlace',
             main
         ) || {
-            placeId: '',
-            placeText: ''
+            text: '',
+            selectedPlaceId: ''
         };
+
+    const selectedPlace = place.selectedPlaceId
+        ? getPlace(place.selectedPlaceId) : null;
+    const unchangedSelectedPlace = selectedPlace
+        && normalizePlaceLookupText(place.text)
+            === normalizePlaceLookupText(placeDisplayText(selectedPlace));
 
     return {
         photoId:
@@ -5591,11 +5597,13 @@ function collectAlbumsPhotoEditDraft()
         date,
 
         placeId:
-          place.placeId
+          place.selectedPlaceId
           || '',
 
         placeText:
-          place.placeText
+          unchangedSelectedPlace
+              ? (state.albumsDetailEditOriginal?.placeText || '')
+              : place.text
           || '',
 
         caption:
@@ -5744,13 +5752,14 @@ function saveAlbumsPhotoEdit()
             draft.date
         );
 
-    photo.placeId =
-        draft.placeId
-        || null;
-
-    photo.placeText =
-        draft.placeText
-        || '';
+    const placeInput = readPlaceInputValue('#albumPhotoPlace', main);
+    const place = resolvePlaceInputValue(
+        placeInput.text,
+        placeInput.selectedPlaceId,
+        placeInput.address
+    );
+    photo.placeId = place.placeId || null;
+    photo.placeText = place.placeText || '';
 
     photo.caption =
         draft.caption
@@ -12470,6 +12479,17 @@ function bindAlbumsSidebar()
     bindToasts(sidebar);
 }
 
+let albumsLastPhotoCardClick = { photoId: null, at: 0 };
+
+function albumsPhotoCardWasDoubleClick(photoId)
+{
+    const now = performance.now();
+    const repeated = albumsLastPhotoCardClick.photoId === photoId
+        && now - albumsLastPhotoCardClick.at <= 420;
+    albumsLastPhotoCardClick = { photoId, at: now };
+    return repeated;
+}
+
 function bindAlbumsCardControls(root = main)
 {
     root
@@ -12507,7 +12527,11 @@ function bindAlbumsCardControls(root = main)
             card.addEventListener('click', event =>
             {
                 if (event.target.closest('button,input,a,select')) return;
-                selectPhoto();
+                const photoId = card.dataset.photoId;
+                if (!event.shiftKey && !event.ctrlKey && !event.metaKey
+                    && albumsPhotoCardWasDoubleClick(photoId))
+                    runAfterAlbumsPhotoEditGuard(() => openPhotoLightbox(photoId));
+                else selectPhoto();
             });
 
             card.addEventListener('keydown', event =>

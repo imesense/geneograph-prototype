@@ -30,6 +30,10 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             await page.locator('#connectRelative').click();
             await page.waitForFunction(() => document.activeElement?.classList.contains('close-button'));
             const modal = page.locator('.connect-person-modal');
+            assert.equal(await modal.locator('[data-connect-relationship]').inputValue(), '');
+            assert.equal(await modal.locator('#connectPersonConfirm').isDisabled(), true);
+            assert.equal(await modal.locator('[data-connect-create-new]').isDisabled(), true);
+            assert.match(await modal.locator('.connect-person-results-title').innerText(), language === 'ru' ? /Люди в этом проекте/ : /People in this project/);
             assert.ok(await modal.evaluate(element =>
             {
                 const box = element.getBoundingClientRect();
@@ -49,7 +53,12 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             assert.ok(await modal.locator('[data-connect-create-new]').evaluate(button =>
                 button.getBoundingClientRect().bottom <= document.querySelector('.connect-person-footer').getBoundingClientRect().top + 1));
             await modal.locator('[data-connect-person-result]').first().click();
-            assert.ok(await modal.locator('.connect-person-layout').evaluate(layout => layout.scrollTop > 0));
+            assert.equal(await modal.locator('#connectPersonConfirm').isDisabled(), true);
+            await modal.locator('[data-connect-relationship]').selectOption('parent');
+            assert.equal(await modal.locator('[data-connect-create-new]').isEnabled(), true);
+            assert.equal(await modal.locator('#connectPersonConfirm').isDisabled(), true);
+            await modal.locator('[data-connect-person-result]').first().click();
+            assert.equal(await modal.locator('#connectPersonConfirm').isEnabled(), true);
             await page.keyboard.press('Escape');
             assert.equal(await page.evaluate(() => mobileSurface), 'details');
             assert.deepEqual(errors, []);

@@ -2172,6 +2172,13 @@ function handleModalKeydown(
         event.preventDefault();
         event.stopImmediatePropagation();
 
+        const addPersonDiscard = document.getElementById('addPersonDiscardOverlay');
+        if (addPersonDiscard)
+        {
+            addPersonDiscard.querySelector('[data-add-person-continue-editing]')?.click();
+            return;
+        }
+
         if (modalBackdrop.querySelector('[data-place-duplicate-menu]'))
         {
             const anchor = menuLifecycleAnchor;
@@ -2398,6 +2405,7 @@ function openNestedModal(html)
 
     nestedModalFrames.push({
         content,
+        beforeClose: modalBackdrop.beforeClose,
         activeElement:
           document.activeElement instanceof HTMLElement
               ? document.activeElement
@@ -2419,11 +2427,12 @@ function restoreNestedModalFrame()
 
     modalBackdrop.innerHTML = '';
     modalBackdrop.appendChild(frame.content);
+    modalBackdrop.beforeClose = frame.beforeClose || null;
 
     modalBackdropDismissBinding =
         bindIntentionalBackdropDismiss(
             modalBackdrop,
-            () => closeModal()
+            () => { if (!modalBackdrop.querySelector('.add-person-modal')) closeModal(); }
         );
 
     requestAnimationFrame(() =>
@@ -2537,7 +2546,7 @@ function openModal(
     modalBackdropDismissBinding =
         bindIntentionalBackdropDismiss(
             modalBackdrop,
-            () => closeModal()
+            () => { if (!modalBackdrop.querySelector('.add-person-modal')) closeModal(); }
         );
 
     document.addEventListener(
@@ -2733,6 +2742,7 @@ function closeModal(options = {})
     nestedModalFrames.length = 0;
     document.getElementById('personPhotoDiscardOverlay')?.remove();
     document.getElementById('addPersonMiniOverlay')?.remove();
+    document.getElementById('addPersonDiscardOverlay')?.remove();
 
     modalBackdropDismissBinding?.destroy();
     modalBackdropDismissBinding = null;

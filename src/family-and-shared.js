@@ -5133,24 +5133,26 @@ function connectPersonCandidates()
     if (!anchor) return [];
 
     const query = String(connectPersonModalState.query || '').trim().toLowerCase();
-    const relationshipType = normalizeConnectRelationshipType(connectPersonModalState.relationshipType);
+    const relationshipType = connectPersonModalState.relationshipType
+        ? normalizeConnectRelationshipType(connectPersonModalState.relationshipType) : '';
 
     return getPeople(currentProjectId())
         .filter(person => person?.id && person.id !== anchor.id)
         .filter(person => !person.deleted)
-        .filter(person => !connectPeopleAlreadyRelated(anchor.id, person.id, relationshipType))
+        .filter(person => !relationshipType || !connectPeopleAlreadyRelated(anchor.id, person.id, relationshipType))
         .filter(person => !query || connectPersonSearchText(person).includes(query))
         .map(person => ({
             person,
             score: connectPersonCandidateScore(person, anchor, relationshipType, query)
         }))
         .sort((a, b) => b.score - a.score || connectPersonName(a.person).localeCompare(connectPersonName(b.person)))
-        .slice(0, query ? 12 : 3)
+        .slice(0, query ? 12 : relationshipType ? 3 : 12)
         .map(item => item.person);
 }
 
 function connectPersonSelectedValidation()
 {
+    if (!connectPersonModalState.relationshipType) return { ok: false };
     if (!connectPersonModalState.selectedPersonId) return { ok: true };
 
     return validateRelationshipConnection({
@@ -5163,6 +5165,7 @@ function connectPersonSelectedValidation()
 
 function connectPersonActiveWarning()
 {
+    if (!connectPersonModalState.relationshipType) return null;
     const anchor = getPerson(connectPersonModalState.anchorPersonId);
     const selected = getPerson(connectPersonModalState.selectedPersonId);
     const type = normalizeConnectRelationshipType(connectPersonModalState.relationshipType);
@@ -5204,6 +5207,7 @@ function connectPersonNoticeHtml(notice)
 
 function connectPersonWarningHtml()
 {
+    if (!connectPersonModalState.relationshipType) return '';
     const validation = connectPersonSelectedValidation();
 
     if (!validation.ok)
@@ -5253,13 +5257,13 @@ function renderConnectPersonModalHtml()
 {
     const anchor = getPerson(connectPersonModalState.anchorPersonId);
     const anchorName = connectPersonName(anchor);
-    const relationshipType = normalizeConnectRelationshipType(connectPersonModalState.relationshipType);
-    const relationshipLabel = connectRelationshipLabel(relationshipType);
+    const relationshipType = connectPersonModalState.relationshipType;
     const relationshipSentence = connectRelationshipSentence(relationshipType);
     const selectedPerson = getPerson(connectPersonModalState.selectedPersonId);
     const selectedValidation = connectPersonSelectedValidation();
-    const connectDisabled = !selectedPerson || !selectedValidation.ok;
-    const resultTitle = connectPersonModalState.query ? 'Search results' : 'Suggested matches';
+    const connectDisabled = !relationshipType || !selectedPerson || !selectedValidation.ok;
+    const resultTitle = connectPersonModalState.query ? 'Search results'
+        : relationshipType ? 'Suggested matches' : 'People in this project';
 
     return `<div class="modal connect-person-modal" role="dialog" aria-modal="true" aria-labelledby="connectPersonTitle">
         <div class="modal-header connect-person-header">
@@ -5276,21 +5280,22 @@ function renderConnectPersonModalHtml()
             <div class="field add-person-select-field">
               <label for="connectPersonRelationship">Select relationship</label>
               <select class="compact-select add-person-select" id="connectPersonRelationship" data-connect-relationship>
+                <option value="" ${!relationshipType ? 'selected' : ''}>Select relationship</option>
                 ${['parent', 'child', 'sibling', 'partner'].map(value => `<option value="${value}" ${value === relationshipType ? 'selected' : ''}>${connectRelationshipLabel(value)}</option>`).join('')}
               </select>
               <span class="add-person-select-chevron" aria-hidden="true">${icon.chevron}</span>
             </div>
 
-            ${renderPartnerChildrenSelector({
+            ${relationshipType ? renderPartnerChildrenSelector({
                 anchorPersonId: anchor?.id || '',
                 relationshipType,
                 selectedPersonId: connectPersonModalState.selectedPersonId,
                 selectedValue: connectPersonModalState.partnerChildrenMode,
                 controlId: 'connectPersonPartnerChildrenMode'
-            })}
+            }) : ''}
 
 
-            ${renderParentFamilySelector({
+            ${relationshipType ? renderParentFamilySelector({
                 anchorPersonId: anchor?.id || '',
                 relationshipType,
                 selectedValue:
@@ -5300,7 +5305,7 @@ function renderConnectPersonModalHtml()
                 'connectPersonParentFamily',
                 showSelectionLabel:
                 false
-            })}
+            }) : ''}
 
             ${connectPersonWarningHtml()}
           </aside>
@@ -5319,11 +5324,11 @@ function renderConnectPersonModalHtml()
               ${renderConnectPersonResults()}
             </div>
 
-            <button class="connect-person-create" type="button" data-connect-create-new>
+            <button class="connect-person-create" type="button" data-connect-create-new ${relationshipType ? '' : 'disabled'}>
               <span class="connect-person-create-icon" aria-hidden="true">${icon.addperson}</span>
               <span class="connect-person-create-copy">
                 <strong>Can’t find the person?</strong>
-                <span>Create a new person and connect as ${escapeHtml(relationshipSentence)}</span>
+                <span>${relationshipType ? `Create a new person and connect as ${escapeHtml(relationshipSentence)}` : 'Select a relationship to create and connect a person.'}</span>
               </span>
               <span class="connect-person-create-chevron" aria-hidden="true">${icon.chevron}</span>
             </button>
@@ -5366,14 +5371,16 @@ function bindConnectPersonModalControls()
 
     modal.querySelector('[data-connect-relationship]')?.addEventListener('change', event =>
     {
-        connectPersonModalState.relationshipType = normalizeConnectRelationshipType(event.currentTarget.value);
+        connectPersonModalState.relationshipType = event.currentTarget.value
+            ? normalizeConnectRelationshipType(event.currentTarget.value) : '';
         connectPersonModalState.selectedPersonId = '';
         connectPersonModalState.partnerChildrenMode =
             PARTNER_CHILDREN_ADD_PARENT;
 
         connectPersonModalState.parentFamilySelection = defaultParentFamilySelection(
             connectPersonModalState.anchorPersonId,
-            connectPersonModalState.relationshipType
+            connectPersonModalState.relationshipType,
+            connectPersonModalState.requestedParentFamilySelection
         );
         refreshConnectPersonModal();
     });
@@ -5409,6 +5416,7 @@ function bindConnectPersonModalControls()
 
     modal.querySelector('[data-connect-create-new]')?.addEventListener('click', () =>
     {
+        if (!connectPersonModalState.relationshipType) return;
         const anchor = getPerson(connectPersonModalState.anchorPersonId);
         const relationshipType = normalizeConnectRelationshipType(connectPersonModalState.relationshipType);
         const label = connectRelationshipSentence(relationshipType);
@@ -5435,7 +5443,7 @@ function bindConnectPersonModalControls()
         const anchor = getPerson(connectPersonModalState.anchorPersonId);
         const selected = getPerson(connectPersonModalState.selectedPersonId);
 
-        if (!anchor || !selected) return;
+        if (!anchor || !selected || !connectPersonModalState.relationshipType) return;
 
         const validation = connectPersonSelectedValidation();
 
@@ -5494,23 +5502,15 @@ function openConnectRelativeModal(anchorPersonId, options = {})
     const anchor = getPerson(anchorPersonId);
     if (!anchor) return;
 
-    const relationshipType =
-        normalizeConnectRelationshipType(
-            options.relationshipType || 'parent'
-        );
+    const relationshipType = '';
 
     connectPersonModalState = {
         anchorPersonId: anchor.id,
         relationshipType,
         query: '',
         selectedPersonId: '',
-        parentFamilySelection: defaultParentFamilySelection(
-            anchor.id,
-            relationshipType,
-            options.parentFamilyId
-            || options.parentFamilySelection
-            || ''
-        ),
+        parentFamilySelection: '',
+        requestedParentFamilySelection: options.parentFamilyId || options.parentFamilySelection || '',
         partnerChildrenMode: normalizePartnerChildrenMode(
             options.partnerChildrenMode
         )
@@ -8769,7 +8769,7 @@ function commitAddPersonModalCreate(title, subtitle, options = {})
 
     state.selectedPeopleId = selectedAfterCreateId;
 
-    closeModal();
+    closeModal({ force: true });
 
     if (state.activeModule === 'Family Tree')
     {
@@ -10757,6 +10757,44 @@ function openRelationshipEditModal(
     bindRelationshipEditModal(context);
 }
 
+function addPersonModalSnapshot(modal)
+{
+    const controls = [...modal.querySelectorAll('input, select, textarea')]
+        .filter(control => control.type !== 'search' && control.id !== 'addPersonCreateAnother')
+        .map(control => [control.id || control.name || '', control.type, control.value,
+            control.type === 'checkbox' || control.type === 'radio' ? control.checked : null]);
+    const attachments = Object.fromEntries(Object.entries(addPersonAttachmentDraftState)
+        .map(([key, ids]) => [key, [...ids].sort()]));
+    return JSON.stringify({ controls, attachments });
+}
+
+function openAddPersonDiscardConfirm()
+{
+    if (document.getElementById('addPersonDiscardOverlay')) return;
+    const overlay = document.createElement('div');
+    overlay.id = 'addPersonDiscardOverlay';
+    overlay.className = 'add-person-mini-backdrop';
+    overlay.innerHTML = `<div class="add-person-mini-card" role="alertdialog" aria-modal="true" aria-labelledby="addPersonDiscardTitle">
+        <div class="add-person-mini-head"><div><h3 id="addPersonDiscardTitle">Discard changes?</h3>
+        <p>Unsaved changes to this person will be lost.</p></div></div>
+        <div class="add-person-mini-footer"><button class="button secondary" type="button" data-add-person-continue-editing>Continue editing</button>
+        <button class="button danger" type="button" data-add-person-discard>Discard changes</button></div></div>`;
+    const returnFocus = document.activeElement;
+    document.body.appendChild(overlay);
+    localizeUI(overlay);
+    overlay.querySelector('[data-add-person-continue-editing]').addEventListener('click', () =>
+    {
+        overlay.remove();
+        returnFocus?.focus?.({ preventScroll: true });
+    });
+    overlay.querySelector('[data-add-person-discard]').addEventListener('click', () =>
+    {
+        overlay.remove();
+        closeModal({ force: true });
+    });
+    overlay.querySelector('[data-add-person-continue-editing]').focus();
+}
+
 function openAddPersonModal(title, subtitle, options = {})
 {
     const isEditMode = options.mode === 'edit';
@@ -10901,6 +10939,15 @@ function openAddPersonModal(title, subtitle, options = {})
     bindAddPersonModalControls(options.mode === 'edit' ? options.personId || '' : '');
     bindAddPersonSideCards(options, editPerson);
     updateAddPersonConditionalFields();
+    const addPersonModal = modalBackdrop.querySelector('.add-person-modal');
+    const initialSnapshot = addPersonModalSnapshot(addPersonModal);
+    modalBackdrop.beforeClose = () =>
+    {
+        if (!modalBackdrop.querySelector('.add-person-modal')) return true;
+        if (addPersonModalSnapshot(addPersonModal) === initialSnapshot) return true;
+        openAddPersonDiscardConfirm();
+        return false;
+    };
     if (isEditMode)
     {
         modalBackdrop.querySelector('[data-save-edit-person]')?.addEventListener('click', () =>
@@ -10934,7 +10981,7 @@ function selectAddPersonPossibleMatch(personId, options = {}, editPerson = null)
 
 function refreshAfterPossibleMatchConnection(anchorPersonId)
 {
-    closeModal();
+    closeModal({ force: true });
 
     state.selectedPersonId = anchorPersonId || state.selectedPersonId;
     state.selectedPeopleId = anchorPersonId || state.selectedPeopleId;
@@ -11742,7 +11789,7 @@ function saveEditPersonModalValues(personId)
     markPersonUpdated(person);
     rebuildSampleEventsAndPruneSourceLinks();
 
-    closeModal();
+    closeModal({ force: true });
     if (state.activeModule === 'Family Tree')
     {
         renderFamilyTreePreserveScroll?.() || renderFamilyTree();

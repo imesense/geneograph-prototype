@@ -3314,6 +3314,16 @@ button.timeline-evidence-name:hover, button.timeline-evidence-name:focus-visible
     color: var(--text-primary);
 }
 
+.connect-person-create:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+}
+
+.connect-person-create:disabled:hover {
+    background: transparent;
+    color: var(--text-secondary);
+}
+
 .connect-person-create:focus-visible {
     outline: 2px solid var(--brand-green-400);
     outline-offset: 2px;
@@ -3354,6 +3364,13 @@ button.timeline-evidence-name:hover, button.timeline-evidence-name:focus-visible
 
 .connect-person-footer {
     justify-content: flex-end;
+}
+
+.connect-person-footer .button.primary:disabled {
+    opacity: .45;
+    filter: none;
+    transform: none;
+    cursor: not-allowed;
 }
 
 @media (max-width: 900px) {
