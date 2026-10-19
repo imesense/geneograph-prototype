@@ -23932,6 +23932,20 @@ sampleData.notes = (() =>
     const body = (...lines) =>
         lines.join('\n');
 
+    const richBody = (...blocks) => ({
+        body: blocks.map(([, text]) => text).join('\n'),
+        bodyDelta: {
+            ops: blocks.flatMap(([kind, text]) => [
+                kind === 'emphasis' ? { insert: text, attributes: { bold: true } }
+                    : { insert: text },
+                kind === 'heading' ? { insert: '\n', attributes: { header: 3 } }
+                    : kind === 'bullet' ? { insert: '\n', attributes: { list: 'bullet' } }
+                        : { insert: '\n' }
+            ])
+        },
+        bodyFormat: 'quill-delta-v1'
+    });
+
     const note = record => ({
         id: '',
         projectId: 'p1',
@@ -23962,20 +23976,18 @@ sampleData.notes = (() =>
             'note-daisy-parentage',
 
             title:
-            'Who was Daisy Milkpaw’s father?',
+            'Daisy’s birth extract: name and place to verify',
 
-            body: body(
-                'Research question',
-                'Who was Daisy Milkpaw’s father?',
-                '',
-                'Current observations',
-                'Daisy’s records place her in the Pawford area, where the Whiskerfield household appears in the available register material.',
-                'Barnaby Whiskerfield is a plausible lead, but no direct parentage statement has been found.',
-                '',
-                'Next steps',
-                'Review the father entry in the Pawford register.',
-                'Compare household members and witnesses.',
-                'Record evidence both for and against the Whiskerfield connection.'
+            ...richBody(
+                ['heading', 'What the extract says'],
+                ['paragraph', 'The sample extract names Daisy Whiskerfield, gives 03 June 1949, and lists Pawford as her birthplace.'],
+                ['emphasis', 'The extract does not identify Daisy’s parents.'],
+                ['heading', 'What the Tree says'],
+                ['paragraph', 'Daisy’s Tree profile records Milkpaw as her maiden name and leaves her birthplace unset. Percival Milkpaw and Nora Creamfur are already connected as her parents; Barnaby Whiskerfield is her husband.'],
+                ['heading', 'To verify'],
+                ['bullet', 'Find the full birth entry and check whether Whiskerfield is a later name on this extract.'],
+                ['bullet', 'Confirm Pawford before adding it to Daisy’s birth fact.'],
+                ['bullet', 'Do not use this extract alone to confirm her parents.']
             ),
 
             collectionIds: [
@@ -23991,7 +24003,7 @@ sampleData.notes = (() =>
                 'note-daisy-parentage-check-register',
 
                     text:
-                'Check the Pawford register father entry',
+                'Find the full birth entry',
 
                     done:
                 false
@@ -24002,7 +24014,7 @@ sampleData.notes = (() =>
                 'note-daisy-parentage-check-households',
 
                     text:
-                'Compare Daisy and Whiskerfield household records',
+                'Check the surname shown on the birth extract',
 
                     done:
                 false
@@ -24013,7 +24025,7 @@ sampleData.notes = (() =>
                 'note-daisy-parentage-review-evidence',
 
                     text:
-                'Review additional evidence before changing relationships',
+                'Confirm Pawford before updating the birth place',
 
                     done:
                 false
@@ -24021,17 +24033,15 @@ sampleData.notes = (() =>
             ],
 
             linkedPersonIds: [
-                'daisy',
-                'barnaby'
+                'daisy'
             ],
 
             linkedPlaceIds: [
                 'place-pawford'
             ],
 
-            linkedPhotoIds: [
-                'photo-daisy-school',
-                'photo-grandparents-garden'
+            linkedEventIds: [
+                'event-daisy-birth'
             ],
 
             linkedArchiveFileIds: [
@@ -24055,15 +24065,12 @@ sampleData.notes = (() =>
             'note-old-cattery-burial',
 
             title:
-            'Old Cattery burial index observations',
+            'Pearl’s Old Cattery burial: source to find',
 
-            body: body(
-                'The burial index contains several entries connected to the Old Cattery area.',
-                '',
-                'Pearl Velvetpaw’s entry is clear, but nearby entries should be checked for relatives and alternate surname spellings.',
-                'Daisy’s connection remains indirect and should not be treated as evidence of residence without another record.',
-                '',
-                'The index should be compared with cemetery and household records before adding new facts.'
+            ...richBody(
+                ['paragraph', 'Pearl Softtail (née Velvetpaw) died on 02 February 2011. Her Tree profile places her death and burial in Old Cattery.'],
+                ['paragraph', 'No burial-index file is linked to this note. Find the original entry and check its date, recorded name, and plot reference before adding further details.'],
+                ['paragraph', 'This archived note preserves the research trail without implying a connection to Daisy or the Pawford branch.']
             ),
 
             collectionIds: [
@@ -24074,7 +24081,6 @@ sampleData.notes = (() =>
             true,
 
             linkedPersonIds: [
-                'daisy',
                 'pearl'
             ],
 
@@ -24094,20 +24100,15 @@ sampleData.notes = (() =>
             'note-meowbridge-transcription',
 
             title:
-            'Meowbridge record transcription',
+            'Meowbridge marriage extract: field notes',
 
-            body: body(
-                'Source details',
-                'Meowbridge record held with the family certificate material.',
-                '',
-                'Extract or transcription',
-                'The record names Meowbridge and confirms the event location. Several handwritten details remain uncertain.',
-                '',
-                'Interpretation',
-                'The place and date agree with Silver and Luna’s other marriage records.',
-                '',
-                'Questions',
-                'Confirm the witnesses and compare their names with household records.'
+            ...richBody(
+                ['heading', 'Visible on the extract'],
+                ['bullet', 'Bridegroom: Silver Whiskerfield. Bride: Luna Purrington.'],
+                ['bullet', 'Date: 18 August 2023. Place: Meowbridge, North Yorkshire.'],
+                ['heading', 'Limits'],
+                ['paragraph', 'The sample image does not show witnesses, a certificate number, or the original register page. Leave those details blank until another record supplies them.'],
+                ['paragraph', 'Keep this transcription linked to the scan; the separate marriage note tracks what the event establishes.']
             ),
 
             collectionIds: [
@@ -24127,6 +24128,10 @@ sampleData.notes = (() =>
                 'af5'
             ],
 
+            relatedNoteIds: [
+                'note-silver-luna-marriage'
+            ],
+
             createdAt:
             '2026-06-24T09:30:00Z',
 
@@ -24139,15 +24144,15 @@ sampleData.notes = (() =>
             'note-pawford-household',
 
             title:
-            'Pawford household register notes',
+            'Pawford register index, 2004',
 
-            body: body(
-                'The Pawford household material contains several Whiskerfield entries that may help reconstruct the family group.',
-                '',
-                'Barnaby appears in the correct district and age range to merit further research.',
-                'The current scan does not establish Daisy’s relationship to the household.',
-                '',
-                'Names, occupations, addresses, and witnesses should be transcribed before drawing conclusions.'
+            ...richBody(
+                ['heading', 'Four separate entries'],
+                ['paragraph', 'The sample page lists Barnaby, Daisy, Silver, and Luna with birth years, Pawford as locality, and separate PW/001–PW/004 references.'],
+                ['paragraph', 'It is an index, not a household listing: it does not say they lived together, give an address, or state how they are related. Luna’s entry uses Purrington, which differs from her current Tree surname.'],
+                ['heading', 'Next step'],
+                ['bullet', 'Use each reference to request the underlying record before treating the locality or name as a new fact.'],
+                ['bullet', 'Compare the index scan with page 12 and note any transcription differences.']
             ),
 
             collectionIds: [
@@ -24165,7 +24170,7 @@ sampleData.notes = (() =>
                 'note-pawford-household-transcribe',
 
                     text:
-                'Transcribe every household member',
+                'Transcribe all four index entries',
 
                     done:
                 true
@@ -24176,7 +24181,7 @@ sampleData.notes = (() =>
                 'note-pawford-household-address',
 
                     text:
-                'Compare the recorded address with nearby events',
+                'Request the underlying records by reference',
 
                     done:
                 false
@@ -24187,7 +24192,7 @@ sampleData.notes = (() =>
                 'note-pawford-household-continuation',
 
                     text:
-                'Check the register continuation',
+                'Compare names with the index on page 12',
 
                     done:
                 false
@@ -24196,7 +24201,9 @@ sampleData.notes = (() =>
 
             linkedPersonIds: [
                 'barnaby',
-                'daisy'
+                'daisy',
+                'silver',
+                'luna'
             ],
 
             linkedPlaceIds: [
@@ -24224,14 +24231,14 @@ sampleData.notes = (() =>
             'note-whiskerfield-album',
 
             title:
-            'Whiskerfield family album context',
+            'Family photographs: identified and open',
 
-            body: body(
-                'The family album appears to combine photographs from several Whiskerfield households.',
-                '',
-                'Silver and Luna can identify some recent photographs. Barnaby and Daisy may appear in older images, but the captions are incomplete.',
-                '',
-                'Album order, handwriting, paper type, and repeated backgrounds may help group unidentified portraits.'
+            ...richBody(
+                ['heading', 'Already identified'],
+                ['paragraph', 'The garden photograph is tagged with Barnaby and Daisy; the family-table photograph is tagged with Silver, Luna, and Pearl. These identifications should be checked against the originals and their captions.'],
+                ['heading', 'Still open'],
+                ['paragraph', 'The studio portrait in Archive has no identified person or date. Do not assign it to a relative just because it appears with family material.'],
+                ['paragraph', 'Daisy’s 2006 letter to Luna says she was sorting family photographs. Compare that context with album order and handwritten captions before proposing an identity.']
             ),
 
             collectionIds: [
@@ -24245,7 +24252,8 @@ sampleData.notes = (() =>
                 'silver',
                 'luna',
                 'barnaby',
-                'daisy'
+                'daisy',
+                'pearl'
             ],
 
             linkedPlaceIds: [
@@ -24254,11 +24262,13 @@ sampleData.notes = (() =>
 
             linkedPhotoIds: [
                 'photo-family-table',
-                'photo-grandparents-garden'
+                'photo-grandparents-garden',
+                'photo-unidentified-studio'
             ],
 
             linkedArchiveFileIds: [
-                'af2'
+                'af2',
+                'af4'
             ],
 
             relatedNoteIds: [
@@ -24277,13 +24287,13 @@ sampleData.notes = (() =>
             'note-whiskerfield-surname',
 
             title:
-            'Whiskerfield surname variants',
+            'Names across the Pawford records',
 
-            body: body(
-                'Searches should include likely handwriting and transcription variants of Whiskerfield.',
-                '',
-                'Potential differences include omitted letters, altered vowel groups, and spacing introduced by indexers.',
-                'Every variant should be recorded with its source rather than added as a confirmed family name automatically.'
+            ...richBody(
+                ['paragraph', 'The 2004 Pawford index lists Daisy as Whiskerfield and Luna as Purrington. Daisy’s Tree profile records Milkpaw as her maiden name; Luna’s records show Purrington before her marriage to Silver.'],
+                ['paragraph', 'A change of surname is not evidence of a spelling error. Keep each recorded form with its date and source, then compare it with the person’s life events.'],
+                ['bullet', 'Check whether Daisy’s birth extract was annotated or created after her marriage.'],
+                ['bullet', 'Keep Luna’s Purrington name in the 2023 marriage transcription.']
             ),
 
             collectionIds: [
@@ -24292,9 +24302,8 @@ sampleData.notes = (() =>
             ],
 
             linkedPersonIds: [
-                'silver',
-                'barnaby',
-                'archibald'
+                'daisy',
+                'luna'
             ],
 
             linkedPlaceIds: [
@@ -24302,7 +24311,9 @@ sampleData.notes = (() =>
             ],
 
             linkedArchiveFileIds: [
-                'af3'
+                'af1',
+                'af-birth-sample',
+                'af5'
             ],
 
             relatedNoteIds: [
@@ -24321,13 +24332,11 @@ sampleData.notes = (() =>
             'note-rupert-death',
 
             title:
-            'Rupert death details to verify',
+            'Rupert’s death: record search',
 
-            body: body(
-                'Rupert Purrington’s death details are incomplete in the current family record.',
-                '',
-                'The available online extract may contain a matching entry, but identity has not been confirmed.',
-                'Check age, residence, relatives, and registration district before entering a death date.'
+            ...richBody(
+                ['paragraph', 'Rupert Purrington is marked deceased in the Tree, but no death date or place is recorded. The Pawford online collection ends in 1950, before Rupert’s recorded birth in 1951, so it cannot supply his death entry.'],
+                ['paragraph', 'Search an appropriate later death register. Compare full name, age, family members, and district before attaching a result or entering a date.']
             ),
 
             collectionIds: [
@@ -24340,7 +24349,7 @@ sampleData.notes = (() =>
                 'note-rupert-death-check-index',
 
                     text:
-                'Check the regional death index',
+                'Find a later death register',
 
                     done:
                 false
@@ -24362,12 +24371,6 @@ sampleData.notes = (() =>
                 'rupert'
             ],
 
-            linkedPlaceIds: [
-                'place-fishmarket-row'
-            ],
-
-            linkedArchiveFileIds: [],
-
             createdAt:
             '2026-06-10T13:30:00Z',
 
@@ -24380,13 +24383,12 @@ sampleData.notes = (() =>
             'note-purrington-surname',
 
             title:
-            'Purrington surname variants',
+            'Purrington name in the marriage extract',
 
             body: body(
-                'Purrington entries may be indexed with shortened or misread letter groups.',
+                'The 2023 marriage extract names the bride Luna Purrington. Her current Tree display name is Luna Mabel Whiskerfield, with Purrington recorded as her maiden name.',
                 '',
-                'Search plans should include common handwriting substitutions while keeping the recorded spelling attached to each source.',
-                'No variant should replace the central surname without supporting evidence.'
+                'Preserve the name exactly as it appears on the dated document. This archived note is a reminder to compare names in their own time, not to treat a later surname as a transcription correction.'
             ),
 
             collectionIds: [],
@@ -24395,8 +24397,11 @@ sampleData.notes = (() =>
             true,
 
             linkedPersonIds: [
-                'rupert',
                 'luna'
+            ],
+
+            linkedArchiveFileIds: [
+                'af5'
             ],
 
             createdAt:
@@ -24413,12 +24418,12 @@ sampleData.notes = (() =>
             title:
             'Silver and Luna marriage record notes',
 
-            body: body(
-                'The marriage record links Silver Whiskerfield and Luna Purrington in Meowbridge.',
-                '',
-                'The names and place are legible. Witness names and the exact certificate reference should be transcribed separately.',
-                '',
-                'The event should remain linked to the original certificate source and scan.'
+            ...richBody(
+                ['heading', 'What the extract supports'],
+                ['paragraph', 'Silver Whiskerfield and Luna Purrington married on 18 August 2023 in Meowbridge, North Yorkshire. The Tree’s marriage event uses that date and place.'],
+                ['heading', 'What it does not show'],
+                ['paragraph', 'The sample extract has no witness names or certificate number. Do not add those details from memory or from the wedding photograph.'],
+                ['paragraph', 'The scan documents the event; the wedding photograph provides separate visual context. The field-note transcription records the visible text.']
             ),
 
             collectionIds: [
@@ -24463,7 +24468,7 @@ sampleData.notes = (() =>
             'note-silver-profile-checklist',
 
             title:
-            'Silver profile research checklist',
+            'Silver’s profile: next checks',
 
             body: '',
 
@@ -24477,7 +24482,7 @@ sampleData.notes = (() =>
                 'note-silver-profile-residence',
 
                     text:
-                'Add residence sources',
+                'Confirm Silver’s Pawford birth announcement against the original notice',
 
                     done:
                 false
@@ -24488,7 +24493,7 @@ sampleData.notes = (() =>
                 'note-silver-profile-photos',
 
                     text:
-                'Review context for linked photographs',
+                'Review names and dates on the linked photographs',
 
                     done:
                 true
@@ -24499,7 +24504,7 @@ sampleData.notes = (() =>
                 'note-silver-profile-events',
 
                     text:
-                'Verify event dates and places',
+                'Check the marriage event against its extract',
 
                     done:
                 false
@@ -24512,6 +24517,14 @@ sampleData.notes = (() =>
 
             linkedPlaceIds: [
                 'place-pawford'
+            ],
+
+            linkedEventIds: [
+                'event-silver-birth'
+            ],
+
+            linkedArchiveFileIds: [
+                'af7'
             ],
 
             relatedNoteIds: [
@@ -24532,18 +24545,14 @@ sampleData.notes = (() =>
             title:
             'Family interview with Luna',
 
-            body: body(
-                'Interview focus',
-                'Family movement, the Whiskerfield album, and memories connected to Meowbridge.',
-                '',
-                'Current recollections',
-                'Luna remembers family stories about movement between nearby villages and Pawford.',
-                'She may be able to identify the owner of the old family album.',
-                '',
-                'Follow-up questions',
-                'Who originally kept the album?',
-                'Which relatives lived in Meowbridge?',
-                'Did Daisy discuss siblings or parentage?'
+            ...richBody(
+                ['heading', 'Interview context'],
+                ['paragraph', 'The source is an audio interview with Luna recorded on 02 April 2026. Luna can speak directly about her own photographs and the family album as she knew it.'],
+                ['heading', 'Secondhand stories'],
+                ['paragraph', 'Accounts of the older Whiskerfield generations came to Luna through relatives. Record who told each story and when; do not present it as Luna’s firsthand memory.'],
+                ['heading', 'Follow-up'],
+                ['bullet', 'Ask who kept the album before Luna saw it.'],
+                ['bullet', 'Compare the people she identifies with the tagged garden photograph and Daisy’s letter about sorting photographs.']
             ),
 
             collectionIds: [
@@ -24576,22 +24585,23 @@ sampleData.notes = (() =>
             ],
 
             linkedPersonIds: [
-                'luna',
-                'silver'
+                'luna'
             ],
 
-            linkedPlaceIds: [
-                'place-meowbridge'
+            linkedPhotoIds: [
+                'photo-grandparents-garden'
             ],
 
-            linkedArchiveFileIds: [],
+            linkedArchiveFileIds: [
+                'af4'
+            ],
 
             relatedNoteIds: [
                 'note-whiskerfield-album'
             ],
 
             createdAt:
-            '2026-04-02T14:00:00Z',
+            '2026-05-20T14:00:00Z',
 
             updatedAt:
             '2026-07-15T11:50:00Z'
@@ -24604,11 +24614,9 @@ sampleData.notes = (() =>
             title:
             'Pawford archive visit checklist',
 
-            body: body(
-                'Prepare a focused archive visit for Pawford household and register material.',
-                '',
-                'Capture complete references and adjacent pages rather than isolated entries.',
-                'Record negative searches as well as useful findings.'
+            ...richBody(
+                ['paragraph', 'Use the four PW references from the 2004 Pawford index to request the underlying entries. The index alone does not establish an address or family relationship.'],
+                ['paragraph', 'Record each full citation and adjacent page. Keep unsuccessful searches too, so the same shelf or register is not checked twice.']
             ),
 
             collectionIds: [
@@ -24622,7 +24630,7 @@ sampleData.notes = (() =>
                 'note-pawford-archive-continuation',
 
                     text:
-                'Review the register continuation',
+                'Request the four underlying PW entries',
 
                     done:
                 false
@@ -24633,7 +24641,7 @@ sampleData.notes = (() =>
                 'note-pawford-archive-households',
 
                     text:
-                'Capture surrounding household pages',
+                'Capture adjacent pages and full citations',
 
                     done:
                 false
@@ -24644,7 +24652,7 @@ sampleData.notes = (() =>
                 'note-pawford-archive-spellings',
 
                     text:
-                'Search surname spelling variants',
+                'Compare the recorded names with Tree names',
 
                     done:
                 false
@@ -24655,7 +24663,7 @@ sampleData.notes = (() =>
                 'note-pawford-archive-images',
 
                     text:
-                'Record image and folder references',
+                'Record image, folder, and shelf references',
 
                     done:
                 false
@@ -24710,13 +24718,12 @@ sampleData.sourceLinks = [
     ['as1', 'note', 'note-daisy-parentage'],
     ['as1', 'note', 'note-pawford-household'],
     ['as1', 'note', 'note-pawford-archive-visit'],
-    ['as2', 'note', 'note-pawford-archive-visit'],
+    ['as1', 'note', 'note-whiskerfield-surname'],
     ['as3', 'note', 'note-meowbridge-transcription'],
     ['as3', 'note', 'note-silver-luna-marriage'],
+    ['as3', 'note', 'note-purrington-surname'],
     ['as4', 'note', 'note-luna-interview'],
-    ['as5', 'note', 'note-whiskerfield-album'],
-    ['as6', 'note', 'note-whiskerfield-surname'],
-    ['as6', 'note', 'note-rupert-death']
+    ['as5', 'note', 'note-whiskerfield-album']
 ].map(
     (
         [
@@ -26212,11 +26219,7 @@ function noteExcerpt(
 {
     const text =
         String(
-            state.language === 'ru'
-                ? translateText(
-                    note?.body || ''
-                )
-                : note?.body || ''
+            localizedNoteBodyText(note?.body || '')
         )
             .replace(/\s+/g, ' ')
             .trim();
@@ -27113,7 +27116,7 @@ function bindNotesBodyFallback(
         false;
 
     textarea.value =
-        localizedDataFieldValue(
+        localizedNoteBodyText(
             String(
                 note?.body || ''
             )
@@ -27296,14 +27299,14 @@ function initializeNotesRichTextEditor(
         if (storedDelta)
         {
             instance.setContents(
-                storedDelta,
+                localizedNoteBodyDelta(storedDelta),
                 'silent'
             );
         }
         else
         {
             instance.setText(
-                localizedDataFieldValue(
+                localizedNoteBodyText(
                     String(
                         note.body || ''
                     )

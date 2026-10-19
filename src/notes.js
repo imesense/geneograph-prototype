@@ -2098,7 +2098,7 @@ function renderNoteEditorContent(
                   aria-label="Note body"
                   placeholder="Start writing…"
                   hidden>${escapeHtml(
-                        localizedDataFieldValue(note.body)
+                        localizedNoteBodyText(note.body)
                     )}</textarea>
               </div>
             </div>
