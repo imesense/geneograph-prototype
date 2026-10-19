@@ -4389,7 +4389,7 @@ const RU_TERMS_GENEALOGY = {
         'Свадьба',
 
     'Civil marriage':
-        'Гражданский брак',
+        'Зарегистрированный брак',
 
     'Education':
         'Образование',
@@ -4787,7 +4787,7 @@ const RU_TERMS_RELATIONSHIPS = {
 
     // Marriage types
     'Civil':
-        'Гражданский',
+        'Зарегистрированный брак',
 
     'Religious':
         'Религиозный',

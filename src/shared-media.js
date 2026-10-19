@@ -5137,17 +5137,6 @@ function relationshipEventTag(event)
     return event?.gedcomTag || event?.tag || '';
 }
 
-function timelineMarriageTitle(event = {})
-{
-    const label = cleanEditFieldValue(event.typeLabel || event.value || '');
-
-    if (!label) return 'Marriage';
-    if (/wedding/i.test(label)) return 'Wedding';
-    if (/marriage/i.test(label)) return label;
-
-    return `${label} marriage`;
-}
-
 function familyMarriageEventsForTimeline(family)
 {
     const storedMarriageEvents = (family?.events || [])
@@ -5243,7 +5232,7 @@ function buildSampleEvents()
                     placeId,
                     placeText: event.placeText || getPlaceDisplay(placeId),
                     address: event.address || family.startAddress || '',
-                    title: timelineMarriageTitle(event),
+                    title: 'Marriage',
                     description: `Marriage of ${personA.names.display} and ${personB.names.display}`,
                     marriageType: event.typeLabel || family.marriageType || ''
                 });
