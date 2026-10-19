@@ -9622,7 +9622,7 @@ function openEventLinkModal({
                 </span>
 
                 <strong>
-                  Select a person
+                  ${escapeHtml(t('Select a person'))}
                 </strong>
 
                 <span>

@@ -4132,7 +4132,7 @@ button.albums-inspector-row-main:focus-visible {
 /* Notes: person-first Add Events modal */
 .notes-events-modal {
     width:
-        min(840px,
+        min(980px,
             calc(100vw - 32px));
 
     height:
@@ -4173,7 +4173,7 @@ button.albums-inspector-row-main:focus-visible {
     display: grid;
 
     grid-template-columns:
-        280px minmax(0, 1fr);
+        320px minmax(0, 1fr);
 
     border:
         1px solid var(--border-default);

@@ -6166,7 +6166,7 @@ function renderAlbumsPhotoDetails(
           <div class="albums-form-grid">
             ${renderGenealogyDateField(
                 'albumPhotoDate',
-                'Historical date',
+                'Date',
                 draft.date,
                 {
                     inputId:

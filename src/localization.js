@@ -2243,9 +2243,6 @@ const RU_UI_ALBUMS = {
     'Photo name':
         'Название фотографии',
 
-    'Historical date':
-        'Историческая дата',
-
     'Caption':
         'Подпись',
 
@@ -3607,6 +3604,9 @@ const RU_UI_NOTES = {
 
     'Choose a Person to view Events that belong to or involve them.':
         'Выберите человека, чтобы просмотреть события, которые относятся к нему или в которых он участвует.',
+
+    'Select a person':
+        'Выберите человека',
 
     'Events must be created from this Person’s profile before they can be linked to the Note.':
         'События необходимо создать в профиле этого человека, прежде чем их можно будет связать с заметкой.',
