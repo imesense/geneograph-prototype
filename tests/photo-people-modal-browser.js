@@ -40,11 +40,20 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             assert.equal(await modal.locator('.photo-people-results').evaluate(element => element.scrollWidth > element.clientWidth + 1), false);
             assert.equal(await modal.locator('.photo-people-results .albums-unified-person-copy small').first().textContent().then(value => /Pawford|North Yorkshire|Meowbridge/.test(value)), false);
             if (width <= 760) assert.ok(layout.people.top >= layout.photo.bottom - 1, width + ': photo should precede list');
-            else assert.ok(layout.people.right <= layout.photo.left + 1, width + ': photo should be beside list');
+            else {
+                assert.ok(layout.people.right <= layout.photo.left + 1, width + ': photo should be beside list');
+                assert.ok(layout.people.width >= 319, width + ': people list should have more name space');
+            }
 
             await modal.locator('[data-photo-people-search]').fill('Pearl');
             await modal.locator('[data-photo-people-choice="pearl"]').first().click();
             assert.equal(await modal.locator('.albums-unified-preview .albums-unified-person-row').count(), 3);
+            const removeControl = await modal.locator('.albums-unified-preview .albums-unified-person-action').first().evaluate(button => ({
+                buttonWidth: button.getBoundingClientRect().width,
+                iconWidth: button.querySelector('svg').getBoundingClientRect().width
+            }));
+            assert.ok(removeControl.buttonWidth >= 44 && removeControl.iconWidth <= 18,
+                width + ': compact remove icon keeps a usable action target ' + JSON.stringify(removeControl));
             assert.equal(await modal.locator('[data-photo-people-region="pearl"]').getAttribute('aria-pressed'), 'true');
             assert.equal(await modal.locator('[data-photo-people-search]').isVisible(), false);
             assert.equal(await modal.evaluate(element => element.scrollWidth > element.clientWidth + 1), false,
