@@ -6092,8 +6092,10 @@ function renderAlbumsPhotoHero(
             ${state.albumsNameEditingId === photo.id ? `
               <div class="inspector-name-editor">
                 <input id="albumsPhotoNameInput" maxlength="180" aria-label="${escapeHtml(t('Photo name'))}" data-source-value="${escapeHtml(state.albumsNameOriginal || '')}" value="${escapeHtml(localizedDataFieldValue(state.albumsNameOriginal || ''))}">
-                <button class="inspector-name-command" type="button" id="albumsSavePhotoName" aria-label="${escapeHtml(t('Save name'))}" title="${escapeHtml(t('Save name'))}">${icon.check}</button>
-                <button class="inspector-name-command" type="button" id="albumsCancelPhotoName" aria-label="${escapeHtml(t('Cancel'))}" title="${escapeHtml(t('Cancel'))}">${icon.close}</button>
+                <div class="inspector-name-editor-actions">
+                  <button class="inspector-name-edit-button inspector-name-save" type="button" id="albumsSavePhotoName">${icon.check}<span>${escapeHtml(t('Save name'))}</span></button>
+                  <button class="inspector-name-edit-button inspector-name-cancel" type="button" id="albumsCancelPhotoName">${icon.close}<span>${escapeHtml(t('Cancel'))}</span></button>
+                </div>
               </div>` : `
               <div class="inspector-name-heading"><h2>${escapeHtml(photo.title || photo.filename || 'Untitled photo')}</h2><button class="inspector-name-command" type="button" id="albumsRenamePhoto" aria-label="${escapeHtml(t('Rename photo'))}" title="${escapeHtml(t('Rename photo'))}">${icon.edit}</button></div>`}
 

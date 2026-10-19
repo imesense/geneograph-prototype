@@ -8,7 +8,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
         ...(process.env.GENEO_BROWSER_EXECUTABLE
             ? { executablePath: process.env.GENEO_BROWSER_EXECUTABLE } : {}) });
     try {
-        for (const width of [390, 1280]) {
+        for (const width of [320, 390, 1280]) {
             const page = await browser.newPage({ viewport: { width, height: 850 } });
             const errors = [];
             page.on('pageerror', error => errors.push(error.message));
@@ -39,6 +39,15 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             assert.equal(await page.locator('.archive-inspector-toolbar #archiveSaveFileEdit').count(), 0);
             await page.locator('#archiveSaveFileEdit').click();
             await page.locator('#archiveRenameFile').click();
+            const archiveLayout = await page.locator('.archive-file-identity .inspector-name-editor').evaluate(editor => ({
+                noOverflow: editor.scrollWidth <= editor.clientWidth,
+                fullWidthInput: editor.querySelector('input').offsetWidth === editor.clientWidth,
+                alignedActions: [...editor.querySelectorAll('.inspector-name-edit-button')].every(button => button.getBoundingClientRect().height >= 40)
+            }));
+            assert.ok(archiveLayout.noOverflow && archiveLayout.fullWidthInput && archiveLayout.alignedActions,
+                JSON.stringify({ width, archiveLayout }));
+            if (process.env.GENEO_SCREENSHOT_DIR)
+                await page.locator('.archive-file-identity').screenshot({ path: path.join(process.env.GENEO_SCREENSHOT_DIR, `file-rename-${width}.png`) });
             await page.locator('#archiveFileNameInput').fill(`Renamed file ${width}`);
             await page.locator('#archiveFileNameInput').press('Enter');
             assert.equal(await page.evaluate(fileId => archiveFileById(fileId).name, ids.fileId), `Renamed file ${width}`);
@@ -71,7 +80,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             await page.evaluate(() => { state.language = 'ru'; renderArchiveMain(); });
             assert.equal(await page.locator('[data-archive-edit-source-details]').count(), 1);
             await page.evaluate(() => {
-                state.language = 'en';
+                state.language = 'ru';
                 state.activeModule = 'Albums';
                 state.selectedPhotoId = sampleData.media.find(item => item.projectId === 'p1').id;
                 state.albumsDetailCollapsed = false;
@@ -85,6 +94,15 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             assert.equal(await page.locator('#albumsEditPhoto').count(), 1);
             await page.locator('#albumsRenamePhoto').click();
             assert.equal(await page.locator('#albumsPhotoNameInput').count(), 1);
+            const photoLayout = await page.locator('.albums-detail-identity .inspector-name-editor').evaluate(editor => ({
+                noOverflow: editor.scrollWidth <= editor.clientWidth,
+                fullWidthInput: editor.querySelector('input').offsetWidth === editor.clientWidth,
+                labelsVisible: [...editor.querySelectorAll('.inspector-name-edit-button')].every(button => button.textContent.trim() && button.getBoundingClientRect().height >= 40)
+            }));
+            assert.ok(photoLayout.noOverflow && photoLayout.fullWidthInput && photoLayout.labelsVisible,
+                JSON.stringify({ width, photoLayout }));
+            if (process.env.GENEO_SCREENSHOT_DIR)
+                await page.locator('.albums-detail-identity').screenshot({ path: path.join(process.env.GENEO_SCREENSHOT_DIR, `photo-rename-${width}.png`) });
             await page.locator('#albumsPhotoNameInput').press('Escape');
             assert.deepEqual(errors, []);
             await page.close();

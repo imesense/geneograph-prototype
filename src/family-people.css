@@ -1404,8 +1404,7 @@
     text-decoration: none;
 }
 
-.inspector-name-heading,
-.inspector-name-editor {
+.inspector-name-heading {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 44px;
     align-items: start;
@@ -1413,7 +1412,57 @@
     min-width: 0;
 }
 
-.inspector-name-editor { grid-template-columns: minmax(0, 1fr) 44px 44px; }
+.inspector-name-editor {
+    display: grid;
+    gap: 10px;
+    min-width: 0;
+}
+
+.inspector-name-editor-actions {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.inspector-name-edit-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 40px;
+    padding: 0 12px;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
+    background: var(--surface-card-hover);
+    color: var(--text-primary);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.inspector-name-edit-button svg { width: 16px; height: 16px; flex: 0 0 16px; }
+
+.inspector-name-edit-button:hover,
+.inspector-name-edit-button:focus-visible {
+    border-color: var(--brand-green-300);
+    outline: 2px solid var(--brand-green-300);
+    outline-offset: 2px;
+}
+
+.inspector-name-save {
+    border-color: rgba(98, 217, 154, .35);
+    background: var(--brand-green-500);
+    color: #06110D;
+}
+
+.inspector-name-save:hover,
+.inspector-name-save:focus-visible {
+    background: var(--brand-green-300);
+    color: #06110D;
+}
+
 .inspector-name-heading h2 { min-width: 0; }
 .inspector-name-editor input {
     box-sizing: border-box;
