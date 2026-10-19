@@ -4067,12 +4067,12 @@
     overflow: visible;
 
     border:
-        1px solid var(--border-default);
+        1px solid rgba(255, 255, 255, .065);
 
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
 
     background:
-        var(--surface-input);
+        transparent;
 
     transition:
         border-color var(--ease),
@@ -4094,9 +4094,9 @@
 }
 
 .geneo-rich-text-inspector-toolbar.ql-toolbar.ql-snow {
-    min-height: 42px;
+    min-height: 46px;
 
-    padding: 5px;
+    padding: 6px 7px;
 
     flex-wrap: wrap;
 
@@ -4106,7 +4106,7 @@
         1px solid var(--border-default);
 
     border-radius:
-        7px 7px 0 0;
+        calc(var(--radius-sm) - 1px) calc(var(--radius-sm) - 1px) 0 0;
 
     background:
         rgba(255,
@@ -4131,18 +4131,17 @@
 }
 
 .geneo-rich-text-inspector-editor-shell .ql-editor {
-    min-height: 150px;
-    max-height: 320px;
+    min-height: 160px;
 
-    padding: 12px;
+    padding: 14px;
 
-    overflow-y: auto;
+    overflow-y: visible;
 
     color:
         var(--text-secondary);
 
-    font-size: 14px;
-    line-height: 1.55;
+    font-size: 15px;
+    line-height: 1.75;
 }
 
 .geneo-rich-text-inspector-editor-shell .ql-editor h2 {
@@ -4196,9 +4195,9 @@
 
 .geneo-rich-text-inspector-fallback {
     width: 100%;
-    min-height: 150px;
+    min-height: 160px;
 
-    padding: 12px;
+    padding: 14px;
 
     border: 0;
     outline: 0;
@@ -4212,7 +4211,8 @@
         var(--text-secondary);
 
     font: inherit;
-    line-height: 1.55;
+    font-size: 15px;
+    line-height: 1.75;
 }
 
 .geneo-rich-text-inspector-fallback[hidden] {

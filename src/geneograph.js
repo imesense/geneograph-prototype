@@ -16310,7 +16310,7 @@ function renderGeneographRichTextInspectorContent(
             )}">
 
           <div
-            class="geneo-rich-text-inspector-editor-shell"
+            class="notes-rich-editor-shell geneo-rich-text-inspector-editor-shell"
             data-geneo-inspector-rich-text-editor-shell>
 
             ${renderRichTextToolbar({
