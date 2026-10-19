@@ -12849,12 +12849,18 @@ function renderArchiveFilePlaces(file, readOnly)
         : '';
     if (!places.length && !legacyText)
         return renderInspectorSectionEmpty('No places linked to this file.');
-    return `<div class="relationship-list archive-file-place-list">
-      ${places.map(place => renderArchiveFileConnectionRow({
-        file, entityType: 'place', record: place,
-        leadingHtml: `<span class="archive-place-row-icon" aria-hidden="true">${icon.mapPin}</span>`,
-        readOnly
-      })).join('')}
+    return `<div class="relationship-list notes-place-list archive-file-place-list">
+      ${places.map(place => {
+        const name = placePrimaryName(place) || place.name || 'Unnamed place';
+        const location = placeSecondaryName(place) || 'No broader place recorded';
+        return `<div class="relation-row notes-place-item">
+          ${readOnly ? `<div class="relation-row-main notes-place-main">` : `<button class="relation-row-main notes-place-main" type="button" data-archive-open-connection="place" data-archive-connection-id="${escapeHtml(place.id)}" aria-label="${escapeHtml(t('Open place:') + ' ' + name)}">`}
+            <span class="notes-place-icon" aria-hidden="true">${icon.mapPin}</span>
+            <span class="notes-place-copy"><strong>${escapeHtml(name)}</strong><span class="notes-place-secondary">${escapeHtml(location)}</span></span>
+          ${readOnly ? '</div>' : '</button>'}
+          ${readOnly ? '' : `<div class="relation-actions"><button class="relation-action-button" type="button" data-archive-unlink-owner-type="file" data-archive-unlink-owner-id="${escapeHtml(file.id)}" data-archive-unlink-type="place" data-archive-unlink-id="${escapeHtml(place.id)}" aria-label="${escapeHtml(t('Unlink') + ' ' + name)}" title="${escapeHtml(t('Unlink'))}">${icon.unlink}</button></div>`}
+        </div>`;
+      }).join('')}
       ${legacyText ? `<div class="archive-legacy-place"><span>${escapeHtml(legacyText)}</span><small>${escapeHtml(t('Place name not linked to a project place'))}</small>${readOnly ? '' : `<button class="link" type="button" data-archive-resolve-file-place="${escapeHtml(file.id)}">${escapeHtml(t('Find place'))}</button>`}</div>` : ''}
     </div>`;
 }
@@ -13578,45 +13584,6 @@ function renderArchiveSourceConnectionContent(
                         )
                   || 'No broader place recorded';
 
-                    const connectionCounts =
-                        getPlaceConnectionCounts(
-                            place.id,
-                            {
-                                projectId:
-                        place.projectId
-                        || currentProjectId()
-                            }
-                        );
-
-                    const connectionTotal =
-                        Object.values(
-                            connectionCounts
-                        ).reduce(
-                            (
-                                total,
-                                count
-                            ) =>
-                                total
-                      + Number(
-                          count || 0
-                      ),
-                            0
-                        );
-
-                    const connectionLabel =
-                        `${connectionTotal} ${
-                            connectionTotal === 1
-                                ? 'connected record'
-                                : 'connected records'
-                        }`;
-
-                    const metadata =
-                        placeHasCoordinates(
-                            place
-                        )
-                            ? connectionLabel
-                            : `${connectionLabel} · No map position`;
-
                     return `
                   <div
                     class="
@@ -13633,9 +13600,7 @@ function renderArchiveSourceConnectionContent(
                       ${openAttributes(
                             place.id
                         )}
-                      aria-label="Open ${escapeHtml(
-                            primaryName
-                        )} in Places">
+                      aria-label="${escapeHtml(t('Open place:') + ' ' + primaryName)}">
 
                       <span
                         class="notes-place-icon"
@@ -13657,11 +13622,6 @@ function renderArchiveSourceConnectionContent(
                             )}
                         </span>
 
-                        <span class="notes-place-meta">
-                          ${escapeHtml(
-                                metadata
-                            )}
-                        </span>
                       </span>
                     </button>
 

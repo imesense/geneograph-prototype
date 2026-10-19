@@ -2763,45 +2763,6 @@ function renderNoteLinkedRecordRows(
                         )
                   || 'No broader place recorded';
 
-                    const connectionCounts =
-                        getPlaceConnectionCounts(
-                            place.id,
-                            {
-                                projectId:
-                        place.projectId
-                        || currentProjectId()
-                            }
-                        );
-
-                    const connectionTotal =
-                        Object.values(
-                            connectionCounts
-                        ).reduce(
-                            (
-                                total,
-                                count
-                            ) =>
-                                total
-                      + Number(
-                          count || 0
-                      ),
-                            0
-                        );
-
-                    const connectionLabel =
-                        `${connectionTotal} ${
-                            connectionTotal === 1
-                                ? 'connected record'
-                                : 'connected records'
-                        }`;
-
-                    const metadata =
-                        placeHasCoordinates(
-                            place
-                        )
-                            ? connectionLabel
-                            : `${connectionLabel} · No map position`;
-
                     return `
                   <div
                     class="
@@ -2820,9 +2781,7 @@ function renderNoteLinkedRecordRows(
                       data-note-linked-id="${escapeHtml(
                             place.id
                         )}"
-                      aria-label="Open ${escapeHtml(
-                            primaryName
-                        )} in Places">
+                      aria-label="${escapeHtml(t('Open place:') + ' ' + primaryName)}">
 
                       <span
                         class="notes-place-icon"
@@ -2845,11 +2804,6 @@ function renderNoteLinkedRecordRows(
                             )}
                         </span>
 
-                        <span class="notes-place-meta">
-                          ${escapeHtml(
-                                metadata
-                            )}
-                        </span>
                       </span>
                     </button>
 

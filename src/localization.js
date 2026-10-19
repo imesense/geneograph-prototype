@@ -2,6 +2,7 @@ const SUPPORTED_LANGUAGES = ['en', 'ru'];
 const LANGUAGE_STORAGE_KEY = 'geneograph.language';
 const PROJECT_CONTINUATION_STORAGE_KEY = 'geneograph.projectContinuation';
 const RU_UI_SHARED = Object.freeze({
+    'Open place:': 'Открыть место:',
     'Rename photo': 'Переименовать фото',
     'Save name': 'Сохранить название',
     'Your unsaved photo name will be lost.': 'Несохранённое название фото будет потеряно.',
