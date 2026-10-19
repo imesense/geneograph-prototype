@@ -3870,6 +3870,29 @@
     overflow-y: auto;
 }
 
+.notes-places-modal .notes-place-result {
+    min-width: 0;
+    min-height: 64px;
+    padding: 8px 10px;
+    grid-template-columns: 40px minmax(0, 1fr) 20px;
+    gap: 10px;
+}
+
+.notes-places-modal .notes-place-result-icon {
+    width: 40px;
+    height: 40px;
+}
+
+.notes-places-modal .notes-place-result .photo-people-result-copy {
+    min-width: 0;
+}
+
+.notes-places-modal .notes-place-result:focus-within .photo-people-result-copy strong {
+    overflow: visible;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
 @media (max-width: 900px) {
     .places-filterbar {
         margin-inline:
@@ -7416,6 +7439,7 @@
 
     .notes-places-modal .notes-place-result {
         grid-template-columns: 32px minmax(0, 1fr) 20px;
+        gap: 8px;
     }
 
     .notes-places-modal .notes-place-result-icon {

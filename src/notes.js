@@ -8051,27 +8051,6 @@ function openNotesPlacesModal(
                 );
         };
 
-    const placeConnectionTotal =
-        place =>
-            Object.values(
-                getPlaceConnectionCounts(
-                    place.id,
-                    {
-                        projectId
-                    }
-                )
-            ).reduce(
-                (
-                    total,
-                    count
-                ) =>
-                    total
-              + Number(
-                  count || 0
-              ),
-                0
-            );
-
     const selectionChanged =
         () =>
             initialSelectedIds.size
@@ -8154,10 +8133,8 @@ function openNotesPlacesModal(
                         data-notes-place-remove="${escapeHtml(
                             place.id
                         )}"
-                        aria-label="Remove ${escapeHtml(
-                            primaryName
-                        )} from selection"
-                        title="Remove from selection">
+                        aria-label="${escapeHtml(t('Remove from selection') + ': ' + primaryName)}"
+                        title="${escapeHtml(t('Remove from selection'))}">
 
                         ${icon.close}
                       </button>
@@ -8181,35 +8158,12 @@ function openNotesPlacesModal(
                 placeSecondaryName(
                     place
                 )
-            || 'No broader place recorded';
-
-            const connected =
-                placeConnectionTotal(
-                    place
-                );
+            || t('No broader place recorded');
 
             const matchedAlternative =
                 matchedAlternativeName(
                     place
                 );
-
-            const metaParts = [
-                `${connected} ${
-                    connected === 1
-                        ? 'connected record'
-                        : 'connected records'
-                }`,
-
-                placeHasCoordinates(
-                    place
-                )
-                    ? 'Mapped'
-                    : 'No map position',
-
-                matchedAlternative
-                    ? `Matched “${matchedAlternative}”`
-                    : ''
-            ].filter(Boolean);
 
             return `
             <label
@@ -8225,29 +8179,19 @@ function openNotesPlacesModal(
                   photo-people-result-copy
                 ">
 
-                <strong>
+                <strong title="${escapeHtml(primaryName)}">
                   ${escapeHtml(
                         primaryName
                     )}
                 </strong>
 
-                <span>
+                <span title="${escapeHtml(secondaryName)}">
                   ${escapeHtml(
                         secondaryName
                     )}
                 </span>
 
-                <span
-                  class="
-                    notes-place-result-meta
-                  ">
-
-                  ${escapeHtml(
-                        metaParts.join(
-                            ' · '
-                        )
-                    )}
-                </span>
+                ${matchedAlternative ? `<span class="notes-place-result-meta" title="${escapeHtml(matchedAlternative)}">${escapeHtml(t('Historical name:') + ' ' + matchedAlternative)}</span>` : ''}
               </span>
 
               <input
@@ -8256,9 +8200,7 @@ function openNotesPlacesModal(
                     place.id
                 )}"
                 data-notes-place-choice
-                aria-label="Select ${escapeHtml(
-                    primaryName
-                )}">
+                aria-label="${escapeHtml(t('Select place:') + ' ' + primaryName)}">
             </label>
           `;
         };
@@ -8280,14 +8222,9 @@ function openNotesPlacesModal(
                 ">
 
                 <div>
-                  <strong>
-                    No places yet
-                  </strong>
+                  <strong>${escapeHtml(t('No places yet'))}</strong>
 
-                  <p>
-                    Create a place before
-                    linking it.
-                  </p>
+                  <p>${escapeHtml(t('Create a place before linking it.'))}</p>
                 </div>
               </div>
             `;
@@ -8315,15 +8252,9 @@ function openNotesPlacesModal(
                 ">
 
                 <div>
-                  <strong>
-                    No places match
-                    this search
-                  </strong>
+                  <strong>${escapeHtml(t('No places match this search'))}</strong>
 
-                  <p>
-                    Try another place name
-                    or historical name.
-                  </p>
+                  <p>${escapeHtml(t('Try another place name or historical name.'))}</p>
                   <div
                     class="
                       notes-place-empty-actions
@@ -8336,7 +8267,7 @@ function openNotesPlacesModal(
                       "
                       type="button"
                       data-notes-place-clear-search>
-                      Clear search
+                      ${escapeHtml(t('Clear search'))}
                     </button>
                   </div>
                 </div>
@@ -8352,8 +8283,7 @@ function openNotesPlacesModal(
 
               <div>
                 <strong>
-                  All available places
-                  are already selected
+                  ${escapeHtml(t('All available places are already selected'))}
                 </strong>
               </div>
             </div>
@@ -8390,7 +8320,7 @@ function openNotesPlacesModal(
               class="close-button"
               type="button"
               data-close
-              aria-label="Close add places dialog">
+              aria-label="${escapeHtml(t('Close add places dialog'))}">
 
               ${icon.close}
             </button>
@@ -8411,7 +8341,7 @@ function openNotesPlacesModal(
               <label
                 for="notesPlacesSearch"
                 class="notes-place-search-label">
-                Find places
+                ${escapeHtml(t('Find places'))}
               </label>
 
               <div
@@ -8427,7 +8357,7 @@ function openNotesPlacesModal(
                         query
                     )}"
                     data-notes-place-search
-                    placeholder="Search by name, broader place, or historical name"
+                    placeholder="${escapeHtml(t('Name or historical name'))}"
                     autocomplete="off">
                 </div>
 
@@ -8442,7 +8372,7 @@ function openNotesPlacesModal(
                   data-notes-place-create>
 
                   ${icon.plus}
-                  <span class="notes-place-new-full">New place</span>
+                  <span class="notes-place-new-full">${escapeHtml(t('New place'))}</span>
                   <span class="notes-place-new-short">${escapeHtml(t('New'))}</span>
                 </button>
               </div>
@@ -8475,9 +8405,6 @@ function openNotesPlacesModal(
                     data-notes-place-results-title>
                   </strong>
 
-                  <span
-                    data-notes-place-results-meta>
-                  </span>
                 </div>
               </div>
 
@@ -8523,7 +8450,7 @@ function openNotesPlacesModal(
                 "
                 type="button"
                 data-notes-place-save>
-                Save places
+                ${escapeHtml(t('Save places'))}
               </button>
             </div>
           </div>
@@ -8558,11 +8485,6 @@ function openNotesPlacesModal(
     const resultsTitle =
         modal.querySelector(
             '[data-notes-place-results-title]'
-        );
-
-    const resultsMeta =
-        modal.querySelector(
-            '[data-notes-place-results-meta]'
         );
 
     const countElement =
@@ -8602,57 +8524,12 @@ function openNotesPlacesModal(
                 normalizePlaceLookupText(query)
             );
 
-        // Saved connections, independent of draft selections.
-        const connectedCount =
-            [...initialSelectedIds]
-                .filter(validPlace)
-                .length;
-
-        const availableLabel =
-            queryActive
-                ? (
-                    places.length === 1
-                        ? '{count} match'
-                        : '{count} matches'
-                )
-                : (
-                    places.length === 1
-                        ? '{count} place available'
-                        : '{count} places available'
-                );
-
         resultsTitle.textContent =
             t(
                 queryActive
                     ? 'Search results'
                     : 'Suggested places'
             );
-
-        const numberFormatter =
-            new Intl.NumberFormat(
-                state.language === 'ru'
-                    ? 'ru-RU'
-                    : 'en-US'
-            );
-
-        const availableText =
-            t(availableLabel).replace(
-                '{count}',
-                numberFormatter.format(
-                    places.length
-                )
-            );
-
-        const connectedText =
-            t('{count} already connected').replace(
-                '{count}',
-                numberFormatter.format(
-                    connectedCount
-                )
-            );
-
-        resultsMeta.textContent =
-            `${availableText} · ${connectedText}`;
 
         resultsHost.innerHTML =
             renderResults(places);
@@ -8666,12 +8543,20 @@ function openNotesPlacesModal(
             const count =
                 selectedIds.size;
 
-            countElement.textContent =
-                `${count} ${
-                    count === 1
-                        ? 'place'
-                        : 'places'
-                } selected`;
+            const countLabel = t(
+                count === 1
+                    ? '{count} place selected'
+                    : '{count} places selected'
+            );
+
+            countElement.textContent = countLabel.replace(
+                '{count}',
+                new Intl.NumberFormat(
+                    state.language === 'ru'
+                        ? 'ru-RU'
+                        : 'en-US'
+                ).format(count)
+            );
 
             saveButton.disabled =
                 !selectionChanged();

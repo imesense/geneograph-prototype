@@ -5980,22 +5980,19 @@ const RU_UI_COMPLETION = {
     'People to add': 'Добавляемые люди',
     'No people were linked.': 'Люди не были связаны.',
     'Close add places dialog': 'Закрыть окно добавления мест',
-    'Search by name, broader place, or historical name': 'Поиск по названию, более широкому месту или историческому названию',
+    'Find places': 'Найти места',
+    'Name or historical name': 'Название или историческое название',
+    'New place': 'Новое место',
+    'Save places': 'Сохранить места',
+    'Select place:': 'Выбрать место:',
+    'Historical name:': 'Историческое название:',
+    'No places yet': 'Пока нет мест',
+    'Create a place before linking it.': 'Создайте место, прежде чем связывать его.',
+    'No places match this search': 'По запросу места не найдены',
+    'Try another place name or historical name.': 'Попробуйте другое название места или историческое название.',
+    '{count} place selected': 'Выбрано мест: {count}',
+    '{count} places selected': 'Выбрано мест: {count}',
     'Suggested places': 'Предлагаемые места',
-    '{count} place available':
-        'Доступно мест: {count}',
-
-    '{count} places available':
-        'Доступно мест: {count}',
-
-    '{count} match':
-        'Найдено: {count}',
-
-    '{count} matches':
-        'Найдено: {count}',
-
-    '{count} already connected':
-        'Уже связано: {count}',
     'Place links updated.': 'Связи с местами обновлены.',
     'Close add events dialog': 'Закрыть окно добавления событий',
     'No events were linked.': 'События не были связаны.',
