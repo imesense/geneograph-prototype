@@ -2082,6 +2082,9 @@ const RU_UI_ALBUMS = {
     'Add photos':
         'Добавить фотографии',
 
+    'Add photos to note':
+        'Добавить фотографии к заметке',
+
     'Photo controls':
         'Управление фотографиями',
 
@@ -2770,6 +2773,15 @@ const RU_UI_ARCHIVE = {
 
     'Selected sources':
         'Выбранные источники',
+
+    'Select source:':
+        'Выбрать источник:',
+
+    '{count} source selected':
+        'Выбрано источников: {count}',
+
+    '{count} sources selected':
+        'Выбрано источников: {count}',
 
     'Suggested sources':
         'Предложенные источники',
@@ -6903,6 +6915,29 @@ function translateDynamicPhrase(core)
     )
     {
         return core;
+    }
+
+    const photoLinkInstruction = String(core).trim().match(
+        /^Selected and uploaded photos will be linked to ([\s\S]+)\.$/
+    );
+
+    if (photoLinkInstruction)
+    {
+        return `Выбранные и загруженные фотографии будут связаны с «${photoLinkInstruction[1]}».`;
+    }
+
+    const sourceLinkInstruction = String(core).trim().match(
+        /^Connect existing sources to ([\s\S]+)\.$/
+    );
+
+    if (sourceLinkInstruction)
+    {
+        if (sourceLinkInstruction[1] === 'this record')
+        {
+            return 'Связать существующие источники с этой записью.';
+        }
+
+        return `Связать существующие источники с «${sourceLinkInstruction[1]}».`;
     }
 
     const folderDropMessage = String(core).trim().match(

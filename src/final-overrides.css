@@ -2788,6 +2788,10 @@ body.mobile-details-open .geneo-inspector [data-geneo-inspector-toggle] {
     display: none;
 }
 
+#modalBackdrop .target-source-picker-modal .notes-related-toolbar .app-search-field {
+    width: 100%;
+}
+
 @media (max-width: 900px) {
     #modalBackdrop .target-source-picker-modal .notes-related-toolbar {
         grid-template-columns: minmax(0, 1fr) auto;

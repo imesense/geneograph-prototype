@@ -7568,13 +7568,13 @@ function openPhotoLinkModal({
               <div>
                 <h2 id="notesPhotosAdderTitle">
                   ${escapeHtml(
-                        title
+                        t(title)
                     )}
                 </h2>
 
                 <p>
                   ${escapeHtml(
-                        description
+                        translateDynamicPhrase(description)
                     )}
                 </p>
               </div>

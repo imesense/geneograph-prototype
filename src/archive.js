@@ -1971,7 +1971,7 @@ function openSourcesForTargetModal({
         {
             const sourceTitle =
                 source.title
-            || 'Untitled source';
+            || t('Untitled source');
 
             const alreadyLinked =
                 existingIds.has(
@@ -2044,7 +2044,7 @@ function openSourcesForTargetModal({
                         ? `
                     <span
                       class="source-picker-choice-status">
-                      ${draftMode ? 'Selected for fact' : 'Already linked'}
+                      ${escapeHtml(t(draftMode ? 'Selected for fact' : 'Already linked'))}
                     </span>
                   `
                         : ''
@@ -2063,10 +2063,10 @@ function openSourcesForTargetModal({
                 }
                 aria-label="${
                     alreadyLinked
-                        ? `${draftMode ? 'Selected for fact' : 'Already linked'}: ${escapeHtml(
+                        ? `${escapeHtml(t(draftMode ? 'Selected for fact' : 'Already linked'))}: ${escapeHtml(
                             sourceTitle
                         )}`
-                        : `Select ${escapeHtml(
+                        : `${escapeHtml(t('Select source:'))} ${escapeHtml(
                             sourceTitle
                         )}`
                 }">
@@ -2104,7 +2104,7 @@ function openSourcesForTargetModal({
             <div
               class="notes-related-selected-head">
               <strong>
-                Selected sources
+                ${escapeHtml(t('Selected sources'))}
               </strong>
             </div>
 
@@ -2116,7 +2116,7 @@ function openSourcesForTargetModal({
                     {
                         const sourceTitle =
                             source.title
-                    || 'Untitled source';
+                    || t('Untitled source');
 
                         return `
                     <div
@@ -2137,10 +2137,8 @@ function openSourcesForTargetModal({
                         data-target-source-remove="${escapeHtml(
                             source.id
                         )}"
-                        aria-label="Remove ${escapeHtml(
-                            sourceTitle
-                        )} from selection"
-                        title="Remove from selection">
+                        aria-label="${escapeHtml(t('Remove from selection'))}: ${escapeHtml(sourceTitle)}"
+                        title="${escapeHtml(t('Remove from selection'))}">
 
                         ${icon.close}
                       </button>
@@ -2163,12 +2161,11 @@ function openSourcesForTargetModal({
                 return `
               <div class="notes-related-empty">
                 <strong>
-                  No sources available
+                  ${escapeHtml(t('No sources available'))}
                 </strong>
 
                 <span>
-                  Create a source first, then return
-                  here to link it.
+                  ${escapeHtml(t('Create a source first, then return here to link it.'))}
                 </span>
               </div>
             `;
@@ -2179,19 +2176,18 @@ function openSourcesForTargetModal({
                 return `
               <div class="notes-related-empty">
                 <strong>
-                  No sources match this search
+                  ${escapeHtml(t('No sources match this search'))}
                 </strong>
 
                 <span>
-                  Try another source name, origin,
-                  location, or reference.
+                  ${escapeHtml(t('Try another source name, origin, location, or reference.'))}
                 </span>
 
                 <button
                   class="button secondary"
                   type="button"
                   data-target-source-clear-search>
-                  Clear search
+                  ${escapeHtml(t('Clear search'))}
                 </button>
               </div>
             `;
@@ -2209,12 +2205,11 @@ function openSourcesForTargetModal({
                 return `
               <div class="notes-related-empty">
                 <strong>
-                  All available sources are linked
+                  ${escapeHtml(t('All available sources are linked'))}
                 </strong>
 
                 <span>
-                  No additional sources are available
-                  for this item.
+                  ${escapeHtml(t('No additional sources are available for this item.'))}
                 </span>
               </div>
             `;
@@ -2231,12 +2226,11 @@ function openSourcesForTargetModal({
                 return `
               <div class="notes-related-empty">
                 <strong>
-                  All available sources are selected
+                  ${escapeHtml(t('All available sources are selected'))}
                 </strong>
 
                 <span>
-                  Every unlinked source is already in
-                  the current selection.
+                  ${escapeHtml(t('Every unlinked source is already in the current selection.'))}
                 </span>
               </div>
             `;
@@ -2245,7 +2239,7 @@ function openSourcesForTargetModal({
             return `
             <div class="notes-related-empty">
               <strong>
-                No sources available
+                ${escapeHtml(t('No sources available'))}
               </strong>
             </div>
           `;
@@ -2277,11 +2271,11 @@ function openSourcesForTargetModal({
           <div class="modal-header">
             <div>
               <h2 id="targetSourcesModalTitle">
-                ${escapeHtml(title)}
+                ${escapeHtml(t(title))}
               </h2>
 
               <p>
-                ${escapeHtml(subtitle)}
+                ${escapeHtml(translateDynamicPhrase(subtitle))}
               </p>
             </div>
 
@@ -2289,7 +2283,7 @@ function openSourcesForTargetModal({
               class="close-button"
               type="button"
               data-close
-              aria-label="Close source picker">
+              aria-label="${escapeHtml(t('Close source picker'))}">
 
               ${icon.close}
             </button>
@@ -2309,7 +2303,7 @@ function openSourcesForTargetModal({
 
                 <label
                   class="app-search-field"
-                  aria-label="Search sources">
+                  aria-label="${escapeHtml(t('Search sources...'))}">
 
                   ${icon.search}
 
@@ -2317,18 +2311,18 @@ function openSourcesForTargetModal({
                     type="search"
                     autocomplete="off"
                     data-target-source-search
-                    placeholder="Search sources...">
+                    placeholder="${escapeHtml(t('Search sources...'))}">
                 </label>
 
                 <button
                   class="button secondary"
                   type="button"
-                  aria-label="Create source"
+                  aria-label="${escapeHtml(t('Create source'))}"
                   data-target-source-create>
 
                   ${icon.plus}
-                  <span class="source-create-full">Create source</span>
-                  <span class="source-create-short">Create</span>
+                  <span class="source-create-full">${escapeHtml(t('Create source'))}</span>
+                  <span class="source-create-short">${escapeHtml(t('Create'))}</span>
                 </button>
               </div>
 
@@ -2350,7 +2344,7 @@ function openSourcesForTargetModal({
                   <div>
                     <strong
                       data-target-source-results-title>
-                      Suggested sources
+                      ${escapeHtml(t('Suggested sources'))}
                     </strong>
 
                     <span
@@ -2380,7 +2374,7 @@ function openSourcesForTargetModal({
               class="notes-related-selection-count"
               data-target-source-count
               aria-live="polite">
-              0 sources selected
+              ${escapeHtml(t('{count} sources selected').replace('{count}', '0'))}
             </span>
 
             <div
@@ -2390,7 +2384,7 @@ function openSourcesForTargetModal({
                 class="button secondary"
                 type="button"
                 data-close>
-                Cancel
+                ${escapeHtml(t('Cancel'))}
               </button>
 
               <button
@@ -2398,7 +2392,7 @@ function openSourcesForTargetModal({
                 type="button"
                 data-target-source-save
                 disabled>
-                Add sources
+                ${escapeHtml(t('Add sources'))}
               </button>
             </div>
           </div>
@@ -2513,12 +2507,13 @@ function openSourcesForTargetModal({
             const selectedCount =
                 selectedIds.size;
 
-            countElement.textContent =
-                `${selectedCount} ${
-                    selectedCount === 1
-                        ? 'source'
-                        : 'sources'
-                } selected`;
+            countElement.textContent = t(
+                selectedCount === 1
+                    ? '{count} source selected'
+                    : '{count} sources selected'
+            ).replace('{count}', new Intl.NumberFormat(
+                state.language === 'ru' ? 'ru-RU' : 'en-US'
+            ).format(selectedCount));
 
             saveButton.disabled =
                 selectedCount === 0;

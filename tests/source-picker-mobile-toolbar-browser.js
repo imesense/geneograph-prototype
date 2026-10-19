@@ -15,7 +15,7 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
     {
         for (const language of ['en', 'ru'])
         {
-            for (const width of [320, 390, 540, 768, 900])
+            for (const width of [320, 390, 540, 768, 900, 1200])
             {
                 const page = await browser.newPage({ viewport: { width, height: 720 } });
                 const errors = [];
@@ -32,7 +32,10 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
                 {
                     assert.ok(targetId, `${module} fixture exists`);
                     await page.evaluate(({ targetType, targetId }) =>
-                        openSourcesForTargetModal({ targetType, targetId }), { targetType, targetId });
+                        openSourcesForTargetModal({
+                            targetType, targetId,
+                            subtitle: 'Connect existing sources to Sample checklist.'
+                        }), { targetType, targetId });
                     const geometry = await page.evaluate(() =>
                     {
                         const toolbar = document.querySelector('.target-source-picker-modal .notes-related-toolbar');
@@ -42,6 +45,8 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
                         return {
                             toolbar: rect(toolbar), search: rect(search), button: rect(button),
                             label: button.getAttribute('aria-label'),
+                            subtitle: document.querySelector('.target-source-picker-modal .modal-header p').textContent.trim(),
+                            count: document.querySelector('[data-target-source-count]').textContent.trim(),
                             overflow: document.documentElement.scrollWidth > innerWidth
                         };
                     });
@@ -50,9 +55,22 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
                         `${module} ${language} ${width}: search and create share a row`);
                     assert.ok(geometry.search.right + 4 <= geometry.button.left,
                         `${module} ${language} ${width}: controls do not overlap`);
+                    assert.ok(geometry.button.left - geometry.search.right <= 20,
+                        `${module} ${language} ${width}: controls have a compact gap`);
+                    assert.equal(geometry.subtitle, language === 'ru'
+                        ? 'Связать существующие источники с «Sample checklist».'
+                        : 'Connect existing sources to Sample checklist.');
+                    assert.equal(geometry.count, language === 'ru'
+                        ? 'Выбрано источников: 0' : '0 sources selected');
                     assert.ok(geometry.button.right <= geometry.toolbar.right + 1,
                         `${module} ${language} ${width}: button stays in toolbar`);
                     assert.ok(!geometry.overflow, `${module} ${language} ${width}: no page overflow`);
+                    if (module === 'Family Tree / People')
+                    {
+                        await page.locator('.target-source-picker-modal [data-target-source-choice]:not(:disabled)').first().click();
+                        assert.equal(await page.locator('[data-target-source-count]').innerText(),
+                            language === 'ru' ? 'Выбрано источников: 1' : '1 source selected');
+                    }
                     await page.evaluate(() => closeModal());
                 }
                 await page.evaluate(() => openArchiveConnectionPicker({
