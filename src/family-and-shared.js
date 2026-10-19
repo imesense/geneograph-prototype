@@ -8200,6 +8200,12 @@ function connectParentToChild(parentId, childId)
         family.childIds = [...new Set([...(family.childIds || []), childId])];
         family.childrenIds = [...family.childIds];
         assignParentToFamily(family, parentId);
+        if (familyHasSecondPartner(family, parentId)
+            && family.relationshipType === 'Unknown relationship')
+        {
+            family.relationshipType = 'Married';
+            family.relationshipStatus = 'active';
+        }
         syncFamilyPartnerAliases(family);
         family.updatedAt = 'Just now';
     }
@@ -8262,8 +8268,11 @@ function connectPartners(personAId, personBId, options = {})
             };
         }
 
-        existingChildrenFamily.relationshipType = 'Partner';
-        existingChildrenFamily.relationshipStatus = 'active';
+        if (existingChildrenFamily.relationshipType === 'Unknown relationship')
+        {
+            existingChildrenFamily.relationshipType = 'Married';
+            existingChildrenFamily.relationshipStatus = 'active';
+        }
         existingChildrenFamily.updatedAt = 'Just now';
 
         syncFamilyPartnerAliases(existingChildrenFamily);
@@ -8304,7 +8313,7 @@ function connectPartners(personAId, personBId, options = {})
           relationshipRoleHintForPerson(personAId),
         partnerBRoleHint:
           relationshipRoleHintForPerson(personBId),
-        relationshipType: 'Partner',
+        relationshipType: 'Married',
         relationshipStatus: 'active',
         childIds: [],
         childrenIds: [],
