@@ -5055,38 +5055,24 @@ function connectPersonSearchText(person)
         .toLowerCase();
 }
 
-function connectPeopleAlreadyRelated(anchorPersonId, candidatePersonId, relationshipType)
+function connectPersonExistingRelationships(anchorPersonId)
 {
-    const type = normalizeConnectRelationshipType(relationshipType);
-
-    if (!anchorPersonId || !candidatePersonId || anchorPersonId === candidatePersonId)
+    const connected = new Map();
+    const add = (personId, type) =>
     {
-        return true;
-    }
+        if (!personId || personId === anchorPersonId) return;
+        if (!connected.has(personId)) connected.set(personId, new Set());
+        connected.get(personId).add(type);
+    };
 
-    if (type === 'parent')
-    {
-        return getParents(anchorPersonId).some(parent => parent.id === candidatePersonId);
-    }
+    getParents(anchorPersonId).forEach(person => add(person.id, 'parent'));
+    getChildren(anchorPersonId).forEach(person => add(person.id, 'child'));
+    getSiblings(anchorPersonId).forEach(person => add(person.id, 'sibling'));
+    getPartnerRelationships(anchorPersonId).forEach(relationship =>
+        add(familyPartnerId(relationship, anchorPersonId), 'partner')
+    );
 
-    if (type === 'child')
-    {
-        return getChildren(anchorPersonId).some(child => child.id === candidatePersonId);
-    }
-
-    if (type === 'sibling')
-    {
-        const anchorFamilies = centralFamilyRecords().filter(family =>
-            unlinkFamilyChildrenIds(family).includes(anchorPersonId)
-        );
-
-        return anchorFamilies.some(family =>
-            unlinkFamilyChildrenIds(family).includes(candidatePersonId)
-        );
-    }
-
-    return getPartnerRelationships(anchorPersonId)
-        .some(relationship => familyPartnerId(relationship, anchorPersonId) === candidatePersonId);
+    return connected;
 }
 
 function connectPersonCandidateScore(person, anchorPerson, relationshipType, query)
@@ -5140,11 +5126,12 @@ function connectPersonCandidates()
     const query = String(connectPersonModalState.query || '').trim().toLowerCase();
     const relationshipType = connectPersonModalState.relationshipType
         ? normalizeConnectRelationshipType(connectPersonModalState.relationshipType) : '';
+    const connected = connectPersonExistingRelationships(anchor.id);
 
     return getPeople(currentProjectId())
         .filter(person => person?.id && person.id !== anchor.id)
         .filter(person => !person.deleted)
-        .filter(person => !relationshipType || !connectPeopleAlreadyRelated(anchor.id, person.id, relationshipType))
+        .filter(person => query || !connected.has(person.id))
         .filter(person => !query || connectPersonSearchText(person).includes(query))
         .map(person => ({
             person,
@@ -5227,10 +5214,14 @@ function connectPersonWarningHtml()
     return connectPersonNoticeHtml(connectPersonActiveWarning());
 }
 
-function renderConnectPersonResult(person)
+function renderConnectPersonResult(person, connectedTypes = null)
 {
     const selected = person.id === connectPersonModalState.selectedPersonId;
     const place = connectPersonPlaceLine(person);
+    const connectedLabel = connectedTypes?.size
+        ? `${t('Already connected as')}: ${[...connectedTypes]
+            .map(type => t(connectRelationshipLabel(type))).join(', ')}`
+        : '';
 
     return `<button class="connect-person-result ${selected ? 'is-selected' : ''}" type="button" data-connect-person-result="${escapeHtml(person.id)}" aria-pressed="${selected ? 'true' : 'false'}">
         ${renderPersonAvatar(person, 'connect-person-avatar')}
@@ -5238,6 +5229,7 @@ function renderConnectPersonResult(person)
           <strong>${escapeHtml(connectPersonName(person))}</strong>
           <span>${escapeHtml(connectPersonLifeLine(person))}</span>
           ${place ? `<span>${escapeHtml(place)}</span>` : ''}
+          ${connectedLabel ? `<span class="connect-person-related-status">${escapeHtml(connectedLabel)}</span>` : ''}
         </span>
       </button>`;
 }
@@ -5245,6 +5237,7 @@ function renderConnectPersonResult(person)
 function renderConnectPersonResults()
 {
     const candidates = connectPersonCandidates();
+    const connected = connectPersonExistingRelationships(connectPersonModalState.anchorPersonId);
 
     if (!candidates.length)
     {
@@ -5254,7 +5247,7 @@ function renderConnectPersonResults()
     }
 
     return `<div class="connect-person-results">
-        ${candidates.map(renderConnectPersonResult).join('')}
+        ${candidates.map(person => renderConnectPersonResult(person, connected.get(person.id))).join('')}
       </div>`;
 }
 
@@ -9025,9 +9018,12 @@ function findAddPersonPossibleMatches(options = {}, editPerson = null)
     if (!draft.hasSignal) return [];
 
     const currentPersonId = editPerson?.id || '';
+    const connectionIntent = addPersonCreateConnectionIntent(options);
+    const anchorPersonId = connectionIntent.shouldConnect
+        ? connectionIntent.anchorPersonId : '';
 
     return getPeople(currentProjectId())
-        .filter(person => person?.id && person.id !== currentPersonId)
+        .filter(person => person?.id && person.id !== currentPersonId && person.id !== anchorPersonId)
         .filter(person => !person.deleted)
         .map(person => ({
             person,

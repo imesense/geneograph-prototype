@@ -5777,6 +5777,7 @@ const RU_UI_COMPLETION = {
     'Invalid relationship': 'Недопустимая связь',
     'A person cannot be connected to themselves.': 'Нельзя связать человека с самим собой.',
     'Already connected': 'Уже связано',
+    'Already connected as': 'Уже есть связь',
     'Relationship loop': 'Циклическая родственная связь',
     'Add a name or at least one identifying fact before creating a person.': 'Перед созданием человека укажите имя или хотя бы один идентифицирующий факт.',
     'Check the additional facts before creating.': 'Проверьте дополнительные факты перед созданием.',

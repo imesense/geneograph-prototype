@@ -3304,6 +3304,11 @@ button.timeline-evidence-name:hover, button.timeline-evidence-name:focus-visible
     line-height: 1.25;
 }
 
+.connect-person-result-copy .connect-person-related-status {
+    color: var(--brand-green-400);
+    font-weight: 700;
+}
+
 .connect-person-empty {
     min-height: 0;
     height: 100%;
