@@ -11779,7 +11779,7 @@ function renderGeneoPaintControl(reference)
                     ? `Restore ${actionSubject} color`
                     : `Remove ${actionSubject} color`
             )}">
-            ${disabled ? 'Restore' : 'Remove'}
+            ${escapeHtml(t(disabled ? 'Restore' : 'Remove'))}
           </button>
         `
         : target.resettable
@@ -11811,7 +11811,7 @@ function renderGeneoPaintControl(reference)
                 class="geneo-paint-state"
                 data-geneo-paint-state
                 ${disabled ? '' : 'hidden'}>
-                None
+                ${escapeHtml(t('None'))}
               </span>
             </div>
 
@@ -12798,9 +12798,9 @@ function renderGeneoPaintPopover(reference)
                     class="geneo-paint-none"
                     type="button"
                     data-geneo-paint-toggle>
-                    ${escapeHtml(
+                    ${escapeHtml(t(
                         `${disabled ? 'Restore' : 'Remove'} ${target.label}`
-                    )}
+                    ))}
                   </button>
                 `
                     : target.resettable
@@ -15573,7 +15573,7 @@ function renderGeneographNodeInspector(
           <div class="geneo-inspector-body">
             ${renderGeneographInspectorHeader(
                 geneoNodeTitle(node),
-                capitalize(node.type),
+                t(capitalize(node.type)),
                 geneoNodeIcon(node.type)
             )}
 
@@ -15607,7 +15607,7 @@ function renderGeneographNodeInspector(
             )}
 
             ${renderGeneographInspectorDangerAction(
-                `Delete ${capitalize(node.type)}`
+                t(`Delete ${capitalize(node.type)}`)
             )}
           </div>
         </aside>

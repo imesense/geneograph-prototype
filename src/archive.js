@@ -12802,7 +12802,7 @@ function renderArchiveFileDetails(
               Description
             </dt>
             <dd class="archive-file-read-description">${escapeHtml(
-                description
+                translateText(description)
             )}</dd>
           </div>
         </dl>
@@ -14993,19 +14993,20 @@ function openConnectedFilesModal({
     };
 
     const folderName = folderId => folderId
-        ? ancestors(folderId).map(folder => folder.name).join(' / ')
+        ? ancestors(folderId).map(folder => translateText(folder.name)).join(' / ')
         : pickerText('All files', 'Все файлы');
 
     const fileSearchText = file => [
         archiveSearchText(file),
         archiveFileTypeLabel(file),
+        ancestors(file.folderId).map(folder => folder.name).join(' / '),
         folderName(file.folderId),
         file.size
     ].filter(Boolean).join(' ').toLowerCase();
 
     const renderBreadcrumbs = folderId => {
         browseBreadcrumbs.innerHTML = `<span class="connected-files-location-icon" aria-hidden="true">${icon.folderyellow}</span><button type="button" data-connected-files-folder-path="" ${folderId ? '' : 'aria-current="location"'}>${escapeHtml(pickerText('All files', 'Все файлы'))}</button>${ancestors(folderId).map((folder, index, path) =>
-            `<span class="connected-files-path-separator" aria-hidden="true">${icon.chevron}</span><button type="button" data-user-content data-connected-files-folder-path="${escapeHtml(folder.id)}" title="${escapeHtml(folder.name)}" ${index === path.length - 1 ? 'aria-current="location"' : ''}>${escapeHtml(folder.name)}</button>`).join('')}`;
+            `<span class="connected-files-path-separator" aria-hidden="true">${icon.chevron}</span><button type="button" data-user-content data-connected-files-folder-path="${escapeHtml(folder.id)}" title="${escapeHtml(translateText(folder.name))}" ${index === path.length - 1 ? 'aria-current="location"' : ''}>${escapeHtml(translateText(folder.name))}</button>`).join('')}`;
         browseBreadcrumbs.querySelector('[aria-current="location"]')?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
     };
 
@@ -15129,7 +15130,7 @@ function openConnectedFilesModal({
         resultsTitle.textContent = searching
             ? pickerText('Search results', 'Результаты поиска')
             : browseFolderId
-                ? archiveFolderById(browseFolderId, projectId)?.name || folderName(null)
+                ? translateText(archiveFolderById(browseFolderId, projectId)?.name || folderName(null))
                 : folderName(null);
 
         resultsMeta.textContent = pickerText(
@@ -15145,7 +15146,7 @@ function openConnectedFilesModal({
         {
             resultsHost.innerHTML = `
             <div class="connected-files-choice-list">
-              ${childFolders.map(folder => `<button class="connected-files-folder-row" type="button" data-connected-files-open-folder="${escapeHtml(folder.id)}">${icon.folderyellow}<span data-user-content>${escapeHtml(folder.name)}</span>${icon.chevron}</button>`).join('')}
+              ${childFolders.map(folder => `<button class="connected-files-folder-row" type="button" data-connected-files-open-folder="${escapeHtml(folder.id)}">${icon.folderyellow}<span data-user-content>${escapeHtml(translateText(folder.name))}</span>${icon.chevron}</button>`).join('')}
               ${files.slice(0, visibleLimit).map(renderChoice).join('')}
               ${files.length > visibleLimit ? `<button class="button secondary connected-files-more" type="button" data-connected-files-more>${escapeHtml(pickerText(`Show more files (${files.length - visibleLimit} remaining)`, `Показать ещё (${files.length - visibleLimit})`))}</button>` : ''}
             </div>

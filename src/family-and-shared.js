@@ -8489,6 +8489,18 @@ function addPersonConnectionToastLabel(relationshipType)
     return map[relationshipType] || 'relative';
 }
 
+function createdPersonConnectionToast(relationshipType)
+{
+    const messages = {
+        parent: 'Person created and connected as parent.',
+        child: 'Person created and connected as child.',
+        sibling: 'Person created and connected as sibling.',
+        partner: 'Person created and connected as partner.'
+    };
+
+    return t(messages[relationshipType] || 'Person created and connected as relative.');
+}
+
 function applyPartnerDetailsToCreatedConnection(connectionResult, relationshipValues)
 {
     if (!connectionResult?.ok || connectionResult.connectType !== 'partner') return;
@@ -8807,7 +8819,7 @@ function commitAddPersonModalCreate(title, subtitle, options = {})
     {
         if (connectionResult?.ok)
         {
-            showToast(`Person created and connected as ${addPersonConnectionToastLabel(connectionIntent.relationshipType)}.`);
+            showToast(createdPersonConnectionToast(connectionIntent.relationshipType));
         }
         else
         {

@@ -2205,10 +2205,9 @@ function renderPersonPhotosAdderUploadPanel()
                 }
               </strong>
 
-              <p>
-                JPEG, PNG, or WebP up to
-                ${maxMegabytes} MB each.
-              </p>
+              <p>${escapeHtml(state.language === 'ru'
+                    ? `JPEG, PNG или WebP, до ${maxMegabytes} МБ на файл.`
+                    : `JPEG, PNG, or WebP up to ${maxMegabytes} MB each.`)}</p>
 
               <button
                 class="button primary"
@@ -11002,14 +11001,9 @@ function openAddPhotosModal()
                   Add photos
                 </h2>
 
-                <p>
-                  New photos will be added
-                  ${
-                        targetAlbumId
-                            ? 'to the current album.'
-                            : 'to the current project.'
-                    }
-                </p>
+                <p>${escapeHtml(t(targetAlbumId
+                    ? 'New photos will be added to the current album.'
+                    : 'New photos will be added to the current project.'))}</p>
               </div>
 
               <button
@@ -11072,10 +11066,9 @@ function openAddPhotosModal()
                         }
                     </strong>
 
-                    <p>
-                      JPEG, PNG, or WebP up to
-                      ${maxMegabytes} MB each.
-                    </p>
+                    <p>${escapeHtml(state.language === 'ru'
+                            ? `JPEG, PNG или WebP, до ${maxMegabytes} МБ на файл.`
+                            : `JPEG, PNG, or WebP up to ${maxMegabytes} MB each.`)}</p>
 
                     <button
                       class="button primary"

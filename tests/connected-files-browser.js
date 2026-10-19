@@ -66,7 +66,7 @@ const url = process.env.GENEO_TEST_URL || pathToFileURL(path.resolve(__dirname, 
             await modal.locator('[data-connected-files-search]').fill('Correspondence');
             await modal.locator('[data-connected-files-add-new]').click();
             const upload = page.locator('.archive-document-import');
-            const destinationName = await page.evaluate(() => archiveFolderById('fond12', 'p1').name);
+            const destinationName = await page.evaluate(() => translateText(archiveFolderById('fond12', 'p1').name));
             assert.ok((await upload.locator('.modal-header').innerText()).includes(destinationName));
             await upload.locator('[data-document-input]').setInputFiles([
                 { name: 'picker-upload.txt', mimeType: 'text/plain', buffer: Buffer.from('Sample record') },

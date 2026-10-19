@@ -731,7 +731,18 @@ const RU_DATA_ARCHIVE = Object.freeze({
     'Household register extract supporting Daisy Milkpaw’s birth and household context.': 'Выписка из домовой ведомости, подтверждающая сведения о рождении Дейзи Милкпоу и составе домохозяйства.',
     'Household scan that may connect members of the Whiskerfield family in Pawford.': 'Скан домовой книги, который может связывать членов семьи Вискерфильдов в Поуфорде.',
     'Index page from the Pawford register collection.': 'Страница указателя из коллекции реестров Поуфорда.',
-    'Started at Pawford tutoring circle': 'Начал обучение в учебном кружке Поуфорда'
+    'Started at Pawford tutoring circle': 'Начал обучение в учебном кружке Поуфорда',
+    'Sample register table with four family names on separate lines.': 'Образец таблицы реестра с четырьмя фамилиями в отдельных строках.',
+    'Unidentified studio portrait awaiting a person link and date.': 'Неопознанный студийный портрет: ожидает привязки к человеку и даты.',
+    'Name index pointing to the household register page.': 'Именной указатель со ссылкой на страницу домовой книги.',
+    'Sample family letter from Daisy to Luna about preserving photographs.': 'Образец семейного письма Дейзи к Луне о сохранении фотографий.',
+    'Sample marriage extract for Silver and Luna in Meowbridge.': 'Образец выписки о браке Сильвера и Луны в Мяубридже.',
+    'Sample birth announcement for Silver Whiskerfield.': 'Образец объявления о рождении Сильвера Вискерфильда.',
+    'Illustrative birth-record extract for Daisy Whiskerfield.': 'Иллюстративная выписка о рождении Дейзи Вискерфильд.',
+    'Transcription of Daisy’s letter to Luna.': 'Расшифровка письма Дейзи к Луне.',
+    'Research notes from a visit to Pawford.': 'Заметки об исследовательской поездке в Поуфорд.',
+    'Searchable transcription of the household register index.': 'Текстовая расшифровка указателя домовой книги с возможностью поиска.',
+    'Research packet for Silver and Luna’s marriage.': 'Подборка материалов о браке Сильвера и Луны.',
 });
 
 const RU_DATA_NOTIFICATIONS = Object.freeze({
@@ -1405,6 +1416,8 @@ const RU_UI_GENEO = {
 
     'Sticky note':
         'Стикер',
+    'Sticky': 'Стикер',
+    'Delete Sticky': 'Удалить стикер',
 
     'Panel':
         'Панель',
@@ -1964,6 +1977,16 @@ const RU_UI_GENEO = {
     'Layout': 'Расположение',
     'Pattern': 'Стиль линии',
     'Remove': 'Убрать',
+    'Restore': 'Восстановить',
+    'None': 'Нет',
+    'Restore Fill': 'Восстановить заливку',
+    'Restore Stroke': 'Восстановить обводку',
+    'Restore Line': 'Восстановить линию',
+    'Restore Background': 'Восстановить фон',
+    'Remove Fill': 'Убрать заливку',
+    'Remove Stroke': 'Убрать обводку',
+    'Remove Line': 'Убрать линию',
+    'Remove Background': 'Убрать фон',
     'Reset': 'Сбросить',
     'Visible': 'Видимый',
     'Width': 'Ширина',
@@ -2392,6 +2415,10 @@ const RU_UI_ALBUMS = {
 
     'New photos will be added to the current project and album.':
         'Новые фотографии будут добавлены в текущий проект и альбом.',
+    'New photos will be added to the current project.':
+        'Новые фотографии будут добавлены в текущий проект.',
+    'New photos will be added to the current album.':
+        'Новые фотографии будут добавлены в текущий альбом.',
 
     // ========================================
     // Add to album picker
@@ -5743,6 +5770,11 @@ const RU_UI_COMPLETION = {
     'Check the relationship details before creating.': 'Проверьте сведения о связи перед созданием.',
     'Person created, but could not connect the relationship.': 'Человек создан, но родственную связь добавить не удалось.',
     'Person created.': 'Человек создан.',
+    'Person created and connected as parent.': 'Человек создан и добавлен как родитель.',
+    'Person created and connected as child.': 'Человек создан и добавлен как ребёнок.',
+    'Person created and connected as sibling.': 'Человек создан и добавлен как брат или сестра.',
+    'Person created and connected as partner.': 'Человек создан и добавлен как партнёр.',
+    'Person created and connected as relative.': 'Человек создан и добавлен как родственник.',
     'Create a new person in this project': 'Создать нового человека в этом проекте',
     'Connect selected': 'Связать выбранного',
     'Add selected': 'Добавить выбранного',
