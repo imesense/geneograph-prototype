@@ -2,6 +2,22 @@ const SUPPORTED_LANGUAGES = ['en', 'ru'];
 const LANGUAGE_STORAGE_KEY = 'geneograph.language';
 const PROJECT_CONTINUATION_STORAGE_KEY = 'geneograph.projectContinuation';
 const RU_UI_SHARED = Object.freeze({
+    'Rename photo': 'Переименовать фото',
+    'Save name': 'Сохранить название',
+    'Your unsaved photo name will be lost.': 'Несохранённое название фото будет потеряно.',
+    'Your unsaved file name will be lost.': 'Несохранённое имя файла будет потеряно.',
+    'Your unsaved detail changes will be lost.': 'Несохранённые изменения сведений будут потеряны.',
+    'Place name not linked to a project place': 'Название ещё не связано с местом проекта',
+    'Find place': 'Найти место',
+    'No places linked to this file.': 'С этим файлом не связаны места.',
+    'Add places to files': 'Добавить места к файлам',
+    'Choose or create a place. Existing file places will stay linked.': 'Выберите или создайте место. Существующие связи файлов с местами сохранятся.',
+    'Files to link:': 'Связать файлов:',
+    'This place is already linked to every selected file': 'Это место уже связано со всеми выбранными файлами',
+    'Files linked:': 'Связано файлов:',
+    'Places could not be updated.': 'Не удалось обновить связи с местами.',
+    'Your unsaved source details will be lost.': 'Несохранённые изменения источника будут потеряны.',
+    'Enter a source name before saving.': 'Укажите название источника перед сохранением.',
     'Evidence': 'Подтверждения',
     'Evidence files': 'Файлы-подтверждения',
     'Citations': 'Ссылки на источники',
@@ -2286,9 +2302,6 @@ const RU_UI_ALBUMS = {
     'Discard photo changes?':
         'Отменить изменения фотографии?',
 
-    'Your unsaved title and detail changes will be lost.':
-        'Несохранённые изменения названия и сведений будут потеряны.',
-
     'Discard changes':
         'Отменить изменения',
 
@@ -2950,9 +2963,6 @@ const RU_UI_ARCHIVE = {
 
     'Discard file changes?':
         'Отменить изменения файла?',
-
-    'Your unsaved file name and detail changes will be lost.':
-        'Несохранённые изменения имени файла и сведений будут потеряны.',
 
     'File updated.':
         'Файл обновлён.',

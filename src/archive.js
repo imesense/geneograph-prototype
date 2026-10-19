@@ -3380,6 +3380,24 @@ function archiveFilePlaceIds(
     ]);
 }
 
+function archiveSetFilePlaces(file, placeIds, { resolveLegacy = false } = {})
+{
+    const ids = archiveUniqueIds(placeIds || []);
+    if (!file || ids.some(id => !getPlace(id) || getPlace(id).deleted || getPlace(id).projectId !== file.projectId)) return false;
+    const legacyText = !file.documentPlaceId
+        ? String(file.documentPlaceText || '').trim()
+        : '';
+    const matchedLegacy = ids.some(id => normalizePlaceLookupText(getPlace(id)?.name || '')
+        === normalizePlaceLookupText(legacyText));
+    file.linkedPlaceIds = [...ids];
+    file.placeIds = [...ids];
+    file.documentPlaceId = null;
+    file.documentPlaceText = ((resolveLegacy && ids.length) || matchedLegacy) ? '' : legacyText;
+    file.updatedAt = new Date().toISOString();
+    file.updated = 'Just now';
+    return true;
+}
+
 function archiveFilterCollator()
 {
     return new Intl.Collator(
@@ -5716,14 +5734,7 @@ function archiveConnectionIds(
 
         if (entityType === 'place')
         {
-            const placeId =
-                archiveDocumentPlace(
-                    file
-                ).placeId;
-
-            return placeId
-                ? [placeId]
-                : [];
+            return archiveFilePlaceIds(file);
         }
 
         if (entityType === 'source')
@@ -6085,33 +6096,11 @@ function archiveSetConnection(
 
     if (entityType === 'place')
     {
-        const currentPlaceId =
-            archiveDocumentPlace(
-                file
-            ).placeId;
-
-        if (shouldLink)
-        {
-            archiveApplyDocumentPlace(
-                file,
-                entityId,
-                ''
-            );
-        }
-        else if (
-            currentPlaceId === entityId
-        )
-        {
-            archiveApplyDocumentPlace(
-                file,
-                '',
-                ''
-            );
-        }
-        else
-        {
-            return false;
-        }
+        const currentIds = archiveFilePlaceIds(file);
+        if (!shouldLink && !currentIds.includes(entityId)) return false;
+        if (!archiveSetFilePlaces(file, shouldLink
+            ? [...currentIds, entityId]
+            : currentIds.filter(id => id !== entityId))) return false;
     }
     else
     {
@@ -6279,11 +6268,14 @@ function archiveSetConnectionsAtomically(
         const previousPlace =
             write.ownerType === 'file'
           && write.entityType === 'place'
-                ? archiveDocumentPlace(
-                    archiveFileById(
-                        write.ownerId
-                    )
-                )
+                ? {
+                    linkedPlaceIds: [...(archiveFileById(write.ownerId)?.linkedPlaceIds || [])],
+                    placeIds: [...(archiveFileById(write.ownerId)?.placeIds || [])],
+                    documentPlaceId: archiveFileById(write.ownerId)?.documentPlaceId,
+                    documentPlaceText: archiveFileById(write.ownerId)?.documentPlaceText,
+                    updatedAt: archiveFileById(write.ownerId)?.updatedAt,
+                    updated: archiveFileById(write.ownerId)?.updated
+                }
                 : null;
 
         const wasLinked =
@@ -6296,8 +6288,7 @@ function archiveSetConnectionsAtomically(
             );
 
         if (
-            wasLinked
-            === write.shouldLink
+            wasLinked === write.shouldLink
         )
         {
             continue;
@@ -6330,20 +6321,12 @@ function archiveSetConnectionsAtomically(
 
                         if (file)
                         {
-                            archiveApplyDocumentPlace(
-                                file,
-                                previous.previousPlace?.placeId
-                      || '',
-
-                                previous.previousPlace?.placeText
-                      || ''
-                            );
-
-                            file.updatedAt =
-                                new Date().toISOString();
-
-                            file.updated =
-                                'Just now';
+                            file.linkedPlaceIds = [...(previous.previousPlace?.linkedPlaceIds || [])];
+                            file.placeIds = [...(previous.previousPlace?.placeIds || [])];
+                            file.documentPlaceId = previous.previousPlace?.documentPlaceId || null;
+                            file.documentPlaceText = previous.previousPlace?.documentPlaceText || '';
+                            file.updatedAt = previous.previousPlace?.updatedAt;
+                            file.updated = previous.previousPlace?.updated;
                         }
                     }
                     else
@@ -6523,8 +6506,9 @@ function archiveDocumentPlace(
 )
 {
     const placeId =
-        file?.documentPlaceId
-        || (
+        Object.prototype.hasOwnProperty.call(file || {}, 'documentPlaceId')
+            ? (file.documentPlaceId || '')
+            : ((
             file?.linkedPlaceIds
           || []
         )[0]
@@ -6532,7 +6516,7 @@ function archiveDocumentPlace(
             file?.placeIds
           || []
         )[0]
-        || '';
+        || '');
 
     return {
         placeId,
@@ -6548,7 +6532,9 @@ function archiveDocumentPlace(
 function archiveApplyDocumentPlace(
     file,
     placeId,
-    placeText
+    placeText,
+    relatedPlaceIds = archiveFilePlaceIds(file)
+        .filter(id => id !== archiveDocumentPlace(file).placeId)
 )
 {
     const normalizedPlaceId =
@@ -6570,12 +6556,10 @@ function archiveApplyDocumentPlace(
         Archive search while making document place
         the single inspector concept.
       */
-    file.linkedPlaceIds =
-        normalizedPlaceId
-            ? [
-                normalizedPlaceId
-            ]
-            : [];
+    file.linkedPlaceIds = archiveUniqueIds([
+        normalizedPlaceId,
+        ...relatedPlaceIds
+    ].filter(Boolean));
 
     file.placeIds =
         [
@@ -6587,18 +6571,9 @@ function archiveFileEditDraftFromFile(
     file
 )
 {
-    const place =
-        archiveDocumentPlace(
-            file
-        );
-
     return {
         fileId:
           file.id,
-
-        name:
-          file.name
-          || '',
 
         description:
           file.description
@@ -6608,15 +6583,7 @@ function archiveFileEditDraftFromFile(
             ...archiveDocumentDateModel(
                 file
             )
-        },
-
-        documentPlaceId:
-          place.placeId
-          || '',
-
-        documentPlaceText:
-          place.placeText
-          || ''
+        }
     };
 }
 
@@ -6625,11 +6592,6 @@ function normalizedArchiveFileEditDraft(
 )
 {
     return {
-        name:
-          String(
-              draft?.name || ''
-          ).trim(),
-
         description:
           String(
               draft?.description || ''
@@ -6639,19 +6601,7 @@ function normalizedArchiveFileEditDraft(
           mediaDateFromGenealogyModel(
               draft?.documentDate
             || {}
-          ),
-
-        documentPlaceId:
-          String(
-              draft?.documentPlaceId
-            || ''
-          ),
-
-        documentPlaceText:
-          String(
-              draft?.documentPlaceText
-            || ''
-          ).trim()
+          )
     };
 }
 
@@ -6681,30 +6631,9 @@ function collectArchiveFileEditDraft({
         return null;
     }
 
-    /*
-        Draft collection must be side-effect free.
-
-        readPlaceInputValue() reads the typed value
-        without creating a new Place record.
-      */
-    const place =
-        readPlaceInputValue(
-            '#archiveFileDocumentPlace',
-            main
-        );
-
     return {
         fileId:
           state.archiveSelectedFileId,
-
-        name:
-          main
-              .querySelector(
-                  '#archiveFileName'
-              )
-              ?.value
-              .trim()
-          || '',
 
         description:
           main
@@ -6715,18 +6644,7 @@ function collectArchiveFileEditDraft({
               .trim()
           || '',
 
-        documentDate,
-
-        documentPlaceId:
-          place.selectedPlaceId
-          || '',
-
-        documentPlaceText:
-          place.text
-          || '',
-
-        documentPlaceCoordinates:
-          place.coordinates
+        documentDate
     };
 }
 
@@ -6823,12 +6741,17 @@ function beginArchiveFileEdit()
             true;
 
     renderArchiveMain();
+    requestAnimationFrame(() => main.querySelector('#archiveFileDocumentDateInput')?.focus({ preventScroll: true }));
 }
 
 function cancelArchiveFileEdit()
 {
-    resetArchiveFileEditState();
-    renderArchiveMain();
+    runAfterArchiveFileEditGuard(() =>
+    {
+        resetArchiveFileEditState();
+        renderArchiveMain();
+        requestAnimationFrame(() => main.querySelector('#archiveEditFile')?.focus({ preventScroll: true }));
+    });
 }
 
 function saveArchiveFileEdit()
@@ -6858,24 +6781,6 @@ function saveArchiveFileEdit()
         return;
     }
 
-    if (!draft.name.trim())
-    {
-        showToast(
-            'Enter a file name before saving.'
-        );
-
-        main
-            .querySelector(
-                '#archiveFileName'
-            )
-            ?.focus();
-
-        return;
-    }
-
-    file.name =
-        draft.name.trim();
-
     file.description =
         draft.description
         || '';
@@ -6893,20 +6798,6 @@ function saveArchiveFileEdit()
           || 'Exact date'
         );
 
-    const resolvedPlace =
-        resolvePlaceInputValue(
-            draft.documentPlaceText,
-            draft.documentPlaceId,
-            '',
-            { projectId: file.projectId, coordinates: draft.documentPlaceCoordinates }
-        );
-
-    archiveApplyDocumentPlace(
-        file,
-        resolvedPlace.placeId,
-        resolvedPlace.placeText
-    );
-
     file.updatedAt =
         new Date()
             .toISOString();
@@ -6916,6 +6807,7 @@ function saveArchiveFileEdit()
 
     resetArchiveFileEditState();
     renderArchive();
+    requestAnimationFrame(() => main.querySelector('#archiveEditFile')?.focus({ preventScroll: true }));
     showToast(
         'File updated.'
     );
@@ -6925,6 +6817,31 @@ function runAfterArchiveFileEditGuard(
     action
 )
 {
+    if (state.archiveFileNameEditingId)
+    {
+        const value = main.querySelector('#archiveFileNameInput')?.value.trim() || '';
+        if (value !== state.archiveFileNameOriginal)
+        {
+            openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="archiveDiscardFileNameTitle"><div class="modal-header"><h2 id="archiveDiscardFileNameTitle">${escapeHtml(t('Discard changes?'))}</h2></div><div class="modal-body"><p>${escapeHtml(t('Your unsaved file name will be lost.'))}</p></div><div class="modal-footer"><button class="button secondary" type="button" data-close>${escapeHtml(t('Continue editing'))}</button><button class="button danger" type="button" data-discard-file-name>${escapeHtml(t('Discard changes'))}</button></div></div>`);
+            modalBackdrop.querySelector('[data-discard-file-name]')?.addEventListener('click', () =>
+            {
+                closeModal();
+                state.archiveFileNameEditingId = '';
+                state.archiveFileNameOriginal = '';
+                action();
+            });
+            return;
+        }
+        state.archiveFileNameEditingId = '';
+        state.archiveFileNameOriginal = '';
+        action();
+        return;
+    }
+    if (state.archiveSourceEditingId)
+    {
+        runAfterArchiveSourceDetailEditGuard(action);
+        return;
+    }
     if (
         !state.archiveFileEditing
     )
@@ -6959,8 +6876,7 @@ function runAfterArchiveFileEditGuard(
               </h2>
 
               <p>
-                Your unsaved file name and detail
-                changes will be lost.
+                Your unsaved detail changes will be lost.
               </p>
             </div>
 
@@ -7007,6 +6923,43 @@ function runAfterArchiveFileEditGuard(
                 action();
             }
         );
+}
+
+function beginArchiveFileRename(fileId)
+{
+    const file = archiveFileById(fileId);
+    if (!file) return;
+    state.archiveView = 'files';
+    state.archiveSelectedFolderId = archiveFileFolderId(file);
+    state.archiveSelectedFileId = file.id;
+    state.archiveInspectorCollapsed = false;
+    state.archiveFileNameEditingId = file.id;
+    state.archiveFileNameOriginal = file.name || '';
+    renderArchiveMain();
+    if (innerWidth <= 900 && !document.body.classList.contains('mobile-details-open'))
+        openMobileSurface('details');
+    requestAnimationFrame(() => main.querySelector('#archiveFileNameInput')?.focus({ preventScroll: true }));
+}
+
+function saveArchiveFileRename()
+{
+    const file = archiveFileById(state.archiveFileNameEditingId);
+    const input = main.querySelector('#archiveFileNameInput');
+    const name = input?.value.trim() || '';
+    if (!file || !name)
+    {
+        input?.focus();
+        showToast(t('Enter a file name before saving.'));
+        return;
+    }
+    file.name = name;
+    file.updatedAt = new Date().toISOString();
+    file.updated = 'Just now';
+    state.archiveFileNameEditingId = '';
+    state.archiveFileNameOriginal = '';
+    renderArchiveMain();
+    requestAnimationFrame(() => main.querySelector('#archiveRenameFile')?.focus({ preventScroll: true }));
+    showToast(t('File renamed.'));
 }
 
 function archiveInspectorSectionIsOpen(
@@ -9000,6 +8953,7 @@ function renderArchiveMain()
     }
     ensureArchiveVisibleSelection();
     const previousScroll = main.querySelector('.archive-main')?.scrollTop || 0;
+    const previousInspectorScroll = main.querySelector('.archive-inspector-scroll')?.scrollTop || 0;
     const previousPageScroll = document.scrollingElement?.scrollTop || 0;
 
     main.innerHTML = `
@@ -9042,6 +8996,8 @@ function renderArchiveMain()
 
     bindArchiveControls();
     localizeUI(main);
+    const nextInspectorScroll = main.querySelector('.archive-inspector-scroll');
+    if (nextInspectorScroll) nextInspectorScroll.scrollTop = previousInspectorScroll;
     if (locationKey === archiveRenderedLocationKey)
     {
         main.querySelector('.archive-main').scrollTop = previousScroll;
@@ -12169,35 +12125,6 @@ function renderArchiveInspectorToolbar()
             aria-label="Edit Archive file">
 
             ${collapseButton}
-
-            <span
-              class="
-                archive-inspector-toolbar-spacer
-              "
-              aria-hidden="true">
-            </span>
-
-            <div
-              class="
-                archive-inspector-edit-actions
-              ">
-
-              <button
-                class="button secondary"
-                type="button"
-                id="archiveCancelFileEdit">
-
-                Cancel
-              </button>
-
-              <button
-                class="button primary"
-                type="button"
-                id="archiveSaveFileEdit">
-
-                Save
-              </button>
-            </div>
           </div>
         `;
     }
@@ -12218,39 +12145,6 @@ function renderArchiveInspectorToolbar()
             "
             aria-hidden="true">
           </span>
-          ${
-                context?.type === 'file'
-                    ? `
-                <button
-                  class="
-                    archive-inspector-action
-                  "
-                  type="button"
-                  id="archiveEditFile"
-                  aria-label="Edit file"
-                  title="Edit file">
-
-                  ${icon.edit}
-                </button>
-              `
-                    : context?.type === 'source'
-                        ? `
-                  <button
-                    class="
-                      archive-inspector-action
-                    "
-                    type="button"
-                    data-archive-edit-source="${escapeHtml(
-                        context.id
-                    )}"
-                    aria-label="Edit source"
-                    title="Edit source">
-
-                    ${icon.edit}
-                  </button>
-                `
-                        : ''
-            }
 
           ${renderArchiveInspectorFolderOpenButton(
                 context
@@ -12540,12 +12434,6 @@ function renderArchiveFileIdentity(
     editing
 )
 {
-    const draft =
-        state.archiveFileEditDraft
-        || archiveFileEditDraftFromFile(
-            file
-        );
-
     const summary =
         [
             archiveFileTypeLabel(
@@ -12574,36 +12462,13 @@ function renderArchiveFileIdentity(
             archive-file-identity
           ">
 
-          ${
-                editing
-                    ? `
-                <label
-                  class="
-                    archive-file-title-field
-                  ">
-
-                  <span>
-                    File name
-                  </span>
-
-                  <input
-                    id="archiveFileName"
-                    maxlength="220"
-                    value="${escapeHtml(
-                        draft.name
-                      || ''
-                    )}">
-                </label>
-              `
-                    : `
-                <h2>
-                  ${escapeHtml(
-                        file.name
-                    || 'Untitled file'
-                    )}
-                </h2>
-              `
-            }
+          ${state.archiveFileNameEditingId === file.id ? `
+            <div class="inspector-name-editor">
+              <input id="archiveFileNameInput" maxlength="220" aria-label="${escapeHtml(t('File name'))}" value="${escapeHtml(file.name || '')}">
+              <button class="inspector-name-command" type="button" id="archiveSaveFileName" aria-label="${escapeHtml(t('Save name'))}" title="${escapeHtml(t('Save name'))}">${icon.check}</button>
+              <button class="inspector-name-command" type="button" id="archiveCancelFileName" aria-label="${escapeHtml(t('Cancel'))}" title="${escapeHtml(t('Cancel'))}">${icon.close}</button>
+            </div>` : `
+            <div class="inspector-name-heading"><h2>${escapeHtml(file.name || 'Untitled file')}</h2><button class="inspector-name-command" type="button" id="archiveRenameFile" aria-label="${escapeHtml(t('Rename file'))}" title="${escapeHtml(t('Rename file'))}">${icon.edit}</button></div>`}
 
           <p
             class="
@@ -12655,7 +12520,6 @@ function renderArchiveFileDetails(
             class="
               archive-file-form-grid
             ">
-
             ${renderGenealogyDateField(
                 'archiveFileDocumentDate',
                 'Date',
@@ -12674,31 +12538,6 @@ function renderArchiveFileDetails(
                   'genealogy-date-inline-range'
                 }
             )}
-
-            ${renderPlaceCombobox({
-                id:
-                'archiveFileDocumentPlace',
-
-                label:
-                'Place',
-
-                value:
-                getPlaceDisplay(
-                    draft.documentPlaceId
-                )
-                || draft.documentPlaceText
-                || '',
-
-                selectedPlaceId:
-                draft.documentPlaceId
-                || '',
-
-                showAddress:
-                false,
-
-                className:
-                'full'
-            })}
 
             <div
               class="
@@ -12719,6 +12558,7 @@ function renderArchiveFileDetails(
                   || ''
                 )}</textarea>
             </div>
+            <div class="details-edit-actions"><button class="button secondary" type="button" id="archiveCancelFileEdit">${escapeHtml(t('Cancel'))}</button><button class="button primary" type="button" id="archiveSaveFileEdit">${escapeHtml(t('Save changes'))}</button></div>
           </div>
         `;
     }
@@ -12730,18 +12570,6 @@ function renderArchiveFileDetails(
             )
         )
         || 'Date unknown';
-
-    const place =
-        archiveDocumentPlace(
-            file
-        );
-
-    const placeLabel =
-        getPlaceDisplay(
-            place.placeId
-        )
-        || place.placeText
-        || 'Place not recorded';
 
     const description =
         String(
@@ -12768,22 +12596,6 @@ function renderArchiveFileDetails(
             <dd>
               ${escapeHtml(
                     dateLabel
-                )}
-            </dd>
-          </div>
-
-          <div
-            class="
-              archive-file-read-row
-            ">
-
-            <dt>
-              Place
-            </dt>
-
-            <dd>
-              ${escapeHtml(
-                    placeLabel
                 )}
             </dd>
           </div>
@@ -13025,6 +12837,26 @@ function renderArchiveFilePeople(
                 .join('')}
         </div>
       `;
+}
+
+function renderArchiveFilePlaces(file, readOnly)
+{
+    const places = archiveFilePlaceIds(file)
+        .map(id => getPlace(id))
+        .filter(place => place && !place.deleted && place.projectId === file.projectId);
+    const legacyText = !file.documentPlaceId
+        ? String(file.documentPlaceText || '').trim()
+        : '';
+    if (!places.length && !legacyText)
+        return renderInspectorSectionEmpty('No places linked to this file.');
+    return `<div class="relationship-list archive-file-place-list">
+      ${places.map(place => renderArchiveFileConnectionRow({
+        file, entityType: 'place', record: place,
+        leadingHtml: `<span class="archive-place-row-icon" aria-hidden="true">${icon.mapPin}</span>`,
+        readOnly
+      })).join('')}
+      ${legacyText ? `<div class="archive-legacy-place"><span>${escapeHtml(legacyText)}</span><small>${escapeHtml(t('Place name not linked to a project place'))}</small>${readOnly ? '' : `<button class="link" type="button" data-archive-resolve-file-place="${escapeHtml(file.id)}">${escapeHtml(t('Find place'))}</button>`}</div>` : ''}
+    </div>`;
 }
 
 function archiveFileEventRecords(
@@ -14008,6 +13840,21 @@ function renderArchiveSourceDetails(
     categoryLabel
 )
 {
+    if (state.archiveSourceEditingId === source.id)
+    {
+        const draft = state.archiveSourceEditDraft || source;
+        return `<div class="archive-source-details-form archive-file-form-grid">
+          <div class="archive-file-field"><label for="archiveSourceDetailTitle">${escapeHtml(t('Source name'))}</label><input id="archiveSourceDetailTitle" maxlength="220" value="${escapeHtml(draft.title || '')}"></div>
+          <div class="archive-file-field"><label for="archiveSourceDetailCategory">${escapeHtml(t('Source category'))}</label><select id="archiveSourceDetailCategory" class="compact-select"><option value="">${escapeHtml(t('Choose category'))}</option>${SOURCE_CATEGORIES.map(category => `<option value="${escapeHtml(category.value)}" ${draft.category === category.value ? 'selected' : ''}>${escapeHtml(t(category.label))}</option>`).join('')}</select></div>
+          <div class="archive-file-field"><label for="archiveSourceDetailProvidedBy">${escapeHtml(t('Where or who did it come from?'))}</label><input id="archiveSourceDetailProvidedBy" value="${escapeHtml(draft.providedBy || '')}"></div>
+          <div class="archive-file-field"><label for="archiveSourceDetailLocation">${escapeHtml(t('Location'))}</label><input id="archiveSourceDetailLocation" value="${escapeHtml(draft.location || '')}"></div>
+          <div class="archive-file-field"><label for="archiveSourceDetailReference">${escapeHtml(t('Where can it be found?'))}</label><input id="archiveSourceDetailReference" value="${escapeHtml(draft.reference || '')}"></div>
+          <div class="archive-file-field"><label for="archiveSourceDetailUrl">${escapeHtml(t('Website or link'))}</label><input id="archiveSourceDetailUrl" type="url" value="${escapeHtml(draft.url || '')}"></div>
+          ${renderGenealogyDateField('archiveSourceDetailAccessed', 'Date accessed or received', draft.accessedDate || '', { inputId: 'archiveSourceDetailAccessedInput', typeId: 'archiveSourceDetailAccessedType', defaultDateType: 'Exact date', exactOnly: true })}
+          <div class="archive-file-field"><label for="archiveSourceDetailNotes">${escapeHtml(t('Notes'))}</label><textarea id="archiveSourceDetailNotes">${escapeHtml(draft.notes || '')}</textarea></div>
+          <div class="details-edit-actions"><button class="button secondary" type="button" id="archiveCancelSourceDetailEdit">${escapeHtml(t('Cancel'))}</button><button class="button primary" type="button" id="archiveSaveSourceDetailEdit">${escapeHtml(t('Save changes'))}</button></div>
+        </div>`;
+    }
     const url =
         String(
             source.url
@@ -14135,6 +13982,120 @@ function renderArchiveSourceDetails(
                 : ''
         }
       `;
+}
+
+function collectArchiveSourceDetailDraft(root = main)
+{
+    const value = id => root.querySelector(`#${id}`)?.value?.trim() || '';
+    const accessedModel = collectGenealogyDateField('archiveSourceDetailAccessed', { allowInvalid: true });
+    const accessedDate = accessedModel?.invalid ? null : archiveSourceAccessedDateToIso(accessedModel);
+    return {
+        title: value('archiveSourceDetailTitle'),
+        category: value('archiveSourceDetailCategory'),
+        providedBy: value('archiveSourceDetailProvidedBy'),
+        location: value('archiveSourceDetailLocation'),
+        reference: value('archiveSourceDetailReference'),
+        url: value('archiveSourceDetailUrl'),
+        accessedDate,
+        notes: value('archiveSourceDetailNotes')
+    };
+}
+
+function beginArchiveSourceDetailEdit(sourceId)
+{
+    const source = archiveSourceById(sourceId);
+    if (!source || source.projectId !== currentProjectId()) return;
+    state.archiveSourceEditingId = sourceId;
+    state.archiveSourceEditOriginal = collectArchiveSourceSnapshot(source);
+    state.archiveSourceEditDraft = { ...state.archiveSourceEditOriginal };
+    state.archiveInspectorSections['source-details'] = true;
+    renderArchiveMain();
+    requestAnimationFrame(() => main.querySelector('#archiveSourceDetailTitle')?.focus({ preventScroll: true }));
+}
+
+function collectArchiveSourceSnapshot(source)
+{
+    return Object.fromEntries(['title', 'category', 'providedBy', 'location', 'reference', 'url', 'accessedDate', 'notes']
+        .map(key => [key, String(source?.[key] || '')]));
+}
+
+function resetArchiveSourceDetailEdit()
+{
+    state.archiveSourceEditingId = '';
+    state.archiveSourceEditOriginal = null;
+    state.archiveSourceEditDraft = null;
+}
+
+function saveArchiveSourceDetailEdit()
+{
+    const source = archiveSourceById(state.archiveSourceEditingId);
+    if (!source || source.projectId !== currentProjectId()) return;
+    const draft = collectArchiveSourceDetailDraft();
+    if (!draft.title)
+    {
+        main.querySelector('#archiveSourceDetailTitle')?.focus();
+        showToast(t('Enter a source name before saving.'));
+        return;
+    }
+    if (draft.accessedDate === null)
+    {
+        main.querySelector('#archiveSourceDetailAccessedInput')?.focus();
+        showToast(t('Enter a complete date with day, month, and year.'));
+        return;
+    }
+    const urlInput = main.querySelector('#archiveSourceDetailUrl');
+    if (draft.url && !urlInput?.checkValidity())
+    {
+        urlInput?.reportValidity();
+        return;
+    }
+    Object.assign(source, draft, { updatedAt: new Date().toISOString() });
+    resetArchiveSourceDetailEdit();
+    renderArchiveMain();
+    requestAnimationFrame(() => main.querySelector('[data-archive-edit-source-details]')?.focus({ preventScroll: true }));
+    showToast(t('Source updated.'));
+}
+
+function cancelArchiveSourceDetailEdit()
+{
+    const current = collectArchiveSourceDetailDraft();
+    if (JSON.stringify(current) !== JSON.stringify(state.archiveSourceEditOriginal))
+    {
+        openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="archiveDiscardSourceTitle"><div class="modal-header"><h2 id="archiveDiscardSourceTitle">${escapeHtml(t('Discard changes?'))}</h2></div><div class="modal-body"><p>${escapeHtml(t('Your unsaved source details will be lost.'))}</p></div><div class="modal-footer"><button class="button secondary" type="button" data-close>${escapeHtml(t('Continue editing'))}</button><button class="button danger" type="button" id="archiveConfirmDiscardSource">${escapeHtml(t('Discard changes'))}</button></div></div>`);
+        modalBackdrop.querySelector('#archiveConfirmDiscardSource')?.addEventListener('click', () =>
+        {
+            closeModal();
+            resetArchiveSourceDetailEdit();
+            renderArchiveMain();
+            requestAnimationFrame(() => main.querySelector('[data-archive-edit-source-details]')?.focus({ preventScroll: true }));
+        });
+        return;
+    }
+    resetArchiveSourceDetailEdit();
+    renderArchiveMain();
+    requestAnimationFrame(() => main.querySelector('[data-archive-edit-source-details]')?.focus({ preventScroll: true }));
+}
+
+function runAfterArchiveSourceDetailEditGuard(action)
+{
+    if (!state.archiveSourceEditingId)
+    {
+        action();
+        return;
+    }
+    if (JSON.stringify(collectArchiveSourceDetailDraft()) === JSON.stringify(state.archiveSourceEditOriginal))
+    {
+        resetArchiveSourceDetailEdit();
+        action();
+        return;
+    }
+    openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="archiveDiscardSourceTitle"><div class="modal-header"><h2 id="archiveDiscardSourceTitle">${escapeHtml(t('Discard changes?'))}</h2></div><div class="modal-body"><p>${escapeHtml(t('Your unsaved source details will be lost.'))}</p></div><div class="modal-footer"><button class="button secondary" type="button" data-close>${escapeHtml(t('Continue editing'))}</button><button class="button danger" type="button" id="archiveConfirmDiscardSource">${escapeHtml(t('Discard changes'))}</button></div></div>`);
+    modalBackdrop.querySelector('#archiveConfirmDiscardSource')?.addEventListener('click', () =>
+    {
+        closeModal();
+        resetArchiveSourceDetailEdit();
+        action();
+    });
 }
 
 function openArchiveSourceFilesModal(
@@ -14277,6 +14238,8 @@ function renderArchiveFileInspector(
             file.projectId
         ).length;
 
+    const placeCount = archiveFilePlaceIds(file).length;
+
     const content = `
         ${renderArchiveFileHero(
             file,
@@ -14289,7 +14252,8 @@ function renderArchiveFileInspector(
             renderArchiveFileDetails(
                 file,
                 editing
-            )
+            ),
+            editing ? '' : `<button class="link" type="button" id="archiveEditFile">${renderPanelButtonLabel(icon.edit, 'Edit')}</button>`
         )}
 
         ${renderArchiveFileSection(
@@ -14366,6 +14330,14 @@ function renderArchiveFileInspector(
                     ? 'source'
                     : 'sources'
             }`
+        )}
+
+        ${renderArchiveFileSection(
+            'places',
+            'Places',
+            renderArchiveFilePlaces(file, editing),
+            editing ? '' : `<button class="link" type="button" data-archive-add-file-place="${escapeHtml(file.id)}">${renderPanelButtonLabel(icon.plus, 'Add places')}</button>`,
+            `${placeCount} ${placeCount === 1 ? 'place' : 'places'}`
         )}
 
         ${renderArchiveFileSection(
@@ -14648,7 +14620,8 @@ function renderArchiveSourceInspector()
         ${renderArchiveSourceSection(
             'details',
             'Source details',
-            renderArchiveSourceDetails(source, categoryLabel)
+            renderArchiveSourceDetails(source, categoryLabel),
+            state.archiveSourceEditingId === source.id ? '' : `<button class="link" type="button" data-archive-edit-source-details="${escapeHtml(source.id)}">${renderPanelButtonLabel(icon.edit, 'Edit')}</button>`
         )}
 
         ${renderArchiveSourceConnectionSection(source, 'person')}
@@ -19355,6 +19328,32 @@ function openArchiveFileNoteModal(
     );
 }
 
+function openArchiveFilePlacesModal(fileId, query = '', resolveLegacy = false)
+{
+    const file = archiveFileById(fileId);
+    if (!file) return;
+    openNotesPlacesModal({
+        query,
+        linkContext: {
+            projectId: file.projectId,
+            title: 'Add places',
+            subtitle: file.name || 'Untitled file',
+            initialPlaceIds: archiveFilePlaceIds(file),
+            suggestedPlaceIds: archiveFilePlaceIds(file),
+            onSave: nextPlaceIds => {
+                const current = archiveFileById(fileId, file.projectId);
+                if (!current || !archiveSetFilePlaces(current, nextPlaceIds, { resolveLegacy })) {
+                    showToast(t('Places could not be updated.'));
+                    return false;
+                }
+                showToast(t('Place links updated.'));
+                return true;
+            },
+            afterSave: renderArchive
+        }
+    });
+}
+
 function openArchiveFilesPlaceModal(
     fileIds
 )
@@ -19369,24 +19368,7 @@ function openArchiveFilesPlaceModal(
         return;
     }
 
-    const currentPlaceIds =
-        files.map(file =>
-            archiveDocumentPlace(
-                file
-            ).placeId
-          || ''
-        );
-
-    const commonPlaceId =
-        currentPlaceIds.length
-        && currentPlaceIds.every(id =>
-            id === currentPlaceIds[0]
-        )
-            ? currentPlaceIds[0]
-            : '';
-
-    let selectedPlaceId =
-        commonPlaceId;
+    let selectedPlaceId = '';
 
     let selectedDraft = null;
 
@@ -19400,10 +19382,10 @@ function openArchiveFilesPlaceModal(
           <div class="modal-header">
             <div>
               <h2 id="archivePlacePickerTitle">
-                ${files.length === 1 ? 'Set file place' : 'Set place for files'}
+                ${escapeHtml(t('Add places to files'))}
               </h2>
               <p>
-                ${escapeHtml(t('Choose or create one project place.'))} ${escapeHtml(t('It will replace the current file place.'))}
+                ${escapeHtml(t('Choose or create a place. Existing file places will stay linked.'))}
               </p>
             </div>
 
@@ -19420,8 +19402,8 @@ function openArchiveFilesPlaceModal(
             ${renderPlaceCombobox({
                 id: 'archiveBulkPlaceInput',
                 label: 'Find or create a place',
-                value: getPlace(commonPlaceId)?.name || '',
-                selectedPlaceId: commonPlaceId,
+                value: '',
+                selectedPlaceId: '',
                 showAddress: false,
                 inputAttrs: `data-place-project-id="${escapeHtml(files[0].projectId)}"`
             })}
@@ -19446,7 +19428,7 @@ function openArchiveFilesPlaceModal(
                 class="button primary"
                 type="button"
                 data-archive-place-save>
-                Save place
+                ${escapeHtml(t('Add place'))}
               </button>
             </div>
           </div>
@@ -19472,19 +19454,17 @@ function openArchiveFilesPlaceModal(
     {
         const changedFiles =
             selectedPlaceId
-                ? currentPlaceIds.filter(id =>
-                    id !== selectedPlaceId
-                ).length
+                ? files.filter(file => !archiveFilePlaceIds(file).includes(selectedPlaceId)).length
                 : 0;
 
         status.textContent =
             selectedPlaceId
                 ? changedFiles
-                    ? `${changedFiles} ${changedFiles === 1 ? 'file' : 'files'} will be updated`
-                    : 'This place is already linked'
+                    ? `${t('Files to link:')} ${changedFiles}`
+                    : t('This place is already linked to every selected file')
                 : selectedDraft?.text
-                    ? `${files.length} ${files.length === 1 ? 'file' : 'files'} will be updated`
-                    : 'Select one place';
+                    ? `${t('Files to link:')} ${files.length}`
+                    : t('Select a place');
 
         save.disabled =
             (!selectedPlaceId && !selectedDraft?.text)
@@ -19520,38 +19500,14 @@ function openArchiveFilesPlaceModal(
 
             const changedFiles =
                 files.filter(file =>
-                    archiveDocumentPlace(file).placeId
-                !== selectedPlaceId
+                    !archiveFilePlaceIds(file).includes(selectedPlaceId)
                 );
 
-            const writes =
-                changedFiles.flatMap(file =>
-                {
-                    const currentPlaceId =
-                        archiveDocumentPlace(
-                            file
-                        ).placeId;
-
-                    return [
-                        ...(currentPlaceId
-                            ? [{
-                                ownerType: 'file',
-                                ownerId: file.id,
-                                entityType: 'place',
-                                entityId: currentPlaceId,
-                                shouldLink: false
-                            }]
-                            : []),
-
-                        {
-                            ownerType: 'file',
-                            ownerId: file.id,
-                            entityType: 'place',
-                            entityId: selectedPlaceId,
-                            shouldLink: true
-                        }
-                    ];
-                });
+            const writes = changedFiles.map(file => ({
+                ownerType: 'file', ownerId: file.id,
+                entityType: 'place', entityId: selectedPlaceId,
+                shouldLink: true
+            }));
 
             const committed =
                 archiveSetConnectionsAtomically(
@@ -19582,11 +19538,7 @@ function openArchiveFilesPlaceModal(
                 )
             );
 
-            showToast(
-                changedCount === 1
-                    ? 'File place updated.'
-                    : `${changedCount} file places updated.`
-            );
+            showToast(`${t('Files linked:')} ${changedCount}`);
         }
     );
 
@@ -20372,12 +20324,7 @@ function openArchiveSourcePlacesModal(
         archiveFilesForSource(
             source.id
         )
-            .map(file =>
-                archiveDocumentPlace(
-                    file
-                ).placeId
-            )
-            .filter(Boolean);
+            .flatMap(file => archiveFilePlaceIds(file));
 
     const notePlaceIds =
         sourceTargetIds(
@@ -21870,10 +21817,7 @@ function openArchiveItemActionsPopover(
                     action === 'rename'
                 )
                 {
-                    openArchiveRenameItemModal(
-                        'file',
-                        file.id
-                    );
+                    runAfterArchiveFileEditGuard(() => beginArchiveFileRename(file.id));
 
                     return;
                 }
@@ -22738,8 +22682,22 @@ function bindArchiveControls()
         )
         ?.addEventListener(
             'click',
-            beginArchiveFileEdit
+            () => runAfterArchiveFileEditGuard(beginArchiveFileEdit)
         );
+    root.querySelector('#archiveRenameFile')?.addEventListener('click', () =>
+        runAfterArchiveFileEditGuard(() => beginArchiveFileRename(state.archiveSelectedFileId)));
+    root.querySelector('#archiveSaveFileName')?.addEventListener('click', saveArchiveFileRename);
+    root.querySelector('#archiveCancelFileName')?.addEventListener('click', () =>
+        runAfterArchiveFileEditGuard(() =>
+        {
+            renderArchiveMain();
+            requestAnimationFrame(() => main.querySelector('#archiveRenameFile')?.focus({ preventScroll: true }));
+        }));
+    root.querySelector('#archiveFileNameInput')?.addEventListener('keydown', event =>
+    {
+        if (event.key === 'Enter') { event.preventDefault(); saveArchiveFileRename(); }
+        if (event.key === 'Escape') { event.preventDefault(); root.querySelector('#archiveCancelFileName')?.click(); }
+    });
     root
         .querySelector(
             '#archiveCancelFileEdit'
@@ -22757,6 +22715,25 @@ function bindArchiveControls()
             'click',
             saveArchiveFileEdit
         );
+    root.querySelector('[data-archive-add-file-place]')?.addEventListener('click', event =>
+        openArchiveFilePlacesModal(event.currentTarget.dataset.archiveAddFilePlace));
+    root.querySelector('[data-archive-resolve-file-place]')?.addEventListener('click', event =>
+    {
+        const file = archiveFileById(event.currentTarget.dataset.archiveResolveFilePlace);
+        if (file) openArchiveFilePlacesModal(file.id, file.documentPlaceText || '', true);
+    });
+    root.querySelector('[data-archive-edit-source-details]')?.addEventListener('click', event =>
+        beginArchiveSourceDetailEdit(event.currentTarget.dataset.archiveEditSourceDetails));
+    root.querySelector('#archiveCancelSourceDetailEdit')?.addEventListener('click', cancelArchiveSourceDetailEdit);
+    root.querySelector('#archiveSaveSourceDetailEdit')?.addEventListener('click', saveArchiveSourceDetailEdit);
+    root.querySelector('.archive-source-details-form')?.addEventListener('input', () =>
+    {
+        state.archiveSourceEditDraft = collectArchiveSourceDetailDraft(root);
+    });
+    root.querySelector('.archive-source-details-form')?.addEventListener('change', () =>
+    {
+        state.archiveSourceEditDraft = collectArchiveSourceDetailDraft(root);
+    });
     root
         .querySelectorAll(
             '[data-archive-section-toggle]'
@@ -23433,7 +23410,12 @@ function bindArchiveControls()
     {
         const open = () =>
         {
-            state.archiveSelectedSourceId = row.dataset.archiveSourceRow; state.archiveInspectorCollapsed = false; renderArchiveMain();
+            runAfterArchiveSourceDetailEditGuard(() =>
+            {
+                state.archiveSelectedSourceId = row.dataset.archiveSourceRow;
+                state.archiveInspectorCollapsed = false;
+                renderArchiveMain();
+            });
         };
         row.addEventListener('click', event =>
         {

@@ -4562,6 +4562,7 @@ function renderAlbums()
         `${state.albumsView}:${state.activeAlbumId || ''}`;
     const previousMain =
         main.querySelector('.albums-main');
+    const previousDetailScrollTop = main.querySelector('.albums-detail')?.scrollTop || 0;
     const mobileScrollTop =
         innerWidth <= 900
         && previousMain?.dataset.albumsScrollKey === scrollKey
@@ -4583,6 +4584,7 @@ function renderAlbums()
     if (!selectedPhoto)
     {
         resetAlbumsPhotoEditState();
+        state.albumsNameEditingId = '';
     }
 
     const shellClasses = [
@@ -4635,6 +4637,8 @@ function renderAlbums()
 
     main.innerHTML =
         nextMainMarkup;
+    const nextDetail = main.querySelector('.albums-detail');
+    if (nextDetail) nextDetail.scrollTop = previousDetailScrollTop;
 
     if (innerWidth <= 900 && mobileScrollTop)
     {
@@ -5498,11 +5502,6 @@ function albumPhotoEditDraftFromPhoto(photo)
     return {
         photoId: photo.id,
 
-        title:
-          photo.title
-          || photo.filename
-          || '',
-
         date: {
             ...photoDateModel(photo)
         },
@@ -5524,10 +5523,6 @@ function albumPhotoEditDraftFromPhoto(photo)
 function normalizedAlbumPhotoEditDraft(draft)
 {
     return {
-        title:
-          String(draft?.title || '')
-              .trim(),
-
         date:
           mediaDateFromGenealogyModel(
               draft?.date || {}
@@ -5581,17 +5576,6 @@ function collectAlbumsPhotoEditDraft()
     return {
         photoId:
           state.selectedPhotoId,
-
-        title:
-          collectLocalizedDataFieldValue(
-              main.querySelector(
-                  '#albumPhotoTitle'
-              ),
-              main.querySelector(
-                  '#albumPhotoTitle'
-              )?.dataset.sourceValue
-              || ''
-          ).trim(),
 
         date,
 
@@ -5695,12 +5679,17 @@ function beginAlbumsPhotoEdit()
         true;
 
     renderAlbums();
+    requestAnimationFrame(() => main.querySelector('#albumPhotoDateInput')?.focus({ preventScroll: true }));
 }
 
 function cancelAlbumsPhotoEdit()
 {
-    resetAlbumsPhotoEditState();
-    renderAlbums();
+    runAfterAlbumsPhotoEditGuard(() =>
+    {
+        resetAlbumsPhotoEditState();
+        renderAlbums();
+        requestAnimationFrame(() => main.querySelector('#albumsEditPhoto')?.focus({ preventScroll: true }));
+    });
 }
 
 function saveAlbumsPhotoEdit()
@@ -5730,22 +5719,6 @@ function saveAlbumsPhotoEdit()
         return;
     }
 
-    if (!draft.title.trim())
-    {
-        showToast(
-            'Enter a photo name before saving.'
-        );
-
-        main
-            .querySelector('#albumPhotoTitle')
-            ?.focus();
-
-        return;
-    }
-
-    photo.title =
-        draft.title.trim();
-
     photo.date =
         mediaDateFromGenealogyModel(
             draft.date
@@ -5770,6 +5743,7 @@ function saveAlbumsPhotoEdit()
 
     resetAlbumsPhotoEditState();
     renderAlbums();
+    requestAnimationFrame(() => main.querySelector('#albumsEditPhoto')?.focus({ preventScroll: true }));
     showToast('Photo updated.');
 }
 
@@ -5777,6 +5751,27 @@ function runAfterAlbumsPhotoEditGuard(
     action
 )
 {
+    if (state.albumsNameEditingId)
+    {
+        const input = main.querySelector('#albumsPhotoNameInput');
+        const value = input?.value.trim() || '';
+        if (value !== state.albumsNameOriginal)
+        {
+            openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="discardPhotoNameTitle"><div class="modal-header"><h2 id="discardPhotoNameTitle">${escapeHtml(t('Discard changes?'))}</h2></div><div class="modal-body"><p>${escapeHtml(t('Your unsaved photo name will be lost.'))}</p></div><div class="modal-footer"><button class="button secondary" type="button" data-close>${escapeHtml(t('Continue editing'))}</button><button class="button danger" type="button" data-discard-photo-name>${escapeHtml(t('Discard changes'))}</button></div></div>`);
+            modalBackdrop.querySelector('[data-discard-photo-name]')?.addEventListener('click', () =>
+            {
+                closeModal();
+                state.albumsNameEditingId = '';
+                state.albumsNameOriginal = '';
+                action();
+            });
+            return;
+        }
+        state.albumsNameEditingId = '';
+        state.albumsNameOriginal = '';
+        action();
+        return;
+    }
     if (!state.albumsDetailEditing)
     {
         action();
@@ -5804,8 +5799,7 @@ function runAfterAlbumsPhotoEditGuard(
               </h2>
 
               <p>
-                Your unsaved title and detail changes
-                will be lost.
+                Your unsaved detail changes will be lost.
               </p>
             </div>
 
@@ -5848,6 +5842,36 @@ function runAfterAlbumsPhotoEditGuard(
                 action();
             }
         );
+}
+
+function beginAlbumsPhotoRename()
+{
+    const photo = getPhoto(state.selectedPhotoId, { projectId: currentProjectId() });
+    if (!photo) return;
+    state.albumsNameEditingId = photo.id;
+    state.albumsNameOriginal = photo.title || photo.filename || '';
+    renderAlbums();
+    requestAnimationFrame(() => main.querySelector('#albumsPhotoNameInput')?.focus({ preventScroll: true }));
+}
+
+function saveAlbumsPhotoRename()
+{
+    const photo = getPhoto(state.albumsNameEditingId, { projectId: currentProjectId() });
+    const input = main.querySelector('#albumsPhotoNameInput');
+    const name = collectLocalizedDataFieldValue(input, input?.dataset.sourceValue || '').trim();
+    if (!photo || !name)
+    {
+        input?.focus();
+        showToast(t('Enter a photo name before saving.'));
+        return;
+    }
+    photo.title = name;
+    photo.updatedAt = new Date().toISOString();
+    state.albumsNameEditingId = '';
+    state.albumsNameOriginal = '';
+    renderAlbums();
+    requestAnimationFrame(() => main.querySelector('#albumsRenamePhoto')?.focus({ preventScroll: true }));
+    showToast(t('Photo updated.'));
 }
 
 function knownPersonDateLabel(value)
@@ -5958,28 +5982,6 @@ function renderAlbumsPhotoToolbar(
         return `
           <div class="albums-detail-toolbar">
             ${collapseButton}
-
-            <span
-              class="
-                albums-detail-toolbar-spacer
-              ">
-            </span>
-
-            <div class="albums-detail-edit-actions">
-              <button
-                class="button secondary"
-                type="button"
-                id="albumsCancelPhotoEdit">
-                Cancel
-              </button>
-
-              <button
-                class="button primary"
-                type="button"
-                id="albumsSavePhotoEdit">
-                Save
-              </button>
-            </div>
           </div>
         `;
     }
@@ -5993,16 +5995,6 @@ function renderAlbumsPhotoToolbar(
               albums-detail-toolbar-spacer
             ">
           </span>
-
-          <button
-            class="albums-detail-action"
-            type="button"
-            id="albumsEditPhoto"
-            aria-label="Edit photo"
-            title="Edit photo">
-
-            ${icon.edit}
-          </button>
 
           <button
             class="
@@ -6050,12 +6042,6 @@ function renderAlbumsPhotoHero(
     editing
 )
 {
-    const draft =
-        state.albumsDetailDraft
-        || albumPhotoEditDraftFromPhoto(
-            photo
-        );
-
     return `
         <div class="albums-detail-hero">
           <button
@@ -6103,35 +6089,13 @@ function renderAlbumsPhotoHero(
           </button>
 
           <div class="albums-detail-identity">
-            ${
-                editing
-                    ? `
-                  <label
-                    class="
-                      albums-detail-title-field
-                    ">
-
-                    <span>Photo name</span>
-
-                    <input
-                      id="albumPhotoTitle"
-                      maxlength="180"
-                      data-source-value="${escapeHtml(draft.title || '')}"
-                      value="${escapeHtml(
-                            localizedDataFieldValue(draft.title || '')
-                        )}">
-                  </label>
-                `
-                    : `
-                  <h2>
-                    ${escapeHtml(
-                        photo.title
-                      || photo.filename
-                      || 'Untitled photo'
-                    )}
-                  </h2>
-                `
-            }
+            ${state.albumsNameEditingId === photo.id ? `
+              <div class="inspector-name-editor">
+                <input id="albumsPhotoNameInput" maxlength="180" aria-label="${escapeHtml(t('Photo name'))}" data-source-value="${escapeHtml(state.albumsNameOriginal || '')}" value="${escapeHtml(localizedDataFieldValue(state.albumsNameOriginal || ''))}">
+                <button class="inspector-name-command" type="button" id="albumsSavePhotoName" aria-label="${escapeHtml(t('Save name'))}" title="${escapeHtml(t('Save name'))}">${icon.check}</button>
+                <button class="inspector-name-command" type="button" id="albumsCancelPhotoName" aria-label="${escapeHtml(t('Cancel'))}" title="${escapeHtml(t('Cancel'))}">${icon.close}</button>
+              </div>` : `
+              <div class="inspector-name-heading"><h2>${escapeHtml(photo.title || photo.filename || 'Untitled photo')}</h2><button class="inspector-name-command" type="button" id="albumsRenamePhoto" aria-label="${escapeHtml(t('Rename photo'))}" title="${escapeHtml(t('Rename photo'))}">${icon.edit}</button></div>`}
 
             <p class="albums-detail-summary">
               ${escapeHtml(
@@ -6210,6 +6174,10 @@ function renderAlbumsPhotoDetails(
                         draft.caption || ''
                     )
                 )}</textarea>
+            </div>
+            <div class="details-edit-actions">
+              <button class="button secondary" type="button" id="albumsCancelPhotoEdit">${escapeHtml(t('Cancel'))}</button>
+              <button class="button primary" type="button" id="albumsSavePhotoEdit">${escapeHtml(t('Save changes'))}</button>
             </div>
           </div>
         `;
@@ -6893,7 +6861,8 @@ function renderAlbumsDetailPane()
                 renderAlbumsPhotoDetails(
                     photo,
                     editing
-                )
+                ),
+                editing ? '' : `<button class="link" type="button" id="albumsEditPhoto">${renderPanelButtonLabel(icon.edit, 'Edit')}</button>`
             )}
 
           ${renderAlbumsDetailSection(
@@ -13176,8 +13145,22 @@ function bindAlbumsControls()
         .querySelector('#albumsEditPhoto')
         ?.addEventListener(
             'click',
-            beginAlbumsPhotoEdit
+            () => runAfterAlbumsPhotoEditGuard(beginAlbumsPhotoEdit)
         );
+    main.querySelector('#albumsRenamePhoto')?.addEventListener('click', () =>
+        runAfterAlbumsPhotoEditGuard(beginAlbumsPhotoRename));
+    main.querySelector('#albumsSavePhotoName')?.addEventListener('click', saveAlbumsPhotoRename);
+    main.querySelector('#albumsCancelPhotoName')?.addEventListener('click', () =>
+        runAfterAlbumsPhotoEditGuard(() =>
+        {
+            renderAlbums();
+            requestAnimationFrame(() => main.querySelector('#albumsRenamePhoto')?.focus({ preventScroll: true }));
+        }));
+    main.querySelector('#albumsPhotoNameInput')?.addEventListener('keydown', event =>
+    {
+        if (event.key === 'Enter') { event.preventDefault(); saveAlbumsPhotoRename(); }
+        if (event.key === 'Escape') { event.preventDefault(); main.querySelector('#albumsCancelPhotoName')?.click(); }
+    });
 
     main
         .querySelector(

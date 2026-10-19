@@ -79,10 +79,16 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
         const countBeforeFileSave = await page.evaluate(() => sampleData.places.length);
         assert.equal(await page.locator('[data-archive-place-save]').isEnabled(), true);
         await page.locator('[data-archive-place-save]').click();
-        const fileResult = await page.evaluate(id => ({ count: sampleData.places.length, place: getPlace(archiveDocumentPlace(sampleData.archiveFiles.find(file => file.id === id)).placeId) }), fileId);
+        const fileResult = await page.evaluate(id => {
+            const file = sampleData.archiveFiles.find(item => item.id === id);
+            return { count: sampleData.places.length,
+                place: archiveFilePlaceIds(file).map(getPlace).find(place => place?.name === 'New Map Parish, Test Country'),
+                primary: file.documentPlaceId };
+        }, fileId);
         assert.equal(fileResult.count, countBeforeFileSave + 1);
         assert.equal(fileResult.place.name, 'New Map Parish, Test Country');
         assert.deepEqual(fileResult.place.coordinates, { lat: 51.2, lng: 24.5 });
+        assert.equal(fileResult.primary, null);
         await page.evaluate(() =>
         {
             activateProject('p1', { moduleName: 'Geneograph' });

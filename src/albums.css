@@ -2597,6 +2597,32 @@
     gap: var(--space-4);
 }
 
+.albums-form-grid > .albums-field > input {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    min-height: 42px;
+    padding: 9px 12px;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
+    background: var(--surface-input);
+    color: var(--text-primary);
+    font: inherit;
+}
+
+.albums-form-grid .details-edit-actions {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-default);
+}
+
+@media (max-width: 420px) {
+    .albums-form-grid .details-edit-actions .button { flex: 1 1 auto; }
+}
+
 .albums-field {
     min-width: 0;
     display: grid;
