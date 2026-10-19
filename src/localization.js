@@ -1076,9 +1076,8 @@ const RU_UI_PEOPLE = {
     'e.g. Secondary education, BA, apprenticeship': 'Например, среднее образование, степень бакалавра, ученичество',
     'e.g. Skill, membership, physical description': 'Например, навык, членство, внешняя особенность',
     'e. g. Woodworking, served in the army, etc.': 'Например, столярное дело, служба в армии и т. п.',
-    'Parent–child connection': 'Связь родителя и ребёнка',
     'will be removed from Saved filters.': 'будет удален из сохраненных фильтров.',
-    'This value describes how this parent and child are connected. It does not change either person record.': 'Это значение описывает связь родителя и ребёнка и не изменяет записи людей.',
+    'Choose how to describe {parent}\'s relationship to {child}. They will stay connected in the Family Tree.': 'Выберите, как описать связь между {parent} и {child}. Они останутся связаны в семейном дереве.',
     'Save relationship': 'Сохранить связь'
 };
 const RU_UI_GENEO = {
@@ -5807,6 +5806,12 @@ const RU_UI_COMPLETION = {
         'Изменится только родственная связь. Записи людей останутся в проекте.',
     'Unlink relationship':
         'Удалить связь',
+    'Manage relationships': 'Управление связями',
+    'Connected through shared parents': 'Связаны через общих родителей',
+    'Shared parent connection': 'Связь через общего родителя',
+    'Siblings share at least one parent. Review a parent connection below to change this.': 'У братьев и сестёр есть хотя бы один общий родитель. Чтобы изменить эту связь, выберите родителя ниже.',
+    'Changing a parent connection may also affect other siblings.': 'Изменение связи с родителем может затронуть и других братьев и сестёр.',
+    'Unsaved relationship changes will be lost.': 'Несохранённые изменения родственной связи будут потеряны.',
     'Children connected through this relationship':
         'Дети, связанные через эту родственную связь',
     'Choose which parent should keep the children after unlinking.':

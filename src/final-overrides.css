@@ -3082,3 +3082,14 @@ body.mobile-details-open .geneo-inspector [data-geneo-inspector-toggle] {
 .geneo-review-relation-preview { grid-column: 1 / -1; margin: 0; color: var(--text-secondary); font-size: 12px; overflow-wrap: anywhere; }
 @media (max-width: 700px) { .geneo-review-relation-editor { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 540px) { .geneo-review-values { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .geneo-review-transfer { grid-column: 1 / -1; grid-row: 2; width: 100%; grid-template-columns: repeat(2, minmax(0, 1fr)); } .geneo-review-relation-editor { grid-template-columns: 1fr; } }
+
+@media (max-width: 900px) {
+    #modalBackdrop > .manage-relationships-modal {
+        display: grid;
+        grid-template-rows: auto minmax(0, 1fr) auto;
+    }
+
+    #modalBackdrop > .manage-relationships-modal > .manage-relationships-body {
+        overflow: hidden;
+    }
+}

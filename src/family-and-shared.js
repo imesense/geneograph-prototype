@@ -3759,7 +3759,9 @@ function renderPersonSidebar(
                     ? 'relationship'
                     : 'relationships'
             }`,
-            relationshipsContent
+            relationshipsContent,
+            `<button class="link" type="button" data-manage-relationships="${escapeHtml(person.id)}">${renderPanelButtonLabel(icon.edit, 'Edit')}</button>`,
+            { inlineAction: true }
         )}
         ${renderInspectorSection(
             'photos',
@@ -10151,6 +10153,133 @@ function buildUnlinkRelationshipContext(raw = {})
     };
 }
 
+function openManageRelationshipsDiscardConfirm(onDiscard)
+{
+    if (document.getElementById('manageRelationshipsDiscardOverlay')) return;
+    const overlay = document.createElement('div');
+    overlay.id = 'manageRelationshipsDiscardOverlay';
+    overlay.className = 'add-person-mini-backdrop';
+    overlay.innerHTML = `<div class="add-person-mini-card" role="alertdialog" aria-modal="true" aria-labelledby="manageRelationshipsDiscardTitle">
+        <div class="add-person-mini-head"><h3 id="manageRelationshipsDiscardTitle">${escapeHtml(t('Discard changes?'))}</h3><p>${escapeHtml(t('Unsaved relationship changes will be lost.'))}</p></div>
+        <div class="add-person-mini-footer"><button class="button secondary" type="button" data-manage-continue-editing>${escapeHtml(t('Continue editing'))}</button><button class="button danger" type="button" data-manage-discard>${escapeHtml(t('Discard changes'))}</button></div>
+      </div>`;
+    const returnFocus = document.activeElement;
+    document.body.appendChild(overlay);
+    overlay.querySelector('[data-manage-continue-editing]').addEventListener('click', () =>
+    {
+        overlay.remove();
+        returnFocus?.focus?.({ preventScroll: true });
+    });
+    overlay.querySelector('[data-manage-discard]').addEventListener('click', () =>
+    {
+        overlay.remove();
+        onDiscard();
+    });
+    overlay.querySelector('[data-manage-continue-editing]').focus();
+}
+
+function openManageRelationshipsModal(personId, sidebarContext = 'tree', returnState = {})
+{
+    const person = getPerson(personId);
+    if (!person || person.projectId !== currentProjectId())
+    {
+        showToast(t('Person record not found.'));
+        return;
+    }
+
+    const order = ['Parents', 'Partners', 'Children', 'Siblings'];
+    const groups = getRelationshipGroups(personId)
+        .sort((a, b) => order.indexOf(a.title) - order.indexOf(b.title))
+        .map(group => ({ ...group, items: group.items.filter(item => item.person?.projectId === person.projectId) }))
+        .filter(group => group.items.length);
+    const items = groups.flatMap(group => group.items);
+    const keyFor = item => `${item.kind}:${item.relatedPersonId}:${item.familyId}`;
+    const selected = items.find(item => keyFor(item) === returnState.selectedKey) || items[0] || null;
+    const selectedKey = selected ? keyFor(selected) : '';
+    const editContext = selected?.kind !== 'sibling' && selected
+        ? buildRelationshipEditContext({ ...selected, sidebarContext }) : null;
+    const sharedParents = selected?.kind === 'sibling'
+        ? getParents(selected.person.id).filter(parent => getParents(personId).some(own => own.id === parent.id))
+        : [];
+    const personList = groups.length ? groups.map(group => `<section class="manage-relationships-group">
+        <h3>${escapeHtml(t(group.title))}<span>${group.items.length}</span></h3>
+        ${group.items.map(item => `<button type="button" class="manage-relationships-choice ${keyFor(item) === selectedKey ? 'is-selected' : ''}" data-manage-select="${escapeHtml(keyFor(item))}" aria-current="${keyFor(item) === selectedKey ? 'true' : 'false'}">
+            ${renderPersonAvatar(item.person, 'small-avatar', { element: 'span', decorative: true })}
+            <span class="manage-relationships-copy"><strong>${escapeHtml(translateText(item.person.names?.display || 'Unnamed person'))}</strong><span>${escapeHtml(item.kind === 'sibling' ? t('Shared parent connection') : translateText(item.meta || ''))}</span></span>
+          </button>`).join('')}
+      </section>`).join('') : `<p class="panel-muted">${escapeHtml(t('No immediate relationships recorded for this person.'))}</p>`;
+    const details = selected ? `<div class="manage-relationships-detail-head">
+        ${renderPersonAvatar(selected.person, 'small-avatar', { element: 'span', decorative: true })}
+        <div class="manage-relationships-identity"><h3>${escapeHtml(translateText(selected.person.names?.display || 'Unnamed person'))}</h3><span>${escapeHtml(t(selected.kind === 'sibling' ? 'Sibling' : selected.kind === 'partner' ? 'Partner' : selected.kind === 'parent' ? 'Parent' : 'Child'))}</span></div>
+        ${selected.kind === 'sibling' ? '' : `<button class="manage-relationships-unlink" type="button" data-manage-unlink aria-label="${escapeHtml(t('Unlink'))}: ${escapeHtml(translateText(selected.person.names?.display || 'Unnamed person'))}" title="${escapeHtml(t('Unlink'))}">${icon.unlink}<span>${escapeHtml(t('Unlink'))}</span></button>`}
+      </div>
+      ${selected.kind === 'sibling' ? `<div class="manage-relationships-sibling">
+          <p>${escapeHtml(t('Siblings share at least one parent. Review a parent connection below to change this.'))}</p>
+          <div class="manage-relationships-parent-actions">${sharedParents.map(parent => `<button class="button secondary" type="button" data-manage-parent-link="${escapeHtml(parent.id)}">${icon.people}<span>${escapeHtml(translateText(parent.names?.display || 'Unnamed person'))}</span>${icon.chevron}</button>`).join('')}</div>
+          <p class="panel-muted">${escapeHtml(t('Changing a parent connection may also affect other siblings.'))}</p>
+        </div>` : `<div class="manage-relationships-fields form-grid">${editContext?.ok ? selected.kind === 'partner' ? renderPartnerRelationshipEditFields(editContext) : renderParentChildRelationshipEditFields(editContext) : `<p class="panel-muted">${escapeHtml(t('Relationship record not found.'))}</p>`}</div>
+        `}`
+        : `<p class="panel-muted">${escapeHtml(t('No immediate relationships recorded for this person.'))}</p>`;
+
+    openModal(`<div class="modal manage-relationships-modal" role="dialog" aria-modal="true" aria-labelledby="manageRelationshipsTitle">
+        <div class="modal-header"><div><h2 id="manageRelationshipsTitle">${escapeHtml(t('Manage relationships'))}</h2><p>${escapeHtml(translateText(person.names?.display || 'Unnamed person'))}</p></div><button class="close-button" type="button" data-close aria-label="${escapeHtml(t('Close'))}">${icon.close}</button></div>
+        <div class="modal-body manage-relationships-body"><nav class="manage-relationships-rail" aria-label="${escapeHtml(t('Relationships'))}">${personList}</nav><section class="manage-relationships-detail" aria-label="${escapeHtml(t('Relationship details'))}">${details}</section></div>
+        <div class="modal-footer manage-relationships-footer"><button class="button secondary" type="button" data-close>${escapeHtml(t('Done'))}</button>${selected && selected.kind !== 'sibling' ? `<button class="button primary" type="button" data-manage-save disabled>${escapeHtml(t('Save relationship'))}</button>` : ''}</div>
+      </div>`);
+
+    const modal = modalBackdrop.querySelector('.manage-relationships-modal');
+    const rail = modal.querySelector('.manage-relationships-rail');
+    rail.scrollTop = returnState.scrollTop || 0;
+    const currentState = () => ({ personId, sidebarContext, selectedKey, scrollTop: rail.scrollTop });
+    const fields = modal.querySelector('.manage-relationships-fields');
+    if (editContext?.ok && selected?.kind === 'partner') bindPartnerRelationshipEditFields(modal);
+    const initialSnapshot = relationshipEditSnapshot(fields);
+    const isDirty = () => Boolean(fields && relationshipEditSnapshot(fields) !== initialSnapshot);
+    const save = modal.querySelector('[data-manage-save]');
+    const updateSave = () => { if (save) save.disabled = !isDirty() || !relationshipEditFieldsValid(editContext); };
+    fields?.addEventListener('input', updateSave);
+    fields?.addEventListener('change', updateSave);
+    const guard = action => isDirty() ? openManageRelationshipsDiscardConfirm(action) : action();
+    modalBackdrop.beforeClose = () =>
+    {
+        if (!isDirty()) return true;
+        if (document.getElementById('manageRelationshipsDiscardOverlay'))
+        {
+            document.querySelector('[data-manage-continue-editing]')?.click();
+            return false;
+        }
+        openManageRelationshipsDiscardConfirm(() => closeModal({ force: true }));
+        return false;
+    };
+    modal.querySelectorAll('[data-manage-select]').forEach(button => button.addEventListener('click', () =>
+        guard(() => openManageRelationshipsModal(personId, sidebarContext, { selectedKey: button.dataset.manageSelect, scrollTop: rail.scrollTop, focusSelection: true }))));
+    modal.querySelectorAll('[data-manage-parent-link]').forEach(button => button.addEventListener('click', () =>
+    {
+        const parent = items.find(item => item.kind === 'parent' && item.relatedPersonId === button.dataset.manageParentLink);
+        if (parent) openManageRelationshipsModal(personId, sidebarContext, { selectedKey: keyFor(parent), scrollTop: rail.scrollTop, focusSelection: true });
+    }));
+    modal.querySelector('[data-manage-unlink]')?.addEventListener('click', () => guard(() => openUnlinkRelationshipModal({
+        kind: selected.kind,
+        personId,
+        relatedPersonId: selected.relatedPersonId,
+        familyId: selected.familyId,
+        sidebarContext,
+        managerReturn: currentState()
+    })));
+    save?.addEventListener('click', () =>
+    {
+        if (!relationshipEditFieldsValid(editContext) || !isDirty()) return;
+        if (saveRelationshipEdit(editContext))
+        {
+            modalBackdrop.beforeClose = null;
+            refreshAfterRelationshipChange(personId, sidebarContext);
+            openManageRelationshipsModal(personId, sidebarContext, currentState());
+            showToast(t('Relationship updated.'));
+        }
+    });
+    if (returnState.focusSelection) requestAnimationFrame(() => modalBackdrop.querySelector(`[data-manage-select="${CSS.escape(selectedKey)}"]`)?.focus({ preventScroll: true }));
+}
+
 function renderUnlinkRelationshipChildren(context)
 {
     if (context.kind !== 'partner' || !context.childrenIds.length) return '';
@@ -10251,6 +10380,19 @@ function openUnlinkRelationshipModal(rawContext = {})
     }
 
     openModal(renderUnlinkRelationshipModal(context));
+    if (rawContext.managerReturn)
+    {
+        context.managerReturn = rawContext.managerReturn;
+        modalBackdrop.beforeClose = () =>
+        {
+            openManageRelationshipsModal(
+                context.managerReturn.personId,
+                context.managerReturn.sidebarContext,
+                context.managerReturn
+            );
+            return false;
+        };
+    }
     bindUnlinkRelationshipModal(context);
 }
 
@@ -10270,6 +10412,25 @@ function bindUnlinkRelationshipModal(context)
     confirmButton?.addEventListener('click', () =>
     {
         let result = null;
+
+        if (context.managerReturn)
+        {
+            const latest = buildUnlinkRelationshipContext(context);
+            const family = centralFamilyRecords().find(candidate => candidate.id === context.familyId);
+            const childrenChanged = context.kind === 'partner'
+                && JSON.stringify([...context.childrenIds].sort())
+                    !== JSON.stringify([...(latest.childrenIds || [])].sort());
+            if (!latest.ok || latest.familyId !== context.familyId
+                || childrenChanged
+                || getPerson(context.personId)?.projectId !== currentProjectId()
+                || getPerson(context.relatedPersonId)?.projectId !== currentProjectId()
+                || family?.projectId !== currentProjectId())
+            {
+                showToast(t('Relationship record not found.'));
+                openManageRelationshipsModal(context.personId, context.sidebarContext, context.managerReturn);
+                return;
+            }
+        }
 
         if (context.kind === 'parent' || context.kind === 'child')
         {
@@ -10298,10 +10459,19 @@ function bindUnlinkRelationshipModal(context)
             return;
         }
 
+        modalBackdrop.beforeClose = null;
         refreshAfterRelationshipChange(
             context.personId,
             context.sidebarContext
         );
+        if (context.managerReturn)
+        {
+            openManageRelationshipsModal(
+                context.managerReturn.personId,
+                context.managerReturn.sidebarContext,
+                context.managerReturn
+            );
+        }
     });
 }
 
@@ -10433,11 +10603,22 @@ function renderParentChildRelationshipEditFields(
         context.parentId,
         context.childId
     );
+    const parentName = translateText(
+        relationshipEditPersonName(context.parentId)
+    );
+    const childName = translateText(
+        relationshipEditPersonName(context.childId)
+    );
+    const description = t(
+        'Choose how to describe {parent}\'s relationship to {child}. They will stay connected in the Family Tree.'
+    )
+        .replace('{parent}', parentName)
+        .replace('{child}', childName);
 
     return `
         <div class="field add-person-select-field">
           <label for="relationshipEditParentChildType">
-            Parent–child connection
+            Relationship type
           </label>
 
           <select
@@ -10456,8 +10637,7 @@ function renderParentChildRelationshipEditFields(
         </div>
 
         <div class="panel-muted">
-          This value describes how this parent and child are
-          connected. It does not change either person record.
+          ${escapeHtml(description)}
         </div>
       `;
 }
@@ -10609,44 +10789,92 @@ function renderRelationshipEditModal(context)
       `;
 }
 
+function relationshipEditSnapshot(root)
+{
+    if (!root) return '';
+    return JSON.stringify([...root.querySelectorAll('input, select, textarea')]
+        .filter(control => control.type !== 'search')
+        .map(control => [control.id || control.name || '', control.value,
+            control.type === 'checkbox' || control.type === 'radio' ? control.checked : null,
+            control.dataset.selectedPlaceId || '']));
+}
+
+function relationshipEditFieldsValid(context)
+{
+    if (!context?.ok) return false;
+    if (context.kind !== 'partner')
+    {
+        return PARENT_CHILD_RELATIONSHIP_TYPES.includes(
+            modalBackdrop.querySelector('#relationshipEditParentChildType')?.value
+        );
+    }
+    const type = modalBackdrop.querySelector('#relationshipEditType')?.value;
+    if (!ADD_PERSON_RELATIONSHIP_TYPES.includes(type)) return false;
+    const start = collectGenealogyDateField('relationshipEditStartDate');
+    const end = partnerRelationshipDefinition(type).hasEnd
+        ? collectGenealogyDateField('relationshipEditEndDate') : null;
+    return Boolean(start && (!partnerRelationshipDefinition(type).hasEnd
+        || (end && partnerRelationshipDateOrderIsValid(start, end))));
+}
+
+function bindPartnerRelationshipEditFields(root = modalBackdrop)
+{
+    bindGenealogyDateFields(root);
+    bindPlaceComboboxes(root);
+    bindNameAffixComboboxes(root);
+    const typeSelect = root.querySelector('#relationshipEditType');
+    const update = () => { if (typeSelect) updatePartnerRelationshipFields(root, typeSelect.value); };
+    typeSelect?.addEventListener('change', update);
+    update();
+}
+
+function saveRelationshipEdit(context)
+{
+    const latest = buildRelationshipEditContext(context);
+    const family = centralFamilyRecords().find(candidate => candidate.id === context.familyId);
+    if (!latest.ok || latest.familyId !== context.familyId || family?.projectId !== currentProjectId()
+        || getPerson(context.personId)?.projectId !== currentProjectId()
+        || getPerson(context.relatedPersonId)?.projectId !== currentProjectId())
+    {
+        showToast(t('Relationship record not found.'));
+        return false;
+    }
+    if (!relationshipEditFieldsValid(latest))
+    {
+        showToast(t('Check the relationship details before saving.'));
+        return false;
+    }
+
+    if (latest.kind === 'partner')
+    {
+        const relationshipType = modalBackdrop.querySelector('#relationshipEditType').value;
+        const definition = partnerRelationshipDefinition(relationshipType);
+        upsertPartnerRelationshipEvents(family, {
+            relationshipType,
+            marriageType: addPersonRelationshipShowsMarriageType(relationshipType)
+                ? modalBackdrop.querySelector('#relationshipEditMarriageType')?.value || 'Civil' : '',
+            startDate: collectGenealogyDateField('relationshipEditStartDate'),
+            startPlace: readPlaceInputValue('#relationshipEditStartPlace', modalBackdrop),
+            endDate: definition.hasEnd ? collectGenealogyDateField('relationshipEditEndDate') : emptyGenealogyDate('Exact date'),
+            endPlace: definition.hasEnd ? readPlaceInputValue('#relationshipEditEndPlace', modalBackdrop) : { text: '', selectedPlaceId: '' }
+        });
+        syncFamilyPartnerAliases(family);
+    }
+    else
+    {
+        const key = parentChildRelationshipKey(latest.parentId, latest.childId);
+        family.parentChildTypes = {
+            ...sanitizeParentChildTypes(family.parentChildTypes),
+            [key]: modalBackdrop.querySelector('#relationshipEditParentChildType').value
+        };
+    }
+    family.updatedAt = 'Just now';
+    return true;
+}
+
 function bindRelationshipEditModal(context)
 {
-    if (context.kind === 'partner')
-    {
-        bindGenealogyDateFields(modalBackdrop);
-        bindPlaceComboboxes(modalBackdrop);
-        bindNameAffixComboboxes(modalBackdrop);
-
-
-        const typeSelect =
-            modalBackdrop.querySelector(
-                '#relationshipEditType'
-            );
-
-        const marriageTypeField =
-            modalBackdrop.querySelector(
-                '[data-relationship-edit-marriage-type]'
-            );
-
-        const updateMarriageTypeVisibility = () =>
-        {
-            if (!marriageTypeField || !typeSelect)
-            {
-                return;
-            }
-            updatePartnerRelationshipFields(
-                modalBackdrop,
-                typeSelect.value
-            );
-        };
-
-        typeSelect?.addEventListener(
-            'change',
-            updateMarriageTypeVisibility
-        );
-
-        updateMarriageTypeVisibility();
-    }
+    if (context.kind === 'partner') bindPartnerRelationshipEditFields(modalBackdrop);
 
     modalBackdrop
         .querySelector(
@@ -10654,120 +10882,7 @@ function bindRelationshipEditModal(context)
         )
         ?.addEventListener('click', () =>
         {
-            const family = context.family;
-
-            if (!family)
-            {
-                showToast(
-                    'Relationship record not found.'
-                );
-                return;
-            }
-
-            if (context.kind === 'partner')
-            {
-                const relationshipType =
-                    modalBackdrop.querySelector(
-                        '#relationshipEditType'
-                    )?.value || 'Partner';
-
-                const definition =
-                    partnerRelationshipDefinition(
-                        relationshipType
-                    );
-
-                const startDate =
-                    collectGenealogyDateField(
-                        'relationshipEditStartDate'
-                    );
-
-                const endDate = definition.hasEnd
-                    ? collectGenealogyDateField(
-                        'relationshipEditEndDate'
-                    )
-                    : emptyGenealogyDate('Exact date');
-
-                if (!startDate || (definition.hasEnd && !endDate))
-                {
-                    showToast(
-                        'Check the relationship dates before saving.'
-                    );
-                    return;
-                }
-
-                if (definition.hasEnd && !partnerRelationshipDateOrderIsValid(startDate, endDate))
-                {
-                    showToast(
-                        'The relationship end date must be after or equal to the start date.'
-                    );
-                    return;
-                }
-
-                const marriageType =
-                    addPersonRelationshipShowsMarriageType(
-                        relationshipType
-                    )
-                        ? modalBackdrop.querySelector(
-                            '#relationshipEditMarriageType'
-                        )?.value || 'Civil'
-                        : '';
-
-                upsertPartnerRelationshipEvents(family, {
-                    relationshipType,
-                    marriageType,
-                    startDate,
-                    startPlace: readPlaceInputValue(
-                        '#relationshipEditStartPlace',
-                        modalBackdrop
-                    ),
-                    endDate,
-                    endPlace: definition.hasEnd
-                        ? readPlaceInputValue(
-                            '#relationshipEditEndPlace',
-                            modalBackdrop
-                        )
-                        : { text: '', selectedPlaceId: '' }
-                });
-
-                if (
-                    typeof syncFamilyPartnerAliases
-              === 'function'
-                )
-                {
-                    syncFamilyPartnerAliases(family);
-                }
-            }
-            else
-            {
-                const value = modalBackdrop.querySelector(
-                    '#relationshipEditParentChildType'
-                )?.value;
-
-                if (!PARENT_CHILD_RELATIONSHIP_TYPES.includes(value))
-                {
-                    showToast(
-                        state.language === 'ru'
-                            ? 'Выберите тип связи между родителем и ребёнком.'
-                            : 'Choose a parent–child relationship type.'
-                    );
-                    return;
-                }
-
-                const key = parentChildRelationshipKey(
-                    context.parentId,
-                    context.childId
-                );
-
-                family.parentChildTypes = {
-                    ...sanitizeParentChildTypes(
-                        family.parentChildTypes
-                    ),
-                    [key]: value
-                };
-            }
-
-            family.updatedAt = 'Just now';
-
+            if (!saveRelationshipEdit(context)) return;
             refreshAfterRelationshipChange(
                 context.personId,
                 context.sidebarContext

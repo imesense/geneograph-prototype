@@ -8616,6 +8616,13 @@ function openPeopleActionsMenu(
         <button
           type="button"
           role="menuitem"
+          data-people-action="relationships">
+          Manage relationships
+        </button>
+
+        <button
+          type="button"
+          role="menuitem"
           class="danger"
           data-people-action="delete">
           Delete person
@@ -8680,6 +8687,11 @@ function openPeopleActionsMenu(
             if (action === 'board')
             {
                 openGeneographBoardChooser([person.id]);
+            }
+
+            if (action === 'relationships')
+            {
+                openManageRelationshipsModal(person.id, state.activeModule === 'Family Tree' ? 'tree' : 'people');
             }
 
             if (action === 'delete')
@@ -9182,6 +9194,12 @@ function bindPersonSidebar(root, context = 'tree')
         event.stopPropagation();
         syncPersonSidebarSelection(selected.id, context);
         openPeopleActionsMenu(selected.id, event.currentTarget, { includeProfile: true });
+    });
+    root.querySelector('[data-manage-relationships]')?.addEventListener('click', () =>
+    {
+        if (!selected?.id) return;
+        syncPersonSidebarSelection(selected.id, context);
+        openManageRelationshipsModal(selected.id, context);
     });
     root
         .querySelector('#addRelative')
