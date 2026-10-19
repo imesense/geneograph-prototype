@@ -304,6 +304,7 @@ const RU_UI_SHARED = Object.freeze({
     'Metadata': 'Метаданные',
     'Place': 'Место',
     'Date': 'Дата',
+    'Toggle section': 'Свернуть или развернуть раздел',
     'Title': 'Название',
     'Files': 'Файлы',
     'Events': 'События',

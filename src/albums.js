@@ -13155,9 +13155,13 @@ function bindAlbumsControls()
                             open
                         );
 
-                    button.setAttribute(
-                        'aria-expanded',
-                        String(open)
+                    section?.querySelectorAll(
+                        '[data-albums-section-toggle]'
+                    ).forEach(toggle =>
+                        toggle.setAttribute(
+                            'aria-expanded',
+                            String(open)
+                        )
                     );
 
                     if (body)

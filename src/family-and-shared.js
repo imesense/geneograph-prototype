@@ -1807,10 +1807,15 @@ function renderInspectorSection(
                 <span class="panel-section-extra">
                   ${inlineAction}
 
-                  <span
-                    class="panel-section-arrow"
-                    aria-hidden="true">
-                  </span>
+                  <button
+                    class="panel-section-chevron-toggle"
+                    type="button"
+                    ${toggleAttribute}="${escapeHtml(id)}"
+                    aria-label="${escapeHtml(t('Toggle section'))}: ${escapeHtml(t(title))}"
+                    aria-expanded="${open ? 'true' : 'false'}"
+                    aria-controls="${escapeHtml(sectionId)}">
+                    <span class="panel-section-arrow" aria-hidden="true"></span>
+                  </button>
                 </span>
               </div>
             `

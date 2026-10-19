@@ -22806,10 +22806,12 @@ function bindArchiveControls()
                             open
                         );
 
-                    button.setAttribute(
-                        'aria-expanded',
-                        String(
-                            open
+                    section?.querySelectorAll(
+                        '[data-archive-section-toggle]'
+                    ).forEach(toggle =>
+                        toggle.setAttribute(
+                            'aria-expanded',
+                            String(open)
                         )
                     );
 
