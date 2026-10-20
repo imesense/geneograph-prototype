@@ -1415,16 +1415,21 @@
 
 .tool-split {
     position: relative;
+    box-sizing: border-box;
     display: inline-flex;
     align-items: stretch;
     flex: 0 0 auto;
+    height: 40px;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, .018);
 }
 
 .tool-split-main,
 .tool-split-trigger {
-    height: 40px;
-    border: 1px solid var(--border-default);
-    background: var(--surface-card);
+    height: 38px;
+    border: 0;
+    background: transparent;
     color: var(--text-secondary);
     display: inline-flex;
     align-items: center;
@@ -1439,24 +1444,40 @@
 }
 
 .tool-split-trigger {
+    position: relative;
     width: 30px;
     padding: 0;
-    margin-left: -1px;
+    margin-left: 0;
     border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.tool-split-trigger::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 10px;
+    bottom: 10px;
+    width: 1px;
+    background: var(--border-default);
 }
 
 .tool-split-main:hover,
 .tool-split-trigger:hover {
     background: var(--surface-card-hover);
     color: var(--text-primary);
-    border-color: var(--border-strong);
+}
+
+.tool-split.active,
+.tool-split:has([aria-expanded="true"]) {
+    background: var(--surface-selected);
+    border-color: rgba(98, 217, 154, .35);
 }
 
 .tool-split.active .tool-split-main,
-.tool-split.active .tool-split-trigger {
-    background: var(--surface-selected);
+.tool-split.active .tool-split-trigger,
+.tool-split:has([aria-expanded="true"]) .tool-split-main,
+.tool-split:has([aria-expanded="true"]) .tool-split-trigger {
     color: var(--text-primary);
-    border-color: rgba(98, 217, 154, .35);
 }
 
 .tool-split-main:focus-visible,
