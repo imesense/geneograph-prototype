@@ -36,6 +36,30 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             await page.evaluate(() => {
                 const section = document.querySelector('[data-geneo-inspector-section="person:card"]');
                 if (section.getAttribute('aria-expanded') === 'false') section.click();
+                document.querySelector('[data-geneo-person-card-style="tree"]').click();
+            });
+            assert.equal(await page.locator('.geneo-node-person[data-geneo-person-card-style="tree"] .geneo-person-avatar').count(), 0);
+            assert.equal(await inspector.locator('[data-geneo-person-card-field="photo"]').count(), 0);
+            assert.equal(await inspector.locator('[data-geneo-person-card-setting="photoSize"]').count(), 0);
+            assert.equal(await page.locator('.geneo-node-person[data-geneo-person-card-style="tree"] .geneo-person-identity-block').evaluate(element => getComputedStyle(element).textAlign), 'center');
+            assert.equal(await page.locator('.geneo-node-person[data-geneo-person-card-style="tree"] .geneo-person-life-summary').count(), 1);
+            if (process.env.GENEO_TREE_SCREENSHOT_DIR)
+                await page.locator('.geneo-node-person[data-geneo-person-card-style="tree"]').first()
+                    .screenshot({ path: path.join(process.env.GENEO_TREE_SCREENSHOT_DIR, `tree-${language}.png`) });
+            await page.evaluate(() => {
+                const node = selectedGeneographNode();
+                node.personCard.photoByStyle.tree = true;
+                node.personCard.fields.photo = true;
+                renderGeneographEditorPreserveScroll();
+            });
+            assert.equal(await page.locator('.geneo-node-person[data-geneo-person-card-style="tree"] .geneo-person-avatar').count(), 0);
+            await page.evaluate(() => {
+                const node = selectedGeneographNode();
+                delete node.personCard.photoByStyle.tree;
+                delete node.personCard.fields.photo;
+                renderGeneographEditorPreserveScroll();
+            });
+            await page.evaluate(() => {
                 document.querySelector('[data-geneo-person-card-style="portrait"]').click();
             });
             assert.equal(await inspector.locator('[data-geneo-person-card-reset]').count(), 1);

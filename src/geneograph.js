@@ -96,9 +96,9 @@ const GENEO_PERSON_CARD_GEOMETRY =
 
         tree: {
             width: 280,
-            height: 170,
+            height: 110,
             minWidth: 230,
-            minHeight: 130,
+            minHeight: 110,
             maxWidth: 560,
             maxHeight: 340
         },
@@ -248,7 +248,7 @@ function geneoPersonCardDefaultFields(
         livingStatus: true,
         birthPlace: false,
         deathPlace: false,
-        maidenName: style === 'chart',
+        maidenName: style === 'chart' || style === 'tree',
         linkIndicator: false
     };
 }
@@ -257,7 +257,7 @@ function geneoPersonCardDefaultPhotoPreferences()
 {
     return {
         standard: true,
-        tree: true,
+        tree: false,
         chart: true,
         portrait: true
     };
@@ -366,7 +366,7 @@ function normalizeGeneographPersonCardSettings(
     ).forEach(key =>
     {
         fields[key] = key === 'photo'
-            ? photoByStyle[style]
+            ? style !== 'tree' && photoByStyle[style]
             : typeof sourceFields[key]
               === 'boolean'
                 ? sourceFields[key]
@@ -397,12 +397,12 @@ function normalizeGeneographPersonCardSettings(
               defaults.photoSize
           ),
 
-        alignment:
-          geneoPersonCardEnumValue(
-              'alignment',
-              source.alignment,
-              defaults.alignment
-          ),
+        alignment: style === 'tree' ? 'center'
+            : geneoPersonCardEnumValue(
+                'alignment',
+                source.alignment,
+                defaults.alignment
+            ),
 
         fields,
         photoByStyle,
@@ -607,7 +607,7 @@ function geneoPersonCardEffectiveSettings(
           value('photoSize'),
 
         alignment:
-          value('alignment'),
+          style === 'tree' ? 'center' : value('alignment'),
 
         fields: {
             ...inheritedFields,
@@ -616,7 +616,8 @@ function geneoPersonCardEffectiveSettings(
                 photoOverride === null
                     ? {}
                     : { photo: photoOverride }
-            )
+            ),
+            ...(style === 'tree' ? { photo: false } : {})
         },
 
         cornerRadius:
@@ -642,6 +643,8 @@ function geneoPersonCardFieldSupported(
     field
 )
 {
+    if (field === 'photo' && style === 'tree') return false;
+
     if (
         field === 'birthPlace'
         || field === 'deathPlace'
@@ -10448,7 +10451,7 @@ function renderGeneographPersonNode(
     const compactLife =
         [
             model.lifeSpan,
-            ...(model.settings.style === 'chart' ? [] : [model.displayStatus])
+            ...(['chart', 'tree'].includes(model.settings.style) ? [] : [model.displayStatus])
         ]
             .filter(Boolean)
             .join(' · ');
@@ -13525,7 +13528,7 @@ function renderGeneographPersonCardStylePicker({
         {
             id: 'tree',
             label: 'Tree',
-            subtitle: 'Compact family view'
+            subtitle: 'Compact text card'
         },
         {
             id: 'chart',
@@ -13719,7 +13722,7 @@ function renderGeneographPersonCardControls({
                     !settings.fields.dates
                 )}
 
-              ${select(
+              ${settings.style === 'tree' ? '' : select(
                     'photoSize',
                     'Photo size',
                     '',
@@ -13841,6 +13844,7 @@ function renderGeneographPersonCardControls({
             <div
               class="geneo-person-card-options">
               ${Object.entries(labels)
+                    .filter(([field]) => settings.style !== 'tree' || field !== 'photo')
                     .map(
                         ([
                             field,

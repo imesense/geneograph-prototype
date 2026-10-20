@@ -1772,8 +1772,8 @@ const RU_UI_GENEO = {
     'Detailed facts':
         'Подробные сведения',
 
-    'Compact family view':
-        'Компактный семейный вид',
+    'Compact text card':
+        'Компактная текстовая карточка',
 
     'Photo-first timeline':
         'Фото и даты',

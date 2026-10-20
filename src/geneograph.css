@@ -3179,76 +3179,49 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
     text-align: center;
 }
 
-/*
-    * TREE
-    * Identity row first, genealogy details
-    * become a separate full-width section.
-    */
-.geneo-node-person[ data-geneo-person-card-style="tree"
-
-] .geneo-person-node-content {
-    --geneo-card-photo:
-        min(var(--geneo-card-photo-target, 64px),
-            max(48px, calc(100cqw - 178px)));
-    --geneo-person-action-reserve: 16px;
-
-    padding:
-        clamp(12px, 8cqh, 16px) clamp(14px, 5.5cqw, 18px);
-
-    display: grid;
-
-    grid-template-areas:
-        "avatar identity"
-        "life life";
-
-    grid-template-columns:
-        var(--geneo-card-photo) minmax(0, 1fr);
-
-    grid-template-rows:
-        auto auto;
-
-    column-gap: clamp(12px, 5cqw, 16px);
-    row-gap: clamp(8px, 8cqh, 16px);
-
-    align-content: center;
+/* Tree cards are compact, text-only labels for dense boards. */
+.geneo-node-person[data-geneo-person-card-style="tree"] .geneo-person-node-content {
+    padding: 12px 38px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    gap: 6px;
 }
 
-.geneo-node-person[ data-geneo-person-card-style="tree"
-
-] .geneo-person-avatar {
-    grid-area: avatar;
-    align-self: center;
-}
-
-.geneo-node-person[ data-geneo-person-card-style="tree"
-
-] .geneo-person-identity-block {
-    grid-area: identity;
-    align-self: center;
-}
-
-.geneo-node-person[ data-geneo-person-card-style="tree"
-
-] .geneo-person-life {
-    grid-area: life;
+.geneo-node-person[data-geneo-person-card-style="tree"] :is(.geneo-person-identity-block, .geneo-person-life) {
     min-width: 0;
-    padding-right: 30px;
-    align-self: center;
+    padding: 0;
+    text-align: center;
 }
 
-.geneo-node-person[ data-geneo-person-card-style="tree"
+.geneo-node-person[data-geneo-person-card-style="tree"] .geneo-person-name-wrap {
+    justify-items: center;
+}
 
-] .geneo-person-name {
+.geneo-node-person[data-geneo-person-card-style="tree"] .geneo-person-name {
     font-size: 18px;
-    font-weight: 850;
+    font-weight: 650;
     line-height: 1.2;
 }
 
-.geneo-node-person[ data-geneo-person-card-style="tree"
+.geneo-node-person[data-geneo-person-card-style="tree"] .geneo-person-maiden {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.25;
+}
 
-] .geneo-person-maiden {
-    font-size: 13px;
-    line-height: 1.35;
+.geneo-node-person[data-geneo-person-card-style="tree"] .geneo-person-life-summary {
+    font-size: 14px;
+    font-weight: 500;
+    color: color-mix(in srgb, currentColor 70%, transparent);
+}
+
+@container geneo-person-card (max-height: 110px) {
+    .geneo-node-person[data-geneo-person-card-style="tree"] .geneo-person-node-content {
+        padding-block: 8px;
+        gap: 4px;
+    }
 }
 
 /* Chart cards put the portrait beside a compact identity and date column. */
@@ -3554,9 +3527,6 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
 }
 
 .geneo-node-person[ data-geneo-person-card-style="standard"
-] .geneo-person-node-content.no-photo,
-.geneo-node-person[ data-geneo-person-card-style="tree"
-
 ] .geneo-person-node-content.no-photo {
     grid-template-areas:
         "identity"
@@ -3583,9 +3553,6 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
         font-size: 14px;
     }
 
-    .geneo-node-person[data-geneo-person-card-style="tree"] .geneo-person-node-content {
-        column-gap: 12px;
-    }
 }
 
 @container geneo-person-card (max-height: 299px) {
