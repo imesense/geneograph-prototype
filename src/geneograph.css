@@ -3648,11 +3648,11 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
 }
 
 .geneo-node-person[data-geneo-person-card-style="standard"] .geneo-person-add-relative {
-    right: 54px;
+    right: 10px;
 }
 
 .geneo-node-person[data-geneo-person-card-style="standard"] .geneo-person-edit-action {
-    right: 10px;
+    right: 54px;
 }
 
 .geneo-node-person[data-geneo-person-card-style="standard"] :is(.geneo-person-add-relative, .geneo-person-edit-action)::before {

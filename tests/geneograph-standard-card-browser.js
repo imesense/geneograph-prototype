@@ -99,21 +99,24 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             }, nodeId);
             const hover = await card.evaluate(element => {
                 const edit = element.querySelector('.geneo-person-edit-action');
+                const addRelative = element.querySelector('.geneo-person-add-relative');
                 const place = element.querySelector('.geneo-person-life-event-place');
                 return {
                     hovered: element.matches(':hover'),
                     editVisible: getComputedStyle(edit).visibility === 'visible',
                     editName: edit.getAttribute('aria-label'),
                     editTarget: edit.offsetWidth,
+                    editRight: edit.getBoundingClientRect().right,
+                    addRelativeLeft: addRelative.getBoundingClientRect().left,
                     placeWidth: place.getBoundingClientRect().width,
                     placeTitle: place.title,
-                    cardRight: element.getBoundingClientRect().right,
-                    editRight: edit.getBoundingClientRect().right
+                    cardRight: element.getBoundingClientRect().right
                 };
             });
             assert.equal(hover.editVisible, true, JSON.stringify(hover));
             assert.ok(hover.editName);
             assert.equal(hover.editTarget, 44);
+            assert.ok(hover.editRight <= hover.addRelativeLeft, JSON.stringify(hover));
             assert.ok(hover.placeWidth > 0);
             assert.ok(hover.placeTitle.length > 0);
             assert.ok(hover.editRight <= hover.cardRight);
