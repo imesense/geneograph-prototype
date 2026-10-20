@@ -3062,12 +3062,12 @@
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    gap: 4px;
+    justify-content: center;
+    gap: 10px;
 }
 
 .geneo-node-person[data-geneo-person-card-style="standard"] .geneo-person-life-event {
-    grid-template-columns: 16px minmax(0, 1fr);
+    grid-template-columns: 38px minmax(0, 1fr);
     gap: 3px;
 }
 
@@ -3077,7 +3077,8 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
 
 .geneo-node-person[data-geneo-person-card-style="standard"] .geneo-person-life-event-kind {
     color: color-mix(in srgb, currentColor 74%, transparent);
-    font-weight: 400;
+    font-size: 13px;
+    font-weight: 500;
 }
 
 .geneo-node-person[data-geneo-person-card-style="standard"] .geneo-person-life-event-kind abbr {
@@ -3102,8 +3103,8 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
 .geneo-node-person[ data-geneo-person-card-style="standard"
 
 ] .geneo-person-name {
-    font-size: 18px;
-    font-weight: 650;
+    font-size: 19px;
+    font-weight: 600;
     line-height: 1.2;
     -webkit-line-clamp: 2;
     line-clamp:
@@ -3126,13 +3127,26 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
 .geneo-node-person[ data-geneo-person-card-style="standard"
 
 ] .geneo-person-maiden {
-    font-size: 16px;
+    color: color-mix(in srgb, currentColor 74%, transparent);
+    font-size: 14px;
+    font-weight: 450;
 }
 
 .geneo-node-person[ data-geneo-person-card-style="standard"
 
 ] .geneo-person-life-event-date {
-    color: color-mix(in srgb, currentColor 92%, transparent);
+    color: color-mix(in srgb, currentColor 90%, transparent);
+    font-weight: 500;
+}
+
+.geneo-node-person[data-geneo-person-card-style="standard"] .geneo-person-life-event-place {
+    font-weight: 400;
+}
+
+@container geneo-person-card (max-height: 150px) {
+    .geneo-node-person[data-geneo-person-card-style="standard"] .geneo-person-life-events {
+        gap: 4px;
+    }
 }
 
 .geneo-node-person[ data-geneo-person-card-style="standard"
@@ -3476,7 +3490,7 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
 
 @container geneo-person-card (max-width: 279px) {
     .geneo-node-person[data-geneo-person-card-style="standard"] .geneo-person-name {
-        font-size: 17px;
+        font-size: 18px;
     }
 
     .geneo-node-person[data-geneo-person-card-style="standard"] .geneo-person-maiden {
@@ -3570,10 +3584,7 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
             11,
             .72);
 
-    color:
-        color-mix(in srgb,
-            currentColor 76%,
-            transparent);
+    color: #f8faf9;
 
     display: grid;
     place-items: center;
@@ -3609,13 +3620,7 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
 
 .geneo-person-add-relative:hover,
 .geneo-person-edit-action:hover {
-    background:
-        rgba(255,
-            255,
-            255,
-            .1);
-
-    color: currentColor;
+    background: rgba(8, 14, 11, .9);
 }
 
 .geneo-person-add-relative:focus-visible,
@@ -3664,7 +3669,7 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
 }
 
 .geneo-node-person[data-geneo-person-card-style="standard"] :is(.geneo-person-add-relative, .geneo-person-edit-action):is(:hover, :focus-visible)::before {
-    background: rgba(255, 255, 255, .1);
+    background: rgba(8, 14, 11, .9);
 }
 
 .geneo-node-person[data-geneo-person-card-style="standard"] :is(.geneo-person-add-relative, .geneo-person-edit-action) svg {

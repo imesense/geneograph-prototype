@@ -10236,13 +10236,18 @@ function renderGeneographPersonLifeEvent(
         return '';
     }
 
+    const fullLabel =
+        shortLabel && state.language === 'ru'
+            ? label === 'Born' ? 'Рождение' : 'Смерть'
+            : label;
+
     return `
         <div class="geneo-person-life-event">
           <span
             class="geneo-person-life-event-kind">
             ${
                 shortLabel
-                    ? `<abbr title="${escapeHtml(label)}" aria-label="${escapeHtml(label)}">${escapeHtml(shortLabel)}</abbr>`
+                    ? `<abbr data-i18n-skip title="${escapeHtml(fullLabel)}" aria-label="${escapeHtml(fullLabel)}">${escapeHtml(shortLabel)}</abbr>`
                     : escapeHtml(label)
             }
           </span>
@@ -10420,7 +10425,7 @@ function renderGeneographPersonNode(
                         'Born',
                         model.birthEvent,
                         model.settings.style === 'standard'
-                            ? 'b.'
+                            ? state.language === 'ru' ? 'род.' : 'Born:'
                             : ''
                     )}
 
@@ -10428,7 +10433,7 @@ function renderGeneographPersonNode(
                         'Died',
                         model.deathEvent,
                         model.settings.style === 'standard'
-                            ? 'd.'
+                            ? state.language === 'ru' ? 'ум.' : 'Died:'
                             : ''
                     )}
                   </div>

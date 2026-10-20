@@ -58,7 +58,9 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                     photoWidth: photo.offsetWidth,
                     photoHeight: photo.offsetHeight,
                     nameSize: getComputedStyle(name).fontSize,
+                    nameWeight: getComputedStyle(name).fontWeight,
                     maidenSize: maiden ? getComputedStyle(maiden).fontSize : null,
+                    maidenWeight: maiden ? getComputedStyle(maiden).fontWeight : null,
                     stroke: getComputedStyle(element).borderTopStyle,
                     labels: [...element.querySelectorAll('.geneo-person-life-event-kind')]
                         .map(item => item.textContent.trim()),
@@ -66,10 +68,16 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                         .map(item => item.getAttribute('aria-label')),
                     labelWeights: [...element.querySelectorAll('.geneo-person-life-event-kind')]
                         .map(item => getComputedStyle(item).fontWeight),
+                    labelSizes: [...element.querySelectorAll('.geneo-person-life-event-kind')]
+                        .map(item => getComputedStyle(item).fontSize),
                     labelColors: [...element.querySelectorAll('.geneo-person-life-event-kind')]
                         .map(item => getComputedStyle(item).color),
                     placeColors: [...element.querySelectorAll('.geneo-person-life-event-place')]
                         .map(item => getComputedStyle(item).color),
+                    dateWeights: [...element.querySelectorAll('.geneo-person-life-event-date')]
+                        .map(item => getComputedStyle(item).fontWeight),
+                    placeWeights: [...element.querySelectorAll('.geneo-person-life-event-place')]
+                        .map(item => getComputedStyle(item).fontWeight),
                     edit: element.querySelectorAll('[data-geneo-edit-person-node]').length
                 };
             });
@@ -77,13 +85,18 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             assert.equal(base.height, 160);
             assert.equal(base.photoWidth, 64);
             assert.equal(base.photoHeight, 64);
-            assert.equal(base.nameSize, '18px');
-            assert.equal(base.maidenSize, '16px');
+            assert.equal(base.nameSize, '19px');
+            assert.equal(base.nameWeight, '600');
+            assert.equal(base.maidenSize, '14px');
+            assert.equal(base.maidenWeight, '450');
             assert.equal(base.stroke, 'none');
             assert.equal(base.edit, 1);
-            assert.deepEqual(base.labels, language === 'ru' ? ['род.', 'ум.'] : ['b.', 'd.']);
-            assert.ok(base.fullLabels.every(Boolean));
-            assert.deepEqual(base.labelWeights, ['400', '400']);
+            assert.deepEqual(base.labels, language === 'ru' ? ['род.', 'ум.'] : ['Born:', 'Died:']);
+            assert.deepEqual(base.fullLabels, language === 'ru' ? ['Рождение', 'Смерть'] : ['Born', 'Died']);
+            assert.deepEqual(base.labelWeights, ['500', '500']);
+            assert.deepEqual(base.labelSizes, ['13px', '13px']);
+            assert.deepEqual(base.dateWeights, ['500', '500']);
+            assert.deepEqual(base.placeWeights, ['400', '400']);
             assert.deepEqual(base.labelColors, base.placeColors);
             assert.equal(await card.evaluate(element => {
                 const stage = document.createElement('div');
@@ -120,6 +133,31 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             assert.ok(hover.placeWidth > 0);
             assert.ok(hover.placeTitle.length > 0);
             assert.ok(hover.editRight <= hover.cardRight);
+            for (const [fill, foreground] of [
+                ['#60afe8', '#101820'],
+                ['#17362e', '#f8faf9']
+            ]) {
+                await card.evaluate((element, colors) => {
+                    element.style.setProperty('--geneo-node-bg', colors.fill);
+                    element.style.setProperty('--geneo-node-text', colors.foreground);
+                }, { fill, foreground });
+                for (const action of ['.geneo-person-edit-action', '.geneo-person-add-relative']) {
+                    const button = card.locator(action);
+                    assert.equal(await button.evaluate(element => getComputedStyle(element).color), 'rgb(248, 250, 249)');
+                    await button.hover();
+                    assert.equal(await button.evaluate(element => getComputedStyle(element, '::before').backgroundColor),
+                        'rgba(8, 14, 11, 0.9)');
+                }
+                if (fill === '#60afe8' && process.env.GENEO_SCREENSHOT_DIR) {
+                    await card.screenshot({
+                        path: path.join(process.env.GENEO_SCREENSHOT_DIR, `geneo-standard-bright-${language}.png`)
+                    });
+                }
+            }
+            await card.evaluate(element => {
+                element.style.removeProperty('--geneo-node-bg');
+                element.style.removeProperty('--geneo-node-text');
+            });
             if (process.env.GENEO_SCREENSHOT_DIR) {
                 await card.screenshot({
                     path: path.join(process.env.GENEO_SCREENSHOT_DIR, `geneo-standard-${language}.png`)
@@ -139,9 +177,10 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                     const rows = [...card.querySelectorAll('.geneo-person-life-event')]
                         .map(row => {
                             const label = row.querySelector('.geneo-person-life-event-kind').getBoundingClientRect();
+                            const labelText = row.querySelector('.geneo-person-life-event-kind abbr').getBoundingClientRect();
                             const value = row.querySelector('.geneo-person-life-event-value').getBoundingClientRect();
                             return {
-                                inside: label.right <= value.left + 1 && value.right <= cardBounds.right + 1,
+                                inside: labelText.right <= value.left + 1 && value.right <= cardBounds.right + 1,
                                 dateStart: value.left / scale,
                                 labelGap: (value.left - label.right) / scale,
                                 top: row.getBoundingClientRect().top / scale,
@@ -162,11 +201,10 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 assert.ok(layout.contentInside && layout.rows.every(row => row.inside), JSON.stringify(layout));
                 assert.ok(layout.rows.every(row => Math.abs(row.labelGap - 3) < 1), JSON.stringify(layout));
                 assert.ok(Math.abs(layout.rows[0].dateStart - layout.rows[1].dateStart) < 1, JSON.stringify(layout));
-                const expectedPhotoGap = height === 144 ? 8 : height === 160 ? 12 : 24;
-                assert.ok(Math.abs(layout.rows[0].top - layout.photoBottom - expectedPhotoGap) < 1,
-                    JSON.stringify(layout));
-                assert.ok(layout.rows[1].top >= layout.rows[0].bottom, JSON.stringify(layout));
-                assert.ok(layout.bottomInset >= 14 && layout.bottomInset <= 17, JSON.stringify(layout));
+                const eventGap = layout.rows[1].top - layout.rows[0].bottom;
+                assert.ok(Math.abs(eventGap - (height === 144 ? 4 : 10)) < 1, JSON.stringify(layout));
+                assert.ok(layout.rows[0].top - layout.photoBottom >= 8, JSON.stringify(layout));
+                assert.ok(layout.bottomInset >= 14, JSON.stringify(layout));
             }
             await page.evaluate(nodeId => {
                 const node = getGeneographNode(nodeId);
@@ -174,6 +212,14 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 node.height = 160;
                 renderGeneographEditorPreserveScroll();
             }, nodeId);
+            assert.deepEqual(await page.evaluate(({ nodeId, language }) => {
+                setLanguage(language === 'en' ? 'ru' : 'en');
+                const labels = [...document.querySelectorAll(
+                    `.geneo-node-person[data-geneo-node="${nodeId}"] .geneo-person-life-event-kind`
+                )].map(item => item.textContent.trim());
+                setLanguage(language);
+                return labels;
+            }, { nodeId, language }), language === 'en' ? ['род.', 'ум.'] : ['Born:', 'Died:']);
             assert.equal(await page.evaluate(nodeId => {
                 const node = getGeneographNode(nodeId);
                 const person = getGeneographPerson(node.personId);
