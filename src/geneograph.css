@@ -2283,11 +2283,14 @@
     font-size: 10px;
     font-weight: 650;
     line-height: 1.25;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
 }
 
 .geneo-person-style-preview-stage {
+    container: geneo-style-stage / inline-size;
     width: 100%;
     height: 66px;
     min-width: 0;
@@ -2301,186 +2304,179 @@
     display: block;
     flex: 0 0 auto;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, .13);
-    border-radius: 5px;
-    background: rgba(255, 255, 255, .035);
+    border: 1px solid color-mix(in srgb, var(--text-primary) 18%, transparent);
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--brand-green-300) 12%, var(--surface-input));
 }
 
 .geneo-person-style-preview.preview-standard {
-    width: 82px;
-    height: 60px;
+    width: 120px;
+    height: 55px;
+    border-color: transparent;
 }
 
-.geneo-person-style-preview.preview-tree {
-    width: 96px;
-    height: 58px;
+.geneo-person-style-preview.preview-compact {
+    width: 112px;
+    height: 44px;
 }
 
 .geneo-person-style-preview.preview-chart {
-    width: 108px;
-    height: 50px;
+    width: 138px;
+    height: 53px;
 }
 
 .geneo-person-style-preview.preview-portrait {
-    width: 38px;
-    height: 63px;
+    width: 40px;
+    height: 64px;
+}
+
+@container geneo-style-stage (max-width: 145px) {
+    .geneo-person-style-preview.preview-chart { transform: scale(.8); }
+}
+
+@container geneo-style-stage (max-width: 115px) {
+    .geneo-person-style-preview.preview-standard { transform: scale(.85); }
+    .geneo-person-style-preview.preview-chart { transform: scale(.68); }
 }
 
 .geneo-person-style-preview>span {
     position: absolute;
     display: block;
-
-    border-radius: 2px;
-
-    background:
-        rgba(255,
-            255,
-            255,
-            .42);
+    border-radius: 1px;
+    background: color-mix(in srgb, var(--text-primary) 76%, transparent);
 }
 
 .geneo-person-style-preview .preview-photo {
-    background:
-        rgba(98,
-            217,
-            154,
-            .34);
+    border-radius: 2px;
+    background: color-mix(in srgb, var(--brand-green-300) 34%, var(--surface-input));
 }
 
 .preview-standard .preview-photo {
-    left: 6px;
-    top: 6px;
-    width: 28px;
-    height: 30px;
+    left: 5px;
+    top: 5px;
+    width: 24px;
+    height: 24px;
 }
 
 .preview-standard .preview-name {
-    left: 40px;
+    left: 35px;
     top: 8px;
-    width: 43%;
-    height: 5px;
+    width: 63px;
+    height: 4px;
 }
 
-.preview-standard .preview-line.one {
-    left: 40px;
-    top: 19px;
-    width: 32%;
-    height: 3px;
+.preview-standard .preview-maiden {
+    left: 35px;
+    top: 16px;
+    width: 35px;
+    height: 2px;
+    opacity: .58;
 }
 
-.preview-standard .preview-line.two {
+.preview-standard :is(.preview-birth, .preview-death) {
     left: 6px;
-    top: 43px;
-    width: 70px;
-    height: 1px;
-    background: rgba(255, 255, 255, .18);
-}
-
-.preview-standard::after {
-    content: '';
-    position: absolute;
-    left: 40px;
-    top: 50px;
-    width: 30px;
+    width: 101px;
     height: 3px;
-    border-radius: 2px;
-    background: rgba(255, 255, 255, .36);
+    opacity: .68;
 }
 
-.preview-tree .preview-photo {
-    left: 7px;
-    top: 7px;
-    width: 25px;
-    height: 28px;
-}
+.preview-standard .preview-birth { top: 38px; }
+.preview-standard .preview-death { top: 46px; width: 83px; }
 
-.preview-tree .preview-name {
-    left: 39px;
-    top: 10px;
-    width: 47%;
+.preview-compact .preview-name {
+    left: 50%;
+    top: 9px;
+    width: 73px;
     height: 5px;
+    transform: translateX(-50%);
 }
 
-.preview-tree .preview-line.one {
-    left: 39px;
-    top: 21px;
-    width: 36%;
-    height: 3px;
+.preview-compact .preview-maiden {
+    left: 50%;
+    top: 18px;
+    width: 37px;
+    height: 2px;
+    opacity: .58;
+    transform: translateX(-50%);
 }
 
-.preview-tree .preview-line.two {
-    left: 7px;
-    top: 45px;
-    width: 61%;
+.preview-compact .preview-birth {
+    left: 50%;
+    top: 30px;
+    width: 79px;
     height: 3px;
+    opacity: .68;
+    transform: translateX(-50%);
 }
+
+.preview-compact .preview-death,
+.preview-chart .preview-death { display: none; }
 
 .preview-chart .preview-photo {
-    left: 7px;
-    top: 10px;
-    width: 18px;
-    height: 22px;
+    left: 5px;
+    top: 5px;
+    width: 42px;
+    height: 42px;
 }
 
 .preview-chart .preview-name {
-    left: 31px;
-    top: 9px;
-    width: 59%;
+    left: 54px;
+    top: 11px;
+    width: 70px;
     height: 5px;
 }
 
-.preview-chart .preview-line.one {
-    left: 31px;
+.preview-chart .preview-maiden {
+    left: 54px;
     top: 20px;
-    width: 41%;
-    height: 3px;
+    width: 40px;
+    height: 2px;
+    opacity: .58;
 }
 
-.preview-chart .preview-line.two {
-    left: 31px;
-    top: 33px;
-    width: 49%;
+.preview-chart .preview-birth {
+    left: 54px;
+    top: 35px;
+    width: 73px;
     height: 3px;
+    opacity: .68;
 }
 
 .preview-portrait .preview-photo {
     left: 50%;
     top: 4px;
-    width: 28px;
-    height: 31px;
-
-    transform:
-        translateX(-50%);
+    width: 23px;
+    height: 23px;
+    transform: translateX(-50%);
 }
 
 .preview-portrait .preview-name {
     left: 50%;
-    top: 40px;
-    width: 66%;
-    height: 4px;
-
-    transform:
-        translateX(-50%);
-}
-
-.preview-portrait .preview-line.one {
-    left: 50%;
-    top: 50px;
-    width: 70%;
-    height: 1px;
-    background: rgba(255, 255, 255, .18);
-
-    transform:
-        translateX(-50%);
-}
-
-.preview-portrait .preview-line.two {
-    left: 50%;
-    top: 56px;
-    width: 54%;
+    top: 32px;
+    width: 72%;
     height: 3px;
     transform: translateX(-50%);
 }
+
+.preview-portrait .preview-maiden {
+    left: 50%;
+    top: 38px;
+    width: 48%;
+    height: 2px;
+    opacity: .58;
+    transform: translateX(-50%);
+}
+
+.preview-portrait :is(.preview-birth, .preview-death) {
+    left: 50%;
+    width: 68%;
+    height: 2px;
+    opacity: .68;
+    transform: translateX(-50%);
+}
+
+.preview-portrait .preview-birth { top: 49px; }
+.preview-portrait .preview-death { top: 55px; width: 51%; }
 
 .geneo-person-card-setting-grid {
     display: grid;

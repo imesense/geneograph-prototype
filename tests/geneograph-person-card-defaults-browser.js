@@ -36,6 +36,32 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             await page.evaluate(() => {
                 const section = document.querySelector('[data-geneo-inspector-section="person:card"]');
                 if (section.getAttribute('aria-expanded') === 'false') section.click();
+            });
+            const previews = await inspector.locator('.geneo-person-style-preview').evaluateAll(elements =>
+                elements.map(element => ({
+                    style: element.className,
+                    width: element.offsetWidth,
+                    height: element.offsetHeight,
+                    bars: element.querySelectorAll('span').length,
+                    photo: element.querySelector('.preview-photo') !== null
+                })));
+            assert.equal(previews.length, 4);
+            assert.ok(previews.every(preview => preview.bars >= 3), JSON.stringify(previews));
+            assert.equal(previews.find(preview => preview.style.includes('preview-compact')).photo, false);
+            if (process.env.GENEO_STYLE_PREVIEW_SCREENSHOT_DIR) {
+                await page.evaluate(() => {
+                    const capture = document.createElement('div');
+                    capture.id = 'geneo-style-preview-capture';
+                    capture.style.cssText = 'position:fixed;z-index:99999;top:20px;left:20px;width:270px;padding:12px;background:var(--surface-input)';
+                    capture.append(document.querySelector('.geneo-person-style-picker').cloneNode(true));
+                    document.body.append(capture);
+                });
+                await page.locator('#geneo-style-preview-capture').screenshot({
+                    path: path.join(process.env.GENEO_STYLE_PREVIEW_SCREENSHOT_DIR, `styles-${language}.png`)
+                });
+                await page.locator('#geneo-style-preview-capture').evaluate(element => element.remove());
+            }
+            await page.evaluate(() => {
                 document.querySelector('[data-geneo-person-card-style="compact"]').click();
             });
             assert.equal(await page.locator('.geneo-node-person[data-geneo-person-card-style="compact"] .geneo-person-avatar').count(), 0);

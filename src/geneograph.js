@@ -13593,10 +13593,11 @@ function renderGeneographPersonCardStylePicker({
                             style.id
                         )}
                     ">
-                    <span class="preview-photo"></span>
+                    ${style.id === 'compact' ? '' : '<span class="preview-photo"></span>'}
                     <span class="preview-name"></span>
-                    <span class="preview-line one"></span>
-                    <span class="preview-line two"></span>
+                    <span class="preview-maiden"></span>
+                    <span class="preview-birth"></span>
+                    <span class="preview-death"></span>
                   </span>
                 </span>
 
