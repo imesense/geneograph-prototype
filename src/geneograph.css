@@ -1932,6 +1932,7 @@
 .geneo-inspector-body {
     min-width: 0;
     min-height: 100%;
+    container-type: inline-size;
 }
 
 .geneo-inspector-header {
@@ -2173,9 +2174,26 @@
     height: 16px;
 }
 
+.geneo-check-help {
+    display: block;
+    margin-top: 2px;
+    color: var(--text-tertiary);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.4;
+}
+
 .geneo-person-card-options {
     display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 4px;
+}
+.geneo-person-card-options .geneo-check { min-width: 0; }
+@container (max-width: 330px) {
+    .geneo-person-card-options { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 480px) {
+    .geneo-person-card-options { grid-template-columns: minmax(0, 1fr); }
 }
 
 .geneo-person-card-controls {
@@ -2685,23 +2703,45 @@
 .geneo-background-pattern {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 2px;
-    padding: 3px;
-    border: 1px solid var(--border-default);
-    border-radius: 8px;
-    background: var(--surface-input);
+    gap: 8px;
 }
 
 .geneo-background-pattern button {
     min-width: 0;
-    min-height: 34px;
-    padding: 0 8px;
-    border: 1px solid transparent;
+    min-height: 86px;
+    padding: 5px;
+    border: 1px solid var(--border-default);
     border-radius: 6px;
-    background: transparent;
+    background: var(--surface-input);
     color: var(--text-secondary);
-    font-weight: 800;
+    font-weight: 600;
+    display: grid;
+    gap: 4px;
+    align-content: start;
 }
+.geneo-pattern-preview {
+    display: block;
+    width: 100%;
+    height: 48px;
+    border-radius: 3px;
+}
+.geneo-pattern-preview.pattern-dots {
+    background-image: radial-gradient(circle at 0 0, rgba(255,255,255,.4) 1px, transparent 1.5px);
+    background-size: 10px 10px;
+}
+.geneo-pattern-preview.pattern-grid {
+    background-image: linear-gradient(rgba(255,255,255,.24) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.24) 1px, transparent 1px);
+    background-size: 10px 10px;
+}
+.geneo-card-default-group { display: grid; gap: 12px; padding-block: 12px; border-top: 1px solid var(--border-default); }
+.geneo-card-default-group h3 { margin: 0; font-size: 14px; }
+.geneo-card-default-dimensions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.geneo-card-default-dimensions .geneo-field { min-width: 0; }
+.geneo-canvas-reset { padding: 16px; border-top: 1px solid var(--border-default); }
+.geneo-canvas-reset .button { width: 100%; }
+.geneo-node.geneo-object-dimmed { opacity: .38; }
+.geneo-node.geneo-object-dimmed:is(.selected, :focus-visible, :focus-within),
+.geneo-export-snapshot .geneo-node.geneo-object-dimmed { opacity: 1; }
 
 .geneo-background-pattern button:hover {
     background: var(--surface-card-hover);

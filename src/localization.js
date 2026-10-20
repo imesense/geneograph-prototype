@@ -1677,14 +1677,36 @@ const RU_UI_GENEO = {
     'Board appearance and behavior':
         'Оформление и поведение холста',
 
+    'Canvas appearance': 'Оформление холста',
+    'Default card appearance': 'Оформление карточек по умолчанию',
+    'Default card layout': 'Макет карточек по умолчанию',
+    'Highlight objects': 'Выделить объекты',
+    'Unlinked people': 'Люди без связи с древом',
+    'Sticky notes': 'Стикеры',
+    'Images': 'Изображения',
+    'Drawings': 'Рисунки',
+    'Panels': 'Панели',
+    'Photo alignment': 'Выравнивание фотографии',
+    'Not yet available': 'Пока недоступно',
+    'Stroke width': 'Толщина обводки',
+    'Stroke pattern': 'Стиль обводки',
+    'Reset defaults': 'Сбросить настройки по умолчанию',
+    'Neutral': 'Нейтральный',
+
     'Background pattern':
         'Узор фона',
 
     'Always show sockets':
         'Всегда показывать точки подключения',
 
+    'Show connection points on every object.':
+        'Показывать точки подключения на всех объектах.',
+
     'Snap to grid':
         'Привязка к сетке',
+
+    'Align objects to the canvas grid when moving them.':
+        'Выравнивать объекты по сетке холста при перемещении.',
 
     'Person cards':
         'Карточки людей',

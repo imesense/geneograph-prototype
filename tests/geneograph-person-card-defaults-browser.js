@@ -110,7 +110,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             await page.evaluate(() => document.querySelector('[data-geneo-person-card-reset]').click());
             assert.equal(await page.evaluate(() => selectedGeneographNode().personCard.cornerRadius), null);
             await page.evaluate(() => {
-                selectedGeneographDiagram().personCardDefaults.cornerRadius = 16;
+                selectedGeneographDiagram().cardAppearanceDefaults.neutral.cornerRadius = 16;
                 renderGeneographEditorPreserveScroll();
             });
             assert.equal(await inspector.locator('#geneoPersonCardRadius').inputValue(), '16');

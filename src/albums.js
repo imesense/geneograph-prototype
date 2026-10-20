@@ -13358,7 +13358,7 @@ function createGeneoCanvasRuntime(boardId = '')
 {
     return {
         boardId,
-        peopleHighlight: 'all',
+        objectHighlight: 'none',
         bounds: null,
         connectionClick: null,
         connectionPreviewPoint: null,
