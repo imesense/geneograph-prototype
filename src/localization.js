@@ -123,6 +123,10 @@ const RU_UI_SHARED = Object.freeze({
     'Dates unknown':
         'Даты неизвестны',
 
+    'b.': 'род.',
+    'd.': 'ум.',
+    'Edit person details': 'Изменить данные человека',
+
     'Died':
         'Смерть:',
 

@@ -86,8 +86,8 @@ const GENEO_PERSON_CARD_ENUMS =
 const GENEO_PERSON_CARD_GEOMETRY =
     Object.freeze({
         standard: {
-            width: 300,
-            height: 164,
+            width: 350,
+            height: 160,
             minWidth: 260,
             minHeight: 144,
             maxWidth: 600,
@@ -1059,9 +1059,9 @@ function geneoPersonCardPhotoBaseSize(
 
     const values = {
         standard: {
-            small: 64,
-            medium: 76,
-            large: 88
+            small: 56,
+            medium: 64,
+            large: 76
         },
 
         tree: {
@@ -10221,7 +10221,8 @@ function geneoPersonCardLifeSpan(
 
 function renderGeneographPersonLifeEvent(
     label,
-    event
+    event,
+    shortLabel = ''
 )
 {
     if (
@@ -10239,7 +10240,11 @@ function renderGeneographPersonLifeEvent(
         <div class="geneo-person-life-event">
           <span
             class="geneo-person-life-event-kind">
-            ${escapeHtml(label)}
+            ${
+                shortLabel
+                    ? `<abbr title="${escapeHtml(label)}" aria-label="${escapeHtml(label)}">${escapeHtml(shortLabel)}</abbr>`
+                    : escapeHtml(label)
+            }
           </span>
 
           <span
@@ -10307,6 +10312,20 @@ function renderGeneographPersonAddRelativeAction(node)
           aria-expanded="false"
           title="Add relative">
           ${icon.plus}
+        </button>
+      `;
+}
+
+function renderGeneographPersonEditAction(node)
+{
+    return `
+        <button
+          class="geneo-person-edit-action"
+          type="button"
+          data-geneo-edit-person-node="${escapeHtml(node.id)}"
+          aria-label="Edit person details"
+          title="Edit person details">
+          ${icon.edit}
         </button>
       `;
 }
@@ -10399,12 +10418,18 @@ function renderGeneographPersonNode(
                     class="geneo-person-life-events">
                     ${renderGeneographPersonLifeEvent(
                         'Born',
-                        model.birthEvent
+                        model.birthEvent,
+                        model.settings.style === 'standard'
+                            ? 'b.'
+                            : ''
                     )}
 
                     ${renderGeneographPersonLifeEvent(
                         'Died',
-                        model.deathEvent
+                        model.deathEvent,
+                        model.settings.style === 'standard'
+                            ? 'd.'
+                            : ''
                     )}
                   </div>
                 `
@@ -11065,6 +11090,13 @@ function renderGeneographObject(node)
                     ? renderGeneographPersonAddRelativeAction(node)
                     : ''
             }
+
+          ${
+                node.type === 'person'
+              && personSettings?.style === 'standard'
+                    ? renderGeneographPersonEditAction(node)
+                    : ''
+          }
 
           ${renderGeneographRichTextToolbar(
                 node
@@ -18958,7 +18990,7 @@ function geneoRelativeDefaultGender(type)
         return 'female';
     }
 
-    return 'unknown';
+    return 'male';
 }
 
 function geneoRelativeLabel(type)
@@ -19928,7 +19960,7 @@ function renderGeneographPersonModal(
             ? geneoRelativeDefaultGender(
                 relative.type
             )
-            : 'unknown';
+            : 'male';
 
     const gender =
         ['male', 'female', 'unknown']
@@ -20240,7 +20272,8 @@ function createGeneographPersonNodeForBoardPerson(
 
     const personCard =
         geneoEmptyPersonCardOverrides(
-            false
+            false,
+            'manual'
         );
 
     const draftNode = {
@@ -20256,6 +20289,12 @@ function createGeneographPersonNodeForBoardPerson(
             draftNode,
             diagram
         );
+
+    const standardCard =
+        geneoPersonCardEffectiveSettings(
+            draftNode,
+            diagram
+        ).style === 'standard';
 
     const placement =
         anchorNode && relative
@@ -20299,6 +20338,10 @@ function createGeneographPersonNodeForBoardPerson(
         personCard,
         appearance: {
             ...defaults.appearance,
+            paintOverrides: {
+                ...defaults.appearance.paintOverrides,
+                stroke: standardCard
+            },
             fill: {
                 color: '#173029',
                 opacity: 100,
@@ -20307,7 +20350,7 @@ function createGeneographPersonNodeForBoardPerson(
             stroke: {
                 color: '#62D99A',
                 opacity: 100,
-                enabled: true
+                enabled: !standardCard
             },
             strokeWidth: 2
         }
@@ -20825,7 +20868,8 @@ function saveGeneographPersonModal(
 
         const personCard =
             geneoEmptyPersonCardOverrides(
-                false
+                false,
+                'manual'
             );
 
         const draftNode = {
@@ -20843,6 +20887,12 @@ function saveGeneographPersonModal(
                 draftNode,
                 diagram
             );
+
+        const standardCard =
+            geneoPersonCardEffectiveSettings(
+                draftNode,
+                diagram
+            ).style === 'standard';
 
         draftNode.width =
             reference.width;
@@ -20911,6 +20961,10 @@ function saveGeneographPersonModal(
 
             appearance: {
                 ...defaults.appearance,
+                paintOverrides: {
+                    ...defaults.appearance.paintOverrides,
+                    stroke: standardCard
+                },
 
                 fill: {
                     color: '#173029',
@@ -20921,7 +20975,7 @@ function saveGeneographPersonModal(
                 stroke: {
                     color: '#62D99A',
                     opacity: 100,
-                    enabled: true
+                    enabled: !standardCard
                 },
 
                 strokeWidth: 2
@@ -26075,6 +26129,19 @@ function bindGeneographEditor()
                 );
             }
         );
+    main.querySelectorAll('[data-geneo-edit-person-node]').forEach(button =>
+    {
+        button.addEventListener('click', event =>
+        {
+            event.preventDefault();
+            event.stopPropagation();
+            const node = getGeneographNode(button.dataset.geneoEditPersonNode);
+            if (node?.type === 'person' && getGeneographPerson(node.personId))
+            {
+                openGeneographPersonModal(node.personId);
+            }
+        });
+    });
     main
         .querySelectorAll(
             '[data-geneo-add-relative]'

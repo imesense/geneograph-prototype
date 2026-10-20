@@ -89,7 +89,7 @@ function geneoPngRemoveEditorContent(stage)
         + '.geneo-connection-selection-guide, .geneo-waypoint, '
         + '.geneo-family-junction, .geneo-connection-preview, '
         + '.geneo-pencil-preview, .geneo-drawing-hit, '
-        + '.geneo-person-add-relative, '
+        + '.geneo-person-add-relative, .geneo-person-edit-action, '
         + '.geneo-port, .geneo-resize-handle, .geneo-resize-edge, '
         + '.geneo-rich-text-toolbar, .geneo-image-layer-label, '
         + '[data-geneo-inline-input], button, textarea'

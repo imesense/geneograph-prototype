@@ -2997,12 +2997,13 @@
 
 ] .geneo-person-node-content {
     --geneo-card-photo:
-        min(var(--geneo-card-photo-target, 76px),
-            max(56px, calc(100cqw - 203px)));
-    --geneo-person-action-reserve: 16px;
+        min(var(--geneo-card-photo-target, 64px),
+            calc(100cqw - 110px));
+    --geneo-card-date-size: 14px;
+    --geneo-card-place-size: 14px;
+    --geneo-person-action-reserve: 0px;
 
-    padding:
-        12px clamp(14px, 5cqw, 18px);
+    padding: 15px;
 
     display: grid;
 
@@ -3014,10 +3015,10 @@
         var(--geneo-card-photo) minmax(0, 1fr);
 
     grid-template-rows:
-        auto auto;
+        minmax(64px, auto) minmax(0, 1fr);
 
-    column-gap: clamp(12px, 4.7cqw, 18px);
-    row-gap: 8px;
+    column-gap: 15px;
+    row-gap: clamp(8px, calc(25cqh - 28px), 24px);
 
     align-content: start;
 }
@@ -3049,23 +3050,64 @@
 ] .geneo-person-life {
     grid-area: life;
     min-height: 0;
-    padding-top: 8px;
-    padding-right: 30px;
-    border-top: 1px solid color-mix(in srgb, currentColor 18%, transparent);
-    display: grid;
-    gap: 7px;
-    align-content: start;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow: hidden;
+}
+
+.geneo-node-person[data-geneo-person-card-style="standard"] .geneo-person-life-events {
+    min-height: 0;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 4px;
+}
+
+.geneo-node-person[data-geneo-person-card-style="standard"] .geneo-person-life-event {
+    grid-template-columns: 16px minmax(0, 1fr);
+    gap: 3px;
+}
+
+html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .geneo-person-life-event {
+    grid-template-columns: 29px minmax(0, 1fr);
+}
+
+.geneo-node-person[data-geneo-person-card-style="standard"] .geneo-person-life-event-kind {
+    color: color-mix(in srgb, currentColor 74%, transparent);
+    font-weight: 400;
+}
+
+.geneo-node-person[data-geneo-person-card-style="standard"] .geneo-person-life-event-kind abbr {
+    text-decoration: none;
+}
+
+.geneo-node-person[data-geneo-person-card-style="standard"] .geneo-person-life-event-date {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 0 1 auto;
+}
+
+.geneo-node-person[data-geneo-person-card-style="standard"] .geneo-person-life-event-place {
+    flex: 1 1 0;
+}
+
+.geneo-node-person[data-geneo-person-card-style="standard"]:is(:hover, :focus-within, .selected) .geneo-person-life {
+    padding-right: 84px;
 }
 
 .geneo-node-person[ data-geneo-person-card-style="standard"
 
 ] .geneo-person-name {
-    font-size: 19px;
-    font-weight: 850;
-    line-height: 1.18;
-    -webkit-line-clamp: 3;
+    font-size: 18px;
+    font-weight: 650;
+    line-height: 1.2;
+    -webkit-line-clamp: 2;
     line-clamp:
-        3;
+        2;
 }
 
 .geneo-node-person[ data-geneo-person-card-style="standard"
@@ -3084,7 +3126,7 @@
 .geneo-node-person[ data-geneo-person-card-style="standard"
 
 ] .geneo-person-maiden {
-    font-size: 14px;
+    font-size: 16px;
 }
 
 .geneo-node-person[ data-geneo-person-card-style="standard"
@@ -3434,7 +3476,11 @@
 
 @container geneo-person-card (max-width: 279px) {
     .geneo-node-person[data-geneo-person-card-style="standard"] .geneo-person-name {
-        font-size: 18px;
+        font-size: 17px;
+    }
+
+    .geneo-node-person[data-geneo-person-card-style="standard"] .geneo-person-maiden {
+        font-size: 14px;
     }
 
     .geneo-node-person[data-geneo-person-card-style="tree"] .geneo-person-node-content {
@@ -3476,12 +3522,6 @@
     }
 }
 
-@container geneo-person-card (min-width: 420px) {
-    .geneo-node-person[data-geneo-person-card-style="standard"] .geneo-person-name {
-        font-size: 21px;
-    }
-}
-
 @container geneo-person-card (min-width: 500px) {
     .geneo-person-node-content {
         --geneo-card-date-size: 15px;
@@ -3508,7 +3548,8 @@
     * matching the interaction language of
     * Family Tree.
     */
-.geneo-person-add-relative {
+.geneo-person-add-relative,
+.geneo-person-edit-action {
     position: absolute;
     z-index: 10;
 
@@ -3548,7 +3589,8 @@
         color var(--ease);
 }
 
-.geneo-person-add-relative svg {
+.geneo-person-add-relative svg,
+.geneo-person-edit-action svg {
     width: 16px;
     height: 16px;
     display: block;
@@ -3556,13 +3598,17 @@
 
 .geneo-node-person:hover .geneo-person-add-relative,
 .geneo-node-person:focus-within .geneo-person-add-relative,
-.geneo-node-person.selected .geneo-person-add-relative {
+.geneo-node-person.selected .geneo-person-add-relative,
+.geneo-node-person:hover .geneo-person-edit-action,
+.geneo-node-person:focus-within .geneo-person-edit-action,
+.geneo-node-person.selected .geneo-person-edit-action {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
 }
 
-.geneo-person-add-relative:hover {
+.geneo-person-add-relative:hover,
+.geneo-person-edit-action:hover {
     background:
         rgba(255,
             255,
@@ -3572,7 +3618,8 @@
     color: currentColor;
 }
 
-.geneo-person-add-relative:focus-visible {
+.geneo-person-add-relative:focus-visible,
+.geneo-person-edit-action:focus-visible {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
@@ -3584,11 +3631,44 @@
 }
 
 @media (hover: none) {
-    .geneo-node-person.selected .geneo-person-add-relative {
+    .geneo-node-person.selected .geneo-person-add-relative,
+    .geneo-node-person.selected .geneo-person-edit-action {
         opacity: 1;
         visibility: visible;
         pointer-events: auto;
     }
+}
+
+.geneo-node-person[data-geneo-person-card-style="standard"] .geneo-person-add-relative,
+.geneo-node-person[data-geneo-person-card-style="standard"] .geneo-person-edit-action {
+    bottom: 9px;
+    width: 44px;
+    height: 44px;
+    background: transparent;
+}
+
+.geneo-node-person[data-geneo-person-card-style="standard"] .geneo-person-add-relative {
+    right: 54px;
+}
+
+.geneo-node-person[data-geneo-person-card-style="standard"] .geneo-person-edit-action {
+    right: 10px;
+}
+
+.geneo-node-person[data-geneo-person-card-style="standard"] :is(.geneo-person-add-relative, .geneo-person-edit-action)::before {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border-radius: 6px;
+    background: rgba(8, 14, 11, .72);
+}
+
+.geneo-node-person[data-geneo-person-card-style="standard"] :is(.geneo-person-add-relative, .geneo-person-edit-action):is(:hover, :focus-visible)::before {
+    background: rgba(255, 255, 255, .1);
+}
+
+.geneo-node-person[data-geneo-person-card-style="standard"] :is(.geneo-person-add-relative, .geneo-person-edit-action) svg {
+    position: relative;
 }
 
 .geneo-node-image .geneo-node-content {
