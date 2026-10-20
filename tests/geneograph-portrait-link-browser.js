@@ -52,7 +52,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 const resized = board.diagram.nodes.find(item => item.id === nodeId);
                 return { first, resized: [resized.width, resized.height] };
             }, nodeId);
-            assert.deepEqual(migration.first, [72.5, 90, 235, 340, 1]);
+            assert.deepEqual(migration.first, [72.5, 80, 235, 360, 1]);
             assert.deepEqual(migration.resized, [205, 305]);
             assert.equal(await card.getAttribute('data-geneo-person-link-status'), null);
             await page.locator('[data-geneo-person-card-field="linkIndicator"][data-geneo-person-card-scope="node"]').check();
@@ -64,7 +64,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             assert.equal(await card.getAttribute('data-geneo-person-link-status'), 'linked');
 
             if (language === 'ru') await page.setViewportSize({ width: 390, height: 800 });
-            for (const [width, height] of [[200, 300], [235, 340], [420, 420]]) {
+            for (const [width, height] of [[200, 300], [235, 360], [420, 420]]) {
                 const layout = await page.evaluate(({ nodeId, width, height }) => {
                     const node = getGeneographNode(nodeId);
                     node.width = width;
@@ -99,7 +99,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 const node = getGeneographNode(nodeId);
                 const person = selectedGeneographDiagram().people.find(item => item.id === node.personId);
                 node.width = 235;
-                node.height = 340;
+                node.height = 360;
                 person.names.first = 'Alexandra Alexandra';
                 person.names.middle = 'Alexandrovna';
                 person.names.last = 'Whiskerfield';

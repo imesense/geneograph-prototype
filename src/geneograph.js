@@ -114,7 +114,7 @@ const GENEO_PERSON_CARD_GEOMETRY =
 
         portrait: {
             width: 235,
-            height: 340,
+            height: 360,
             minWidth: 200,
             minHeight: 300,
             maxWidth: 400,
