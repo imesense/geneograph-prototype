@@ -2975,7 +2975,6 @@ body.mobile-details-open .geneo-inspector [data-geneo-inspector-toggle] {
 .geneo-node-person[data-geneo-person-link-status]::after { content: ''; position: absolute; top: 7px; right: 7px; width: 7px; height: 7px; border-radius: 50%; border: 1px solid var(--surface-card); background: var(--text-tertiary); pointer-events: none; }
 .geneo-node-person[data-geneo-person-link-status="linked"]::after { background: var(--brand-green-500); }
 .geneo-node-person[data-geneo-person-link-status="attention"]::after { background: var(--red); }
-.geneo-node-person[data-geneo-person-link-status="attention"] .geneo-person-link-indicator { color: var(--red); }
 .geneo-tree-import-modal { width: min(1080px, calc(100vw - 32px)); max-height: min(820px, calc(100dvh - 32px)); }
 .geneo-tree-import-modal .geneo-transfer-body { display: block; padding: 0; overflow: auto; flex: 1; }
 .geneo-review-layout { display: grid; grid-template-columns: minmax(190px, 230px) minmax(0, 1fr); min-height: 100%; }

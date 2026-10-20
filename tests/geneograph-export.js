@@ -84,6 +84,7 @@ async function runGeneographExportChecks()
 
         await check('Connection-status dots are omitted from the PNG clone only', async () =>
         {
+            app.eval('selectedGeneographDiagram().personCardDefaults.fields.linkIndicator = true; renderGeneographEditorPreserveScroll();');
             const result = app.eval(`(() => {
                 const live = main.querySelector('[data-geneo-stage]');
                 const before = live.querySelectorAll('[data-geneo-person-link-status]').length;

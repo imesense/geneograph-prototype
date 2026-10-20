@@ -709,9 +709,7 @@ function geneoPersonCardViewModel(
             structuredLife: false,
             birthEvent: null,
             deathEvent: null,
-            displayStatus: '',
-            linked: false,
-            linkTitle: ''
+            displayStatus: ''
         };
     }
 
@@ -850,17 +848,6 @@ function geneoPersonCardViewModel(
             ? person.livingStatus
             : '';
 
-    const linked =
-        Boolean(
-            fields.linkIndicator
-          && person.treePersonId
-        );
-
-    const linkTitle =
-        person.syncState === 'modified'
-            ? 'Linked to Family Tree with board changes'
-            : 'Linked to Family Tree';
-
     return {
         person,
         settings,
@@ -873,9 +860,7 @@ function geneoPersonCardViewModel(
         structuredLife,
         birthEvent,
         deathEvent,
-        displayStatus,
-        linked,
-        linkTitle
+        displayStatus
     };
 }
 
@@ -10441,30 +10426,6 @@ function renderGeneographPersonNode(
             ${statusContent}
           `;
 
-    const linkIndicator =
-        model.linked
-            ? `
-            <span
-              class="
-                geneo-person-link-indicator
-                ${
-                    person.syncState === 'modified'
-                        ? 'modified'
-                        : ''
-                }
-              "
-              role="img"
-              aria-label="${escapeHtml(
-                    model.linkTitle
-                )}"
-              title="${escapeHtml(
-                    model.linkTitle
-                )}">
-              ${icon.link}
-            </span>
-          `
-            : '';
-
     return `
         <div
           class="
@@ -10520,7 +10481,6 @@ function renderGeneographPersonNode(
                     : ''
             }
 
-          ${linkIndicator}
         </div>
       `;
 }
@@ -11070,7 +11030,7 @@ function renderGeneographObject(node)
                 node.id
             )}"
           ${node.type === 'shape' ? `data-geneo-shape-kind="${escapeHtml(normalizeGeneographShapeKind(node.shapeKind))}"` : ''}
-          ${boardPerson ? `data-geneo-person-link-status="${personLinked ? 'linked' : boardPerson.treePersonId ? 'attention' : 'board'}"` : ''}
+          ${boardPerson && personSettings?.fields.linkIndicator ? `data-geneo-person-link-status="${personLinked ? 'linked' : boardPerson.treePersonId ? 'attention' : 'board'}"` : ''}
           ${
                 personSettings
                     ? `
@@ -11092,7 +11052,7 @@ function renderGeneographObject(node)
           tabindex="0"
           aria-label="${escapeHtml(
                 geneoNodeTitle(node)
-            )}${boardPerson ? `, ${personLinked ? 'Linked to Family Tree' : boardPerson.treePersonId ? 'Link needs attention' : 'Board only'}` : ''}">
+            )}${boardPerson && personSettings?.fields.linkIndicator ? `, ${personLinked ? 'Linked to Family Tree' : boardPerson.treePersonId ? 'Link needs attention' : 'Board only'}` : ''}">
           <div
             class="geneo-node-content">
             ${renderGeneographNodeContent(
