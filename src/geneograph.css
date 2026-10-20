@@ -1507,6 +1507,26 @@
     line-height: 1.4;
 }
 
+.geneo-object-context-menu {
+    box-sizing: border-box;
+    width: min(210px, calc(100vw - 24px));
+}
+
+.geneo-object-context-menu button {
+    min-height: 38px;
+}
+
+.geneo-object-context-menu button:focus-visible {
+    background: var(--surface-card-hover);
+    color: var(--text-primary);
+    outline: 2px solid var(--brand-green-300);
+    outline-offset: -2px;
+}
+
+.geneo-object-context-menu button.danger:is(:hover, :focus-visible) {
+    color: #f2b3b3;
+}
+
 .tool-options-menu button {
     min-height: 38px;
     display: flex;

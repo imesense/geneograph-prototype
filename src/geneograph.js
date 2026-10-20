@@ -5143,7 +5143,10 @@ function bindGeneographHome()
 function openGeneographBoard(id)
 {
     cancelGeneographPencilStroke();
+    closeGeneographObjectContextMenu();
+    closeMenu();
     const previousBoard = selectedGeneographBoard();
+    if (previousBoard?.id !== id) geneoObjectClipboard = null;
     if (state.geneoView === 'board' && previousBoard?.id && previousBoard.id !== id) captureGeneographViewport(previousBoard.id);
     const savedViewport = geneoSavedViewport(id);
     state.selectedGeneoBoardId = id;
@@ -5207,6 +5210,7 @@ function deleteGeneographBoard(
 
     if (ownsEditorState)
     {
+        geneoObjectClipboard = null;
         // Cancel pending editor interactions before removing the canvas.
         cancelGeneographPencilStroke();
         cancelGeneographConnectionDraft();
@@ -7814,6 +7818,7 @@ let geneoHistoryRuntime = {
     undo: [],
     redo: []
 };
+let geneoObjectClipboard = null;
 
 let geneoToolbarResizeObserver = null;
 
@@ -15829,6 +15834,7 @@ function renderGeneographConnectionInspector(
 
 function renderGeneographEditor()
 {
+    closeGeneographObjectContextMenu();
     const richTextDraft = captureGeneographRichTextDraft();
     destroyGeneographRichTextEditor();
     if (geneoPaintRuntime.popover) closeGeneoPaintPopover({ restoreFocus: false });
@@ -23532,13 +23538,264 @@ function removeGeneographRelationship(connectionId)
     }
 }
 
-function deleteGeneographSelection()
+function geneoObjectGroupNodes(nodeIds = [...geneoSelectedNodeIdSet()])
+{
+    const diagram = selectedGeneographDiagram();
+    if (!diagram) return [];
+    const included = new Set(nodeIds);
+    let changed = true;
+    while (changed)
+    {
+        changed = false;
+        diagram.nodes.forEach(node =>
+        {
+            if (node.parentPanelId && included.has(node.parentPanelId) && !included.has(node.id))
+            {
+                included.add(node.id);
+                changed = true;
+            }
+        });
+    }
+    return diagram.nodes.filter(node => included.has(node.id));
+}
+
+function geneoObjectSnapshot(nodes)
+{
+    const diagram = selectedGeneographDiagram();
+    if (!diagram || !nodes.length) return null;
+    const personIds = new Set(nodes.filter(node => node.type === 'person').map(node => node.personId));
+    const assetIds = new Set(nodes.filter(node => node.type === 'image' && node.imageRef?.scope === 'board').map(node => node.imageRef.id));
+    diagram.people.forEach(person =>
+    {
+        if (personIds.has(person.id) && person.photoAssetId) assetIds.add(person.photoAssetId);
+    });
+    return structuredClone({
+        boardId: selectedGeneographBoard().id,
+        nodes,
+        people: diagram.people.filter(person => personIds.has(person.id)),
+        assets: (diagram.assets || []).filter(asset => assetIds.has(asset.id)),
+        pasteCount: 0
+    });
+}
+
+function copyGeneographSelection()
+{
+    const snapshot = geneoObjectSnapshot(geneoObjectGroupNodes());
+    if (!snapshot) return false;
+    geneoObjectClipboard = { ...snapshot, mode: 'copy' };
+    return true;
+}
+
+function geneoDetachCutPeople(personIds)
+{
+    if (!personIds.size) return;
+    const diagram = selectedGeneographDiagram();
+    diagram.families = diagram.families.filter(family =>
+    {
+        family.partnerIds = family.partnerIds.filter(id => !personIds.has(id));
+        family.children = family.children.filter(child => !personIds.has(child.personId));
+        return family.partnerIds.length || family.relationshipType === 'Sibling relationship' && family.children.length;
+    });
+    const familyIds = new Set(diagram.families.map(family => family.id));
+    diagram.connections = diagram.connections.filter(connection =>
+        !connection.familyId || familyIds.has(connection.familyId));
+}
+
+function cutGeneographSelection()
+{
+    const nodes = geneoObjectGroupNodes();
+    const snapshot = geneoObjectSnapshot(nodes);
+    if (!snapshot) return false;
+    geneoObjectClipboard = { ...snapshot, mode: 'cut' };
+    setGeneographNodeSelection(nodes.map(node => node.id));
+    deleteGeneographSelection({ detachFamilies: true });
+    return true;
+}
+
+function pasteGeneographObjects(snapshot = geneoObjectClipboard, { duplicate = false } = {})
+{
+    const diagram = selectedGeneographDiagram();
+    if (!diagram || !snapshot?.nodes?.length || snapshot.boardId !== selectedGeneographBoard()?.id) return false;
+    const cut = snapshot.mode === 'cut' && !duplicate;
+    if (cut && snapshot.nodes.some(node => diagram.nodes.some(existing => existing.id === node.id
+        || node.type === 'person' && existing.type === 'person' && existing.personId === node.personId)))
+    {
+        geneoObjectClipboard = null;
+        showToast(t('Cut objects are already on this board.'));
+        return false;
+    }
+    if (cut && snapshot.people.some(person => !diagram.people.some(item => item.id === person.id)))
+    {
+        geneoObjectClipboard = null;
+        showToast(t('Cut objects are no longer available.'));
+        return false;
+    }
+    const assetIds = new Set((diagram.assets || []).map(asset => asset.id));
+    const missingAssets = snapshot.assets.filter(asset => !assetIds.has(asset.id));
+    const personMap = new Map();
+    const nodeMap = new Map(snapshot.nodes.map(node => [node.id, createRuntimeId('geneo-node')]));
+    const minX = Math.min(...snapshot.nodes.map(node => node.x));
+    const minY = Math.min(...snapshot.nodes.map(node => node.y));
+    const maxX = Math.max(...snapshot.nodes.map(node => node.x + node.width));
+    const maxY = Math.max(...snapshot.nodes.map(node => node.y + node.height));
+    const center = geneoCurrentViewportCenter() || geneoContentCenter();
+    const offset = duplicate ? 24 : (snapshot.pasteCount || 0) * 24;
+    const dx = duplicate ? 24 : center.x - (minX + maxX) / 2 + offset;
+    const dy = duplicate ? 24 : center.y - (minY + maxY) / 2 + offset;
+    const nextOrder = Math.max(0, ...diagram.nodes.map(node => node.order || 0));
+
+    geneoPushHistory();
+    if (missingAssets.length) diagram.assets.push(...structuredClone(missingAssets));
+    if (!cut)
+    {
+        snapshot.people.forEach(person =>
+        {
+            const id = createRuntimeId('geneo-person');
+            personMap.set(person.id, id);
+            diagram.people.push({ ...structuredClone(person), id, treePersonId: null, syncState: 'local' });
+        });
+    }
+    const pastedNodes = snapshot.nodes.map((node, index) => ({
+        ...structuredClone(node),
+        id: nodeMap.get(node.id),
+        personId: node.type === 'person' ? (personMap.get(node.personId) || node.personId) : node.personId,
+        parentPanelId: nodeMap.get(node.parentPanelId) || null,
+        x: geneoNumber(node.x + dx, node.x, -GENEO_WORLD_LIMIT, GENEO_WORLD_LIMIT),
+        y: geneoNumber(node.y + dy, node.y, -GENEO_WORLD_LIMIT, GENEO_WORLD_LIMIT),
+        order: nextOrder + index + 1
+    }));
+    diagram.nodes.push(...pastedNodes);
+    setGeneographNodeSelection(pastedNodes.map(node => node.id), pastedNodes.at(-1)?.id);
+    touchGeneographBoard();
+    renderGeneographEditorPreserveScroll();
+    if (cut) geneoObjectClipboard = null;
+    else if (!duplicate) snapshot.pasteCount += 1;
+    return true;
+}
+
+function duplicateGeneographSelection()
+{
+    const snapshot = geneoObjectSnapshot(geneoObjectGroupNodes());
+    return snapshot ? pasteGeneographObjects({ ...snapshot, mode: 'copy' }, { duplicate: true }) : false;
+}
+
+function geneoSetSelectedObjectsProperty(property, value)
+{
+    const nodes = geneoObjectGroupNodes();
+    if (!nodes.length || nodes.every(node => node[property] === value)) return;
+    geneoPushHistory();
+    nodes.forEach(node => { node[property] = value; });
+    if (property === 'visible' && !value) selectGeneographCanvas();
+    touchGeneographBoard();
+    renderGeneographEditorPreserveScroll();
+}
+
+let geneoObjectMenuController = null;
+
+function closeGeneographObjectContextMenu()
+{
+    geneoObjectMenuController?.abort();
+    geneoObjectMenuController = null;
+    document.querySelector('.geneo-object-context-menu')?.remove();
+}
+
+function openGeneographObjectContextMenu(nodeId, clientX, clientY)
+{
+    const node = getGeneographNode(nodeId);
+    if (!node) return;
+    closeGeneographObjectContextMenu();
+    closeMenu();
+    if (!geneoSelectedNodeIdSet().has(nodeId))
+    {
+        selectGeneographNode(nodeId);
+        renderGeneographEditorPreserveScroll();
+    }
+    if (state.selectedGeneoConnectionIds.length)
+    {
+        setGeneographNodeSelection([...geneoSelectedNodeIdSet()], nodeId);
+        renderGeneographEditorPreserveScroll();
+    }
+    const anchor = [...main.querySelectorAll('.geneo-node[data-geneo-node]')]
+        .find(element => element.dataset.geneoNode === nodeId);
+    if (!anchor) return;
+    const nodes = geneoObjectGroupNodes();
+    const visible = nodes.some(item => item.visible);
+    const locked = nodes.every(item => item.locked);
+    const actions = [
+        [visible ? 'hide' : 'show', visible ? 'Hide' : 'Show'],
+        [locked ? 'unlock' : 'lock', locked ? 'Unlock' : 'Lock'],
+        ['duplicate', 'Duplicate'],
+        ['copy', 'Copy'],
+        ['cut', 'Cut'],
+        ...(geneoObjectClipboard?.boardId === selectedGeneographBoard()?.id ? [['paste', 'Paste']] : []),
+        ['delete', 'Delete']
+    ];
+    const menu = document.createElement('div');
+    menu.id = 'projectMenu';
+    menu.className = 'menu-popover geneo-object-context-menu';
+    menu.setAttribute('role', 'menu');
+    menu.setAttribute('aria-label', t('Object actions'));
+    menu.style.visibility = 'hidden';
+    menu.innerHTML = actions.map(([action, label]) => `<button type="button" role="menuitem" data-geneo-object-action="${action}" class="${action === 'delete' ? 'danger' : ''}">${escapeHtml(t(label))}</button>`).join('');
+    document.body.appendChild(menu);
+    const bounds = menu.getBoundingClientRect();
+    menu.style.left = `${Math.max(12, Math.min(clientX, window.innerWidth - bounds.width - 12))}px`;
+    menu.style.top = `${Math.max(12, Math.min(clientY, window.innerHeight - bounds.height - 12))}px`;
+    menu.style.visibility = 'visible';
+    menu.addEventListener('click', event =>
+    {
+        const action = event.target.closest('[data-geneo-object-action]')?.dataset.geneoObjectAction;
+        if (!action) return;
+        closeGeneographObjectContextMenu();
+        if (action === 'hide' || action === 'show') geneoSetSelectedObjectsProperty('visible', action === 'show');
+        else if (action === 'lock' || action === 'unlock') geneoSetSelectedObjectsProperty('locked', action === 'lock');
+        else if (action === 'duplicate') duplicateGeneographSelection();
+        else if (action === 'copy') copyGeneographSelection();
+        else if (action === 'cut') cutGeneographSelection();
+        else if (action === 'paste') pasteGeneographObjects();
+        else if (action === 'delete') deleteGeneographSelection();
+    });
+    menu.addEventListener('keydown', event =>
+    {
+        const items = [...menu.querySelectorAll('[role="menuitem"]')];
+        const index = items.indexOf(document.activeElement);
+        if (event.key === 'Escape')
+        {
+            event.preventDefault(); event.stopPropagation(); closeGeneographObjectContextMenu(); anchor.focus();
+        }
+        else if (['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key))
+        {
+            event.preventDefault(); event.stopPropagation();
+            const next = event.key === 'Home' ? 0 : event.key === 'End' ? items.length - 1
+                : (index + (event.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length;
+            items[next]?.focus();
+        }
+        else if (event.key === 'Tab')
+        {
+            setTimeout(() => {
+                if (menu.isConnected && !menu.contains(document.activeElement)) closeGeneographObjectContextMenu();
+            }, 0);
+        }
+    });
+    geneoObjectMenuController = new AbortController();
+    const signal = geneoObjectMenuController.signal;
+    document.addEventListener('pointerdown', event =>
+    {
+        if (!menu.contains(event.target)) closeGeneographObjectContextMenu();
+    }, { signal });
+    window.addEventListener('resize', closeGeneographObjectContextMenu, { signal });
+    menu.querySelector('[role="menuitem"]')?.focus();
+}
+
+function deleteGeneographSelection({ detachFamilies = false } = {})
 {
     const diagram = selectedGeneographDiagram();
     const connections = selectedGeneographConnections();
     const nodes = selectedGeneographNodes();
     if (!connections.length && !nodes.length) return;
     geneoPushHistory();
+    if (detachFamilies)
+        geneoDetachCutPeople(new Set(nodes.filter(node => node.type === 'person').map(node => node.personId)));
     connections.map(connection => connection.id).forEach(connectionId =>
     {
         if (getGeneographConnection(connectionId)) removeGeneographRelationship(connectionId);
@@ -26198,6 +26455,25 @@ function bindGeneographEditor()
                     '.ql-tooltip'
                 ].join(',');
 
+            element.addEventListener('contextmenu', event =>
+            {
+                if (event.target.closest('input,textarea,select,[contenteditable="true"],.ql-editor')) return;
+                event.preventDefault();
+                event.stopPropagation();
+                openGeneographObjectContextMenu(element.dataset.geneoNode, event.clientX, event.clientY);
+            });
+
+            element.addEventListener('keydown', event =>
+            {
+                if ((event.shiftKey && event.key === 'F10') || event.key === 'ContextMenu')
+                {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    const rect = element.getBoundingClientRect();
+                    openGeneographObjectContextMenu(element.dataset.geneoNode, rect.left + 12, rect.top + 12);
+                }
+            });
+
             element.addEventListener(
                 'pointerdown',
                 event =>
@@ -27632,6 +27908,22 @@ function ensureGeneographKeyboardBinding()
         if (state.activeModule !== 'Geneograph' || state.geneoView !== 'board' || modalBackdrop.classList.contains('open')) return;
         const editable = event.target.closest('input,textarea,select,[contenteditable="true"]');
         if (editable) return;
+        if (event.ctrlKey || event.metaKey)
+        {
+            const key = event.key.toLowerCase();
+            if (key === 'c' && selectedGeneographNodes().length)
+            {
+                event.preventDefault(); copyGeneographSelection(); return;
+            }
+            if (key === 'x' && selectedGeneographNodes().length)
+            {
+                event.preventDefault(); closeGeneographObjectContextMenu(); cutGeneographSelection(); return;
+            }
+            if (key === 'v' && geneoObjectClipboard?.boardId === selectedGeneographBoard()?.id)
+            {
+                event.preventDefault(); closeGeneographObjectContextMenu(); pasteGeneographObjects(); return;
+            }
+        }
         if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'z')
         {
             event.preventDefault(); event.shiftKey ? redoGeneographChange() : undoGeneographChange(); return;
