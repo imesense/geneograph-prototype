@@ -34,7 +34,7 @@ function selectedGeneographBoard()
 const GENEO_PERSON_CARD_STYLES =
     Object.freeze([
         'standard',
-        'tree',
+        'compact',
         'chart',
         'portrait'
     ]);
@@ -94,7 +94,7 @@ const GENEO_PERSON_CARD_GEOMETRY =
             maxHeight: 440
         },
 
-        tree: {
+        compact: {
             width: 280,
             height: 110,
             minWidth: 230,
@@ -248,7 +248,7 @@ function geneoPersonCardDefaultFields(
         livingStatus: true,
         birthPlace: false,
         deathPlace: false,
-        maidenName: style === 'chart' || style === 'tree',
+        maidenName: style === 'chart' || style === 'compact',
         linkIndicator: false
     };
 }
@@ -257,7 +257,7 @@ function geneoPersonCardDefaultPhotoPreferences()
 {
     return {
         standard: true,
-        tree: false,
+        compact: false,
         chart: true,
         portrait: true
     };
@@ -270,7 +270,7 @@ function geneoDefaultPersonCardSettings(
     const normalizedStyle =
         [
             'standard',
-            'tree',
+            'compact',
             'chart',
             'portrait'
         ].includes(style)
@@ -366,7 +366,7 @@ function normalizeGeneographPersonCardSettings(
     ).forEach(key =>
     {
         fields[key] = key === 'photo'
-            ? style !== 'tree' && photoByStyle[style]
+            ? style !== 'compact' && photoByStyle[style]
             : typeof sourceFields[key]
               === 'boolean'
                 ? sourceFields[key]
@@ -397,7 +397,7 @@ function normalizeGeneographPersonCardSettings(
               defaults.photoSize
           ),
 
-        alignment: style === 'tree' ? 'center'
+        alignment: style === 'compact' ? 'center'
             : geneoPersonCardEnumValue(
                 'alignment',
                 source.alignment,
@@ -607,7 +607,7 @@ function geneoPersonCardEffectiveSettings(
           value('photoSize'),
 
         alignment:
-          style === 'tree' ? 'center' : value('alignment'),
+          style === 'compact' ? 'center' : value('alignment'),
 
         fields: {
             ...inheritedFields,
@@ -617,7 +617,7 @@ function geneoPersonCardEffectiveSettings(
                     ? {}
                     : { photo: photoOverride }
             ),
-            ...(style === 'tree' ? { photo: false } : {})
+            ...(style === 'compact' ? { photo: false } : {})
         },
 
         cornerRadius:
@@ -643,7 +643,7 @@ function geneoPersonCardFieldSupported(
     field
 )
 {
-    if (field === 'photo' && style === 'tree') return false;
+    if (field === 'photo' && style === 'compact') return false;
 
     if (
         field === 'birthPlace'
@@ -1067,12 +1067,6 @@ function geneoPersonCardPhotoBaseSize(
     const values = {
         standard: {
             small: 56,
-            medium: 64,
-            large: 76
-        },
-
-        tree: {
-            small: 52,
             medium: 64,
             large: 76
         },
@@ -10451,7 +10445,7 @@ function renderGeneographPersonNode(
     const compactLife =
         [
             model.lifeSpan,
-            ...(['chart', 'tree'].includes(model.settings.style) ? [] : [model.displayStatus])
+            ...(['chart', 'compact'].includes(model.settings.style) ? [] : [model.displayStatus])
         ]
             .filter(Boolean)
             .join(' · ');
@@ -13384,7 +13378,7 @@ function geneoPersonCardControlOptions()
     return {
         style: [
             ['standard', 'Standard'],
-            ['tree', 'Tree'],
+            ['compact', 'Compact'],
             ['chart', 'Chart'],
             ['portrait', 'Portrait']
         ],
@@ -13526,8 +13520,8 @@ function renderGeneographPersonCardStylePicker({
             subtitle: 'Detailed facts'
         },
         {
-            id: 'tree',
-            label: 'Tree',
+            id: 'compact',
+            label: 'Compact',
             subtitle: 'Compact text card'
         },
         {
@@ -13722,7 +13716,7 @@ function renderGeneographPersonCardControls({
                     !settings.fields.dates
                 )}
 
-              ${settings.style === 'tree' ? '' : select(
+              ${settings.style === 'compact' ? '' : select(
                     'photoSize',
                     'Photo size',
                     '',
@@ -13844,7 +13838,7 @@ function renderGeneographPersonCardControls({
             <div
               class="geneo-person-card-options">
               ${Object.entries(labels)
-                    .filter(([field]) => settings.style !== 'tree' || field !== 'photo')
+                    .filter(([field]) => settings.style !== 'compact' || field !== 'photo')
                     .map(
                         ([
                             field,

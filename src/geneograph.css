@@ -3179,8 +3179,8 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
     text-align: center;
 }
 
-/* Tree cards are compact, text-only labels for dense boards. */
-.geneo-node-person[data-geneo-person-card-style="tree"] .geneo-person-node-content {
+/* Compact cards are text-only labels for dense boards. */
+.geneo-node-person[data-geneo-person-card-style="compact"] .geneo-person-node-content {
     padding: 12px 38px;
     display: flex;
     flex-direction: column;
@@ -3189,36 +3189,36 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
     gap: 6px;
 }
 
-.geneo-node-person[data-geneo-person-card-style="tree"] :is(.geneo-person-identity-block, .geneo-person-life) {
+.geneo-node-person[data-geneo-person-card-style="compact"] :is(.geneo-person-identity-block, .geneo-person-life) {
     min-width: 0;
     padding: 0;
     text-align: center;
 }
 
-.geneo-node-person[data-geneo-person-card-style="tree"] .geneo-person-name-wrap {
+.geneo-node-person[data-geneo-person-card-style="compact"] .geneo-person-name-wrap {
     justify-items: center;
 }
 
-.geneo-node-person[data-geneo-person-card-style="tree"] .geneo-person-name {
+.geneo-node-person[data-geneo-person-card-style="compact"] .geneo-person-name {
     font-size: 18px;
     font-weight: 650;
     line-height: 1.2;
 }
 
-.geneo-node-person[data-geneo-person-card-style="tree"] .geneo-person-maiden {
+.geneo-node-person[data-geneo-person-card-style="compact"] .geneo-person-maiden {
     font-size: 14px;
     font-weight: 500;
     line-height: 1.25;
 }
 
-.geneo-node-person[data-geneo-person-card-style="tree"] .geneo-person-life-summary {
+.geneo-node-person[data-geneo-person-card-style="compact"] .geneo-person-life-summary {
     font-size: 14px;
     font-weight: 500;
     color: color-mix(in srgb, currentColor 70%, transparent);
 }
 
 @container geneo-person-card (max-height: 110px) {
-    .geneo-node-person[data-geneo-person-card-style="tree"] .geneo-person-node-content {
+    .geneo-node-person[data-geneo-person-card-style="compact"] .geneo-person-node-content {
         padding-block: 8px;
         gap: 4px;
     }
