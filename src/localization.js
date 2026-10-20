@@ -1775,8 +1775,8 @@ const RU_UI_GENEO = {
     'Compact family view':
         'Компактный семейный вид',
 
-    'Maximum density':
-        'Максимальная плотность',
+    'Photo-first timeline':
+        'Фото и даты',
 
     'Photo-first':
         'Акцент на фотографии',
