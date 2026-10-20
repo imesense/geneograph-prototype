@@ -34,6 +34,26 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 return node.id;
             }, language);
             const card = page.locator(`.geneo-node-person[data-geneo-node="${nodeId}"]`);
+            const migration = await page.evaluate(nodeId => {
+                const board = structuredClone(selectedGeneographBoard());
+                const node = board.diagram.nodes.find(item => item.id === nodeId);
+                node.width = 180;
+                node.height = 280;
+                node.x = 100;
+                node.y = 120;
+                delete node.portraitCardLayoutVersion;
+                const people = new Map([[board.projectId, new Set()]]);
+                normalizeGeneographBoardRecord(board, people);
+                const grown = board.diagram.nodes.find(item => item.id === nodeId);
+                const first = [grown.x, grown.y, grown.width, grown.height, grown.portraitCardLayoutVersion];
+                grown.width = 205;
+                grown.height = 305;
+                normalizeGeneographBoardRecord(board, people);
+                const resized = board.diagram.nodes.find(item => item.id === nodeId);
+                return { first, resized: [resized.width, resized.height] };
+            }, nodeId);
+            assert.deepEqual(migration.first, [72.5, 90, 235, 340, 1]);
+            assert.deepEqual(migration.resized, [205, 305]);
             assert.equal(await card.getAttribute('data-geneo-person-link-status'), null);
             await page.locator('[data-geneo-person-card-field="linkIndicator"][data-geneo-person-card-scope="node"]').check();
             assert.equal(await card.getAttribute('data-geneo-person-link-status'), 'linked');
@@ -44,7 +64,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             assert.equal(await card.getAttribute('data-geneo-person-link-status'), 'linked');
 
             if (language === 'ru') await page.setViewportSize({ width: 390, height: 800 });
-            for (const [width, height] of [[170, 260], [200, 330], [420, 420]]) {
+            for (const [width, height] of [[200, 300], [235, 340], [420, 420]]) {
                 const layout = await page.evaluate(({ nodeId, width, height }) => {
                     const node = getGeneographNode(nodeId);
                     node.width = width;
@@ -53,22 +73,67 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                     const card = document.querySelector(`.geneo-node-person[data-geneo-node="${nodeId}"]`);
                     const bounds = card.getBoundingClientRect();
                     const content = card.querySelector('.geneo-person-node-content').getBoundingClientRect();
-                    const events = [...card.querySelectorAll('.geneo-person-life-event')].map(row => {
-                        const label = row.querySelector('.geneo-person-life-event-kind').getBoundingClientRect();
-                        const value = row.querySelector('.geneo-person-life-event-value').getBoundingClientRect();
-                        return { separate: label.right <= value.left + 1 || label.bottom <= value.top + 1,
-                            inside: label.left >= bounds.left - 1 && value.right <= bounds.right + 1 };
-                    });
-                    return { count: events.length, events,
-                        noOverflow: content.right <= bounds.right + 1 && content.bottom <= bounds.bottom + 1 };
+                    const avatar = card.querySelector('.geneo-person-avatar').getBoundingClientRect();
+                    const name = card.querySelector('.geneo-person-name').getBoundingClientRect();
+                    const date = card.querySelector('.geneo-person-life').getBoundingClientRect();
+                    const editButton = card.querySelector('.geneo-person-edit-action');
+                    const addButton = card.querySelector('.geneo-person-add-relative');
+                    const edit = editButton.getBoundingClientRect();
+                    const add = addButton.getBoundingClientRect();
+                    return { avatar: [avatar.width, avatar.height],
+                        noOverflow: content.right <= bounds.right + 1 && content.bottom <= bounds.bottom + 1,
+                        ordered: avatar.bottom < name.top && name.bottom <= date.top && date.bottom < edit.top,
+                        actions: editButton.offsetWidth >= 44 && addButton.offsetWidth >= 44 && edit.right <= add.left + 1,
+                        date: card.querySelector('.geneo-portrait-date-full')?.textContent.trim(),
+                        placeRows: card.querySelectorAll('.geneo-person-life-event').length };
                 }, { nodeId, width, height });
-                assert.equal(layout.count, 2);
-                assert.ok(layout.events.every(event => event.separate && event.inside) && layout.noOverflow,
+                assert.equal(layout.placeRows, 0);
+                assert.ok(layout.noOverflow && layout.ordered && layout.actions && layout.date && Math.abs(layout.avatar[0] - layout.avatar[1]) < 1,
                     JSON.stringify({ language, width, height, layout }));
                 if (process.env.GENEO_SCREENSHOT_DIR && language === 'ru')
                     await card.screenshot({ path: path.join(process.env.GENEO_SCREENSHOT_DIR, `geneo-portrait-${width}.png`) });
             }
             if (language === 'ru') await page.setViewportSize({ width: 1280, height: 800 });
+
+            const dense = await page.evaluate(nodeId => {
+                const node = getGeneographNode(nodeId);
+                const person = selectedGeneographDiagram().people.find(item => item.id === node.personId);
+                node.width = 235;
+                node.height = 340;
+                person.names.first = 'Alexandra Alexandra';
+                person.names.middle = 'Alexandrovna';
+                person.names.last = 'Whiskerfield';
+                renderGeneographEditorPreserveScroll();
+                const card = document.querySelector(`.geneo-node-person[data-geneo-node="${nodeId}"]`);
+                const name = card.querySelector('.geneo-person-name').getBoundingClientRect();
+                const date = card.querySelector('.geneo-person-life').getBoundingClientRect();
+                const edit = card.querySelector('.geneo-person-edit-action').getBoundingClientRect();
+                return { nameBeforeDate: name.bottom <= date.top,
+                    dateBeforeActions: date.bottom < edit.top,
+                    photo: !!card.querySelector('.geneo-person-avatar') };
+            }, nodeId);
+            assert.ok(dense.photo && dense.nameBeforeDate && dense.dateBeforeActions,
+                JSON.stringify({ language, dense }));
+
+            const noPhoto = await page.evaluate(nodeId => {
+                const node = getGeneographNode(nodeId);
+                const person = selectedGeneographDiagram().people.find(item => item.id === node.personId);
+                node.width = 200;
+                node.height = 300;
+                node.personCard.fields.photo = false;
+                renderGeneographEditorPreserveScroll();
+                const card = document.querySelector(`.geneo-node-person[data-geneo-node="${nodeId}"]`);
+                const content = card.querySelector('.geneo-person-node-content');
+                const name = card.querySelector('.geneo-person-name').getBoundingClientRect();
+                const date = card.querySelector('.geneo-person-life').getBoundingClientRect();
+                const edit = card.querySelector('.geneo-person-edit-action').getBoundingClientRect();
+                return { noPhoto: content.classList.contains('no-photo'),
+                    noOverlap: name.bottom <= date.top && date.bottom < edit.top,
+                    fullDate: card.querySelector('.geneo-portrait-date-full').textContent,
+                    wrapped: card.classList.contains('geneo-portrait-date-tight') };
+            }, nodeId);
+            assert.ok(noPhoto.noPhoto && noPhoto.noOverlap && noPhoto.fullDate.includes('–'),
+                JSON.stringify({ language, noPhoto }));
 
             await page.evaluate(() => {
                 state.selectedGeneoNodeId = '';

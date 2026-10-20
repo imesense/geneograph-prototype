@@ -113,10 +113,10 @@ const GENEO_PERSON_CARD_GEOMETRY =
         },
 
         portrait: {
-            width: 200,
-            height: 330,
-            minWidth: 170,
-            minHeight: 260,
+            width: 235,
+            height: 340,
+            minWidth: 200,
+            minHeight: 300,
             maxWidth: 400,
             maxHeight: 660
         }
@@ -248,7 +248,7 @@ function geneoPersonCardDefaultFields(
         livingStatus: true,
         birthPlace: false,
         deathPlace: false,
-        maidenName: style === 'chart' || style === 'compact',
+        maidenName: style === 'chart' || style === 'compact' || style === 'portrait',
         linkIndicator: false
     };
 }
@@ -579,7 +579,11 @@ function geneoPersonCardEffectiveSettings(
                     photo:
                   geneoPersonCardDefaultFields(
                       style
-                  ).photo
+                  ).photo,
+                    maidenName:
+                  geneoPersonCardDefaultFields(
+                      style
+                  ).maidenName
                 }
         )
     };
@@ -650,10 +654,7 @@ function geneoPersonCardFieldSupported(
         || field === 'deathPlace'
     )
     {
-        return (
-            style === 'standard'
-          || style === 'portrait'
-        );
+        return style === 'standard';
     }
 
     return true;
@@ -756,9 +757,7 @@ function geneoPersonCardViewModel(
             person
         );
 
-    const detailedStyle =
-        settings.style === 'standard'
-        || settings.style === 'portrait';
+    const detailedStyle = settings.style === 'standard';
 
     const birthDate =
         fields.dates
@@ -833,6 +832,15 @@ function geneoPersonCardViewModel(
                 settings.dateFormat
             )
             : '';
+    const portraitLifeSpan = settings.style === 'portrait' && fields.dates
+        ? birthDate && deathDate
+            ? `${birthDate} – ${deathDate}`
+            : birthDate
+                ? `${state.language === 'ru' ? 'Род.' : 'Born'} ${birthDate}`
+                : deathDate
+                    ? `${state.language === 'ru' ? 'Ум.' : 'Died'} ${deathDate}`
+                    : ''
+        : '';
 
     /*
        * Living is intentionally not presented
@@ -861,6 +869,7 @@ function geneoPersonCardViewModel(
         showPhoto:
           Boolean(fields.photo),
         lifeSpan,
+        portraitLifeSpan,
         chartWrappedFirst: birthDate && deathDate ? birthDate : lifeSpan,
         chartWrappedSecond: birthDate && deathDate
             ? `– ${deathDate}` : '',
@@ -1078,9 +1087,9 @@ function geneoPersonCardPhotoBaseSize(
         },
 
         portrait: {
-            small: 96,
-            medium: 116,
-            large: 136
+            small: 110,
+            medium: 130,
+            large: 150
         }
     };
 
@@ -1159,6 +1168,8 @@ function ensureGeneographPersonCardSize(
         );
     if (geneoPersonCardEffectiveSettings(node, diagram).style === 'chart')
         node.chartCardLayoutVersion = 1;
+    if (geneoPersonCardEffectiveSettings(node, diagram).style === 'portrait')
+        node.portraitCardLayoutVersion = 1;
 }
 
 function geneoPersonCardUsesAutoHeight(
@@ -8708,6 +8719,16 @@ function normalizeGeneographBoardRecord(board, projectPeople)
                         normalizedNode.height = height;
                     }
 
+                    if (legacyStyle === 'portrait' && node.portraitCardLayoutVersion !== 1)
+                    {
+                        const width = Math.max(normalizedNode.width, GENEO_PERSON_CARD_GEOMETRY.portrait.width);
+                        const height = Math.max(normalizedNode.height, GENEO_PERSON_CARD_GEOMETRY.portrait.height);
+                        normalizedNode.x -= (width - normalizedNode.width) / 2;
+                        normalizedNode.y -= (height - normalizedNode.height) / 2;
+                        normalizedNode.width = width;
+                        normalizedNode.height = height;
+                    }
+
                     ensureGeneographPersonCardSize(
                         normalizedNode,
                         diagram
@@ -10403,6 +10424,21 @@ function updateGeneographChartDateFit(element)
     }
 }
 
+function updateGeneographPortraitDateFit(element)
+{
+    if (element?.dataset.geneoPersonCardStyle !== 'portrait') return;
+    const full = element.querySelector('.geneo-portrait-date-full');
+    const summary = full?.closest('.geneo-person-life-summary');
+    if (!full || !summary) return;
+    element.classList.remove('geneo-portrait-date-tight');
+    if (!element.querySelector('.geneo-portrait-date-wrapped')) return;
+    const context = document.createElement('canvas').getContext('2d');
+    const style = getComputedStyle(full);
+    context.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+    if (context.measureText(full.textContent).width > summary.clientWidth + 1)
+        element.classList.add('geneo-portrait-date-tight');
+}
+
 function renderGeneographPersonNode(
     node
 )
@@ -10434,18 +10470,12 @@ function renderGeneographPersonNode(
             )
             : '';
 
-    const compactStyle =
-        ![
-            'standard',
-            'portrait'
-        ].includes(
-            model.settings.style
-        );
+    const compactStyle = model.settings.style !== 'standard';
 
     const compactLife =
         [
             model.lifeSpan,
-            ...(['chart', 'compact'].includes(model.settings.style) ? [] : [model.displayStatus])
+            ...(['chart', 'compact', 'portrait'].includes(model.settings.style) ? [] : [model.displayStatus])
         ]
             .filter(Boolean)
             .join(' · ');
@@ -10472,8 +10502,10 @@ function renderGeneographPersonNode(
         compactStyle
             ? compactLife
                 ? `
-              <span class="geneo-person-life-summary" title="${escapeHtml(compactLife)}">
-                ${model.settings.style === 'chart'
+              <span class="geneo-person-life-summary" title="${escapeHtml(model.settings.style === 'portrait' ? model.portraitLifeSpan : compactLife)}">
+                ${model.settings.style === 'portrait'
+                    ? `<span class="geneo-portrait-date-full">${escapeHtml(model.portraitLifeSpan)}</span>${model.chartWrappedSecond ? `<span class="geneo-portrait-date-wrapped"><span class="geneo-portrait-date-first">${escapeHtml(model.chartWrappedFirst)}</span><span class="geneo-portrait-date-second">${escapeHtml(model.chartWrappedSecond)}</span></span>` : ''}`
+                    : model.settings.style === 'chart'
                     ? `<span class="geneo-chart-date-full">${escapeHtml(compactLife)}</span><span class="geneo-chart-date-wrapped"><span class="geneo-chart-date-first">${escapeHtml(model.chartWrappedFirst)}</span>${model.chartWrappedSecond ? `<span class="geneo-chart-date-second">${escapeHtml(model.chartWrappedSecond)}</span>` : ''}</span>`
                     : escapeHtml(compactLife)}
               </span>
@@ -11162,7 +11194,7 @@ function renderGeneographObject(node)
 
           ${
                 node.type === 'person'
-              && ['standard', 'chart'].includes(personSettings?.style)
+              && ['standard', 'chart', 'portrait'].includes(personSettings?.style)
                     ? renderGeneographPersonEditAction(node)
                     : ''
           }
@@ -13839,7 +13871,7 @@ function renderGeneographPersonCardControls({
             <div
               class="geneo-person-card-options">
               ${Object.entries(labels)
-                    .filter(([field]) => settings.style !== 'compact' || field !== 'photo')
+                    .filter(([field]) => (settings.style !== 'compact' || field !== 'photo') && (settings.style !== 'portrait' || !['birthPlace', 'deathPlace'].includes(field)))
                     .map(
                         ([
                             field,
@@ -26526,6 +26558,11 @@ function bindGeneographEditor()
                 ['pointerenter', 'pointerleave', 'focusin', 'focusout'].forEach(type =>
                     element.addEventListener(type, () => requestAnimationFrame(() => updateGeneographChartDateFit(element))));
                 requestAnimationFrame(() => updateGeneographChartDateFit(element));
+            }
+            if (element.dataset.geneoPersonCardStyle === 'portrait')
+            {
+                requestAnimationFrame(() => updateGeneographPortraitDateFit(element));
+                new ResizeObserver(() => updateGeneographPortraitDateFit(element)).observe(element);
             }
 
             element.addEventListener('keydown', event =>
