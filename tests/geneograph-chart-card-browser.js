@@ -27,7 +27,8 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 diagram.personCardDefaults.photoByStyle.chart = true;
                 diagram.personCardDefaults.fields.maidenName = true;
                 const person = diagram.people.find(item => item.id === 'gp-daisy');
-                person.names.maiden = 'Purrington';
+                person.names.last = 'Purrington';
+                person.names.maiden = 'Milkpaw';
                 const node = createGeneographPersonNodeForBoardPerson(person);
                 node.x = 400; node.y = 350;
                 renderGeneographEditorPreserveScroll();
@@ -39,18 +40,27 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 height: element.offsetHeight,
                 photo: element.querySelector('.geneo-person-avatar')?.offsetWidth,
                 nameSize: getComputedStyle(element.querySelector('.geneo-person-name')).fontSize,
+                nameLineHeight: getComputedStyle(element.querySelector('.geneo-person-name')).lineHeight,
                 dateSize: getComputedStyle(element.querySelector('.geneo-person-life-summary')).fontSize,
                 date: element.querySelector('.geneo-chart-date-full')?.textContent,
                 maiden: element.querySelector('.geneo-person-maiden')?.textContent,
                 placeCount: element.querySelectorAll('.geneo-person-life-event-place').length,
                 statusCount: element.querySelectorAll('.geneo-person-status').length,
-                align: getComputedStyle(element.querySelector('.geneo-person-life')).textAlign
+                align: getComputedStyle(element.querySelector('.geneo-person-life')).textAlign,
+                groupGap: (() => {
+                    const scale = element.getBoundingClientRect().width / element.offsetWidth;
+                    const identity = element.querySelector('.geneo-person-identity-block').getBoundingClientRect();
+                    const life = element.querySelector('.geneo-person-life').getBoundingClientRect();
+                    return (life.top - identity.bottom) / scale;
+                })()
             }));
             assert.equal(base.width, 420);
             assert.equal(base.height, 160);
             assert.equal(base.photo, 130, JSON.stringify(base));
             assert.equal(base.nameSize, '20px');
+            assert.equal(base.nameLineHeight, '27px');
             assert.equal(base.dateSize, '16px');
+            assert.ok(base.groupGap >= 8 && base.groupGap <= 12, JSON.stringify(base));
             assert.ok(base.maiden);
             assert.equal(base.placeCount, 0);
             assert.equal(base.statusCount, 0);

@@ -24,7 +24,8 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 setLanguage(language, false);
                 const diagram = selectedGeneographDiagram();
                 const person = diagram.people.find(item => item.id === 'gp-daisy');
-                person.names.maiden = 'Purrington';
+                person.names.last = 'Purrington';
+                person.names.maiden = 'Milkpaw';
                 person.birth.placeText = 'Pawford, North Yorkshire, England';
                 person.death.placeText = 'Pawford, North Yorkshire, England';
                 diagram.personCardDefaults.fields.birthPlace = true;
@@ -59,6 +60,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                     photoHeight: photo.offsetHeight,
                     nameSize: getComputedStyle(name).fontSize,
                     nameWeight: getComputedStyle(name).fontWeight,
+                    nameLineHeight: getComputedStyle(name).lineHeight,
                     maidenSize: maiden ? getComputedStyle(maiden).fontSize : null,
                     maidenWeight: maiden ? getComputedStyle(maiden).fontWeight : null,
                     stroke: getComputedStyle(element).borderTopStyle,
@@ -87,10 +89,13 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             assert.equal(base.photoHeight, 64);
             assert.equal(base.nameSize, '19px');
             assert.equal(base.nameWeight, '600');
+            assert.equal(base.nameLineHeight, '25.65px');
             assert.equal(base.maidenSize, '14px');
             assert.equal(base.maidenWeight, '450');
             assert.equal(base.stroke, 'none');
             assert.equal(base.edit, 1);
+            if (process.env.GENEO_STANDARD_SCREENSHOT_DIR)
+                await card.screenshot({ path: path.join(process.env.GENEO_STANDARD_SCREENSHOT_DIR, `standard-${language}-both.png`) });
             assert.deepEqual(base.labels, language === 'ru' ? ['род.', 'ум.'] : ['Born:', 'Died:']);
             assert.deepEqual(base.fullLabels, language === 'ru' ? ['Рождение', 'Смерть'] : ['Born', 'Died']);
             assert.deepEqual(base.labelWeights, ['500', '500']);
@@ -228,6 +233,15 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 renderGeneographEditorPreserveScroll();
                 return document.querySelectorAll(`.geneo-node-person[data-geneo-node="${nodeId}"] .geneo-person-life-event`).length;
             }, nodeId), 1);
+            const singleEventGap = await card.evaluate(element => {
+                const scale = element.getBoundingClientRect().width / element.offsetWidth;
+                const photo = element.querySelector('.geneo-person-avatar').getBoundingClientRect();
+                const event = element.querySelector('.geneo-person-life-event').getBoundingClientRect();
+                return (event.top - photo.bottom) / scale;
+            });
+            assert.ok(singleEventGap >= 8 && singleEventGap <= 16, singleEventGap);
+            if (process.env.GENEO_STANDARD_SCREENSHOT_DIR)
+                await card.screenshot({ path: path.join(process.env.GENEO_STANDARD_SCREENSHOT_DIR, `standard-${language}-single.png`) });
             await card.locator('[data-geneo-edit-person-node]').click();
             assert.equal(await page.locator('.geneo-person-modal').count(), 1);
             assert.deepEqual(await page.evaluate(() => {
