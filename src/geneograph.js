@@ -14255,6 +14255,48 @@ function renderGeneographPersonCardSection(
     });
 }
 
+function renderGeneoPersonAppearanceControls({ scope, id, appearance, radius })
+{
+    const boardDefault = scope === 'card-default';
+
+    return `
+      <div class="geneo-person-appearance-controls">
+        ${['fill', 'stroke', 'text'].map(property => renderGeneoPaintControl({
+            scope, id, property
+        })).join('')}
+        ${boardDefault ? '' : renderGeneoContrastWarning(getGeneographNode(id))}
+        <div class="geneo-card-default-dimensions">
+          <label class="geneo-field">Stroke width
+            <input class="geneo-input" type="number" min="1" max="12" step="1"
+              value="${appearance.strokeWidth}" ${boardDefault
+                ? `data-geneo-card-default-stroke-width="${id}"`
+                : 'data-geneo-stroke-width="node"'}>
+          </label>
+          <label class="geneo-field">Stroke pattern
+            <span class="common-select-shell">
+              <select class="common-select" ${boardDefault
+                ? `data-geneo-card-default-stroke-pattern="${id}"`
+                : 'data-geneo-stroke-pattern="node"'} ${appearance.stroke.enabled ? '' : 'disabled'}>
+                <option value="solid" ${appearance.strokePattern === 'solid' ? 'selected' : ''}>Solid</option>
+                <option value="dashed" ${appearance.strokePattern === 'dashed' ? 'selected' : ''}>Dashed</option>
+              </select>
+              <span class="common-select-chevron" aria-hidden="true">${icon.chevron}</span>
+            </span>
+          </label>
+        </div>
+        <div class="geneo-person-card-radius-row">
+          <label class="geneo-field" for="geneoPersonCardRadius-${id}">Corner radius
+            <span class="geneo-selection-help">0–32 px</span>
+          </label>
+          <input class="geneo-input" id="geneoPersonCardRadius-${id}"
+            type="number" min="0" max="32" step="1" value="${radius}"
+            ${boardDefault
+                ? `data-geneo-card-default-radius="${id}"`
+                : `data-geneo-person-card-radius="node" data-geneo-person-card-node="${escapeHtml(id)}"`}>
+        </div>
+      </div>`;
+}
+
 function renderGeneoCardDefaultAppearance()
 {
     const diagram = selectedGeneographDiagram();
@@ -14269,28 +14311,10 @@ function renderGeneoCardDefaultAppearance()
         const appearance = diagram.cardAppearanceDefaults[gender];
         return `<div class="geneo-card-default-group" role="group" aria-label="${escapeHtml(t(capitalize(gender)))}">
           ${colored ? `<h3>${escapeHtml(capitalize(gender))}</h3>` : ''}
-          ${['fill', 'stroke', 'text'].map(property => renderGeneoPaintControl({
-              scope: 'card-default', id: gender, property
-          })).join('')}
-          <div class="geneo-card-default-dimensions">
-            <label class="geneo-field">Stroke width
-              <input class="geneo-input" type="number" min="1" max="12" step="1"
-                value="${appearance.strokeWidth}" data-geneo-card-default-stroke-width="${gender}">
-            </label>
-            <label class="geneo-field">Stroke pattern
-              <span class="common-select-shell">
-                <select class="common-select" data-geneo-card-default-stroke-pattern="${gender}" ${appearance.stroke.enabled ? '' : 'disabled'}>
-                  <option value="solid" ${appearance.strokePattern === 'solid' ? 'selected' : ''}>Solid</option>
-                  <option value="dashed" ${appearance.strokePattern === 'dashed' ? 'selected' : ''}>Dashed</option>
-                </select>
-                <span class="common-select-chevron" aria-hidden="true">${icon.chevron}</span>
-              </span>
-            </label>
-            <label class="geneo-field">Corner radius
-              <input class="geneo-input" type="number" min="0" max="32" step="1"
-                value="${appearance.cornerRadius}" data-geneo-card-default-radius="${gender}">
-            </label>
-          </div>
+          ${renderGeneoPersonAppearanceControls({
+              scope: 'card-default', id: gender, appearance,
+              radius: appearance.cornerRadius
+          })}
         </div>`;
       }).join('')}`;
 }
@@ -15625,7 +15649,14 @@ function renderGeneographNodeInspector(
                             inlineAction: node.type === 'person'
                         });
 
-    const appearanceContent = `
+    const appearanceContent = node.type === 'person'
+        ? `${renderGeneoPersonAppearanceControls({
+            scope: 'node', id: node.id,
+            appearance: geneoResolveVisibleNodeAppearance(node),
+            radius: geneoPersonCardEffectiveSettings(node).cornerRadius
+        })}
+          <button class="button secondary geneo-apply-gender" type="button" data-geneo-apply-gender-color>${escapeHtml(t('Apply gender color'))}</button>`
+        : `
         ${
             node.type === 'drawing'
                 ? ''
@@ -15652,19 +15683,6 @@ function renderGeneographNodeInspector(
                 appearance
             })}
         </div>
-
-        ${node.type === 'person' ? `
-          <div class="geneo-person-card-radius-row">
-            <div class="geneo-field">
-              <label for="geneoPersonCardRadius">Corner radius</label>
-              <span class="geneo-selection-help">0–32 px</span>
-            </div>
-            <input class="geneo-input" id="geneoPersonCardRadius"
-              type="number" min="0" max="32" step="1"
-              value="${geneoPersonCardEffectiveSettings(node).cornerRadius}"
-              data-geneo-person-card-radius="node"
-              data-geneo-person-card-node="${escapeHtml(node.id)}">
-          </div>` : ''}
 
         ${
             node.type === 'text'
@@ -15718,7 +15736,6 @@ function renderGeneographNodeInspector(
             `
         }
 
-        ${node.type === 'person' ? `<button class="button secondary geneo-apply-gender" type="button" data-geneo-apply-gender-color>${escapeHtml(t('Apply gender color'))}</button>` : ''}
       `;
 
     return `

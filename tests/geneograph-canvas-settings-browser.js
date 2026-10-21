@@ -37,6 +37,17 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             assert.equal(await inspector.locator('[data-geneo-person-card-setting="photoSize"]').count(), 0);
             assert.equal(await inspector.locator('[data-geneo-person-card-setting="photoAlignment"]:not(:disabled)').count(), 1);
             assert.equal(await inspector.locator('[data-geneo-person-card-field="livingStatus"]').count(), 0);
+            const appearanceOrder = await inspector.locator('.geneo-card-default-group').first()
+                .locator('.geneo-person-appearance-controls > *').evaluateAll(elements =>
+                    elements.map(element => element.matches('.geneo-paint-row')
+                        ? element.querySelector('.geneo-paint-label')?.textContent.trim()
+                        : element.classList.contains('geneo-card-default-dimensions') ? 'stroke settings' : 'radius'));
+            assert.deepEqual(appearanceOrder, [
+                ...(language === 'ru' ? ['Заливка', 'Обводка', 'Текст'] : ['Fill', 'Stroke', 'Text']),
+                'stroke settings', 'radius'
+            ]);
+            assert.equal(await inspector.locator('.geneo-card-default-group').first()
+                .locator('.geneo-person-card-radius-row [data-geneo-card-default-radius]').count(), 1);
             assert.equal(await page.evaluate(() =>
                 geneoResolveVisibleNodeAppearance(getGeneographNode('gn-daisy')).fill.color), '#2D2437');
             if (process.env.GENEO_SCREENSHOT_DIR)

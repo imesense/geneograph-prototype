@@ -2702,11 +2702,17 @@
         minmax(0, 1fr) 78px;
     gap: var(--space-3);
     align-items: end;
-    margin-block: var(--space-2);
+    margin-block: 0;
 }
 
 .geneo-person-card-radius-row .geneo-input {
     text-align: left;
+}
+
+.geneo-person-appearance-controls {
+    display: grid;
+    gap: 12px;
+    min-width: 0;
 }
 
 .geneo-person-multi-actions {
