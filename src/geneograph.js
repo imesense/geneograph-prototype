@@ -41,7 +41,7 @@ const GENEO_PERSON_CARD_STYLES =
 
 const GENEO_PERSON_CARD_FORMAT_KEYS = [
     'nameFormat', 'dateFormat', 'photoSize',
-    'photoAlignment', 'alignment'
+    'photoAlignment', 'alignment', 'nameAlignment'
 ];
 
 const GENEO_PERSON_CARD_NAME_FORMATS =
@@ -92,6 +92,9 @@ const GENEO_PERSON_CARD_ENUMS =
           GENEO_PERSON_CARD_PHOTO_ALIGNMENTS,
 
         alignment:
+          GENEO_PERSON_CARD_ALIGNMENTS,
+
+        nameAlignment:
           GENEO_PERSON_CARD_ALIGNMENTS
     });
 
@@ -183,6 +186,7 @@ function geneoEmptyPersonCardOverrides(
         photoSize: null,
         photoAlignment: null,
         alignment: null,
+        nameAlignment: null,
         cornerRadius: null
     };
 }
@@ -298,6 +302,7 @@ function geneoDefaultPersonCardSettings(
         photoSize: 'medium',
         photoAlignment: 'left',
         alignment: 'left',
+        nameAlignment: 'left',
 
         fields:
           geneoPersonCardDefaultFields(
@@ -458,10 +463,14 @@ function normalizeGeneographPersonCardSettings(
                 && !saved && cardStyle !== style
                 && ['compact', 'portrait'].includes(style)
                 ? cardDefaults.alignment : preset[key];
+            const legacyNameAlignment = key === 'nameAlignment'
+                && !Object.hasOwn(preset, 'nameAlignment')
+                ? geneoPersonCardEnumValue('alignment', preset.alignment, cardDefaults.alignment)
+                : legacyAlignment;
             styleSettings[cardStyle][key] = key === 'alignment'
                 && ['compact', 'portrait'].includes(cardStyle)
                     ? 'center'
-                    : geneoPersonCardEnumValue(key, legacyAlignment, cardDefaults[key]);
+                    : geneoPersonCardEnumValue(key, legacyNameAlignment, cardDefaults[key]);
         });
     });
 
@@ -503,6 +512,8 @@ function normalizeGeneographPersonCardSettings(
                 active.alignment,
                 defaults.alignment
             ),
+
+        nameAlignment: active.nameAlignment,
 
         fields: active.fields,
         photoByStyle,
@@ -622,14 +633,19 @@ function normalizeGeneographPersonCardOverrides(
         styleSettings[style] = { fields: cardFields };
         GENEO_PERSON_CARD_FORMAT_KEYS.forEach(key =>
         {
+            const legacyNameAlignment = key === 'nameAlignment'
+                && saved && !Object.hasOwn(saved, 'nameAlignment')
+                ? saved.alignment
+                : key === 'nameAlignment' && !saved && style === legacyStyle
+                  ? source.alignment : preset[key];
             styleSettings[style][key] = key === 'alignment'
                 && ['compact', 'portrait'].includes(style)
                     ? null
                     : key === 'alignment' && !saved && style !== legacyStyle
                       && ['compact', 'portrait'].includes(legacyStyle)
                         ? null
-                    : geneoPersonCardSettingValueIsValid(key, preset[key])
-                        ? preset[key] : null;
+                    : geneoPersonCardSettingValueIsValid(key, legacyNameAlignment)
+                        ? legacyNameAlignment : null;
         });
     });
 
@@ -657,6 +673,9 @@ function normalizeGeneographPersonCardOverrides(
 
         alignment:
           enumOverride('alignment'),
+
+        nameAlignment:
+          enumOverride('nameAlignment'),
 
         cornerRadius:
           Number.isFinite(radius)
@@ -734,6 +753,9 @@ function geneoPersonCardEffectiveSettings(
         alignment:
           style === 'compact' ? 'center' : value('alignment'),
 
+        nameAlignment:
+          style === 'standard' ? value('nameAlignment') : value('alignment'),
+
         fields: {
             ...inheritedFields,
             ...overrideStyle.fields,
@@ -756,7 +778,7 @@ function geneoPersonCardHasOverrides(node)
 {
     const overrides = normalizeGeneographPersonCardOverrides(node?.personCard);
     return overrides.custom && (
-        ['style', 'nameFormat', 'dateFormat', 'photoSize', 'photoAlignment', 'alignment', 'cornerRadius']
+        ['style', 'nameFormat', 'dateFormat', 'photoSize', 'photoAlignment', 'alignment', 'nameAlignment', 'cornerRadius']
             .some(key => overrides[key] !== null)
         || Object.keys(overrides.fields).length > 0
         || Object.keys(overrides.photoByStyle).length > 0
@@ -11338,6 +11360,9 @@ function renderGeneographObject(node)
                 data-geneo-person-card-align="${escapeHtml(
                     personSettings.alignment
                 )}"
+                data-geneo-person-card-name-align="${escapeHtml(
+                    personSettings.nameAlignment
+                )}"
                 data-geneo-person-card-photo="${escapeHtml(
                     personSettings.photoSize
                 )}"
@@ -13621,6 +13646,12 @@ function geneoPersonCardControlOptions()
             ['left', 'Left'],
             ['center', 'Center'],
             ['right', 'Right']
+        ],
+
+        nameAlignment: [
+            ['left', 'Left'],
+            ['center', 'Center'],
+            ['right', 'Right']
         ]
     };
 }
@@ -13921,11 +13952,11 @@ function renderGeneographPersonCardControls({
                     : ''}
 
               ${
-                    ['standard', 'chart'].includes(settings.style)
-                        ? select(
-                            'alignment',
-                            'Text alignment'
-                        )
+                    settings.style === 'standard'
+                        ? `${select('nameAlignment', 'Name alignment')}
+                           ${select('alignment', 'Dates alignment')}`
+                        : settings.style === 'chart'
+                        ? select('alignment', 'Text alignment')
                         : `
                     <div class="geneo-field">
                       <span
@@ -25442,9 +25473,9 @@ function bindGeneographPersonCardControls()
                     if (scope === 'board')
                     {
                         if (
-                            diagram.personCardDefaults[
-                                key
-                            ] === value
+                            normalizeGeneographPersonCardSettings(
+                                diagram.personCardDefaults
+                            ).styleSettings[diagram.personCardDefaults.style][key] === value
                         )
                         {
                             return;

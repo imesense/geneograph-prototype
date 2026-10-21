@@ -28,12 +28,27 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 state.selectedGeneoNodeIds = [];
                 renderGeneographEditorPreserveScroll();
             }, language);
+            assert.deepEqual(await page.evaluate(() => {
+                const defaults = geneoDefaultPersonCardSettings('standard');
+                defaults.styleSettings = { standard: { alignment: 'right', fields: {} } };
+                delete defaults.nameAlignment;
+                const board = normalizeGeneographPersonCardSettings(defaults);
+                const node = normalizeGeneographPersonCardOverrides({
+                    custom: true,
+                    style: 'standard',
+                    styleSettings: { standard: { alignment: 'right', fields: {} } }
+                });
+                return [board.nameAlignment, node.styleSettings.standard.nameAlignment];
+            }), ['right', 'right']);
             const card = page.locator('.geneo-node-person[data-geneo-node="gn-barnaby"]');
+            assert.equal(await page.locator('[data-geneo-person-card-setting="nameAlignment"][data-geneo-person-card-scope="board"]').count(), 1);
             for (const alignment of ['left', 'center', 'right']) {
                 await page.evaluate(alignment => {
-                    const control = document.querySelector('[data-geneo-person-card-setting="alignment"][data-geneo-person-card-scope="board"]');
-                    control.value = alignment;
-                    control.dispatchEvent(new Event('change', { bubbles: true }));
+                    for (const key of ['nameAlignment', 'alignment']) {
+                        const control = document.querySelector(`[data-geneo-person-card-setting="${key}"][data-geneo-person-card-scope="board"]`);
+                        control.value = alignment;
+                        control.dispatchEvent(new Event('change', { bubbles: true }));
+                    }
                 }, alignment);
                 const position = await card.evaluate(element => {
                     const life = element.querySelector('.geneo-person-life').getBoundingClientRect();
@@ -54,6 +69,30 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 if (process.env.GENEO_CARD_SCREENSHOT_DIR)
                     await card.screenshot({ path: path.join(process.env.GENEO_CARD_SCREENSHOT_DIR, `standard-${language}-${alignment}.png`) });
             }
+            await page.evaluate(() => {
+                const name = document.querySelector('[data-geneo-person-card-setting="nameAlignment"][data-geneo-person-card-scope="board"]');
+                name.value = 'left';
+                name.dispatchEvent(new Event('change', { bubbles: true }));
+            });
+            assert.deepEqual(await card.evaluate(element => ({
+                name: getComputedStyle(element.querySelector('.geneo-person-name-wrap')).justifyItems,
+                dates: getComputedStyle(element.querySelector('.geneo-person-life-events')).alignSelf
+            })), { name: 'normal', dates: 'flex-end' });
+            await page.evaluate(() => {
+                state.selectedGeneoNodeId = 'gn-barnaby';
+                state.selectedGeneoNodeIds = ['gn-barnaby'];
+                renderGeneographEditorPreserveScroll();
+            });
+            await page.locator('[data-geneo-person-card-setting="nameAlignment"][data-geneo-person-card-scope="node"]').selectOption('center');
+            assert.deepEqual(await card.evaluate(element => ({
+                name: getComputedStyle(element.querySelector('.geneo-person-name-wrap')).justifyItems,
+                dates: getComputedStyle(element.querySelector('.geneo-person-life-events')).alignSelf
+            })), { name: 'center', dates: 'flex-end' });
+            await page.evaluate(() => {
+                state.selectedGeneoNodeId = null;
+                state.selectedGeneoNodeIds = [];
+                renderGeneographEditorPreserveScroll();
+            });
             const dateAppearance = await page.evaluate(() => {
                 const pick = style => {
                     document.querySelector(`[data-geneo-person-card-style="${style}"][data-geneo-person-card-scope="board"]`).click();

@@ -3377,17 +3377,12 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
     }
 }
 
-.geneo-node-person[ data-geneo-person-card-style="standard"
-][ data-geneo-person-card-align="center"
-] .geneo-person-identity-block,
-.geneo-node-person[ data-geneo-person-card-style="standard"
-][ data-geneo-person-card-align="center"
-
-] .geneo-person-life {
+.geneo-node-person[data-geneo-person-card-style="standard"][data-geneo-person-card-name-align="center"] .geneo-person-identity-block,
+.geneo-node-person[data-geneo-person-card-style="standard"][data-geneo-person-card-align="center"] .geneo-person-life {
     text-align: center;
 }
 
-.geneo-node-person[data-geneo-person-card-style="standard"][data-geneo-person-card-align="center"] .geneo-person-name-wrap {
+.geneo-node-person[data-geneo-person-card-style="standard"][data-geneo-person-card-name-align="center"] .geneo-person-name-wrap {
     justify-items: center;
 }
 
@@ -3395,11 +3390,12 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
     align-self: center;
 }
 
-.geneo-node-person[data-geneo-person-card-style="standard"][data-geneo-person-card-align="right"] :is(.geneo-person-identity-block, .geneo-person-life) {
+.geneo-node-person[data-geneo-person-card-style="standard"][data-geneo-person-card-name-align="right"] .geneo-person-identity-block,
+.geneo-node-person[data-geneo-person-card-style="standard"][data-geneo-person-card-align="right"] .geneo-person-life {
     text-align: right;
 }
 
-.geneo-node-person[data-geneo-person-card-style="standard"][data-geneo-person-card-align="right"] .geneo-person-name-wrap {
+.geneo-node-person[data-geneo-person-card-style="standard"][data-geneo-person-card-name-align="right"] .geneo-person-name-wrap {
     justify-items: end;
 }
 

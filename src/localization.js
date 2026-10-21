@@ -1769,6 +1769,12 @@ const RU_UI_GENEO = {
     'Text alignment':
         'Выравнивание текста',
 
+    'Name alignment':
+        'Выравнивание имени',
+
+    'Dates alignment':
+        'Выравнивание дат',
+
     'Centered by this style':
         'По центру для этого стиля',
 
