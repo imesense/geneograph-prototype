@@ -766,6 +766,16 @@ function geneoPersonCardHasOverrides(node)
     );
 }
 
+function geneoPersonHasResettableSettings(node)
+{
+    if (node?.type !== 'person') return false;
+    const card = normalizeGeneographPersonCardOverrides(node.personCard);
+    const appearance = node.appearance || {};
+    return geneoPersonCardHasOverrides({ personCard: { ...card, style: null } })
+        || ['fill', 'stroke', 'text'].some(key => appearance.paintOverrides?.[key] === true)
+        || ['strokeWidth', 'strokePattern'].some(key => appearance.styleOverrides?.[key] === true);
+}
+
 function geneoPersonCardFieldSupported(
     style,
     field
@@ -13480,7 +13490,8 @@ function bindGeneoPaintControls()
 function renderGeneographInspectorHeader(
     title,
     subtitle,
-    iconHtml = ''
+    iconHtml = '',
+    node = null
 )
 {
     const hasIcon =
@@ -13519,15 +13530,26 @@ function renderGeneographInspectorHeader(
             }
 
             <div class="geneo-inspector-title">
-              <h2 title="${escapeHtml(title)}">
+              <h2 title="${escapeHtml(title)}" ${node ? 'data-geneo-header-name' : ''}>
                 ${escapeHtml(title)}
               </h2>
+
+              ${node ? `<input class="geneo-input geneo-inspector-name-input" type="text"
+                maxlength="${GENEO_LAYER_NAME_LIMIT}"
+                value="${escapeHtml(localizedDataFieldValue(normalizeGeneographLayerName(node.name) || title))}"
+                data-geneo-header-name-input data-user-content aria-label="${escapeHtml(t('Layer name'))}"
+                hidden>` : ''}
 
               <span title="${escapeHtml(subtitle)}">
                 ${escapeHtml(subtitle)}
               </span>
             </div>
           </div>
+          ${node ? `<div class="geneo-inspector-header-actions">
+            <button type="button" data-geneo-header-rename aria-label="${escapeHtml(`${t('Rename layer')}: ${title}`)}" title="${escapeHtml(t('Rename layer'))}">${icon.edit}</button>
+            <button type="button" data-geneo-header-lock aria-label="${escapeHtml(`${t(node.locked ? 'Unlock layer' : 'Lock layer')}: ${title}`)}" title="${escapeHtml(t(node.locked ? 'Unlock layer' : 'Lock layer'))}" aria-pressed="${node.locked ? 'true' : 'false'}">${node.locked ? icon.lock : icon.unlock}</button>
+            <button type="button" data-geneo-header-visible aria-label="${escapeHtml(`${t(node.visible ? 'Hide layer' : 'Show layer')}: ${title}`)}" title="${escapeHtml(t(node.visible ? 'Hide layer' : 'Show layer'))}" aria-pressed="${node.visible ? 'true' : 'false'}">${node.visible ? icon.eye : icon.eyeOff}</button>
+          </div>` : ''}
         </div>
       `;
 }
@@ -13824,8 +13846,6 @@ function renderGeneographPersonCardControls({
             )
             : boardSettings;
 
-    const hasOverrides = node && geneoPersonCardHasOverrides(node);
-
     const labels =
         geneoPersonCardFieldLabels();
 
@@ -13848,20 +13868,6 @@ function renderGeneographPersonCardControls({
             });
 
     return `
-        ${
-            node
-                ? `
-              ${hasOverrides
-                    ? `<button class="button secondary compact" type="button"
-                         data-geneo-person-card-reset
-                         data-geneo-person-card-node="${escapeHtml(node.id)}">
-                         Reset to default
-                       </button>`
-                    : `<span class="geneo-selection-help">Board default</span>`}
-            `
-                : ''
-        }
-
         <div
           class="geneo-person-card-controls"
           data-geneo-person-card-controls
@@ -13949,7 +13955,7 @@ function renderGeneographPersonCardControls({
               class="geneo-person-card-options">
               ${Object.entries(labels)
                     .filter(([field]) =>
-                        (scope !== 'board' || !['livingStatus', 'linkIndicator'].includes(field))
+                        (scope !== 'board' || field !== 'livingStatus')
                         && geneoPersonCardFieldSupported(settings.style, field))
                     .map(
                         ([
@@ -14036,7 +14042,8 @@ function renderGeneographInspectorSection({
     title,
     content,
     meta = '',
-    actionHtml = ''
+    actionHtml = '',
+    inlineAction = false
 })
 {
     const sectionKey =
@@ -14059,7 +14066,8 @@ function renderGeneographInspectorSection({
             'data-geneo-inspector-section',
 
             sectionId:
-            `geneo-inspector-${context}-${id}`
+            `geneo-inspector-${context}-${id}`,
+            inlineAction
         }
     );
 }
@@ -14207,7 +14215,7 @@ function renderGeneographPersonCardSection(
     return renderGeneographInspectorSection({
         context: 'person',
         id: 'card',
-        title: 'Card style & content',
+        title: 'Card layout',
         content:
           renderGeneographPersonCardControls({
               scope: 'node',
@@ -14388,12 +14396,6 @@ function renderGeneographInspector()
           <span>Snap to grid
             <small class="geneo-check-help">Align objects to the canvas grid when moving them.</small>
           </span>
-        </label>
-        <label class="geneo-check">
-          <input type="checkbox" data-geneo-person-card-field="linkIndicator"
-            data-geneo-person-card-scope="board"
-            ${selectedGeneographDiagram().personCardDefaults.fields.linkIndicator ? 'checked' : ''}>
-          Family Tree link indicator
         </label>
         <div class="geneo-field">
           <label for="geneoObjectHighlight">Highlight objects</label>
@@ -14853,14 +14855,6 @@ function renderGeneographPersonInspectorContent(
                 )
                 .join('')}
         </dl>
-
-        <button
-          class="button secondary"
-          type="button"
-          data-geneo-edit-person>
-          ${icon.edit}
-          Edit details
-        </button>
       `;
 }
 
@@ -15236,16 +15230,9 @@ function renderGeneographNodeLayoutSection(
           ),
 
         id: 'layout',
-        title: 'Layout',
+        title: 'Position & size',
 
         content: `
-          <div class="geneo-layout-name">
-            ${renderGeneographLayerNameField(
-                'node',
-                node
-            )}
-          </div>
-
           <div class="geneo-layout-grid">
             <div class="geneo-field">
               <label for="geneoNodeLayoutX">
@@ -15350,89 +15337,20 @@ function renderGeneographNodeLayoutSection(
             }
 
           ${
-                isPerson
+                isPerson && !autoHeight
                     ? `
                 <div class="geneo-person-size-controls">
-                  <span class="geneo-selection-help">
-                    ${
-                        autoHeight
-                            ? 'Height fits visible content · Width remains freeform'
-                            : 'Freeform size · Hold Shift to preserve ratio'
-                    }
-                  </span>
-
-                  <div
-                    class="geneo-person-size-presets"
-                    role="group"
-                    aria-label="Person card size">
-
-                    ${[
-                        [0.9, '90%'],
-                        [1, '100%'],
-                        [1.25, '125%']
-                    ]
-                        .map(
-                            ([
-                                scale,
-                                label
-                            ]) => `
-                          <button
-                            class="button secondary compact"
-                            type="button"
-                            data-geneo-person-size="${scale}">
-                            ${label}
-                          </button>
-                        `
-                        )
-                        .join('')}
-                  </div>
-
-                  ${
-                        autoHeight
-                            ? ''
-                            : `
-                        <button
-                          class="button ghost compact"
-                          type="button"
-                          data-geneo-person-fit-height>
-                          Fit height to content
-                        </button>
-                      `
-                    }
+                  <button
+                    class="button ghost compact"
+                    type="button"
+                    data-geneo-person-fit-height>
+                    Fit height to content
+                  </button>
                 </div>
               `
                     : ''
             }
 
-          <label class="geneo-check">
-            <input
-              type="checkbox"
-              data-geneo-node-visible
-              ${
-                    node.visible
-                        ? 'checked'
-                        : ''
-                }>
-
-            <span>
-              Visible
-            </span>
-          </label>
-
-          <label class="geneo-check">
-            <input
-              type="checkbox"
-              data-geneo-node-locked
-              ${
-                    node.locked
-                        ? 'checked'
-                        : ''
-                }>
-
-            <span>
-              Locked
-            </span>
-          </label>
         `
     });
 }
@@ -15668,8 +15586,12 @@ function renderGeneographNodeInspector(
                         : renderGeneographInspectorSection({
                             context,
                             id: 'content',
-                            title: 'Content',
-                            content
+                            title: node.type === 'person' ? 'Card content' : 'Content',
+                            content,
+                            actionHtml: node.type === 'person'
+                                ? `<button class="geneo-section-edit" type="button" data-geneo-edit-person aria-label="${escapeHtml(t('Edit card content'))}">${icon.edit}<span>${escapeHtml(t('Edit'))}</span></button>`
+                                : '',
+                            inlineAction: node.type === 'person'
                         });
 
     const appearanceContent = `
@@ -15764,6 +15686,8 @@ function renderGeneographNodeInspector(
               </div>
             `
         }
+
+        ${node.type === 'person' ? `<button class="button secondary geneo-apply-gender" type="button" data-geneo-apply-gender-color>${escapeHtml(t('Apply gender color'))}</button>` : ''}
       `;
 
     return `
@@ -15772,7 +15696,8 @@ function renderGeneographNodeInspector(
             ${renderGeneographInspectorHeader(
                 geneoNodeTitle(node),
                 t(capitalize(node.type)),
-                geneoNodeIcon(node.type)
+                geneoNodeIcon(node.type),
+                node
             )}
 
             ${contentSection}
@@ -15788,7 +15713,7 @@ function renderGeneographNodeInspector(
             ${renderGeneographInspectorSection({
                 context,
                 id: 'appearance',
-                title: 'Appearance',
+                title: node.type === 'person' ? 'Card appearance' : 'Appearance',
                 content: appearanceContent
             })}
 
@@ -15803,6 +15728,8 @@ function renderGeneographNodeInspector(
             ${renderGeneographNodeLayoutSection(
                 node
             )}
+
+            ${node.type === 'person' ? `<div class="geneo-inspector-reset"><button class="button secondary" type="button" data-geneo-person-card-reset data-geneo-person-card-node="${escapeHtml(node.id)}" ${geneoPersonHasResettableSettings(node) ? '' : 'disabled'}>${escapeHtml(t('Reset to default'))}</button></div>` : ''}
 
             ${renderGeneographInspectorDangerAction(
                 t(`Delete ${capitalize(node.type)}`)
@@ -25171,6 +25098,63 @@ function bindGeneographInspectorNameField()
     );
 }
 
+function bindGeneographNodeHeader()
+{
+    const node = selectedGeneographNode();
+    if (!node) return;
+    const renameButton = main.querySelector('[data-geneo-header-rename]');
+    const input = main.querySelector('[data-geneo-header-name-input]');
+    const heading = main.querySelector('[data-geneo-header-name]');
+    if (renameButton && input && heading)
+    {
+        renameButton.addEventListener('click', () =>
+        {
+            heading.hidden = true;
+            input.hidden = false;
+            input.focus({ preventScroll: true });
+            input.select();
+        });
+        let finished = false;
+        const finish = cancel =>
+        {
+            if (finished || input.hidden) return;
+            finished = true;
+            const originalName = normalizeGeneographLayerName(node.name);
+            const displayedName = localizedDataFieldValue(originalName || geneoNodeTitle(node));
+            if (!cancel)
+            {
+                const nextName = input.value === displayedName
+                    ? originalName
+                    : collectLocalizedDataFieldValue(input, originalName);
+                renameGeneographEntity('node', node.id, nextName);
+            }
+            renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true });
+            requestAnimationFrame(() => main.querySelector('[data-geneo-header-rename]')?.focus({ preventScroll: true }));
+        };
+        input.addEventListener('keydown', event =>
+        {
+            if (!['Enter', 'Escape'].includes(event.key)) return;
+            event.preventDefault();
+            event.stopPropagation();
+            finish(event.key === 'Escape');
+        });
+        input.addEventListener('blur', () => finish(false));
+    }
+    for (const [selector, key] of [['[data-geneo-header-lock]', 'locked'], ['[data-geneo-header-visible]', 'visible']])
+    {
+        main.querySelector(selector)?.addEventListener('click', () =>
+        {
+            const current = getGeneographNode(node.id);
+            if (!current) return;
+            geneoPushHistory();
+            current[key] = !current[key];
+            touchGeneographBoard();
+            renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true });
+            requestAnimationFrame(() => main.querySelector(selector)?.focus({ preventScroll: true }));
+        });
+    }
+}
+
 function bindGeneographPersonCardControls()
 {
     const diagram =
@@ -25400,26 +25384,27 @@ function bindGeneographPersonCardControls()
                         node.personCard
                     );
 
-                if (!geneoPersonCardHasOverrides(node))
+                if (!geneoPersonHasResettableSettings(node))
                 {
                     return;
                 }
-
-                const scales =
-                    geneoCapturePersonCardDimensions(
-                        [node],
-                        diagram
-                    );
 
                 geneoPushHistory();
 
                 node.personCard =
                     geneoEmptyPersonCardOverrides(
-                        false,
+                        Boolean(current.style),
                         current.heightMode
                     );
-
-                commit(scales);
+                node.personCard.style = current.style;
+                const inherited = geneoPersonGenderAppearance(node, diagram);
+                for (const key of ['fill', 'stroke', 'text'])
+                    node.appearance[key] = structuredClone(inherited[key]);
+                node.appearance.strokeWidth = inherited.strokeWidth;
+                node.appearance.strokePattern = inherited.strokePattern;
+                node.appearance.paintOverrides = { fill: false, stroke: false, text: false };
+                node.appearance.styleOverrides = { strokeWidth: false, strokePattern: false };
+                commit();
             }
         );
 
@@ -27354,97 +27339,29 @@ function bindGeneographEditor()
             });
         });
 
-    main
-        .querySelectorAll(
-            '[data-geneo-person-size]'
-        )
-        .forEach(button =>
-        {
-            button.addEventListener(
-                'click',
-                () =>
-                {
-                    const node =
-                        selectedGeneographNode();
-
-                    if (
-                        node?.type !== 'person'
-                    )
-                    {
-                        return;
-                    }
-
-                    const factor =
-                        geneoNumber(
-                            button.dataset
-                                .geneoPersonSize,
-                            1,
-                            .5,
-                            2
-                        );
-
-                    geneoPushHistory();
-
-                    geneoSetPersonCardDimensions(
-                        node,
-                        {
-                            width: factor,
-                            height: factor
-                        }
-                    );
-
-                    node.personCard.heightMode =
-                        'manual';
-
-                    touchGeneographBoard();
-
-                    renderGeneographEditorPreserveScroll({
-                        preserveInspectorScroll:
-                  true
-                    });
-                }
-            );
-        });
-    main
-        .querySelector('[data-geneo-node-visible]')
-        ?.addEventListener('change', event =>
-        {
-            const node =
-                selectedGeneographNode();
-
-            if (!node) return;
-
-            geneoPushHistory();
-
-            node.visible =
-                event.target.checked;
-
-            touchGeneographBoard();
-
-            renderGeneographEditorPreserveScroll({
-                preserveInspectorScroll: true
-            });
-        });
-    main
-        .querySelector('[data-geneo-node-locked]')
-        ?.addEventListener('change', event =>
-        {
-            const node =
-                selectedGeneographNode();
-
-            if (!node) return;
-
-            geneoPushHistory();
-
-            node.locked =
-                event.target.checked;
-
-            touchGeneographBoard();
-
-            renderGeneographEditorPreserveScroll({
-                preserveInspectorScroll: true
-            });
-        });
+    main.querySelector('[data-geneo-apply-gender-color]')?.addEventListener('click', () =>
+    {
+        const node = selectedGeneographNode();
+        const diagram = selectedGeneographDiagram();
+        if (node?.type !== 'person' || !diagram) return;
+        const person = getGeneographPerson(node.personId);
+        const gender = ['male', 'female'].includes(person?.gender) ? person.gender : 'unknown';
+        const preset = diagram.cardAppearanceDefaults[gender];
+        if (!preset) return;
+        geneoPushHistory();
+        for (const key of ['fill', 'stroke', 'text'])
+            node.appearance[key] = structuredClone(preset[key]);
+        node.appearance.strokeWidth = preset.strokeWidth;
+        node.appearance.strokePattern = preset.strokePattern;
+        node.appearance.paintOverrides = { fill: true, stroke: true, text: true };
+        node.appearance.styleOverrides = { strokeWidth: true, strokePattern: true };
+        node.personCard = normalizeGeneographPersonCardOverrides(node.personCard);
+        node.personCard.custom = true;
+        node.personCard.cornerRadius = preset.cornerRadius;
+        touchGeneographBoard();
+        renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true });
+        requestAnimationFrame(() => main.querySelector('[data-geneo-apply-gender-color]')?.focus({ preventScroll: true }));
+    });
     main.querySelector('[data-geneo-link-person]')?.addEventListener('click', openGeneographTreePersonPicker);
     main.querySelector('[data-geneo-import-family]')?.addEventListener('click', () => {
         const person = getGeneographPerson(selectedGeneographNode()?.personId);
@@ -27669,6 +27586,7 @@ function bindGeneographEditor()
         renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true });
     });
     bindGeneographInspectorNameField();
+    bindGeneographNodeHeader();
     bindGeneographPersonCardControls();
     bindGeneographSidebarControls();
     bindToasts(main);

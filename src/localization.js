@@ -1717,6 +1717,18 @@ const RU_UI_GENEO = {
     'Card style & content':
         'Стиль и содержимое карточки',
 
+    'Card content': 'Содержимое карточки',
+    'Card appearance': 'Оформление карточки',
+    'Card layout': 'Макет карточки',
+    'Position & size': 'Положение и размер',
+    'Apply gender color': 'Применить цвета для пола',
+    'Rename layer': 'Переименовать слой',
+    'Lock layer': 'Заблокировать слой',
+    'Unlock layer': 'Разблокировать слой',
+    'Hide layer': 'Скрыть слой',
+    'Show layer': 'Показать слой',
+    'Edit card content': 'Редактировать содержимое карточки',
+
     'Multiple selection':
         'Множественный выбор',
 

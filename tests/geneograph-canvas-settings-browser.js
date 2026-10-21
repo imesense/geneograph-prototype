@@ -32,7 +32,8 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 if (await toggle.getAttribute('aria-expanded') === 'false') await toggle.click();
             }
             assert.equal(await inspector.locator('.geneo-pattern-preview').count(), 3);
-            assert.equal(await inspector.locator('[data-geneo-person-card-field="linkIndicator"]').count(), 1);
+            assert.equal(await inspector.locator('#geneo-inspector-canvas-appearance [data-geneo-person-card-field="linkIndicator"]').count(), 0);
+            assert.equal(await inspector.locator('#geneo-inspector-canvas-personCards .geneo-person-card-options [data-geneo-person-card-field="linkIndicator"]').count(), 1);
             assert.equal(await inspector.locator('[data-geneo-person-card-setting="photoSize"]').count(), 0);
             assert.equal(await inspector.locator('[data-geneo-person-card-setting="photoAlignment"]:not(:disabled)').count(), 1);
             assert.equal(await inspector.locator('[data-geneo-person-card-field="livingStatus"]').count(), 0);
