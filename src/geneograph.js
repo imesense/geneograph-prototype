@@ -39,6 +39,11 @@ const GENEO_PERSON_CARD_STYLES =
         'portrait'
     ]);
 
+const GENEO_PERSON_CARD_FORMAT_KEYS = [
+    'nameFormat', 'dateFormat', 'photoSize',
+    'photoAlignment', 'alignment'
+];
+
 const GENEO_PERSON_CARD_NAME_FORMATS =
     Object.freeze([
         'full',
@@ -59,6 +64,9 @@ const GENEO_PERSON_CARD_PHOTO_SIZES =
         'large'
     ]);
 
+const GENEO_PERSON_CARD_PHOTO_ALIGNMENTS =
+    Object.freeze(['left', 'right']);
+
 const GENEO_PERSON_CARD_ALIGNMENTS =
     Object.freeze([
         'left',
@@ -78,6 +86,9 @@ const GENEO_PERSON_CARD_ENUMS =
 
         photoSize:
           GENEO_PERSON_CARD_PHOTO_SIZES,
+
+        photoAlignment:
+          GENEO_PERSON_CARD_PHOTO_ALIGNMENTS,
 
         alignment:
           GENEO_PERSON_CARD_ALIGNMENTS
@@ -163,11 +174,13 @@ function geneoEmptyPersonCardOverrides(
 
         fields: {},
         photoByStyle: {},
+        styleSettings: {},
 
         style: null,
         nameFormat: null,
         dateFormat: null,
         photoSize: null,
+        photoAlignment: null,
         alignment: null,
         cornerRadius: null
     };
@@ -282,6 +295,7 @@ function geneoDefaultPersonCardSettings(
         nameFormat: 'full',
         dateFormat: 'full',
         photoSize: 'medium',
+        photoAlignment: 'left',
         alignment: 'left',
 
         fields:
@@ -291,6 +305,8 @@ function geneoDefaultPersonCardSettings(
 
         photoByStyle:
           geneoPersonCardDefaultPhotoPreferences(),
+
+        styleSettings: {},
 
         cornerRadius: 8
     };
@@ -418,39 +434,78 @@ function normalizeGeneographPersonCardSettings(
                 : defaults.fields[key];
     });
 
+    const styleSettings = {};
+    GENEO_PERSON_CARD_STYLES.forEach(cardStyle =>
+    {
+        const saved = source.styleSettings?.[cardStyle];
+        const preset = saved && typeof saved === 'object' ? saved : source;
+        const cardDefaults = geneoDefaultPersonCardSettings(cardStyle);
+        const presetFields = preset.fields && typeof preset.fields === 'object'
+            ? preset.fields : sourceFields;
+        const cardFields = { ...cardDefaults.fields };
+        Object.keys(cardFields).forEach(field =>
+        {
+            if (typeof presetFields[field] === 'boolean')
+                cardFields[field] = presetFields[field];
+        });
+        cardFields.photo = cardStyle !== 'compact' && photoByStyle[cardStyle];
+        cardFields.linkIndicator = fields.linkIndicator;
+        styleSettings[cardStyle] = { fields: cardFields };
+        GENEO_PERSON_CARD_FORMAT_KEYS.forEach(key =>
+        {
+            const legacyAlignment = key === 'alignment'
+                && !saved && cardStyle !== style
+                && ['compact', 'portrait'].includes(style)
+                ? cardDefaults.alignment : preset[key];
+            styleSettings[cardStyle][key] = key === 'alignment'
+                && ['compact', 'portrait'].includes(cardStyle)
+                    ? 'center'
+                    : geneoPersonCardEnumValue(key, legacyAlignment, cardDefaults[key]);
+        });
+    });
+
+    const active = styleSettings[style];
     return {
         style,
 
         nameFormat:
           geneoPersonCardEnumValue(
               'nameFormat',
-              source.nameFormat,
+              active.nameFormat,
               defaults.nameFormat
           ),
 
         dateFormat:
           geneoPersonCardEnumValue(
               'dateFormat',
-              source.dateFormat,
+              active.dateFormat,
               defaults.dateFormat
           ),
 
         photoSize:
           geneoPersonCardEnumValue(
               'photoSize',
-              source.photoSize,
+              active.photoSize,
               defaults.photoSize
+          ),
+
+        photoAlignment:
+          geneoPersonCardEnumValue(
+              'photoAlignment',
+              active.photoAlignment,
+              defaults.photoAlignment
           ),
 
         alignment: style === 'compact' ? 'center'
             : geneoPersonCardEnumValue(
                 'alignment',
-                source.alignment,
+                active.alignment,
                 defaults.alignment
             ),
 
-        fields,
+        fields: active.fields,
         photoByStyle,
+        styleSettings,
 
         cornerRadius:
           Math.round(
@@ -466,7 +521,8 @@ function normalizeGeneographPersonCardSettings(
 
 function normalizeGeneographPersonCardOverrides(
     value,
-    fallbackHeightMode = 'auto'
+    fallbackHeightMode = 'auto',
+    inheritedStyle = 'standard'
 )
 {
     const source =
@@ -548,11 +604,40 @@ function normalizeGeneographPersonCardOverrides(
                 ? source[key]
                 : null;
 
+    const styleSettings = {};
+    const legacyStyle = source.style || inheritedStyle;
+    GENEO_PERSON_CARD_STYLES.forEach(style =>
+    {
+        const saved = source.styleSettings?.[style];
+        const preset = saved && typeof saved === 'object' ? saved : source;
+        const presetFields = preset.fields && typeof preset.fields === 'object'
+            ? preset.fields : fields;
+        const cardFields = {};
+        Object.keys(geneoDefaultPersonCardSettings().fields).forEach(field =>
+        {
+            if (typeof presetFields[field] === 'boolean')
+                cardFields[field] = presetFields[field];
+        });
+        styleSettings[style] = { fields: cardFields };
+        GENEO_PERSON_CARD_FORMAT_KEYS.forEach(key =>
+        {
+            styleSettings[style][key] = key === 'alignment'
+                && ['compact', 'portrait'].includes(style)
+                    ? null
+                    : key === 'alignment' && !saved && style !== legacyStyle
+                      && ['compact', 'portrait'].includes(legacyStyle)
+                        ? null
+                    : geneoPersonCardSettingValueIsValid(key, preset[key])
+                        ? preset[key] : null;
+        });
+    });
+
     return {
         custom: true,
         heightMode,
         fields,
         photoByStyle,
+        styleSettings,
 
         style:
           enumOverride('style'),
@@ -565,6 +650,9 @@ function normalizeGeneographPersonCardOverrides(
 
         photoSize:
           enumOverride('photoSize'),
+
+        photoAlignment:
+          enumOverride('photoAlignment'),
 
         alignment:
           enumOverride('alignment'),
@@ -595,7 +683,9 @@ function geneoPersonCardEffectiveSettings(
 
     const overrides =
         normalizeGeneographPersonCardOverrides(
-            node?.personCard
+            node?.personCard,
+            'auto',
+            boardSettings.style
         );
 
     if (!overrides.custom)
@@ -607,40 +697,21 @@ function geneoPersonCardEffectiveSettings(
         };
     }
 
-    const value =
-        key =>
-            overrides[key] === null
-          || overrides[key] === undefined
-                ? boardSettings[key]
-                : overrides[key];
+    const style = overrides.style || boardSettings.style;
+    const boardStyle = boardSettings.styleSettings[style];
+    const overrideStyle = overrides.styleSettings[style];
+    const value = key => overrideStyle[key] == null
+        ? boardStyle[key] : overrideStyle[key];
 
-    const style = value('style');
-
-    const inheritedFields = {
-        ...boardSettings.fields,
-        ...(
-            style === boardSettings.style
-                ? {}
-                : {
-                    photo:
-                  geneoPersonCardDefaultFields(
-                      style
-                  ).photo,
-                    maidenName:
-                  geneoPersonCardDefaultFields(
-                      style
-                  ).maidenName
-                }
-        )
-    };
+    const inheritedFields = { ...boardStyle.fields };
 
     const photoOverride =
         typeof overrides.photoByStyle?.[style]
           === 'boolean'
             ? overrides.photoByStyle[style]
-            : typeof overrides.fields.photo
+            : typeof overrideStyle.fields.photo
               === 'boolean'
-                ? overrides.fields.photo
+                ? overrideStyle.fields.photo
                 : null;
 
     return {
@@ -656,12 +727,15 @@ function geneoPersonCardEffectiveSettings(
         photoSize:
           value('photoSize'),
 
+        photoAlignment:
+          value('photoAlignment'),
+
         alignment:
           style === 'compact' ? 'center' : value('alignment'),
 
         fields: {
             ...inheritedFields,
-            ...overrides.fields,
+            ...overrideStyle.fields,
             ...(
                 photoOverride === null
                     ? {}
@@ -681,10 +755,13 @@ function geneoPersonCardHasOverrides(node)
 {
     const overrides = normalizeGeneographPersonCardOverrides(node?.personCard);
     return overrides.custom && (
-        ['style', 'nameFormat', 'dateFormat', 'photoSize', 'alignment', 'cornerRadius']
+        ['style', 'nameFormat', 'dateFormat', 'photoSize', 'photoAlignment', 'alignment', 'cornerRadius']
             .some(key => overrides[key] !== null)
         || Object.keys(overrides.fields).length > 0
         || Object.keys(overrides.photoByStyle).length > 0
+        || Object.values(overrides.styleSettings).some(preset =>
+            GENEO_PERSON_CARD_FORMAT_KEYS.some(key => preset[key] !== null)
+            || Object.keys(preset.fields).length > 0)
     );
 }
 
@@ -694,6 +771,7 @@ function geneoPersonCardFieldSupported(
 )
 {
     if (field === 'photo' && style === 'compact') return false;
+    if (field === 'livingStatus') return style === 'standard';
 
     if (
         field === 'birthPlace'
@@ -5729,6 +5807,80 @@ function renderGeneoToolbarObjectButton(
       `;
 }
 
+function geneoToolbarPersonGender()
+{
+    return ['male', 'female', 'unknown'].includes(state.geneoPersonGender)
+        ? state.geneoPersonGender
+        : 'male';
+}
+
+function renderGeneoPersonSplitTool()
+{
+    const gender = geneoToolbarPersonGender();
+    const actionLabel = `${t('Add person')}: ${t(capitalize(gender))}`;
+
+    return `
+        <div class="tool-split" data-tool-split="person" data-geneo-toolbar-item="person">
+          <button class="tool-split-main" type="button" data-geneo-person-main
+            aria-label="${escapeHtml(actionLabel)}" title="${escapeHtml(actionLabel)}">
+            ${icon.profile}
+            <span>${escapeHtml(t('Person'))}</span>
+          </button>
+          <button class="tool-split-trigger" type="button" data-geneo-person-menu
+            aria-label="${escapeHtml(t('Choose person gender'))}"
+            title="${escapeHtml(t('Choose person gender'))}"
+            aria-haspopup="menu" aria-expanded="false">
+            ${icon.chevron}
+          </button>
+        </div>`;
+}
+
+function openGeneoPersonGenderMenu(anchor)
+{
+    if (!(anchor instanceof HTMLElement)) return;
+    closeMenu();
+    const rect = anchor.getBoundingClientRect();
+    const menu = document.createElement('div');
+    menu.className = 'menu-popover tool-options-menu';
+    menu.id = 'projectMenu';
+    menu.setAttribute('role', 'menu');
+    menu.setAttribute('aria-label', t('Choose person gender'));
+    menu.style.top = `${rect.bottom + 7}px`;
+    menu.style.left = `${Math.max(12, Math.min(rect.left - 118, window.innerWidth - 210))}px`;
+    menu.innerHTML = ['male', 'female', 'unknown'].map(gender => {
+        return `<button type="button" role="menuitemradio" aria-checked="${geneoToolbarPersonGender() === gender}"
+            data-geneo-person-gender="${gender}"><span>${escapeHtml(t(capitalize(gender)))}</span></button>`;
+    }).join('');
+    document.body.appendChild(menu);
+    if (window.innerWidth <= 900) mountMobileChoiceSheet(menu, anchor, t('Choose person gender'));
+    anchor.setAttribute('aria-expanded', 'true');
+    menu.addEventListener('click', event => {
+        const button = event.target.closest('[data-geneo-person-gender]');
+        if (!button) return;
+        state.geneoPersonGender = button.dataset.geneoPersonGender;
+        closeMenu();
+        addGeneographObject('person');
+    });
+    menu.addEventListener('keydown', event => {
+        const items = [...menu.querySelectorAll('[role="menuitemradio"]')];
+        const index = items.indexOf(document.activeElement);
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            event.stopPropagation();
+            closeMenu();
+            anchor.focus();
+        } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+            event.preventDefault();
+            items[(index + (event.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length]?.focus();
+        } else if (event.key === 'Home' || event.key === 'End') {
+            event.preventDefault();
+            items[event.key === 'Home' ? 0 : items.length - 1]?.focus();
+        }
+    });
+    bindMenuLifecycle(anchor);
+    requestAnimationFrame(() => menu.querySelector('[aria-checked="true"]')?.focus());
+}
+
 function renderGeneoConnectionSplitTool()
 {
     const pattern =
@@ -6267,7 +6419,7 @@ function geneoToolbarOverflowItems(toolbar)
         ['history', [['undo', 'Undo', icon.undo], ['redo', 'Redo', icon.redo]]],
         ['modes', [['select', 'Select', icon.cursorSelect], ['pan', 'Pan', icon.pan], ['pencil', 'Pencil', icon.edit]]],
         ['connect', [['connect', 'Connect', icon.link], ['connection-style', 'Connection style', icon.link]]],
-        ['person', [['person', 'Person', icon.profile]]],
+        ['person', [['person', 'Person', icon.profile], ['person-gender', 'Choose person gender', icon.chevron]]],
         ['place', [['place', 'Place', icon.mapPin]]],
         ['image', [['image', 'Image', icon.image]]],
         ['panel', [['panel', 'Panel', icon.panel]]],
@@ -6408,11 +6560,12 @@ function openGeneoToolbarOverflowMenu(
                 return;
             }
 
-            if (action === 'shape-style' || action === 'content-style')
+            if (action === 'shape-style' || action === 'content-style' || action === 'person-gender')
             {
                 closeMenu();
                 requestAnimationFrame(() => (action === 'shape-style'
-                    ? openGeneoShapeMenu : openGeneoContentMenu)(anchor));
+                    ? openGeneoShapeMenu : action === 'content-style'
+                        ? openGeneoContentMenu : openGeneoPersonGenderMenu)(anchor));
                 return;
             }
 
@@ -8775,7 +8928,8 @@ function normalizeGeneographBoardRecord(board, projectPeople)
                             personCardSource,
                             legacyDefaultHeight
                                 ? 'auto'
-                                : 'manual'
+                                : 'manual',
+                            diagram.personCardDefaults.style
                         );
 
                     if (legacyStyle === 'chart' && node.chartCardLayoutVersion !== 1)
@@ -11241,6 +11395,9 @@ function renderGeneographObject(node)
                 data-geneo-person-card-photo="${escapeHtml(
                     personSettings.photoSize
                 )}"
+                data-geneo-person-card-photo-align="${escapeHtml(
+                    personSettings.photoAlignment
+                )}"
                 data-geneo-person-card-height-mode="${escapeHtml(
                     personSettings.heightMode
                 )}"
@@ -13489,6 +13646,11 @@ function geneoPersonCardControlOptions()
             ['large', 'Large']
         ],
 
+        photoAlignment: [
+            ['left', 'Left'],
+            ['right', 'Right']
+        ],
+
         alignment: [
             ['left', 'Left'],
             ['center', 'Center']
@@ -13796,18 +13958,16 @@ function renderGeneographPersonCardControls({
                     !settings.fields.dates
                 )}
 
-              ${scope === 'board' ? `
-                <div class="geneo-field">
-                  <label for="geneoPhotoAlignment">Photo alignment</label>
-                  <select class="geneo-select" id="geneoPhotoAlignment" disabled>
-                    <option>Left</option>
-                  </select>
-                </div>` : settings.style === 'compact' ? '' : select(
+              ${scope === 'node' && settings.style !== 'compact' ? select(
                     'photoSize',
                     'Photo size',
                     '',
                     !settings.fields.photo
-                )}
+                ) : ''}
+
+              ${['standard', 'chart'].includes(settings.style)
+                    ? select('photoAlignment', 'Photo alignment', '', !settings.fields.photo)
+                    : ''}
 
               ${
                     ['standard', 'chart'].includes(settings.style)
@@ -13824,12 +13984,7 @@ function renderGeneographPersonCardControls({
 
                       <span
                         class="geneo-selection-help">
-                        ${
-                            settings.style
-                          === 'portrait'
-                                ? 'Centered by this style'
-                                : 'Defined by this style'
-                        }
+                        Centered by this style
                       </span>
                     </div>
                   `
@@ -13848,31 +14003,18 @@ function renderGeneographPersonCardControls({
             <div
               class="geneo-person-card-options">
               ${Object.entries(labels)
-                    .filter(([field]) => (scope !== 'board' || !['livingStatus', 'linkIndicator'].includes(field)) && (settings.style !== 'compact' || field !== 'photo') && (settings.style !== 'portrait' || !['birthPlace', 'deathPlace'].includes(field)))
+                    .filter(([field]) =>
+                        (scope !== 'board' || !['livingStatus', 'linkIndicator'].includes(field))
+                        && geneoPersonCardFieldSupported(settings.style, field))
                     .map(
                         ([
                             field,
                             label
                         ]) =>
                         {
-                            const supported =
-                                geneoPersonCardFieldSupported(
-                                    settings.style,
-                                    field
-                                );
-
                             return `
                     <label
-                      class="geneo-check ${
-                            supported
-                                ? ''
-                                : 'is-unavailable'
-                        }"
-                      ${
-                            supported
-                                ? ''
-                                : 'title="Available in Standard and Portrait cards"'
-                        }>
+                      class="geneo-check">
                       <input
                         type="checkbox"
                         data-geneo-person-card-field="${escapeHtml(
@@ -13897,14 +14039,7 @@ function renderGeneographPersonCardControls({
                                 ? 'checked'
                                 : ''
                         }
-                        ${
-                            !supported
-                                ? `
-                              disabled
-                              aria-disabled="true"
-                            `
-                                : ''
-                        }>
+                        >
                       ${escapeHtml(label)}
                     </label>
                   `;
@@ -14428,6 +14563,9 @@ function renderGeneographPersonMultiSelectionControls(
             'style'
         );
 
+    const visibleStyles = nodes.map(node =>
+        geneoPersonCardEffectiveSettings(node).style);
+
     const renderField =
         (
             field,
@@ -14437,25 +14575,12 @@ function renderGeneographPersonMultiSelectionControls(
             const value =
                 sharedField(field);
 
-            const supported =
-                style === null
-            || geneoPersonCardFieldSupported(
-                style,
-                field
-            );
+            if (!visibleStyles.every(cardStyle =>
+                geneoPersonCardFieldSupported(cardStyle, field))) return '';
 
             return `
             <label
-              class="geneo-check ${
-                    supported
-                        ? ''
-                        : 'is-unavailable'
-                }"
-              ${
-                    supported
-                        ? ''
-                        : 'title="Available in Standard and Portrait cards"'
-                }>
+              class="geneo-check">
               <input
                 type="checkbox"
                 data-geneo-person-multi-field="${escapeHtml(
@@ -14471,11 +14596,7 @@ function renderGeneographPersonMultiSelectionControls(
                         ? 'checked'
                         : ''
                 }
-                ${
-                    supported
-                        ? ''
-                        : 'disabled aria-disabled="true"'
-                }>
+                >
               ${escapeHtml(label)}
             </label>
           `;
@@ -16105,11 +16226,7 @@ function renderGeneographEditor()
             }">
 
             ${
-                renderGeneoToolbarObjectButton(
-                    'person',
-                    icon.profile,
-                    'Person'
-                )
+                renderGeneoPersonSplitTool()
             }
 
             ${
@@ -20085,7 +20202,8 @@ function renderGeneographPersonStatusField(status)
 function renderGeneographPersonModal(
     person = null,
     {
-        relative = null
+        relative = null,
+        gender: initialGender = 'male'
     } = {}
 )
 {
@@ -20101,7 +20219,9 @@ function renderGeneographPersonModal(
             ? geneoRelativeDefaultGender(
                 relative.type
             )
-            : 'male';
+            : ['male', 'female', 'unknown'].includes(initialGender)
+                ? initialGender
+                : 'male';
 
     const gender =
         ['male', 'female', 'unknown']
@@ -21318,7 +21438,7 @@ function openGeneographPersonModal(
 
 function openAddGeneographPersonModal()
 {
-    openGeneographPersonModal();
+    openGeneographPersonModal('', { gender: geneoToolbarPersonGender() });
 }
 
 function resetGeneographImagePickerState()
@@ -25117,6 +25237,10 @@ function bindGeneographPersonCardControls()
         scaleMap = null
     ) =>
     {
+        diagram.personCardDefaults =
+            normalizeGeneographPersonCardSettings(
+                diagram.personCardDefaults
+            );
         if (
             scaleMap instanceof Map
         )
@@ -25398,9 +25522,8 @@ function bindGeneographPersonCardControls()
 
                         geneoPushHistory();
 
-                        diagram.personCardDefaults[
-                            key
-                        ] = value;
+                        diagram.personCardDefaults
+                            .styleSettings[diagram.personCardDefaults.style][key] = value;
 
                         commit();
                         return;
@@ -25432,15 +25555,14 @@ function bindGeneographPersonCardControls()
                     geneoPushHistory();
                     ensureCustomNode(node);
 
-                    const boardValue =
-                        diagram.personCardDefaults[
-                            key
-                        ];
-
-                    node.personCard[key] =
-                        value === boardValue
-                            ? null
-                            : value;
+                    const style = effective.style;
+                    const boardValue = normalizeGeneographPersonCardSettings(
+                        diagram.personCardDefaults
+                    ).styleSettings[style][key];
+                    node.personCard.styleSettings ||= {};
+                    node.personCard.styleSettings[style] ||= { fields: {} };
+                    node.personCard.styleSettings[style][key] =
+                        value === boardValue ? null : value;
 
                     commit();
                 }
@@ -25493,10 +25615,11 @@ function bindGeneographPersonCardControls()
 
                         geneoPushHistory();
 
-                        diagram
-                            .personCardDefaults
-                            .fields[field] =
-                                input.checked;
+                        diagram.personCardDefaults.fields[field] = input.checked;
+                        if (field !== 'linkIndicator')
+                            diagram.personCardDefaults.styleSettings[
+                                diagram.personCardDefaults.style
+                            ].fields[field] = input.checked;
 
                         if (field === 'photo')
                         {
@@ -25550,14 +25673,15 @@ function bindGeneographPersonCardControls()
                             diagram.personCardDefaults
                         );
 
-                    const boardValue =
-                        field === 'photo'
-                && effective.style
-                  !== boardSettings.style
-                            ? geneoPersonCardDefaultFields(
-                                effective.style
-                            ).photo
-                            : boardSettings.fields[field];
+                    const boardValue = boardSettings.styleSettings[
+                        effective.style
+                    ].fields[field];
+
+                    node.personCard.styleSettings ||= {};
+                    node.personCard.styleSettings[effective.style] ||= { fields: {} };
+                    const styleFields = node.personCard.styleSettings[
+                        effective.style
+                    ].fields;
 
                     if (field === 'photo')
                     {
@@ -25565,8 +25689,7 @@ function bindGeneographPersonCardControls()
                             node.personCard.photoByStyle
                   || {};
 
-                        delete node.personCard
-                            .fields.photo;
+                        delete styleFields.photo;
 
                         if (input.checked === boardValue)
                         {
@@ -25587,14 +25710,11 @@ function bindGeneographPersonCardControls()
                         input.checked === boardValue
                     )
                     {
-                        delete node.personCard
-                            .fields[field];
+                        delete styleFields[field];
                     }
                     else
                     {
-                        node.personCard
-                            .fields[field] =
-                                input.checked;
+                        styleFields[field] = input.checked;
                     }
 
                     commit();
@@ -25747,14 +25867,14 @@ function bindGeneographPersonCardControls()
                                 diagram.personCardDefaults
                             );
 
-                        const boardValue =
-                            field === 'photo'
-                  && effective.style
-                    !== boardSettings.style
-                                ? geneoPersonCardDefaultFields(
-                                    effective.style
-                                ).photo
-                                : boardSettings.fields[field];
+                        const boardValue = boardSettings.styleSettings[
+                            effective.style
+                        ].fields[field];
+                        node.personCard.styleSettings ||= {};
+                        node.personCard.styleSettings[effective.style] ||= { fields: {} };
+                        const styleFields = node.personCard.styleSettings[
+                            effective.style
+                        ].fields;
 
                         if (field === 'photo')
                         {
@@ -25762,8 +25882,7 @@ function bindGeneographPersonCardControls()
                                 node.personCard.photoByStyle
                     || {};
 
-                            delete node.personCard
-                                .fields.photo;
+                            delete styleFields.photo;
 
                             if (input.checked === boardValue)
                             {
@@ -25784,14 +25903,11 @@ function bindGeneographPersonCardControls()
                             input.checked === boardValue
                         )
                         {
-                            delete node.personCard
-                                .fields[field];
+                            delete styleFields[field];
                         }
                         else
                         {
-                            node.personCard
-                                .fields[field] =
-                                    input.checked;
+                            styleFields[field] = input.checked;
                         }
                     });
 
@@ -25850,16 +25966,23 @@ function bindGeneographPersonCardControls()
                     {
                         ensureCustomNode(node);
 
-                        const boardValue =
-                            diagram
-                                .personCardDefaults[
-                                    key
-                                ];
-
-                        node.personCard[key] =
-                            value === boardValue
-                                ? null
-                                : value;
+                        if (key === 'style')
+                        {
+                            node.personCard.style =
+                                value === diagram.personCardDefaults.style
+                                    ? null : value;
+                        }
+                        else
+                        {
+                            const style = geneoPersonCardEffectiveSettings(node, diagram).style;
+                            const boardValue = normalizeGeneographPersonCardSettings(
+                                diagram.personCardDefaults
+                            ).styleSettings[style][key];
+                            node.personCard.styleSettings ||= {};
+                            node.personCard.styleSettings[style] ||= { fields: {} };
+                            node.personCard.styleSettings[style][key] =
+                                value === boardValue ? null : value;
+                        }
                     });
 
                     commit(scales);
@@ -26359,6 +26482,14 @@ function bindGeneographEditor()
                 );
             });
         });
+    main.querySelector('[data-geneo-person-main]')?.addEventListener('click', () =>
+        addGeneographObject('person'));
+    const personMenuButton = main.querySelector('[data-geneo-person-menu]');
+    personMenuButton?.addEventListener('click', event => {
+        event.preventDefault();
+        event.stopPropagation();
+        openGeneoPersonGenderMenu(personMenuButton);
+    });
     main
         .querySelectorAll(
             '[data-geneo-tool]'

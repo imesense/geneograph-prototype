@@ -1438,6 +1438,9 @@ const RU_UI_GENEO = {
     'Choose content type':
         'Выбрать тип содержимого',
 
+    'Choose person gender':
+        'Выбрать пол человека',
+
     'Shapes':
         'Фигуры',
 
@@ -1756,9 +1759,6 @@ const RU_UI_GENEO = {
 
     'Centered by this style':
         'По центру для этого стиля',
-
-    'Defined by this style':
-        'Определяется выбранным стилем',
 
     'Corner radius':
         'Радиус скругления',

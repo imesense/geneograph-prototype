@@ -3100,6 +3100,13 @@
     align-content: start;
 }
 
+.geneo-node-person[data-geneo-person-card-style="standard"][data-geneo-person-card-photo-align="right"] .geneo-person-node-content:not(.no-photo) {
+    grid-template-areas:
+        "identity avatar"
+        "life life";
+    grid-template-columns: minmax(0, 1fr) var(--geneo-card-photo);
+}
+
 .geneo-node-person[ data-geneo-person-card-style="standard"
 ][ data-geneo-person-card-height-mode="auto"
 
@@ -3314,6 +3321,15 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
     transform: translateY(-50%);
 }
 
+.geneo-node-person[data-geneo-person-card-style="chart"][data-geneo-person-card-photo-align="right"] .geneo-person-node-content:not(.no-photo) {
+    padding: 15px calc(30px + var(--geneo-card-photo)) 15px 15px;
+}
+
+.geneo-node-person[data-geneo-person-card-style="chart"][data-geneo-person-card-photo-align="right"] .geneo-person-avatar {
+    left: auto;
+    right: 15px;
+}
+
 .geneo-node-person[ data-geneo-person-card-style="chart"
 
 ] .geneo-person-identity-block {
@@ -3412,6 +3428,8 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
     .geneo-node-person[data-geneo-person-card-style="chart"] .geneo-person-node-content { padding: 12px 12px 12px calc(22px + var(--geneo-card-photo)); }
     .geneo-node-person[data-geneo-person-card-style="chart"] .geneo-person-node-content.no-photo { padding-left: 12px; }
     .geneo-node-person[data-geneo-person-card-style="chart"] .geneo-person-avatar { left: 12px; }
+    .geneo-node-person[data-geneo-person-card-style="chart"][data-geneo-person-card-photo-align="right"] .geneo-person-node-content:not(.no-photo) { padding: 12px calc(22px + var(--geneo-card-photo)) 12px 12px; }
+    .geneo-node-person[data-geneo-person-card-style="chart"][data-geneo-person-card-photo-align="right"] .geneo-person-avatar { left: auto; right: 12px; }
     .geneo-node-person[data-geneo-person-card-style="chart"] .geneo-person-name { font-size: 18px; }
     .geneo-node-person[data-geneo-person-card-style="chart"] .geneo-person-life-summary { font-size: 14px; }
 }
@@ -3858,6 +3876,23 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
 }
 
 .geneo-node-person[data-geneo-person-card-style="chart"] .geneo-person-edit-action { right: 54px; }
+
+.geneo-node-person[data-geneo-person-card-style="chart"][data-geneo-person-card-photo-align="right"]:has(.geneo-person-avatar) :is(.geneo-person-add-relative, .geneo-person-edit-action) {
+    --geneo-card-photo: min(var(--geneo-card-photo-target, 130px), calc(100cqh - 26px), max(60px, calc(100cqw - 145px)));
+}
+
+.geneo-node-person[data-geneo-person-card-style="chart"][data-geneo-person-card-photo-align="right"]:has(.geneo-person-avatar) .geneo-person-add-relative {
+    right: calc(30px + var(--geneo-card-photo));
+}
+
+.geneo-node-person[data-geneo-person-card-style="chart"][data-geneo-person-card-photo-align="right"]:has(.geneo-person-avatar) .geneo-person-edit-action {
+    right: calc(74px + var(--geneo-card-photo));
+}
+
+@container geneo-person-card (max-width: 349px) {
+    .geneo-node-person[data-geneo-person-card-style="chart"][data-geneo-person-card-photo-align="right"]:has(.geneo-person-avatar) .geneo-person-add-relative { right: calc(22px + var(--geneo-card-photo)); }
+    .geneo-node-person[data-geneo-person-card-style="chart"][data-geneo-person-card-photo-align="right"]:has(.geneo-person-avatar) .geneo-person-edit-action { right: calc(66px + var(--geneo-card-photo)); }
+}
 
 .geneo-node-person[data-geneo-person-card-style="chart"] :is(.geneo-person-add-relative, .geneo-person-edit-action)::before {
     content: '';

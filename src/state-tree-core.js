@@ -63,6 +63,7 @@ const state = {
     geneoTool: 'pan',
     geneoPlacementReturnTool: null,
     geneoContentKind: 'sticky',
+    geneoPersonGender: 'male',
     geneoConnectorPattern: 'solid',
     geneoShapeKind: 'rectangle',
     geneoConnectionDraft: null,

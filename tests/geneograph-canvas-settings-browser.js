@@ -34,7 +34,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             assert.equal(await inspector.locator('.geneo-pattern-preview').count(), 3);
             assert.equal(await inspector.locator('[data-geneo-person-card-field="linkIndicator"]').count(), 1);
             assert.equal(await inspector.locator('[data-geneo-person-card-setting="photoSize"]').count(), 0);
-            assert.equal(await inspector.locator('#geneoPhotoAlignment:disabled').count(), 1);
+            assert.equal(await inspector.locator('[data-geneo-person-card-setting="photoAlignment"]:not(:disabled)').count(), 1);
             assert.equal(await inspector.locator('[data-geneo-person-card-field="livingStatus"]').count(), 0);
             assert.equal(await page.evaluate(() =>
                 geneoResolveVisibleNodeAppearance(getGeneographNode('gn-daisy')).fill.color), '#2D2437');
