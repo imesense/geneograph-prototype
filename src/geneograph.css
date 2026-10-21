@@ -5142,14 +5142,10 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
 }
 
 .geneo-place-modal {
-    width: min(790px,
+    width: min(680px,
             calc(100vw - 48px));
 
-    height: min(600px,
-            calc(100vh - 48px));
-
-    max-height:
-        calc(100vh - 48px);
+    max-height: min(600px, calc(100vh - 48px));
 
     display: flex;
     flex-direction: column;
@@ -5159,7 +5155,7 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
 
 .geneo-place-picker-form {
     width: 100%;
-    height: 100%;
+    max-height: inherit;
 
     min-width: 0;
     min-height: 0;
@@ -5176,7 +5172,7 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
 }
 
 .geneo-place-picker-body {
-    flex: 1 1 auto;
+    flex: 0 1 auto;
 
     min-width: 0;
     min-height: 0;
@@ -5185,9 +5181,10 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
         20px var(--space-6) 16px;
 
     display: grid;
+    align-content: start;
 
     grid-template-rows:
-        auto minmax(0, 1fr) auto auto auto;
+        auto auto auto;
 
     gap: 14px;
 
@@ -5203,6 +5200,23 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
         var(--space-2);
 }
 
+.geneo-place-picker-options {
+    min-width: 0;
+    min-height: 0;
+    max-height: 360px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    display: block;
+    scrollbar-gutter: stable;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
+    background: rgba(10, 16, 14, .44);
+}
+
+.geneo-place-picker-options [hidden] {
+    display: none;
+}
+
 .geneo-place-picker-results-section {
     min-width: 0;
     min-height: 0;
@@ -5210,17 +5224,16 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
     display: flex;
     flex-direction: column;
 
-    gap: 8px;
+    gap: 0;
 }
 
 .geneo-place-picker-results-heading {
-    min-height: 24px;
+    min-height: 38px;
+    padding: 9px 12px 5px;
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    gap: var(--space-3);
+    display: grid;
+    align-content: center;
+    gap: 2px;
 }
 
 .geneo-place-picker-results-heading h3 {
@@ -5235,53 +5248,17 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
     letter-spacing: .02em;
 }
 
-.geneo-place-picker-count {
-    min-width: 26px;
-    height: 24px;
-
-    padding:
-        0 8px;
-
-    border:
-        1px solid var(--border-default);
-
-    border-radius:
-        999px;
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    color:
-        var(--text-tertiary);
-
-    background:
-        rgba(255, 255, 255, .025);
-
+.geneo-place-picker-results-heading span {
+    color: var(--text-tertiary);
     font-size: 12px;
-    font-weight: 800;
+    line-height: 1.4;
 }
 
 .geneo-place-picker-results {
-    flex: 1 1 auto;
+    flex: 0 0 auto;
 
     min-width: 0;
-    min-height: 112px;
-
-    overflow-x: hidden;
-    overflow-y: auto;
-
-    border:
-        1px solid var(--border-default);
-
-    border-radius:
-        var(--radius-sm);
-
-    background:
-        rgba(10, 16, 14, .44);
-
-    scrollbar-gutter:
-        stable;
+    min-height: 0;
 }
 
 .geneo-place-picker-option {
@@ -5409,58 +5386,26 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
     display: block;
 }
 
-.geneo-place-picker-empty {
-    min-height: 112px;
-
-    padding:
-        var(--space-5);
-
-    display: grid;
-    place-items: center;
-
-    color:
-        var(--text-tertiary);
-
-    text-align: center;
-}
-
-.geneo-place-picker-empty div {
-    max-width: 420px;
-
-    display: grid;
-
-    gap: 5px;
-}
-
-.geneo-place-picker-empty strong {
-    color:
-        var(--text-secondary);
-
-    font-size: 14px;
-}
-
-.geneo-place-picker-empty span {
-    font-size: 12px;
-
+.geneo-place-picker-status:not([hidden]) {
+    padding: 14px 12px;
+    color: var(--text-secondary);
+    font-size: 13px;
     line-height: 1.45;
 }
 
-.geneo-place-board-choice-host:empty {
-    display: none;
+.geneo-place-board-choice-host {
+    border-top: 1px solid var(--border-default);
 }
 
 .geneo-place-board-choice {
     width: 100%;
-    min-height: 68px;
+    min-height: 70px;
 
     padding:
         10px 12px;
 
-    border:
-        1px solid rgba(98, 217, 154, .22);
-
-    border-radius:
-        var(--radius-sm);
+    border: 0;
+    border-radius: 0;
 
     display: grid;
 
@@ -5474,8 +5419,7 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
     color:
         var(--text-primary);
 
-    background:
-        rgba(47, 174, 116, .045);
+    background: transparent;
 
     text-align: left;
 
@@ -5485,9 +5429,6 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
 }
 
 .geneo-place-board-choice:hover {
-    border-color:
-        rgba(98, 217, 154, .42);
-
     background:
         rgba(47, 174, 116, .09);
 }
@@ -5496,14 +5437,10 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
     outline:
         2px solid var(--brand-green-300);
 
-    outline-offset:
-        2px;
+    outline-offset: -2px;
 }
 
 .geneo-place-board-choice.selected {
-    border-color:
-        rgba(98, 217, 154, .6);
-
     background:
         var(--surface-selected);
 }
@@ -5543,17 +5480,6 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
     font-size: 12px;
 }
 
-.geneo-place-modal-help {
-    margin: 0;
-
-    color:
-        var(--text-tertiary);
-
-    font-size: 12px;
-
-    line-height: 1.45;
-}
-
 .geneo-place-picker-error:empty {
     display: none;
 }
@@ -5573,9 +5499,6 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
     .geneo-place-modal {
         width:
             calc(100vw - 24px);
-
-        height:
-            calc(100vh - 24px);
 
         max-height:
             calc(100vh - 24px);

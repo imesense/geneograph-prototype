@@ -17958,43 +17958,6 @@ function renderGeneographPlacePickerResults(
     pickerState
 )
 {
-    if (!model.matches.length)
-    {
-        const noProjectPlaces =
-            !model.allPlaces.length;
-
-        const title =
-            noProjectPlaces
-                ? 'No project places yet.'
-                : `No project places match “${model.query}”.`;
-
-        const support =
-            noProjectPlaces &&
-          !model.query
-                ? 'Type a name above to create a board-only place.'
-                : '';
-
-        return `
-          <div class="geneo-place-picker-empty">
-            <div>
-              <strong>
-                ${escapeHtml(title)}
-              </strong>
-
-              ${
-                    support
-                        ? `
-                    <span>
-                      ${escapeHtml(support)}
-                    </span>
-                  `
-                        : ''
-                }
-            </div>
-          </div>
-        `;
-    }
-
     return model.matches
         .map(place =>
         {
@@ -18011,7 +17974,7 @@ function renderGeneographPlacePickerResults(
 
             const context =
                 placeSecondaryName(place)
-            || 'Project place';
+            || t('Project place');
 
             return `
             <button
@@ -18030,8 +17993,9 @@ function renderGeneographPlacePickerResults(
                         : 'false'
                 }"
               aria-label="${escapeHtml(
-                    `Select ${primary}`
-                )}">
+                    `${t('Select')} ${primary}`
+                )}"
+              title="${escapeHtml(placeDisplayText(place))}">
 
               <span
                 class="geneo-place-picker-option-copy">
@@ -18088,6 +18052,7 @@ function renderGeneographBoardOnlyPlaceChoice(
           data-geneo-board-place-name="${escapeHtml(
                 model.boardOnlyCandidate
             )}"
+          title="${escapeHtml(model.boardOnlyCandidate)}"
           aria-pressed="${
                 selected
                     ? 'true'
@@ -18096,20 +18061,15 @@ function renderGeneographBoardOnlyPlaceChoice(
 
           <span
             class="geneo-place-board-choice-copy">
-            <strong>
-              Create board-only place
-            </strong>
+            <strong>${escapeHtml(t('Use on this board only'))}</strong>
 
-            <span
-              class="geneo-place-board-choice-name">
-              ${escapeHtml(
-                    model.boardOnlyCandidate
-                )}
+            <span class="geneo-place-board-choice-name">
+              ${escapeHtml(model.boardOnlyCandidate)}
             </span>
 
             <span
               class="geneo-place-board-choice-meta">
-              Only available on this board
+              ${escapeHtml(t('Not added to Places'))}
             </span>
           </span>
 
@@ -18165,15 +18125,11 @@ function renderGeneographPlacePickerModal({
             <div class="modal-header">
               <div>
                 <h2 id="geneoPlaceModalTitle">
-                  ${
-                        editing
-                            ? 'Edit place object'
-                            : 'Add place'
-                    }
+                  ${escapeHtml(t(editing ? 'Change place' : 'Add place'))}
                 </h2>
 
                 <p>
-                  Add an existing project place or create a place that exists only on this board.
+                  ${escapeHtml(t('Search project places or the map.'))}
                 </p>
               </div>
 
@@ -18181,7 +18137,7 @@ function renderGeneographPlacePickerModal({
                 class="close-button"
                 type="button"
                 data-close
-                aria-label="Close">
+                aria-label="${escapeHtml(t('Close'))}">
                 ${icon.close}
               </button>
             </div>
@@ -18198,7 +18154,7 @@ function renderGeneographPlacePickerModal({
                   geneo-place-picker-search
                 ">
                 <label for="geneoPlacePickerSearch">
-                  Search places
+                  ${escapeHtml(t('Find a place'))}
                 </label>
 
                 <input
@@ -18207,35 +18163,32 @@ function renderGeneographPlacePickerModal({
                   value="${escapeHtml(
                         pickerState.query
                     )}"
-                  placeholder="Search project places or type a board-only name"
+                  placeholder="${escapeHtml(t('Search project places or the map'))}"
                   autocomplete="off"
-                  aria-describedby="geneoPlacePickerHelp"
+                  aria-controls="geneoPlacePickerOptions"
                   data-geneo-place-picker-search
                   autofocus>
               </div>
 
+              <div class="geneo-place-picker-options" id="geneoPlacePickerOptions" data-geneo-place-picker-options>
               <section
                 class="geneo-place-picker-results-section"
-                aria-labelledby="geneoPlacePickerResultsTitle">
+                aria-labelledby="geneoPlacePickerResultsTitle"
+                data-geneo-place-project-group
+                ${model.matches.length ? '' : 'hidden'}>
 
                 <div
                   class="geneo-place-picker-results-heading">
                   <h3 id="geneoPlacePickerResultsTitle">
-                    Project places
+                    ${escapeHtml(t('Project places'))}
                   </h3>
 
-                  <span
-                    class="geneo-place-picker-count"
-                    data-geneo-place-picker-count
-                    aria-live="polite">
-                    ${model.matches.length}
-                  </span>
                 </div>
 
                 <div
                   class="geneo-place-picker-results"
                   data-geneo-place-picker-results
-                  aria-label="Project place results">
+                  aria-label="${escapeHtml(t('Project place results'))}">
                   ${renderGeneographPlacePickerResults(
                         model,
                         pickerState
@@ -18243,31 +18196,27 @@ function renderGeneographPlacePickerModal({
                 </div>
               </section>
 
-              <section class="geneo-place-picker-results-section" aria-label="${escapeHtml(t('Map results'))}">
-                <h3>${escapeHtml(t('Map results'))}</h3>
+              <section class="geneo-place-picker-results-section" aria-labelledby="geneoPlaceMapResultsTitle" data-geneo-place-map-group hidden>
+                <div class="geneo-place-picker-results-heading">
+                  <h3 id="geneoPlaceMapResultsTitle">${escapeHtml(t('Map results'))}</h3>
+                  <span>${escapeHtml(t('Choosing a map result adds it to Places.'))}</span>
+                </div>
                 <div class="geneo-place-picker-results" data-geneo-place-map-results></div>
               </section>
 
-              <div
-                class="geneo-place-board-choice-host"
-                data-geneo-place-board-choice-host>
-                ${renderGeneographBoardOnlyPlaceChoice(
-                    model,
-                    pickerState
-                )}
-              </div>
+              <div class="geneo-place-picker-status" data-geneo-place-picker-status role="status" aria-live="polite"></div>
 
-              <p
-                class="geneo-place-modal-help"
-                id="geneoPlacePickerHelp">
-                Project places stay linked and reflect future name changes. Board-only places exist only on this board.
-              </p>
+              <div class="geneo-place-board-choice-host" data-geneo-place-board-choice-host ${model.boardOnlyCandidate ? '' : 'hidden'}>
+                ${renderGeneographBoardOnlyPlaceChoice(model, pickerState)}
+              </div>
+              </div>
 
               <span
                 class="
                   field-error
                   geneo-place-picker-error
                 "
+                id="geneoPlacePickerError"
                 data-geneo-place-error
                 role="alert"
                 aria-live="polite">
@@ -18279,7 +18228,7 @@ function renderGeneographPlacePickerModal({
                 class="button secondary"
                 type="button"
                 data-close>
-                Cancel
+                ${escapeHtml(t('Cancel'))}
               </button>
 
               <button
@@ -18291,12 +18240,12 @@ function renderGeneographPlacePickerModal({
                         ? ''
                         : 'disabled'
                 }>
-                ${escapeHtml(
+                ${escapeHtml(t(
                     geneographPlacePickerPrimaryLabel(
                         pickerState,
                         editing
                     )
-                )}
+                ))}
               </button>
             </div>
           </form>
@@ -18410,15 +18359,14 @@ function openGeneographPlaceModal(
         );
 
     const mapHost = form?.querySelector('[data-geneo-place-map-results]');
+    const projectGroup = form?.querySelector('[data-geneo-place-project-group]');
+    const mapGroup = form?.querySelector('[data-geneo-place-map-group]');
+    const statusHost = form?.querySelector('[data-geneo-place-picker-status]');
+    const optionsHost = form?.querySelector('[data-geneo-place-picker-options]');
     let mapResults = [];
     let mapState = 'idle';
     let mapTimer = null;
     let mapController = null;
-
-    const countElement =
-        form?.querySelector(
-            '[data-geneo-place-picker-count]'
-        );
 
     const primaryButton =
         form?.querySelector(
@@ -18435,7 +18383,10 @@ function openGeneographPlaceModal(
         || !searchInput
         || !resultsHost
         || !boardChoiceHost
-        || !countElement
+        || !projectGroup
+        || !mapGroup
+        || !statusHost
+        || !optionsHost
         || !primaryButton
     )
     {
@@ -18444,15 +18395,12 @@ function openGeneographPlaceModal(
 
     const clearError = () =>
     {
-        if (errorElement)
-        {
-            errorElement.textContent =
-                '';
-        }
+        if (errorElement) errorElement.textContent = '';
 
         searchInput.removeAttribute(
             'aria-invalid'
         );
+        searchInput.removeAttribute('aria-describedby');
     };
 
     const choiceIsSelected = (
@@ -18540,10 +18488,27 @@ function openGeneographPlaceModal(
             !pickerState.choice;
 
         primaryButton.textContent =
-            geneographPlacePickerPrimaryLabel(
+            t(geneographPlacePickerPrimaryLabel(
                 pickerState,
                 editing
-            );
+            ));
+    };
+
+    const renderStatus = model =>
+    {
+        let message = '';
+        if (!model.matches.length && mapGroup.hidden)
+        {
+            if (!model.query)
+                message = 'No project places yet. Search for a place to add it to this board.';
+            else if (mapState === 'empty')
+                message = 'No matching places found.';
+            else if (mapState === 'idle')
+                message = t('Type at least {count} characters to search the map.')
+                    .replace('{count}', String(PLACE_EDITOR_GEOCODER_MIN_LENGTH));
+        }
+        statusHost.textContent = message ? t(message) : '';
+        statusHost.hidden = !message;
     };
 
     const refreshResults = () =>
@@ -18559,32 +18524,32 @@ function openGeneographPlaceModal(
                 model,
                 pickerState
             );
+        projectGroup.hidden = !model.matches.length;
 
         boardChoiceHost.innerHTML =
             renderGeneographBoardOnlyPlaceChoice(
                 model,
                 pickerState
             );
+        boardChoiceHost.hidden = !model.boardOnlyCandidate;
 
-        countElement.textContent =
-            String(
-                model.matches.length
-            );
-
+        renderStatus(model);
         updateChoiceUi();
     };
 
     const renderMapResults = () =>
     {
         if (!mapHost) return;
-        mapHost.closest('section').hidden = mapState === 'idle' && !mapResults.length;
+        mapGroup.hidden = !(['loading', 'unavailable', 'ready'].includes(mapState) &&
+            (mapState !== 'ready' || mapResults.length));
         mapHost.innerHTML = mapState === 'loading'
             ? `<div class="place-combobox-status">${escapeHtml(t('Searching map results...'))}</div>`
             : mapState === 'unavailable'
                 ? `<div class="place-combobox-status">${escapeHtml(t('Map search is unavailable. You can retry or use the entered text.'))} <button type="button" data-geneo-place-map-retry>${escapeHtml(t('Retry'))}</button></div>`
                 : mapState === 'empty'
                     ? `<div class="place-combobox-status">${escapeHtml(t('No matching map results. You can still use the entered text.'))}</div>`
-                    : mapResults.map((result, index) => `<button class="geneo-place-picker-option" type="button" data-geneo-place-picker-choice="map" data-geneo-place-map-index="${index}" aria-pressed="false" aria-label="${escapeHtml(`${t('Select')} ${result.name}`)}"><span class="geneo-place-picker-option-copy"><strong>${escapeHtml(result.primary)}</strong><span>${escapeHtml(result.context || result.name)}</span></span><span class="geneo-place-picker-check" data-geneo-place-picker-check aria-hidden="true" hidden>${icon.check}</span></button>`).join('');
+                    : mapResults.map((result, index) => `<button class="geneo-place-picker-option" type="button" data-geneo-place-picker-choice="map" data-geneo-place-map-index="${index}" aria-pressed="false" aria-label="${escapeHtml(`${t('Select')} ${result.name}`)}" title="${escapeHtml(result.name)}"><span class="geneo-place-picker-option-copy"><strong>${escapeHtml(result.primary)}</strong><span>${escapeHtml(result.context || result.name)}</span></span><span class="geneo-place-picker-check" data-geneo-place-picker-check aria-hidden="true" hidden>${icon.check}</span></button>`).join('');
+        renderStatus(geneographPlacePickerViewModel(board.projectId, pickerState));
         updateChoiceUi();
     };
 
@@ -18648,8 +18613,23 @@ function openGeneographPlaceModal(
         }
     );
 
+    searchInput.addEventListener('keydown', event =>
+    {
+        if (event.key !== 'ArrowDown') return;
+        const first = [...optionsHost.querySelectorAll('[data-geneo-place-picker-choice]')]
+            .find(button => button.getClientRects().length);
+        if (!first) return;
+        event.preventDefault();
+        first.focus();
+    });
+
     renderMapResults();
     if (searchInput.value.trim()) scheduleMapSearch();
+    requestAnimationFrame(() =>
+    {
+        optionsHost.querySelector('[data-geneo-place-picker-choice].selected')
+            ?.scrollIntoView({ block: 'nearest' });
+    });
 
     form.addEventListener('click', event =>
     {
@@ -18696,7 +18676,11 @@ function openGeneographPlaceModal(
                 !== board.projectId
                 )
                 {
+                    pickerState.choice = null;
                     refreshResults();
+                    scheduleMapSearch();
+                    errorElement.textContent = t('This place is no longer available. Choose another place.');
+                    searchInput.setAttribute('aria-describedby', 'geneoPlacePickerError');
                     return;
                 }
 
@@ -18751,6 +18735,7 @@ function openGeneographPlaceModal(
 
             let nextRef = null;
             let createdPlace = null;
+            let staleProjectPlace = false;
 
             if (
                 pickerState.choice?.type
@@ -18789,6 +18774,7 @@ function openGeneographPlaceModal(
                       )
                     };
                 }
+                else staleProjectPlace = true;
             }
             else if (
                 pickerState.choice?.type
@@ -18832,16 +18818,21 @@ function openGeneographPlaceModal(
                     const index = sampleData.places.indexOf(createdPlace);
                     if (index >= 0) sampleData.places.splice(index, 1);
                 }
-                if (errorElement)
+                if (staleProjectPlace)
                 {
-                    errorElement.textContent =
-                        'Select a project place or the board-only creation choice.';
+                    pickerState.choice = null;
+                    refreshResults();
+                    scheduleMapSearch();
                 }
+                if (errorElement) errorElement.textContent = t(staleProjectPlace
+                    ? 'This place is no longer available. Choose another place.'
+                    : 'Choose a place from the results or use the entered name on this board.');
 
                 searchInput.setAttribute(
                     'aria-invalid',
                     'true'
                 );
+                searchInput.setAttribute('aria-describedby', 'geneoPlacePickerError');
 
                 searchInput.focus({
                     preventScroll: true

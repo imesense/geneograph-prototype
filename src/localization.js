@@ -1930,6 +1930,51 @@ const RU_UI_GENEO = {
     'Add an existing project place or create a place that exists only on this board.':
         'Добавьте существующее место проекта или создайте место, которое будет существовать только на этом холсте.',
 
+    'Choose a project place, search the map, or add a board-only place.':
+        'Выберите место проекта, найдите место на карте или добавьте место только на этот холст.',
+
+    'Find a place':
+        'Найти место',
+
+    'Search project places or the map':
+        'Поиск по местам проекта и карте',
+
+    'Search project places or the map.':
+        'Найдите место проекта или место на карте.',
+
+    'Choosing a map result adds it to Places.':
+        'Выбранное место с карты добавится в раздел «Места».',
+
+    'Use on this board only':
+        'Только на этом холсте',
+
+    'Not added to Places':
+        'Не добавится в раздел «Места»',
+
+    'No project places yet. Search for a place to add it to this board.':
+        'В проекте пока нет мест. Найдите место, чтобы добавить его на холст.',
+
+    'No matching places found.':
+        'Подходящих мест не найдено.',
+
+    'Type at least {count} characters to search the map.':
+        'Чтобы искать на карте, введите не менее {count} символов.',
+
+    'This place is no longer available. Choose another place.':
+        'Это место больше недоступно. Выберите другое.',
+
+    'Choose a place from the results or use the entered name on this board.':
+        'Выберите место из результатов или используйте введённое название только на этом холсте.',
+
+    'No project places match':
+        'Не найдены места проекта по запросу',
+
+    'Search for a place or enter a name to add it only to this board.':
+        'Найдите место или введите название, чтобы добавить его только на этот холст.',
+
+    'Project places stay in sync with Places. Board-only places appear only on this board.':
+        'Места проекта обновляются вместе с разделом «Места». Места только на холсте видны лишь здесь.',
+
     'Search project places or type a board-only name':
         'Найдите место проекта или введите название места только для этого холста',
 
