@@ -70,7 +70,8 @@ const GENEO_PERSON_CARD_PHOTO_ALIGNMENTS =
 const GENEO_PERSON_CARD_ALIGNMENTS =
     Object.freeze([
         'left',
-        'center'
+        'center',
+        'right'
     ]);
 
 const GENEO_PERSON_CARD_ENUMS =
@@ -106,8 +107,8 @@ const GENEO_PERSON_CARD_GEOMETRY =
         },
 
         compact: {
-            width: 280,
-            height: 110,
+            width: 300,
+            height: 130,
             minWidth: 230,
             minHeight: 110,
             maxWidth: 560,
@@ -124,8 +125,8 @@ const GENEO_PERSON_CARD_GEOMETRY =
         },
 
         portrait: {
-            width: 235,
-            height: 360,
+            width: 250,
+            height: 350,
             minWidth: 200,
             minHeight: 300,
             maxWidth: 400,
@@ -833,8 +834,6 @@ function geneoPersonCardViewModel(
             showPhoto:
             Boolean(fields.photo),
             lifeSpan: '',
-            chartWrappedFirst: '',
-            chartWrappedSecond: '',
             structuredLife: false,
             birthEvent: null,
             deathEvent: null,
@@ -994,9 +993,6 @@ function geneoPersonCardViewModel(
           Boolean(fields.photo),
         lifeSpan,
         portraitLifeSpan,
-        chartWrappedFirst: birthDate && deathDate ? birthDate : lifeSpan,
-        chartWrappedSecond: birthDate && deathDate
-            ? `– ${deathDate}` : '',
         structuredLife,
         birthEvent,
         deathEvent,
@@ -8153,6 +8149,13 @@ function geneoPaintCssColor(paint, { disabledColor = 'transparent' } = {})
     return `rgba(${r}, ${g}, ${b}, ${geneoNumber(paint.opacity, 100, 0, 100) / 100})`;
 }
 
+function geneoPersonActionGapColor(paint)
+{
+    return paint?.enabled && geneoNumber(paint.opacity, 100, 0, 100) === 100
+        ? geneoPaintCssColor(paint)
+        : 'transparent';
+}
+
 function isCanonicalGeneoPaint(paint, { mustBeEnabled = false, fixedOpacity = null } = {})
 {
     return Boolean(
@@ -8944,8 +8947,8 @@ function normalizeGeneographBoardRecord(board, projectPeople)
 
                     if (legacyStyle === 'portrait' && node.portraitCardLayoutVersion !== 1)
                     {
-                        const width = Math.max(normalizedNode.width, GENEO_PERSON_CARD_GEOMETRY.portrait.width);
-                        const height = Math.max(normalizedNode.height, GENEO_PERSON_CARD_GEOMETRY.portrait.height);
+                        const width = Math.max(normalizedNode.width, 235);
+                        const height = Math.max(normalizedNode.height, 360);
                         normalizedNode.x -= (width - normalizedNode.width) / 2;
                         normalizedNode.y -= (height - normalizedNode.height) / 2;
                         normalizedNode.width = width;
@@ -10597,71 +10600,6 @@ function renderGeneographPersonEditAction(node)
       `;
 }
 
-function updateGeneographChartDateFit(element)
-{
-    if (element?.dataset.geneoPersonCardStyle !== 'chart') return;
-    const summary = element.querySelector('.geneo-person-life-summary');
-    const full = summary?.querySelector('.geneo-chart-date-full');
-    if (!full) return;
-    element.classList.remove('geneo-chart-date-tight', 'geneo-chart-date-edge', 'geneo-chart-date-first-edge');
-    const context = document.createElement('canvas').getContext('2d');
-    const style = getComputedStyle(full);
-    context.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
-    const actionsVisible = element.matches(':hover, :focus-within, .selected');
-    const edit = element.querySelector('.geneo-person-edit-action');
-    if (!actionsVisible || !edit) return;
-    const scale = element.getBoundingClientRect().width / element.offsetWidth || 1;
-    const buttonLeft = Math.max(0, (edit.getBoundingClientRect().left
-        - summary.getBoundingClientRect().left) / scale - 4);
-    const centered = getComputedStyle(summary).textAlign === 'center';
-    const singleLineLimit = centered
-        ? 2 * (buttonLeft - summary.clientWidth / 2) : buttonLeft;
-    if (context.measureText(full.textContent).width > Math.min(summary.clientWidth, singleLineLimit) + 1)
-    {
-        element.classList.add('geneo-chart-date-tight');
-        const second = summary.querySelector('.geneo-chart-date-second');
-        const secondWidth = second ? context.measureText(second.textContent).width : 0;
-        let lowerLimit = buttonLeft;
-        let shift = 0;
-        if (centered && secondWidth <= buttonLeft)
-        {
-            lowerLimit = summary.clientWidth;
-            shift = Math.max(0, (summary.clientWidth + secondWidth) / 2 - buttonLeft);
-        }
-        else if (centered)
-        {
-            element.classList.add('geneo-chart-date-edge');
-        }
-        element.style.setProperty('--geneo-chart-date-limit', `${lowerLimit}px`);
-        element.style.setProperty('--geneo-chart-date-first-limit', `${buttonLeft}px`);
-        element.style.setProperty('--geneo-chart-date-shift', `${shift}px`);
-        const first = summary.querySelector('.geneo-chart-date-first');
-        if (first && edit)
-        {
-            const firstBounds = first.getBoundingClientRect();
-            const buttonBounds = edit.getBoundingClientRect();
-            if (firstBounds.bottom > buttonBounds.top && firstBounds.top < buttonBounds.bottom
-                && firstBounds.right > buttonBounds.left - 4)
-                element.classList.add('geneo-chart-date-first-edge');
-        }
-    }
-}
-
-function updateGeneographPortraitDateFit(element)
-{
-    if (element?.dataset.geneoPersonCardStyle !== 'portrait') return;
-    const full = element.querySelector('.geneo-portrait-date-full');
-    const summary = full?.closest('.geneo-person-life-summary');
-    if (!full || !summary) return;
-    element.classList.remove('geneo-portrait-date-tight');
-    if (!element.querySelector('.geneo-portrait-date-wrapped')) return;
-    const context = document.createElement('canvas').getContext('2d');
-    const style = getComputedStyle(full);
-    context.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
-    if (context.measureText(full.textContent).width > summary.clientWidth + 1)
-        element.classList.add('geneo-portrait-date-tight');
-}
-
 function renderGeneographPersonNode(
     node
 )
@@ -10726,11 +10664,8 @@ function renderGeneographPersonNode(
             ? compactLife
                 ? `
               <span class="geneo-person-life-summary" title="${escapeHtml(model.settings.style === 'portrait' ? model.portraitLifeSpan : compactLife)}">
-                ${model.settings.style === 'portrait'
-                    ? `<span class="geneo-portrait-date-full">${escapeHtml(model.portraitLifeSpan)}</span>${model.chartWrappedSecond ? `<span class="geneo-portrait-date-wrapped"><span class="geneo-portrait-date-first">${escapeHtml(model.chartWrappedFirst)}</span><span class="geneo-portrait-date-second">${escapeHtml(model.chartWrappedSecond)}</span></span>` : ''}`
-                    : model.settings.style === 'chart'
-                    ? `<span class="geneo-chart-date-full">${escapeHtml(compactLife)}</span><span class="geneo-chart-date-wrapped"><span class="geneo-chart-date-first">${escapeHtml(model.chartWrappedFirst)}</span>${model.chartWrappedSecond ? `<span class="geneo-chart-date-second">${escapeHtml(model.chartWrappedSecond)}</span>` : ''}</span>`
-                    : escapeHtml(compactLife)}
+                ${escapeHtml(model.settings.style === 'portrait'
+                    ? model.portraitLifeSpan : compactLife)}
               </span>
             `
                 : ''
@@ -11292,6 +11227,7 @@ function renderGeneographObject(node)
         `--geneo-node-bg:${geneoPaintCssColor(
             visibleFill
         )}`,
+        `--geneo-node-gap-bg:${geneoPersonActionGapColor(visibleFill)}`,
         `--geneo-node-stroke:${geneoPaintCssColor(
             visibleStroke
         )}`,
@@ -11415,6 +11351,8 @@ function renderGeneographObject(node)
             )}
           </div>
 
+          ${node.type === 'person' && ['compact', 'chart', 'portrait'].includes(personSettings?.style) ? '<span class="geneo-person-action-gap" aria-hidden="true"></span>' : ''}
+
           ${
                 node.type === 'person'
                     ? renderGeneographPersonAddRelativeAction(node)
@@ -11423,7 +11361,7 @@ function renderGeneographObject(node)
 
           ${
                 node.type === 'person'
-              && ['standard', 'chart', 'portrait'].includes(personSettings?.style)
+              && ['standard', 'compact', 'chart', 'portrait'].includes(personSettings?.style)
                     ? renderGeneographPersonEditAction(node)
                     : ''
           }
@@ -12418,6 +12356,7 @@ function applyGeneoPaintTargetToDom(reference)
             if (!element) return;
             const visible = geneoResolveVisibleNodeAppearance(node);
             element.style.setProperty('--geneo-node-bg', geneoPaintCssColor(visible.fill));
+            element.style.setProperty('--geneo-node-gap-bg', geneoPersonActionGapColor(visible.fill));
             element.style.setProperty('--geneo-node-stroke', geneoPaintCssColor(visible.stroke));
             element.style.setProperty('--geneo-node-text', geneoPaintCssColor(visible.text));
             element.style.setProperty('--geneo-node-stroke-style', visible.stroke?.enabled ? visible.strokePattern : 'none');
@@ -12456,6 +12395,11 @@ function applyGeneoPaintTargetToDom(reference)
                 geneoPaintCssColor(
                     visibleFill
                 )
+            );
+
+            element.style.setProperty(
+                '--geneo-node-gap-bg',
+                geneoPersonActionGapColor(visibleFill)
             );
 
             element.style.setProperty(
@@ -13653,7 +13597,8 @@ function geneoPersonCardControlOptions()
 
         alignment: [
             ['left', 'Left'],
-            ['center', 'Center']
+            ['center', 'Center'],
+            ['right', 'Right']
         ]
     };
 }
@@ -26722,18 +26667,6 @@ function bindGeneographEditor()
                 event.stopPropagation();
                 openGeneographObjectContextMenu(element.dataset.geneoNode, event.clientX, event.clientY);
             });
-
-            if (element.dataset.geneoPersonCardStyle === 'chart')
-            {
-                ['pointerenter', 'pointerleave', 'focusin', 'focusout'].forEach(type =>
-                    element.addEventListener(type, () => requestAnimationFrame(() => updateGeneographChartDateFit(element))));
-                requestAnimationFrame(() => updateGeneographChartDateFit(element));
-            }
-            if (element.dataset.geneoPersonCardStyle === 'portrait')
-            {
-                requestAnimationFrame(() => updateGeneographPortraitDateFit(element));
-                new ResizeObserver(() => updateGeneographPortraitDateFit(element)).observe(element);
-            }
 
             element.addEventListener('keydown', event =>
             {

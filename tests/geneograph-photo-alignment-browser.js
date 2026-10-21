@@ -105,6 +105,23 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             assert.ok(layout.addRight <= layout.avatarLeft + 1, JSON.stringify(layout));
             assert.ok(layout.editLeft >= layout.cardLeft + 8, JSON.stringify(layout));
             assert.ok(layout.editRight <= layout.addLeft + 1, JSON.stringify(layout));
+            const actionGap = await page.locator('.geneo-node-person[data-geneo-node="gn-barnaby"]').evaluate(element => {
+                const edit = element.querySelector('.geneo-person-edit-action').getBoundingClientRect();
+                const add = element.querySelector('.geneo-person-add-relative').getBoundingClientRect();
+                const gap = element.querySelector('.geneo-person-action-gap');
+                const segment = gap.getBoundingClientRect();
+                const inset = 6 * edit.width / 44;
+                return {
+                    leftDifference: Math.abs(segment.left - (edit.right - inset)),
+                    rightDifference: Math.abs(segment.right - (add.left + inset)),
+                    fillMatches: getComputedStyle(gap).backgroundColor === getComputedStyle(element).backgroundColor,
+                    dateClip: getComputedStyle(element.querySelector('.geneo-person-life-summary')).clipPath
+                };
+            });
+            assert.ok(actionGap.leftDifference < 1, JSON.stringify(actionGap));
+            assert.ok(actionGap.rightDifference < 1, JSON.stringify(actionGap));
+            assert.ok(actionGap.fillMatches, JSON.stringify(actionGap));
+            assert.equal(actionGap.dateClip, 'inset(0px 88px 0px 0px)');
             if (process.env.GENEO_SCREENSHOT_DIR) {
                 await page.locator('.geneo-node-person[data-geneo-node="gn-barnaby"]').screenshot({
                     path: path.join(process.env.GENEO_SCREENSHOT_DIR, `photo-right-chart-${width}.png`)
@@ -120,7 +137,6 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                     diagram.personCardDefaults.styleSettings.chart.alignment = 'center';
                     renderGeneographEditorPreserveScroll();
                     const card = document.querySelector('.geneo-node-person[data-geneo-node="gn-barnaby"]');
-                    updateGeneographChartDateFit(card);
                     const avatar = card.querySelector('.geneo-person-avatar').getBoundingClientRect();
                     const edit = card.querySelector('.geneo-person-edit-action').getBoundingClientRect();
                     const add = card.querySelector('.geneo-person-add-relative').getBoundingClientRect();

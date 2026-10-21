@@ -84,7 +84,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                         noOverflow: content.right <= bounds.right + 1 && content.bottom <= bounds.bottom + 1,
                         ordered: avatar.bottom < name.top && name.bottom <= date.top && date.bottom < edit.top,
                         actions: editButton.offsetWidth >= 44 && addButton.offsetWidth >= 44 && edit.right <= add.left + 1,
-                        date: card.querySelector('.geneo-portrait-date-full')?.textContent.trim(),
+                        date: card.querySelector('.geneo-person-life-summary')?.textContent.trim(),
                         placeRows: card.querySelectorAll('.geneo-person-life-event').length };
                 }, { nodeId, width, height });
                 assert.equal(layout.placeRows, 0);
@@ -129,10 +129,10 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 const edit = card.querySelector('.geneo-person-edit-action').getBoundingClientRect();
                 return { noPhoto: content.classList.contains('no-photo'),
                     noOverlap: name.bottom <= date.top && date.bottom < edit.top,
-                    fullDate: card.querySelector('.geneo-portrait-date-full').textContent,
-                    wrapped: card.classList.contains('geneo-portrait-date-tight') };
+                    fullDate: card.querySelector('.geneo-person-life-summary').textContent,
+                    wrapped: getComputedStyle(card.querySelector('.geneo-person-life-summary')).whiteSpace === 'nowrap' };
             }, nodeId);
-            assert.ok(noPhoto.noPhoto && noPhoto.noOverlap && noPhoto.fullDate.includes('–'),
+            assert.ok(noPhoto.noPhoto && noPhoto.noOverlap && noPhoto.fullDate.includes('–') && noPhoto.wrapped,
                 JSON.stringify({ language, noPhoto }));
 
             await page.evaluate(() => {
