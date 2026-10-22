@@ -798,6 +798,37 @@ function geneoPersonHasResettableSettings(node)
         || ['strokeWidth', 'strokePattern'].some(key => appearance.styleOverrides?.[key] === true);
 }
 
+function geneoResetPersonCardSettings(node, diagram)
+{
+    const current = normalizeGeneographPersonCardOverrides(node.personCard);
+    node.personCard = geneoEmptyPersonCardOverrides(Boolean(current.style), current.heightMode);
+    node.personCard.style = current.style;
+    const inherited = geneoPersonGenderAppearance(node, diagram);
+    for (const key of ['fill', 'stroke', 'text'])
+        node.appearance[key] = structuredClone(inherited[key]);
+    node.appearance.strokeWidth = inherited.strokeWidth;
+    node.appearance.strokePattern = inherited.strokePattern;
+    node.appearance.paintOverrides = { fill: false, stroke: false, text: false };
+    node.appearance.styleOverrides = { strokeWidth: false, strokePattern: false };
+}
+
+function geneoApplyPersonGenderAppearance(node, diagram)
+{
+    const person = getGeneographPerson(node.personId);
+    const gender = ['male', 'female'].includes(person?.gender) ? person.gender : 'unknown';
+    const preset = diagram.cardAppearanceDefaults[gender];
+    if (!preset) return;
+    for (const key of ['fill', 'stroke', 'text'])
+        node.appearance[key] = structuredClone(preset[key]);
+    node.appearance.strokeWidth = preset.strokeWidth;
+    node.appearance.strokePattern = preset.strokePattern;
+    node.appearance.paintOverrides = { fill: true, stroke: true, text: true };
+    node.appearance.styleOverrides = { strokeWidth: true, strokePattern: true };
+    node.personCard = normalizeGeneographPersonCardOverrides(node.personCard);
+    node.personCard.custom = true;
+    node.personCard.cornerRadius = preset.cornerRadius;
+}
+
 function geneoPersonCardFieldSupported(
     style,
     field
@@ -14535,191 +14566,151 @@ function geneoSharedPersonCardValue(
         : null;
 }
 
+function geneoSharedPersonPaintValue(nodes, property, field)
+{
+    if (!nodes.length) return null;
+    const values = nodes.map(node =>
+        geneoResolveVisibleNodeAppearance(node)?.[property]?.[field]);
+    return values.every(value => value === values[0]) ? values[0] : null;
+}
+
+function renderGeneographPersonMultiAppearance(nodes)
+{
+    const visible = nodes.map(node => geneoResolveVisibleNodeAppearance(node));
+    const shared = key => {
+        const values = visible.map(appearance => appearance[key]);
+        return values.every(value => value === values[0]) ? values[0] : null;
+    };
+    const paintRow = property => {
+        const color = geneoSharedPersonPaintValue(nodes, property, 'color');
+        const opacity = geneoSharedPersonPaintValue(nodes, property, 'opacity');
+        const enabled = geneoSharedPersonPaintValue(nodes, property, 'enabled');
+        const label = capitalize(property);
+        return `<div class="geneo-paint-row geneo-person-multi-paint-row ${enabled === false ? 'is-none' : ''}"
+          data-geneo-person-multi-paint-row="${property}">
+          <div class="geneo-paint-row-heading">
+            <span class="geneo-paint-heading-copy"><span class="geneo-paint-label">${escapeHtml(label)}</span>
+              ${enabled === null ? `<span class="geneo-paint-state">${escapeHtml(t('Mixed'))}</span>` : ''}
+              ${enabled === false ? `<span class="geneo-paint-state">${escapeHtml(t('None'))}</span>` : ''}
+            </span>
+            ${property === 'text' ? '' : `<button class="geneo-paint-action" type="button"
+              data-geneo-person-multi-paint-toggle="${property}">${escapeHtml(t(enabled === false ? 'Restore' : 'Remove'))}</button>`}
+          </div>
+          <div class="geneo-paint-controls">
+            <label class="geneo-paint-swatch geneo-multi-paint-swatch ${color === null ? 'is-mixed' : ''}"
+              title="${escapeHtml(color === null ? t('Mixed') : color)}">
+              <input type="color" value="${color || '#FFFFFF'}"
+                data-geneo-person-multi-paint-color="${property}"
+                aria-label="${escapeHtml(t(`${label} color`))}" ${enabled === false ? 'disabled' : ''}>
+            </label>
+            <input class="geneo-paint-hex" type="text" maxlength="7" spellcheck="false"
+              value="${color || ''}" placeholder="${escapeHtml(t('Mixed'))}"
+              data-geneo-person-multi-paint-hex="${property}"
+              aria-label="${escapeHtml(t(`${label} hex color`))}" ${enabled === false ? 'disabled' : ''}>
+            <label class="geneo-paint-opacity-number">
+              <input type="number" min="0" max="100" step="1" value="${opacity ?? ''}"
+                placeholder="${escapeHtml(t('Mixed'))}"
+                data-geneo-person-multi-paint-opacity="${property}"
+                aria-label="${escapeHtml(t(`${label} opacity`))}" ${enabled === false ? 'disabled' : ''}>
+              <span aria-hidden="true">%</span>
+            </label>
+          </div>
+        </div>`;
+    };
+    const width = shared('strokeWidth');
+    const pattern = shared('strokePattern');
+    const radius = geneoSharedPersonCardValue(nodes, settings => settings.cornerRadius);
+    return renderGeneographInspectorSection({
+        context: 'multi', id: 'appearance', title: 'Card appearance',
+        content: `<div class="geneo-person-appearance-controls">
+          ${['fill', 'stroke', 'text'].map(paintRow).join('')}
+          <div class="geneo-card-default-dimensions">
+            <label class="geneo-field">Stroke width
+              <input class="geneo-input" type="number" min="1" max="12" step="1"
+                value="${width ?? ''}" placeholder="${escapeHtml(t('Mixed'))}"
+                data-geneo-person-multi-appearance="strokeWidth">
+            </label>
+            <label class="geneo-field">Stroke pattern
+              <span class="common-select-shell">
+                <select class="common-select" data-geneo-person-multi-appearance="strokePattern"
+                  ${visible.every(appearance => !appearance.stroke.enabled) ? 'disabled' : ''}>
+                  ${pattern === null ? `<option value="" selected>${escapeHtml(t('Mixed'))}</option>` : ''}
+                  <option value="solid" ${pattern === 'solid' ? 'selected' : ''}>Solid</option>
+                  <option value="dashed" ${pattern === 'dashed' ? 'selected' : ''}>Dashed</option>
+                </select>
+                <span class="common-select-chevron" aria-hidden="true">${icon.chevron}</span>
+              </span>
+            </label>
+          </div>
+          <div class="geneo-person-card-radius-row">
+            <label class="geneo-field" for="geneoPersonMultiRadius">Corner radius
+              <span class="geneo-selection-help">0–32 px</span>
+            </label>
+            <input class="geneo-input" id="geneoPersonMultiRadius" type="number" min="0" max="32" step="1"
+              value="${radius ?? ''}" placeholder="${escapeHtml(t('Mixed'))}"
+              data-geneo-person-multi-appearance="cornerRadius">
+          </div>
+        </div>
+        <button class="button secondary geneo-apply-gender" type="button"
+          data-geneo-person-multi-apply-gender>${escapeHtml(t('Apply gender color'))}</button>`
+    });
+}
+
 function renderGeneographPersonMultiSelectionControls(
     nodes
 )
 {
-    const options =
-        geneoPersonCardControlOptions();
-
-    const sharedSetting =
-        key =>
-            geneoSharedPersonCardValue(
-                nodes,
-                settings =>
-                    settings[key]
-            );
-
-    const sharedField =
-        field =>
-            geneoSharedPersonCardValue(
-                nodes,
-                settings =>
-                    settings.fields[
-                        field
-                    ]
-            );
-
-    const style =
-        sharedSetting(
-            'style'
-        );
-
-    const visibleStyles = nodes.map(node =>
-        geneoPersonCardEffectiveSettings(node).style);
-
-    const renderField =
-        (
-            field,
-            label
-        ) =>
-        {
-            const value =
-                sharedField(field);
-
-            if (!visibleStyles.every(cardStyle =>
-                geneoPersonCardFieldSupported(cardStyle, field))) return '';
-
-            return `
-            <label
-              class="geneo-check">
-              <input
-                type="checkbox"
-                data-geneo-person-multi-field="${escapeHtml(
-                    field
-                )}"
-                data-mixed="${
-                    value === null
-                        ? 'true'
-                        : 'false'
-                }"
-                ${
-                    value === true
-                        ? 'checked'
-                        : ''
-                }
-                >
-              ${escapeHtml(label)}
-            </label>
-          `;
-        };
+    const options = geneoPersonCardControlOptions();
+    const styles = nodes.map(node => geneoPersonCardEffectiveSettings(node).style);
+    const style = geneoSharedPersonCardValue(nodes, settings => settings.style);
+    const sharedSetting = key => geneoSharedPersonCardValue(nodes, settings => settings[key]);
+    const select = (key, label, disabled = false) => {
+        const value = sharedSetting(key);
+        return `<div class="geneo-field"><label for="geneoMultiCard-${key}">${escapeHtml(label)}</label>
+          <span class="common-select-shell"><select class="common-select" id="geneoMultiCard-${key}"
+            data-geneo-person-multi-setting="${key}" ${disabled ? 'disabled' : ''}>
+            ${value === null ? `<option value="" selected>${escapeHtml(t('Mixed'))}</option>` : ''}
+            ${options[key].map(([optionValue, optionLabel]) =>
+                `<option value="${optionValue}" ${value === optionValue ? 'selected' : ''}>${escapeHtml(optionLabel)}</option>`).join('')}
+          </select><span class="common-select-chevron" aria-hidden="true">${icon.chevron}</span></span>
+        </div>`;
+    };
+    const fields = Object.entries(geneoPersonCardFieldLabels())
+        .filter(([field]) => styles.every(cardStyle => geneoPersonCardFieldSupported(cardStyle, field)))
+        .map(([field, label]) => {
+            const value = geneoSharedPersonCardValue(nodes, settings => settings.fields[field]);
+            return `<label class="geneo-check"><input type="checkbox"
+              data-geneo-person-multi-field="${field}" data-mixed="${value === null}"
+              ${value === true ? 'checked' : ''}>${escapeHtml(label)}</label>`;
+        }).join('');
 
     return renderGeneographInspectorSection({
-        context: 'multi',
-        id: 'personCards',
-        title: 'Person cards',
-        content: `
-            <div class="geneo-field">
-              <label>
-                Card style
-              </label>
-
-              <select
-                class="geneo-select"
-                data-geneo-person-multi-setting="style">
-                ${
-                    style === null
-                        ? `
-                      <option
-                        value=""
-                        selected>
-                        Mixed
-                      </option>
-                    `
-                        : ''
-                }
-
-                ${options.style
-                    .map(
-                        ([
-                            value,
-                            label
-                        ]) => `
-                      <option
-                        value="${escapeHtml(
-                            value
-                        )}"
-                        ${
-                            style === value
-                                ? 'selected'
-                                : ''
-                        }>
-                        ${escapeHtml(
-                            label
-                        )}
-                      </option>
-                    `
-                    )
-                    .join('')}
-              </select>
+        context: 'multi', id: 'personCards', title: 'Card layout',
+        content: `<div class="geneo-person-card-controls">
+          <div class="geneo-person-card-control-group">
+            <strong class="geneo-person-card-group-title">Card style</strong>
+            ${renderGeneographPersonCardStylePicker({ scope: 'multi', settings: { style } })}
+            ${style === null ? `<span class="geneo-selection-help">${escapeHtml(t('Mixed'))}</span>` : ''}
+          </div>
+          <div class="geneo-person-card-control-group">
+            <strong class="geneo-person-card-group-title">Formatting</strong>
+            <div class="geneo-person-card-setting-grid">
+              ${select('nameFormat', 'Name format')}
+              ${select('dateFormat', 'Date format', nodes.every(node => !geneoPersonCardEffectiveSettings(node).fields.dates))}
+              ${styles.every(cardStyle => cardStyle !== 'compact')
+                  ? select('photoSize', 'Photo size', nodes.every(node => !geneoPersonCardEffectiveSettings(node).fields.photo)) : ''}
+              ${styles.every(cardStyle => ['standard', 'chart'].includes(cardStyle))
+                  ? select('photoAlignment', 'Photo alignment', nodes.every(node => !geneoPersonCardEffectiveSettings(node).fields.photo)) : ''}
+              ${style === 'standard' ? `${select('nameAlignment', 'Name alignment')}${select('alignment', 'Dates alignment')}` : ''}
+              ${style === 'chart' ? select('alignment', 'Text alignment') : ''}
+              ${['compact', 'portrait'].includes(style) ? `<div class="geneo-field"><span class="geneo-field-label">Text alignment</span><span class="geneo-selection-help">Centered by this style</span></div>` : ''}
             </div>
-
-            <div
-              class="geneo-person-card-options">
-              ${renderField(
-                    'photo',
-                    'Photo'
-                )}
-
-              ${renderField(
-                    'dates',
-                    'Life dates'
-                )}
-
-              ${renderField(
-                    'livingStatus',
-                    'Status'
-                )}
-
-              ${renderField(
-                    'birthPlace',
-                    'Birth place'
-                )}
-
-              ${renderField(
-                    'deathPlace',
-                    'Death place'
-                )}
-            </div>
-
-            <p class="geneo-selection-help">
-              Living is never shown. Deceased appears only when no
-              death date or place is recorded. Unknown appears when enabled.
-            </p>
-
-            <div
-              class="geneo-person-multi-actions">
-              <button
-                class="button secondary"
-                type="button"
-                data-geneo-person-multi-use-defaults>
-                Use board defaults
-              </button>
-            </div>
-
-            <div
-              class="geneo-person-multi-actions">
-              ${[
-                    [0.9, '90%'],
-                    [1, '100%'],
-                    [1.25, '125%']
-                ]
-                    .map(
-                        ([
-                            scale,
-                            label
-                        ]) => `
-                    <button
-                      class="button secondary compact"
-                      type="button"
-                      data-geneo-person-multi-size="${scale}">
-                      ${label}
-                    </button>
-                  `
-                    )
-                    .join('')}
-            </div>
-        `
+          </div>
+          <div class="geneo-person-card-control-group">
+            <strong class="geneo-person-card-group-title">Displayed information</strong>
+            <div class="geneo-person-card-options">${fields}</div>
+          </div>
+        </div>`
     });
 }
 
@@ -14799,9 +14790,13 @@ function renderGeneographMultiSelectionInspector(
 
             ${
                 peopleOnly
-                    ? renderGeneographPersonMultiSelectionControls(
-                        nodes
-                    )
+                    ? `${renderGeneographPersonMultiAppearance(nodes)}
+                       ${renderGeneographPersonMultiSelectionControls(nodes)}
+                       <div class="geneo-inspector-reset">
+                         <button class="button secondary" type="button"
+                           data-geneo-person-multi-reset
+                           ${nodes.some(geneoPersonHasResettableSettings) ? '' : 'disabled'}>${escapeHtml(t('Reset to default'))}</button>
+                       </div>`
                     : ''
             }
 
@@ -25300,6 +25295,22 @@ function bindGeneographPersonCardControls()
                         return;
                     }
 
+                    if (scope === 'multi')
+                    {
+                        const nodes = selectedGeneographNodes().filter(node => node.type === 'person');
+                        if (!nodes.length || nodes.every(node =>
+                            geneoPersonCardEffectiveSettings(node, diagram).style === value)) return;
+                        const scales = geneoCapturePersonCardDimensions(nodes, diagram);
+                        geneoPushHistory();
+                        nodes.forEach(node =>
+                        {
+                            ensureCustomNode(node);
+                            node.personCard.style = value === diagram.personCardDefaults.style ? null : value;
+                        });
+                        commit(scales);
+                        return;
+                    }
+
                     if (scope === 'board')
                     {
                         if (
@@ -25418,31 +25429,13 @@ function bindGeneographPersonCardControls()
                     return;
                 }
 
-                const current =
-                    normalizeGeneographPersonCardOverrides(
-                        node.personCard
-                    );
-
                 if (!geneoPersonHasResettableSettings(node))
                 {
                     return;
                 }
 
                 geneoPushHistory();
-
-                node.personCard =
-                    geneoEmptyPersonCardOverrides(
-                        Boolean(current.style),
-                        current.heightMode
-                    );
-                node.personCard.style = current.style;
-                const inherited = geneoPersonGenderAppearance(node, diagram);
-                for (const key of ['fill', 'stroke', 'text'])
-                    node.appearance[key] = structuredClone(inherited[key]);
-                node.appearance.strokeWidth = inherited.strokeWidth;
-                node.appearance.strokePattern = inherited.strokePattern;
-                node.appearance.paintOverrides = { fill: false, stroke: false, text: false };
-                node.appearance.styleOverrides = { strokeWidth: false, strokePattern: false };
+                geneoResetPersonCardSettings(node, diagram);
                 commit();
             }
         );
@@ -25959,104 +25952,115 @@ function bindGeneographPersonCardControls()
             );
         });
 
-    main
-        .querySelector(
-            '[data-geneo-person-multi-use-defaults]'
-        )
-        ?.addEventListener(
-            'click',
-            () =>
-            {
-                const nodes =
-                    selectedGeneographNodes()
-                        .filter(
-                            node =>
-                                node.type
-                    === 'person'
-                        );
+    main.querySelector('[data-geneo-person-multi-reset]')?.addEventListener('click', () =>
+    {
+        const nodes = selectedGeneographNodes().filter(geneoPersonHasResettableSettings);
+        if (!nodes.length) return;
+        geneoPushHistory();
+        nodes.forEach(node => geneoResetPersonCardSettings(node, diagram));
+        commit();
+    });
+}
 
-                if (!nodes.length) return;
-
-                const scales =
-                    geneoCapturePersonCardDimensions(
-                        nodes,
-                        diagram
-                    );
-
-                geneoPushHistory();
-
-                nodes.forEach(node =>
-                {
-                    const heightMode =
-                        node.personCard?.heightMode;
-
-                    node.personCard =
-                        geneoEmptyPersonCardOverrides(
-                            false,
-                            heightMode
-                        );
-                });
-
-                commit(scales);
-            }
-        );
-    main
-        .querySelectorAll(
-            '[data-geneo-person-multi-size]'
-        )
-        .forEach(button =>
-        {
-            button.addEventListener(
-                'click',
-                () =>
-                {
-                    const nodes =
-                        selectedGeneographNodes()
-                            .filter(
-                                node =>
-                                    node.type
-                      === 'person'
-                            );
-
-                    if (!nodes.length) return;
-
-                    const factor =
-                        geneoNumber(
-                            button.dataset
-                                .geneoPersonMultiSize,
-                            1,
-                            .5,
-                            2
-                        );
-
-                    geneoPushHistory();
-
-                    nodes.forEach(node =>
-                    {
-                        geneoSetPersonCardDimensions(
-                            node,
-                            {
-                                width: factor,
-                                height: factor
-                            },
-                            diagram
-                        );
-
-                        node.personCard.heightMode =
-                            'manual';
-                    });
-
-                    touchGeneographBoard();
-
-                    renderGeneographEditorPreserveScroll({
-                        preserveInspectorScroll:
-                  true,
-                        preserveSidebarScroll:
-                  true
-                    });
-                }
-            );
+function bindGeneographPersonMultiAppearance()
+{
+    const diagram = selectedGeneographDiagram();
+    if (!diagram) return;
+    const selected = () => selectedGeneographNodes().filter(node => node.type === 'person');
+    const commit = update =>
+    {
+        const nodes = selected();
+        if (!nodes.length) return;
+        geneoPushHistory();
+        nodes.forEach(node => update(node));
+        touchGeneographBoard();
+        renderGeneographEditorPreserveScroll({
+            preserveInspectorScroll: true, preserveSidebarScroll: true
         });
+    };
+    const updatePaint = (property, field, value) => commit(node =>
+    {
+        const appearance = geneoResolveVisibleNodeAppearance(node);
+        node.appearance[property] = { ...appearance[property], [field]: value };
+        node.appearance.paintOverrides ||= { fill: false, stroke: false, text: false };
+        node.appearance.paintOverrides[property] = true;
+    });
+
+    main.querySelectorAll('[data-geneo-person-multi-paint-color]')
+        .forEach(input => input.addEventListener('change', () =>
+            updatePaint(input.dataset.geneoPersonMultiPaintColor, 'color', input.value.toUpperCase())));
+    main.querySelectorAll('[data-geneo-person-multi-paint-hex]')
+        .forEach(input => input.addEventListener('change', () =>
+        {
+            const value = input.value.trim();
+            if (!/^#?([0-9a-f]{3}|[0-9a-f]{6})$/i.test(value))
+            {
+                input.setCustomValidity(t('Enter a valid hex color.'));
+                input.reportValidity();
+                input.focus();
+                return;
+            }
+            input.setCustomValidity('');
+            updatePaint(input.dataset.geneoPersonMultiPaintHex, 'color', normalizeGeneoHexColor(value));
+        }));
+    main.querySelectorAll('[data-geneo-person-multi-paint-opacity]')
+        .forEach(input => input.addEventListener('change', () =>
+        {
+            if (input.value.trim() === '' || !input.checkValidity())
+            {
+                input.reportValidity();
+                input.focus();
+                return;
+            }
+            updatePaint(input.dataset.geneoPersonMultiPaintOpacity, 'opacity', Number(input.value));
+        }));
+    main.querySelectorAll('[data-geneo-person-multi-paint-toggle]')
+        .forEach(button => button.addEventListener('click', () =>
+        {
+            const property = button.dataset.geneoPersonMultiPaintToggle;
+            const enabled = selected().every(node =>
+                geneoResolveVisibleNodeAppearance(node)[property].enabled === false);
+            updatePaint(property, 'enabled', enabled);
+        }));
+    main.querySelectorAll('[data-geneo-person-multi-appearance]')
+        .forEach(input => input.addEventListener('change', () =>
+        {
+            const key = input.dataset.geneoPersonMultiAppearance;
+            let value = input.value;
+            if (key === 'strokePattern')
+            {
+                if (!['solid', 'dashed'].includes(value)) return;
+            }
+            else
+            {
+                if (value.trim() === '' || !input.checkValidity())
+                {
+                    input.reportValidity();
+                    input.focus();
+                    return;
+                }
+                value = Number(value);
+            }
+            commit(node =>
+            {
+                if (key === 'cornerRadius')
+                {
+                    node.personCard = normalizeGeneographPersonCardOverrides(node.personCard);
+                    node.personCard.custom = true;
+                    const boardRadius = geneoCardAppearanceForNode(node, diagram)?.cornerRadius
+                        ?? diagram.personCardDefaults.cornerRadius;
+                    node.personCard.cornerRadius = value === boardRadius ? null : value;
+                }
+                else
+                {
+                    node.appearance[key] = value;
+                    node.appearance.styleOverrides ||= { strokeWidth: false, strokePattern: false };
+                    node.appearance.styleOverrides[key] = true;
+                }
+            });
+        }));
+    main.querySelector('[data-geneo-person-multi-apply-gender]')?.addEventListener('click', () =>
+        commit(node => geneoApplyPersonGenderAppearance(node, diagram)));
 }
 
 const GENEO_CANVAS_CLICK_DRAG_THRESHOLD = 6;
@@ -27383,20 +27387,8 @@ function bindGeneographEditor()
         const node = selectedGeneographNode();
         const diagram = selectedGeneographDiagram();
         if (node?.type !== 'person' || !diagram) return;
-        const person = getGeneographPerson(node.personId);
-        const gender = ['male', 'female'].includes(person?.gender) ? person.gender : 'unknown';
-        const preset = diagram.cardAppearanceDefaults[gender];
-        if (!preset) return;
         geneoPushHistory();
-        for (const key of ['fill', 'stroke', 'text'])
-            node.appearance[key] = structuredClone(preset[key]);
-        node.appearance.strokeWidth = preset.strokeWidth;
-        node.appearance.strokePattern = preset.strokePattern;
-        node.appearance.paintOverrides = { fill: true, stroke: true, text: true };
-        node.appearance.styleOverrides = { strokeWidth: true, strokePattern: true };
-        node.personCard = normalizeGeneographPersonCardOverrides(node.personCard);
-        node.personCard.custom = true;
-        node.personCard.cornerRadius = preset.cornerRadius;
+        geneoApplyPersonGenderAppearance(node, diagram);
         touchGeneographBoard();
         renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true });
         requestAnimationFrame(() => main.querySelector('[data-geneo-apply-gender-color]')?.focus({ preventScroll: true }));
@@ -27627,6 +27619,7 @@ function bindGeneographEditor()
     bindGeneographInspectorNameField();
     bindGeneographNodeHeader();
     bindGeneographPersonCardControls();
+    bindGeneographPersonMultiAppearance();
     bindGeneographSidebarControls();
     bindToasts(main);
 }

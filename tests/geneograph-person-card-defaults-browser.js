@@ -31,8 +31,8 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             assert.equal(await inspector.locator('[data-geneo-person-card-reset]').isDisabled(), true);
             assert.equal(await inspector.locator('[data-geneo-person-card-use-defaults]').count(), 0);
             assert.equal(await inspector.locator('[data-geneo-person-card-style]:disabled').count(), 0);
-            assert.equal(await inspector.locator('#geneoPersonCardRadius').count(), 1);
-            assert.equal(await inspector.locator('.panel-section:has([data-geneo-inspector-section="person:appearance"]) #geneoPersonCardRadius').count(), 1);
+            assert.equal(await inspector.locator('[data-geneo-person-card-radius="node"]').count(), 1);
+            assert.equal(await inspector.locator('.panel-section:has([data-geneo-inspector-section="person:appearance"]) [data-geneo-person-card-radius="node"]').count(), 1);
             assert.equal(await inspector.locator('[data-geneo-inspector-section="person:appearance"]')
                 .count(), 1);
             await page.evaluate(() => {
@@ -95,7 +95,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             await page.evaluate(() => document.querySelector('[data-geneo-person-card-style="standard"]').click());
             await page.evaluate(() => document.querySelector('[data-geneo-person-card-style="portrait"]').click());
             await page.evaluate(() => {
-                const radius = document.querySelector('#geneoPersonCardRadius');
+                const radius = document.querySelector('[data-geneo-person-card-radius="node"]');
                 radius.value = '12';
                 radius.dispatchEvent(new Event('change', { bubbles: true }));
             });
@@ -113,7 +113,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 selectedGeneographDiagram().cardAppearanceDefaults.neutral.cornerRadius = 16;
                 renderGeneographEditorPreserveScroll();
             });
-            assert.equal(await inspector.locator('#geneoPersonCardRadius').inputValue(), '16');
+            assert.equal(await inspector.locator('[data-geneo-person-card-radius="node"]').inputValue(), '16');
             assert.deepEqual(errors, []);
             await page.close();
         }

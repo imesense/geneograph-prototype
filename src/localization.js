@@ -1714,6 +1714,11 @@ const RU_UI_GENEO = {
     'Person cards':
         'Карточки людей',
 
+    'Mixed': 'Разные значения',
+    'Enter a valid hex color.': 'Введите корректный HEX-код цвета.',
+    'Fill color': 'Цвет заливки',
+    'Stroke color': 'Цвет обводки',
+
     'Card style & content':
         'Стиль и содержимое карточки',
 
