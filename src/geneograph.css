@@ -3086,6 +3086,56 @@
                 var(--geneo-card-photo-target, 68px)) * .36);
 }
 
+.geneo-avatar-action {
+    position: absolute;
+    z-index: 5;
+    right: 0;
+    bottom: 0;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #f8faf9;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--ease);
+}
+
+.geneo-avatar-action::before {
+    content: '';
+    position: absolute;
+    inset: 7px 5px 5px 7px;
+    border: 1px solid rgba(255, 255, 255, .2);
+    border-radius: 6px;
+    background: #101715;
+}
+
+.geneo-avatar-action svg {
+    position: relative;
+    width: 17px;
+    height: 17px;
+}
+
+.geneo-node-person:is(:hover, :focus-within, .selected) .geneo-avatar-action,
+.geneo-avatar-action:focus-visible,
+.geneo-avatar-action.in-inspector {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.geneo-avatar-action:hover::before {
+    background: #20523e;
+}
+
+.geneo-avatar-action:focus-visible {
+    outline: 2px solid var(--brand-green-300);
+    outline-offset: -2px;
+}
+
 .geneo-person-name-wrap {
     min-width: 0;
     display: grid;
@@ -5927,6 +5977,114 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
     margin: 0;
     display: grid;
     gap: 8px;
+}
+
+.geneo-person-inspector-hero {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.geneo-person-inspector-hero.has-places {
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-default);
+    margin-bottom: 16px;
+}
+
+.person-avatar.geneo-inspector-person-avatar {
+    --person-avatar-width: 82px;
+    --person-avatar-height: 82px;
+    --person-avatar-font-size: 27px;
+    --person-avatar-radius: 7px;
+}
+
+.geneo-person-inspector-identity {
+    min-width: 0;
+    display: grid;
+    gap: 5px;
+    line-height: 1.3;
+}
+
+.geneo-person-inspector-name {
+    font-size: 16px;
+    overflow-wrap: anywhere;
+}
+
+.geneo-person-inspector-maiden {
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.geneo-person-inspector-identity span {
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+
+.geneo-avatar-adjust-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(180px, 1fr);
+    gap: 24px;
+    align-items: center;
+}
+
+.person-photo-picker-modal.geneo-avatar-picker-modal {
+    width: min(680px, calc(100vw - 32px));
+}
+
+body.mobile-details-open:has(.geneo-inspector) #modalBackdrop.modal-backdrop.open:has(.geneo-avatar-picker-modal) {
+    z-index: 1006;
+}
+
+.geneo-avatar-adjust-previews {
+    display: flex;
+    align-items: end;
+    justify-content: center;
+    gap: 18px;
+}
+
+.geneo-avatar-adjust-large .person-avatar {
+    --person-avatar-width: 130px;
+    --person-avatar-height: 130px;
+    --person-avatar-font-size: 42px;
+}
+
+.geneo-avatar-adjust-small .person-avatar {
+    --person-avatar-width: 64px;
+    --person-avatar-height: 64px;
+    --person-avatar-font-size: 20px;
+}
+
+.geneo-avatar-adjust-controls {
+    min-width: 0;
+    display: grid;
+    gap: 16px;
+}
+
+.geneo-avatar-adjust-controls label {
+    display: grid;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.geneo-avatar-adjust-controls input {
+    width: 100%;
+    accent-color: var(--brand-green-300);
+}
+
+.geneo-avatar-error {
+    color: var(--text-danger, #e99494);
+    font-size: 12px;
+}
+
+@media (max-width: 600px) {
+    .geneo-avatar-adjust-body {
+        grid-template-columns: minmax(0, 1fr);
+        align-content: start;
+        gap: 28px;
+    }
 }
 
 .geneo-person-summary>div {

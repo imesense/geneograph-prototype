@@ -524,7 +524,9 @@ function renderPersonAvatar(
     className,
     {
         element = 'div',
-        attrs = ''
+        attrs = '',
+        overlayHtml = '',
+        preferCrop = false
     } = {}
 )
 {
@@ -560,7 +562,7 @@ function renderPersonAvatar(
         .filter(Boolean)
         .join(' ');
 
-    const faceRegion = photoPersonRegion(primaryPhoto, centralPerson?.id);
+    const faceRegion = preferCrop ? null : photoPersonRegion(primaryPhoto, centralPerson?.id);
     if (faceRegion) scheduleFaceRegionPosition();
     const content = primaryPhoto
         ? `
@@ -598,6 +600,7 @@ function renderPersonAvatar(
           class="${escapeHtml(classes)}"
           ${attrs}>
           ${content}
+          ${overlayHtml}
         </${element}>
       `;
 }

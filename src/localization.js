@@ -2026,6 +2026,69 @@ const RU_UI_GENEO = {
     'Image details':
         'Сведения об изображении',
 
+    'Add avatar':
+        'Добавить фото',
+
+    'Change avatar':
+        'Изменить фото',
+
+    'Choose avatar':
+        'Выбрать фото',
+
+    'Avatar source':
+        'Источник фото',
+
+    'Choose a project photo or upload one only for this board.':
+        'Выберите фотографию проекта или загрузите фото только для этого холста.',
+
+    'Adjust avatar':
+        'Настроить фото',
+
+    'Frame the photo for this board.':
+        'Настройте кадрирование фото для этого холста.',
+
+    'Zoom':
+        'Масштаб',
+
+    'Photo selected':
+        'Фото выбрано',
+
+    'No photo selected':
+        'Фото не выбрано',
+
+    'Remove board photo':
+        'Убрать фото с холста',
+
+    'Save photo':
+        'Сохранить фото',
+
+    'Reset framing':
+        'Сбросить кадрирование',
+
+    'Horizontal position':
+        'Положение по горизонтали',
+
+    'Vertical position':
+        'Положение по вертикали',
+
+    'This photo is no longer available. Choose another.':
+        'Эта фотография больше недоступна. Выберите другую.',
+
+    'Use a JPEG, PNG, or WebP photo.':
+        'Выберите фото в формате JPEG, PNG или WebP.',
+
+    'Photo must be smaller than 20 MB.':
+        'Размер фото должен быть меньше 20 МБ.',
+
+    'Could not read this photo. Choose another file.':
+        'Не удалось прочитать фото. Выберите другой файл.',
+
+    'No project photos yet.':
+        'В проекте пока нет фотографий.',
+
+    'Upload new image':
+        'Загрузить новое изображение',
+
     'Image unavailable':
         'Изображение недоступно',
 
