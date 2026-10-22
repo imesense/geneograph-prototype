@@ -3101,7 +3101,6 @@
     place-items: center;
     cursor: pointer;
     opacity: 0;
-    pointer-events: none;
     transition: opacity var(--ease);
 }
 
@@ -3120,11 +3119,15 @@
     height: 17px;
 }
 
-.geneo-node-person:is(:hover, :focus-within, .selected) .geneo-avatar-action,
-.geneo-avatar-action:focus-visible,
-.geneo-avatar-action.in-inspector {
+.person-avatar:is(.geneo-person-avatar, .geneo-inspector-person-avatar):hover > .geneo-avatar-action,
+.geneo-avatar-action:focus-visible {
     opacity: 1;
-    pointer-events: auto;
+}
+
+@media (hover: none) {
+    .person-avatar:is(.geneo-person-avatar, .geneo-inspector-person-avatar) > .geneo-avatar-action {
+        opacity: 1;
+    }
 }
 
 .geneo-avatar-action:hover::before {

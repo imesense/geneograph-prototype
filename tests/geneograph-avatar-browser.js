@@ -64,6 +64,24 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             assert.equal(emptyPlacesHero.hasPlaces, false);
             assert.equal(emptyPlacesHero.facts, 0);
             assert.equal(await inspector.locator('[data-geneo-avatar-location="inspector"]').count(), 1);
+            if (width > 900) {
+                const camera = inspector.locator('[data-geneo-avatar-location="inspector"]');
+                const cardCamera = page.locator(`[data-geneo-node="${ids.nodeId}"] [data-geneo-avatar-location="card"]`);
+                await page.mouse.move(10, 10);
+                await page.waitForTimeout(200);
+                assert.equal(await camera.evaluate(button => getComputedStyle(button).opacity), '0');
+                assert.equal(await cardCamera.evaluate(button => getComputedStyle(button).opacity), '0');
+                await page.locator(`[data-geneo-node="${ids.nodeId}"] .geneo-person-avatar`).hover();
+                await page.waitForTimeout(200);
+                assert.equal(await cardCamera.evaluate(button => getComputedStyle(button).opacity), '1');
+                await inspector.locator('.geneo-inspector-person-avatar').hover();
+                await page.waitForTimeout(200);
+                assert.equal(await camera.evaluate(button => getComputedStyle(button).opacity), '1');
+                assert.equal(await camera.evaluate(button => {
+                    const box = button.getBoundingClientRect();
+                    return document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2)?.closest('button') === button;
+                }), true);
+            }
             await inspector.locator('[data-geneo-avatar-location="inspector"]').click();
             await page.locator(`[data-geneo-image-candidate="${ids.photoId}"]`).click();
             await page.locator('[data-geneo-image-confirm]').click();
