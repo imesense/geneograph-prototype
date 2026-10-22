@@ -1606,6 +1606,22 @@ const RU_UI_GENEO = {
     'Dashed':
         'Пунктирная',
 
+    'Dotted': 'Точечная',
+    'Short-long dashes': 'Короткие и длинные штрихи',
+    'Connection pattern': 'Стиль линии связи',
+    'Connection settings': 'Настройки связи',
+    'Close connection settings': 'Закрыть настройки связи',
+    'Default connection appearance': 'Оформление связей по умолчанию',
+    'Connection color': 'Цвет линии связи',
+    'Connection hex color': 'Шестнадцатеричный цвет связи',
+    'Color': 'Цвет',
+    'Arrowheads': 'Стрелки на концах',
+    'Start': 'В начале',
+    'End': 'В конце',
+    'Both': 'С обеих сторон',
+    'Reset to board defaults': 'Вернуть настройки холста',
+    'Use board default': 'Использовать настройку холста',
+
     'Relationship details':
         'Сведения о связи',
 

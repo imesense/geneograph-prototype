@@ -176,10 +176,10 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             assert.equal(await connect.evaluate(el => getComputedStyle(el).borderTopRightRadius), '8px');
             await connect.click();
             assert.equal(await page.evaluate(() => state.geneoTool), 'connect');
-            await page.locator('[data-geneo-connection-main]').click();
-            assert.equal(await page.locator('[data-geneo-connector="dashed"]').isVisible(), true);
+            assert.equal(await page.locator('[data-geneo-connection-panel]').isVisible(), true);
+            await page.locator('[data-geneo-connection-tool-pattern]').click();
             await page.locator('[data-geneo-connector="dashed"]').click();
-            assert.equal(await page.evaluate(() => state.geneoConnectorPattern), 'dashed');
+            assert.equal(await page.evaluate(() => geneoConnectionToolStyle().pattern), 'dashed');
             const contentVisible = await page.locator('[data-geneo-mobile-content="sticky"]').isVisible();
             if (contentVisible)
             {

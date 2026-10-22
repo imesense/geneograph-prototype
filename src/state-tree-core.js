@@ -64,7 +64,6 @@ const state = {
     geneoPlacementReturnTool: null,
     geneoContentKind: 'sticky',
     geneoPersonGender: 'male',
-    geneoConnectorPattern: 'solid',
     geneoShapeKind: 'rectangle',
     geneoConnectionDraft: null,
     geneoInlineEditNodeId: null,

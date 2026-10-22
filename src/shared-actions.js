@@ -1767,7 +1767,7 @@ function openProjectMenu(id, anchor)
 let menuLifecycleController = null;
 let menuLifecycleAnchor = null;
 
-function bindMenuLifecycle(anchor = null)
+function bindMenuLifecycle(anchor = null, { ignoreScrollWithin = null } = {})
 {
     menuLifecycleController?.abort();
 
@@ -1822,6 +1822,7 @@ function bindMenuLifecycle(anchor = null)
         {
             if (
                 eventIsInsideMenu(event)
+                || ignoreScrollWithin?.contains?.(event.target)
             )
             {
                 return;

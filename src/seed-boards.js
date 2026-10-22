@@ -21,6 +21,7 @@ sampleData.boards = [
             },
             personCardDefaults:
             geneoDefaultPersonCardSettings(),
+            connectionDefaults: geneoDefaultConnectionStyle(),
             assets: [],
             people: [
                 { id: 'gp-barnaby', treePersonId: 'barnaby', syncState: 'linked', names: { first: 'Barnaby', middle: '', last: 'Whiskerfield', maiden: '' }, gender: 'male', livingStatus: 'Deceased', birth: { ...normalizeGenealogyDateInput('14 Feb 1946'), placeId: null, placeText: '' }, death: { ...normalizeGenealogyDateInput('22 Nov 2018'), placeId: null, placeText: '' }, photoId: 'photo-barnaby-portrait' },
@@ -179,12 +180,12 @@ sampleData.boards = [
                 }
             ],
             connections: [
-                { id: 'gc-partner', kind: 'family-partner', familyId: 'gf-whiskerfield', source: { nodeId: 'gn-barnaby', port: 'right' }, target: { nodeId: 'gn-daisy', port: 'left' }, style: { pattern: 'solid', line: { color: '#D9E5E1', opacity: 100, enabled: true }, width: 3 }, route: { mode: 'auto', waypoints: [] } },
-                { id: 'gc-child-silver', kind: 'family-child', familyId: 'gf-whiskerfield', source: { familyId: 'gf-whiskerfield', port: 'bottom' }, target: { nodeId: 'gn-silver', port: 'top' }, style: { pattern: 'solid', line: { color: '#8ECDB2', opacity: 100, enabled: true }, width: 2 }, route: { mode: 'auto', waypoints: [] } },
-                { id: 'gc-child-iris', kind: 'family-child', familyId: 'gf-whiskerfield', source: { familyId: 'gf-whiskerfield', port: 'bottom' }, target: { nodeId: 'gn-iris', port: 'top' }, style: { pattern: 'solid', line: { color: '#8ECDB2', opacity: 100, enabled: true }, width: 2 }, route: { mode: 'auto', waypoints: [] } },
-                { id: 'gc-single-parent', kind: 'family-child', familyId: 'gf-luna', source: { nodeId: 'gn-luna', port: 'bottom' }, target: { nodeId: 'gn-theo', port: 'top' }, style: { pattern: 'solid', line: { color: '#8ECDB2', opacity: 100, enabled: true }, width: 2 }, route: { mode: 'auto', waypoints: [] } },
-                { id: 'gc-visual-solid', kind: 'visual', familyId: null, source: { nodeId: 'gn-image', port: 'bottom' }, target: { nodeId: 'gn-sticky', port: 'top' }, style: { pattern: 'solid', line: { color: '#D4AA6B', opacity: 100, enabled: true }, width: 2 }, route: { mode: 'manual', waypoints: [{ x: 2210, y: 440 }, { x: 2140, y: 440 }] } },
-                { id: 'gc-visual-dashed', kind: 'visual', familyId: null, source: { nodeId: 'gn-sticky', port: 'left' }, target: { nodeId: 'gn-luna', port: 'right' }, style: { pattern: 'dashed', line: { color: '#AA8CE8', opacity: 100, enabled: true }, width: 2 }, route: { mode: 'auto', waypoints: [] } }
+                { id: 'gc-partner', kind: 'family-partner', familyId: 'gf-whiskerfield', source: { nodeId: 'gn-barnaby', port: 'right' }, target: { nodeId: 'gn-daisy', port: 'left' }, style: { width: 3 }, route: { mode: 'auto', waypoints: [] } },
+                { id: 'gc-child-silver', kind: 'family-child', familyId: 'gf-whiskerfield', source: { familyId: 'gf-whiskerfield', port: 'bottom' }, target: { nodeId: 'gn-silver', port: 'top' }, style: {}, route: { mode: 'auto', waypoints: [] } },
+                { id: 'gc-child-iris', kind: 'family-child', familyId: 'gf-whiskerfield', source: { familyId: 'gf-whiskerfield', port: 'bottom' }, target: { nodeId: 'gn-iris', port: 'top' }, style: {}, route: { mode: 'auto', waypoints: [] } },
+                { id: 'gc-single-parent', kind: 'family-child', familyId: 'gf-luna', source: { nodeId: 'gn-luna', port: 'bottom' }, target: { nodeId: 'gn-theo', port: 'top' }, style: {}, route: { mode: 'auto', waypoints: [] } },
+                { id: 'gc-visual-solid', kind: 'visual', familyId: null, source: { nodeId: 'gn-image', port: 'bottom' }, target: { nodeId: 'gn-sticky', port: 'top' }, style: { line: { color: '#D4AA6B', opacity: 100, enabled: true } }, route: { mode: 'manual', waypoints: [{ x: 2210, y: 440 }, { x: 2140, y: 440 }] } },
+                { id: 'gc-visual-dashed', kind: 'visual', familyId: null, source: { nodeId: 'gn-sticky', port: 'left' }, target: { nodeId: 'gn-luna', port: 'right' }, style: { pattern: 'dashed', line: { color: '#AA8CE8', opacity: 100, enabled: true } }, route: { mode: 'auto', waypoints: [] } }
             ]
         }
     }

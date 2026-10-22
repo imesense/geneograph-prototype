@@ -1577,6 +1577,78 @@
     min-width: 216px;
 }
 
+.tool-options-menu [data-geneo-connector] {
+    justify-content: center;
+    min-width: 150px;
+    min-height: 42px;
+}
+
+.tool-options-menu .geneo-line-sample {
+    width: 88px;
+    height: 16px;
+    flex: 0 0 88px;
+}
+
+.geneo-editor { position: relative; }
+
+.geneo-tool-settings {
+    position: absolute;
+    top: 64px;
+    left: 12px;
+    z-index: 60;
+    box-sizing: border-box;
+    width: max-content;
+    max-width: calc(100vw - 24px);
+    padding: 7px;
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    background: var(--surface-card);
+    box-shadow: var(--shadow-soft);
+}
+
+.geneo-connection-tool-panel { overflow-x: auto; overflow-y: hidden; scrollbar-width: thin; }
+.geneo-connection-tool-row { display: flex; align-items: center; gap: 5px; width: max-content; }
+.geneo-connection-tool-row > button,
+.geneo-connection-tool-width { box-sizing: border-box; flex: 0 0 auto; height: 38px; }
+.geneo-connection-choice { display: flex; align-items: center; justify-content: center; gap: 5px; width: 88px; padding: 0 6px; border: 1px solid var(--border-default); border-radius: 5px; background: transparent; color: var(--text-primary); cursor: pointer; }
+.geneo-connection-choice .geneo-line-sample { width: 55px; height: 16px; }
+.geneo-connection-choice > svg:last-child { width: 12px; height: 12px; color: var(--text-secondary); transform: rotate(90deg); }
+.geneo-connection-tool-swatch.geneo-paint-swatch { width: 38px; height: 38px; border-radius: 5px; cursor: pointer; }
+.geneo-connection-tool-width { display: flex; align-items: center; width: 68px; border: 1px solid var(--border-default); border-radius: 5px; background: var(--surface-input); color: var(--text-tertiary); }
+.geneo-connection-tool-width input { box-sizing: border-box; width: 47px; height: 100%; min-width: 0; padding: 0 2px 0 9px; border: 0; outline: 0; background: transparent; color: var(--text-primary); font: inherit; }
+.geneo-connection-tool-width span { padding-right: 6px; font-size: 11px; }
+.geneo-connection-tool-divider { flex: 0 0 1px; height: 24px; margin: 0 2px; background: var(--border-default); }
+.geneo-connection-tool-icon { display: grid; place-items: center; width: 38px; border: 0; border-radius: 5px; background: transparent; color: var(--text-secondary); cursor: pointer; }
+.geneo-connection-tool-icon svg { width: 17px; height: 17px; }
+.geneo-connection-tool-row > button:hover { background: var(--surface-card-hover); color: var(--text-primary); }
+.geneo-connection-tool-row > button:focus-visible,
+.geneo-connection-tool-width:focus-within { outline: 2px solid var(--brand-green-300); outline-offset: -2px; }
+.geneo-connection-style-fields { display: grid; grid-template-columns: minmax(0, 1fr) 96px; gap: 12px; }
+.geneo-connection-style-fields > .geneo-field:first-child,
+.geneo-connection-style-fields > .geneo-field:nth-child(2),
+.geneo-connection-arrows { grid-column: 1 / -1; }
+.geneo-connection-style-fields > .geneo-paint-row { grid-column: 1 / -1; }
+.geneo-connection-default-pattern { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: min(180px, 100%); height: 40px; padding: 0 10px; border: 1px solid var(--border-default); border-radius: 5px; background: var(--surface-input); color: var(--text-primary); cursor: pointer; }
+.geneo-connection-default-pattern .geneo-line-sample { width: 120px; max-width: calc(100% - 22px); height: 16px; }
+.geneo-connection-default-pattern > svg:last-child { width: 13px; height: 13px; color: var(--text-secondary); transform: rotate(90deg); }
+.geneo-connection-default-pattern:focus-visible { outline: 2px solid var(--brand-green-300); outline-offset: 2px; }
+.geneo-connection-arrows { min-width: 0; margin: 0; padding: 0; border: 0; }
+.geneo-connection-arrows legend { margin-bottom: 8px; color: var(--text-secondary); font-size: 12px; }
+.geneo-connection-arrow-options { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
+.geneo-connection-arrow-options label { position: relative; min-width: 0; }
+.geneo-connection-arrow-options input { position: absolute; opacity: 0; }
+.geneo-connection-arrow-options span { display: grid; place-items: center; min-height: 36px; border: 1px solid var(--border-default); border-radius: 4px; color: var(--text-secondary); font-size: 12px; cursor: pointer; }
+.geneo-connection-arrow-options input:checked + span { border-color: var(--brand-green-300); background: var(--surface-selected); color: var(--text-primary); }
+.geneo-connection-arrow-options input:focus-visible + span { outline: 2px solid var(--brand-green-300); outline-offset: 2px; }
+
+@media (max-width: 900px) {
+    .geneo-connection-tool-panel { position: absolute; top: 58px; left: 8px !important; width: calc(100% - 16px); max-width: none; padding: 6px; }
+}
+
+@media (max-width: 540px) {
+    .geneo-connection-arrow-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
 .geneo-shape-option-preview {
     width: 22px;
     height: 18px;
@@ -3025,6 +3097,11 @@
     cursor: move;
     outline: 0;
 }
+
+.geneo-canvas-stage.connection-tool,
+.geneo-canvas-stage.connection-tool .geneo-node { cursor: grab; }
+.geneo-canvas-stage.connection-tool .geneo-port,
+.geneo-canvas-stage.connection-tool .geneo-family-junction { cursor: crosshair; }
 
 .geneo-node.is-rich-editing {
     touch-action: auto;
@@ -5885,13 +5962,9 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
 
 .geneo-connection-preview {
     fill: none;
-    stroke: #8ce9b9;
-    stroke-width: 2;
-    stroke-dasharray: 7 6;
     stroke-linejoin: round;
     stroke-linecap: round;
     pointer-events: none;
-    filter: drop-shadow(0 0 3px rgba(98, 217, 154, .52));
 }
 
 .geneo-connection.selected .geneo-connection-line {
@@ -6394,7 +6467,7 @@ body.mobile-details-open:has(.geneo-inspector) #modalBackdrop.modal-backdrop.ope
 
 .geneo-paint-popover {
     position: fixed;
-    z-index: 220;
+    z-index: 1007;
     max-width: calc(100vw - 16px);
     overflow: auto;
     border: 1px solid var(--border-strong);
