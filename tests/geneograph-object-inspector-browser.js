@@ -156,6 +156,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             for (const type of ['panel', 'image', 'sticky', 'text']) {
                 await page.evaluate(type => {
                     const node = selectedGeneographDiagram().nodes.find(item => item.type === type);
+                    if (type === 'image') node.appearance.fill = { color: '#FF0000', opacity: 100, enabled: true };
                     state.selectedGeneoNodeId = node.id;
                     state.selectedGeneoNodeIds = [node.id];
                     renderGeneographEditorPreserveScroll();
@@ -163,6 +164,35 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 assert.equal(await inspector.locator('[data-geneo-header-rename], [data-geneo-header-lock], [data-geneo-header-visible]').count(), 3);
                 assert.equal(await inspector.locator('[data-geneo-person-card-reset]').count(), 0);
                 assert.ok(await inspector.evaluate(element => element.scrollWidth <= element.clientWidth + 1));
+                if (type === 'image') {
+                    assert.equal(await page.evaluate(() => Object.hasOwn(geneoNodeDefaults('image').appearance, 'fill')), false);
+                    assert.equal(await page.evaluate(() => resolveGeneoPaintTarget({
+                        scope: 'node', id: selectedGeneographNode().id, property: 'fill'
+                    })), null);
+                    assert.equal(await inspector.locator('[data-geneo-replace-image]').count(), 1);
+                    assert.equal(await page.evaluate(() => Object.hasOwn(selectedGeneographNode().appearance, 'fill')), false);
+                    const background = await page.locator('.geneo-node-image').first().evaluate(element => getComputedStyle(element).backgroundColor);
+                    assert.equal(background, 'rgba(0, 0, 0, 0)');
+                    await inspector.locator('[data-geneo-replace-image]').click();
+                    assert.equal(await page.locator('[data-geneo-image-picker]').count(), 1);
+                    await page.locator('[data-geneo-image-picker] .close-button').click();
+                    const projectPhotoId = await page.evaluate(() => sampleData.media.find(photo =>
+                        photo.projectId === selectedGeneographBoard().projectId && !photo.deletedAt)?.id);
+                    assert.ok(projectPhotoId);
+                    await page.evaluate(id => {
+                        selectedGeneographNode().imageRef = { scope: 'project', id };
+                        renderGeneographEditorPreserveScroll();
+                    }, projectPhotoId);
+                    assert.equal(await inspector.locator('[data-geneo-open-project-photo]').count(), 1);
+                    assert.equal(await inspector.locator('.geneo-image-source-badge').count(), 0);
+                    await page.evaluate(() => {
+                        selectedGeneographNode().imageRef = { scope: 'project', id: 'missing-photo' };
+                        renderGeneographEditorPreserveScroll();
+                    });
+                    assert.equal(await inspector.locator('.geneo-image-missing-placeholder').count(), 1);
+                    assert.equal(await page.locator('.geneo-node-image .geneo-image-missing-placeholder').count(), 1);
+                    assert.equal(await inspector.locator('[data-geneo-replace-image]').count(), 1);
+                }
             }
             for (const type of ['place', 'shape', 'drawing']) {
                 await page.evaluate(type => {

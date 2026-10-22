@@ -7252,7 +7252,7 @@ function validateSampleGeneographCollections(
                 }
                 nodeIds.add(node.id);
 
-                ['fill', 'stroke', 'text'].forEach(property =>
+                (node.type === 'image' ? ['stroke', 'text'] : ['fill', 'stroke', 'text']).forEach(property =>
                 {
                     if (!isCanonicalGeneoPaint(node.appearance?.[property], { mustBeEnabled: property === 'text' }))
                     {
@@ -8242,7 +8242,8 @@ function geneoAppearance(value, defaults = {}, nodeType = '')
         : null;
     const defaultPattern = defaults.strokePattern === 'dashed' ? 'dashed' : 'solid';
     const result = { ...defaults, ...source };
-    result.fill = geneoPaintFromLegacy(
+    if (nodeType === 'image') delete result.fill;
+    else result.fill = geneoPaintFromLegacy(
         source.fill,
         source.backgroundColor,
         defaults.fill,
@@ -9261,8 +9262,11 @@ function geneoNodeDefaults(type)
 
     if (type === 'image')
     {
+        const appearance = { ...common.appearance };
+        delete appearance.fill;
         return {
             ...common,
+            appearance,
             width: 280,
             height: 200,
             minWidth: 160,
@@ -10972,14 +10976,14 @@ function renderGeneographNodeContent(
                             label:
                         layerName
                         }
-                    )
+                    ) + `<span class="geneo-image-missing-placeholder geneo-image-load-fallback">${icon.image}<small>${escapeHtml(t('Image unavailable'))}</small></span>`
                     : `
-                  <span
-                    class="geneo-image-node-missing">
+                   <span
+                     class="geneo-image-missing-placeholder">
                     ${icon.image}
 
                     <small>
-                      Image unavailable
+                       ${escapeHtml(t('Image unavailable'))}
                     </small>
                   </span>
                 `
@@ -12051,7 +12055,7 @@ function resolveGeneoPaintTarget(reference)
     const applicable =
         property === 'text'
             ? node.type !== 'image'
-            : true;
+            : property !== 'fill' || node.type !== 'image';
     if (!applicable) return null;
     const defaults = geneoNodeDefaults(node.type).appearance;
     return {
@@ -12059,8 +12063,7 @@ function resolveGeneoPaintTarget(reference)
         label:
           property === 'fill'
               ? (
-                  node.type === 'image'
-                || node.type === 'text'
+                  node.type === 'text'
                       ? 'Background'
                       : 'Fill'
               )
@@ -15166,7 +15169,9 @@ function renderGeneographImageSourceSection(node)
     return renderGeneographInspectorSection({
         context: 'image',
         id: 'imageSource',
-        title: 'Image source',
+        title: t('Image details'),
+        actionHtml: `<button class="geneo-section-edit" type="button" data-geneo-replace-image aria-label="${escapeHtml(t('Replace image'))}" title="${escapeHtml(t('Replace image'))}">${icon.edit}<span>${escapeHtml(t('Replace'))}</span></button>`,
+        inlineAction: true,
         content: `
             ${
                 source.available
@@ -15176,13 +15181,10 @@ function renderGeneographImageSourceSection(node)
                       ${renderPhotoThumbnail(source.photo, {
                             label: source.displayName
                         })}
+                      <span class="geneo-image-missing-placeholder geneo-image-load-fallback">${icon.image}<small>${escapeHtml(t('Image unavailable'))}</small></span>
                     </div>
 
                     <div class="geneo-image-source-copy">
-                      <span class="geneo-image-source-badge">
-                        ${escapeHtml(source.sourceLabel)}
-                      </span>
-
                       <strong title="${escapeHtml(source.displayName)}">
                         ${escapeHtml(source.displayName)}
                       </strong>
@@ -15203,45 +15205,26 @@ function renderGeneographImageSourceSection(node)
                                 ? `<span>${escapeHtml(metadata)}</span>`
                                 : ''
                         }
+                      <div class="geneo-image-source-origin">
+                        <span>${escapeHtml(t(source.sourceLabel))}</span>
+                        ${source.ref?.scope === 'project' ? `<button class="geneo-image-source-link" type="button" data-geneo-open-project-photo="${escapeHtml(source.ref.id)}">${escapeHtml(t('Open photo'))}</button>` : ''}
+                      </div>
                     </div>
                   </div>
                 `
                     : `
-                  <div class="geneo-image-source-missing" role="status">
-                    <strong>Image unavailable</strong>
-                    <span>
-                      The original ${
-                            source.sourceLabel === 'Board upload'
-                                ? 'board upload'
-                                : 'project photo'
-                        } can no longer be found. Replace it to restore this layer.
-                    </span>
+                  <div class="geneo-image-source-card geneo-image-source-card-missing" role="status">
+                    <div class="geneo-image-source-preview geneo-image-missing-placeholder">
+                      ${icon.image}
+                      <small>${escapeHtml(t('Image unavailable'))}</small>
+                    </div>
+                    <div class="geneo-image-source-copy">
+                      <strong>${escapeHtml(t('Image unavailable'))}</strong>
+                      <span>${escapeHtml(t(source.ref?.scope === 'board' ? 'Board upload missing. Replace the image to restore this layer.' : source.ref?.scope === 'project' ? 'Project photo missing. Replace the image to restore this layer.' : 'No image selected. Replace the image to restore this layer.'))}</span>
+                    </div>
                   </div>
                 `
             }
-
-            <div class="geneo-image-source-actions">
-              <button
-                class="button secondary"
-                type="button"
-                data-geneo-replace-image>
-                Replace image
-              </button>
-
-              ${
-                    source.available
-                && source.ref?.scope === 'project'
-                        ? `
-                    <button
-                      class="button ghost"
-                      type="button"
-                      data-geneo-open-project-photo="${escapeHtml(source.ref.id)}">
-                      Open photo
-                    </button>
-                  `
-                        : ''
-                }
-            </div>
         `
     });
 }
@@ -15653,7 +15636,7 @@ function renderGeneographNodeInspector(
           <button class="button secondary geneo-apply-gender" type="button" data-geneo-apply-gender-color>${escapeHtml(t('Apply gender color'))}</button>`
         : `
         ${
-            node.type === 'drawing'
+            ['drawing', 'image'].includes(node.type)
                 ? ''
                 : `
               <div class="geneo-appearance-group">

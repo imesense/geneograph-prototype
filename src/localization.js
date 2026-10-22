@@ -2023,14 +2023,29 @@ const RU_UI_GENEO = {
     'Image source':
         'Источник изображения',
 
+    'Image details':
+        'Сведения об изображении',
+
     'Image unavailable':
         'Изображение недоступно',
 
     'Board upload':
         'Загрузка на холст',
 
+    'Board upload missing. Replace the image to restore this layer.':
+        'Загруженное на холст изображение не найдено. Замените его, чтобы восстановить этот слой.',
+
+    'Project photo missing. Replace the image to restore this layer.':
+        'Фотография проекта не найдена. Замените её, чтобы восстановить этот слой.',
+
+    'No image selected. Replace the image to restore this layer.':
+        'Изображение не выбрано. Замените его, чтобы восстановить этот слой.',
+
     'Replace image':
         'Заменить изображение',
+
+    'Replace':
+        'Заменить',
 
     'Open photo':
         'Открыть фотографию',
