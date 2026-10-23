@@ -24149,7 +24149,7 @@ function commitGeneographConnection(source, target)
         showToast(result.reason); return false;
     }
     const diagram = selectedGeneographDiagram();
-    const duplicate = diagram.connections.some(connection => JSON.stringify(connection.source) === JSON.stringify(source) && JSON.stringify(connection.target) === JSON.stringify(target) || JSON.stringify(connection.source) === JSON.stringify(target) && JSON.stringify(connection.target) === JSON.stringify(source));
+    const duplicate = geneoConnectionCandidateExists(source, target);
     if (duplicate)
     {
         showToast('That connection already exists.'); return false;
@@ -24563,8 +24563,124 @@ function cancelGeneographConnectionDraft()
     state.geneoConnectionDraft = null;
     clearGeneographConnectionClick();
     geneoCanvasRuntime.connectionPreviewPoint = null;
+    geneoCanvasRuntime.connectionHoverTarget = null;
     if (geneoCanvasRuntime.connectionPreviewFrame) cancelAnimationFrame(geneoCanvasRuntime.connectionPreviewFrame);
     geneoCanvasRuntime.connectionPreviewFrame = null;
+    main.querySelector('[data-geneo-connection-tip]')?.remove();
+}
+
+function exitGeneographConnectionTool()
+{
+    cancelGeneographConnectionDraft();
+    selectGeneographCanvas();
+    geneoConnectionToolRuntime.panelOpen = false;
+    state.geneoTool = 'pan';
+    renderGeneographEditorPreserveScroll({
+        preserveInspectorScroll: true,
+        preserveSidebarScroll: true
+    });
+}
+
+function geneoConnectionCandidateExists(source, target)
+{
+    return selectedGeneographDiagram()?.connections.some(connection =>
+        JSON.stringify(connection.source) === JSON.stringify(source) && JSON.stringify(connection.target) === JSON.stringify(target)
+        || JSON.stringify(connection.source) === JSON.stringify(target) && JSON.stringify(connection.target) === JSON.stringify(source));
+}
+
+function geneoConnectionTipText(source, target)
+{
+    if (!source.familyId && !target.familyId && !geneoPersonIdForNode(source.nodeId) && !geneoPersonIdForNode(target.nodeId))
+        return null;
+    const result = canCreateGeneographConnection(source, target);
+    if (!result.valid) return { text: t(result.reason), invalid: true };
+    if (geneoConnectionCandidateExists(source, target)) return { text: t('That connection already exists.'), invalid: true };
+    if (result.kind === 'visual') return null;
+    const personName = personId => geneoPersonDisplayName(getGeneographPerson(personId) || {});
+    if (result.kind === 'family-partner') return { text: t('Connect as partners'), invalid: false };
+    if (result.kind === 'family-sibling') return { text: t('Connect as siblings'), invalid: false };
+    if (result.familyId)
+        return { text: t('Add {child} to this family').replace('{child}', personName(result.childPersonId)), invalid: false };
+    return { text: t('{parent} is parent of {child}')
+        .replace('{parent}', personName(result.parentPersonId))
+        .replace('{child}', personName(result.childPersonId)), invalid: false };
+}
+
+function updateGeneographConnectionTip()
+{
+    const target = geneoCanvasRuntime.connectionHoverTarget;
+    const viewport = main.querySelector('[data-geneo-canvas-viewport]');
+    let tip = viewport?.querySelector('[data-geneo-connection-tip]');
+    if (state.geneoTool !== 'connect' || !state.geneoConnectionDraft || !target?.element?.isConnected || !viewport)
+    {
+        tip?.remove();
+        return;
+    }
+    const message = geneoConnectionTipText(state.geneoConnectionDraft, target.reference);
+    if (!message)
+    {
+        tip?.remove();
+        return;
+    }
+    if (!tip)
+    {
+        tip = document.createElement('div');
+        tip.dataset.geneoConnectionTip = '';
+        tip.className = 'geneo-connection-tip';
+        tip.setAttribute('role', 'status');
+        viewport.appendChild(tip);
+    }
+    if (tip.textContent !== message.text) tip.textContent = message.text;
+    tip.classList.toggle('invalid', message.invalid);
+    const viewportRect = viewport.getBoundingClientRect();
+    const socketRect = target.element.getBoundingClientRect();
+    const stageRect = main.querySelector('[data-geneo-stage]')?.getBoundingClientRect();
+    const bounds = geneoCanvasRuntime.bounds || { left: 0, top: 0 };
+    const points = geneoConnectionPreviewPoints(state.geneoConnectionDraft, geneoConnectionPoint(target.reference));
+    const end = points.at(-1);
+    const previous = points.at(-2);
+    const zoom = state.geneoZoom / 100;
+    const lineX = (stageRect?.left || 0) + (end.x * .45 + previous.x * .55 - bounds.left) * zoom - viewportRect.left;
+    const lineY = (stageRect?.top || 0) + (end.y * .45 + previous.y * .55 - bounds.top) * zoom - viewportRect.top;
+    const tipWidth = tip.offsetWidth;
+    const tipHeight = tip.offsetHeight;
+    const lineVisible = lineX >= 0 && lineX <= viewportRect.width && lineY >= 0 && lineY <= viewportRect.height;
+    const center = lineVisible ? lineX : socketRect.left + socketRect.width / 2 - viewportRect.left;
+    const above = (lineVisible ? lineY : socketRect.top - viewportRect.top) - tipHeight - 13;
+    const clampLeft = value => Math.max(8, Math.min(value, viewportRect.width - tipWidth - 8));
+    let left = clampLeft(center - tipWidth / 2);
+    let top = Math.max(8, Math.min(above >= 8 ? above : (lineVisible ? lineY : socketRect.bottom - viewportRect.top) + 13,
+        viewportRect.height - tipHeight - 8));
+    const card = target.element.closest('[data-geneo-node]')?.getBoundingClientRect();
+    if (card && left + tipWidth > card.left - viewportRect.left && left < card.right - viewportRect.left
+        && top + tipHeight > card.top - viewportRect.top && top < card.bottom - viewportRect.top)
+    {
+        const aboveCard = card.top - viewportRect.top - tipHeight - 9;
+        const belowCard = card.bottom - viewportRect.top + 9;
+        if (aboveCard >= 8) top = aboveCard;
+        else if (belowCard + tipHeight <= viewportRect.height - 8) top = belowCard;
+        else left = clampLeft(card.left - viewportRect.left - tipWidth - 9);
+    }
+    tip.style.left = `${left}px`;
+    tip.style.top = `${top}px`;
+}
+
+function setGeneographConnectionHoverTarget(element)
+{
+    if (state.geneoTool !== 'connect' || !state.geneoConnectionDraft || !element)
+    {
+        geneoCanvasRuntime.connectionHoverTarget = null;
+        updateGeneographConnectionTip();
+        return;
+    }
+    const reference = element.hasAttribute('data-geneo-family-junction')
+        ? { familyId: element.dataset.geneoFamilyJunction, port: 'bottom' }
+        : { nodeId: element.dataset.geneoPortNode, port: element.dataset.geneoPort };
+    geneoCanvasRuntime.connectionHoverTarget = { element, reference };
+    geneoCanvasRuntime.connectionPreviewPoint = geneoConnectionPoint(reference);
+    main.querySelector('[data-geneo-connection-preview]')?.setAttribute('d',
+        geneoPolylinePath(geneoConnectionPreviewPoints(state.geneoConnectionDraft, geneoCanvasRuntime.connectionPreviewPoint)));
+    updateGeneographConnectionTip();
 }
 
 function activateGeneographConnectionPoint(reference)
@@ -24590,6 +24706,7 @@ function activateGeneographConnectionPoint(reference)
 function updateGeneographConnectionPreview(event)
 {
     if (!state.geneoConnectionDraft || !event.target.closest?.('[data-geneo-canvas-viewport]')) return;
+    if (geneoCanvasRuntime.connectionHoverTarget?.element?.contains(event.target)) return;
     const clientX = event.clientX;
     const clientY = event.clientY;
     if (geneoCanvasRuntime.connectionPreviewFrame) cancelAnimationFrame(geneoCanvasRuntime.connectionPreviewFrame);
@@ -24597,7 +24714,9 @@ function updateGeneographConnectionPreview(event)
     {
         geneoCanvasRuntime.connectionPreviewFrame = null;
         if (!state.geneoConnectionDraft) return;
-        const point = geneoPointerToCanvas({ clientX, clientY });
+        const point = geneoCanvasRuntime.connectionHoverTarget?.element?.isConnected
+            ? geneoConnectionPoint(geneoCanvasRuntime.connectionHoverTarget.reference)
+            : geneoPointerToCanvas({ clientX, clientY });
         geneoCanvasRuntime.connectionPreviewPoint = point;
         const preview = main.querySelector('[data-geneo-connection-preview]');
         if (preview) preview.setAttribute('d', geneoPolylinePath(geneoConnectionPreviewPoints(state.geneoConnectionDraft, point)));
@@ -26806,15 +26925,7 @@ function bindGeneographIntentionalCanvasClick(
 
                 event.preventDefault();
 
-                cancelGeneographConnectionDraft();
-                selectGeneographCanvas();
-
-                state.geneoTool = 'pan';
-
-                renderGeneographEditorPreserveScroll({
-                    preserveInspectorScroll: true,
-                    preserveSidebarScroll: true
-                });
+                exitGeneographConnectionTool();
                 return;
             }
 
@@ -27428,6 +27539,36 @@ function bindGeneographEditor()
         const reference = { familyId: junction.dataset.geneoFamilyJunction, port: 'bottom' };
         activateGeneographConnectionPoint(reference);
     }));
+    const connectionTargetSelector = '[data-geneo-port-node], [data-geneo-family-junction]';
+    wrap.addEventListener('pointerover', event =>
+    {
+        const target = event.target.closest?.(connectionTargetSelector);
+        if (target) setGeneographConnectionHoverTarget(target);
+    });
+    wrap.addEventListener('pointerout', event =>
+    {
+        const target = event.target.closest?.(connectionTargetSelector);
+        if (target && !target.contains(event.relatedTarget) && document.activeElement !== target)
+            setGeneographConnectionHoverTarget(null);
+    });
+    wrap.addEventListener('focusin', event =>
+    {
+        const target = event.target.closest?.(connectionTargetSelector);
+        if (target) setGeneographConnectionHoverTarget(target);
+    });
+    wrap.addEventListener('focusout', event =>
+    {
+        const target = event.target.closest?.(connectionTargetSelector);
+        if (target && !target.matches(':hover')) setGeneographConnectionHoverTarget(null);
+    });
+    wrap.addEventListener('scroll', updateGeneographConnectionTip, { passive: true });
+    wrap.addEventListener('contextmenu', event =>
+    {
+        if (state.geneoTool !== 'connect' || geneographCanvasTargetIsInteractive(event.target)) return;
+        event.preventDefault();
+        event.stopPropagation();
+        exitGeneographConnectionTool();
+    });
     main
         .querySelectorAll(
             '[data-geneo-node]'

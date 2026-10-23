@@ -5982,6 +5982,29 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
     pointer-events: none;
 }
 
+.geneo-connection-tip {
+    position: absolute;
+    z-index: 20;
+    box-sizing: border-box;
+    max-width: min(320px, calc(100% - 16px));
+    padding: 7px 10px;
+    border: 1px solid var(--border-strong);
+    border-radius: 5px;
+    background: var(--surface-card);
+    color: var(--text-primary);
+    box-shadow: 0 5px 16px rgba(0, 0, 0, .25);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+    pointer-events: none;
+}
+
+.geneo-connection-tip.invalid {
+    border-color: #9b7842;
+    color: #f3d9a7;
+}
+
 .geneo-connection.selected .geneo-connection-line {
     filter: drop-shadow(0 0 3px #62d99a);
 }
