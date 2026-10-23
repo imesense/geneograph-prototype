@@ -26,7 +26,7 @@ function openGeneographBoardChooser(personIds)
           <label class="geneo-transfer-check"><input type="checkbox" data-geneo-include-archived> Include archived boards</label><div class="geneo-transfer-list" role="radiogroup" aria-label="Boards" data-geneo-board-list></div>
           <button class="geneo-transfer-create-toggle" type="button" data-geneo-toggle-create aria-expanded="false" aria-controls="geneoTransferCreate">${icon.plus}<span>Create new board</span>${icon.chevron}</button>
           <div class="geneo-transfer-create" id="geneoTransferCreate" hidden><label for="geneoNewBoardName">Board name</label><input id="geneoNewBoardName" class="geneo-input" type="text" maxlength="120" placeholder="Board name" autocomplete="off"></div></div>
-        <div class="modal-footer"><span class="geneo-transfer-summary" data-geneo-board-summary aria-live="polite"></span><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="button" data-geneo-add-to-board disabled>Add to board</button></div>
+        <div class="modal-footer"><span class="geneo-transfer-announcement" data-geneo-board-summary aria-live="polite"></span><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="button" data-geneo-add-to-board disabled>Add to board</button></div>
       </div>`);
 
     const modal = modalBackdrop.querySelector('.geneo-transfer-modal');
@@ -49,12 +49,8 @@ function openGeneographBoardChooser(personIds)
         const missing = board ? draft.personIds.length - present : 0;
         add.textContent = draft.createOpen ? t('Create and add') : board && !missing ? t('Open board') : t('Add to board');
         add.disabled = draft.createOpen ? !draft.newTitle.trim() : !board;
-        summary.textContent = draft.createOpen
-            ? state.language === 'ru' ? `Новый холст · ${draft.personIds.length} чел.` : `New board · ${draft.personIds.length} ${draft.personIds.length === 1 ? 'person' : 'people'}`
-            : board
-                ? missing ? state.language === 'ru' ? `Будет добавлено: ${missing}` : `${missing} ${missing === 1 ? 'person' : 'people'} to add`
-                    : t('Everyone already on this board')
-                : t('Select a board');
+        summary.textContent = draft.createOpen ? t('Create and add')
+            : board ? `${add.textContent}: ${board.title}` : t('Select a board');
     };
     const renderList = () =>
     {
@@ -68,7 +64,7 @@ function openGeneographBoardChooser(personIds)
             const missing = draft.personIds.length - present;
             const status = missing
                 ? state.language === 'ru' ? `Добавить: ${missing}${present ? ` · Уже на холсте: ${present}` : ''}` : `${missing} ${missing === 1 ? 'person' : 'people'} to add${present ? ` · ${present} already on board` : ''}`
-                : t('Everyone already on this board');
+                : t(draft.personIds.length === 1 ? 'Already on this board' : 'All selected people are on this board');
             return `<label class="geneo-transfer-choice ${draft.boardId === board.id && !draft.createOpen ? 'selected' : ''}"><span class="geneo-transfer-preview" aria-hidden="true">${renderGeneographBoardPreview(board, 'square')}</span><span class="geneo-transfer-copy"><strong title="${escapeHtml(board.title)}">${escapeHtml(board.title)}</strong><small>${board.archived ? `${escapeHtml(t('Archived board'))} · ` : ''}${escapeHtml(status)}</small></span><input type="radio" name="geneoBoardChoice" value="${escapeHtml(board.id)}" ${draft.boardId === board.id && !draft.createOpen ? 'checked' : ''} aria-label="${escapeHtml(`${board.title}, ${status}`)}"></label>`;
         }).join('') : '<p class="geneo-transfer-empty">No boards found. Create one below.</p>';
         localizeUI(list);

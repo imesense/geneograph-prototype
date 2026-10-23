@@ -1128,7 +1128,8 @@ const RU_UI_GENEO = {
     'Open board': 'Открыть холст',
     'Select a board': 'Выберите холст',
     'Boards': 'Холсты',
-    'Everyone already on this board': 'Все уже на этом холсте',
+    'Already on this board': 'Уже на этом холсте',
+    'All selected people are on this board': 'Все выбранные люди уже на этом холсте',
     'No boards found. Create one below.': 'Холсты не найдены. Создайте новый ниже.',
     'Archived board': 'Архивный холст',
     'Board opened.': 'Холст открыт.',
@@ -1355,7 +1356,7 @@ const RU_UI_GENEO = {
         'Измените название, описание и коллекции холста.',
 
     'Create a visual workspace for research, evidence and visual exploration.':
-        'Создайте визуальное пространство для исследований, доказательств и изучения связей.',
+        'Создайте холст для исследований, визуализации и построения теорий.',
 
     'Enter a board name.':
         'Введите название холста.',
@@ -1407,7 +1408,7 @@ const RU_UI_GENEO = {
         'Попробуйте другое название или описание коллекции.',
 
     'Create a collection to organize this board.':
-        'Создайте коллекцию, чтобы организовать этот холст.',
+        'Создайте коллекцию для упорядочивания холстов.',
 
     'Enter a collection name.':
         'Введите название коллекции.',
