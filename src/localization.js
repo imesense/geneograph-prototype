@@ -1668,6 +1668,15 @@ const RU_UI_GENEO = {
     'Shape type':
         'Тип фигуры',
 
+    'Shape settings':
+        'Настройки фигуры',
+
+    'Drawing settings':
+        'Настройки рисования',
+
+    'Close settings':
+        'Закрыть настройки',
+
     'Rectangle':
         'Прямоугольник',
 

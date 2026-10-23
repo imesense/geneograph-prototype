@@ -1612,11 +1612,16 @@
 }
 
 .geneo-connection-tool-panel { overflow-x: auto; overflow-y: hidden; scrollbar-width: thin; }
+.geneo-creation-tool-panel .geneo-creation-shape-choice { width: 62px; }
+.geneo-creation-tool-panel .geneo-creation-radius { width: 68px; }
+.geneo-creation-tool-panel .geneo-paint-swatch.is-none > span { opacity: .14; }
+.geneo-creation-tool-panel .geneo-paint-swatch.is-none::after { content: ''; position: absolute; z-index: 2; left: 50%; top: 50%; width: 125%; height: 2px; background: var(--text-secondary); transform: translate(-50%, -50%) rotate(-45deg); pointer-events: none; }
 .geneo-connection-tool-row { display: flex; align-items: center; gap: 5px; width: max-content; }
 .geneo-connection-tool-row > button,
 .geneo-connection-tool-width { box-sizing: border-box; flex: 0 0 auto; height: 38px; }
 .geneo-connection-choice { display: flex; align-items: center; justify-content: center; gap: 5px; width: 88px; padding: 0 6px; border: 1px solid var(--border-default); border-radius: 5px; background: transparent; color: var(--text-primary); cursor: pointer; }
 .geneo-connection-choice .geneo-line-sample { width: 55px; height: 16px; }
+.geneo-connection-choice svg { pointer-events: none; }
 .geneo-connection-choice > svg:last-child { width: 12px; height: 12px; color: var(--text-secondary); transform: rotate(90deg); }
 .geneo-connection-tool-swatch.geneo-paint-swatch { width: 38px; height: 38px; border-radius: 5px; cursor: pointer; }
 .geneo-connection-tool-width { display: flex; align-items: center; width: 68px; border: 1px solid var(--border-default); border-radius: 5px; background: var(--surface-input); color: var(--text-tertiary); }
@@ -1628,6 +1633,11 @@
 .geneo-connection-tool-row > button:hover { background: var(--surface-card-hover); color: var(--text-primary); }
 .geneo-connection-tool-row > button:focus-visible,
 .geneo-connection-tool-width:focus-within { outline: 2px solid var(--brand-green-300); outline-offset: -2px; }
+.geneo-creation-tool-panel .geneo-connection-choice .geneo-shape-option-preview { margin-right: auto; }
+.geneo-panel-draft.shape-preview { border: 0; background: transparent; }
+.geneo-panel-draft.shape-preview .geneo-shape-svg { width: 100%; height: 100%; }
+.geneo-panel-draft.shape-preview .geneo-shape-svg :is(rect, ellipse, path) { fill: var(--geneo-node-bg); stroke: var(--geneo-node-stroke); stroke-width: var(--geneo-node-stroke-width); }
+.geneo-panel-draft.shape-preview.stroke-dashed .geneo-shape-svg :is(rect, ellipse, path) { stroke-dasharray: 8 7; }
 .geneo-connection-style-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .geneo-connection-style-fields > .geneo-field { min-width: 0; }
 .geneo-connection-arrows { grid-column: 1 / -1; }
