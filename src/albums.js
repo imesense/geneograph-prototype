@@ -526,7 +526,8 @@ function renderPersonAvatar(
         element = 'div',
         attrs = '',
         overlayHtml = '',
-        preferCrop = false
+        preferCrop = false,
+        faceRegionOverride = null
     } = {}
 )
 {
@@ -562,7 +563,8 @@ function renderPersonAvatar(
         .filter(Boolean)
         .join(' ');
 
-    const faceRegion = preferCrop ? null : photoPersonRegion(primaryPhoto, centralPerson?.id);
+    const faceRegion = normalizeFaceRegion(faceRegionOverride)
+        || (preferCrop ? null : photoPersonRegion(primaryPhoto, centralPerson?.id));
     if (faceRegion) scheduleFaceRegionPosition();
     const content = primaryPhoto
         ? `
@@ -1018,8 +1020,8 @@ function bindFaceRegionSelector(root, getRegion, setRegion, boxLabel = 'Face are
     let drag = null;
     const update = region =>
     {
-        const normalized = normalizeFaceRegion(region, FACE_REGION_MIN);
-        setRegion(normalized);
+        let normalized = normalizeFaceRegion(region, FACE_REGION_MIN);
+        normalized = normalizeFaceRegion(setRegion(normalized) || normalized, FACE_REGION_MIN);
         let box = stage.querySelector('[data-face-region-box]');
         if (!box && normalized)
         {

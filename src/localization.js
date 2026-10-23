@@ -2060,6 +2060,18 @@ const RU_UI_GENEO = {
     'Choose avatar':
         'Выбрать фото',
 
+    'Change photo for {name}':
+        'Изменить фото: {name}',
+
+    'This photo will appear only on this board.':
+        'Это фото будет показано только на этом холсте.',
+
+    'Card preview':
+        'Предпросмотр карточки',
+
+    'Inspector preview':
+        'Предпросмотр панели',
+
     'Avatar source':
         'Источник фото',
 

@@ -93,22 +93,31 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             await page.locator(`[data-geneo-image-candidate="${ids.photoId}"]`).click();
             await page.locator('[data-geneo-image-confirm]').click();
             assert.equal(await page.locator('[data-geneo-avatar-adjust]').count(), 1);
+            assert.ok((await page.locator('#geneoAvatarAdjustTitle').textContent())
+                .includes(language === 'ru' ? 'Изменить фото' : 'Change photo for'));
+            assert.equal(await page.locator('[data-geneo-avatar-adjust] [data-face-region-selector]').count(), 1);
+            assert.equal(await page.locator('[data-geneo-avatar-adjust] .person-photo-preview-card').count(), 2);
             assert.equal(await page.evaluate(() => Boolean(document.elementFromPoint(innerWidth / 2, innerHeight / 2)?.closest('[data-geneo-avatar-adjust]'))), true);
             if (process.env.GENEO_AVATAR_SCREENSHOT_DIR) {
                 await page.locator('[data-geneo-avatar-adjust]').screenshot({
                     path: path.join(process.env.GENEO_AVATAR_SCREENSHOT_DIR, `avatar-adjust-${width}.png`)
                 });
             }
-            await page.locator('[data-geneo-avatar-crop="zoom"]').evaluate(input => {
-                input.value = '1.5'; input.dispatchEvent(new Event('input', { bubbles: true }));
-            });
+            const originalRegion = await page.evaluate(() => ({ ...state.geneoImagePicker.avatarRegion }));
+            await page.locator('[data-geneo-avatar-adjust] [data-face-region-box]').focus();
+            await page.keyboard.press('ArrowRight');
+            const adjustedRegion = await page.evaluate(() => ({ ...state.geneoImagePicker.avatarRegion }));
+            assert.ok(adjustedRegion.x > originalRegion.x);
+            assert.deepEqual(await page.locator('[data-geneo-avatar-adjust] .person-photo-region-preview').first().evaluate(
+                preview => JSON.parse(preview.dataset.faceRegion)), adjustedRegion);
             await page.locator('[data-geneo-avatar-save]').click();
             assert.deepEqual(await page.evaluate(personId => {
                 const person = getGeneographPerson(personId);
-                return [person.photoId, person.photoAssetId, person.photoCrop.zoom];
-            }, ids.personId), [ids.photoId, null, 1.5]);
+                return [person.photoId, person.photoAssetId, person.photoCrop, person.photoRegion];
+            }, ids.personId), [ids.photoId, null, null, adjustedRegion]);
             assert.equal(await inspector.locator('.geneo-person-inspector-avatar, .geneo-inspector-person-avatar.has-photo').count(), 1);
-            assert.match(await inspector.locator('.geneo-inspector-person-avatar .person-avatar-media').getAttribute('style'), /--person-photo-zoom:1\.5/);
+            assert.deepEqual(await inspector.locator('.geneo-inspector-person-avatar .person-avatar-media').evaluate(
+                media => JSON.parse(media.dataset.faceRegion)), adjustedRegion);
             if (process.env.GENEO_AVATAR_SCREENSHOT_DIR) {
                 await inspector.screenshot({
                     path: path.join(process.env.GENEO_AVATAR_SCREENSHOT_DIR, `avatar-inspector-${width}.png`)
@@ -122,6 +131,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             assert.equal(await page.evaluate(personId => getGeneographPerson(personId).photoId, ids.personId), ids.initialPhotoId);
             await page.evaluate(() => redoGeneographChange());
             assert.equal(await page.evaluate(personId => getGeneographPerson(personId).photoId, ids.personId), ids.photoId);
+            assert.deepEqual(await page.evaluate(personId => getGeneographPerson(personId).photoRegion, ids.personId), adjustedRegion);
             await inspector.locator('[data-geneo-avatar-location="inspector"]').click();
             assert.equal(await page.locator('[data-geneo-avatar-remove]').count(), 1);
             await page.locator('[data-geneo-avatar-remove]').click();
@@ -154,6 +164,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             assert.equal(uploaded.treePhotoId, ids.treePhotoId);
             const exported = await page.evaluate(async () => JSON.parse(await buildGeneographBoardFile()).board.diagram);
             assert.ok(exported.assets.some(item => item.id === uploaded.id));
+            assert.ok(exported.people.some(item => item.id === ids.personId && item.photoRegion));
             await page.evaluate(() => undoGeneographChange());
             assert.equal(await page.evaluate(personId => getGeneographPerson(personId).photoAssetId, ids.personId), null);
             await page.evaluate(() => redoGeneographChange());

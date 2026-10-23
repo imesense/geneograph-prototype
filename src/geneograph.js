@@ -9067,7 +9067,8 @@ function normalizeGeneographBoardRecord(board, projectPeople)
                   ? normalizePersonPhotoCrop(
                       person.photoCrop
                   )
-                  : null
+                  : null,
+                photoRegion: normalizeFaceRegion(person.photoRegion, FACE_REGION_MIN)
             });
         });
         const nodeIds = new Set();
@@ -10718,6 +10719,7 @@ function geneoPersonAvatarModel(person)
           usesTreePhoto
               ? treePerson.primaryPhotoCrop
               : hasBoardPhoto ? person?.photoCrop : null,
+        photoRegion: hasBoardPhoto ? normalizeFaceRegion(person?.photoRegion, FACE_REGION_MIN) : null,
         hasBoardPhoto,
         avatarClass:
           treePerson?.avatarClass
@@ -10912,6 +10914,7 @@ function renderGeneographPersonNode(
     const avatar = model.showPhoto
         ? renderPersonAvatar(avatarModel, 'geneo-person-avatar', {
             preferCrop: avatarModel.hasBoardPhoto,
+            faceRegionOverride: avatarModel.photoRegion,
             overlayHtml: renderGeneographAvatarAction(node, person)
         })
         : '';
@@ -15156,6 +15159,7 @@ function renderGeneographPersonInspectorContent(
         <div class="geneo-person-inspector-hero${details.length ? ' has-places' : ''}">
           ${renderPersonAvatar(avatar, 'geneo-inspector-person-avatar', {
             preferCrop: avatar.hasBoardPhoto,
+            faceRegionOverride: avatar.photoRegion,
             overlayHtml: renderGeneographAvatarAction(node, person, 'inspector')
         })}
           <div class="geneo-person-inspector-identity">
@@ -20694,7 +20698,8 @@ function createGeneographLinkedBoardPerson(
                   placeText: ''
               },
         photoId: null,
-        photoCrop: null
+        photoCrop: null,
+        photoRegion: null
     };
 }
 
@@ -21314,7 +21319,8 @@ function saveGeneographPersonModal(
             ...values,
 
             photoId: null,
-            photoCrop: null
+            photoCrop: null,
+            photoRegion: null
         };
 
         diagram.people.push(person);
@@ -21645,7 +21651,7 @@ function resetGeneographImagePickerState()
         originNodeId: null,
         originLocation: 'card',
         step: 'choose',
-        avatarCrop: null,
+        avatarRegion: null,
         sourceTab: 'project',
         search: '',
         selectedProjectPhotoIds: [],
@@ -22132,13 +22138,13 @@ function renderGeneographImagePickerModal({
           <div class="modal-header">
             <div>
               <h2 id="geneoImagePickerTitle">
-                 ${avatarMode ? escapeHtml(t('Choose avatar')) : replacing ? 'Replace image' : 'Add images'}
+                 ${avatarMode ? escapeHtml(t('Change photo for {name}').replace('{name}', geneoPersonDisplayName(boardPerson))) : replacing ? 'Replace image' : 'Add images'}
               </h2>
 
               <p>
                 ${
                     avatarMode
-                        ? escapeHtml(t('Choose a project photo or upload one only for this board.'))
+                        ? escapeHtml(t('This photo will appear only on this board.'))
                         : replacing
                         ? 'Choose one project photo or upload a replacement stored locally in this board.'
                         : 'Select project photos, upload new images, or combine both sources in one addition.'
@@ -22160,6 +22166,7 @@ function renderGeneographImagePickerModal({
               modal-body
               person-photo-picker-body
             ">
+            ${avatarMode ? `<div class="person-photo-picker-step" aria-label="${escapeHtml(t('Choose photo'))}">${escapeHtml(t('Choose photo'))}</div>` : ''}
             <div
               class="person-photo-picker-tabs"
               role="tablist"
@@ -23033,13 +23040,17 @@ function bindGeneographImagePickerModal()
         );
 }
 
-function geneoAvatarCropInBounds(value)
+function geneoAvatarCropToRegion(value, photo)
 {
     const crop = normalizePersonPhotoCrop(value);
-    const reach = (crop.zoom - 1) / (2 * crop.zoom);
-    crop.centerX = Math.min(.5 + reach, Math.max(.5 - reach, crop.centerX));
-    crop.centerY = Math.min(.5 + reach, Math.max(.5 - reach, crop.centerY));
-    return crop;
+    const aspect = (Number(photo?.width) || 1) / (Number(photo?.height) || 1);
+    const width = Math.min(1, 1 / aspect) / crop.zoom;
+    const height = Math.min(1, aspect) / crop.zoom;
+    return normalizeFaceRegion({
+        x: .5 + (crop.centerX - .5) * width - width / 2,
+        y: .5 + (crop.centerY - .5) * height - height / 2,
+        width, height
+    }, FACE_REGION_MIN);
 }
 
 function geneoAvatarPickerSelection()
@@ -23079,7 +23090,10 @@ function advanceGeneographAvatarPicker()
     const sameSource = selection.scope === 'project'
         ? person.photoId === selection.photo.id
         : person.photoAssetId === selection.draft?.id;
-    picker.avatarCrop = geneoAvatarCropInBounds(sameSource ? person.photoCrop : null);
+    picker.avatarRegion = sameSource
+        ? normalizeFaceRegion(person.photoRegion, FACE_REGION_MIN)
+            || (person.photoCrop ? geneoAvatarCropToRegion(person.photoCrop, selection.photo) : { ...FACE_REGION_DEFAULT })
+        : { ...FACE_REGION_DEFAULT };
     picker.step = 'adjust';
     renderGeneographAvatarAdjustModal();
 }
@@ -23090,64 +23104,54 @@ function renderGeneographAvatarAdjustModal()
     const selection = geneoAvatarPickerSelection();
     const person = getGeneographPerson(picker.personId);
     if (!selection || !person) return;
-    const crop = geneoAvatarCropInBounds(picker.avatarCrop);
-    picker.avatarCrop = crop;
-    const previewPerson = {
-        id: 'geneo-avatar-preview',
-        projectId: selectedGeneographBoard()?.projectId || '',
-        names: { display: geneoPersonDisplayName(person), initials: geneoPersonInitials(person) },
-        primaryPhotoId: selection.scope === 'project' ? selection.photo.id : '',
-        embeddedPhoto: selection.scope === 'board' ? selection.photo : null,
-        primaryPhotoCrop: crop
-    };
-    const preview = className => renderPersonAvatar(previewPerson, className, { preferCrop: true });
+    const photo = selection.photo;
+    const region = normalizeFaceRegion(picker.avatarRegion, FACE_REGION_MIN) || { ...FACE_REGION_DEFAULT };
+    picker.avatarRegion = region;
+    const preview = () => renderPersonPhotoRegionMedia(photo, region);
     openModal(`<div class="modal person-photo-picker-modal geneo-avatar-picker-modal" data-geneo-image-picker data-geneo-avatar-adjust role="dialog" aria-modal="true" aria-labelledby="geneoAvatarAdjustTitle">
-      <div class="modal-header"><div><h2 id="geneoAvatarAdjustTitle">${escapeHtml(t('Adjust avatar'))}</h2><p>${escapeHtml(t('Frame the photo for this board.'))}</p></div>
+      <div class="modal-header"><div><h2 id="geneoAvatarAdjustTitle">${escapeHtml(t('Change photo for {name}').replace('{name}', geneoPersonDisplayName(person)))}</h2><p>${escapeHtml(t('This photo will appear only on this board.'))}</p></div>
         <button class="close-button" type="button" data-geneo-avatar-cancel aria-label="${escapeHtml(t('Close'))}">${icon.close}</button></div>
-      <div class="modal-body geneo-avatar-adjust-body">
-        <div class="geneo-avatar-adjust-previews"><div class="geneo-avatar-adjust-large">${preview('geneo-avatar-preview-large')}</div><div class="geneo-avatar-adjust-small">${preview('geneo-avatar-preview-small')}</div></div>
-        <div class="geneo-avatar-adjust-controls">
-          <label>${escapeHtml(t('Zoom'))}<input type="range" min="1" max="3" step="0.05" value="${crop.zoom}" data-geneo-avatar-crop="zoom"></label>
-          <label>${escapeHtml(t('Horizontal position'))}<input type="range" min="0" max="100" step="1" value="${Math.round(crop.centerX * 100)}" data-geneo-avatar-crop="centerX"></label>
-          <label>${escapeHtml(t('Vertical position'))}<input type="range" min="0" max="100" step="1" value="${Math.round(crop.centerY * 100)}" data-geneo-avatar-crop="centerY"></label>
-          <button class="button ghost compact" type="button" data-geneo-avatar-reset>${escapeHtml(t('Reset framing'))}</button>
+      <div class="modal-body person-photo-picker-body">
+        <div class="person-photo-picker-step" aria-label="${escapeHtml(t('Adjust photo'))}">${escapeHtml(t('Adjust photo'))}</div>
+        <div class="person-photo-adjust-layout">
+          <div class="person-photo-crop-column">
+            ${renderFaceRegionSelector(photo, region)}
+            <p class="person-photo-crop-hint">${escapeHtml(t('Drag to select a face. Move the box or drag its corner to adjust it.'))}</p>
+            <button class="person-photo-tool-button" type="button" data-geneo-avatar-reset>${escapeHtml(t('Reset area'))}</button>
+          </div>
+          <aside class="person-photo-preview-column" aria-label="${escapeHtml(t('Avatar previews'))}">
+            <div class="person-photo-preview-card"><strong>${escapeHtml(t('Card preview'))}</strong><div class="person-photo-preview-avatar geneo-card">${preview()}</div></div>
+            <div class="person-photo-preview-card"><strong>${escapeHtml(t('Inspector preview'))}</strong><div class="person-photo-preview-avatar geneo-inspector-preview">${preview()}</div></div>
+          </aside>
         </div>
       </div>
-      <div class="modal-footer"><div class="modal-footer-actions">
-        <button class="button secondary" type="button" data-geneo-avatar-back>${escapeHtml(t('Back'))}</button>
+      <div class="modal-footer"><button class="button secondary" type="button" data-geneo-avatar-back>${escapeHtml(t('Back'))}</button><div class="modal-footer-actions">
         <button class="button secondary" type="button" data-geneo-avatar-cancel>${escapeHtml(t('Cancel'))}</button>
-        <button class="button primary" type="button" data-geneo-avatar-save>${escapeHtml(t('Save photo'))}</button>
+        <button class="button primary" type="button" data-geneo-avatar-save>${escapeHtml(t('Use photo'))}</button>
       </div></div></div>`);
     bindGeneographAvatarAdjustModal();
-    requestAnimationFrame(() => modalBackdrop.querySelector('[data-geneo-avatar-crop="zoom"]')?.focus());
+    requestAnimationFrame(() => modalBackdrop.querySelector('[data-face-region-box]')?.focus());
 }
 
 function bindGeneographAvatarAdjustModal()
 {
     const root = modalBackdrop.querySelector('[data-geneo-avatar-adjust]');
     if (!root) return;
-    const update = () =>
-    {
-        const crop = state.geneoImagePicker.avatarCrop;
-        root.querySelectorAll('.geneo-avatar-adjust-previews .person-avatar-media').forEach(media =>
-            media.setAttribute('style', personPhotoCropStyle(crop)));
-        root.querySelector('[data-geneo-avatar-crop="centerX"]').value = Math.round(crop.centerX * 100);
-        root.querySelector('[data-geneo-avatar-crop="centerY"]').value = Math.round(crop.centerY * 100);
-    };
-    root.querySelectorAll('[data-geneo-avatar-crop]').forEach(input => input.addEventListener('input', () =>
-    {
-        const key = input.dataset.geneoAvatarCrop;
-        state.geneoImagePicker.avatarCrop = geneoAvatarCropInBounds({
-            ...state.geneoImagePicker.avatarCrop,
-            [key]: key === 'zoom' ? Number(input.value) : Number(input.value) / 100
+    bindFaceRegionSelector(root,
+        () => state.geneoImagePicker.avatarRegion,
+        region =>
+        {
+            state.geneoImagePicker.avatarRegion = region;
+            root.querySelectorAll('.person-photo-region-preview').forEach(preview =>
+            {
+                preview.dataset.faceRegion = JSON.stringify(region);
+                positionFaceRegionMedia(preview);
+            });
         });
-        update();
-    }));
     root.querySelector('[data-geneo-avatar-reset]')?.addEventListener('click', () =>
     {
-        state.geneoImagePicker.avatarCrop = geneoAvatarCropInBounds(null);
-        root.querySelector('[data-geneo-avatar-crop="zoom"]').value = 1;
-        update();
+        state.geneoImagePicker.avatarRegion = { ...FACE_REGION_DEFAULT };
+        renderGeneographAvatarAdjustModal();
     });
     root.querySelector('[data-geneo-avatar-back]')?.addEventListener('click', () =>
     {
@@ -23176,11 +23180,12 @@ function saveGeneographAvatarPhoto()
         modalBackdrop.querySelector('[data-geneo-avatar-save]')?.insertAdjacentHTML('beforebegin', `<span class="geneo-avatar-error" role="alert">${escapeHtml(t('This photo is no longer available. Choose another.'))}</span>`);
         return;
     }
-    const crop = geneoAvatarCropInBounds(picker.avatarCrop);
+    const region = normalizeFaceRegion(picker.avatarRegion, FACE_REGION_MIN) || { ...FACE_REGION_DEFAULT };
     const unchangedSource = selection.scope === 'project'
         ? person.photoId === projectPhoto.id && !person.photoAssetId
         : person.photoAssetId === existingAsset?.id && !person.photoId;
-    if (unchangedSource && JSON.stringify(person.photoCrop) === JSON.stringify(crop))
+    if (unchangedSource && !person.photoCrop
+        && JSON.stringify(person.photoRegion) === JSON.stringify(region))
     {
         closeGeneographAvatarPicker();
         return;
@@ -23191,7 +23196,8 @@ function saveGeneographAvatarPhoto()
         : null;
     person.photoId = projectPhoto?.id || null;
     person.photoAssetId = asset?.id || null;
-    person.photoCrop = crop;
+    person.photoCrop = null;
+    person.photoRegion = region;
     pruneGeneographBoardAssets(board.diagram);
     touchGeneographBoard();
     closeGeneographAvatarPicker({ render: true });
@@ -23207,6 +23213,7 @@ function removeGeneographAvatarPhoto()
     person.photoId = null;
     person.photoAssetId = null;
     person.photoCrop = null;
+    person.photoRegion = null;
     pruneGeneographBoardAssets(board.diagram);
     touchGeneographBoard();
     closeGeneographAvatarPicker({ render: true });
@@ -23226,7 +23233,7 @@ function openGeneographAvatarPicker(personId, { nodeId = null, location = 'card'
         sourceTab: asset ? 'upload' : 'project',
         selectedProjectPhotoIds: person.photoId ? [person.photoId] : [],
         uploadDrafts: asset ? [{ ...asset }] : [],
-        avatarCrop: geneoAvatarCropInBounds(person.photoCrop)
+        avatarRegion: normalizeFaceRegion(person.photoRegion, FACE_REGION_MIN)
     });
     if (!photos.length && !asset) state.geneoImagePicker.sourceTab = 'upload';
     renderGeneographImagePickerModal();

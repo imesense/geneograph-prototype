@@ -238,7 +238,9 @@ function validateGeneographBoardFile(payload)
     for (const person of diagram.people)
     {
         if (!person.names || typeof person.names !== 'object'
-            || (person.photoAssetId && !assets.has(person.photoAssetId)))
+            || (person.photoAssetId && !assets.has(person.photoAssetId))
+            || (person.photoRegion && (!normalizeFaceRegion(person.photoRegion, FACE_REGION_MIN)
+                || ['x', 'y', 'width', 'height'].some(key => !Number.isFinite(person.photoRegion[key])))))
             throw geneoBoardFileError('A board person has invalid data.');
     }
     for (const family of diagram.families)

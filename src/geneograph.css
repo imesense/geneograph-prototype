@@ -6151,69 +6151,25 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
     font-size: 12px;
 }
 
-.geneo-avatar-adjust-body {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(180px, 1fr);
-    gap: 24px;
-    align-items: center;
-}
-
-.person-photo-picker-modal.geneo-avatar-picker-modal {
-    width: min(680px, calc(100vw - 32px));
-}
-
 body.mobile-details-open:has(.geneo-inspector) #modalBackdrop.modal-backdrop.open:has(.geneo-avatar-picker-modal) {
     z-index: 1006;
 }
 
-.geneo-avatar-adjust-previews {
-    display: flex;
-    align-items: end;
-    justify-content: center;
-    gap: 18px;
+.geneo-avatar-picker-modal .person-photo-preview-avatar.geneo-card {
+    width: 130px;
+    height: 130px;
+    border-radius: var(--radius-sm);
 }
 
-.geneo-avatar-adjust-large .person-avatar {
-    --person-avatar-width: 130px;
-    --person-avatar-height: 130px;
-    --person-avatar-font-size: 42px;
-}
-
-.geneo-avatar-adjust-small .person-avatar {
-    --person-avatar-width: 64px;
-    --person-avatar-height: 64px;
-    --person-avatar-font-size: 20px;
-}
-
-.geneo-avatar-adjust-controls {
-    min-width: 0;
-    display: grid;
-    gap: 16px;
-}
-
-.geneo-avatar-adjust-controls label {
-    display: grid;
-    gap: 8px;
-    font-size: 13px;
-    color: var(--text-secondary);
-}
-
-.geneo-avatar-adjust-controls input {
-    width: 100%;
-    accent-color: var(--brand-green-300);
+.geneo-avatar-picker-modal .person-photo-preview-avatar.geneo-inspector-preview {
+    width: 92px;
+    height: 92px;
+    border-radius: var(--radius-sm);
 }
 
 .geneo-avatar-error {
     color: var(--text-danger, #e99494);
     font-size: 12px;
-}
-
-@media (max-width: 600px) {
-    .geneo-avatar-adjust-body {
-        grid-template-columns: minmax(0, 1fr);
-        align-content: start;
-        gap: 28px;
-    }
 }
 
 .geneo-person-summary>div {
