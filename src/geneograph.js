@@ -1,5 +1,8 @@
 function renderGeneograph()
 {
+    if (geneoCtrlSelectPressed && (state.geneoView !== 'board'
+        || geneoCtrlSelectContext?.boardId !== selectedGeneographBoard()?.id))
+        setGeneoCtrlSelectPressed(false);
     workspace.classList.remove('no-sidebar');
     if (state.geneoView === 'board')
     {
@@ -8290,6 +8293,9 @@ let geneoCanvasRuntime =
 let geneoPaintRuntime = createGeneoPaintRuntime();
 let geneoKeyboardBound = false;
 let geneoShiftPressed = false;
+let geneoCtrlSelectPressed = false;
+let geneoCtrlSelectContext = null;
+let geneoDrawPanPending = false;
 let geneoPointerBound = false;
 let geneoImageUploadRequestId = 0;
 
@@ -8297,6 +8303,25 @@ function geneoNumber(value, fallback, min = -Infinity, max = Infinity)
 {
     const number = Number(value);
     return Number.isFinite(number) ? Math.min(max, Math.max(min, number)) : fallback;
+}
+
+function geneoEffectiveCanvasTool()
+{
+    return geneoCtrlSelectPressed && state.activeModule === 'Geneograph'
+        && state.geneoView === 'board' && !modalBackdrop.classList.contains('open')
+        && geneoCtrlSelectContext?.tool === state.geneoTool
+        && geneoCtrlSelectContext?.boardId === selectedGeneographBoard()?.id
+        ? 'select' : state.geneoTool;
+}
+
+function setGeneoCtrlSelectPressed(pressed)
+{
+    if (geneoCtrlSelectPressed === pressed) return;
+    geneoCtrlSelectPressed = pressed;
+    geneoCtrlSelectContext = pressed
+        ? { tool: state.geneoTool, boardId: selectedGeneographBoard()?.id } : null;
+    main.querySelector('.geneo-canvas-stage')?.classList.toggle('temporary-select-tool', pressed);
+    if (pressed) setGeneographConnectionHoverTarget(null);
 }
 function normalizeGeneographLayerName(value)
 {
@@ -16229,6 +16254,9 @@ function renderGeneographConnectionInspector(
 
 function renderGeneographEditor()
 {
+    if (geneoCtrlSelectPressed && (geneoCtrlSelectContext?.tool !== state.geneoTool
+        || geneoCtrlSelectContext?.boardId !== selectedGeneographBoard()?.id))
+        setGeneoCtrlSelectPressed(false);
     closeGeneographObjectContextMenu();
     const richTextDraft = captureGeneographRichTextDraft();
     destroyGeneographRichTextEditor();
@@ -16261,6 +16289,7 @@ function renderGeneographEditor()
     const ordered = diagram.nodes.slice().sort((a, b) => (a.type === 'panel' ? -1000 : 0) + a.order - ((b.type === 'panel' ? -1000 : 0) + b.order));
     const stageClasses = [
         'geneo-canvas-stage',
+        geneoEffectiveCanvasTool() === 'select' && state.geneoTool !== 'select' ? 'temporary-select-tool' : '',
         state.geneoTool === 'connect' ? 'connection-tool' : '',
         state.geneoTool === 'panel'
             ? 'panel-tool'
@@ -17904,6 +17933,7 @@ function updateGeneographPencilPreview(points = [])
 function cancelGeneographPencilStroke()
 {
     if (geneoPointerState?.kind !== 'pencil') return false;
+    geneoDrawPanPending = false;
     const activeStroke = geneoPointerState;
     geneoPointerState = null;
     if (activeStroke.wrap?.hasPointerCapture?.(activeStroke.pointerId))
@@ -24611,7 +24641,7 @@ function updateGeneographConnectionTip()
     const target = geneoCanvasRuntime.connectionHoverTarget;
     const viewport = main.querySelector('[data-geneo-canvas-viewport]');
     let tip = viewport?.querySelector('[data-geneo-connection-tip]');
-    if (state.geneoTool !== 'connect' || !state.geneoConnectionDraft || !target?.element?.isConnected || !viewport)
+    if (geneoEffectiveCanvasTool() !== 'connect' || !state.geneoConnectionDraft || !target?.element?.isConnected || !viewport)
     {
         tip?.remove();
         return;
@@ -24667,7 +24697,7 @@ function updateGeneographConnectionTip()
 
 function setGeneographConnectionHoverTarget(element)
 {
-    if (state.geneoTool !== 'connect' || !state.geneoConnectionDraft || !element)
+    if (geneoEffectiveCanvasTool() !== 'connect' || !state.geneoConnectionDraft || !element)
     {
         geneoCanvasRuntime.connectionHoverTarget = null;
         updateGeneographConnectionTip();
@@ -24705,7 +24735,7 @@ function activateGeneographConnectionPoint(reference)
 
 function updateGeneographConnectionPreview(event)
 {
-    if (!state.geneoConnectionDraft || !event.target.closest?.('[data-geneo-canvas-viewport]')) return;
+    if (geneoEffectiveCanvasTool() !== 'connect' || !state.geneoConnectionDraft || !event.target.closest?.('[data-geneo-canvas-viewport]')) return;
     if (geneoCanvasRuntime.connectionHoverTarget?.element?.contains(event.target)) return;
     const clientX = event.clientX;
     const clientY = event.clientY;
@@ -24740,7 +24770,7 @@ function startGeneographObjectDrag(event)
           ].join(',')
       ))
         return;
-    const node = getGeneographNode(nodeElement.dataset.geneoNode); if (!node || !['select', 'pan'].includes(state.geneoTool)) return;
+    const node = getGeneographNode(nodeElement.dataset.geneoNode); if (!node || !['select', 'pan'].includes(geneoEffectiveCanvasTool())) return;
     if (event.shiftKey || event.ctrlKey || event.metaKey) return;
     if (!geneoSelectedNodeIdSet().has(node.id)) selectGeneographNode(node.id);
     event.preventDefault();
@@ -24764,7 +24794,7 @@ function startGeneographConnectionDrag(event)
 {
     if (geneoPointerState || event.isPrimary === false) return false;
     const path = event.target.closest('.geneo-connection-hit');
-    if (!path || event.button !== 0 || !['select', 'pan'].includes(state.geneoTool) || event.shiftKey || event.ctrlKey || event.metaKey) return false;
+    if (!path || event.button !== 0 || !['select', 'pan'].includes(geneoEffectiveCanvasTool()) || event.shiftKey || event.ctrlKey || event.metaKey) return false;
     const connection = getGeneographConnection(path.dataset.geneoConnection);
     if (!connection) return false;
     if (!geneoSelectedConnectionIdSet().has(connection.id)) selectGeneographConnection(connection.id);
@@ -25350,9 +25380,11 @@ function updateGeneographLiveGeometry(
 function endGeneographObjectDrag(event)
 {
     if (geneoPointerState?.pointerId !== undefined && event.pointerId !== geneoPointerState.pointerId) return;
+    if (geneoPointerState?.kind === 'pencil' && event?.type === 'pointerup' && (event.buttons & 1)) return;
     if (!geneoPointerState) return; const stateBefore = geneoPointerState; geneoPointerState = null;
     if (event?.type === 'pointercancel' && stateBefore.beforeSnapshot)
     {
+        geneoDrawPanPending = false;
         const board = selectedGeneographBoard();
         if (board) board.diagram = JSON.parse(stateBefore.beforeSnapshot);
         geneoHistoryRuntime.undo.length = stateBefore.undoLength;
@@ -25362,6 +25394,8 @@ function endGeneographObjectDrag(event)
     }
     if (stateBefore.kind === 'pencil')
     {
+        const switchToPan = geneoDrawPanPending;
+        geneoDrawPanPending = false;
         updateGeneographPencilPreview();
         if (stateBefore.wrap?.hasPointerCapture?.(stateBefore.pointerId))
         {
@@ -25372,9 +25406,23 @@ function endGeneographObjectDrag(event)
         {
             geneoCanvasRuntime.suppressNodeClick = false;
         });
-        if (event?.type === 'pointercancel') return;
+        if (switchToPan)
+        {
+            geneoCreationToolSettings('drawing').panelOpen = false;
+            state.geneoTool = 'pan';
+            setGeneoCtrlSelectPressed(false);
+        }
+        if (event?.type === 'pointercancel')
+        {
+            if (switchToPan) renderGeneographEditorPreserveScroll();
+            return;
+        }
         const drawing = createGeneographDrawingFromPoints(stateBefore.points, stateBefore.beforeSnapshot);
-        if (!drawing) return;
+        if (!drawing)
+        {
+            if (switchToPan) renderGeneographEditorPreserveScroll();
+            return;
+        }
         renderGeneographEditorPreserveScroll();
         requestAnimationFrame(() => main.querySelector(`[data-geneo-node="${CSS.escape(drawing.id)}"]`)?.focus({ preventScroll: true }));
         return;
@@ -26910,7 +26958,7 @@ function bindGeneographIntentionalCanvasClick(
             }
 
             if (
-                state.geneoTool === 'connect'
+                geneoEffectiveCanvasTool() === 'connect'
             )
             {
             /*
@@ -27334,6 +27382,7 @@ function bindGeneographEditor()
                 'click',
                 () =>
                 {
+                    setGeneoCtrlSelectPressed(false);
                     cancelGeneographPencilStroke();
                     cancelGeneographConnectionDraft();
 
@@ -27530,18 +27579,21 @@ function bindGeneographEditor()
     main.querySelectorAll('[data-geneo-port-node]').forEach(button => button.addEventListener('click', event =>
     {
         event.stopPropagation();
+        if (geneoCtrlSelectPressed) return;
         const reference = { nodeId: button.dataset.geneoPortNode, port: button.dataset.geneoPort };
         activateGeneographConnectionPoint(reference);
     }));
     main.querySelectorAll('[data-geneo-family-junction]').forEach(junction => junction.addEventListener('click', event =>
     {
         event.stopPropagation();
+        if (geneoCtrlSelectPressed) return;
         const reference = { familyId: junction.dataset.geneoFamilyJunction, port: 'bottom' };
         activateGeneographConnectionPoint(reference);
     }));
     const connectionTargetSelector = '[data-geneo-port-node], [data-geneo-family-junction]';
     wrap.addEventListener('pointerover', event =>
     {
+        if (geneoCtrlSelectPressed) return;
         const target = event.target.closest?.(connectionTargetSelector);
         if (target) setGeneographConnectionHoverTarget(target);
     });
@@ -27553,6 +27605,7 @@ function bindGeneographEditor()
     });
     wrap.addEventListener('focusin', event =>
     {
+        if (geneoCtrlSelectPressed) return;
         const target = event.target.closest?.(connectionTargetSelector);
         if (target) setGeneographConnectionHoverTarget(target);
     });
@@ -27564,10 +27617,25 @@ function bindGeneographEditor()
     wrap.addEventListener('scroll', updateGeneographConnectionTip, { passive: true });
     wrap.addEventListener('contextmenu', event =>
     {
-        if (state.geneoTool !== 'connect' || geneographCanvasTargetIsInteractive(event.target)) return;
+        if (geneographCanvasTargetIsInteractive(event.target)) return;
+        if (state.geneoTool !== 'connect' && state.geneoTool !== 'pencil') return;
         event.preventDefault();
         event.stopPropagation();
-        exitGeneographConnectionTool();
+        if (state.geneoTool === 'connect')
+        {
+            exitGeneographConnectionTool();
+            return;
+        }
+        if (geneoPointerState?.kind === 'pencil')
+        {
+            geneoDrawPanPending = true;
+            return;
+        }
+        updateGeneographPencilPreview();
+        geneoCreationToolSettings('drawing').panelOpen = false;
+        state.geneoTool = 'pan';
+        setGeneoCtrlSelectPressed(false);
+        renderGeneographEditorPreserveScroll();
     });
     main
         .querySelectorAll(
@@ -27735,13 +27803,14 @@ function bindGeneographEditor()
         {
             return;
         }
+        const canvasTool = geneoEffectiveCanvasTool();
         if (
-            state.geneoTool === 'sticky'
-          || state.geneoTool === 'text'
+            canvasTool === 'sticky'
+          || canvasTool === 'text'
         )
         {
             const placementType =
-                state.geneoTool;
+                canvasTool;
 
             /*
            * Text and Sticky can be placed on
@@ -27808,7 +27877,7 @@ function bindGeneographEditor()
             return;
         }
 
-        if (state.geneoTool === 'pencil')
+        if (canvasTool === 'pencil')
         {
             if (event.target.closest([
                 'button',
@@ -27837,8 +27906,8 @@ function bindGeneographEditor()
         }
 
         const placementNodeElement = event.target.closest('[data-geneo-node]');
-        const connecting = state.geneoTool === 'connect';
-        const drawingShapeOnPanel = state.geneoTool === 'shape'
+        const connecting = canvasTool === 'connect';
+        const drawingShapeOnPanel = canvasTool === 'shape'
           && getGeneographNode(placementNodeElement?.dataset.geneoNode)?.type === 'panel';
         if (
             event.target.closest(
@@ -27862,7 +27931,7 @@ function bindGeneographEditor()
             return;
         }
 
-        if (state.geneoTool === 'pan' || connecting)
+        if (canvasTool === 'pan' || connecting)
         {
             geneoPointerState = {
                 kind: 'pan',
@@ -27875,7 +27944,7 @@ function bindGeneographEditor()
                 moved: false
             };
         }
-        else if (state.geneoTool === 'select')
+        else if (canvasTool === 'select')
         {
             const additive = event.shiftKey;
 
@@ -27899,8 +27968,8 @@ function bindGeneographEditor()
             }
         }
         else if (
-            state.geneoTool === 'panel'
-          || state.geneoTool === 'shape'
+            canvasTool === 'panel'
+          || canvasTool === 'shape'
         )
         {
             const point = snapGeneographPoint(
@@ -27908,7 +27977,7 @@ function bindGeneographEditor()
             );
 
             geneoPointerState = {
-                kind: state.geneoTool === 'shape' ? 'draw-shape' : 'draw-panel',
+                kind: canvasTool === 'shape' ? 'draw-shape' : 'draw-panel',
                 start: point,
                 current: point,
                 moved: false
@@ -29025,6 +29094,12 @@ function ensureGeneographKeyboardBinding()
         {
             geneoShiftPressed = true;
         }
+        if (event.key === 'Control' && !event.repeat && state.activeModule === 'Geneograph'
+            && state.geneoView === 'board' && !modalBackdrop.classList.contains('open')
+            && !event.target.closest?.('input,textarea,select,[contenteditable="true"]'))
+        {
+            setGeneoCtrlSelectPressed(true);
+        }
         if (state.activeModule !== 'Geneograph' || state.geneoView !== 'board' || modalBackdrop.classList.contains('open')) return;
         if (event.key === 'Escape' && event.target.closest?.('[data-geneo-connection-panel]'))
         {
@@ -29131,10 +29206,17 @@ function ensureGeneographKeyboardBinding()
         {
             geneoShiftPressed = false;
         }
+        if (event.key === 'Control') setGeneoCtrlSelectPressed(false);
+    });
+    document.addEventListener('focusin', event =>
+    {
+        if (event.target.closest?.('input,textarea,select,[contenteditable="true"]')
+            || modalBackdrop.contains(event.target)) setGeneoCtrlSelectPressed(false);
     });
     window.addEventListener('blur', () =>
     {
         geneoShiftPressed = false;
+        setGeneoCtrlSelectPressed(false);
     });
 }
 

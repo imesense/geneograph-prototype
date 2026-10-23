@@ -3118,6 +3118,15 @@
 .geneo-canvas-stage.connection-tool .geneo-port,
 .geneo-canvas-stage.connection-tool .geneo-family-junction { cursor: crosshair; }
 
+.geneo-canvas-stage.temporary-select-tool .geneo-port,
+.geneo-canvas-stage.temporary-select-tool .geneo-family-junction {
+    cursor: default;
+}
+
+.geneo-canvas-stage.temporary-select-tool .geneo-connection-preview {
+    visibility: hidden;
+}
+
 .geneo-node.is-rich-editing {
     touch-action: auto;
 }
@@ -5752,6 +5761,11 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
 .geneo-canvas-stage.pencil-tool {
     cursor: crosshair;
     touch-action: none;
+}
+
+.geneo-canvas-stage.temporary-select-tool,
+.geneo-canvas-stage.temporary-select-tool .geneo-node-panel {
+    cursor: default;
 }
 
 .geneo-inline-editor {
