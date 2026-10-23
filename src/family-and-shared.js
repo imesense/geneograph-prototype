@@ -5214,7 +5214,7 @@ function renderConnectPersonDetailSelector()
     const options = type === 'partner'
         ? addPersonRelationshipTypeOptions(value)
         : parentChildRelationshipTypeOptions(value);
-    return `<div class="field add-person-select-field">
+    return `<div class="field add-person-select-field connect-person-detail-field">
       <label for="connectPersonDetailType">${escapeHtml(t('Relationship type'))}</label>
       <select class="compact-select add-person-select" id="connectPersonDetailType" data-connect-detail-type>${options}</select>
       <span class="add-person-select-chevron" aria-hidden="true">${icon.chevron}</span>
