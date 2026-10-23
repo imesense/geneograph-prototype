@@ -1766,6 +1766,22 @@ function openProjectMenu(id, anchor)
 }
 let menuLifecycleController = null;
 let menuLifecycleAnchor = null;
+let lastInteractionWasKeyboard = false;
+function clearDismissedSplitFocus()
+{
+    document.querySelectorAll('.tool-split.escape-dismissed').forEach(split => split.classList.remove('escape-dismissed'));
+}
+function suppressSplitFocusAfterEscape(element)
+{
+    element?.closest?.('.tool-split')?.classList.add('escape-dismissed');
+}
+document.addEventListener('pointerdown', () => { lastInteractionWasKeyboard = false; clearDismissedSplitFocus(); }, true);
+document.addEventListener('keydown', event => {
+    if (!event.altKey && !event.ctrlKey && !event.metaKey) lastInteractionWasKeyboard = true;
+    if (event.key === 'Escape' && document.getElementById('projectMenu'))
+        suppressSplitFocusAfterEscape(menuLifecycleAnchor);
+    else if (event.key !== 'Escape') clearDismissedSplitFocus();
+}, true);
 
 function bindMenuLifecycle(anchor = null, { ignoreScrollWithin = null } = {})
 {
@@ -1886,7 +1902,11 @@ function bindMenuLifecycle(anchor = null, { ignoreScrollWithin = null } = {})
             )
             {
                 closeMenu();
-                if (sheet && anchor?.isConnected) anchor.focus();
+                if (anchor?.isConnected)
+                {
+                    if (anchor.closest('.tool-split')) suppressSplitFocusAfterEscape(anchor);
+                    else if (sheet) anchor.focus({ preventScroll: true });
+                }
             }
         },
         {
@@ -1970,7 +1990,7 @@ function mountMobileChoiceSheet(popover, anchor, title)
     backdrop.addEventListener('click', () =>
     {
         closeMenu();
-        if (anchor?.isConnected) anchor.focus();
+        if (lastInteractionWasKeyboard && anchor?.isConnected) anchor.focus({ preventScroll: true });
     });
     document.body.insertBefore(backdrop, popover);
 
@@ -1995,7 +2015,7 @@ function mountMobileChoiceSheet(popover, anchor, title)
     heading.querySelector('button').addEventListener('click', () =>
     {
         closeMenu();
-        if (anchor?.isConnected) anchor.focus();
+        if (lastInteractionWasKeyboard && anchor?.isConnected) anchor.focus({ preventScroll: true });
     });
     if (!geneoTourRuntime.active)
         requestAnimationFrame(() => heading.querySelector('button')?.focus({ preventScroll: true }));
@@ -2190,7 +2210,7 @@ function handleModalKeydown(
             return;
         }
 
-        closeModal();
+        closeModal({ escapeDismissed: true });
         return;
     }
 
@@ -2675,7 +2695,8 @@ function closeModal(options = {})
     }
     const {
         force = false,
-        preservePlaceEditor = false
+        preservePlaceEditor = false,
+        escapeDismissed = false
     } = options || {};
 
     const returnToPlaceEditor = Boolean(
@@ -2763,6 +2784,7 @@ function closeModal(options = {})
 
     const returnTarget = modalReturnFocus;
     modalReturnFocus = null;
+    if (escapeDismissed) suppressSplitFocusAfterEscape(returnTarget);
 
     requestAnimationFrame(
         () =>
@@ -2772,9 +2794,8 @@ function closeModal(options = {})
                     ?.isConnected
             )
             {
-                returnTarget.focus({
-                    preventScroll: true
-                });
+                if (!escapeDismissed && (lastInteractionWasKeyboard || !returnTarget.closest?.('.tool-split')))
+                    returnTarget.focus({ preventScroll: true });
             }
 
             cancelledPlaceEditorCompletion

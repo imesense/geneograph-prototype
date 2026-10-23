@@ -21,9 +21,21 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 setLanguage(language, false);
             }, language);
             assert.equal(await page.evaluate(() => state.geneoPersonGender), 'male');
+            for (const selector of ['[data-geneo-content-menu]', '[data-geneo-shape-menu]']) {
+                const trigger = page.locator(selector);
+                if (!await trigger.isVisible()) continue;
+                await trigger.click();
+                assert.equal(await page.locator('#projectMenu').count(), 1);
+                await trigger.click();
+                assert.equal(await page.locator('#projectMenu').count(), 0);
+                assert.equal(await trigger.getAttribute('aria-expanded'), 'false');
+            }
             const visible = await page.locator('[data-tool-split="person"]').isVisible();
             if (visible) {
                 assert.equal(await page.locator('[data-geneo-person-main] span').innerText(), language === 'ru' ? 'Человек' : 'Person');
+                await page.locator('[data-geneo-person-menu]').click();
+                await page.locator('[data-geneo-person-menu]').click();
+                assert.equal(await page.locator('#projectMenu').count(), 0);
                 await page.locator('[data-geneo-person-menu]').click();
             } else {
                 await page.locator('[data-geneo-toolbar-overflow]').click();
@@ -39,6 +51,8 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             assert.equal(await page.evaluate(() => state.geneoPersonGender), 'female');
             await page.locator('#geneoPersonGender').selectOption('unknown');
             await page.locator('.geneo-person-modal .close-button').click();
+            await page.waitForTimeout(50);
+            if (visible) assert.equal(await page.locator('[data-geneo-person-menu]').evaluate(el => el === document.activeElement), false);
             if (visible) {
                 await page.locator('[data-geneo-person-main]').click();
             } else {
@@ -46,12 +60,22 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 await page.locator('[data-geneo-toolbar-action="person"]').click();
             }
             assert.equal(await page.locator('#geneoPersonGender').inputValue(), 'female');
-            await page.locator('.geneo-person-modal .close-button').click();
+            await page.keyboard.press('Escape');
+            assert.equal(await page.locator('.geneo-person-modal').count(), 0);
+            if (visible) assert.equal(await page.locator('[data-tool-split="person"]').evaluate(split => {
+                const focused = split.querySelector(':focus-visible');
+                return focused ? getComputedStyle(focused).outlineStyle : 'none';
+            }), 'none');
             if (visible) {
                 await page.locator('[data-geneo-person-menu]').click();
                 await page.keyboard.press('Escape');
                 assert.equal(await page.locator('#projectMenu').count(), 0);
-                assert.equal(await page.locator('[data-geneo-person-menu]').evaluate(el => el === document.activeElement), true);
+                assert.equal(await page.locator('[data-tool-split="person"]').evaluate(split => {
+                    const focused = split.querySelector(':focus-visible');
+                    return focused ? getComputedStyle(focused).outlineStyle : 'none';
+                }), 'none');
+                await page.keyboard.press('Tab');
+                assert.equal(await page.locator('[data-tool-split="person"]').evaluate(split => split.classList.contains('escape-dismissed')), false);
                 await page.locator('[data-geneo-person-menu]').click();
             } else {
                 await page.locator('[data-geneo-toolbar-overflow]').click();

@@ -53,9 +53,32 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             assert.equal(await defaultsSection.count(), 1);
             if (await defaultsSection.getAttribute('aria-expanded') === 'false') await defaultsSection.click();
             const defaultControls = page.locator('[data-geneo-connection-fields="default"]');
+            const layout = await defaultControls.evaluate(root => {
+                const pattern = root.querySelector('[data-geneo-connection-default-pattern]').closest('.geneo-field').getBoundingClientRect();
+                const widthField = root.querySelector('[data-geneo-connection-default-width]').closest('.geneo-field').getBoundingClientRect();
+                const color = root.querySelector('.geneo-paint-row').getBoundingClientRect();
+                const arrows = root.querySelector('.geneo-connection-arrows').getBoundingClientRect();
+                const label = getComputedStyle(root.querySelector('.geneo-setting-label'));
+                const paintLabel = getComputedStyle(root.querySelector('.geneo-paint-label'));
+                return { pattern: { top: pattern.top, right: pattern.right, bottom: pattern.bottom },
+                    width: { top: widthField.top, left: widthField.left }, color: { top: color.top, bottom: color.bottom },
+                    arrowsTop: arrows.top, fontSize: label.fontSize, fontWeight: label.fontWeight,
+                    labelColor: label.color, paintWeight: paintLabel.fontWeight };
+            });
+            assert.ok(Math.abs(layout.pattern.top - layout.width.top) < 2);
+            assert.ok(layout.pattern.right <= layout.width.left);
+            assert.ok(layout.color.top >= layout.pattern.bottom);
+            assert.ok(layout.arrowsTop >= layout.color.bottom);
+            assert.equal(layout.fontSize, '12px');
+            assert.equal(layout.fontWeight, '700');
+            assert.equal(layout.paintWeight, '700');
             step = 'default pattern';
             await defaultControls.locator('[data-geneo-connection-default-pattern]').click();
             assert.equal(await page.locator('[data-geneo-connector] .geneo-line-sample').count(), 4);
+            if (width > 900) await defaultControls.locator('[data-geneo-connection-default-pattern]').click();
+            else await page.keyboard.press('Escape');
+            assert.equal(await page.locator('#projectMenu').count(), 0);
+            await defaultControls.locator('[data-geneo-connection-default-pattern]').click();
             await page.locator('[data-geneo-connector="alternating"]').click();
             assert.equal(await page.evaluate(() => selectedGeneographDiagram().connectionDefaults.pattern), 'alternating');
             assert.equal(await page.evaluate(() => state.geneoTool), 'pan');
@@ -101,6 +124,17 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 await menuButton.click();
                 assert.equal(await page.locator('[data-geneo-connector]').count(), 4);
                 assert.equal(await page.locator('[data-geneo-connector] .geneo-line-sample').count(), 4);
+                if (width > 900) await menuButton.click();
+                else await page.keyboard.press('Escape');
+                assert.equal(await page.locator('#projectMenu').count(), 0);
+                assert.equal(await menuButton.getAttribute('aria-expanded'), 'false');
+                await menuButton.click();
+                await page.keyboard.press('Escape');
+                assert.equal(await page.locator('[data-tool-split="connection"]').evaluate(split => {
+                    const focused = split.querySelector(':focus-visible');
+                    return focused ? getComputedStyle(focused).outlineStyle : 'none';
+                }), 'none');
+                await menuButton.click();
                 await page.locator('[data-geneo-connector="alternating"]').click();
             }
             const tool = strip;
@@ -151,6 +185,31 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             });
             if (width < 900) await page.evaluate(() => document.body.classList.add('mobile-details-open'));
             const lineInspector = page.locator('.geneo-inspector');
+            const inspectorFields = lineInspector.locator('[data-geneo-connection-fields="inspector"]');
+            const inspectorLayout = await inspectorFields.evaluate(root => {
+                const pattern = root.querySelector('[data-geneo-connection-inspector-pattern]').closest('.geneo-field').getBoundingClientRect();
+                const widthField = root.querySelector('[data-geneo-stroke-width="connection"]').closest('.geneo-field').getBoundingClientRect();
+                const color = root.querySelector('.geneo-paint-row').getBoundingClientRect();
+                const arrows = root.querySelector('.geneo-connection-arrows').getBoundingClientRect();
+                return { pattern: { top: pattern.top, right: pattern.right, bottom: pattern.bottom },
+                    width: { top: widthField.top, left: widthField.left }, colorTop: color.top, arrowsTop: arrows.top };
+            });
+            assert.ok(Math.abs(inspectorLayout.pattern.top - inspectorLayout.width.top) < 2);
+            assert.ok(inspectorLayout.pattern.right <= inspectorLayout.width.left);
+            assert.ok(inspectorLayout.colorTop >= inspectorLayout.pattern.bottom);
+            assert.ok(inspectorLayout.arrowsTop >= inspectorLayout.colorTop);
+            if (process.env.GENEO_SCREENSHOT_DIR)
+                await page.screenshot({ path: path.join(process.env.GENEO_SCREENSHOT_DIR, `connection-inspector-${width}.png`) });
+            await inspectorFields.locator('[data-geneo-connection-inspector-pattern]').click();
+            assert.equal(await page.locator('[data-geneo-connector]').count(), 4, `${width}: inspector pattern menu`);
+            if (width > 900) await inspectorFields.locator('[data-geneo-connection-inspector-pattern]').click();
+            else await page.keyboard.press('Escape');
+            assert.equal(await page.locator('#projectMenu').count(), 0);
+            await inspectorFields.locator('[data-geneo-connection-inspector-pattern]').click();
+            await page.locator('[data-geneo-connector="dashed"]').click();
+            assert.equal(await page.evaluate(() => getGeneographConnection('test-visual-arrow').style.pattern), 'dashed');
+            await lineInspector.locator('[data-geneo-connection-reset-property="pattern"]').click();
+            assert.equal(await page.evaluate(() => getGeneographConnection('test-visual-arrow').style.pattern), undefined);
             assert.equal(await lineInspector.locator('[data-geneo-connection-arrows]').count(), 4);
             await lineInspector.locator('label:has([data-geneo-connection-arrows][value="start"])').click();
             assert.equal(await page.locator('[data-geneo-connection-group="test-visual-arrow"] .geneo-connection-line').getAttribute('marker-start'), 'url(#geneo-arrow-test-visual-arrow)');
@@ -170,7 +229,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             assert.equal(serialized.connections.find(item => item.id === 'test-visual-arrow').style.arrows, undefined);
             const exported = await page.evaluate(async () => JSON.parse(await buildGeneographBoardFile()).board.diagram);
             assert.equal(exported.connectionDefaults.line.color, '#447766');
-            assert.equal(exported.connections.find(item => item.id === 'test-visual-arrow').style.pattern, 'dotted');
+            assert.equal(exported.connections.find(item => item.id === 'test-visual-arrow').style.pattern, undefined);
             await page.evaluate(() => {
                 const second = structuredClone(selectedGeneographBoard());
                 second.id = 'test-other-board';
