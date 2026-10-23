@@ -31,6 +31,9 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             }, { source, target });
             const socket = (nodeId, port) => ({ nodeId, port });
             const family = familyId => ({ familyId, port: 'bottom' });
+            const origin = await evaluateTarget(socket('gn-silver', 'right'), socket('gn-silver', 'right'));
+            assert.equal(origin.text, '');
+            assert.equal(origin.snapped, true);
             const partners = await evaluateTarget(socket('gn-silver', 'right'), socket('gn-luna', 'left'));
             assert.equal(partners.text, language === 'ru' ? 'Связать как партнёров' : 'Connect as partners');
             assert.equal(partners.invalid, false);
@@ -47,6 +50,19 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             assert.equal((await evaluateTarget(family('gf-whiskerfield'), socket('gn-silver', 'top'))).invalid, true);
             assert.equal((await evaluateTarget(socket('gn-silver', 'bottom'), socket('gn-barnaby', 'top'))).invalid, true);
             assert.equal((await evaluateTarget(socket('gn-silver', 'right'), socket('gn-luna', 'top'))).invalid, true);
+            const beforeConnections = await page.evaluate(() => selectedGeneographDiagram().connections.length);
+            await page.evaluate(() => {
+                state.geneoConnectionDraft = { nodeId: 'gn-silver', port: 'right' };
+                renderGeneographEditorPreserveScroll();
+            });
+            await page.locator('[data-geneo-port-node="gn-silver"][data-geneo-port="right"]').click();
+            assert.deepEqual(await page.evaluate(() => ({
+                draft: state.geneoConnectionDraft,
+                tool: state.geneoTool,
+                count: selectedGeneographDiagram().connections.length,
+                strip: Boolean(document.querySelector('[data-geneo-connection-panel]'))
+            })), { draft: null, tool: 'pan', count: beforeConnections, strip: false });
+            await page.evaluate(() => activateGeneographConnectionTool());
             await page.evaluate(() => { state.geneoConnectionDraft = null; setGeneographConnectionHoverTarget(null); });
 
             const target = page.locator('[data-geneo-port-node="gn-daisy"][data-geneo-port="left"]');

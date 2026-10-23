@@ -153,6 +153,21 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             await page.locator('#geneoPaintPopover [data-geneo-paint-close]').click();
             step = 'tool arrows';
             await tool.locator('[data-geneo-connection-tool-arrows]').click();
+            if (width > 900) {
+                const samples = await page.locator('[data-geneo-connector]').evaluateAll(options =>
+                    Object.fromEntries(options.map(option => [option.dataset.geneoConnector, {
+                        start: option.querySelector('line')?.getAttribute('x1'),
+                        end: option.querySelector('line')?.getAttribute('x2'),
+                        arrow: [...option.querySelectorAll('path')].map(path => path.getAttribute('d')).join(' ')
+                    }])));
+                for (const option of ['none', 'start', 'end', 'both']) {
+                    assert.equal(samples[option].start, '3');
+                    assert.equal(samples[option].end, '85');
+                }
+                assert.match(samples.start.arrow, /M3 8/);
+                assert.match(samples.end.arrow, /M85 8/);
+                assert.match(samples.both.arrow, /M3 8.*M85 8/);
+            }
             await page.locator('[data-geneo-connector="both"]').click();
             const created = await page.evaluate(() => {
                 const diagram = selectedGeneographDiagram();

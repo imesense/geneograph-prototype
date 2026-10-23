@@ -40,11 +40,36 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
         assert.ok(empty, 'An empty canvas drag point should be available');
         await drag(empty.x, empty.y);
 
-        const card = page.locator('[data-geneo-node="gn-barnaby"]');
+        const card = page.locator('article[data-geneo-node="gn-barnaby"]');
         await card.scrollIntoViewIfNeeded();
         const cardBox = await card.boundingBox();
         assert.ok(cardBox);
         await drag(cardBox.x + cardBox.width * 0.7, cardBox.y + cardBox.height * 0.6);
+
+        await page.evaluate(() => {
+            selectGeneographNode('gn-barnaby');
+            renderGeneographEditorPreserveScroll();
+        });
+        const selectedBox = await card.boundingBox();
+        const beforeMove = await page.evaluate(() => {
+            const node = getGeneographNode('gn-barnaby');
+            const canvas = document.querySelector('[data-geneo-canvas-wrap]');
+            return { x: node.x, y: node.y, left: canvas.scrollLeft, top: canvas.scrollTop };
+        });
+        await page.mouse.move(selectedBox.x + selectedBox.width * 0.7, selectedBox.y + selectedBox.height * 0.6);
+        await page.mouse.down();
+        await page.mouse.move(selectedBox.x + selectedBox.width * 0.7 - 30,
+            selectedBox.y + selectedBox.height * 0.6 - 20, { steps: 5 });
+        await page.mouse.up();
+        const afterMove = await page.evaluate(() => {
+            const node = getGeneographNode('gn-barnaby');
+            const canvas = document.querySelector('[data-geneo-canvas-wrap]');
+            return { x: node.x, y: node.y, left: canvas.scrollLeft, top: canvas.scrollTop, tool: state.geneoTool };
+        });
+        assert.ok(afterMove.x !== beforeMove.x || afterMove.y !== beforeMove.y, 'Selected card should move in Connect mode');
+        assert.equal(afterMove.left, beforeMove.left);
+        assert.equal(afterMove.top, beforeMove.top);
+        assert.equal(afterMove.tool, 'connect');
 
         const socket = page.locator('[data-geneo-port-node="gn-barnaby"][data-geneo-port="right"]');
         await socket.click();

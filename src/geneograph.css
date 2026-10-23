@@ -3115,6 +3115,7 @@
 
 .geneo-canvas-stage.connection-tool,
 .geneo-canvas-stage.connection-tool .geneo-node { cursor: grab; }
+.geneo-canvas-stage.connection-tool .geneo-node.selected { cursor: move; }
 .geneo-canvas-stage.connection-tool .geneo-port,
 .geneo-canvas-stage.connection-tool .geneo-family-junction { cursor: crosshair; }
 

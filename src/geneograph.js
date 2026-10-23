@@ -5997,7 +5997,7 @@ function renderGeneoConnectionArrowSample(arrows)
 {
     const start = arrows === 'start' || arrows === 'both';
     const end = arrows === 'end' || arrows === 'both';
-    return `<svg class="geneo-line-sample" viewBox="0 0 88 16" aria-hidden="true"><line x1="${start ? 13 : 3}" y1="8" x2="${end ? 75 : 85}" y2="8" stroke="currentColor" stroke-width="2"></line>${start ? '<path d="M13 8 L21 4 M13 8 L21 12" fill="none" stroke="currentColor" stroke-width="2"></path>' : ''}${end ? '<path d="M75 8 L67 4 M75 8 L67 12" fill="none" stroke="currentColor" stroke-width="2"></path>' : ''}</svg>`;
+    return `<svg class="geneo-line-sample" viewBox="0 0 88 16" aria-hidden="true"><line x1="3" y1="8" x2="85" y2="8" stroke="currentColor" stroke-width="2"></line>${start ? '<path d="M3 8 L11 4 M3 8 L11 12" fill="none" stroke="currentColor" stroke-width="2"></path>' : ''}${end ? '<path d="M85 8 L77 4 M85 8 L77 12" fill="none" stroke="currentColor" stroke-width="2"></path>' : ''}</svg>`;
 }
 
 function renderGeneoConnectionToolPanel()
@@ -24618,8 +24618,16 @@ function geneoConnectionCandidateExists(source, target)
         || JSON.stringify(connection.source) === JSON.stringify(target) && JSON.stringify(connection.target) === JSON.stringify(source));
 }
 
+function geneoConnectionReferencesMatch(source, target)
+{
+    return source?.nodeId === target?.nodeId
+        && source?.familyId === target?.familyId
+        && source?.port === target?.port;
+}
+
 function geneoConnectionTipText(source, target)
 {
+    if (geneoConnectionReferencesMatch(source, target)) return null;
     if (!source.familyId && !target.familyId && !geneoPersonIdForNode(source.nodeId) && !geneoPersonIdForNode(target.nodeId))
         return null;
     const result = canCreateGeneographConnection(source, target);
@@ -24723,6 +24731,11 @@ function activateGeneographConnectionPoint(reference)
         renderGeneographEditorPreserveScroll();
         return;
     }
+    if (geneoConnectionReferencesMatch(state.geneoConnectionDraft, reference))
+    {
+        exitGeneographConnectionTool();
+        return;
+    }
     const created = commitGeneographConnection(state.geneoConnectionDraft, reference);
     if (created)
     {
@@ -24770,7 +24783,9 @@ function startGeneographObjectDrag(event)
           ].join(',')
       ))
         return;
-    const node = getGeneographNode(nodeElement.dataset.geneoNode); if (!node || !['select', 'pan'].includes(geneoEffectiveCanvasTool())) return;
+    const node = getGeneographNode(nodeElement.dataset.geneoNode);
+    if (!node || (!['select', 'pan'].includes(geneoEffectiveCanvasTool())
+        && !(geneoEffectiveCanvasTool() === 'connect' && geneoSelectedNodeIdSet().has(node.id)))) return;
     if (event.shiftKey || event.ctrlKey || event.metaKey) return;
     if (!geneoSelectedNodeIdSet().has(node.id)) selectGeneographNode(node.id);
     event.preventDefault();
