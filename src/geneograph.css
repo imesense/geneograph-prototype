@@ -1613,7 +1613,6 @@
 
 .geneo-connection-tool-panel { overflow-x: auto; overflow-y: hidden; scrollbar-width: thin; }
 .geneo-creation-tool-panel .geneo-creation-shape-choice { width: 62px; }
-.geneo-creation-tool-panel .geneo-creation-radius { width: 68px; }
 .geneo-creation-tool-panel .geneo-paint-swatch.is-none > span { opacity: .14; }
 .geneo-creation-tool-panel .geneo-paint-swatch.is-none::after { content: ''; position: absolute; z-index: 2; left: 50%; top: 50%; width: 125%; height: 2px; background: var(--text-secondary); transform: translate(-50%, -50%) rotate(-45deg); pointer-events: none; }
 .geneo-connection-tool-row { display: flex; align-items: center; gap: 5px; width: max-content; }

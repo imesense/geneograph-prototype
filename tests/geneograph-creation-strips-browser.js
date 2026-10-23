@@ -76,8 +76,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             await page.locator('#geneoPaintPopover [data-geneo-paint-close]').click();
             await shape.locator('[data-geneo-creation-swatch="stroke"]').click();
             await page.locator('#geneoPaintPopover [data-geneo-paint-toggle]').click();
-            await shape.locator('[data-geneo-creation-radius]').fill('12');
-            await shape.locator('[data-geneo-creation-radius]').dispatchEvent('change');
+            assert.equal(await shape.locator('[data-geneo-creation-radius]').count(), 0);
             const shapeResult = await page.evaluate(() => {
                 updateGeneographPanelDraftDom({ x: 100, y: 100 }, { x: 240, y: 190 });
                 const preview = document.querySelector('[data-geneo-panel-draft]');
@@ -88,7 +87,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             assert.equal(shapeResult.kind, 'triangle');
             assert.equal(shapeResult.appearance.fill.color, '#335577');
             assert.equal(shapeResult.appearance.stroke.enabled, false);
-            assert.equal(shapeResult.appearance.cornerRadius, 12);
+            assert.equal(shapeResult.appearance.cornerRadius, 8);
             assert.deepEqual(shapeResult.preview, [true, true]);
             await shape.locator('[data-geneo-creation-shape-kind]').click();
             await page.locator('[data-geneo-shape-kind="ellipse"]').dispatchEvent('click');

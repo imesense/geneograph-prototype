@@ -6015,8 +6015,7 @@ function renderGeneoCreationToolPanel(tool)
     const width = `<label class="geneo-connection-tool-width"><input type="number" min="1" max="12" step="1" value="${appearance.strokeWidth}" data-geneo-creation-width="${tool}" aria-label="${escapeHtml(`${t('Stroke width')} (px)`)}" title="${escapeHtml(`${t('Stroke width')} (px)`)}"><span aria-hidden="true">px</span></label>`;
     const shape = tool === 'shape';
     const shapeChoice = shape ? `<button type="button" class="geneo-connection-choice geneo-creation-shape-choice" data-geneo-creation-shape-kind aria-label="${escapeHtml(`${t('Shape type')}: ${t(geneoShapeLabel(settings.shapeKind))}`)}" title="${escapeHtml(t('Shape type'))}" aria-haspopup="menu" aria-expanded="false"><span class="geneo-shape-option-preview shape-${escapeHtml(settings.shapeKind)}" aria-hidden="true"></span>${icon.chevron}</button>` : '';
-    const radius = shape && settings.shapeKind !== 'ellipse' ? `<label class="geneo-connection-tool-width geneo-creation-radius"><input type="number" min="0" max="32" step="1" value="${appearance.cornerRadius}" data-geneo-creation-radius aria-label="${escapeHtml(`${t('Corner radius')} (px)`)}" title="${escapeHtml(`${t('Corner radius')} (px)`)}"><span aria-hidden="true">px</span></label>` : '';
-    return `<section class="geneo-tool-settings geneo-connection-tool-panel geneo-creation-tool-panel" data-geneo-creation-panel="${tool}" role="toolbar" aria-label="${escapeHtml(t(shape ? 'Shape settings' : 'Drawing settings'))}"><div class="geneo-connection-tool-row">${shapeChoice}${shape ? swatch('fill') : ''}${swatch('stroke')}${width}${pattern}${radius}<span class="geneo-connection-tool-divider" aria-hidden="true"></span><button type="button" class="geneo-connection-tool-icon" data-geneo-creation-reset aria-label="${escapeHtml(t('Reset to default'))}" title="${escapeHtml(t('Reset to default'))}">${icon.undo}</button><button type="button" class="geneo-connection-tool-icon" data-geneo-creation-close aria-label="${escapeHtml(t('Close settings'))}" title="${escapeHtml(t('Close settings'))}">${icon.close}</button></div></section>`;
+    return `<section class="geneo-tool-settings geneo-connection-tool-panel geneo-creation-tool-panel" data-geneo-creation-panel="${tool}" role="toolbar" aria-label="${escapeHtml(t(shape ? 'Shape settings' : 'Drawing settings'))}"><div class="geneo-connection-tool-row">${shapeChoice}${shape ? swatch('fill') : ''}${swatch('stroke')}${width}${pattern}<span class="geneo-connection-tool-divider" aria-hidden="true"></span><button type="button" class="geneo-connection-tool-icon" data-geneo-creation-reset aria-label="${escapeHtml(t('Reset to default'))}" title="${escapeHtml(t('Reset to default'))}">${icon.undo}</button><button type="button" class="geneo-connection-tool-icon" data-geneo-creation-close aria-label="${escapeHtml(t('Close settings'))}" title="${escapeHtml(t('Close settings'))}">${icon.close}</button></div></section>`;
 }
 
 function renderGeneoConnectionSplitTool()
@@ -27099,12 +27098,6 @@ function bindGeneoCreationToolControls()
             openGeneoCreationPatternMenu(event.currentTarget, tool));
         panel.querySelector('[data-geneo-creation-shape-kind]')?.addEventListener('click', event =>
             openGeneoShapeMenu(event.currentTarget));
-        panel.querySelector('[data-geneo-creation-radius]')?.addEventListener('change', event =>
-        {
-            const appearance = geneoCreationToolSettings('shape').appearance;
-            appearance.cornerRadius = Math.round(geneoNumber(event.target.value, appearance.cornerRadius, 0, 32));
-            event.target.value = appearance.cornerRadius;
-        });
         panel.querySelector('[data-geneo-creation-reset]')?.addEventListener('click', () =>
         {
             if (geneoPaintRuntime.popover) closeGeneoPaintPopover({ restoreFocus: false });
