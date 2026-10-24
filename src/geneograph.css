@@ -1641,6 +1641,7 @@
 .geneo-connection-style-fields > .geneo-field { min-width: 0; }
 .geneo-connection-arrows { grid-column: 1 / -1; }
 .geneo-connection-style-fields > .geneo-paint-row { grid-column: 1 / -1; }
+.geneo-connection-date-default { grid-column: 1 / -1; }
 .geneo-connection-radius-row { grid-column: 1 / -1; }
 .geneo-connection-default-pattern { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-width: 0; height: 42px; padding: 0 10px; border: 1px solid var(--border-default); border-radius: 5px; background: var(--surface-input); color: var(--text-primary); cursor: pointer; }
 .geneo-connection-default-pattern .geneo-line-sample { width: 120px; max-width: calc(100% - 22px); height: 16px; }

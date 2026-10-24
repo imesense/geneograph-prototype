@@ -72,6 +72,29 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             assert.equal(layout.fontSize, '12px');
             assert.equal(layout.fontWeight, '700');
             assert.equal(layout.paintWeight, '700');
+            const dateDefault = defaultControls.locator('[data-geneo-connection-default-dates]');
+            assert.equal(await dateDefault.isChecked(), false);
+            assert.deepEqual(await page.evaluate(() => {
+                const partner = selectedGeneographDiagram().connections.find(item => item.kind === 'family-partner');
+                delete partner.showRelationshipDates;
+                return [selectedGeneographDiagram().connectionDefaults.showRelationshipDates,
+                    geneoEffectiveShowRelationshipDates(partner)];
+            }), [false, false]);
+            await dateDefault.check();
+            assert.deepEqual(await page.evaluate(() => {
+                const partner = selectedGeneographDiagram().connections.find(item => item.kind === 'family-partner');
+                return [selectedGeneographDiagram().connectionDefaults.showRelationshipDates,
+                    geneoEffectiveShowRelationshipDates(partner), partner.showRelationshipDates];
+            }), [true, true, undefined]);
+            await page.evaluate(() => {
+                selectedGeneographDiagram().connections.find(item => item.kind === 'family-partner').showRelationshipDates = false;
+            });
+            assert.equal(await page.evaluate(() => geneoEffectiveShowRelationshipDates(
+                selectedGeneographDiagram().connections.find(item => item.kind === 'family-partner'))), false);
+            await page.evaluate(() => undoGeneographChange());
+            assert.equal(await page.evaluate(() => selectedGeneographDiagram().connectionDefaults.showRelationshipDates), false);
+            await page.evaluate(() => redoGeneographChange());
+            await dateDefault.uncheck();
             step = 'default pattern';
             await defaultControls.locator('[data-geneo-connection-default-pattern]').click();
             assert.equal(await page.locator('[data-geneo-connector] .geneo-line-sample').count(), 4);
@@ -299,9 +322,11 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 return normalizeGeneographBoardRecord(board, new Map([[board.projectId, new Set()]])).diagram;
             });
             assert.equal(serialized.connectionDefaults.line.color, '#447766');
+            assert.equal(serialized.connectionDefaults.showRelationshipDates, false);
             assert.equal(serialized.connections.find(item => item.id === 'test-visual-arrow').style.arrows, undefined);
             const exported = await page.evaluate(async () => JSON.parse(await buildGeneographBoardFile()).board.diagram);
             assert.equal(exported.connectionDefaults.line.color, '#447766');
+            assert.equal(exported.connectionDefaults.showRelationshipDates, false);
             assert.equal(exported.connections.find(item => item.id === 'test-visual-arrow').style.pattern, undefined);
             await page.evaluate(() => {
                 const second = structuredClone(selectedGeneographBoard());

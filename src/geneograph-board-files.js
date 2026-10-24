@@ -223,6 +223,9 @@ function validateGeneographBoardFile(payload)
             || diagram.connectionDefaults.cornerRadius < 0
             || diagram.connectionDefaults.cornerRadius > 32))
         throw geneoBoardFileError('The board has invalid connection defaults.');
+    if (diagram.connectionDefaults?.showRelationshipDates !== undefined
+        && typeof diagram.connectionDefaults.showRelationshipDates !== 'boolean')
+        throw geneoBoardFileError('The board has invalid connection defaults.');
     const uniqueIds = items =>
     {
         const ids = items.map(item => item?.id);
@@ -281,6 +284,8 @@ function validateGeneographBoardFile(payload)
     {
         const validEnd = end => end && (end.nodeId ? nodes.has(end.nodeId) : families.has(end.familyId));
         if (!validEnd(connection.source) || !validEnd(connection.target)
+            || (connection.showRelationshipDates !== undefined
+                && typeof connection.showRelationshipDates !== 'boolean')
             || (connection.style?.cornerRadius !== undefined
                 && (!Number.isInteger(connection.style.cornerRadius)
                     || connection.style.cornerRadius < 0 || connection.style.cornerRadius > 32))

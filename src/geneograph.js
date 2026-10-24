@@ -5983,6 +5983,7 @@ function renderGeneoConnectionStyleFields(style, scope)
       ${renderGeneoPaintControl({ scope: 'connection-default', property: 'line' })}
       <fieldset class="geneo-connection-arrows"><legend class="geneo-setting-label">${escapeHtml(t('Arrowheads'))}</legend><div class="geneo-connection-arrow-options">${GENEO_CONNECTION_ARROWS.map(value => `<label><input type="radio" name="${prefix}-arrows" value="${value}" data-${prefix}-arrows ${style.arrows === value ? 'checked' : ''}><span>${escapeHtml(t(capitalize(value)))}</span></label>`).join('')}</div></fieldset>
       <div class="geneo-person-card-radius-row geneo-connection-radius-row"><label class="geneo-field" for="geneoConnectionDefaultRadius"><span class="geneo-setting-label">${escapeHtml(t('Corner radius'))}</span><span class="geneo-selection-help">0–32 px</span></label><input class="geneo-input" id="geneoConnectionDefaultRadius" type="number" min="0" max="32" step="1" value="${style.cornerRadius}" data-geneo-connection-default-radius></div>
+      <label class="geneo-check geneo-connection-date-default"><input type="checkbox" data-geneo-connection-default-dates ${style.showRelationshipDates ? 'checked' : ''}><span>${escapeHtml(t('Show relationship date on board'))}</span></label>
     </div>`;
 }
 
@@ -7519,7 +7520,8 @@ function validateSampleGeneographCollections(
             || !GENEO_CONNECTION_ARROWS.includes(diagram.connectionDefaults?.arrows)
             || !Number.isInteger(diagram.connectionDefaults?.cornerRadius)
             || diagram.connectionDefaults.cornerRadius < 0
-            || diagram.connectionDefaults.cornerRadius > 32)
+            || diagram.connectionDefaults.cornerRadius > 32
+            || typeof diagram.connectionDefaults.showRelationshipDates !== 'boolean')
         {
             warn(`Board ${board.id} has invalid connection defaults`);
         }
@@ -7563,6 +7565,9 @@ function validateSampleGeneographCollections(
                     && (!Number.isInteger(connection.style.cornerRadius)
                         || connection.style.cornerRadius < 0 || connection.style.cornerRadius > 32))
                     warn(`Connection ${connection.id} has an invalid corner radius`);
+                if (connection.showRelationshipDates !== undefined
+                    && typeof connection.showRelationshipDates !== 'boolean')
+                    warn(`Connection ${connection.id} has an invalid relationship-date setting`);
 
                 [
                     connection.source,
@@ -8240,7 +8245,7 @@ function geneoCreationToolSettings(tool)
 
 function geneoDefaultConnectionStyle()
 {
-    return { line: { color: '#D9E5E1', opacity: 100, enabled: true }, width: 2, pattern: 'solid', arrows: 'none', cornerRadius: 0 };
+    return { line: { color: '#D9E5E1', opacity: 100, enabled: true }, width: 2, pattern: 'solid', arrows: 'none', cornerRadius: 0, showRelationshipDates: false };
 }
 
 function geneoNormalizeConnectionDefaults(value)
@@ -8251,7 +8256,9 @@ function geneoNormalizeConnectionDefaults(value)
         width: Math.round(geneoNumber(value?.width, fallback.width, GENEO_STROKE_WIDTH_MIN, GENEO_STROKE_WIDTH_MAX)),
         pattern: GENEO_CONNECTION_PATTERNS.includes(value?.pattern) ? value.pattern : fallback.pattern,
         arrows: GENEO_CONNECTION_ARROWS.includes(value?.arrows) ? value.arrows : fallback.arrows,
-        cornerRadius: Math.round(geneoNumber(value?.cornerRadius, fallback.cornerRadius, 0, 32))
+        cornerRadius: Math.round(geneoNumber(value?.cornerRadius, fallback.cornerRadius, 0, 32)),
+        showRelationshipDates: typeof value?.showRelationshipDates === 'boolean'
+            ? value.showRelationshipDates : fallback.showRelationshipDates
     };
 }
 
@@ -9413,7 +9420,8 @@ function normalizeGeneographBoardRecord(board, projectPeople)
                 familyId: familyIds.has(connection.familyId) ? connection.familyId : null,
                 source: { ...connection.source }, target: { ...connection.target },
                 style: geneoNormalizeConnectionOverrides(connection.style, connection.kind),
-                showRelationshipDates: connection.showRelationshipDates !== false,
+                ...(typeof connection.showRelationshipDates === 'boolean'
+                    ? { showRelationshipDates: connection.showRelationshipDates } : {}),
                 route: {
                     mode: connection.route?.mode === 'manual' ? 'manual' : 'auto',
                     waypoints: (Array.isArray(connection.route?.waypoints) ? connection.route.waypoints : []).map(point => ({
@@ -12390,9 +12398,14 @@ function geneoRelationshipForFamily(family, { create = false } = {})
     return { relationship: relationship || family, central: Boolean(relationship) };
 }
 
+function geneoEffectiveShowRelationshipDates(connection, diagram = selectedGeneographDiagram())
+{
+    return connection?.showRelationshipDates ?? diagram?.connectionDefaults?.showRelationshipDates ?? false;
+}
+
 function geneoPartnerRelationshipDateLabel(connection)
 {
-    if (connection?.kind !== 'family-partner' || connection.showRelationshipDates === false) return '';
+    if (connection?.kind !== 'family-partner' || !geneoEffectiveShowRelationshipDates(connection)) return '';
     const family = getGeneographFamily(connection.familyId);
     const relationship = geneoRelationshipForFamily(family).relationship;
     return partnerRelationshipDateSummary(relationship).rangeLabel || '';
@@ -16322,12 +16335,11 @@ function renderGeneographConnectionInspector(
                       type="checkbox"
                       data-geneo-show-relationship-dates
                       ${
-                            connection.showRelationshipDates
-                        !== false
+                            geneoEffectiveShowRelationshipDates(connection)
                                 ? 'checked'
                                 : ''
                         }>
-                    Show relationship date on board
+                    ${escapeHtml(t('Show relationship date on board'))}
                   </label>
 
                   <p class="geneo-relationship-storage">
@@ -24481,7 +24493,7 @@ function geneoCreateConnection(kind, source, target, familyId = null)
     const overrides = { ...geneoConnectionToolRuntime.overrides };
     if (overrides.line) overrides.line = { ...overrides.line };
     if (kind !== 'visual') delete overrides.arrows;
-    return { id: createRuntimeId('geneo-connection'), kind, familyId, source: { ...source }, target: { ...target }, showRelationshipDates: true, style: overrides, route: { mode: 'auto', waypoints: [] } };
+    return { id: createRuntimeId('geneo-connection'), kind, familyId, source: { ...source }, target: { ...target }, style: overrides, route: { mode: 'auto', waypoints: [] } };
 }
 
 function commitGeneographConnection(source, target)
@@ -27558,6 +27570,7 @@ function bindGeneoConnectionControls()
         };
         group.querySelector(`${prefix}width]`)?.addEventListener('change', event => commit('width', Math.round(geneoNumber(event.target.value, 2, 1, 12))));
         group.querySelector(`${prefix}radius]`)?.addEventListener('change', event => commit('cornerRadius', Math.round(geneoNumber(event.target.value, 0, 0, 32))));
+        group.querySelector(`${prefix}dates]`)?.addEventListener('change', event => commit('showRelationshipDates', event.target.checked));
         group.querySelector(`${prefix}pattern]`)?.addEventListener('click', event => openGeneoConnectionStyleMenu(event.currentTarget, 'pattern', 'default'));
         group.querySelectorAll(`${prefix}arrows]`).forEach(input => input.addEventListener('change', () => { if (input.checked) commit('arrows', input.value); }));
     });
@@ -28875,7 +28888,13 @@ function bindGeneographEditor()
         relationshipEditor.querySelector('[data-geneo-relationship-type]')?.addEventListener('change', event => updatePartnerRelationshipFields(relationshipEditor, event.target.value));
         relationshipEditor.querySelector('[data-geneo-show-relationship-dates]')?.addEventListener('change', event =>
         {
-            const connection = selectedGeneographConnection(); if (!connection) return; geneoPushHistory(); connection.showRelationshipDates = event.target.checked; touchGeneographBoard(); renderGeneographEditorPreserveScroll();
+            const connection = selectedGeneographConnection(); if (!connection) return;
+            if (geneoEffectiveShowRelationshipDates(connection) === event.target.checked) return;
+            geneoPushHistory();
+            if (event.target.checked === selectedGeneographDiagram().connectionDefaults.showRelationshipDates)
+                delete connection.showRelationshipDates;
+            else connection.showRelationshipDates = event.target.checked;
+            touchGeneographBoard(); renderGeneographEditorPreserveScroll();
         });
         relationshipEditor.querySelector('[data-geneo-save-relationship]')?.addEventListener('click', saveGeneographPartnerRelationship);
     }
