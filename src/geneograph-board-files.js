@@ -218,6 +218,11 @@ function validateGeneographBoardFile(payload)
     if (diagram.assets.length > 200 || diagram.people.length > 2000 || diagram.families.length > 2000
         || diagram.nodes.length > 2000 || diagram.connections.length > 4000)
         throw geneoBoardFileError('The board file contains too many objects.');
+    if (diagram.connectionDefaults?.cornerRadius !== undefined
+        && (!Number.isInteger(diagram.connectionDefaults.cornerRadius)
+            || diagram.connectionDefaults.cornerRadius < 0
+            || diagram.connectionDefaults.cornerRadius > 32))
+        throw geneoBoardFileError('The board has invalid connection defaults.');
     const uniqueIds = items =>
     {
         const ids = items.map(item => item?.id);
@@ -276,6 +281,9 @@ function validateGeneographBoardFile(payload)
     {
         const validEnd = end => end && (end.nodeId ? nodes.has(end.nodeId) : families.has(end.familyId));
         if (!validEnd(connection.source) || !validEnd(connection.target)
+            || (connection.style?.cornerRadius !== undefined
+                && (!Number.isInteger(connection.style.cornerRadius)
+                    || connection.style.cornerRadius < 0 || connection.style.cornerRadius > 32))
             || !Array.isArray(connection.route?.waypoints)
             || (connection.route.railY !== undefined && (!Number.isFinite(connection.route.railY)
                 || Math.abs(connection.route.railY) > GENEO_WORLD_LIMIT))

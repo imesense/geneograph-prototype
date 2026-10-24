@@ -5982,6 +5982,7 @@ function renderGeneoConnectionStyleFields(style, scope)
       <label class="geneo-field"><span class="geneo-setting-label">${escapeHtml(t('Width'))}</span><span class="geneo-number-unit"><input class="geneo-input" type="number" min="1" max="12" step="1" value="${style.width}" data-${prefix}-width><span aria-hidden="true">px</span></span></label>
       ${renderGeneoPaintControl({ scope: 'connection-default', property: 'line' })}
       <fieldset class="geneo-connection-arrows"><legend class="geneo-setting-label">${escapeHtml(t('Arrowheads'))}</legend><div class="geneo-connection-arrow-options">${GENEO_CONNECTION_ARROWS.map(value => `<label><input type="radio" name="${prefix}-arrows" value="${value}" data-${prefix}-arrows ${style.arrows === value ? 'checked' : ''}><span>${escapeHtml(t(capitalize(value)))}</span></label>`).join('')}</div></fieldset>
+      <div class="geneo-person-card-radius-row geneo-connection-radius-row"><label class="geneo-field" for="geneoConnectionDefaultRadius"><span class="geneo-setting-label">${escapeHtml(t('Corner radius'))}</span><span class="geneo-selection-help">0–32 px</span></label><input class="geneo-input" id="geneoConnectionDefaultRadius" type="number" min="0" max="32" step="1" value="${style.cornerRadius}" data-geneo-connection-default-radius></div>
     </div>`;
 }
 
@@ -5993,6 +5994,7 @@ function renderGeneoConnectionInspectorStyleFields(connection)
       <div class="geneo-field"><label class="geneo-setting-label" for="geneoConnectionStrokeWidth">${escapeHtml(t('Width'))}</label><span class="geneo-number-unit"><input class="geneo-input" id="geneoConnectionStrokeWidth" type="number" min="1" max="12" step="1" value="${style.width}" data-geneo-stroke-width="connection"><span aria-hidden="true">px</span></span></div>
       ${renderGeneoPaintControl({ scope: 'connection', id: connection.id, property: 'line' })}
       ${connection.kind === 'visual' ? `<fieldset class="geneo-connection-arrows"><legend class="geneo-setting-label">${escapeHtml(t('Arrowheads'))}</legend><div class="geneo-connection-arrow-options">${GENEO_CONNECTION_ARROWS.map(value => `<label><input type="radio" name="geneo-inspector-arrows" value="${value}" data-geneo-connection-arrows ${style.arrows === value ? 'checked' : ''}><span>${escapeHtml(t(capitalize(value)))}</span></label>`).join('')}</div></fieldset>` : ''}
+      <div class="geneo-person-card-radius-row geneo-connection-radius-row"><label class="geneo-field" for="geneoConnectionRadius"><span class="geneo-setting-label">${escapeHtml(t('Corner radius'))}</span><span class="geneo-selection-help">0–32 px</span></label><input class="geneo-input" id="geneoConnectionRadius" type="number" min="0" max="32" step="1" value="${style.cornerRadius}" data-geneo-connection-radius></div>
     </div>`;
 }
 
@@ -7514,7 +7516,10 @@ function validateSampleGeneographCollections(
             || diagram.connectionDefaults.width < GENEO_STROKE_WIDTH_MIN
             || diagram.connectionDefaults.width > GENEO_STROKE_WIDTH_MAX
             || !GENEO_CONNECTION_PATTERNS.includes(diagram.connectionDefaults?.pattern)
-            || !GENEO_CONNECTION_ARROWS.includes(diagram.connectionDefaults?.arrows))
+            || !GENEO_CONNECTION_ARROWS.includes(diagram.connectionDefaults?.arrows)
+            || !Number.isInteger(diagram.connectionDefaults?.cornerRadius)
+            || diagram.connectionDefaults.cornerRadius < 0
+            || diagram.connectionDefaults.cornerRadius > 32)
         {
             warn(`Board ${board.id} has invalid connection defaults`);
         }
@@ -7554,6 +7559,10 @@ function validateSampleGeneographCollections(
                 }
                 if (connection.style?.arrows !== undefined && (connection.kind !== 'visual' || !GENEO_CONNECTION_ARROWS.includes(connection.style.arrows)))
                     warn(`Connection ${connection.id} has invalid arrowheads`);
+                if (connection.style?.cornerRadius !== undefined
+                    && (!Number.isInteger(connection.style.cornerRadius)
+                        || connection.style.cornerRadius < 0 || connection.style.cornerRadius > 32))
+                    warn(`Connection ${connection.id} has an invalid corner radius`);
 
                 [
                     connection.source,
@@ -8231,7 +8240,7 @@ function geneoCreationToolSettings(tool)
 
 function geneoDefaultConnectionStyle()
 {
-    return { line: { color: '#D9E5E1', opacity: 100, enabled: true }, width: 2, pattern: 'solid', arrows: 'none' };
+    return { line: { color: '#D9E5E1', opacity: 100, enabled: true }, width: 2, pattern: 'solid', arrows: 'none', cornerRadius: 0 };
 }
 
 function geneoNormalizeConnectionDefaults(value)
@@ -8241,7 +8250,8 @@ function geneoNormalizeConnectionDefaults(value)
         line: geneoPaintFromLegacy(value?.line, value?.color, fallback.line),
         width: Math.round(geneoNumber(value?.width, fallback.width, GENEO_STROKE_WIDTH_MIN, GENEO_STROKE_WIDTH_MAX)),
         pattern: GENEO_CONNECTION_PATTERNS.includes(value?.pattern) ? value.pattern : fallback.pattern,
-        arrows: GENEO_CONNECTION_ARROWS.includes(value?.arrows) ? value.arrows : fallback.arrows
+        arrows: GENEO_CONNECTION_ARROWS.includes(value?.arrows) ? value.arrows : fallback.arrows,
+        cornerRadius: Math.round(geneoNumber(value?.cornerRadius, fallback.cornerRadius, 0, 32))
     };
 }
 
@@ -8252,6 +8262,8 @@ function geneoNormalizeConnectionOverrides(value, kind = 'visual')
     if (Number.isInteger(value?.width) && value.width >= GENEO_STROKE_WIDTH_MIN && value.width <= GENEO_STROKE_WIDTH_MAX) result.width = value.width;
     if (GENEO_CONNECTION_PATTERNS.includes(value?.pattern)) result.pattern = value.pattern;
     if (kind === 'visual' && GENEO_CONNECTION_ARROWS.includes(value?.arrows)) result.arrows = value.arrows;
+    if (Number.isInteger(value?.cornerRadius) && value.cornerRadius >= 0 && value.cornerRadius <= 32)
+        result.cornerRadius = value.cornerRadius;
     return result;
 }
 
@@ -10452,6 +10464,39 @@ function geneoFamilyJunction(familyId)
     const routedMidpoint = partnerPoints ? geneoPolylineMidpoint(partnerPoints) : null;
     if (routedMidpoint)
     {
+        const radius = geneoEffectiveConnectionStyle(partnerConnection).cornerRadius;
+        if (radius)
+        {
+            const candidates = partnerPoints.slice(0, -1).map((first, index) =>
+            {
+                const second = partnerPoints[index + 1];
+                const length = Math.hypot(second.x - first.x, second.y - first.y);
+                if (!length) return null;
+                const startCut = geneoConnectionCornerCut(partnerPoints, index, radius) / length;
+                const endCut = geneoConnectionCornerCut(partnerPoints, index + 1, radius) / length;
+                const start = { x: first.x + (second.x - first.x) * startCut,
+                    y: first.y + (second.y - first.y) * startCut };
+                const end = { x: second.x - (second.x - first.x) * endCut,
+                    y: second.y - (second.y - first.y) * endCut };
+                const point = geneoProjectedPointOnSegment(routedMidpoint, start, end);
+                return { start, end, point, distance: Math.hypot(point.x - routedMidpoint.x, point.y - routedMidpoint.y) };
+            }).filter(Boolean).sort((a, b) => a.distance - b.distance);
+            const closest = candidates[0];
+            if (closest)
+            {
+                const point = { ...closest.point };
+                if (selectedGeneographDiagram()?.canvas.snapToGrid)
+                {
+                    if (Math.abs(closest.start.y - closest.end.y) < .001)
+                        point.x = Math.max(Math.min(closest.start.x, closest.end.x),
+                            Math.min(Math.max(closest.start.x, closest.end.x), snapGeneographCoordinate(point.x)));
+                    else if (Math.abs(closest.start.x - closest.end.x) < .001)
+                        point.y = Math.max(Math.min(closest.start.y, closest.end.y),
+                            Math.min(Math.max(closest.start.y, closest.end.y), snapGeneographCoordinate(point.y)));
+                }
+                return point;
+            }
+        }
         if (!selectedGeneographDiagram()?.canvas.snapToGrid) return routedMidpoint;
         for (let index = 0; index < partnerPoints.length - 1; index++)
         {
@@ -10494,7 +10539,7 @@ function geneoFamilyChildBusGroups(diagram = selectedGeneographDiagram())
         const sourceKey = source.familyId ? `family:${source.familyId}` : `node:${source.nodeId}`;
         const style = geneoEffectiveConnectionStyle(connection, diagram);
         const styleKey = JSON.stringify([style.line?.color, style.line?.opacity,
-            style.line?.enabled, style.width, style.pattern]);
+            style.line?.enabled, style.width, style.pattern, style.cornerRadius]);
         const key = JSON.stringify([connection.familyId, sourceKey, source.port, styleKey]);
         if (!candidates.has(key)) candidates.set(key, []);
         candidates.get(key).push(connection);
@@ -10564,6 +10609,56 @@ function geneoConnectionPoints(connection, busByConnection = null)
 function geneoPolylinePath(points)
 {
     return points.map((point, index) => `${index ? 'L' : 'M'} ${Math.round(point.x)} ${Math.round(point.y)}`).join(' ');
+}
+
+function geneoConnectionCornerCut(points, index, radius)
+{
+    if (!radius || index <= 0 || index >= points.length - 1) return 0;
+    const previous = points[index - 1];
+    const current = points[index];
+    const next = points[index + 1];
+    const incoming = { x: previous.x - current.x, y: previous.y - current.y };
+    const outgoing = { x: next.x - current.x, y: next.y - current.y };
+    const incomingLength = Math.hypot(incoming.x, incoming.y);
+    const outgoingLength = Math.hypot(outgoing.x, outgoing.y);
+    if (!incomingLength || !outgoingLength
+        || Math.abs(incoming.x * outgoing.y - incoming.y * outgoing.x)
+            < incomingLength * outgoingLength * .001) return 0;
+    return Math.min(radius, incomingLength / 2, outgoingLength / 2);
+}
+
+function geneoRoundedPolylinePath(points, radius = 0)
+{
+    if (!radius || points.length < 3) return geneoPolylinePath(points);
+    const coordinate = value => Number(value.toFixed(2));
+    const commands = [`M ${coordinate(points[0].x)} ${coordinate(points[0].y)}`];
+    for (let index = 1; index < points.length - 1; index++)
+    {
+        const current = points[index];
+        const cut = geneoConnectionCornerCut(points, index, radius);
+        if (!cut)
+        {
+            commands.push(`L ${coordinate(current.x)} ${coordinate(current.y)}`);
+            continue;
+        }
+        const previous = points[index - 1];
+        const next = points[index + 1];
+        const incomingLength = Math.hypot(previous.x - current.x, previous.y - current.y);
+        const outgoingLength = Math.hypot(next.x - current.x, next.y - current.y);
+        const before = {
+            x: current.x + (previous.x - current.x) * cut / incomingLength,
+            y: current.y + (previous.y - current.y) * cut / incomingLength
+        };
+        const after = {
+            x: current.x + (next.x - current.x) * cut / outgoingLength,
+            y: current.y + (next.y - current.y) * cut / outgoingLength
+        };
+        commands.push(`L ${coordinate(before.x)} ${coordinate(before.y)}`,
+            `Q ${coordinate(current.x)} ${coordinate(current.y)} ${coordinate(after.x)} ${coordinate(after.y)}`);
+    }
+    const end = points.at(-1);
+    commands.push(`L ${coordinate(end.x)} ${coordinate(end.y)}`);
+    return commands.join(' ');
 }
 
 function geneoProjectedPointOnSegment(point, start, end)
@@ -10713,7 +10808,7 @@ function renderGeneographConnectors()
     const { buses, byConnection } = geneoFamilyChildBusGroups(diagram);
     const bounds = geneoCanvasRuntime.bounds || geneoDerivedCanvasBounds(diagram);
     const previewPath = state.geneoConnectionDraft
-        ? geneoPolylinePath(geneoConnectionPreviewPoints(state.geneoConnectionDraft, geneoCanvasRuntime.connectionPreviewPoint))
+        ? geneoRoundedPolylinePath(geneoConnectionPreviewPoints(state.geneoConnectionDraft, geneoCanvasRuntime.connectionPreviewPoint), geneoConnectionToolStyle().cornerRadius)
         : '';
     const selectedConnectionIds = geneoSelectedConnectionIdSet();
     const connectionPaintRank = connection => connection.kind === 'family-partner'
@@ -10729,7 +10824,15 @@ function renderGeneographConnectors()
         ${buses.map(bus =>
         {
             const trunkPath = geneoPolylinePath([bus.start, { x: bus.start.x, y: bus.railY }]);
-            const railPath = geneoPolylinePath([{ x: bus.minX, y: bus.railY }, { x: bus.maxX, y: bus.railY }]);
+            const leftEnds = [...bus.ends.values()].filter(point => point.x === bus.minX);
+            const rightEnds = [...bus.ends.values()].filter(point => point.x === bus.maxX);
+            const leftCut = leftEnds.length === 1 && bus.minX < bus.start.x
+                ? Math.min(bus.style.cornerRadius, (bus.maxX - bus.minX) / 2,
+                    (leftEnds[0].y - bus.railY) / 2, bus.start.x - bus.minX) : 0;
+            const rightCut = rightEnds.length === 1 && bus.maxX > bus.start.x
+                ? Math.min(bus.style.cornerRadius, (bus.maxX - bus.minX) / 2,
+                    (rightEnds[0].y - bus.railY) / 2, bus.maxX - bus.start.x) : 0;
+            const railPath = geneoPolylinePath([{ x: bus.minX + leftCut, y: bus.railY }, { x: bus.maxX - rightCut, y: bus.railY }]);
             const busPath = `${trunkPath} ${railPath}`;
             const paint = bus.style.line;
             const selected = bus.connectionIds.every(id => selectedConnectionIds.has(id));
@@ -10747,10 +10850,16 @@ function renderGeneographConnectors()
             const bus = byConnection.get(connection.id);
             const points = geneoConnectionPoints(connection, byConnection);
             const end = points.at(-1);
-            const path = bus
-                ? geneoPolylinePath([{ x: end.x, y: bus.railY }, end])
-                : geneoPolylinePath(points);
             const style = geneoEffectiveConnectionStyle(connection, diagram);
+            const busEndXs = bus ? [...bus.ends.values()].map(point => point.x) : [];
+            const busCut = bus && busEndXs.filter(x => x === end.x).length === 1
+                && end.x !== bus.start.x && (end.x === bus.minX || end.x === bus.maxX)
+                ? Math.min(style.cornerRadius, (bus.maxX - bus.minX) / 2,
+                    (end.y - bus.railY) / 2, Math.abs(end.x - bus.start.x)) : 0;
+            const path = bus && busCut
+                ? `M ${end.x + (end.x === bus.minX ? busCut : -busCut)} ${bus.railY} Q ${end.x} ${bus.railY} ${end.x} ${bus.railY + busCut} L ${end.x} ${end.y}`
+                : bus ? geneoPolylinePath([{ x: end.x, y: bus.railY }, end])
+                    : geneoRoundedPolylinePath(points, style.cornerRadius);
             const linePaint = style.line;
             const dash = geneoConnectionDashArray(style.pattern, style.width);
             const markerId = `geneo-arrow-${connection.id}`;
@@ -10765,7 +10874,14 @@ function renderGeneographConnectors()
             ${selected && !bus ? points.slice(0, -1).map((point, index) =>
             {
                 const next = points[index + 1];
-                return index > 0 && index < points.length - 2 ? `<line class="geneo-segment-hit" x1="${point.x}" y1="${point.y}" x2="${next.x}" y2="${next.y}" data-geneo-segment="${index}" data-geneo-connection="${escapeHtml(connection.id)}"></line>` : '';
+                if (index <= 0 || index >= points.length - 2) return '';
+                const length = Math.hypot(next.x - point.x, next.y - point.y);
+                if (!length) return '';
+                const startCut = geneoConnectionCornerCut(points, index, style.cornerRadius);
+                const endCut = geneoConnectionCornerCut(points, index + 1, style.cornerRadius);
+                const startRatio = startCut / length;
+                const endRatio = endCut / length;
+                return `<line class="geneo-segment-hit" x1="${point.x + (next.x - point.x) * startRatio}" y1="${point.y + (next.y - point.y) * startRatio}" x2="${next.x - (next.x - point.x) * endRatio}" y2="${next.y - (next.y - point.y) * endRatio}" data-geneo-segment="${index}" data-geneo-connection="${escapeHtml(connection.id)}"></line>`;
             }).join('') : ''}
             <path class="geneo-connection-line" d="${path}" stroke="${escapeHtml(geneoPaintCssColor(linePaint))}" stroke-width="${style.width}" stroke-linecap="round" ${dash ? `stroke-dasharray="${dash}"` : ''} ${arrowAttrs}></path>
             <path class="geneo-connection-selection-guide" d="${path}"></path>
@@ -15164,6 +15280,7 @@ function renderGeneographMultiSelectionInspector(
             node =>
                 node.type === 'person'
         );
+    const connectionsOnly = connections.length > 0 && nodes.length === 0;
 
     const selectionContent = `
         <ul class="geneo-selection-list">
@@ -15212,6 +15329,8 @@ function renderGeneographMultiSelectionInspector(
                        </div>`
                     : ''
             }
+
+            ${connectionsOnly ? `<div class="geneo-inspector-reset"><button class="button secondary" type="button" data-geneo-connection-multi-reset-default ${connections.some(connection => Object.keys(connection.style || {}).length) ? '' : 'disabled'}>${escapeHtml(t('Reset to default'))}</button></div>` : ''}
 
             ${renderGeneographInspectorDangerAction(
                 'Delete selected'
@@ -24854,7 +24973,7 @@ function setGeneographConnectionHoverTarget(element)
     geneoCanvasRuntime.connectionHoverTarget = { element, reference };
     geneoCanvasRuntime.connectionPreviewPoint = geneoConnectionPoint(reference);
     main.querySelector('[data-geneo-connection-preview]')?.setAttribute('d',
-        geneoPolylinePath(geneoConnectionPreviewPoints(state.geneoConnectionDraft, geneoCanvasRuntime.connectionPreviewPoint)));
+        geneoRoundedPolylinePath(geneoConnectionPreviewPoints(state.geneoConnectionDraft, geneoCanvasRuntime.connectionPreviewPoint), geneoConnectionToolStyle().cornerRadius));
     updateGeneographConnectionTip();
 }
 
@@ -24899,7 +25018,7 @@ function updateGeneographConnectionPreview(event)
             : geneoPointerToCanvas({ clientX, clientY });
         geneoCanvasRuntime.connectionPreviewPoint = point;
         const preview = main.querySelector('[data-geneo-connection-preview]');
-        if (preview) preview.setAttribute('d', geneoPolylinePath(geneoConnectionPreviewPoints(state.geneoConnectionDraft, point)));
+        if (preview) preview.setAttribute('d', geneoRoundedPolylinePath(geneoConnectionPreviewPoints(state.geneoConnectionDraft, point), geneoConnectionToolStyle().cornerRadius));
     });
 }
 
@@ -24942,13 +25061,10 @@ function startGeneographObjectDrag(event)
     geneoPointerState = { kind: 'move-group', pointerId: event.pointerId, beforeSnapshot, undoLength, redo, nodeId: node.id, start: point, x: node.x, y: node.y, nodes, connections, moved: false };
 }
 
-function startGeneographConnectionDrag(event)
+function startGeneographSelectedConnectionDrag(event, connection)
 {
-    if (geneoPointerState || event.isPrimary === false) return false;
-    const path = event.target.closest('.geneo-connection-hit');
-    if (!path || event.button !== 0 || !['select', 'pan'].includes(geneoEffectiveCanvasTool()) || event.shiftKey || event.ctrlKey || event.metaKey) return false;
-    const connection = getGeneographConnection(path.dataset.geneoConnection);
-    if (!connection) return false;
+    if (!connection || geneoPointerState || event.isPrimary === false) return false;
+    if (event.button !== 0 || !['select', 'pan', 'connect'].includes(geneoEffectiveCanvasTool()) || event.shiftKey || event.ctrlKey || event.metaKey) return false;
     if (!geneoSelectedConnectionIdSet().has(connection.id)) selectGeneographConnection(connection.id);
     const beforeSnapshot = geneoSnapshot();
     const undoLength = geneoHistoryRuntime.undo.length;
@@ -24975,6 +25091,13 @@ function startGeneographConnectionDrag(event)
     event.preventDefault();
     event.stopPropagation();
     return true;
+}
+
+function startGeneographConnectionDrag(event)
+{
+    const path = event.target.closest('.geneo-connection-hit');
+    return path ? startGeneographSelectedConnectionDrag(event,
+        getGeneographConnection(path.dataset.geneoConnection)) : false;
 }
 
 function startGeneographResize(
@@ -27378,6 +27501,7 @@ function bindGeneoConnectionControls()
             else refreshGeneoConnectionToolUi();
         };
         group.querySelector(`${prefix}width]`)?.addEventListener('change', event => commit('width', Math.round(geneoNumber(event.target.value, 2, 1, 12))));
+        group.querySelector(`${prefix}radius]`)?.addEventListener('change', event => commit('cornerRadius', Math.round(geneoNumber(event.target.value, 0, 0, 32))));
         group.querySelector(`${prefix}pattern]`)?.addEventListener('click', event => openGeneoConnectionStyleMenu(event.currentTarget, 'pattern', 'default'));
         group.querySelectorAll(`${prefix}arrows]`).forEach(input => input.addEventListener('change', () => { if (input.checked) commit('arrows', input.value); }));
     });
@@ -27416,12 +27540,36 @@ function bindGeneoConnectionControls()
         touchGeneographBoard();
         renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true });
     }));
+    main.querySelector('[data-geneo-connection-radius]')?.addEventListener('change', event =>
+    {
+        const connection = selectedGeneographConnection();
+        if (!connection) return;
+        const radius = Math.round(geneoNumber(event.target.value,
+            geneoEffectiveConnectionStyle(connection).cornerRadius, 0, 32));
+        if (radius === geneoEffectiveConnectionStyle(connection).cornerRadius) return;
+        geneoPushHistory();
+        if (radius === selectedGeneographDiagram().connectionDefaults.cornerRadius)
+            delete connection.style.cornerRadius;
+        else connection.style.cornerRadius = radius;
+        touchGeneographBoard();
+        renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true });
+    });
     main.querySelector('[data-geneo-connection-reset-default]')?.addEventListener('click', () =>
     {
         const connection = selectedGeneographConnection();
         if (!connection || !Object.keys(connection.style || {}).length) return;
         geneoPushHistory();
         connection.style = {};
+        touchGeneographBoard();
+        renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true });
+    });
+    main.querySelector('[data-geneo-connection-multi-reset-default]')?.addEventListener('click', () =>
+    {
+        const connections = selectedGeneographConnections();
+        if (!connections.length || selectedGeneographNodes().length
+            || !connections.some(connection => Object.keys(connection.style || {}).length)) return;
+        geneoPushHistory();
+        connections.forEach(connection => { connection.style = {}; });
         touchGeneographBoard();
         renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true });
     });
@@ -27984,6 +28132,9 @@ function bindGeneographEditor()
     {
         event.preventDefault(); event.stopPropagation();
         const connection = getGeneographConnection(segment.dataset.geneoConnection); if (!connection) return; const index = Number(segment.dataset.geneoSegment); const points = geneoConnectionPoints(connection);
+        if (geneoSelectedConnectionIdSet().has(connection.id)
+            && selectedGeneographNodes().length + selectedGeneographConnections().length > 1
+            && startGeneographSelectedConnectionDrag(event, connection)) return;
         if (index < 1 || index >= points.length - 2) return;
         geneoPushHistory();
         if (connection.route.mode !== 'manual') connection.route = { mode: 'manual', waypoints: points.slice(1, -1).map(snapGeneographPoint) };

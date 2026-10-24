@@ -243,12 +243,57 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             await page.evaluate(() => redoGeneographChange());
             assert.deepEqual(await page.evaluate(() => getGeneographConnection('test-visual-arrow').style), {});
             await page.evaluate(() => {
+                const diagram = selectedGeneographDiagram();
+                diagram.connectionDefaults.cornerRadius = 16;
+                const first = getGeneographConnection('test-visual-arrow');
+                const second = getGeneographConnection('test-family-no-arrow');
+                first.style.cornerRadius = 32;
+                second.style.width = 5;
+                state.selectedGeneoConnectionId = first.id;
+                state.selectedGeneoConnectionIds = [first.id, second.id];
+                renderGeneographEditorPreserveScroll();
+            });
+            assert.equal(await page.locator('[data-geneo-connection-multi-reset-default]').isEnabled(), true);
+            assert.match(await page.locator('[data-geneo-connection-group="test-visual-arrow"] .geneo-connection-line').getAttribute('d'), / Q /);
+            await page.locator('[data-geneo-connection-multi-reset-default]').click();
+            assert.deepEqual(await page.evaluate(() => {
+                const first = getGeneographConnection('test-visual-arrow');
+                const second = getGeneographConnection('test-family-no-arrow');
+                return [first.style, second.style, first.route.waypoints,
+                    geneoEffectiveConnectionStyle(first).cornerRadius];
+            }), [{}, {}, [{ x: 2100, y: 400 }], 16]);
+            assert.equal(await page.locator('[data-geneo-connection-multi-reset-default]').isDisabled(), true);
+            await page.evaluate(() => undoGeneographChange());
+            assert.deepEqual(await page.evaluate(() => [
+                getGeneographConnection('test-visual-arrow').style.cornerRadius,
+                getGeneographConnection('test-family-no-arrow').style.width
+            ]), [32, 5]);
+            await page.evaluate(() => redoGeneographChange());
+            assert.deepEqual(await page.evaluate(() => {
+                const first = getGeneographConnection('test-visual-arrow');
+                const second = getGeneographConnection('test-family-no-arrow');
+                first.route = { mode: 'manual', waypoints: [{ x: 2100, y: 400 }, { x: 2180, y: 400 }] };
+                second.route = { mode: 'manual', waypoints: [{ x: 2200, y: 500 }, { x: 2280, y: 500 }] };
+                state.selectedGeneoConnectionIds = [first.id, second.id];
+                state.selectedGeneoConnectionId = first.id;
+                const before = [first.route.waypoints[0].x, second.route.waypoints[0].x];
+                const started = startGeneographSelectedConnectionDrag({ button: 0, isPrimary: true,
+                    pointerId: 1, clientX: 0, clientY: 0, preventDefault() {}, stopPropagation() {} }, first);
+                applyGeneographSelectionTranslation(geneoPointerState, 40, 20);
+                const after = [first.route.waypoints[0].x, second.route.waypoints[0].x];
+                geneoPointerState = null;
+                undoGeneographChange();
+                return [started, before, after,
+                    [getGeneographConnection(first.id).route.waypoints[0].x,
+                        getGeneographConnection(second.id).route.waypoints[0].x]];
+            }), [true, [2100, 2200], [2140, 2240], [2100, 2200]]);
+            await page.evaluate(() => {
                 state.selectedGeneoConnectionId = 'test-family-no-arrow';
                 state.selectedGeneoConnectionIds = ['test-family-no-arrow'];
                 renderGeneographEditorPreserveScroll();
             });
             assert.equal(await lineInspector.locator('[data-geneo-connection-arrows]').count(), 0);
-            assert.equal(await lineInspector.locator('[data-geneo-connection-reset-default]').isEnabled(), true);
+            assert.equal(await lineInspector.locator('[data-geneo-connection-reset-default]').isDisabled(), true);
             const serialized = await page.evaluate(() => {
                 const board = structuredClone(selectedGeneographBoard());
                 return normalizeGeneographBoardRecord(board, new Map([[board.projectId, new Set()]])).diagram;
