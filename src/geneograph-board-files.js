@@ -277,6 +277,8 @@ function validateGeneographBoardFile(payload)
         const validEnd = end => end && (end.nodeId ? nodes.has(end.nodeId) : families.has(end.familyId));
         if (!validEnd(connection.source) || !validEnd(connection.target)
             || !Array.isArray(connection.route?.waypoints)
+            || (connection.route.railY !== undefined && (!Number.isFinite(connection.route.railY)
+                || Math.abs(connection.route.railY) > GENEO_WORLD_LIMIT))
             || connection.route.waypoints.some(point => !Number.isFinite(point?.x)
                 || !Number.isFinite(point?.y) || Math.abs(point.x) > GENEO_WORLD_LIMIT
                 || Math.abs(point.y) > GENEO_WORLD_LIMIT))

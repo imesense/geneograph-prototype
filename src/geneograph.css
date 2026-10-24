@@ -5975,12 +5975,26 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
     display: block;
 }
 
-.geneo-connection-hit {
+.geneo-connection-hit,
+.geneo-family-bus-hit {
     fill: none;
     stroke: transparent;
     stroke-width: var(--geneo-connection-hit-width, 14px);
     pointer-events: stroke;
     cursor: pointer;
+}
+
+.geneo-family-bus-hit {
+    outline: none;
+}
+
+.geneo-family-bus-rail-hit {
+    cursor: ns-resize;
+}
+
+.geneo-family-bus-hit:focus-visible {
+    stroke: rgba(98, 217, 154, .35);
+    outline: none;
 }
 
 .geneo-segment-hit {

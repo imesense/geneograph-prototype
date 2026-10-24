@@ -32,7 +32,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 diagram.personCardDefaults.fields.deathPlace = true;
                 diagram.personCardDefaults.fields.maidenName = true;
                 const node = createGeneographPersonNodeForBoardPerson(person);
-                if (node.width !== 350 || node.height !== 160
+                if (node.width !== 360 || node.height !== 160
                     || node.personCard.heightMode !== 'manual'
                     || node.appearance.stroke.enabled
                     || !node.appearance.paintOverrides.stroke) {
@@ -83,7 +83,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                     edit: element.querySelectorAll('[data-geneo-edit-person-node]').length
                 };
             });
-            assert.equal(base.width, 350);
+            assert.equal(base.width, 360);
             assert.equal(base.height, 160);
             assert.equal(base.photoWidth, 64);
             assert.equal(base.photoHeight, 64);

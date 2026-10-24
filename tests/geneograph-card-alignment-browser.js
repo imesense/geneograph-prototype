@@ -156,7 +156,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 compact: [GENEO_PERSON_CARD_GEOMETRY.compact.width, GENEO_PERSON_CARD_GEOMETRY.compact.height],
                 portrait: [GENEO_PERSON_CARD_GEOMETRY.portrait.width, GENEO_PERSON_CARD_GEOMETRY.portrait.height]
             }));
-            assert.deepEqual(defaults, { compact: [300, 130], portrait: [250, 350] });
+            assert.deepEqual(defaults, { compact: [320, 160], portrait: [280, 360] });
             if (process.env.GENEO_CARD_SCREENSHOT_DIR) {
                 await card.screenshot({ path: path.join(process.env.GENEO_CARD_SCREENSHOT_DIR, `compact-${language}.png`) });
             }

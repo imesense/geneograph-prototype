@@ -54,7 +54,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                     return (life.top - identity.bottom) / scale;
                 })()
             }));
-            assert.equal(base.width, 420);
+            assert.equal(base.width, 440);
             assert.equal(base.height, 160);
             assert.equal(base.photo, 130, JSON.stringify(base));
             assert.equal(base.nameSize, '20px');

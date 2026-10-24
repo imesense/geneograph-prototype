@@ -104,7 +104,7 @@ const GENEO_PERSON_CARD_ENUMS =
 const GENEO_PERSON_CARD_GEOMETRY =
     Object.freeze({
         standard: {
-            width: 350,
+            width: 360,
             height: 160,
             minWidth: 260,
             minHeight: 144,
@@ -113,8 +113,8 @@ const GENEO_PERSON_CARD_GEOMETRY =
         },
 
         compact: {
-            width: 300,
-            height: 130,
+            width: 320,
+            height: 160,
             minWidth: 230,
             minHeight: 110,
             maxWidth: 560,
@@ -122,7 +122,7 @@ const GENEO_PERSON_CARD_GEOMETRY =
         },
 
         chart: {
-            width: 420,
+            width: 440,
             height: 160,
             minWidth: 260,
             minHeight: 120,
@@ -131,8 +131,8 @@ const GENEO_PERSON_CARD_GEOMETRY =
         },
 
         portrait: {
-            width: 250,
-            height: 350,
+            width: 280,
+            height: 360,
             minWidth: 200,
             minHeight: 300,
             maxWidth: 400,
@@ -1399,6 +1399,7 @@ function geneoAutoPersonHeightSignature(
 
     return JSON.stringify([
         state.language,
+        Boolean(diagram.canvas.snapToGrid),
         Math.round(
             geneoNumber(
                 node.width,
@@ -1505,14 +1506,16 @@ function syncGeneographAutoPersonCardHeights()
                 content.scrollHeight
             );
 
-            const nextHeight = Math.round(
-                geneoNumber(
-                    naturalHeight,
-                    node.height,
-                    geometry.minHeight,
-                    geometry.maxHeight
-                )
+            const contentHeight = geneoNumber(
+                naturalHeight,
+                node.height,
+                geometry.minHeight,
+                geometry.maxHeight
             );
+            const nextHeight = diagram.canvas.snapToGrid
+                ? Math.min(geometry.maxHeight,
+                    Math.ceil(contentHeight / (GENEO_GRID_SIZE * 2)) * GENEO_GRID_SIZE * 2)
+                : Math.round(contentHeight);
 
             if (
                 Math.abs(nextHeight - node.height)
@@ -1806,7 +1809,7 @@ function createEmptyGeneographDiagram()
         canvas: {
             backgroundPaint: { color: '#0F1413', opacity: 100, enabled: true },
             backgroundPattern: 'dots',
-            snapToGrid: false,
+            snapToGrid: true,
             alwaysShowSockets: false,
             colorPersonCardsByGender: false
         },
@@ -9218,7 +9221,7 @@ function normalizeGeneographBoardRecord(board, projectPeople)
 
                     if (legacyStyle === 'chart' && node.chartCardLayoutVersion !== 1)
                     {
-                        const width = Math.max(normalizedNode.width, GENEO_PERSON_CARD_GEOMETRY.chart.width);
+                        const width = Math.max(normalizedNode.width, 420);
                         const height = Math.max(normalizedNode.height, GENEO_PERSON_CARD_GEOMETRY.chart.height);
                         normalizedNode.x -= (width - normalizedNode.width) / 2;
                         normalizedNode.y -= (height - normalizedNode.height) / 2;
@@ -9404,7 +9407,11 @@ function normalizeGeneographBoardRecord(board, projectPeople)
                     waypoints: (Array.isArray(connection.route?.waypoints) ? connection.route.waypoints : []).map(point => ({
                         x: geneoNumber(point?.x, 0, -GENEO_WORLD_LIMIT, GENEO_WORLD_LIMIT),
                         y: geneoNumber(point?.y, 0, -GENEO_WORLD_LIMIT, GENEO_WORLD_LIMIT)
-                    }))
+                    })),
+                    ...(connection.kind === 'family-child' && connection.route?.mode !== 'manual'
+                        && Number.isFinite(connection.route?.railY)
+                        ? { railY: geneoNumber(connection.route.railY, 0, -GENEO_WORLD_LIMIT, GENEO_WORLD_LIMIT) }
+                        : {})
                 }
             });
         });
@@ -10441,8 +10448,29 @@ function geneoFamilyJunction(familyId)
     if (!nodes.length) return { x: 0, y: 0 };
     if (nodes.length === 1) return geneoCanvasPointForNode(nodes[0], 'bottom');
     const partnerConnection = geneoPartnerConnectionForFamily(familyId);
-    const routedMidpoint = partnerConnection ? geneoPolylineMidpoint(geneoConnectionPoints(partnerConnection)) : null;
-    if (routedMidpoint) return routedMidpoint;
+    const partnerPoints = partnerConnection ? geneoConnectionPoints(partnerConnection) : null;
+    const routedMidpoint = partnerPoints ? geneoPolylineMidpoint(partnerPoints) : null;
+    if (routedMidpoint)
+    {
+        if (!selectedGeneographDiagram()?.canvas.snapToGrid) return routedMidpoint;
+        for (let index = 0; index < partnerPoints.length - 1; index++)
+        {
+            const first = partnerPoints[index];
+            const second = partnerPoints[index + 1];
+            const within = (value, a, b) => value >= Math.min(a, b) - .001 && value <= Math.max(a, b) + .001;
+            if (Math.abs(first.y - second.y) < .001
+                && Math.abs(routedMidpoint.y - first.y) < .001
+                && within(routedMidpoint.x, first.x, second.x))
+                return { x: Math.max(Math.min(first.x, second.x),
+                    Math.min(Math.max(first.x, second.x), snapGeneographCoordinate(routedMidpoint.x))), y: first.y };
+            if (Math.abs(first.x - second.x) < .001
+                && Math.abs(routedMidpoint.x - first.x) < .001
+                && within(routedMidpoint.y, first.y, second.y))
+                return { x: first.x, y: Math.max(Math.min(first.y, second.y),
+                    Math.min(Math.max(first.y, second.y), snapGeneographCoordinate(routedMidpoint.y))) };
+        }
+        return routedMidpoint;
+    }
     const first = geneoCanvasPointForNode(nodes[0], nodes[0].x < nodes[1].x ? 'right' : 'left');
     const second = geneoCanvasPointForNode(nodes[1], nodes[0].x < nodes[1].x ? 'left' : 'right');
     return { x: (first.x + second.x) / 2, y: (first.y + second.y) / 2 };
@@ -10454,11 +10482,71 @@ function geneoConnectionPoint(reference)
     return geneoCanvasPointForNode(getGeneographNode(reference?.nodeId), reference?.port);
 }
 
-function geneoConnectionPoints(connection)
+function geneoFamilyChildBusGroups(diagram = selectedGeneographDiagram())
+{
+    const candidates = new Map();
+    for (const connection of diagram?.connections || [])
+    {
+        if (connection.kind !== 'family-child' || !connection.familyId
+            || connection.route?.mode === 'manual' || connection.target?.port !== 'top'
+            || !geneoConnectionEffectiveVisible(connection)) continue;
+        const source = connection.source || {};
+        const sourceKey = source.familyId ? `family:${source.familyId}` : `node:${source.nodeId}`;
+        const style = geneoEffectiveConnectionStyle(connection, diagram);
+        const styleKey = JSON.stringify([style.line?.color, style.line?.opacity,
+            style.line?.enabled, style.width, style.pattern]);
+        const key = JSON.stringify([connection.familyId, sourceKey, source.port, styleKey]);
+        if (!candidates.has(key)) candidates.set(key, []);
+        candidates.get(key).push(connection);
+    }
+    const buses = [];
+    const byConnection = new Map();
+    for (const group of candidates.values())
+    {
+        if (group.length < 2) continue;
+        const start = geneoConnectionPoint(group[0].source);
+        const ends = new Map(group.map(connection =>
+            [connection.id, geneoConnectionPoint(connection.target)]));
+        const parentBottom = Math.max(start.y, ...geneoConnectionReferenceNodes(group[0].source)
+            .map(node => node.y + node.height));
+        const lowerBound = parentBottom + GENEO_GRID_SIZE;
+        const upperBound = Math.min(...[...ends.values()].map(point => point.y)) - GENEO_GRID_SIZE;
+        if (lowerBound > upperBound) continue;
+        const savedRailY = group.find(connection => Number.isFinite(connection.route?.railY))?.route.railY;
+        let railY = Math.max(lowerBound, Math.min(upperBound,
+            savedRailY ?? (lowerBound + upperBound) / 2));
+        if (diagram.canvas.snapToGrid)
+        {
+            const firstGridY = Math.ceil(lowerBound / GENEO_GRID_SIZE) * GENEO_GRID_SIZE;
+            const lastGridY = Math.floor(upperBound / GENEO_GRID_SIZE) * GENEO_GRID_SIZE;
+            if (firstGridY > lastGridY) continue;
+            railY = Math.max(firstGridY, Math.min(lastGridY, snapGeneographCoordinate(railY)));
+        }
+        const childXs = [...ends.values()].map(point => point.x);
+        const bus = {
+            connectionIds: group.map(connection => connection.id),
+            start, ends, railY, lowerBound, upperBound,
+            minX: Math.min(start.x, ...childXs),
+            maxX: Math.max(start.x, ...childXs),
+            style: geneoEffectiveConnectionStyle(group[0], diagram)
+        };
+        buses.push(bus);
+        bus.connectionIds.forEach(id => byConnection.set(id, bus));
+    }
+    return { buses, byConnection };
+}
+
+function geneoConnectionPoints(connection, busByConnection = null)
 {
     const start = geneoConnectionPoint(connection.source);
     const end = geneoConnectionPoint(connection.target);
     if (connection.route?.mode === 'manual' && connection.route.waypoints?.length) return [start, ...connection.route.waypoints, end];
+    if (connection.kind === 'family-child')
+    {
+        const bus = (busByConnection || geneoFamilyChildBusGroups().byConnection).get(connection.id);
+        if (bus) return [start, { x: start.x, y: bus.railY },
+            { x: end.x, y: bus.railY }, end];
+    }
     if (connection.kind === 'family-sibling' && connection.source?.port === 'top' && connection.target?.port === 'top')
     {
         const routeY = snapGeneographCoordinate(Math.min(start.y, end.y) - GENEO_TOP_ROUTE_CLEARANCE);
@@ -10622,6 +10710,7 @@ function renderGeneographConnectors()
 {
     const diagram = selectedGeneographDiagram();
     if (!diagram) return '';
+    const { buses, byConnection } = geneoFamilyChildBusGroups(diagram);
     const bounds = geneoCanvasRuntime.bounds || geneoDerivedCanvasBounds(diagram);
     const previewPath = state.geneoConnectionDraft
         ? geneoPolylinePath(geneoConnectionPreviewPoints(state.geneoConnectionDraft, geneoCanvasRuntime.connectionPreviewPoint))
@@ -10637,11 +10726,30 @@ function renderGeneographConnectors()
           - connectionPaintRank(second)
         );
     return `<svg class="geneo-connections" viewBox="${bounds.left} ${bounds.top} ${bounds.width} ${bounds.height}" style="--geneo-connection-hit-width:${14 / Math.max(.25, state.geneoZoom / 100)}px;--geneo-segment-hit-width:${18 / Math.max(.25, state.geneoZoom / 100)}px" aria-label="Board connections">
+        ${buses.map(bus =>
+        {
+            const trunkPath = geneoPolylinePath([bus.start, { x: bus.start.x, y: bus.railY }]);
+            const railPath = geneoPolylinePath([{ x: bus.minX, y: bus.railY }, { x: bus.maxX, y: bus.railY }]);
+            const busPath = `${trunkPath} ${railPath}`;
+            const paint = bus.style.line;
+            const selected = bus.connectionIds.every(id => selectedConnectionIds.has(id));
+            const dash = geneoConnectionDashArray(bus.style.pattern, bus.style.width);
+            return `<g class="geneo-connection geneo-family-bus ${selected ? 'selected' : ''} ${paint.enabled ? '' : 'no-stroke'}" data-geneo-family-bus-group="${escapeHtml(bus.connectionIds.join(','))}">
+              <path class="geneo-family-bus-hit" d="${trunkPath}" data-geneo-family-bus="${escapeHtml(bus.connectionIds.join(','))}" role="button" tabindex="0" aria-label="${escapeHtml(t('Select family connections'))}"></path>
+              <path class="geneo-family-bus-hit geneo-family-bus-rail-hit" d="${railPath}" data-geneo-family-bus="${escapeHtml(bus.connectionIds.join(','))}" data-geneo-family-bus-rail role="button" tabindex="0" aria-label="${escapeHtml(t('Move family rail'))}"></path>
+              <path class="geneo-connection-line" d="${busPath}" stroke="${escapeHtml(geneoPaintCssColor(paint))}" stroke-width="${bus.style.width}" stroke-linecap="round" ${dash ? `stroke-dasharray="${dash}"` : ''}></path>
+              <path class="geneo-connection-selection-guide" d="${busPath}"></path>
+            </g>`;
+        }).join('')}
         ${orderedConnections.map(connection =>
         {
             const selected = selectedConnectionIds.has(connection.id);
-            const points = geneoConnectionPoints(connection);
-            const path = geneoPolylinePath(points);
+            const bus = byConnection.get(connection.id);
+            const points = geneoConnectionPoints(connection, byConnection);
+            const end = points.at(-1);
+            const path = bus
+                ? geneoPolylinePath([{ x: end.x, y: bus.railY }, end])
+                : geneoPolylinePath(points);
             const style = geneoEffectiveConnectionStyle(connection, diagram);
             const linePaint = style.line;
             const dash = geneoConnectionDashArray(style.pattern, style.width);
@@ -10654,7 +10762,7 @@ function renderGeneographConnectors()
                 : null;
             return `<g class="geneo-connection ${selected ? 'selected' : ''} ${linePaint.enabled ? '' : 'no-stroke'}" data-geneo-connection-group="${escapeHtml(connection.id)}">${marker}
             <path class="geneo-connection-hit" d="${path}" data-geneo-connection="${escapeHtml(connection.id)}"></path>
-            ${selected ? points.slice(0, -1).map((point, index) =>
+            ${selected && !bus ? points.slice(0, -1).map((point, index) =>
             {
                 const next = points[index + 1];
                 return index > 0 && index < points.length - 2 ? `<line class="geneo-segment-hit" x1="${point.x}" y1="${point.y}" x2="${next.x}" y2="${next.y}" data-geneo-segment="${index}" data-geneo-connection="${escapeHtml(connection.id)}"></line>` : '';
@@ -14759,20 +14867,6 @@ function renderGeneographInspector()
         <label class="geneo-check">
           <input
             type="checkbox"
-            data-geneo-sockets
-            ${
-                canvas.alwaysShowSockets
-                    ? 'checked'
-                    : ''
-            }>
-          <span>Always show sockets
-            <small class="geneo-check-help">Show connection points on every object.</small>
-          </span>
-        </label>
-
-        <label class="geneo-check">
-          <input
-            type="checkbox"
             data-geneo-snap
             ${
                 canvas.snapToGrid
@@ -14781,6 +14875,19 @@ function renderGeneographInspector()
             }>
           <span>Snap to grid
             <small class="geneo-check-help">Align objects to the canvas grid when moving them.</small>
+          </span>
+        </label>
+        <label class="geneo-check">
+          <input
+            type="checkbox"
+            data-geneo-sockets
+            ${
+                canvas.alwaysShowSockets
+                    ? 'checked'
+                    : ''
+            }>
+          <span>Always show sockets
+            <small class="geneo-check-help">Show connection points on every object.</small>
           </span>
         </label>
         <div class="geneo-field">
@@ -19356,6 +19463,97 @@ function handleGeneographConnectionClick(event)
     };
     selectGeneographConnection(connectionId, null, { toggle: modified });
     renderGeneographEditorPreserveScroll();
+}
+
+function handleGeneographFamilyBusSelection(event)
+{
+    if (event.type === 'keydown' && ['ArrowUp', 'ArrowDown'].includes(event.key)
+        && event.currentTarget.hasAttribute('data-geneo-family-bus-rail'))
+    {
+        event.preventDefault();
+        event.stopPropagation();
+        const ids = (event.currentTarget.dataset.geneoFamilyBus || '').split(',');
+        const bus = geneoFamilyChildBusGroups().buses.find(item =>
+            item.connectionIds.join(',') === ids.join(','));
+        if (!bus) return;
+        const step = selectedGeneographDiagram().canvas.snapToGrid ? GENEO_GRID_SIZE : 10;
+        const nextY = geneoClampFamilyBusRailY(bus, bus.railY
+            + (event.key === 'ArrowDown' ? step : -step));
+        if (nextY === bus.railY) return;
+        geneoPushHistory();
+        geneoSetFamilyBusRailY(bus, nextY);
+        setGeneographSelection([], ids, { connectionId: ids.at(-1) });
+        touchGeneographBoard();
+        renderGeneographEditorPreserveScroll();
+        main.querySelector(`[data-geneo-family-bus-rail][data-geneo-family-bus="${CSS.escape(ids.join(','))}"]`)
+            ?.focus({ preventScroll: true });
+        return;
+    }
+    if (event.type === 'keydown' && !['Enter', ' '].includes(event.key)) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const ids = (event.currentTarget.dataset.geneoFamilyBus || '').split(',')
+        .filter(id => Boolean(getGeneographConnection(id)));
+    if (!ids.length) return;
+    const modified = event.shiftKey || event.ctrlKey || event.metaKey;
+    if (modified)
+    {
+        const selected = geneoSelectedConnectionIdSet();
+        const remove = ids.every(id => selected.has(id));
+        ids.forEach(id => remove ? selected.delete(id) : selected.add(id));
+        setGeneographSelection([...geneoSelectedNodeIdSet()], [...selected],
+            { connectionId: selected.has(ids.at(-1)) ? ids.at(-1) : [...selected].at(-1) });
+    }
+    else setGeneographSelection([], ids, { connectionId: ids.at(-1) });
+    renderGeneographEditorPreserveScroll();
+    if (event.type === 'keydown')
+        main.querySelector(`${event.currentTarget.hasAttribute('data-geneo-family-bus-rail')
+            ? '[data-geneo-family-bus-rail]' : ''}[data-geneo-family-bus="${CSS.escape(ids.join(','))}"]`)
+            ?.focus({ preventScroll: true });
+}
+
+function geneoClampFamilyBusRailY(bus, value)
+{
+    let minimum = bus.lowerBound;
+    let maximum = bus.upperBound;
+    if (selectedGeneographDiagram()?.canvas.snapToGrid)
+    {
+        minimum = Math.ceil(minimum / GENEO_GRID_SIZE) * GENEO_GRID_SIZE;
+        maximum = Math.floor(maximum / GENEO_GRID_SIZE) * GENEO_GRID_SIZE;
+    }
+    return Math.max(minimum, Math.min(maximum,
+        selectedGeneographDiagram()?.canvas.snapToGrid
+            ? snapGeneographCoordinate(value) : Math.round(value)));
+}
+
+function geneoSetFamilyBusRailY(bus, value)
+{
+    bus.connectionIds.forEach(id =>
+    {
+        const connection = getGeneographConnection(id);
+        if (connection?.route?.mode === 'auto') connection.route.railY = value;
+    });
+}
+
+function startGeneographFamilyBusRailDrag(event)
+{
+    if (geneoPointerState || event.isPrimary === false || event.button !== 0
+        || !['select', 'pan'].includes(geneoEffectiveCanvasTool())
+        || event.shiftKey || event.ctrlKey || event.metaKey) return;
+    const ids = (event.currentTarget.dataset.geneoFamilyBus || '').split(',');
+    const bus = geneoFamilyChildBusGroups().buses.find(item =>
+        item.connectionIds.join(',') === ids.join(','));
+    if (!bus) return;
+    geneoPushHistory();
+    setGeneographSelection([], ids, { connectionId: ids.at(-1) });
+    geneoPointerState = {
+        kind: 'family-bus-rail', pointerId: event.pointerId,
+        connectionIds: ids, start: geneoPointerToCanvas(event),
+        railY: bus.railY, lowerBound: bus.lowerBound, upperBound: bus.upperBound,
+        moved: false
+    };
+    event.preventDefault();
+    event.stopPropagation();
 }
 
 function geneoRelativeDefaultGender(type)
@@ -24925,6 +25123,22 @@ function moveGeneographObject(event)
         }
         return;
     }
+    if (geneoPointerState.kind === 'family-bus-rail')
+    {
+        const point = geneoPointerToCanvas(event);
+        const bus = geneoPointerState;
+        const nextY = geneoClampFamilyBusRailY(bus,
+            bus.railY + point.y - bus.start.y);
+        if (nextY === bus.railY && !bus.moved) return;
+        const currentY = getGeneographConnection(bus.connectionIds[0])?.route?.railY ?? bus.railY;
+        if (nextY === currentY) return;
+        clearGeneographConnectionClick();
+        geneoSetFamilyBusRailY(bus, nextY);
+        bus.moved = true;
+        const svg = main.querySelector('.geneo-connections');
+        if (svg) svg.outerHTML = renderGeneographConnectors();
+        return;
+    }
     if (geneoPointerState.kind === 'segment')
     {
         const connection = getGeneographConnection(geneoPointerState.connectionId);
@@ -25207,6 +25421,23 @@ function moveGeneographObject(event)
                     node.height,
                     baseMinimumSize.height,
                     maximumSize.height
+                );
+        }
+
+        if (node.type === 'person' && diagram.canvas.snapToGrid && !lockPersonRatio)
+        {
+            const socketStep = GENEO_GRID_SIZE * 2;
+            if (west || east)
+                width = Math.max(
+                    Math.ceil(baseMinimumSize.width / socketStep) * socketStep,
+                    Math.min(Math.floor(maximumSize.width / socketStep) * socketStep,
+                        Math.round(width / socketStep) * socketStep)
+                );
+            if (north || south)
+                height = Math.max(
+                    Math.ceil(baseMinimumSize.height / socketStep) * socketStep,
+                    Math.min(Math.floor(maximumSize.height / socketStep) * socketStep,
+                        Math.round(height / socketStep) * socketStep)
                 );
         }
 
@@ -27731,6 +27962,14 @@ function bindGeneographEditor()
         });
     main.querySelectorAll('.geneo-connection-hit').forEach(path => path.addEventListener('pointerdown', startGeneographConnectionDrag));
     main.querySelectorAll('.geneo-connection-hit, .geneo-segment-hit').forEach(path => path.addEventListener('click', handleGeneographConnectionClick));
+    main.querySelectorAll('[data-geneo-family-bus]').forEach(path =>
+    {
+        path.addEventListener('pointerdown', path.hasAttribute('data-geneo-family-bus-rail')
+            ? startGeneographFamilyBusRailDrag
+            : event => event.stopPropagation());
+        path.addEventListener('click', handleGeneographFamilyBusSelection);
+        path.addEventListener('keydown', handleGeneographFamilyBusSelection);
+    });
     main.querySelectorAll('[data-geneo-waypoint]').forEach(point =>
     {
         point.addEventListener('click', event =>
@@ -28442,17 +28681,22 @@ function bindGeneographEditor()
 
             if (!connection) return;
 
+            const automaticPoints = connection.route.mode === 'auto'
+                && event.target.value === 'manual' && !connection.route.waypoints.length
+                ? geneoConnectionPoints(connection) : null;
             geneoPushHistory();
 
             connection.route.mode =
                 event.target.value;
+
+            if (connection.route.mode === 'manual') delete connection.route.railY;
 
             if (
                 connection.route.mode === 'manual'
             && !connection.route.waypoints.length
             )
             {
-                const points =
+                const points = automaticPoints ||
                     geneoConnectionPoints({
                         ...connection,
                         route: {
@@ -28484,6 +28728,13 @@ function bindGeneographEditor()
             if (!connection) return;
 
             geneoPushHistory();
+
+            const bus = geneoFamilyChildBusGroups().byConnection.get(connection.id);
+            bus?.connectionIds.forEach(id =>
+            {
+                const member = getGeneographConnection(id);
+                if (member?.route) delete member.route.railY;
+            });
 
             connection.route = {
                 mode: 'auto',

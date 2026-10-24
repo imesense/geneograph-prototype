@@ -2215,6 +2215,8 @@ const RU_UI_GENEO = {
     'Left': 'По левому краю',
     'Center': 'По центру',
     'Board connections': 'Связи на холсте',
+    'Select family connections': 'Выбрать связи семьи',
+    'Move family rail': 'Переместить семейную линию',
     'Connect child to this family': 'Связать ребёнка с этой семьёй',
     'Connect from top': 'Начать связь сверху',
     'Connect from right': 'Начать связь справа',

@@ -31,6 +31,15 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 const toggle = inspector.locator(`[data-geneo-inspector-section="canvas:${section}"]`);
                 if (await toggle.getAttribute('aria-expanded') === 'false') await toggle.click();
             }
+            assert.deepEqual(await page.evaluate(() => ({
+                newBoard: createEmptyGeneographDiagram().canvas.snapToGrid,
+                sampleBoard: selectedGeneographDiagram().canvas.snapToGrid,
+                order: [...document.querySelectorAll('#geneo-inspector-canvas-appearance .geneo-check input')]
+                    .filter(input => input.matches('[data-geneo-snap], [data-geneo-sockets]'))
+                    .map(input => input.dataset.geneoSnap !== undefined ? 'snap' : 'sockets')
+            })), { newBoard: true, sampleBoard: true, order: ['snap', 'sockets'] });
+            assert.equal(await inspector.locator('[data-geneo-snap]').isChecked(), true);
+            assert.equal(await inspector.locator('[data-geneo-sockets]').isChecked(), false);
             assert.equal(await inspector.locator('.geneo-pattern-preview').count(), 3);
             assert.equal(await inspector.locator('#geneo-inspector-canvas-appearance [data-geneo-person-card-field="linkIndicator"]').count(), 0);
             assert.equal(await inspector.locator('#geneo-inspector-canvas-personCards .geneo-person-card-options [data-geneo-person-card-field="linkIndicator"]').count(), 1);
