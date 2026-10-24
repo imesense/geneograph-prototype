@@ -74,7 +74,7 @@ const state = {
     geneoBoardViewports: {},
     geneoInspectorCollapsed: false,
     geneoLayerSearch: '',
-    geneoSidebarSections: { layers: true, connections: true },
+    geneoItemFilter: { types: [], status: 'all' },
     geneoInspectorSections: {
         canvas: {
             appearance: true,

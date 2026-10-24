@@ -47,7 +47,7 @@ const geneoTourSteps = [
     { id: 'geneograph-editor-welcome', module: 'Geneograph', presentation: 'centered', title: "Explore the board editor", body: "Build out your board by arranging people, connections, and research materials however you need." },
     { id: 'geneograph-all-boards', module: 'Geneograph', title: "Return to all boards", body: "All Boards opens the board library. Your edits save automatically." },
     { id: 'geneograph-current-board', module: 'Geneograph', title: "Board details", body: "The board name appears here. Use Edit board to change its name, description, or collections." },
-    { id: 'geneograph-layers', module: 'Geneograph', title: "Find and manage items", body: "Layers lists what's on the canvas. Find an item, hide it, or lock it in place." },
+    { id: 'geneograph-layers', module: 'Geneograph', title: "Find and manage items", body: "Search objects and connections together. Use the filter to narrow the list, or locate an item on the canvas." },
     { id: 'geneograph-objects', module: 'Geneograph', title: "See items on the canvas", body: "Here you can see a few items already placed on the canvas, including a panel and person cards." },
     { id: 'geneograph-topbar', module: 'Geneograph', title: "Board toolbar", body: "The toolbar helps you navigate the board and add the different kinds of items you need." },
     { id: 'geneograph-modes', module: 'Geneograph', title: "Select, move, or draw", body: "Switch between selecting objects, moving around the canvas, and drawing with the pencil." },
@@ -493,16 +493,13 @@ function geneoTourPrepare(index)
             || !main.querySelector('.geneo-editor'))
         {
             state.geneoInspectorCollapsed = false;
-            state.geneoSidebarSections.layers = true;
             openGeneographBoard('gb1');
         }
         else
         {
             const needsRender = state.geneoInspectorCollapsed
-                || state.geneoSidebarSections?.layers === false
                 || state.selectedGeneoNodeId || state.selectedGeneoConnectionId;
             state.geneoInspectorCollapsed = false;
-            state.geneoSidebarSections.layers = true;
             if (state.selectedGeneoNodeId || state.selectedGeneoConnectionId)
                 selectGeneographCanvas();
             if (needsRender) renderGeneographEditorPreserveScroll({

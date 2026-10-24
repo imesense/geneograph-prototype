@@ -97,6 +97,18 @@ function handleMobileSurfaceKeydown(event)
     if (modalBackdrop.classList.contains('open')) return;
     if (event.key === 'Escape')
     {
+        const itemFilter = document.querySelector('[data-geneo-item-filter-menu]:not([hidden])');
+        if (itemFilter)
+        {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            state.geneoItemFilterOpen = false;
+            itemFilter.hidden = true;
+            const trigger = document.querySelector('[data-geneo-item-filter-trigger]');
+            trigger?.setAttribute('aria-expanded', 'false');
+            trigger?.focus({ preventScroll: true });
+            return;
+        }
         event.preventDefault();
         event.stopImmediatePropagation();
         if (document.querySelector('.mobile-choice-sheet'))
@@ -249,6 +261,7 @@ sidebar.addEventListener('click', event =>
     const button = event.target.closest('button');
     if (!button || (state.activeModule === 'Albums' && button.closest('[data-album-menu]'))
         || (state.activeModule === 'Places' && button.matches('[data-place-menu], [data-place-saved-filter-menu], #placesSavedFilterPlus'))
+        || button.matches('[data-geneo-item-filter-clear], [data-geneo-toggle-connection-visible], [data-geneo-toggle-visible], [data-geneo-toggle-lock]')
         || (button.hasAttribute('aria-expanded') && !button.hasAttribute('aria-haspopup'))) return;
     requestAnimationFrame(() =>
     {

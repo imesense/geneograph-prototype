@@ -39,7 +39,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             await page.locator('[data-geneo-header-visible]').click();
             assert.equal(await page.evaluate(id => getGeneographConnection(id).visible, id), false);
             assert.equal(await page.locator(`[data-geneo-connection-group="${id}"]`).count(), 0);
-            assert.equal(await page.locator(`[data-geneo-layer-connection="${id}"] .geneo-layer-paint-status:not([hidden])`).count() > 0, true);
+            assert.equal(await page.locator(`[data-geneo-layer-connection="${id}"] [data-geneo-toggle-connection-visible]`).evaluate(button => button.getAttribute('aria-label').startsWith(t('Show'))), true);
             await page.evaluate(() => undoGeneographChange());
             assert.equal(await page.evaluate(id => getGeneographConnection(id).visible, id), true);
             await page.locator('[data-geneo-header-visible]').click();

@@ -27,7 +27,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             const originalName = await page.evaluate(() => selectedGeneographBoard().title);
             const displayedName = await page.evaluate(() => localizedDataFieldValue(selectedGeneographBoard().title));
             assert.equal(await page.locator('.geneo-current-board-summary').count(), 0);
-            assert.equal(await page.locator('.geneo-board-panel > .geneo-sidebar-section').count(), 3);
+            assert.equal(await page.locator('.geneo-board-panel > .geneo-sidebar-section').count(), 2);
             assert.equal((await inspector.locator('.geneo-inspector-title h2').textContent()).trim(), displayedName);
             assert.equal(await inspector.locator('.geneo-inspector-title h2').getAttribute('title'), displayedName);
             assert.equal(await inspector.locator('[data-geneo-settings]').count(), 1);
