@@ -46,6 +46,44 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             assert.equal(await page.locator('#geneographBoardSettingsForm').count(), 1);
             assert.equal(await page.locator('#geneographSettingsName').inputValue(), originalName);
             assert.equal(await page.locator('#geneographBoardSettingsForm').getByText(language === 'ru' ? 'Коллекции' : 'Collections').count() > 0, true);
+            assert.equal(await page.locator('[data-geneo-collection-results-title]').count(), 0);
+            assert.equal(await page.locator('.geneo-collection-chooser-head > span').count(), 0);
+            assert.equal(await page.locator('.geneo-collection-results .album-picker-cover, .geneo-collection-results .album-picker-meta').count(), 0);
+            assert.equal(await page.locator('#geneographSettingsDescription').getAttribute('rows'), '2');
+            assert.equal(await page.locator('.geneo-collection-create-panel').textContent().then(value => value.includes(language === 'ru' ? 'создаётся сразу' : 'immediately')), true);
+            assert.equal(await page.locator('.geneo-collection-search-row').evaluate(row => {
+                const search = row.querySelector('input').getBoundingClientRect();
+                const create = row.querySelector('button').getBoundingClientRect();
+                return Math.abs(search.top - create.top) < 8 && create.right <= row.getBoundingClientRect().right;
+            }), true);
+            assert.equal(await page.locator('.geneo-collection-results').evaluate(list => {
+                const style = getComputedStyle(list);
+                return style.overflowY === 'visible' && list.scrollHeight <= list.clientHeight + 1;
+            }), true);
+            assert.equal(await page.locator('.geneo-board-settings-modal').evaluate(modal => {
+                const footer = modal.querySelector('.modal-footer').getBoundingClientRect();
+                const bounds = modal.getBoundingClientRect();
+                return footer.bottom <= bounds.bottom + 1 && bounds.bottom <= window.innerHeight + 1;
+            }), true);
+            if (width === 1280) {
+                const search = page.locator('[data-geneo-collection-search]');
+                await search.fill('Research theory');
+                assert.equal(await page.locator('[data-geneo-collection-row]').count(), 1);
+                await search.fill('');
+                const firstChoice = page.locator('[data-geneo-collection-row]').first();
+                const wasSelected = await firstChoice.locator('input').isChecked();
+                await firstChoice.click();
+                assert.equal(await firstChoice.locator('input').isChecked(), !wasSelected);
+                assert.match(await page.locator('[data-geneo-collection-results-meta]').textContent(), /selected/);
+                await page.locator('.geneo-collection-search-row [data-geneo-inline-collection-toggle]').click();
+                await page.locator('[data-geneo-inline-collection-name]').fill('Inspector test collection');
+                await page.locator('[data-geneo-inline-collection-create]').click();
+                assert.equal(await page.locator('[data-geneo-collection-row].is-selected').filter({ hasText: 'Inspector test collection' }).count(), 1);
+                await page.locator('#geneographBoardSettingsForm .modal-footer [data-close]').click();
+                assert.equal(await page.evaluate(() => getProjectBoardCollections('p1')
+                    .some(collection => collection.name === 'Inspector test collection')), true);
+                await inspector.locator('[data-geneo-settings]').click();
+            }
             await page.locator('#geneographSettingsName').fill('A very long board title for inspector header layout and truncation');
             await page.locator('#geneographBoardSettingsForm button[type="submit"]').click();
             const updatedName = await page.evaluate(() => selectedGeneographBoard().title);

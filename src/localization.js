@@ -1401,6 +1401,9 @@ const RU_UI_GENEO = {
     'The new collection will be selected automatically.':
         'Новая коллекция будет выбрана автоматически.',
 
+    'Creates the collection immediately and selects it for this board. Canceling the board form will not delete it.':
+        'Коллекция создаётся сразу и выбирается для этого холста. Отмена формы холста не удалит её.',
+
     'No collections match this search':
         'По этому запросу коллекции не найдены',
 

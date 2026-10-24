@@ -3724,14 +3724,6 @@ function renderGeneographCollectionChoiceRows(
                     collection.id
                 );
 
-            const boardCount =
-                getBoardsForCollection(
-                    collection.id,
-                    {
-                        projectId
-                    }
-                ).length;
-
             return `
             <label
               class="
@@ -3745,15 +3737,6 @@ function renderGeneographCollectionChoiceRows(
               data-geneo-collection-row="${escapeHtml(
                     collection.id
                 )}">
-
-              <span
-                class="
-                  album-picker-cover
-                "
-                aria-hidden="true">
-
-                ${icon.folder}
-              </span>
 
               <span
                 class="
@@ -3777,12 +3760,6 @@ function renderGeneographCollectionChoiceRows(
                     )}
                 </span>
 
-                <span
-                  class="
-                    album-picker-meta
-                  ">
-                  ${escapeHtml(geneographCanvasCountLabel(boardCount))}
-                </span>
               </span>
 
               <input
@@ -3819,11 +3796,6 @@ function renderGeneographCollectionChooser({
         new Set()
 } = {})
 {
-    const collections =
-        getProjectBoardCollections(
-            projectId
-        );
-
     return `
         <section
           class="
@@ -3836,15 +3808,11 @@ function renderGeneographCollectionChooser({
               geneo-collection-chooser-head
             ">
 
-            <label
+            <h3
               id="geneoCollectionChooserLabel">
 
               Collections
-            </label>
-
-            <span>
-              Optional
-            </span>
+            </h3>
           </div>
 
           <div
@@ -3854,18 +3822,13 @@ function renderGeneographCollectionChooser({
             "
             data-geneo-collection-browse>
 
+            <div class="geneo-collection-search-row">
             <div
               class="
                 field
                 photo-people-search-field
                 album-picker-search
               ">
-
-              <label
-                for="geneoCollectionSearch">
-
-                Find collections
-              </label>
 
               <div
                 class="
@@ -3878,9 +3841,20 @@ function renderGeneographCollectionChooser({
                   id="geneoCollectionSearch"
                   type="search"
                   data-geneo-collection-search
+                  aria-label="Search collections"
                   placeholder="Search collections"
                   autocomplete="off">
               </div>
+            </div>
+
+            <button
+              class="button secondary compact geneo-collection-new-button"
+              type="button"
+              data-geneo-inline-collection-toggle
+              aria-label="New collection"
+              title="New collection">
+              ${icon.plus}<span>New collection</span>
+            </button>
             </div>
 
             <section
@@ -3888,48 +3862,7 @@ function renderGeneographCollectionChooser({
                 album-picker-results-panel
               ">
 
-              <div
-                class="
-                  album-picker-results-head
-                ">
-
-                <div
-                  class="
-                    album-picker-results-heading
-                  ">
-
-                  <strong
-                    data-geneo-collection-results-title>
-
-                    All collections
-                  </strong>
-
-                  <span
-                    data-geneo-collection-results-meta>
-
-                    ${collections.length}
-                    ${
-                        collections.length === 1
-                            ? 'collection'
-                            : 'collections'
-                    }
-                  </span>
-                </div>
-
-                <button
-                  class="
-                    button
-                    secondary
-                    compact
-                    album-picker-new-button
-                  "
-                  type="button"
-                  data-geneo-inline-collection-toggle>
-
-                  ${icon.plus}
-                  New collection
-                </button>
-              </div>
+              <span class="geneo-collection-status" data-geneo-collection-results-meta role="status" aria-live="polite"></span>
 
               <div
                 class="
@@ -3965,8 +3898,7 @@ function renderGeneographCollectionChooser({
               </strong>
 
               <span>
-                The new collection will be
-                selected automatically.
+                Creates the collection immediately and selects it for this board. Canceling the board form will not delete it.
               </span>
             </div>
 
@@ -4075,11 +4007,6 @@ function bindGeneographCollectionChooser(
             '[data-geneo-collection-choice-list]'
         );
 
-    const resultsTitle =
-        root.querySelector(
-            '[data-geneo-collection-results-title]'
-        );
-
     const resultsMeta =
         root.querySelector(
             '[data-geneo-collection-results-meta]'
@@ -4134,13 +4061,6 @@ function bindGeneographCollectionChooser(
     {
         const count = visibleCollections().length;
         const selected = selectedCollectionIds.size;
-
-        if (resultsTitle)
-        {
-            resultsTitle.textContent = translateText(
-                query.trim() ? 'Search results' : 'All collections'
-            );
-        }
 
         if (resultsMeta)
         {
@@ -8000,7 +7920,7 @@ function openGeneographSettingsModal()
 
     openModal(`
         <div
-          class="modal"
+          class="modal geneo-board-settings-modal"
           role="dialog"
           aria-modal="true"
           aria-labelledby="boardSettingsTitle">
@@ -8013,10 +7933,6 @@ function openGeneographSettingsModal()
                 Board settings
               </h2>
 
-              <p>
-                Update board details and
-                collection memberships.
-              </p>
             </div>
 
             <button
@@ -8067,7 +7983,7 @@ function openGeneographSettingsModal()
                 <textarea
                   id="geneographSettingsDescription"
                   maxlength="500"
-                  rows="4">${escapeHtml(
+                  rows="2">${escapeHtml(
                         board.description
                     || ''
                     )}</textarea>
