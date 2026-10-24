@@ -65,6 +65,23 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 renderGeneographEditorPreserveScroll();
             }, id);
             const editor = page.locator('[data-geneo-relationship-editor]');
+            assert.equal(await editor.locator('[data-geneo-show-relationship-dates]').count(), 0);
+            const dateToggle = page.locator('#geneo-inspector-connection-appearance .geneo-check.geneo-connection-date-default [data-geneo-show-relationship-dates]');
+            assert.equal(await dateToggle.count(), 1);
+            const dateToggleStyle = await dateToggle.evaluate(input => {
+                const style = getComputedStyle(input.closest('label'));
+                return [style.fontSize, style.fontWeight];
+            });
+            const canvasToggleStyle = await page.evaluate(() => {
+                const label = document.createElement('label');
+                label.className = 'geneo-check geneo-connection-date-default';
+                document.body.appendChild(label);
+                const style = getComputedStyle(label);
+                const result = [style.fontSize, style.fontWeight];
+                label.remove();
+                return result;
+            });
+            assert.deepEqual(dateToggleStyle, canvasToggleStyle);
             const labelStyle = await editor.locator('.genealogy-date-field > label').first().evaluate(label => {
                 const style = getComputedStyle(label);
                 return [style.fontSize, style.fontWeight];

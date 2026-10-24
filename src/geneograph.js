@@ -16286,18 +16286,6 @@ function renderGeneographConnectionInspector(
                     </select>
                   </div>
 
-                  <label class="geneo-check">
-                    <input
-                      type="checkbox"
-                      data-geneo-show-relationship-dates
-                      ${
-                            geneoEffectiveShowRelationshipDates(connection)
-                                ? 'checked'
-                                : ''
-                        }>
-                    ${escapeHtml(t('Show relationship date on board'))}
-                  </label>
-
                 </div>
               `
             })
@@ -16305,6 +16293,7 @@ function renderGeneographConnectionInspector(
 
     const appearanceContent = `
         ${renderGeneoConnectionInspectorStyleFields(connection)}
+        ${family ? `<label class="geneo-check geneo-connection-date-default"><input type="checkbox" data-geneo-show-relationship-dates ${geneoEffectiveShowRelationshipDates(connection) ? 'checked' : ''}><span>${escapeHtml(t('Show relationship date on board'))}</span></label>` : ''}
 
         <div class="geneo-field">
           <label for="geneoConnectionRouting">
@@ -28853,23 +28842,22 @@ function bindGeneographEditor()
         };
         relationshipEditor.addEventListener('change', event =>
         {
-            if (event.target.matches('[data-geneo-show-relationship-dates]')) return;
             if (event.target.matches('[data-geneo-relationship-type]'))
                 updatePartnerRelationshipFields(relationshipEditor, event.target.value);
             commit();
         });
         relationshipEditor.addEventListener('genealogy-date-committed', commit);
-        relationshipEditor.querySelector('[data-geneo-show-relationship-dates]')?.addEventListener('change', event =>
-        {
-            const connection = selectedGeneographConnection(); if (!connection) return;
-            if (geneoEffectiveShowRelationshipDates(connection) === event.target.checked) return;
-            geneoPushHistory();
-            if (event.target.checked === selectedGeneographDiagram().connectionDefaults.showRelationshipDates)
-                delete connection.showRelationshipDates;
-            else connection.showRelationshipDates = event.target.checked;
-            touchGeneographBoard(); renderGeneographEditorPreserveScroll();
-        });
     }
+    main.querySelector('[data-geneo-show-relationship-dates]')?.addEventListener('change', event =>
+    {
+        const connection = selectedGeneographConnection(); if (!connection) return;
+        if (geneoEffectiveShowRelationshipDates(connection) === event.target.checked) return;
+        geneoPushHistory();
+        if (event.target.checked === selectedGeneographDiagram().connectionDefaults.showRelationshipDates)
+            delete connection.showRelationshipDates;
+        else connection.showRelationshipDates = event.target.checked;
+        touchGeneographBoard(); renderGeneographEditorPreserveScroll();
+    });
     main
         .querySelector('[data-geneo-connection-routing]')
         ?.addEventListener('change', event =>

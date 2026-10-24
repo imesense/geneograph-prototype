@@ -6144,8 +6144,7 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
 
 .geneo-relationship-editor .geneo-field > label,
 .geneo-relationship-editor .genealogy-date-field > label,
-.geneo-relationship-editor .place-combobox-field > label,
-.geneo-relationship-editor .geneo-check {
+.geneo-relationship-editor .place-combobox-field > label {
     color: var(--text-secondary);
     font-size: 12px;
     font-weight: 700;
