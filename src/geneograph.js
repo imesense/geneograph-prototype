@@ -19743,6 +19743,25 @@ function geneoRelativeCategory(type)
     return 'partner';
 }
 
+function geneoFirstParentForAddedParent(childNode, newParentPersonId = null)
+{
+    const diagram = selectedGeneographDiagram();
+    if (!diagram || childNode?.type !== 'person') return null;
+    const parentFamilies = diagram.families.filter(family =>
+        family.partnerIds.length && family.children.some(child => child.personId === childNode.personId));
+    const parentIds = new Set(parentFamilies.flatMap(family => family.partnerIds));
+    if (parentIds.size !== 1 || parentIds.has(newParentPersonId)) return null;
+    const family = parentFamilies.find(item => item.partnerIds.length === 1);
+    if (!family) return null;
+    const connection = diagram.connections.find(item => item.kind === 'family-child'
+        && item.familyId === family.id && item.target?.nodeId === childNode.id);
+    const parentNode = diagram.nodes.find(node => node.id === connection?.source?.nodeId
+        && node.type === 'person' && node.personId === family.partnerIds[0])
+        || diagram.nodes.find(node => node.type === 'person'
+            && node.personId === family.partnerIds[0]);
+    return connection && parentNode ? { family, connection, parentNode } : null;
+}
+
 function geneoRelativeNodePlacement(
     anchorNode,
     relativeType,
@@ -19772,6 +19791,22 @@ function geneoRelativeNodePlacement(
         - height / 2;
 
     const candidates = [];
+
+    if (category === 'parent')
+    {
+        const firstParent = geneoFirstParentForAddedParent(anchorNode)?.parentNode;
+        if (firstParent)
+        {
+            for (const offset of [0, -1, 1])
+            {
+                const y = firstParent.y + offset * (height + verticalGap);
+                candidates.push(
+                    { x: firstParent.x + firstParent.width + horizontalGap, y },
+                    { x: firstParent.x - width - horizontalGap, y }
+                );
+            }
+        }
+    }
 
     for (let step = 1; step <= 6; step += 1)
     {
@@ -19953,6 +19988,27 @@ function connectGeneographCreatedRelative(
 
     if (category === 'parent')
     {
+        const firstParent = geneoFirstParentForAddedParent(anchorNode, relativePersonId);
+        if (firstParent)
+        {
+            const firstNode = firstParent.parentNode;
+            const relativeIsRight = relativeNode.x >= firstNode.x;
+            const family = createGeneographPartnerRelationship(
+                firstNode.personId, relativePersonId,
+                { nodeId: firstNode.id, port: relativeIsRight ? 'right' : 'left' },
+                { nodeId: relativeNode.id, port: relativeIsRight ? 'left' : 'right' }
+            );
+            const child = firstParent.family.children.find(item => item.personId === anchorPersonId);
+            if (!family.children.some(item => item.personId === anchorPersonId))
+                family.children.push(child ? { ...child } : { personId: anchorPersonId, parentageType: 'biological' });
+            firstParent.connection.familyId = family.id;
+            firstParent.connection.source = { familyId: family.id, port: 'bottom' };
+            firstParent.connection.route = { mode: 'auto', waypoints: [] };
+            firstParent.family.children = firstParent.family.children.filter(item => item.personId !== anchorPersonId);
+            if (!firstParent.family.children.length)
+                selectedGeneographDiagram().families = selectedGeneographDiagram().families.filter(item => item.id !== firstParent.family.id);
+            return;
+        }
         createGeneographParentChildRelationship(
             relativePersonId,
             anchorPersonId,
