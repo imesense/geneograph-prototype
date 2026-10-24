@@ -46,7 +46,7 @@ const geneoTourSteps = [
     { id: 'geneograph-card', module: 'Geneograph', title: "Open the sample board", body: "This card shows the sample board and its details. Open it to explore the editor." },
     { id: 'geneograph-editor-welcome', module: 'Geneograph', presentation: 'centered', title: "Explore the board editor", body: "Build out your board by arranging people, connections, and research materials however you need." },
     { id: 'geneograph-all-boards', module: 'Geneograph', title: "Return to all boards", body: "All Boards opens the board library. Your edits save automatically." },
-    { id: 'geneograph-current-board', module: 'Geneograph', title: "Current board", body: "See the board name and collections here, and use Edit to update its details." },
+    { id: 'geneograph-current-board', module: 'Geneograph', title: "Board details", body: "The board name appears here. Use Edit board to change its name, description, or collections." },
     { id: 'geneograph-layers', module: 'Geneograph', title: "Find and manage items", body: "Layers lists what's on the canvas. Find an item, hide it, or lock it in place." },
     { id: 'geneograph-objects', module: 'Geneograph', title: "See items on the canvas", body: "Here you can see a few items already placed on the canvas, including a panel and person cards." },
     { id: 'geneograph-topbar', module: 'Geneograph', title: "Board toolbar", body: "The toolbar helps you navigate the board and add the different kinds of items you need." },
@@ -714,7 +714,7 @@ function geneoTourApplyTreeReveal(step)
         if (step.id === 'geneograph-objects' || step.id.startsWith('geneograph-sockets-'))
             document.body.classList.add('geneo-tour-geneo-focus-canvas');
         if (['geneograph-navigation', 'geneograph-collections', 'geneograph-all-boards',
-            'geneograph-current-board', 'geneograph-layers'].includes(step.id))
+            'geneograph-layers'].includes(step.id))
             document.body.classList.add('geneo-tour-geneo-sidebar');
         if (['geneograph-topbar', 'geneograph-modes', 'geneograph-connect',
             'geneograph-person', 'geneograph-other-objects', 'geneograph-export'].includes(step.id))
@@ -822,7 +822,7 @@ function geneoTourTarget(index)
         'geneograph-create-modal': '#modalBackdrop .geneo-board-create-modal',
         'geneograph-card': '[data-geneo-board-id="gb1"]',
         'geneograph-all-boards': '[data-geneo-all-boards]',
-        'geneograph-current-board': '.geneo-board-panel > .geneo-sidebar-section:nth-child(2)',
+        'geneograph-current-board': '.geneo-inspector:not(.collapsed) .geneo-inspector-header',
         'geneograph-layers': '.geneo-board-panel .geneo-layers',
         'geneograph-objects': '[data-geneo-node="gn-panel"]',
         'geneograph-topbar': '.geneo-editor-toolbar',

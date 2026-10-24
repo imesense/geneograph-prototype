@@ -7152,29 +7152,6 @@ function bindGeneographToolbarKeyboard()
     );
 }
 
-function geneographEditorCollectionMeta(board)
-{
-    const collections =
-        getCollectionsForBoard(
-            board.id,
-            {
-                projectId:
-              board.projectId
-            }
-        );
-
-    return {
-        label: collections.length
-            ? collections.length === 1
-                ? collections[0].name
-                : `${collections[0].name} +${collections.length - 1}`
-            : 'Not in collection',
-        title: collections.length
-            ? collections.map(collection => collection.name).join(', ')
-            : 'Not in collection'
-    };
-}
-
 function validateSampleGeneographCollections(
     warn,
     projectIds
@@ -11958,7 +11935,6 @@ function renderGeneographEditorSidebar(board)
     const rootNodes = diagram.nodes.filter(node => node.type !== 'panel' && !node.parentPanelId && matches(node)).sort((a, b) => b.order - a.order);
     const selectedIds = geneoSelectedNodeIdSet();
     const selectedConnectionIds = geneoSelectedConnectionIdSet();
-    const collectionMeta = geneographEditorCollectionMeta(board);
     const layersExpanded = state.geneoSidebarSections?.layers !== false;
     const connectionsExpanded = state.geneoSidebarSections?.connections !== false;
     const row = (
@@ -12083,7 +12059,6 @@ function renderGeneographEditorSidebar(board)
         };
     sidebar.innerHTML = `<nav class="geneo-sidebar geneo-board-panel" aria-label="Geneograph board navigation">
         <section class="geneo-sidebar-section navigation"><div class="side-section-title">Navigation</div><div class="side-nav">${renderGeneoAllBoardsNavigationButton({ editor: true })}</div></section>
-        <section class="geneo-sidebar-section"><div class="side-section-title">Current board</div><div class="geneo-current-board-summary"><div class="geneo-current-board-copy"><strong title="${escapeHtml(board.title)}">${escapeHtml(board.title)}</strong><span title="${escapeHtml(collectionMeta.title)}">${icon.folder}<span>${escapeHtml(collectionMeta.label)}</span></span></div><button class="geneo-board-square-action" type="button" data-geneo-settings aria-label="Edit ${escapeHtml(board.title)}">${icon.edit}</button></div></section>
         <section class="geneo-sidebar-section geneo-layers"><button class="geneo-sidebar-disclosure" type="button" data-geneo-sidebar-section="layers" aria-expanded="${layersExpanded}"><span>Layers</span><span class="geneo-sidebar-disclosure-meta"><span>${diagram.nodes.length}</span>${icon.chevron}</span></button>${layersExpanded ? `<div class="geneo-sidebar-section-body"><div class="geneo-layer-tools"><input class="geneo-object-search" id="geneoLayerSearch" placeholder="Search layers" value="${escapeHtml(state.geneoLayerSearch)}"></div><div class="geneo-layer-list">${panels.map(panel =>
         {
             const collapsed = Boolean(state.geneoCollapsedPanels[panel.id]); const children = diagram.nodes.filter(node => node.parentPanelId === panel.id && matches(node)).sort((a, b) => b.order - a.order); return `<div class="geneo-layer-panel"><div class="geneo-layer-panel-head"><button class="geneo-layer-disclosure" type="button" data-geneo-collapse-panel="${escapeHtml(panel.id)}" aria-expanded="${!collapsed}">${icon.chevron}</button>${row(panel)}</div>${collapsed ? '' : children.map(node => row(node, 1)).join('')}</div>`;
@@ -14186,6 +14161,8 @@ function renderGeneographInspectorHeader(
             <button type="button" data-geneo-header-rename aria-label="${escapeHtml(`${t('Rename layer')}: ${title}`)}" title="${escapeHtml(t('Rename layer'))}">${icon.edit}</button>
             ${entityType === 'node' ? `<button type="button" data-geneo-header-lock aria-label="${escapeHtml(`${t(node.locked ? 'Unlock layer' : 'Lock layer')}: ${title}`)}" title="${escapeHtml(t(node.locked ? 'Unlock layer' : 'Lock layer'))}" aria-pressed="${node.locked ? 'true' : 'false'}">${node.locked ? icon.lock : icon.unlock}</button>` : ''}
             <button type="button" data-geneo-header-visible aria-label="${escapeHtml(`${t(node.visible ? 'Hide layer' : 'Show layer')}: ${title}`)}" title="${escapeHtml(t(node.visible ? 'Hide layer' : 'Show layer'))}" aria-pressed="${node.visible ? 'true' : 'false'}">${node.visible ? icon.eye : icon.eyeOff}</button>
+          </div>` : entityType === 'board' ? `<div class="geneo-inspector-header-actions">
+            <button type="button" data-geneo-settings aria-label="${escapeHtml(t('Edit board'))}" title="${escapeHtml(t('Edit board'))}">${icon.edit}</button>
           </div>` : ''}
         </div>
       `;
@@ -14992,6 +14969,7 @@ function renderGeneographInspector()
         );
     }
 
+    const board = selectedGeneographBoard();
     const canvas =
         selectedGeneographDiagram().canvas;
     const highlight = geneoCanvasRuntime.objectHighlight || 'none';
@@ -15083,8 +15061,11 @@ function renderGeneographInspector()
         <aside class="geneo-inspector">
           <div class="geneo-inspector-body">
             ${renderGeneographInspectorHeader(
-                'Canvas',
-                'Board appearance and behavior'
+                board.title,
+                t('Board appearance and behavior'),
+                '',
+                null,
+                'board'
             )}
 
             ${renderGeneographInspectorSection({
@@ -29044,6 +29025,7 @@ function bindGeneographEditor()
             const gender = input.dataset.geneoCardDefaultRadius;
             updateCardDefault(gender, 'cornerRadius', Math.round(geneoNumber(input.value, cardDefaults[gender].cornerRadius, 0, 32)));
         }));
+    main.querySelector('[data-geneo-settings]')?.addEventListener('click', openGeneographSettingsModal);
     main.querySelector('[data-geneo-reset-canvas-defaults]')?.addEventListener('click', () => {
         const diagram = selectedGeneographDiagram();
         if (!diagram) return;
@@ -29166,7 +29148,6 @@ function bindGeneographSidebarControls()
     {
         captureGeneographViewport(); cancelGeneographConnectionDraft(); state.geneoView = 'home'; selectGeneographCanvas(); renderGeneographHome();
     });
-    sidebar.querySelector('[data-geneo-settings]')?.addEventListener('click', openGeneographSettingsModal);
     sidebar.querySelectorAll('[data-geneo-sidebar-section]').forEach(button => button.addEventListener('click', () =>
     {
         const section = button.dataset.geneoSidebarSection;
