@@ -226,7 +226,7 @@ function geneoPreviewSvg(board, mode, nodes, scene)
     {
         const source = geneoPreviewPort(connection.source, byId, board.diagram);
         const target = geneoPreviewPort(connection.target, byId, board.diagram);
-        return source && target && connection.style?.line?.enabled;
+        return connection.visible !== false && source && target && connection.style?.line?.enabled;
     }).map(connection =>
     {
         const source = geneoPreviewPort(connection.source, byId, board.diagram);

@@ -3644,6 +3644,7 @@ function applyGenealogyDateToField(fieldId, dateInput, options = {})
                 : '';
     }
     if (!options.keepError) setGenealogyDateFieldError(root, '');
+    if (!options.silent) root.dispatchEvent(new Event('genealogy-date-committed', { bubbles: true }));
 }
 
 function closeGenealogyDateEditor()

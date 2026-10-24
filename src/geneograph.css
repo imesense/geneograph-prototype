@@ -6098,10 +6098,29 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
 }
 
 .geneo-relationship-editor {
-    gap: var(--space-3);
+    display: grid;
+    gap: var(--space-4);
+    min-width: 0;
 }
 
-.geneo-relationship-storage,
+.geneo-relationship-editor .partner-relationship-start,
+.geneo-relationship-editor .partner-relationship-end {
+    gap: var(--space-4);
+}
+
+.geneo-relationship-editor .place-combobox-field > label {
+    margin-bottom: 6px;
+}
+
+.geneo-relationship-editor .geneo-field > label,
+.geneo-relationship-editor .genealogy-date-field > label,
+.geneo-relationship-editor .place-combobox-field > label,
+.geneo-relationship-editor .geneo-check {
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 700;
+}
+
 .geneo-selection-help,
 .geneo-selection-more {
     margin: 0;
@@ -6830,6 +6849,8 @@ body.mobile-details-open:has(.geneo-inspector) #modalBackdrop.modal-backdrop.ope
     font-size: 10px;
     font-weight: 800;
 }
+
+.geneo-layer-paint-status svg { width: 12px; height: 12px; vertical-align: -2px; margin-right: 3px; }
 
 .geneo-layer-paint-status[hidden] {
     display: none;

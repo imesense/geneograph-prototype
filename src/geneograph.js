@@ -7543,6 +7543,9 @@ function validateSampleGeneographCollections(
                 }
                 connectionIds.add(connection.id);
 
+                if (typeof connection.visible !== 'boolean')
+                    warn(`Connection ${connection.id} has invalid visibility`);
+
                 if (connection.style?.line && !isCanonicalGeneoPaint(connection.style.line))
                 {
                     warn(`Connection ${connection.id} has an invalid line paint`);
@@ -9414,6 +9417,7 @@ function normalizeGeneographBoardRecord(board, projectPeople)
             diagram.connections.push({
                 id: String(connection.id),
                 kind: ['family-partner', 'family-child', 'family-sibling', 'visual'].includes(connection.kind) ? connection.kind : 'visual',
+                visible: connection.visible !== false,
                 name: normalizeGeneographLayerName(
                     connection.name
                 ),
@@ -9725,6 +9729,41 @@ function geneoSnapshot()
     return JSON.stringify(selectedGeneographDiagram());
 }
 
+function geneoRelationshipExternalState(personIds)
+{
+    const relationship = getPartnerRelationshipBetween(...personIds);
+    return { personIds, record: relationship ? structuredClone(relationship) : null };
+}
+
+function geneoRelationshipHistorySnapshot(personIds)
+{
+    return JSON.stringify({ geneoRelationshipHistory: true,
+        diagram: selectedGeneographDiagram(),
+        external: geneoRelationshipExternalState(personIds) });
+}
+
+function geneoHistoryCompanionSnapshot(snapshot)
+{
+    const parsed = JSON.parse(snapshot);
+    return parsed?.geneoRelationshipHistory
+        ? geneoRelationshipHistorySnapshot(parsed.external.personIds) : geneoSnapshot();
+}
+
+function geneoRestoreRelationshipExternalState(external)
+{
+    const records = centralFamilyRecords();
+    const current = getPartnerRelationshipBetween(...external.personIds);
+    const index = current ? records.indexOf(current) : -1;
+    if (external.record)
+    {
+        if (index >= 0) records[index] = structuredClone(external.record);
+        else records.push(structuredClone(external.record));
+    }
+    else if (index >= 0) records.splice(index, 1);
+    syncFamilyReciprocalLinks();
+    rebuildSampleEventsAndPruneSourceLinks();
+}
+
 function geneoPushHistory()
 {
     geneoEnsureHistory();
@@ -9757,8 +9796,10 @@ function geneoRestoreSnapshot(
 
     try
     {
-        board.diagram =
-            JSON.parse(snapshot);
+        const parsed = JSON.parse(snapshot);
+        board.diagram = parsed?.geneoRelationshipHistory ? parsed.diagram : parsed;
+        if (parsed?.geneoRelationshipHistory)
+            geneoRestoreRelationshipExternalState(parsed.external);
 
         state.geneoLayerRename = null;
 
@@ -9784,7 +9825,7 @@ function undoGeneographChange()
     geneoEnsureHistory();
     const snapshot = geneoHistoryRuntime.undo.pop();
     if (!snapshot) return;
-    geneoHistoryRuntime.redo.push(geneoSnapshot());
+    geneoHistoryRuntime.redo.push(geneoHistoryCompanionSnapshot(snapshot));
     if (geneoRestoreSnapshot(snapshot)) renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true, preserveSidebarScroll: true });
 }
 
@@ -9794,7 +9835,7 @@ function redoGeneographChange()
     geneoEnsureHistory();
     const snapshot = geneoHistoryRuntime.redo.pop();
     if (!snapshot) return;
-    geneoHistoryRuntime.undo.push(geneoSnapshot());
+    geneoHistoryRuntime.undo.push(geneoHistoryCompanionSnapshot(snapshot));
     if (geneoRestoreSnapshot(snapshot)) renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true, preserveSidebarScroll: true });
 }
 
@@ -9954,6 +9995,7 @@ function geneoConnectionEffectiveVisible(connection)
 {
     return Boolean(
         connection
+        && connection.visible !== false
         && geneoConnectionReferenceEffectiveVisible(
             connection.source
         )
@@ -12034,7 +12076,8 @@ function renderGeneographEditorSidebar(board)
                     displayName
                 )
             }
-            <span class="geneo-layer-paint-status" data-geneo-connection-paint-status ${geneoEffectiveConnectionStyle(connection).line.enabled ? 'hidden' : ''}>No stroke</span>
+            <span class="geneo-layer-paint-status" ${connection.visible !== false ? 'hidden' : ''}>${icon.eyeOff}<span>${escapeHtml(t('Hidden'))}</span></span>
+            <span class="geneo-layer-paint-status" data-geneo-connection-paint-status ${connection.visible === false || geneoEffectiveConnectionStyle(connection).line.enabled ? 'hidden' : ''}>No stroke</span>
           </div>
         `;
         };
@@ -14084,7 +14127,8 @@ function renderGeneographInspectorHeader(
     title,
     subtitle,
     iconHtml = '',
-    node = null
+    node = null,
+    entityType = 'node'
 )
 {
     const hasIcon =
@@ -14140,7 +14184,7 @@ function renderGeneographInspectorHeader(
           </div>
           ${node ? `<div class="geneo-inspector-header-actions">
             <button type="button" data-geneo-header-rename aria-label="${escapeHtml(`${t('Rename layer')}: ${title}`)}" title="${escapeHtml(t('Rename layer'))}">${icon.edit}</button>
-            <button type="button" data-geneo-header-lock aria-label="${escapeHtml(`${t(node.locked ? 'Unlock layer' : 'Lock layer')}: ${title}`)}" title="${escapeHtml(t(node.locked ? 'Unlock layer' : 'Lock layer'))}" aria-pressed="${node.locked ? 'true' : 'false'}">${node.locked ? icon.lock : icon.unlock}</button>
+            ${entityType === 'node' ? `<button type="button" data-geneo-header-lock aria-label="${escapeHtml(`${t(node.locked ? 'Unlock layer' : 'Lock layer')}: ${title}`)}" title="${escapeHtml(t(node.locked ? 'Unlock layer' : 'Lock layer'))}" aria-pressed="${node.locked ? 'true' : 'false'}">${node.locked ? icon.lock : icon.unlock}</button>` : ''}
             <button type="button" data-geneo-header-visible aria-label="${escapeHtml(`${t(node.visible ? 'Hide layer' : 'Show layer')}: ${title}`)}" title="${escapeHtml(t(node.visible ? 'Hide layer' : 'Show layer'))}" aria-pressed="${node.visible ? 'true' : 'false'}">${node.visible ? icon.eye : icon.eyeOff}</button>
           </div>` : ''}
         </div>
@@ -15656,22 +15700,6 @@ function renderGeneographLayerNameField(
       `;
 }
 
-function renderGeneographConnectionNameSection(
-    connection
-)
-{
-    return renderGeneographInspectorSection({
-        context: 'connection',
-        id: 'connection',
-        title: 'Connection',
-        content:
-          renderGeneographLayerNameField(
-              'connection',
-              connection
-          )
-    });
-}
-
 function renderGeneographImageSourceSection(node)
 {
     const source = resolveGeneographImageSource(node);
@@ -16230,11 +16258,6 @@ function renderGeneographConnectionInspector(
     connection
 )
 {
-    const nameSection =
-        renderGeneographConnectionNameSection(
-            connection
-        );
-
     const family =
         connection.kind === 'family-partner'
             ? getGeneographFamily(
@@ -16342,20 +16365,6 @@ function renderGeneographConnectionInspector(
                     ${escapeHtml(t('Show relationship date on board'))}
                   </label>
 
-                  <p class="geneo-relationship-storage">
-                    ${
-                        resolved.central
-                            ? 'Linked Family Tree relationship'
-                            : 'Board-only relationship'
-                    }
-                  </p>
-
-                  <button
-                    class="button primary"
-                    type="button"
-                    data-geneo-save-relationship>
-                    Save relationship details
-                  </button>
                 </div>
               `
             })
@@ -16411,10 +16420,11 @@ function renderGeneographConnectionInspector(
                     connection
                 ),
                 'Connection',
-                icon.link
+                icon.link,
+                connection,
+                'connection'
             )}
 
-            ${nameSection}
             ${relationshipSection}
 
             ${renderGeneographInspectorSection({
@@ -24493,7 +24503,7 @@ function geneoCreateConnection(kind, source, target, familyId = null)
     const overrides = { ...geneoConnectionToolRuntime.overrides };
     if (overrides.line) overrides.line = { ...overrides.line };
     if (kind !== 'visual') delete overrides.arrows;
-    return { id: createRuntimeId('geneo-connection'), kind, familyId, source: { ...source }, target: { ...target }, style: overrides, route: { mode: 'auto', waypoints: [] } };
+    return { id: createRuntimeId('geneo-connection'), kind, familyId, source: { ...source }, target: { ...target }, visible: true, style: overrides, route: { mode: 'auto', waypoints: [] } };
 }
 
 function commitGeneographConnection(source, target)
@@ -26052,30 +26062,42 @@ function commitGeneoInlineEdit(
     renderGeneographEditorPreserveScroll();
 }
 
-function saveGeneographPartnerRelationship()
+function geneoRelationshipEditorFingerprint(editor)
+{
+    return JSON.stringify([...editor.querySelectorAll('input, select')]
+        .filter(input => !input.matches('[data-geneo-show-relationship-dates]'))
+        .map(input => [input.id, input.value, input.dataset.placeId || '', input.dataset.placeCoordinates || '']));
+}
+
+function saveGeneographPartnerRelationship(editor)
 {
     const connection = selectedGeneographConnection();
     const family = connection?.kind === 'family-partner' ? getGeneographFamily(connection.familyId) : null;
-    const editor = main.querySelector('[data-geneo-relationship-editor]');
-    if (!connection || !family || !editor) return;
+    if (!connection || !family || !editor) return false;
     const relationshipType = editor.querySelector('[data-geneo-relationship-type]')?.value || 'Married';
     const definition = partnerRelationshipDefinition(relationshipType);
     const startDate = collectGenealogyDateField('geneoRelationshipStartDate');
     const endDate = definition.hasEnd ? collectGenealogyDateField('geneoRelationshipEndDate') : emptyGenealogyDate('Exact date');
     if (!startDate || (definition.hasEnd && !endDate))
     {
-        showToast('Check the relationship dates before saving.'); return;
+        return false;
     }
     if (definition.hasEnd && !partnerRelationshipDateOrderIsValid(startDate, endDate))
     {
-        showToast('The relationship end date must be after or equal to the start date.'); return;
+        setGenealogyDateFieldError(editor.querySelector('[data-genealogy-date-field="geneoRelationshipEndDate"]'),
+            'The relationship end date must be after or equal to the start date.');
+        return false;
     }
+    const centralIds = geneoCentralPartnerIdsForFamily(family);
+    const beforeSnapshot = centralIds.length === 2
+        ? geneoRelationshipHistorySnapshot(centralIds) : geneoSnapshot();
     const resolved = geneoRelationshipForFamily(family, { create: true });
     if (!resolved.relationship)
     {
-        showToast('The relationship could not be updated.'); return;
+        showToast('The relationship could not be updated.'); return false;
     }
-    geneoPushHistory();
+    const focusedId = editor.contains(document.activeElement) ? document.activeElement.id : '';
+    geneoPushHistorySnapshot(beforeSnapshot);
     upsertPartnerRelationshipEvents(resolved.relationship, {
         relationshipType,
         marriageType: editor.querySelector('[data-geneo-marriage-type]')?.value || 'Civil',
@@ -26091,8 +26113,9 @@ function saveGeneographPartnerRelationship()
         rebuildSampleEventsAndPruneSourceLinks();
     }
     touchGeneographBoard();
-    renderGeneographEditorPreserveScroll();
-    showToast('Relationship details updated.');
+    renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true });
+    if (focusedId) requestAnimationFrame(() => main.querySelector(`#${CSS.escape(focusedId)}`)?.focus({ preventScroll: true }));
+    return true;
 }
 
 function bindGeneographInspectorNameField()
@@ -26174,7 +26197,10 @@ function bindGeneographInspectorNameField()
 function bindGeneographNodeHeader()
 {
     const node = selectedGeneographNode();
-    if (!node) return;
+    const connection = node ? null : selectedGeneographConnection();
+    const entity = node || connection;
+    const entityType = node ? 'node' : 'connection';
+    if (!entity) return;
     const renameButton = main.querySelector('[data-geneo-header-rename]');
     const input = main.querySelector('[data-geneo-header-name-input]');
     const heading = main.querySelector('[data-geneo-header-name]');
@@ -26192,14 +26218,14 @@ function bindGeneographNodeHeader()
         {
             if (finished || input.hidden) return;
             finished = true;
-            const originalName = normalizeGeneographLayerName(node.name);
-            const displayedName = localizedDataFieldValue(originalName || geneoNodeTitle(node));
+            const originalName = normalizeGeneographLayerName(entity.name);
+            const displayedName = localizedDataFieldValue(originalName || (node ? geneoNodeTitle(node) : geneoConnectionLabel(connection)));
             if (!cancel)
             {
                 const nextName = input.value === displayedName
                     ? originalName
                     : collectLocalizedDataFieldValue(input, originalName);
-                renameGeneographEntity('node', node.id, nextName);
+                renameGeneographEntity(entityType, entity.id, nextName);
             }
             renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true });
             requestAnimationFrame(() => main.querySelector('[data-geneo-header-rename]')?.focus({ preventScroll: true }));
@@ -26217,7 +26243,7 @@ function bindGeneographNodeHeader()
     {
         main.querySelector(selector)?.addEventListener('click', () =>
         {
-            const current = getGeneographNode(node.id);
+            const current = entityType === 'node' ? getGeneographNode(entity.id) : getGeneographConnection(entity.id);
             if (!current) return;
             geneoPushHistory();
             current[key] = !current[key];
@@ -28885,7 +28911,21 @@ function bindGeneographEditor()
     {
         bindGenealogyDateFields(relationshipEditor);
         bindPlaceComboboxes(relationshipEditor);
-        relationshipEditor.querySelector('[data-geneo-relationship-type]')?.addEventListener('change', event => updatePartnerRelationshipFields(relationshipEditor, event.target.value));
+        let committed = geneoRelationshipEditorFingerprint(relationshipEditor);
+        const commit = () =>
+        {
+            const current = geneoRelationshipEditorFingerprint(relationshipEditor);
+            if (current === committed) return;
+            if (saveGeneographPartnerRelationship(relationshipEditor)) committed = current;
+        };
+        relationshipEditor.addEventListener('change', event =>
+        {
+            if (event.target.matches('[data-geneo-show-relationship-dates]')) return;
+            if (event.target.matches('[data-geneo-relationship-type]'))
+                updatePartnerRelationshipFields(relationshipEditor, event.target.value);
+            commit();
+        });
+        relationshipEditor.addEventListener('genealogy-date-committed', commit);
         relationshipEditor.querySelector('[data-geneo-show-relationship-dates]')?.addEventListener('change', event =>
         {
             const connection = selectedGeneographConnection(); if (!connection) return;
@@ -28896,7 +28936,6 @@ function bindGeneographEditor()
             else connection.showRelationshipDates = event.target.checked;
             touchGeneographBoard(); renderGeneographEditorPreserveScroll();
         });
-        relationshipEditor.querySelector('[data-geneo-save-relationship]')?.addEventListener('click', saveGeneographPartnerRelationship);
     }
     main
         .querySelector('[data-geneo-connection-routing]')

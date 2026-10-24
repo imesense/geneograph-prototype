@@ -39,6 +39,7 @@ const root = path.resolve(__dirname, '../src');
             {
                 activateProject('p1', { moduleName: 'Geneograph' });
                 openGeneographBoard('gb1');
+                selectedGeneographDiagram().connections[0].visible = false;
             });
             const before = await page.evaluate(() => ({
                 board: structuredClone(selectedGeneographBoard()),
@@ -50,6 +51,7 @@ const root = path.resolve(__dirname, '../src');
             assert.equal(payload.version, 1);
             assert.equal(payload.board.diagram.nodes.length, before.board.diagram.nodes.length);
             assert.equal(payload.board.diagram.connections.length, before.board.diagram.connections.length);
+            assert.equal(payload.board.diagram.connections[0].visible, false);
             assert.ok(payload.board.diagram.assets.every(asset => /^data:image\/(?:jpeg|png|webp);base64,/.test(asset.src)));
             assert.ok(payload.board.diagram.nodes.some(node => node.type === 'image' && node.imageRef?.scope === 'board'));
             assert.ok(payload.board.diagram.people.some(person => person.photoAssetId));
@@ -94,6 +96,7 @@ const root = path.resolve(__dirname, '../src');
             assert.equal(imported.count, before.count + 1);
             assert.equal(imported.board.diagram.nodes.length, before.board.diagram.nodes.length);
             assert.equal(imported.board.diagram.connections.length, before.board.diagram.connections.length);
+            assert.equal(imported.board.diagram.connections[0].visible, false);
             assert.equal(imported.board.favorite, false);
             assert.equal(imported.board.archived, false);
             assert.deepEqual(imported.board.collectionIds, []);

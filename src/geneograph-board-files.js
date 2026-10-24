@@ -284,6 +284,7 @@ function validateGeneographBoardFile(payload)
     {
         const validEnd = end => end && (end.nodeId ? nodes.has(end.nodeId) : families.has(end.familyId));
         if (!validEnd(connection.source) || !validEnd(connection.target)
+            || (connection.visible !== undefined && typeof connection.visible !== 'boolean')
             || (connection.showRelationshipDates !== undefined
                 && typeof connection.showRelationshipDates !== 'boolean')
             || (connection.style?.cornerRadius !== undefined

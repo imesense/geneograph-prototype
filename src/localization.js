@@ -1621,6 +1621,7 @@ const RU_UI_GENEO = {
     'Connection settings': 'Настройки связи',
     'Close connection settings': 'Закрыть настройки связи',
     'Default connection appearance': 'Оформление связей по умолчанию',
+    'Hidden': 'Скрыто',
     'Connection color': 'Цвет линии связи',
     'Connection hex color': 'Шестнадцатеричный цвет связи',
     'Color': 'Цвет',
