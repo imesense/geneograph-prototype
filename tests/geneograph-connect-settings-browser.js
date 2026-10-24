@@ -223,19 +223,32 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             await inspectorFields.locator('[data-geneo-connection-inspector-pattern]').click();
             await page.locator('[data-geneo-connector="dashed"]').click();
             assert.equal(await page.evaluate(() => getGeneographConnection('test-visual-arrow').style.pattern), 'dashed');
-            await lineInspector.locator('[data-geneo-connection-reset-property="pattern"]').click();
-            assert.equal(await page.evaluate(() => getGeneographConnection('test-visual-arrow').style.pattern), undefined);
+            assert.equal(await lineInspector.locator('[data-geneo-connection-reset-property]').count(), 0);
             assert.equal(await lineInspector.locator('[data-geneo-connection-arrows]').count(), 4);
             await lineInspector.locator('label:has([data-geneo-connection-arrows][value="start"])').click();
             assert.equal(await page.locator('[data-geneo-connection-group="test-visual-arrow"] .geneo-connection-line').getAttribute('marker-start'), 'url(#geneo-arrow-test-visual-arrow)');
-            await lineInspector.locator('[data-geneo-connection-reset-property="arrows"]').click();
-            assert.equal(await page.evaluate(() => getGeneographConnection('test-visual-arrow').style.arrows), undefined);
+            const resetAppearance = lineInspector.locator('[data-geneo-connection-reset-default]');
+            assert.equal(await resetAppearance.isEnabled(), true);
+            await resetAppearance.click();
+            assert.deepEqual(await page.evaluate(() => {
+                const connection = getGeneographConnection('test-visual-arrow');
+                return { style: connection.style, route: connection.route };
+            }), { style: {}, route: { mode: 'manual', waypoints: [{ x: 2100, y: 400 }] } });
+            assert.equal(await resetAppearance.isDisabled(), true);
+            await page.evaluate(() => undoGeneographChange());
+            assert.deepEqual(await page.evaluate(() => {
+                const style = getGeneographConnection('test-visual-arrow').style;
+                return [style.pattern, style.width, style.line.color, style.arrows];
+            }), ['dashed', 4, '#CC6644', 'start']);
+            await page.evaluate(() => redoGeneographChange());
+            assert.deepEqual(await page.evaluate(() => getGeneographConnection('test-visual-arrow').style), {});
             await page.evaluate(() => {
                 state.selectedGeneoConnectionId = 'test-family-no-arrow';
                 state.selectedGeneoConnectionIds = ['test-family-no-arrow'];
                 renderGeneographEditorPreserveScroll();
             });
             assert.equal(await lineInspector.locator('[data-geneo-connection-arrows]').count(), 0);
+            assert.equal(await lineInspector.locator('[data-geneo-connection-reset-default]').isEnabled(), true);
             const serialized = await page.evaluate(() => {
                 const board = structuredClone(selectedGeneographBoard());
                 return normalizeGeneographBoardRecord(board, new Map([[board.projectId, new Set()]])).diagram;

@@ -5986,10 +5986,10 @@ function renderGeneoConnectionInspectorStyleFields(connection)
 {
     const style = geneoEffectiveConnectionStyle(connection);
     return `<div class="geneo-connection-style-fields" data-geneo-connection-fields="inspector">
-      <div class="geneo-field"><span class="geneo-setting-label">${escapeHtml(t('Pattern'))}</span><button type="button" class="geneo-connection-default-pattern" data-geneo-connection-inspector-pattern aria-label="${escapeHtml(`${t('Pattern')}: ${t(GENEO_CONNECTION_PATTERN_LABELS[style.pattern])}`)}" title="${escapeHtml(t(GENEO_CONNECTION_PATTERN_LABELS[style.pattern]))}" aria-haspopup="menu" aria-expanded="false" ${style.line.enabled ? '' : 'disabled'}>${renderGeneoConnectionLineSample(style.pattern)}${icon.chevron}</button><button class="geneo-paint-action" type="button" data-geneo-connection-reset-property="pattern">${escapeHtml(t('Use board default'))}</button></div>
-      <div class="geneo-field"><label class="geneo-setting-label" for="geneoConnectionStrokeWidth">${escapeHtml(t('Width'))}</label><span class="geneo-number-unit"><input class="geneo-input" id="geneoConnectionStrokeWidth" type="number" min="1" max="12" step="1" value="${style.width}" data-geneo-stroke-width="connection"><span aria-hidden="true">px</span></span><button class="geneo-paint-action" type="button" data-geneo-connection-reset-property="width">${escapeHtml(t('Use board default'))}</button></div>
+      <div class="geneo-field"><span class="geneo-setting-label">${escapeHtml(t('Pattern'))}</span><button type="button" class="geneo-connection-default-pattern" data-geneo-connection-inspector-pattern aria-label="${escapeHtml(`${t('Pattern')}: ${t(GENEO_CONNECTION_PATTERN_LABELS[style.pattern])}`)}" title="${escapeHtml(t(GENEO_CONNECTION_PATTERN_LABELS[style.pattern]))}" aria-haspopup="menu" aria-expanded="false" ${style.line.enabled ? '' : 'disabled'}>${renderGeneoConnectionLineSample(style.pattern)}${icon.chevron}</button></div>
+      <div class="geneo-field"><label class="geneo-setting-label" for="geneoConnectionStrokeWidth">${escapeHtml(t('Width'))}</label><span class="geneo-number-unit"><input class="geneo-input" id="geneoConnectionStrokeWidth" type="number" min="1" max="12" step="1" value="${style.width}" data-geneo-stroke-width="connection"><span aria-hidden="true">px</span></span></div>
       ${renderGeneoPaintControl({ scope: 'connection', id: connection.id, property: 'line' })}
-      ${connection.kind === 'visual' ? `<fieldset class="geneo-connection-arrows"><legend class="geneo-setting-label">${escapeHtml(t('Arrowheads'))}</legend><div class="geneo-connection-arrow-options">${GENEO_CONNECTION_ARROWS.map(value => `<label><input type="radio" name="geneo-inspector-arrows" value="${value}" data-geneo-connection-arrows ${style.arrows === value ? 'checked' : ''}><span>${escapeHtml(t(capitalize(value)))}</span></label>`).join('')}</div><button class="geneo-paint-action" type="button" data-geneo-connection-reset-property="arrows">${escapeHtml(t('Use board default'))}</button></fieldset>` : ''}
+      ${connection.kind === 'visual' ? `<fieldset class="geneo-connection-arrows"><legend class="geneo-setting-label">${escapeHtml(t('Arrowheads'))}</legend><div class="geneo-connection-arrow-options">${GENEO_CONNECTION_ARROWS.map(value => `<label><input type="radio" name="geneo-inspector-arrows" value="${value}" data-geneo-connection-arrows ${style.arrows === value ? 'checked' : ''}><span>${escapeHtml(t(capitalize(value)))}</span></label>`).join('')}</div></fieldset>` : ''}
     </div>`;
 }
 
@@ -15687,7 +15687,7 @@ function renderGeneographStrokeFields({ scope, appearance })
     const strokeEnabled = connection ? appearance.line?.enabled : appearance.stroke?.enabled;
     const prefix = connection ? 'Connection' : 'Node';
     const options = (connection ? GENEO_CONNECTION_PATTERNS : ['solid', 'dashed']).map(value => `<option value="${value}" ${pattern === value ? 'selected' : ''}>${escapeHtml(t(GENEO_CONNECTION_PATTERN_LABELS[value]))}</option>`).join('');
-    return `<div class="geneo-stroke-settings"><div class="geneo-field geneo-appearance-subfield"><label for="geneo${prefix}StrokeWidth">${escapeHtml(t('Width'))}</label><div class="geneo-number-unit"><input class="geneo-input" id="geneo${prefix}StrokeWidth" type="number" min="${GENEO_STROKE_WIDTH_MIN}" max="${GENEO_STROKE_WIDTH_MAX}" step="1" value="${Math.round(width)}" data-geneo-stroke-width="${scope}"><span aria-hidden="true">px</span></div>${connection ? `<button class="geneo-paint-action" type="button" data-geneo-connection-reset-property="width">${escapeHtml(t('Use board default'))}</button>` : ''}</div><div class="geneo-field geneo-appearance-subfield"><label for="geneo${prefix}StrokePattern">${escapeHtml(t('Pattern'))}</label><div class="common-select-shell geneo-pattern-select-shell"><select class="common-select geneo-pattern-select" id="geneo${prefix}StrokePattern" data-geneo-stroke-pattern="${scope}" ${strokeEnabled ? '' : 'disabled'}>${options}</select><span class="common-select-chevron" aria-hidden="true">${icon.chevron}</span></div>${connection ? `<button class="geneo-paint-action" type="button" data-geneo-connection-reset-property="pattern">${escapeHtml(t('Use board default'))}</button>` : ''}</div></div>`;
+    return `<div class="geneo-stroke-settings"><div class="geneo-field geneo-appearance-subfield"><label for="geneo${prefix}StrokeWidth">${escapeHtml(t('Width'))}</label><div class="geneo-number-unit"><input class="geneo-input" id="geneo${prefix}StrokeWidth" type="number" min="${GENEO_STROKE_WIDTH_MIN}" max="${GENEO_STROKE_WIDTH_MAX}" step="1" value="${Math.round(width)}" data-geneo-stroke-width="${scope}"><span aria-hidden="true">px</span></div></div><div class="geneo-field geneo-appearance-subfield"><label for="geneo${prefix}StrokePattern">${escapeHtml(t('Pattern'))}</label><div class="common-select-shell geneo-pattern-select-shell"><select class="common-select geneo-pattern-select" id="geneo${prefix}StrokePattern" data-geneo-stroke-pattern="${scope}" ${strokeEnabled ? '' : 'disabled'}>${options}</select><span class="common-select-chevron" aria-hidden="true">${icon.chevron}</span></div></div></div>`;
 }
 
 function renderGeneographPlaceInspectorContent(
@@ -16185,6 +16185,8 @@ function renderGeneographConnectionInspector(
                 title: 'Appearance',
                 content: appearanceContent
             })}
+
+            <div class="geneo-inspector-reset"><button class="button secondary" type="button" data-geneo-connection-reset-default ${Object.keys(connection.style || {}).length ? '' : 'disabled'}>${escapeHtml(t('Reset to default'))}</button></div>
 
             ${renderGeneographInspectorDangerAction(
                 'Delete connection'
@@ -27183,16 +27185,15 @@ function bindGeneoConnectionControls()
         touchGeneographBoard();
         renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true });
     }));
-    main.querySelectorAll('[data-geneo-connection-reset-property]').forEach(button => button.addEventListener('click', () =>
+    main.querySelector('[data-geneo-connection-reset-default]')?.addEventListener('click', () =>
     {
         const connection = selectedGeneographConnection();
-        const key = button.dataset.geneoConnectionResetProperty;
-        if (!connection || !Object.hasOwn(connection.style, key)) return;
+        if (!connection || !Object.keys(connection.style || {}).length) return;
         geneoPushHistory();
-        delete connection.style[key];
+        connection.style = {};
         touchGeneographBoard();
         renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true });
-    }));
+    });
 }
 
 function bindGeneoCreationToolControls()
