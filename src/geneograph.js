@@ -25457,6 +25457,8 @@ function startGeneographObjectDrag(event)
       ))
         return;
     const node = getGeneographNode(nodeElement.dataset.geneoNode);
+    if (node?.type === 'panel' && geneoEffectiveCanvasTool() === 'select'
+        && !geneoPanelDirectTarget(event, nodeElement)) return;
     if (!node || (!['select', 'pan'].includes(geneoEffectiveCanvasTool())
         && !(geneoEffectiveCanvasTool() === 'connect' && geneoSelectedNodeIdSet().has(node.id)))) return;
     if (event.shiftKey || event.ctrlKey || event.metaKey) return;
@@ -25476,6 +25478,31 @@ function startGeneographObjectDrag(event)
         geneoHistoryRuntime.undo.pop(); return;
     }
     geneoPointerState = { kind: 'move-group', pointerId: event.pointerId, beforeSnapshot, undoLength, redo, nodeId: node.id, start: point, x: node.x, y: node.y, nodes, connections, moved: false };
+}
+
+function geneoPanelDirectTarget(event, element)
+{
+    if (event.type === 'click' && event.detail === 0) return true;
+    const rect = element.getBoundingClientRect();
+    const edge = 12;
+    if (event.clientX - rect.left <= edge || rect.right - event.clientX <= edge
+        || event.clientY - rect.top <= edge || rect.bottom - event.clientY <= edge) return true;
+    const title = element.querySelector('.geneo-panel-title');
+    if (!title) return false;
+    const titleRect = title.getBoundingClientRect();
+    return event.clientX >= titleRect.left && event.clientX <= titleRect.right
+        && event.clientY >= titleRect.top && event.clientY <= titleRect.bottom;
+}
+
+function geneoNodeInsidePanel(node, panelId)
+{
+    let parentId = node.parentPanelId;
+    while (parentId)
+    {
+        if (parentId === panelId) return true;
+        parentId = getGeneographNode(parentId)?.parentPanelId;
+    }
+    return false;
 }
 
 function startGeneographSelectedConnectionDrag(event, connection)
@@ -25717,13 +25744,18 @@ function moveGeneographObject(event)
         const hitIds = selectedGeneographDiagram().nodes.filter(node =>
         {
             if (!geneoNodeEffectiveVisible(node)) return false;
+            if (geneoPointerState.panelId && !geneoNodeInsidePanel(node, geneoPointerState.panelId)) return false;
+            if (node.type === 'panel' && !(node.x >= left && node.y >= top
+                && node.x + node.width <= right && node.y + node.height <= bottom)) return false;
             if (node.type === 'drawing') return geneoDrawingIntersectsRect(node, rect);
             return node.x < right && node.x + node.width > left && node.y < bottom && node.y + node.height > top;
         }).map(node => node.id);
+        const selectedPanels = new Set(hitIds.filter(id => getGeneographNode(id)?.type === 'panel'));
+        const rootHitIds = hitIds.filter(id => ![...selectedPanels].some(panelId => geneoNodeInsidePanel(getGeneographNode(id), panelId)));
         const hitConnectionIds = selectedGeneographDiagram().connections.filter(connection => geneoConnectionIntersectsRect(connection, rect)).map(connection => connection.id);
-        const nextIds = geneoPointerState.additive ? [...new Set([...geneoPointerState.baseIds, ...hitIds])] : hitIds;
+        const nextIds = geneoPointerState.additive ? [...new Set([...geneoPointerState.baseIds, ...rootHitIds])] : rootHitIds;
         const nextConnectionIds = geneoPointerState.additive ? [...new Set([...geneoPointerState.baseConnectionIds, ...hitConnectionIds])] : hitConnectionIds;
-        setGeneographSelection(nextIds, nextConnectionIds, { nodeId: hitIds.at(-1) || nextIds.at(-1), connectionId: hitConnectionIds.at(-1) || nextConnectionIds.at(-1) });
+        setGeneographSelection(nextIds, nextConnectionIds, { nodeId: rootHitIds.at(-1) || nextIds.at(-1), connectionId: hitConnectionIds.at(-1) || nextConnectionIds.at(-1) });
         const bounds = geneoCanvasRuntime.bounds || { left: 0, top: 0 };
         const marquee = main.querySelector('[data-geneo-marquee]');
         if (marquee)
@@ -28739,6 +28771,10 @@ function bindGeneographEditor()
                         return;
                     }
 
+                    const clickedNode = getGeneographNode(element.dataset.geneoNode);
+                    if (clickedNode?.type === 'panel' && geneoEffectiveCanvasTool() === 'select'
+                        && !geneoPanelDirectTarget(event, element)) return;
+
                     selectGeneographNode(
                         element.dataset
                             .geneoNode,
@@ -28951,6 +28987,9 @@ function bindGeneographEditor()
 
         const placementNodeElement = event.target.closest('[data-geneo-node]');
         const connecting = canvasTool === 'connect';
+        const panelInterior = canvasTool === 'select'
+            && getGeneographNode(placementNodeElement?.dataset.geneoNode)?.type === 'panel'
+            && !geneoPanelDirectTarget(event, placementNodeElement);
         const drawingShapeOnPanel = canvasTool === 'shape'
           && getGeneographNode(placementNodeElement?.dataset.geneoNode)?.type === 'panel';
         if (
@@ -28969,7 +29008,7 @@ function bindGeneographEditor()
                 ].join(',')
             )
           || (!connecting && event.target.closest('[data-geneo-connection]'))
-          || (placementNodeElement && !drawingShapeOnPanel && !connecting)
+          || (placementNodeElement && !panelInterior && !drawingShapeOnPanel && !connecting)
         )
         {
             return;
@@ -29003,6 +29042,7 @@ function bindGeneographEditor()
                     ? [...geneoSelectedConnectionIdSet()]
                     : [],
                 additive,
+                panelId: panelInterior ? placementNodeElement.dataset.geneoNode : null,
                 moved: false
             };
 
