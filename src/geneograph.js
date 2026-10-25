@@ -11942,7 +11942,8 @@ function renderGeneographEditorSidebar(board)
                 )
             }
 
-            <button class="geneo-layer-toggle" type="button" data-geneo-locate-node="${escapeHtml(node.id)}" ${geneoNodeEffectiveVisible(node) ? '' : 'disabled'} aria-label="${escapeHtml(`${t('Locate on canvas')}: ${displayName}`)}" title="${escapeHtml(t('Locate on canvas'))}">${icon.mapCenter}</button>
+            <span class="geneo-layer-actions">
+              <button class="geneo-layer-toggle" type="button" data-geneo-locate-node="${escapeHtml(node.id)}" ${geneoNodeEffectiveVisible(node) ? '' : 'disabled'} aria-label="${escapeHtml(`${t('Locate on canvas')}: ${displayName}`)}" title="${escapeHtml(t('Locate on canvas'))}">${icon.mapCenter}</button>
 
             <button
               class="geneo-layer-toggle"
@@ -11979,6 +11980,7 @@ function renderGeneographEditorSidebar(board)
                         : icon.unlock
                 }
             </button>
+            </span>
           </div>
         `;
     };
@@ -12018,8 +12020,10 @@ function renderGeneographEditorSidebar(board)
               <span class="geneo-layer-subtitle" title="${escapeHtml(geneoDefaultConnectionLabel(connection))}">${escapeHtml(normalizeGeneographLayerName(connection.name) ? geneoDefaultConnectionLabel(connection) : geneoConnectionKindLabel(connection))}</span>
             </span>
             <span class="geneo-layer-paint-status" data-geneo-connection-paint-status ${connection.visible === false || geneoEffectiveConnectionStyle(connection).line.enabled ? 'hidden' : ''}>${escapeHtml(t('No stroke'))}</span>
-            <button class="geneo-layer-toggle" type="button" data-geneo-locate-connection="${escapeHtml(connection.id)}" ${geneoConnectionEffectiveVisible(connection) ? '' : 'disabled'} aria-label="${escapeHtml(`${t('Locate on canvas')}: ${displayName}`)}" title="${escapeHtml(t('Locate on canvas'))}">${icon.mapCenter}</button>
-            <button class="geneo-layer-toggle" type="button" data-geneo-toggle-connection-visible="${escapeHtml(connection.id)}" aria-label="${escapeHtml(`${t(connection.visible === false ? 'Show' : 'Hide')} ${displayName}`)}" title="${escapeHtml(t(connection.visible === false ? 'Show' : 'Hide'))}">${connection.visible === false ? icon.eyeOff : icon.eye}</button>
+            <span class="geneo-layer-actions">
+              <button class="geneo-layer-toggle" type="button" data-geneo-locate-connection="${escapeHtml(connection.id)}" ${geneoConnectionEffectiveVisible(connection) ? '' : 'disabled'} aria-label="${escapeHtml(`${t('Locate on canvas')}: ${displayName}`)}" title="${escapeHtml(t('Locate on canvas'))}">${icon.mapCenter}</button>
+              <button class="geneo-layer-toggle" type="button" data-geneo-toggle-connection-visible="${escapeHtml(connection.id)}" aria-label="${escapeHtml(`${t(connection.visible === false ? 'Show' : 'Hide')} ${displayName}`)}" title="${escapeHtml(t(connection.visible === false ? 'Show' : 'Hide'))}">${connection.visible === false ? icon.eyeOff : icon.eye}</button>
+            </span>
           </div>
         `;
         };
