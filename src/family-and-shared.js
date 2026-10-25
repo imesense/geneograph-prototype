@@ -11189,7 +11189,10 @@ function openAddPersonModal(title, subtitle, options = {})
             && parentIdsForPerson(connectionIntent.anchorPersonId).length >= 2
             ? 'Adoptive' : 'Biological');
 
-    const relativeGender = getGenderForRelativeType(options.relativeType);
+    const anchorGender = String(getPerson(connectionIntent.anchorPersonId)?.gender || '').toLowerCase();
+    const relativeGender = isPartnerMode && connectionIntent.shouldConnect
+        ? anchorGender === 'male' ? 'Female' : anchorGender === 'female' ? 'Male' : 'Unknown'
+        : getGenderForRelativeType(options.relativeType);
 
     const initialGender = options.gender
         || (isEditMode ? editValues.gender : relativeGender)

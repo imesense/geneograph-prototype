@@ -20036,8 +20036,14 @@ function startGeneographFamilyBusRailDrag(event)
     event.stopPropagation();
 }
 
-function geneoRelativeDefaultGender(type)
+function geneoRelativeDefaultGender(type, anchorNodeId = '')
 {
+    if (type === 'partner')
+    {
+        const anchorNode = getGeneographNode(anchorNodeId);
+        const gender = getGeneographPerson(anchorNode?.personId)?.gender;
+        return gender === 'male' ? 'female' : gender === 'female' ? 'male' : 'unknown';
+    }
     if (
         ['father', 'son', 'brother']
             .includes(type)
@@ -21065,7 +21071,7 @@ function renderGeneographPersonModal(
     person = null,
     {
         relative = null,
-        gender: initialGender = 'male'
+        gender: initialGender
     } = {}
 )
 {
@@ -21076,14 +21082,11 @@ function renderGeneographPersonModal(
             person || {}
         );
 
-    const defaultGender =
-        relative
-            ? geneoRelativeDefaultGender(
-                relative.type
-            )
-            : ['male', 'female', 'unknown'].includes(initialGender)
-                ? initialGender
-                : 'male';
+    const defaultGender = ['male', 'female', 'unknown'].includes(initialGender)
+        ? initialGender
+        : relative
+            ? geneoRelativeDefaultGender(relative.type, relative.anchorNodeId)
+            : 'male';
 
     const gender =
         ['male', 'female', 'unknown']
