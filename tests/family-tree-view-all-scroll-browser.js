@@ -45,7 +45,11 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             await link.first().click();
             assert.equal(await page.evaluate(() => state.activeModule), destination);
             await page.evaluate(() => navigateToProjectModule(currentProjectId(), 'Family Tree'));
-            await page.waitForTimeout(50);
+            await page.waitForFunction(expected =>
+            {
+                const canvas = document.querySelector('.tree-canvas');
+                return canvas?.scrollLeft === expected.left && canvas?.scrollTop === expected.top;
+            }, before);
             const after = await page.locator('.tree-canvas').evaluate(canvas => ({
                 left: canvas.scrollLeft, top: canvas.scrollTop
             }));

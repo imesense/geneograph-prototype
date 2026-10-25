@@ -794,6 +794,7 @@ function renderFamilyTree()
             --tree-focus-control-height:
               ${TREE_GEOMETRY.focusControlHeight}px;
           ">
+          <div class="tree-workspace ${state.treeInspectorCollapsed ? 'inspector-collapsed' : ''}">
           <div class="tree-toolbar">
             <div class="tree-toolbar-left">
               <button class="tree-control tree-control-select" type="button" data-tree-person-picker aria-haspopup="dialog" aria-expanded="false" aria-label="${escapeHtml(t('Find person'))}: ${escapeHtml(selected?.name || '')}" title="${escapeHtml(selected?.name || '')}">
@@ -807,12 +808,11 @@ function renderFamilyTree()
             </div>
             <div class="tree-toolbar-right">
               <label class="tree-view-mobile">${icon.tree}<select aria-label="${escapeHtml(t('Tree view mode'))}"><option value="Classic">${escapeHtml(t('Classic'))}</option><option value="Pedigree" disabled>${escapeHtml(t('Pedigree'))}</option><option value="Fan" disabled>${escapeHtml(t('Fan'))}</option></select>${icon.chevron}</label>
+              <span class="tree-people-status" role="status" aria-label="${escapeHtml(t('People in project'))}: ${escapeHtml(familyPeopleCountLabel)}" title="${escapeHtml(t('People in project'))}">${escapeHtml(familyPeopleCountLabel)}</span>
               <button class="tree-icon-button tree-display-settings" type="button" data-tree-settings aria-label="${escapeHtml(t('Tree display settings'))}" title="${escapeHtml(t('Tree display settings'))}">${icon.slidersHorizontal}</button>
             </div>
           </div>
-          <div class="tree-workspace ${state.treeInspectorCollapsed ? 'inspector-collapsed' : ''}">
             <button class="inspector-restore sidebar-toggle-icon sidebar-toggle-icon-restore" type="button" id="restoreInspector" aria-label="Show person sidebar">${icon.doublechevronSidebar}</button>
-            <div class="tree-canvas-status" role="status" aria-label="${escapeHtml(t('People in project'))}: ${escapeHtml(familyPeopleCountLabel)}" title="${escapeHtml(t('People in project'))}">${icon.peoplegroup}<span>${escapeHtml(familyPeopleCountLabel)}</span></div>
             <section class="tree-canvas" aria-label="Family tree canvas">
               <div class="tree-stage-space" style="width:${treeLayout.stageWidth * state.treeZoom / 100}px;height:${treeLayout.stageHeight * state.treeZoom / 100}px;">
                 <div class="tree-stage" style="width:${treeLayout.stageWidth}px;height:${treeLayout.stageHeight}px;transform: scale(${state.treeZoom / 100});">
