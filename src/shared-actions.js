@@ -742,8 +742,6 @@ function resetProjectModuleState(projectId)
         : treeDefaultPersonId(projectId);
     treeView.focusPersonId = validTreeFocus;
     treeView.recentPersonIds = validTreeFocus ? [validTreeFocus] : [];
-    treeView.navigationBackStack = [];
-    treeView.navigationForwardStack = [];
 
     cancelGeneographPencilStroke?.();
     clearGeneographConnectionClick?.();

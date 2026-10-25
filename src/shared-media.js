@@ -847,6 +847,8 @@ function openAlbumsForPhoto(
         return;
     }
 
+    appNavigationMarkIntent({ type: 'photo', id: photoId });
+
     state.activeModule =
         'Albums';
 

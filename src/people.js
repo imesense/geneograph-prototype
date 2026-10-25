@@ -6991,6 +6991,8 @@ function openProfilePlace(placeId)
         return;
     }
 
+    appNavigationMarkIntent({ type: 'place', id: placeId });
+
     state.activeModule = 'Places';
     state.placesView = 'all';
     state.selectedPlaceId = placeId;
@@ -8726,10 +8728,13 @@ function openPeopleProfileFromRow(personId)
 
 function showPersonInFamilyTree(personId)
 {
-    if (!getPerson(personId))
+    const person = getPerson(personId);
+    if (!person || person.deleted || person.projectId !== currentProjectId())
     {
         showToast('This person is not currently shown in the sample Family Tree.'); return;
     }
+    appNavigationMarkIntent();
+    treeProjectViewState().focusPersonId = personId;
     state.activeModule = 'Family Tree';
     state.selectedPersonId = personId;
     rememberTreeSelectedPerson(personId);
@@ -9696,23 +9701,6 @@ function deletePeopleRecords(personIds)
                 view.focusPersonId = treeDefaultPersonId(projectId);
             }
 
-            view.navigationBackStack = Array.isArray(
-                view.navigationBackStack
-            )
-                ? view.navigationBackStack.filter(entry =>
-                    !deletedIds.has(entry?.focusPersonId)
-                && !deletedIds.has(entry?.selectedPersonId)
-                )
-                : [];
-
-            view.navigationForwardStack = Array.isArray(
-                view.navigationForwardStack
-            )
-                ? view.navigationForwardStack.filter(entry =>
-                    !deletedIds.has(entry?.focusPersonId)
-                && !deletedIds.has(entry?.selectedPersonId)
-                )
-                : [];
         }
     );
 
@@ -10201,6 +10189,7 @@ function bindPeopleSidebar(root)
         .querySelector('[data-open-profile]')
         ?.addEventListener('click', () =>
         {
+            appNavigationMarkIntent();
             clearPeopleSelection();
             state.peopleView = 'profile';
             renderPeople();

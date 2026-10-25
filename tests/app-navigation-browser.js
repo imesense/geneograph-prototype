@@ -29,6 +29,9 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             await page.evaluate(() => openAlbumsForPhoto('photo-silver-portrait'));
             assert.equal(await page.evaluate(() => state.activeModule), 'Albums');
             assert.equal(await page.locator('[data-app-navigation="back"]').isEnabled(), true);
+            assert.doesNotMatch(await page.locator('[data-app-navigation="back"]').getAttribute('title'), /GeneoGraph Project|Whiskerfield project/i, 'tooltip omits the project name');
+            if (width <= 390) assert.ok(await page.locator('[data-app-navigation="back"]').evaluate(button =>
+                button.getBoundingClientRect().width >= 44 && button.getBoundingClientRect().height >= 44), 'phone navigation has a 44px target');
             assert.ok(await page.locator('.app-navigation-controls').evaluate(group =>
             {
                 const style = getComputedStyle(group);
@@ -48,7 +51,7 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             await page.locator('[data-app-navigation="back"]').click();
             assert.deepEqual(await page.evaluate(() => [state.activeModule, state.peopleView, state.selectedPeopleId]), ['People', 'profile', 'silver']);
             await page.locator('[data-app-navigation="forward"]').click();
-            assert.deepEqual(await page.evaluate(() => [state.activeModule, state.selectedPhotoId]), ['Albums', 'photo-silver-portrait']);
+            assert.deepEqual(await page.evaluate(() => [state.activeModule, state.selectedPhotoId, state.albumsDetailCollapsed]), ['Albums', 'photo-silver-portrait', false]);
             await page.keyboard.press('Alt+ArrowLeft');
             assert.equal(await page.evaluate(() => state.activeModule), 'People');
             if (width === 1280)
@@ -77,14 +80,25 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
                 await page.evaluate(() => { state.projectOpen = false; state.currentProjectId = null; state.activeModule = 'Projects'; render(); });
                 assert.equal(await page.locator('.app-navigation-controls').count(), 0);
                 await page.keyboard.press('Alt+ArrowLeft');
-                assert.deepEqual(await page.evaluate(() => [state.projectOpen, state.activeModule]), [true, 'Projects']);
-                await page.locator('[data-app-navigation="back"]').click();
-                assert.equal(await page.evaluate(() => state.activeModule), 'People');
+                assert.deepEqual(await page.evaluate(() => [state.projectOpen, state.activeModule, appNavigation.back.length, appNavigation.forward.length]), [false, 'Projects', 0, 0]);
+                await page.evaluate(() => activateProject('p1', { moduleName: 'People' }));
+                assert.equal(await page.locator('[data-app-navigation="back"]').isDisabled(), true, 'reopening a project starts fresh history');
                 await page.evaluate(() => navigateToProjectModule(currentProjectId(), 'Places'));
                 assert.equal(await page.locator('[data-app-navigation="forward"]').isDisabled(), true, 'new navigation clears Forward');
                 await page.evaluate(() => { appNavigation.back.push({ projectId: 'deleted-project', module: 'People' }); appNavigationUpdateControls(); });
                 await page.locator('[data-app-navigation="back"]').click();
                 assert.equal(await page.evaluate(() => state.activeModule), 'People', 'unavailable entry skipped');
+                await page.evaluate(() => navigateToProjectModule(currentProjectId(), 'Family Tree'));
+                const treeStart = await page.evaluate(() => ({ focus: treeProjectViewState().focusPersonId, selected: state.selectedPersonId }));
+                await page.evaluate(() => navigateFamilyTreeToPerson('barnaby', { center: false }));
+                await page.evaluate(() => navigateFamilyTreeToPerson('daisy', { center: false }));
+                assert.equal(await page.evaluate(() => state.selectedPersonId), 'daisy');
+                await page.locator('[data-app-navigation="back"]').click();
+                assert.equal(await page.evaluate(() => state.selectedPersonId), 'barnaby', 'same-branch selections have separate steps');
+                await page.locator('[data-app-navigation="back"]').click();
+                assert.deepEqual(await page.evaluate(() => ({ focus: treeProjectViewState().focusPersonId, selected: state.selectedPersonId })), treeStart);
+                await page.locator('[data-app-navigation="forward"]').click();
+                assert.equal(await page.evaluate(() => state.selectedPersonId), 'barnaby');
                 await page.evaluate(() => navigateToProjectModule(currentProjectId(), 'Geneograph'));
                 await page.evaluate(() => openGeneographBoard('gb1'));
                 assert.deepEqual(await page.evaluate(() => [state.geneoView, state.selectedGeneoBoardId]), ['board', 'gb1']);
@@ -97,9 +111,7 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
                     sampleData.projects.push({ ...sampleData.projects[0], id: 'navigation-test-project', name: 'Other project' });
                     activateProject('navigation-test-project', { moduleName: 'Projects' });
                 });
-                await page.locator('[data-app-navigation="back"]').click();
-                assert.deepEqual(await page.evaluate(() => [state.currentProjectId, state.activeModule, state.selectedGeneoBoardId]), ['p1', 'Geneograph', 'gb1']);
-                await page.locator('[data-app-navigation="forward"]').click();
+                assert.equal(await page.locator('[data-app-navigation="back"]').isDisabled(), true, 'switching projects resets history');
                 assert.equal(await page.evaluate(() => state.currentProjectId), 'navigation-test-project');
             }
             assert.ok(await page.locator('.topbar').evaluate(el => el.scrollWidth <= el.clientWidth + 1), `header fits ${width}px`);

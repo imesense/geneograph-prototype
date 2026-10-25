@@ -288,14 +288,20 @@ main.addEventListener('click', event =>
     });
 }, true);
 
-const appNavigation = { current: null, back: [], forward: [], intent: false, restoring: false };
+const appNavigation = { current: null, back: [], forward: [], intent: null, activeTarget: null, restoring: false };
 
 function appNavigationSnapshot()
 {
     if (!state.projectOpen) return { projectId: null, module: 'Projects' };
     const location = { projectId: state.currentProjectId, module: state.activeModule };
     if (location.module === 'Projects') location.view = state.openSide;
-    if (location.module === 'Family Tree') location.personId = treeProjectViewState().focusPersonId;
+    if (location.module === 'Family Tree')
+    {
+        location.focusPersonId = treeProjectViewState().focusPersonId;
+        location.personId = state.selectedPersonId || location.focusPersonId;
+        location.treeZoom = state.treeZoom;
+        location.treeScroll = getTreeCanvasScroll() || treeProjectViewState().canvasScroll;
+    }
     if (location.module === 'People')
     {
         location.view = state.peopleView;
@@ -310,7 +316,8 @@ function appNavigationSnapshot()
     {
         location.view = state.albumsView;
         if (location.view === 'album') location.albumId = state.activeAlbumId;
-        if (state.selectedPhotoId) location.photoId = state.selectedPhotoId;
+        const target = appNavigation.intent?.target || appNavigation.activeTarget;
+        if (target?.type === 'photo' && target.id === state.selectedPhotoId) location.photoId = target.id;
     }
     if (location.module === 'Archive')
     {
@@ -322,12 +329,13 @@ function appNavigationSnapshot()
     {
         location.view = state.notesView;
         location.collectionId = state.notesActiveCollectionId;
-        location.noteId = state.selectedNoteId;
+        if (state.selectedNoteId && !state.notesRightCollapsed) location.noteId = state.selectedNoteId;
     }
     if (location.module === 'Places')
     {
         location.view = state.placesView;
-        location.placeId = state.selectedPlaceId;
+        const target = appNavigation.intent?.target || appNavigation.activeTarget;
+        if (target?.type === 'place' && target.id === state.selectedPlaceId) location.placeId = target.id;
     }
     if (location.module === 'Publish') location.view = state.publishView;
     return location;
@@ -336,20 +344,32 @@ function appNavigationSnapshot()
 function appNavigationKey(location)
 {
     if (!location) return '';
-    const { archive, ...rest } = location;
+    const { archive, treeZoom, treeScroll, ...rest } = location;
     return JSON.stringify(archive ? { ...rest, archive: [archive.view, archive.folderId, archive.selectedFileId] } : rest);
 }
 
-function appNavigationMarkIntent() { appNavigation.intent = true; }
+function appNavigationMarkIntent(target = null)
+{
+    if (appNavigation.current && state.projectOpen) appNavigation.current = appNavigationSnapshot();
+    appNavigation.activeTarget = null;
+    appNavigation.intent = { target };
+}
 
 function appNavigationObserve()
 {
     const next = appNavigationSnapshot();
     const previous = appNavigation.current;
-    if (!previous) appNavigation.current = next;
+    if (previous && previous.projectId !== next.projectId)
+    {
+        appNavigation.back = [];
+        appNavigation.forward = [];
+        appNavigation.activeTarget = null;
+        appNavigation.current = next;
+    }
+    else if (!previous) appNavigation.current = next;
     else if (appNavigationKey(previous) !== appNavigationKey(next))
     {
-        if (!appNavigation.restoring && (appNavigation.intent || previous.module !== next.module || previous.projectId !== next.projectId))
+        if (!appNavigation.restoring && (appNavigation.intent || previous.module !== next.module))
         {
             appNavigation.back.push(previous);
             if (appNavigation.back.length > 50) appNavigation.back.shift();
@@ -358,16 +378,18 @@ function appNavigationObserve()
         appNavigation.current = next;
     }
     else appNavigation.current = next;
-    appNavigation.intent = false;
+    if (!appNavigation.restoring && (previous?.module !== next.module || previous?.view !== next.view)) appNavigation.activeTarget = null;
+    if (appNavigation.intent?.target) appNavigation.activeTarget = appNavigation.intent.target;
+    appNavigation.intent = null;
     appNavigationUpdateControls();
 }
 
 function appNavigationValid(location)
 {
-    if (!location.projectId) return location.module === 'Projects';
-    if (!validProjectById(location.projectId)) return false;
+    if (!state.projectOpen || location.projectId !== state.currentProjectId || !validProjectById(location.projectId)) return false;
     const projectId = location.projectId;
     if (location.personId && !getPeople(projectId).some(person => person.id === location.personId && !person.deleted)) return false;
+    if (location.focusPersonId && !getPeople(projectId).some(person => person.id === location.focusPersonId && !person.deleted)) return false;
     if (location.boardId && !getGeneographBoard(location.boardId, { projectId })) return false;
     if (location.albumId && !(sampleData.albums || []).some(album => album.id === location.albumId && album.projectId === projectId)) return false;
     if (location.photoId && !getPhoto(location.photoId, { projectId })) return false;
@@ -387,8 +409,6 @@ function appNavigationDestination(direction)
 function appNavigationLabel(location)
 {
     if (!location) return '';
-    if (!location.projectId) return t('All projects');
-    const project = validProjectById(location.projectId);
     const details = [
         location.personId && getPerson(location.personId)?.name,
         location.boardId && getGeneographBoard(location.boardId, { projectId: location.projectId })?.name,
@@ -399,7 +419,11 @@ function appNavigationLabel(location)
         location.archive?.selectedFileId && archiveFileById(location.archive.selectedFileId, location.projectId)?.name,
         location.sourceId && archiveSourceById(location.sourceId, location.projectId)?.name
     ];
-    return [project?.name, t(location.module), ...details].filter(Boolean).join(' - ');
+    const view = location.module === 'People' && location.view === 'profile' ? t('Profile')
+        : location.module === 'Geneograph' && location.view === 'board' ? t('Board')
+        : location.module === 'Archive' && location.archiveView === 'sources' ? t('Sources')
+        : location.module === 'Albums' && location.view === 'album' ? t('Album') : '';
+    return [t(location.module), view, ...details].filter(Boolean).join(': ');
 }
 
 function appNavigationUpdateControls()
@@ -410,32 +434,28 @@ function appNavigationUpdateControls()
         if (!button) continue;
         const target = appNavigationDestination(direction);
         button.disabled = !target;
-        button.title = target ? `${t(direction === 'back' ? 'Back to' : 'Forward to')} ${appNavigationLabel(target)}` : t(direction === 'back' ? 'Back' : 'Forward');
+        button.title = target ? `${t(direction === 'back' ? 'Back to' : 'Forward to')} ${appNavigationLabel(target)}` : t(direction === 'back' ? 'No previous destination' : 'No next destination');
         button.setAttribute('aria-label', button.title);
     }
 }
 
 function appNavigationRestore(location)
 {
-    if (!location.projectId)
-    {
-        state.projectOpen = false;
-        state.currentProjectId = null;
-        state.activeModule = 'Projects';
-        render();
-        return;
-    }
+    if (!appNavigationValid(location)) return;
     activateProject(location.projectId, { moduleName: location.module, renderNow: false });
     if (location.module === 'Projects') state.openSide = location.view || 'overview';
     if (location.module === 'Family Tree' && location.personId)
     {
-        treeProjectViewState(location.projectId).focusPersonId = location.personId;
+        treeProjectViewState(location.projectId).focusPersonId = location.focusPersonId || location.personId;
         state.selectedPersonId = location.personId;
-        state.treeCenterTargetId = location.personId;
+        state.treeZoom = location.treeZoom || state.treeZoom;
+        state.treeCenterTargetId = location.treeScroll ? '' : location.personId;
+        if (location.treeScroll) treeProjectViewState(location.projectId).canvasScroll = location.treeScroll;
     }
     if (location.module === 'People')
     {
         state.peopleView = location.view || 'directory';
+        state.peopleSide = state.peopleView === 'profile' ? 'profile' : 'people';
         if (location.personId) { state.selectedPeopleId = location.personId; state.selectedPersonId = location.personId; }
     }
     if (location.module === 'Geneograph')
@@ -452,6 +472,7 @@ function appNavigationRestore(location)
         state.albumsView = location.view || 'all';
         state.activeAlbumId = location.albumId || null;
         if (location.photoId) state.selectedPhotoId = location.photoId;
+        state.albumsDetailCollapsed = !location.photoId;
     }
     if (location.module === 'Archive' && location.archive)
     {
@@ -467,6 +488,8 @@ function appNavigationRestore(location)
         state.notesView = location.view || 'all';
         state.notesActiveCollectionId = location.collectionId || null;
         state.selectedNoteId = location.noteId || null;
+        state.notesRightCollapsed = !location.noteId;
+        state.notesMobilePane = location.noteId ? 'editor' : 'browser';
     }
     if (location.module === 'Places')
     {
@@ -479,7 +502,7 @@ function appNavigationRestore(location)
 
 function appNavigationGo(direction)
 {
-    if (modalBackdrop.classList.contains('open')) return;
+    if (!state.projectOpen || modalBackdrop.classList.contains('open')) return;
     const target = appNavigationDestination(direction);
     if (!target) return;
     const commit = () =>
@@ -490,7 +513,13 @@ function appNavigationGo(direction)
         const other = direction === 'back' ? 'forward' : 'back';
         if (appNavigation.current) appNavigation[other].push(appNavigation.current);
         appNavigation.restoring = true;
-        try { appNavigationRestore(entry); appNavigation.current = entry; }
+        try
+        {
+            appNavigation.activeTarget = entry.photoId ? { type: 'photo', id: entry.photoId }
+                : entry.placeId ? { type: 'place', id: entry.placeId } : null;
+            appNavigationRestore(entry);
+            appNavigation.current = entry;
+        }
         finally { appNavigation.restoring = false; appNavigationUpdateControls(); }
     };
     if (state.activeModule === 'Archive') runAfterArchiveFileEditGuard(commit);
@@ -499,7 +528,7 @@ function appNavigationGo(direction)
 
 document.addEventListener('keydown', event =>
 {
-    if (!event.altKey || event.ctrlKey || event.metaKey || event.shiftKey
+    if (!state.projectOpen || !event.altKey || event.ctrlKey || event.metaKey || event.shiftKey
         || !['ArrowLeft', 'ArrowRight'].includes(event.key)
         || event.target.closest('input, textarea, select, [contenteditable="true"]')
         || modalBackdrop.classList.contains('open')) return;

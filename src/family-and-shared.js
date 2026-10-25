@@ -9022,8 +9022,6 @@ function commitAddPersonModalCreate(title, subtitle, options = {})
         const treeView = treeProjectViewState(newPerson.projectId);
         treeView.focusPersonId = newPerson.id;
         treeView.recentPersonIds = [newPerson.id];
-        treeView.navigationBackStack = [];
-        treeView.navigationForwardStack = [];
         state.treeCenterTargetId = newPerson.id;
     }
 

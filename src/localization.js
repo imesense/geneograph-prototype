@@ -304,6 +304,8 @@ const RU_UI_SHARED = Object.freeze({
     'Forward': 'Вперёд',
     'Back to': 'Назад к',
     'Forward to': 'Вперёд к',
+    'No previous destination': 'Нет предыдущего места',
+    'No next destination': 'Нет следующего места',
     'App navigation': 'Навигация по приложению',
     'Add': 'Добавить',
     'Edit': 'Изменить',
