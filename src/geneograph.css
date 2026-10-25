@@ -2177,6 +2177,88 @@
     cursor: default;
 }
 
+.geneo-bulk-arrange-layout {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    width: 100%;
+    min-width: 0;
+}
+
+.geneo-bulk-arrange-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 3 1 0;
+}
+
+.geneo-bulk-arrange-group:last-child {
+    flex: 1 1 0;
+}
+
+.geneo-bulk-command-row {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    min-width: 0;
+    margin-top: 8px;
+}
+
+.geneo-bulk-command-strip {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    margin-top: 8px;
+    border: 1px solid var(--border-default);
+    border-radius: 6px;
+    background: transparent;
+    overflow: hidden;
+}
+
+.geneo-bulk-command-row .geneo-bulk-command-strip {
+    flex: 1 1 0;
+    margin-top: 0;
+}
+
+.geneo-bulk-arrange-button {
+    display: grid;
+    place-items: center;
+    flex: 1 1 0;
+    min-width: 0;
+    height: 36px;
+    padding: 0;
+    border: 0;
+    border-right: 1px solid var(--border-default);
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.geneo-bulk-arrange-button:last-child {
+    border-right: 0;
+}
+
+.geneo-bulk-arrange-button:hover:not(:disabled) {
+    background: var(--surface-selected);
+    color: var(--text-primary);
+}
+
+.geneo-bulk-arrange-button:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 2px var(--brand-green-300);
+    color: var(--text-primary);
+}
+
+.geneo-bulk-arrange-button:disabled {
+    opacity: .4;
+    cursor: default;
+}
+
+.geneo-bulk-arrange-button svg {
+    width: 16px;
+    height: 16px;
+}
+
 @container (max-width: 360px) {
     .geneo-inspector-header {
         gap: 6px;
@@ -6164,6 +6246,23 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
     display: grid;
     gap: 6px;
     color: var(--text-secondary);
+}
+
+.geneo-selection-group {
+    display: grid;
+    gap: 8px;
+}
+
+.geneo-selection-group + .geneo-selection-group {
+    margin-top: var(--space-3);
+}
+
+.geneo-mixed-selection-scope-title {
+    margin: 0;
+    padding: var(--space-4) var(--space-4) 0;
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 700;
 }
 
 .geneo-person-summary {

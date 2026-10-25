@@ -1813,6 +1813,27 @@ const RU_UI_GENEO = {
     'Reset to default':
         'Сбросить к значениям по умолчанию',
 
+    'Arrange': 'Упорядочить',
+    'Align': 'Выровнять',
+    'Distribute': 'Распределить',
+    'Align left': 'По левому краю',
+    'Align horizontal centers': 'По горизонтальному центру',
+    'Align right': 'По правому краю',
+    'Align top': 'По верхнему краю',
+    'Align vertical centers': 'По вертикальному центру',
+    'Align bottom': 'По нижнему краю',
+    'Distribute horizontally': 'Распределить по горизонтали',
+    'Distribute vertically': 'Распределить по вертикали',
+    'Show selected': 'Показать выбранное',
+    'Hide selected': 'Скрыть выбранное',
+    'Lock selected': 'Заблокировать выбранное',
+    'Unlock selected': 'Разблокировать выбранное',
+    'Lock selected objects': 'Заблокировать выбранные объекты',
+    'Unlock selected objects': 'Разблокировать выбранные объекты',
+    'Arrange objects': 'Упорядочить объекты',
+    '{count} items selected': 'Выбрано элементов: {count}',
+    'and {count} more': 'и ещё {count}',
+
     'Fit to image':
         'Подогнать под изображение',
 

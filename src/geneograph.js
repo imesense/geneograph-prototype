@@ -6018,7 +6018,9 @@ function openGeneoConnectionStyleMenu(anchor, choice = 'pattern', scope = 'tool'
     if (closeGeneoOpenMenuOnTrigger(anchor)) return;
     closeMenu();
     const style = scope === 'default' ? selectedGeneographDiagram().connectionDefaults
-        : scope === 'connection' ? geneoEffectiveConnectionStyle(selectedGeneographConnection()) : geneoConnectionToolStyle();
+        : scope === 'connection' ? geneoEffectiveConnectionStyle(selectedGeneographConnection())
+            : scope === 'multi' ? { [choice]: geneoSharedConnectionValue(selectedGeneographConnections(), connection => geneoEffectiveConnectionStyle(connection)[choice]) }
+                : geneoConnectionToolStyle();
     const arrows = choice === 'arrows';
     const values = arrows ? GENEO_CONNECTION_ARROWS : GENEO_CONNECTION_PATTERNS;
     const label = arrows ? t('Arrowheads') : t('Connection pattern');
@@ -6064,6 +6066,12 @@ function openGeneoConnectionStyleMenu(anchor, choice = 'pattern', scope = 'tool'
             }
             closeMenu();
             renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true });
+            return;
+        }
+        if (scope === 'multi')
+        {
+            geneoCommitMultiConnectionAppearance(choice, value);
+            closeMenu();
             return;
         }
         geneoConnectionToolStyle();
@@ -14055,7 +14063,8 @@ function renderGeneographInspectorHeader(
     subtitle,
     iconHtml = '',
     node = null,
-    entityType = 'node'
+    entityType = 'node',
+    extraActions = ''
 )
 {
     const hasIcon =
@@ -14115,7 +14124,7 @@ function renderGeneographInspectorHeader(
             <button type="button" data-geneo-header-visible aria-label="${escapeHtml(`${t(node.visible ? 'Hide layer' : 'Show layer')}: ${title}`)}" title="${escapeHtml(t(node.visible ? 'Hide layer' : 'Show layer'))}" aria-pressed="${node.visible ? 'true' : 'false'}">${node.visible ? icon.eye : icon.eyeOff}</button>
           </div>` : entityType === 'board' ? `<div class="geneo-inspector-header-actions">
             <button type="button" data-geneo-settings aria-label="${escapeHtml(t('Edit board'))}" title="${escapeHtml(t('Edit board'))}">${icon.edit}</button>
-          </div>` : ''}
+          </div>` : extraActions}
         </div>
       `;
 }
@@ -15233,6 +15242,248 @@ function renderGeneographPersonMultiSelectionControls(
     });
 }
 
+function geneoSharedConnectionValue(connections, getter)
+{
+    if (!connections.length) return null;
+    const values = connections.map(getter);
+    return values.every(value => value === values[0]) ? values[0] : null;
+}
+
+function geneoCommitMultiConnectionAppearance(key, value)
+{
+    const connections = selectedGeneographConnections();
+    const diagram = selectedGeneographDiagram();
+    if (!diagram || !connections.length) return;
+    const eligible = key === 'arrows' ? connections.every(connection => connection.kind === 'visual')
+        : key === 'showRelationshipDates' ? connections.every(connection => connection.kind === 'family-partner') : true;
+    if (!eligible || connections.every(connection =>
+        (key === 'showRelationshipDates' ? geneoEffectiveShowRelationshipDates(connection)
+            : geneoEffectiveConnectionStyle(connection)[key]) === value)) return;
+    geneoPushHistory();
+    connections.forEach(connection =>
+    {
+        if (key === 'showRelationshipDates')
+        {
+            if (value === diagram.connectionDefaults.showRelationshipDates) delete connection.showRelationshipDates;
+            else connection.showRelationshipDates = value;
+        }
+        else
+        {
+            connection.style ||= {};
+            if (value === diagram.connectionDefaults[key]) delete connection.style[key];
+            else connection.style[key] = value;
+        }
+    });
+    touchGeneographBoard();
+    renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true, preserveSidebarScroll: true });
+}
+
+function geneoCommitMultiConnectionPaint(field, value)
+{
+    const connections = selectedGeneographConnections();
+    const diagram = selectedGeneographDiagram();
+    if (!diagram || !connections.length) return;
+    if (connections.every(connection => geneoEffectiveConnectionStyle(connection).line[field] === value)) return;
+    geneoPushHistory();
+    connections.forEach(connection =>
+    {
+        const line = { ...geneoEffectiveConnectionStyle(connection).line, [field]: value };
+        connection.style ||= {};
+        if (['color', 'opacity', 'enabled'].every(key => line[key] === diagram.connectionDefaults.line[key])) delete connection.style.line;
+        else connection.style.line = line;
+    });
+    touchGeneographBoard();
+    renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true, preserveSidebarScroll: true });
+}
+
+function renderGeneographMultiConnectionAppearance(connections, mixed = false)
+{
+    const shared = getter => geneoSharedConnectionValue(connections, getter);
+    const styleValue = key => shared(connection => geneoEffectiveConnectionStyle(connection)[key]);
+    const pattern = styleValue('pattern');
+    const width = styleValue('width');
+    const radius = styleValue('cornerRadius');
+    const color = shared(connection => geneoEffectiveConnectionStyle(connection).line.color);
+    const opacity = shared(connection => geneoEffectiveConnectionStyle(connection).line.opacity);
+    const enabled = shared(connection => geneoEffectiveConnectionStyle(connection).line.enabled);
+    const visualOnly = connections.every(connection => connection.kind === 'visual');
+    const partnerOnly = connections.every(connection => connection.kind === 'family-partner');
+    const arrows = visualOnly ? styleValue('arrows') : null;
+    const dates = partnerOnly ? shared(connection => geneoEffectiveShowRelationshipDates(connection)) : null;
+    return renderGeneographInspectorSection({
+        context: 'multi', id: mixed ? 'connectionAppearance' : 'appearance', title: 'Appearance',
+        content: `<div class="geneo-connection-style-fields" data-geneo-connection-fields="multi">
+          <div class="geneo-field"><span class="geneo-setting-label">${escapeHtml(t('Pattern'))}</span>
+            <button type="button" class="geneo-connection-default-pattern" data-geneo-connection-multi-pattern
+              aria-label="${escapeHtml(`${t('Pattern')}: ${pattern ? t(GENEO_CONNECTION_PATTERN_LABELS[pattern]) : t('Mixed')}`)}"
+              aria-haspopup="menu" aria-expanded="false">${pattern ? renderGeneoConnectionLineSample(pattern) : escapeHtml(t('Mixed'))}${icon.chevron}</button>
+          </div>
+          <label class="geneo-field"><span class="geneo-setting-label">${escapeHtml(t('Width'))}</span>
+            <span class="geneo-number-unit"><input class="geneo-input" type="number" min="1" max="12" step="1"
+              value="${width ?? ''}" placeholder="${escapeHtml(t('Mixed'))}" data-geneo-connection-multi-width><span aria-hidden="true">px</span></span>
+          </label>
+          <div class="geneo-paint-row geneo-person-multi-paint-row ${enabled === false ? 'is-none' : ''}" data-geneo-connection-multi-paint-row>
+            <div class="geneo-paint-row-heading"><span class="geneo-paint-heading-copy"><span class="geneo-paint-label">${escapeHtml(t('Connection color'))}</span>
+              ${enabled === null ? `<span class="geneo-paint-state">${escapeHtml(t('Mixed'))}</span>` : ''}
+              ${enabled === false ? `<span class="geneo-paint-state">${escapeHtml(t('None'))}</span>` : ''}</span>
+              <button class="geneo-paint-action" type="button" data-geneo-connection-multi-paint-toggle>${escapeHtml(t(enabled === false ? 'Restore' : 'Remove'))}</button></div>
+            <div class="geneo-paint-controls">
+              <label class="geneo-paint-swatch geneo-multi-paint-swatch ${color === null ? 'is-mixed' : ''}" title="${escapeHtml(color ?? t('Mixed'))}">
+                <input type="color" value="${color || '#D9E5E1'}" data-geneo-connection-multi-color aria-label="${escapeHtml(t('Connection color'))}"></label>
+              <input class="geneo-paint-hex" type="text" maxlength="7" spellcheck="false" value="${color || ''}"
+                placeholder="${escapeHtml(t('Mixed'))}" data-geneo-connection-multi-hex aria-label="${escapeHtml(t('Connection color'))}">
+              <label class="geneo-paint-opacity-number"><input type="number" min="0" max="100" step="1"
+                value="${opacity ?? ''}" placeholder="${escapeHtml(t('Mixed'))}" data-geneo-connection-multi-opacity
+                aria-label="${escapeHtml(t('Line opacity'))}"><span aria-hidden="true">%</span></label>
+            </div>
+          </div>
+          ${visualOnly ? `<fieldset class="geneo-connection-arrows"><legend class="geneo-setting-label">${escapeHtml(t('Arrowheads'))}</legend>
+            <div class="geneo-connection-arrow-options">${GENEO_CONNECTION_ARROWS.map(value => `<label><input type="radio" name="geneo-multi-arrows" value="${value}" data-geneo-connection-multi-arrows ${arrows === value ? 'checked' : ''}><span>${escapeHtml(t(capitalize(value)))}</span></label>`).join('')}</div></fieldset>` : ''}
+          <div class="geneo-person-card-radius-row geneo-connection-radius-row"><label class="geneo-field" for="geneoConnectionMultiRadius">
+            <span class="geneo-setting-label">${escapeHtml(t('Corner radius'))}</span><span class="geneo-selection-help">0–32 px</span></label>
+            <input class="geneo-input" id="geneoConnectionMultiRadius" type="number" min="0" max="32" step="1"
+              value="${radius ?? ''}" placeholder="${escapeHtml(t('Mixed'))}" data-geneo-connection-multi-radius></div>
+        </div>
+        ${partnerOnly ? `<label class="geneo-check geneo-connection-date-default"><input type="checkbox" data-geneo-connection-multi-dates ${dates === true ? 'checked' : ''} data-mixed="${dates === null}"><span>${escapeHtml(t('Show relationship date on board'))}</span></label>` : ''}`
+    });
+}
+
+function geneoBulkNodeSupports(node, property)
+{
+    if (property === 'fill') return !['image', 'drawing'].includes(node.type);
+    if (property === 'text') return !['image', 'shape', 'drawing'].includes(node.type);
+    if (property === 'cornerRadius') return node.type !== 'drawing'
+        && (node.type !== 'shape' || normalizeGeneographShapeKind(node.shapeKind) !== 'ellipse');
+    return true;
+}
+
+function geneoBulkNodeValue(node, property, field = '')
+{
+    if (property === 'cornerRadius') return node.type === 'person'
+        ? geneoPersonCardEffectiveSettings(node).cornerRadius : node.appearance.cornerRadius;
+    const appearance = node.type === 'person' ? geneoResolveVisibleNodeAppearance(node) : node.appearance;
+    return field ? appearance[property][field] : appearance[property];
+}
+
+function geneoBulkNodeAppearanceIsDefault(node)
+{
+    if (node.type !== 'person') return !geneoNodeAppearanceIsDefault(node);
+    const appearance = node.appearance || {};
+    return ['fill', 'stroke', 'text'].some(key => appearance.paintOverrides?.[key] === true)
+        || ['strokeWidth', 'strokePattern'].some(key => appearance.styleOverrides?.[key] === true)
+        || normalizeGeneographPersonCardOverrides(node.personCard).cornerRadius != null;
+}
+
+function renderGeneographGenericMultiAppearance(nodes)
+{
+    const shared = (property, field = '') => geneoSharedConnectionValue(nodes,
+        node => geneoBulkNodeValue(node, property, field));
+    const paintRow = property =>
+    {
+        if (!nodes.every(node => geneoBulkNodeSupports(node, property))) return '';
+        const color = shared(property, 'color');
+        const opacity = shared(property, 'opacity');
+        const enabled = shared(property, 'enabled');
+        const label = t(capitalize(property));
+        return `<div class="geneo-paint-row geneo-person-multi-paint-row ${enabled === false ? 'is-none' : ''}">
+          <div class="geneo-paint-row-heading"><span class="geneo-paint-heading-copy"><span class="geneo-paint-label">${escapeHtml(label)}</span>
+            ${enabled === null ? `<span class="geneo-paint-state">${escapeHtml(t('Mixed'))}</span>` : ''}
+            ${enabled === false ? `<span class="geneo-paint-state">${escapeHtml(t('None'))}</span>` : ''}</span>
+            ${property !== 'text' ? `<button class="geneo-paint-action" type="button" data-geneo-bulk-paint-toggle="${property}">${escapeHtml(t(enabled === false ? 'Restore' : 'Remove'))}</button>` : ''}</div>
+          <div class="geneo-paint-controls"><label class="geneo-paint-swatch geneo-multi-paint-swatch ${color === null ? 'is-mixed' : ''}" title="${escapeHtml(color || t('Mixed'))}">
+            <input type="color" value="${color || '#FFFFFF'}" data-geneo-bulk-paint-color="${property}" aria-label="${escapeHtml(t(`${capitalize(property)} color`))}"></label>
+            <input class="geneo-paint-hex" type="text" maxlength="7" spellcheck="false" value="${color || ''}" placeholder="${escapeHtml(t('Mixed'))}"
+              data-geneo-bulk-paint-hex="${property}" aria-label="${escapeHtml(t(`${capitalize(property)} hex color`))}">
+            <label class="geneo-paint-opacity-number"><input type="number" min="0" max="100" step="1" value="${opacity ?? ''}"
+              placeholder="${escapeHtml(t('Mixed'))}" data-geneo-bulk-paint-opacity="${property}" aria-label="${escapeHtml(t(`${capitalize(property)} opacity`))}"><span aria-hidden="true">%</span></label>
+          </div></div>`;
+    };
+    const width = shared('strokeWidth');
+    const pattern = shared('strokePattern');
+    const radiusSupported = nodes.every(node => geneoBulkNodeSupports(node, 'cornerRadius'));
+    const radius = radiusSupported ? shared('cornerRadius') : null;
+    const shapesOnly = nodes.every(node => node.type === 'shape');
+    const shapeKind = shapesOnly ? geneoSharedConnectionValue(nodes, node => normalizeGeneographShapeKind(node.shapeKind)) : null;
+    return renderGeneographInspectorSection({
+        context: 'multi', id: 'appearance', title: 'Appearance',
+        content: `<div class="geneo-person-appearance-controls geneo-bulk-node-appearance">
+          ${['fill', 'stroke', 'text'].map(paintRow).join('')}
+          <div class="geneo-card-default-dimensions">
+            <label class="geneo-field"><span class="geneo-setting-label">${escapeHtml(t('Stroke width'))}</span>
+              <input class="geneo-input" type="number" min="1" max="12" step="1" value="${width ?? ''}"
+                placeholder="${escapeHtml(t('Mixed'))}" data-geneo-bulk-appearance="strokeWidth"></label>
+            <label class="geneo-field"><span class="geneo-setting-label">${escapeHtml(t('Stroke pattern'))}</span>
+              <span class="common-select-shell"><select class="common-select" data-geneo-bulk-appearance="strokePattern">
+                ${pattern === null ? `<option value="" selected>${escapeHtml(t('Mixed'))}</option>` : ''}
+                <option value="solid" ${pattern === 'solid' ? 'selected' : ''}>${escapeHtml(t('Solid'))}</option>
+                <option value="dashed" ${pattern === 'dashed' ? 'selected' : ''}>${escapeHtml(t('Dashed'))}</option>
+              </select><span class="common-select-chevron" aria-hidden="true">${icon.chevron}</span></span></label>
+          </div>
+          ${radiusSupported ? `<div class="geneo-person-card-radius-row"><label class="geneo-field" for="geneoBulkNodeRadius">
+            <span class="geneo-setting-label">${escapeHtml(t('Corner radius'))}</span><span class="geneo-selection-help">0–32 px</span></label>
+            <input class="geneo-input" id="geneoBulkNodeRadius" type="number" min="0" max="32" step="1" value="${radius ?? ''}"
+              placeholder="${escapeHtml(t('Mixed'))}" data-geneo-bulk-appearance="cornerRadius"></div>` : ''}
+          ${shapesOnly ? `<label class="geneo-field"><span class="geneo-setting-label">${escapeHtml(t('Shape type'))}</span>
+            <span class="common-select-shell"><select class="common-select" data-geneo-bulk-shape-kind>
+              ${shapeKind === null ? `<option value="" selected>${escapeHtml(t('Mixed'))}</option>` : ''}
+              ${GENEO_SHAPE_KINDS.map(shape => `<option value="${shape.id}" ${shapeKind === shape.id ? 'selected' : ''}>${escapeHtml(t(shape.label))}</option>`).join('')}
+            </select><span class="common-select-chevron" aria-hidden="true">${icon.chevron}</span></span></label>` : ''}
+        </div>`
+    });
+}
+
+function geneoBulkArrangeRoots(nodes)
+{
+    const selectedIds = new Set(nodes.map(node => node.id));
+    return nodes.filter(node => !geneoNodeHasSelectedAncestor(node, selectedIds)
+        && !geneoNodeEffectiveLocked(node));
+}
+
+function renderGeneographBulkArrange(nodes, mixed = false)
+{
+    const roots = geneoBulkArrangeRoots(nodes);
+    if (roots.length < 2) return '';
+    const command = (value, label, iconHtml, disabled = false) => `<button class="geneo-bulk-arrange-button" type="button"
+        data-geneo-bulk-arrange="${value}" aria-label="${escapeHtml(t(label))}" title="${escapeHtml(t(label))}"
+        ${disabled ? 'disabled' : ''}>${iconHtml}</button>`;
+    return renderGeneographInspectorSection({
+        context: 'multi', id: 'arrange', title: mixed ? 'Arrange objects' : 'Arrange',
+        content: `<div class="geneo-bulk-arrange-layout"><div class="geneo-bulk-arrange-group"><span class="geneo-setting-label">${escapeHtml(t('Align'))}</span>
+            <div class="geneo-bulk-command-row" role="group" aria-label="${escapeHtml(t('Align'))}">
+              <div class="geneo-bulk-command-strip">${[
+                ['left', 'Align left', icon.alignStartVertical], ['centerX', 'Align horizontal centers', icon.alignCenterVertical],
+                ['right', 'Align right', icon.alignEndVertical]
+              ].map(([value, label, iconHtml]) => command(value, label, iconHtml)).join('')}</div>
+              <div class="geneo-bulk-command-strip">${[
+                ['top', 'Align top', icon.alignStartHorizontal], ['centerY', 'Align vertical centers', icon.alignCenterHorizontal],
+                ['bottom', 'Align bottom', icon.alignEndHorizontal]
+              ].map(([value, label, iconHtml]) => command(value, label, iconHtml)).join('')}</div>
+            </div></div>
+          <div class="geneo-bulk-arrange-group"><span class="geneo-setting-label">${escapeHtml(t('Distribute'))}</span>
+            <div class="geneo-bulk-command-strip" role="group" aria-label="${escapeHtml(t('Distribute'))}">
+              ${command('distributeX', 'Distribute horizontally', icon.alignHorizontalSpaceBetween)}
+              ${command('distributeY', 'Distribute vertically', icon.alignVerticalSpaceBetween)}</div></div></div>`
+    });
+}
+
+function renderGeneographBulkActions(nodes, connections)
+{
+    const targets = geneoObjectGroupNodes(nodes.map(node => node.id));
+    const selected = [...targets, ...connections];
+    const allVisible = selected.every(item => item.visible !== false);
+    const allUnlocked = targets.length && targets.every(node => !node.locked);
+    const visibleAction = allVisible ? 'hide' : 'show';
+    const lockAction = allUnlocked ? 'lock' : 'unlock';
+    const button = (action, label, iconHtml) => `<button type="button" data-geneo-bulk-action="${action}"
+        aria-label="${escapeHtml(t(label))}" title="${escapeHtml(t(label))}">${iconHtml}</button>`;
+    return `<div class="geneo-inspector-header-actions geneo-bulk-header-actions">
+      ${!nodes.length ? '' : button(lockAction, connections.length
+        ? (lockAction === 'lock' ? 'Lock selected objects' : 'Unlock selected objects')
+        : (lockAction === 'lock' ? 'Lock selected' : 'Unlock selected'), lockAction === 'lock' ? icon.unlock : icon.lock)}
+      ${button(visibleAction, visibleAction === 'show' ? 'Show selected' : 'Hide selected', visibleAction === 'show' ? icon.eyeOff : icon.eye)}
+    </div>`;
+}
+
 function renderGeneographMultiSelectionInspector(
     nodes,
     connections = []
@@ -15248,57 +15499,53 @@ function renderGeneographMultiSelectionInspector(
         )
     ];
 
-    const visibleNames =
-        labels
-            .slice(0, 6)
-            .map(
-                label =>
-                    `<li>${escapeHtml(label)}</li>`
-            )
-            .join('');
-
-    const remaining =
-        Math.max(
-            0,
-            labels.length - 6
-        );
+    const mixed = Boolean(nodes.length && connections.length);
+    const selectionGroup = (title, names) => `<div class="geneo-selection-group">
+        <strong class="geneo-setting-label">${escapeHtml(t(title))} (${names.length})</strong>
+        <ul class="geneo-selection-list">${names.slice(0, 6).map(name => `<li>${escapeHtml(name)}</li>`).join('')}</ul>
+        ${names.length > 6 ? `<p class="geneo-selection-more">${escapeHtml(t('and {count} more').replace('{count}', names.length - 6))}</p>` : ''}
+      </div>`;
 
     const peopleOnly =
         nodes.length > 0
-        && connections.length === 0
         && nodes.every(
             node =>
                 node.type === 'person'
         );
-    const connectionsOnly = connections.length > 0 && nodes.length === 0;
-
     const selectionContent = `
-        <ul class="geneo-selection-list">
-          ${visibleNames}
-        </ul>
-
-        ${
-            remaining
-                ? `
-              <p class="geneo-selection-more">
-                and ${remaining} more
-              </p>
-            `
-                : ''
-        }
-
+        ${nodes.length ? selectionGroup('Objects', nodes.map(geneoNodeTitle)) : ''}
+        ${connections.length ? selectionGroup('Connections', connections.map(geneoConnectionLabel)) : ''}
         <p class="geneo-selection-help">
-          Drag a selected object or connector to move the selection.
+          ${escapeHtml(t('Drag a selected object or connector to move the selection.'))}
         </p>
       `;
+    const objectSettings = nodes.length ? `
+        ${renderGeneographBulkArrange(nodes, mixed)}
+        ${peopleOnly ? `${renderGeneographPersonMultiAppearance(nodes)}
+            ${renderGeneographPersonMultiSelectionControls(nodes)}
+            <div class="geneo-inspector-reset"><button class="button secondary" type="button"
+              data-geneo-person-multi-reset ${nodes.some(geneoPersonHasResettableSettings) ? '' : 'disabled'}>${escapeHtml(t('Reset to default'))}</button></div>`
+            : `${renderGeneographGenericMultiAppearance(nodes)}
+              <div class="geneo-inspector-reset"><button class="button secondary" type="button"
+                data-geneo-bulk-node-reset ${nodes.some(geneoBulkNodeAppearanceIsDefault) ? '' : 'disabled'}>${escapeHtml(t('Reset to default'))}</button></div>`}
+      ` : '';
+    const connectionSettings = connections.length ? `${renderGeneographMultiConnectionAppearance(connections, mixed)}
+        <div class="geneo-inspector-reset"><button class="button secondary" type="button"
+          data-geneo-connection-multi-reset-default ${connections.some(connection => Object.keys(connection.style || {}).length || connection.showRelationshipDates !== undefined) ? '' : 'disabled'}>${escapeHtml(t('Reset to default'))}</button></div>` : '';
+    const scope = (title, count, content) => `<div class="geneo-mixed-selection-scope">
+        <h3 class="geneo-mixed-selection-scope-title">${escapeHtml(t(title))} (${count})</h3>${content}
+      </div>`;
 
     return `
         <aside class="geneo-inspector">
           <div class="geneo-inspector-body">
             ${renderGeneographInspectorHeader(
-                `${labels.length} items selected`,
+                t('{count} items selected').replace('{count}', labels.length),
                 'Multiple selection',
-                icon.cursorSelect
+                icon.cursorSelect,
+                null,
+                'node',
+                renderGeneographBulkActions(nodes, connections)
             )}
 
             ${renderGeneographInspectorSection({
@@ -15308,19 +15555,8 @@ function renderGeneographMultiSelectionInspector(
                 content: selectionContent
             })}
 
-            ${
-                peopleOnly
-                    ? `${renderGeneographPersonMultiAppearance(nodes)}
-                       ${renderGeneographPersonMultiSelectionControls(nodes)}
-                       <div class="geneo-inspector-reset">
-                         <button class="button secondary" type="button"
-                           data-geneo-person-multi-reset
-                           ${nodes.some(geneoPersonHasResettableSettings) ? '' : 'disabled'}>${escapeHtml(t('Reset to default'))}</button>
-                       </div>`
-                    : ''
-            }
-
-            ${connectionsOnly ? `<div class="geneo-inspector-reset"><button class="button secondary" type="button" data-geneo-connection-multi-reset-default ${connections.some(connection => Object.keys(connection.style || {}).length) ? '' : 'disabled'}>${escapeHtml(t('Reset to default'))}</button></div>` : ''}
+            ${mixed ? scope('Objects', nodes.length, objectSettings) + scope('Connections', connections.length, connectionSettings)
+                : objectSettings + connectionSettings}
 
             ${renderGeneographInspectorDangerAction(
                 'Delete selected'
@@ -16356,7 +16592,7 @@ function renderGeneographConnectionInspector(
                 content: appearanceContent
             })}
 
-            <div class="geneo-inspector-reset"><button class="button secondary" type="button" data-geneo-connection-reset-default ${Object.keys(connection.style || {}).length ? '' : 'disabled'}>${escapeHtml(t('Reset to default'))}</button></div>
+            <div class="geneo-inspector-reset"><button class="button secondary" type="button" data-geneo-connection-reset-default ${Object.keys(connection.style || {}).length || connection.showRelationshipDates !== undefined ? '' : 'disabled'}>${escapeHtml(t('Reset to default'))}</button></div>
 
             ${renderGeneographInspectorDangerAction(
                 'Delete connection'
@@ -27060,6 +27296,214 @@ function bindGeneographPersonMultiAppearance()
         commit(node => geneoApplyPersonGenderAppearance(node, diagram)));
 }
 
+function geneoUpdateBulkNodeAppearance(node, property, field, value, diagram)
+{
+    if (property === 'cornerRadius' && node.type === 'person')
+    {
+        node.personCard = normalizeGeneographPersonCardOverrides(node.personCard);
+        node.personCard.custom = true;
+        const inherited = geneoCardAppearanceForNode(node, diagram)?.cornerRadius
+            ?? diagram.personCardDefaults.cornerRadius;
+        node.personCard.cornerRadius = value === inherited ? null : value;
+        return;
+    }
+    if (field)
+    {
+        const paint = geneoBulkNodeValue(node, property);
+        node.appearance[property] = { ...paint, [field]: value };
+        if (node.type === 'person')
+        {
+            node.appearance.paintOverrides ||= { fill: false, stroke: false, text: false };
+            node.appearance.paintOverrides[property] = true;
+        }
+        return;
+    }
+    node.appearance[property] = value;
+    if (node.type === 'person' && ['strokeWidth', 'strokePattern'].includes(property))
+    {
+        node.appearance.styleOverrides ||= { strokeWidth: false, strokePattern: false };
+        node.appearance.styleOverrides[property] = true;
+    }
+}
+
+function geneoResetBulkNodeAppearance(node, diagram)
+{
+    if (node.type !== 'person')
+    {
+        node.appearance = structuredClone(geneoNodeDefaults(node.type).appearance);
+        return;
+    }
+    const inherited = geneoPersonGenderAppearance(node, diagram);
+    for (const key of ['fill', 'stroke', 'text']) node.appearance[key] = structuredClone(inherited[key]);
+    node.appearance.strokeWidth = inherited.strokeWidth;
+    node.appearance.strokePattern = inherited.strokePattern;
+    node.appearance.paintOverrides = { fill: false, stroke: false, text: false };
+    node.appearance.styleOverrides = { strokeWidth: false, strokePattern: false };
+    node.personCard = normalizeGeneographPersonCardOverrides(node.personCard);
+    node.personCard.cornerRadius = null;
+}
+
+function geneoApplyBulkArrangement(nodes, command)
+{
+    const roots = geneoBulkArrangeRoots(nodes);
+    if (roots.length < 2) return;
+    const x = command === 'distributeX' || ['left', 'centerX', 'right'].includes(command);
+    const ordered = [...roots].sort((a, b) => (x ? a.x - b.x : a.y - b.y));
+    const first = ordered[0];
+    const last = ordered.at(-1);
+    const position = new Map();
+    if (command.startsWith('distribute'))
+    {
+        const start = x ? first.x : first.y;
+        const end = x ? last.x + last.width : last.y + last.height;
+        const total = ordered.reduce((sum, node) => sum + (x ? node.width : node.height), 0);
+        const gap = Math.max(20, (end - start - total) / (ordered.length - 1));
+        let cursor = start;
+        ordered.forEach((node, index) =>
+        {
+            if (index > 0) position.set(node.id, cursor);
+            cursor += (x ? node.width : node.height) + gap;
+        });
+    }
+    else
+    {
+        const left = Math.min(...roots.map(node => node.x));
+        const right = Math.max(...roots.map(node => node.x + node.width));
+        const top = Math.min(...roots.map(node => node.y));
+        const bottom = Math.max(...roots.map(node => node.y + node.height));
+        roots.forEach(node => position.set(node.id, ({
+            left, centerX: (left + right - node.width) / 2, right: right - node.width,
+            top, centerY: (top + bottom - node.height) / 2, bottom: bottom - node.height
+        })[command]));
+    }
+    const moves = new Map();
+    roots.forEach(root =>
+    {
+        const target = position.get(root.id);
+        if (target === undefined) return;
+        const dx = x ? target - root.x : 0;
+        const dy = x ? 0 : target - root.y;
+        if (!dx && !dy) return;
+        geneoObjectGroupNodes([root.id]).forEach(node =>
+        {
+            if (!geneoNodeEffectiveLocked(node)) moves.set(node.id, { dx, dy });
+        });
+    });
+    if (!moves.size) return;
+    const diagram = selectedGeneographDiagram();
+    geneoPushHistory();
+    diagram.connections.forEach(connection =>
+    {
+        if (connection.route?.mode !== 'manual') return;
+        const sourceNodes = geneoConnectionReferenceNodes(connection.source);
+        const targetNodes = geneoConnectionReferenceNodes(connection.target);
+        const endpoints = [...sourceNodes, ...targetNodes];
+        if (!endpoints.length || !endpoints.every(node => moves.has(node.id))) return;
+        const delta = moves.get(endpoints[0].id);
+        if (!endpoints.every(node => moves.get(node.id).dx === delta.dx && moves.get(node.id).dy === delta.dy)) return;
+        connection.route.waypoints.forEach(point => { point.x += delta.dx; point.y += delta.dy; });
+    });
+    moves.forEach(({ dx, dy }, id) =>
+    {
+        const node = getGeneographNode(id);
+        node.x += dx;
+        node.y += dy;
+    });
+    touchGeneographBoard();
+    renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true, preserveSidebarScroll: true });
+}
+
+function bindGeneographGenericBulkControls()
+{
+    const selected = () => selectedGeneographNodes();
+    const commitAppearance = (property, field, value) =>
+    {
+        const nodes = selected();
+        const diagram = selectedGeneographDiagram();
+        if (!diagram || !nodes.length || nodes.some(node => !geneoBulkNodeSupports(node, property))) return;
+        if (nodes.every(node => geneoBulkNodeValue(node, property, field) === value)) return;
+        geneoPushHistory();
+        nodes.forEach(node => geneoUpdateBulkNodeAppearance(node, property, field, value, diagram));
+        touchGeneographBoard();
+        renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true, preserveSidebarScroll: true });
+    };
+    main.querySelectorAll('[data-geneo-bulk-paint-color]').forEach(input => input.addEventListener('change', () =>
+        commitAppearance(input.dataset.geneoBulkPaintColor, 'color', normalizeGeneoHexColor(input.value))));
+    main.querySelectorAll('[data-geneo-bulk-paint-hex]').forEach(input => input.addEventListener('change', () =>
+    {
+        if (!/^#?([0-9a-f]{3}|[0-9a-f]{6})$/i.test(input.value.trim()))
+        {
+            input.setCustomValidity(t('Enter a valid hex color.'));
+            input.reportValidity();
+            return;
+        }
+        input.setCustomValidity('');
+        commitAppearance(input.dataset.geneoBulkPaintHex, 'color', normalizeGeneoHexColor(input.value));
+    }));
+    main.querySelectorAll('[data-geneo-bulk-paint-opacity]').forEach(input => input.addEventListener('change', () =>
+    {
+        if (input.value.trim() === '' || !input.checkValidity()) { input.reportValidity(); return; }
+        commitAppearance(input.dataset.geneoBulkPaintOpacity, 'opacity', Number(input.value));
+    }));
+    main.querySelectorAll('[data-geneo-bulk-paint-toggle]').forEach(button => button.addEventListener('click', () =>
+    {
+        const property = button.dataset.geneoBulkPaintToggle;
+        commitAppearance(property, 'enabled', selected().every(node =>
+            geneoBulkNodeValue(node, property, 'enabled') === false));
+    }));
+    main.querySelectorAll('[data-geneo-bulk-appearance]').forEach(input => input.addEventListener('change', () =>
+    {
+        const property = input.dataset.geneoBulkAppearance;
+        if (property === 'strokePattern')
+        {
+            if (['solid', 'dashed'].includes(input.value)) commitAppearance(property, '', input.value);
+            return;
+        }
+        if (input.value.trim() === '' || !input.checkValidity()) { input.reportValidity(); return; }
+        commitAppearance(property, '', Number(input.value));
+    }));
+    main.querySelector('[data-geneo-bulk-shape-kind]')?.addEventListener('change', event =>
+    {
+        const nodes = selected();
+        const kind = event.currentTarget.value;
+        if (!nodes.length || !nodes.every(node => node.type === 'shape')
+            || !GENEO_SHAPE_KINDS.some(shape => shape.id === kind)
+            || nodes.every(node => node.shapeKind === kind)) return;
+        geneoPushHistory();
+        nodes.forEach(node => { node.shapeKind = kind; });
+        touchGeneographBoard();
+        renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true, preserveSidebarScroll: true });
+    });
+    main.querySelector('[data-geneo-bulk-node-reset]')?.addEventListener('click', () =>
+    {
+        const nodes = selected();
+        if (!nodes.length || !nodes.some(geneoBulkNodeAppearanceIsDefault)) return;
+        geneoPushHistory();
+        const diagram = selectedGeneographDiagram();
+        nodes.forEach(node => geneoResetBulkNodeAppearance(node, diagram));
+        touchGeneographBoard();
+        renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true, preserveSidebarScroll: true });
+    });
+    main.querySelectorAll('[data-geneo-bulk-arrange]').forEach(button => button.addEventListener('click', () =>
+        geneoApplyBulkArrangement(selected(), button.dataset.geneoBulkArrange)));
+    main.querySelectorAll('[data-geneo-bulk-action]').forEach(button => button.addEventListener('click', () =>
+    {
+        const action = button.dataset.geneoBulkAction;
+        const nodes = selected();
+        const connections = selectedGeneographConnections();
+        const targets = action === 'lock' || action === 'unlock' ? geneoObjectGroupNodes()
+            : [...geneoObjectGroupNodes(), ...connections];
+        const property = action === 'show' || action === 'hide' ? 'visible' : 'locked';
+        const value = action === 'show' || action === 'lock';
+        if ((!nodes.length && !connections.length) || !targets.length
+            || targets.every(item => item[property] === value)) return;
+        geneoPushHistory();
+        targets.forEach(item => { item[property] = value; });
+        touchGeneographBoard();
+        renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true, preserveSidebarScroll: true });
+    }));
+}
+
 const GENEO_CANVAS_CLICK_DRAG_THRESHOLD = 6;
 
 const GENEO_CANVAS_INTERACTIVE_SELECTOR = [
@@ -27524,6 +27968,55 @@ function bindGeneoConnectionControls()
     });
     main.querySelector('[data-geneo-connection-tool-pattern]')?.addEventListener('click', event => openGeneoConnectionStyleMenu(event.currentTarget));
     main.querySelector('[data-geneo-connection-inspector-pattern]')?.addEventListener('click', event => openGeneoConnectionStyleMenu(event.currentTarget, 'pattern', 'connection'));
+    main.querySelector('[data-geneo-connection-multi-pattern]')?.addEventListener('click', event => openGeneoConnectionStyleMenu(event.currentTarget, 'pattern', 'multi'));
+    main.querySelector('[data-geneo-connection-multi-width]')?.addEventListener('change', event =>
+    {
+        const input = event.currentTarget;
+        if (input.value.trim() === '' || !input.checkValidity()) { input.reportValidity(); return; }
+        geneoCommitMultiConnectionAppearance('width', Number(input.value));
+    });
+    main.querySelector('[data-geneo-connection-multi-radius]')?.addEventListener('change', event =>
+    {
+        const input = event.currentTarget;
+        if (input.value.trim() === '' || !input.checkValidity()) { input.reportValidity(); return; }
+        geneoCommitMultiConnectionAppearance('cornerRadius', Number(input.value));
+    });
+    main.querySelector('[data-geneo-connection-multi-color]')?.addEventListener('change', event =>
+        geneoCommitMultiConnectionPaint('color', normalizeGeneoHexColor(event.currentTarget.value)));
+    main.querySelector('[data-geneo-connection-multi-hex]')?.addEventListener('change', event =>
+    {
+        const input = event.currentTarget;
+        if (!/^#?([0-9a-f]{3}|[0-9a-f]{6})$/i.test(input.value.trim()))
+        {
+            input.setCustomValidity(t('Enter a valid hex color.'));
+            input.reportValidity();
+            return;
+        }
+        input.setCustomValidity('');
+        geneoCommitMultiConnectionPaint('color', normalizeGeneoHexColor(input.value));
+    });
+    main.querySelector('[data-geneo-connection-multi-opacity]')?.addEventListener('change', event =>
+    {
+        const input = event.currentTarget;
+        if (input.value.trim() === '' || !input.checkValidity()) { input.reportValidity(); return; }
+        geneoCommitMultiConnectionPaint('opacity', Number(input.value));
+    });
+    main.querySelector('[data-geneo-connection-multi-paint-toggle]')?.addEventListener('click', () =>
+    {
+        const connections = selectedGeneographConnections();
+        geneoCommitMultiConnectionPaint('enabled', connections.every(connection =>
+            geneoEffectiveConnectionStyle(connection).line.enabled === false));
+    });
+    main.querySelectorAll('[data-geneo-connection-multi-arrows]').forEach(input => input.addEventListener('change', () =>
+    {
+        if (input.checked) geneoCommitMultiConnectionAppearance('arrows', input.value);
+    }));
+    const dateToggle = main.querySelector('[data-geneo-connection-multi-dates]');
+    if (dateToggle)
+    {
+        dateToggle.indeterminate = dateToggle.dataset.mixed === 'true';
+        dateToggle.addEventListener('change', () => geneoCommitMultiConnectionAppearance('showRelationshipDates', dateToggle.checked));
+    }
     main.querySelector('[data-geneo-connection-tool-arrows]')?.addEventListener('click', event => openGeneoConnectionStyleMenu(event.currentTarget, 'arrows'));
     main.querySelector('[data-geneo-connection-tool-swatch]')?.addEventListener('click', event => openGeneoPaintPopover({ scope: 'connection-tool', property: 'line' }, event.currentTarget));
     main.querySelector('[data-geneo-connection-tool-width]')?.addEventListener('change', event =>
@@ -27574,19 +28067,20 @@ function bindGeneoConnectionControls()
     main.querySelector('[data-geneo-connection-reset-default]')?.addEventListener('click', () =>
     {
         const connection = selectedGeneographConnection();
-        if (!connection || !Object.keys(connection.style || {}).length) return;
+        if (!connection || (!Object.keys(connection.style || {}).length && connection.showRelationshipDates === undefined)) return;
         geneoPushHistory();
         connection.style = {};
+        delete connection.showRelationshipDates;
         touchGeneographBoard();
         renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true });
     });
     main.querySelector('[data-geneo-connection-multi-reset-default]')?.addEventListener('click', () =>
     {
         const connections = selectedGeneographConnections();
-        if (!connections.length || selectedGeneographNodes().length
-            || !connections.some(connection => Object.keys(connection.style || {}).length)) return;
+        if (!connections.length
+            || !connections.some(connection => Object.keys(connection.style || {}).length || connection.showRelationshipDates !== undefined)) return;
         geneoPushHistory();
-        connections.forEach(connection => { connection.style = {}; });
+        connections.forEach(connection => { connection.style = {}; delete connection.showRelationshipDates; });
         touchGeneographBoard();
         renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true });
     });
@@ -28984,6 +29478,7 @@ function bindGeneographEditor()
     bindGeneographNodeHeader();
     bindGeneographPersonCardControls();
     bindGeneographPersonMultiAppearance();
+    bindGeneographGenericBulkControls();
     bindGeneographSidebarControls();
     bindToasts(main);
 }
