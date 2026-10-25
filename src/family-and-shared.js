@@ -606,6 +606,97 @@ function openTreeMobileMenu(anchor)
     menu.querySelector('button')?.focus();
 }
 
+function treePersonPickerResults(query)
+{
+    if (!query) return treeRecentPeople();
+    const normalized = query.toLocaleLowerCase();
+    return getPeople(currentFamilyTreeProjectId())
+        .filter(person => !person.deleted)
+        .filter(person => {
+            const names = [connectPersonName(person), person.names?.first, person.names?.middle,
+                person.names?.last, person.names?.maiden].filter(Boolean);
+            return [...names, ...names.map(name => translateText(name))]
+                .join(' ').toLocaleLowerCase().includes(normalized);
+        })
+        .sort((a, b) => connectPersonName(a).localeCompare(connectPersonName(b), state.language))
+        .slice(0, 12);
+}
+
+function openTreePersonPicker(anchor)
+{
+    if (document.getElementById('projectMenu'))
+    {
+        closeMenu();
+        return;
+    }
+    closeMenu();
+    const picker = document.createElement('div');
+    picker.id = 'projectMenu';
+    picker.className = 'menu-popover tree-person-picker';
+    picker.setAttribute('role', 'dialog');
+    picker.setAttribute('aria-label', t('Find person'));
+    picker.innerHTML = `<div class="tree-person-picker-search">${icon.search}<input type="search" placeholder="${escapeHtml(t('Find person'))}" aria-label="${escapeHtml(t('Find person'))}" aria-controls="treePersonPickerResults" aria-expanded="true" aria-autocomplete="list" role="combobox"></div><div class="tree-person-picker-results" id="treePersonPickerResults" role="listbox" aria-label="${escapeHtml(t('Search results'))}"></div>`;
+    document.body.appendChild(picker);
+    if (window.innerWidth <= 900) mountMobileChoiceSheet(picker, anchor, t('Find person'));
+    else
+    {
+        const rect = anchor.getBoundingClientRect();
+        const width = Math.min(360, window.innerWidth - 24);
+        picker.style.width = `${width}px`;
+        picker.style.left = `${Math.max(12, Math.min(rect.left, window.innerWidth - width - 12))}px`;
+        picker.style.top = `${rect.bottom + 6}px`;
+    }
+    const input = picker.querySelector('input');
+    const list = picker.querySelector('#treePersonPickerResults');
+    let results = [];
+    let activeIndex = -1;
+    const renderResults = () =>
+    {
+        const query = input.value.trim();
+        results = treePersonPickerResults(query);
+        activeIndex = -1;
+        input.removeAttribute('aria-activedescendant');
+        const rows = results.map((person, index) => `<button id="treePersonPickerOption${index}" class="tree-recent-person" type="button" role="option" aria-selected="false" data-tree-picker-person="${escapeHtml(person.id)}">${renderPersonAvatar(person, 'small-avatar')}<span><strong>${escapeHtml(connectPersonName(person))}</strong><small>${escapeHtml(connectPersonLifeLine(person))}</small></span>${person.id === state.selectedPersonId ? `<span class="tree-recent-current" aria-label="${escapeHtml(t('Selected'))}">${icon.check}</span>` : ''}</button>`).join('');
+        list.innerHTML = `<div class="tree-recent-people-head">${escapeHtml(t(query ? 'Search results' : 'Recently selected people'))}</div>`
+            + (rows || `<div class="tree-recent-people-empty" role="status">${escapeHtml(t(query ? 'No matching people.' : 'No recently selected people'))}</div>`);
+        localizeUI(list, { suppressObserverReplay: true });
+    };
+    const choose = personId =>
+    {
+        closeMenu();
+        navigateFamilyTreeToPerson(personId);
+    };
+    input.addEventListener('input', renderResults);
+    input.addEventListener('keydown', event =>
+    {
+        if (event.key === 'Escape')
+        {
+            event.preventDefault(); event.stopPropagation(); closeMenu(); anchor.focus({ preventScroll: true });
+        }
+        else if (['ArrowDown', 'ArrowUp'].includes(event.key) && results.length)
+        {
+            event.preventDefault();
+            activeIndex = (activeIndex + (event.key === 'ArrowDown' ? 1 : -1) + results.length) % results.length;
+            list.querySelectorAll('[role="option"]').forEach((option, index) => option.setAttribute('aria-selected', String(index === activeIndex)));
+            const option = list.querySelectorAll('[role="option"]')[activeIndex];
+            input.setAttribute('aria-activedescendant', option.id);
+            option.scrollIntoView({ block: 'nearest' });
+        }
+        else if (event.key === 'Enter' && results.length)
+        {
+            event.preventDefault(); choose(results[activeIndex < 0 ? 0 : activeIndex].id);
+        }
+    });
+    list.addEventListener('click', event =>
+    {
+        const button = event.target.closest('[data-tree-picker-person]');
+        if (button) choose(button.dataset.treePickerPerson);
+    });
+    renderResults();
+    bindMenuLifecycle(anchor, { ignoreScrollWithin: picker });
+    input.focus({ preventScroll: true });
+}
+
 function renderFamilyTree()
 {
     closeTreeMobileMenu();
@@ -649,9 +740,7 @@ function renderFamilyTree()
         showCousins: treeViewState.showCousins
     });
     const familyPeopleCountLabel =
-        formatProjectPeopleCount(
-            treeProjectId
-        );
+        translateCountPhrase(formatProjectPeopleCount(treeProjectId));
 
     if (!projection.people.some(person => person.id === state.selectedPersonId))
     {
@@ -667,12 +756,6 @@ function renderFamilyTree()
             treeProjectId
         );
     }
-
-    const canNavigateTreeBack =
-        treeNavigationCanGo('back', treeProjectId);
-
-    const canNavigateTreeForward =
-        treeNavigationCanGo('forward', treeProjectId);
 
     const treeLayout = calculateTreeLayout(
         projection.people,
@@ -713,66 +796,23 @@ function renderFamilyTree()
           ">
           <div class="tree-toolbar">
             <div class="tree-toolbar-left">
-              <button
-                class="tree-icon-button tree-arrow-button"
-                type="button"
-                data-tree-navigation="back"
-                aria-label="Back"
-                title="Back"
-                ${canNavigateTreeBack ? '' : 'disabled'}
-              >
-                ${icon.arrow}
-              </button>
-
-              <button
-                class="tree-icon-button tree-arrow-button tree-arrow-button-forward"
-                type="button"
-                data-tree-navigation="forward"
-                aria-label="Forward"
-                title="Forward"
-                ${canNavigateTreeForward ? '' : 'disabled'}
-              >
-                ${icon.arrow}
-              </button>
-              <button class="tree-control tree-control-select" type="button" data-tree-recent-toggle aria-haspopup="menu" aria-expanded="false" aria-label="Recently selected people. Current person: ${escapeHtml(selected?.name || '')}">
+              <button class="tree-control tree-control-select" type="button" data-tree-person-picker aria-haspopup="dialog" aria-expanded="false" aria-label="${escapeHtml(t('Find person'))}: ${escapeHtml(selected?.name || '')}" title="${escapeHtml(selected?.name || '')}">
                 <span class="tree-control-focus-icon" aria-hidden="true">${icon.profile}</span>
-                <span class="tree-control-name">${escapeHtml(selected?.name || '')}</span>
+                <span class="tree-control-copy"><strong class="tree-control-name">${escapeHtml(selected?.name || '')}</strong><small class="tree-control-find">${icon.search}${escapeHtml(t('Find person'))}</small></span>
                 <span class="tree-control-chevron" aria-hidden="true">${icon.chevron}</span>
               </button>
-              <div class="view-modes" role="tablist" aria-label="Tree view mode">
-                ${['Classic','Pedigree','Fan'].map(view => `<button class="view-mode ${state.treeView === view ? 'active' : ''}" type="button" role="tab" aria-selected="${state.treeView === view ? 'true' : 'false'}" aria-disabled="${view === 'Classic' ? 'false' : 'true'}" data-tree-view="${view}" title="${view === 'Classic' ? 'Classic view' : view + ' view will be added later'}">${view}</button>`).join('')}
+              <div class="view-modes" role="tablist" aria-label="${escapeHtml(t('Tree view mode'))}">
+                ${['Classic','Pedigree','Fan'].map((view, index) => `<button class="view-mode ${state.treeView === view ? 'active' : ''}" type="button" role="tab" aria-label="${escapeHtml(t(view))}" aria-selected="${state.treeView === view ? 'true' : 'false'}" ${view === 'Classic' ? '' : 'disabled'} data-tree-view="${view}" title="${escapeHtml(t(view === 'Classic' ? 'Classic view' : view + ' view will be added later.'))}">${[icon.tree, icon.hypothesis, icon.compass][index]}<span>${escapeHtml(t(view))}</span></button>`).join('')}
               </div>
-            <span
-              class="people-count"
-              role="group"
-              aria-label="${
-                    escapeHtml(
-                        familyPeopleCountLabel
-                    )
-                }">
-
-              ${icon.peoplegroup}
-
-              <span class="people-count-number" aria-hidden="true">${getProjectPeopleCount(treeProjectId)}</span>
-              <span class="people-count-label" aria-hidden="true">
-                ${escapeHtml(
-                    familyPeopleCountLabel
-                )}
-              </span>
-            </span>
             </div>
             <div class="tree-toolbar-right">
-              <button class="tree-icon-button tree-mobile-search-trigger" type="button" data-tree-mobile-search aria-label="${escapeHtml(t('Search people'))}">${icon.search}</button>
-              <label class="app-search-field">${icon.search}<input type="search" placeholder="Search people..." id="treeSearch" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-label="${escapeHtml(t('Search people'))}"></label>
-              <button class="tree-icon-button tree-mobile-search-close" type="button" data-tree-mobile-search-close aria-label="${escapeHtml(t('Close'))}">${icon.close}</button>
-              <button class="tree-action" type="button" data-tree-mobile-original="export" data-toast="Export is planned for the Publish iteration." aria-label="Export" title="Export">${icon.export}<span class="tree-action-label">Export</span></button>
-              <button class="tree-action" type="button" data-tree-mobile-original="print" data-toast="Print preview will be added later." aria-label="Print" title="Print">${icon.print}<span class="tree-action-label">Print</span></button>
-              <button class="tree-action" type="button" data-tree-settings aria-label="Tree Settings" title="Tree Settings">${icon.settings}<span class="tree-action-label">Tree Settings</span></button>
-              <button class="tree-icon-button tree-mobile-more" type="button" data-tree-mobile-more aria-label="${escapeHtml(t('More actions'))}" aria-haspopup="menu" aria-expanded="false">${icon.more}</button>
+              <label class="tree-view-mobile">${icon.tree}<select aria-label="${escapeHtml(t('Tree view mode'))}"><option value="Classic">${escapeHtml(t('Classic'))}</option><option value="Pedigree" disabled>${escapeHtml(t('Pedigree'))}</option><option value="Fan" disabled>${escapeHtml(t('Fan'))}</option></select>${icon.chevron}</label>
+              <button class="tree-icon-button tree-display-settings" type="button" data-tree-settings aria-label="${escapeHtml(t('Tree display settings'))}" title="${escapeHtml(t('Tree display settings'))}">${icon.slidersHorizontal}</button>
             </div>
           </div>
           <div class="tree-workspace ${state.treeInspectorCollapsed ? 'inspector-collapsed' : ''}">
             <button class="inspector-restore sidebar-toggle-icon sidebar-toggle-icon-restore" type="button" id="restoreInspector" aria-label="Show person sidebar">${icon.doublechevronSidebar}</button>
+            <div class="tree-canvas-status" role="status" aria-label="${escapeHtml(t('People in project'))}: ${escapeHtml(familyPeopleCountLabel)}" title="${escapeHtml(t('People in project'))}">${icon.peoplegroup}<span>${escapeHtml(familyPeopleCountLabel)}</span></div>
             <section class="tree-canvas" aria-label="Family tree canvas">
               <div class="tree-stage-space" style="width:${treeLayout.stageWidth * state.treeZoom / 100}px;height:${treeLayout.stageHeight * state.treeZoom / 100}px;">
                 <div class="tree-stage" style="width:${treeLayout.stageWidth}px;height:${treeLayout.stageHeight}px;transform: scale(${state.treeZoom / 100});">
@@ -794,19 +834,7 @@ function renderFamilyTree()
         </div>
       `;
     bindTreeCanvasPan();
-    bindTreeSearch();
     main.querySelector('.tree-canvas')?.addEventListener('wheel', queueTreeWheelZoom, { passive: false });
-    main
-        .querySelectorAll('[data-tree-navigation]')
-        .forEach(button =>
-        {
-            button.addEventListener('click', () =>
-            {
-                navigateTreeHistory(
-                    button.dataset.treeNavigation
-                );
-            });
-        });
     main
         .querySelectorAll('.tree-person-card[data-person-id]')
         .forEach(card =>
@@ -907,11 +935,7 @@ function renderFamilyTree()
     }));
     main.querySelectorAll('[data-tree-view]').forEach(button => button.addEventListener('click', () =>
     {
-        if (button.dataset.treeView !== 'Classic')
-        {
-            showToast(`${button.dataset.treeView} view will be added later.`);
-            return;
-        }
+        if (button.dataset.treeView !== 'Classic') return;
         state.treeView = 'Classic';
         renderFamilyTree();
     }));
@@ -925,23 +949,12 @@ function renderFamilyTree()
         }
         setTreeZoom(state.treeZoom + (button.dataset.zoom === 'in' ? 10 : -10));
     }));
-    main.querySelector('[data-tree-recent-toggle]')?.addEventListener('click', event =>
+    main.querySelector('[data-tree-person-picker]')?.addEventListener('click', event =>
     {
         event.stopPropagation();
-        openTreeRecentPeopleMenu(event.currentTarget);
+        openTreePersonPicker(event.currentTarget);
     });
     main.querySelector('[data-tree-settings]')?.addEventListener('click', openTreeSettingsModal);
-    main.querySelector('[data-tree-mobile-more]')?.addEventListener('click', event => openTreeMobileMenu(event.currentTarget));
-    main.querySelector('[data-tree-mobile-search]')?.addEventListener('click', () =>
-    {
-        main.querySelector('.tree-toolbar')?.classList.add('mobile-search-open');
-        main.querySelector('#treeSearch')?.focus();
-    });
-    main.querySelector('[data-tree-mobile-search-close]')?.addEventListener('click', () =>
-    {
-        main.querySelector('.tree-toolbar')?.classList.remove('mobile-search-open');
-        main.querySelector('[data-tree-mobile-search]')?.focus();
-    });
     bindPersonSidebar(main, 'tree');
     const centerTargetId =
         state.treeCenterTargetId;

@@ -3093,3 +3093,81 @@ body.mobile-details-open .geneo-inspector [data-geneo-inspector-toggle] {
         overflow: hidden;
     }
 }
+
+/* Family Tree: one person finder, compact display modes, and canvas status. */
+.tree-toolbar-left { flex: 1 1 auto; }
+.tree-toolbar-right { flex: 0 0 auto; }
+.tree-toolbar .tree-control-select {
+    width: clamp(210px, 22vw, 280px);
+    max-width: 280px;
+    min-width: 0;
+    flex: 0 1 auto;
+    grid-template-columns: 18px minmax(0, 1fr) 16px;
+    height: 44px;
+}
+.tree-control-copy { min-width: 0; display: grid; gap: 1px; text-align: left; }
+.tree-control-copy .tree-control-name { font-size: 13px; line-height: 1.15; }
+.tree-control-find { display: flex; align-items: center; gap: 4px; color: var(--text-tertiary); font-size: 11px; line-height: 1.15; white-space: nowrap; }
+.tree-control-find svg { width: 12px; height: 12px; flex: none; }
+.tree-toolbar .view-modes { width: 204px; min-width: 204px; height: 44px; background: transparent; }
+.tree-toolbar .view-mode { width: 42px; min-width: 42px; padding: 0; border: 0; border-right: 1px solid var(--border-default); gap: 5px; cursor: pointer; }
+.tree-toolbar .view-mode.active { width: 118px; min-width: 118px; border: 0; border-right: 1px solid var(--border-default); border-radius: 0; box-shadow: none; }
+.tree-toolbar .view-mode:last-child { border-right: 0; }
+.tree-toolbar .view-mode svg { width: 17px; height: 17px; flex: none; }
+.tree-toolbar .view-mode:not(.active) span { display: none; }
+.tree-toolbar .view-mode:disabled { opacity: .42; cursor: not-allowed; }
+.tree-toolbar .view-mode:disabled:hover { background: transparent; color: var(--text-tertiary); }
+.tree-toolbar .tree-display-settings { width: 44px; flex: 0 0 44px; }
+.tree-display-settings svg { width: 18px; height: 18px; }
+.tree-view-mobile { display: none; }
+.tree-canvas-status {
+    position: absolute;
+    z-index: 8;
+    top: 12px;
+    left: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    max-width: calc(100% - 32px);
+    padding: 5px 8px;
+    border: 1px solid var(--border-default);
+    border-radius: 5px;
+    background: rgba(18, 24, 23, .9);
+    color: var(--text-secondary);
+    font-size: 12px;
+    line-height: 1.2;
+    pointer-events: none;
+}
+.tree-canvas-status svg { width: 15px; height: 15px; flex: none; }
+.tree-canvas-status span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tree-person-picker { width: min(360px, calc(100vw - 24px)); max-height: min(520px, calc(100dvh - 24px)); padding: 6px; overflow: hidden; }
+.tree-person-picker-search { display: flex; align-items: center; gap: 8px; margin: 4px 4px 8px; padding: 0 10px; min-height: 42px; border: 1px solid var(--border-default); border-radius: 6px; background: var(--surface-input); }
+.tree-person-picker-search:focus-within { border-color: var(--brand-green-300); }
+.tree-person-picker-search svg { width: 16px; height: 16px; color: var(--text-tertiary); flex: none; }
+.tree-person-picker-search input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--text-primary); font: inherit; }
+.tree-person-picker-results { max-height: min(420px, calc(100dvh - 130px)); overflow-y: auto; }
+.tree-person-picker-results .tree-recent-person[aria-selected="true"] { background: var(--surface-card-hover); }
+
+@media (max-width: 900px) {
+    .tree-toolbar { gap: 8px; }
+    .tree-toolbar-left { flex: 1 1 auto; min-width: 0; }
+    .tree-toolbar-right { flex: 0 0 auto; }
+    .tree-toolbar .tree-control-select { width: 100%; max-width: none; height: 42px; grid-template-columns: 18px minmax(0, 1fr) 14px; }
+    .tree-toolbar .view-modes { display: none; }
+    .tree-view-mobile { display: flex; align-items: center; gap: 4px; width: 106px; height: 42px; padding: 0 6px; border: 1px solid var(--border-default); border-radius: 5px; background: var(--surface-card); color: var(--text-secondary); }
+    .tree-view-mobile svg { width: 16px; height: 16px; flex: none; }
+    .tree-view-mobile select { min-width: 0; flex: 1; appearance: none; border: 0; background: transparent; color: var(--text-primary); font: inherit; font-size: 12px; }
+    .tree-view-mobile select:focus-visible { outline: 2px solid var(--brand-green-300); outline-offset: 2px; }
+    .tree-view-mobile select option { background: var(--surface-card); }
+    .tree-view-mobile > svg:last-child { width: 12px; transform: rotate(90deg); pointer-events: none; }
+    .tree-toolbar .tree-display-settings { display: inline-flex; width: 42px; flex-basis: 42px; height: 42px; }
+    body .tree-person-picker.mobile-choice-sheet { width: 100vw !important; max-height: min(80dvh, 620px); }
+    body .tree-person-picker.mobile-choice-sheet .mobile-choice-body { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+    body .tree-person-picker.mobile-choice-sheet .tree-person-picker-search { flex: none; }
+    body .tree-person-picker.mobile-choice-sheet .tree-person-picker-results { flex: 1; min-height: 0; max-height: none; }
+}
+@media (max-width: 390px) {
+    .tree-view-mobile { width: 48px; justify-content: center; }
+    .tree-view-mobile select { position: absolute; width: 48px; height: 42px; opacity: 0; cursor: pointer; }
+    .tree-view-mobile > svg:last-child { display: none; }
+}

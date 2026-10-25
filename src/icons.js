@@ -101,4 +101,5 @@ const icon = {
 };
 
 icon.unlink = icon.unlink.replace('<title>unlink_2_line</title>', '');
+icon.slidersHorizontal = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h9m4 0h3M4 17h3m4 0h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg>';
 

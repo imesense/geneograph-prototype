@@ -13,7 +13,7 @@ const geneoTourSteps = [
     { id: 'tree-welcome', module: 'Family Tree', presentation: 'centered', title: "Welcome to Family Tree", body: "See family members across generations, discover how people are related, and explore different branches of the tree." },
     { id: 'tree-person-card', module: 'Family Tree', title: "Meet a person in the tree", body: "The card shows a photo, name, and key life dates. Select a card to learn more about that person." },
     { id: 'tree-focus-switch', module: 'Family Tree', title: "Explore another branch", body: "Focus on a different person to see their branch of the tree." },
-    { id: 'tree-navigation', module: 'Family Tree', title: "Navigate the tree", body: "Previous and Next buttons revisit people you've selected. The dropdown menu opens recently viewed people." },
+    { id: 'tree-navigation', module: 'Family Tree', title: "Find a person", body: "Open the person picker to revisit recent people or search everyone in this project." },
     { id: 'tree-sidebar', module: 'Family Tree', title: "More about this person", body: "The right panel gives you more information about the selected person without taking you away from the tree." },
     { id: 'tree-sidebar-hero', module: 'Family Tree', title: "Person at a glance", body: "The top of the panel shows the person's photo, name, life details, and a link to their full profile." },
     { id: 'tree-sidebar-actions', module: 'Family Tree', title: "Edit this person", body: "Quick edit, add a relative, or connect someone already in the project as a new relative." },
@@ -742,7 +742,7 @@ function geneoTourTarget(index)
         'projects-tabs': '.topnav',
         'tree-person-card': '.tree-person-card[data-person-id="silver"]',
         'tree-focus-switch': '[data-tree-card-focus="luna"]',
-        'tree-navigation': '[data-tree-navigation="back"]',
+        'tree-navigation': '[data-tree-person-picker]',
         'tree-sidebar': '.tree-inspector',
         'tree-sidebar-hero': '.tree-inspector .tree-person-hero',
         'tree-sidebar-actions': '.tree-inspector .panel-actions',
@@ -2088,17 +2088,6 @@ function geneoTourTargetRect(target)
         const visibleTop = Math.max(72, rect.top);
         return { left: rect.left, right: rect.right, top: visibleTop,
             bottom: Math.min(rect.bottom, innerHeight - 8, Math.max(visibleTop + 80, innerHeight * .58)) };
-    }
-    if (stepId === 'tree-navigation')
-    {
-        const controls = [...main.querySelectorAll('[data-tree-navigation], [data-tree-recent-toggle]')]
-            .map(control => control.getBoundingClientRect());
-        return {
-            left: Math.min(...controls.map(control => control.left)),
-            top: Math.min(...controls.map(control => control.top)),
-            right: Math.max(...controls.map(control => control.right)),
-            bottom: Math.max(...controls.map(control => control.bottom))
-        };
     }
     if (stepId === 'tree-timeline')
     {
