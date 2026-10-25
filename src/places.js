@@ -1806,6 +1806,7 @@ function showPlaceOnMap(
 
 function renderPlaces()
 {
+    appNavigationObserve();
     if (
         ![
             'all',

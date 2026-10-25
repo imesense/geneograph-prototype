@@ -1,5 +1,6 @@
 function renderGeneograph()
 {
+    appNavigationObserve();
     if (geneoCtrlSelectPressed && (state.geneoView !== 'board'
         || geneoCtrlSelectContext?.boardId !== selectedGeneographBoard()?.id))
         setGeneoCtrlSelectPressed(false);
@@ -5267,6 +5268,7 @@ function bindGeneographHome()
 
 function openGeneographBoard(id)
 {
+    appNavigationMarkIntent();
     cancelGeneographPencilStroke();
     closeGeneographObjectContextMenu();
     closeMenu();

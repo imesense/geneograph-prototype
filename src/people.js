@@ -3403,6 +3403,7 @@ function renderPeopleDirectoryControls(rows)
 
 function renderPeople()
 {
+    appNavigationObserve();
     if (!currentPeopleRecords().length && state.peopleView === 'profile')
         state.peopleView = 'directory';
 
@@ -8714,6 +8715,7 @@ function openPeopleProfileFromRow(personId)
         showToast('Person record not found.');
         return;
     }
+    appNavigationMarkIntent();
     state.selectedPeopleId = personId;
     state.selectedPersonId = personId;
     state.peopleView = 'profile';

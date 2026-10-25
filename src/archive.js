@@ -8067,6 +8067,7 @@ function ensureArchiveSelection()
 
 function renderArchive()
 {
+    appNavigationObserve();
     workspace.classList.remove(
         'no-sidebar'
     );
@@ -23715,28 +23716,6 @@ function bindArchiveControls()
             }
 
             if (
-                event.key === 'ArrowLeft'
-            && archiveNavigationCanGoBack()
-            )
-            {
-                event.preventDefault();
-                archiveNavigateBack();
-
-                return;
-            }
-
-            if (
-                event.key === 'ArrowRight'
-            && archiveNavigationCanGoForward()
-            )
-            {
-                event.preventDefault();
-                archiveNavigateForward();
-
-                return;
-            }
-
-            if (
                 event.key === 'ArrowUp'
             && archiveNavigationCanGoUp()
             )
@@ -26039,6 +26018,8 @@ function openCentralNoteFromContext(
     {
         return;
     }
+
+    appNavigationMarkIntent();
 
     state.activeModule =
         'Notes';

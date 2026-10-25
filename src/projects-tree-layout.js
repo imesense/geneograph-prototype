@@ -393,6 +393,7 @@ function closeProjectNameOverlay()
 
 function renderOpenProject()
 {
+    appNavigationObserve();
     const project = currentProject();
     if (!project)
     {

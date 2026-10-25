@@ -3204,3 +3204,36 @@ body.mobile-details-open .geneo-inspector [data-geneo-inspector-toggle] {
     .tree-people-status { position: absolute; left: 8px; bottom: 6px; font-size: 11px; }
     .tree-inspector { display: none; }
 }
+
+.app-navigation-controls {
+    display: inline-flex;
+    align-items: center;
+    flex: none;
+    gap: 1px;
+    padding-right: 10px;
+    border-right: 1px solid var(--border-default);
+}
+.app-navigation-controls button {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: 0;
+    border-radius: 5px;
+    background: transparent;
+    color: var(--text-primary);
+}
+.app-navigation-controls button svg { width: 18px; height: 18px; }
+.app-navigation-controls button svg path { stroke-width: 2.5; }
+.app-navigation-controls [data-app-navigation="forward"] svg { transform: rotate(180deg); }
+.app-navigation-controls button:hover:not(:disabled) { color: var(--brand-green-300); }
+.app-navigation-controls button:disabled { opacity: .38; }
+.app-navigation-controls button:focus-visible { outline: 2px solid var(--brand-green-300); outline-offset: 1px; }
+@media (max-width: 900px) {
+    .app-navigation-controls { padding-right: 6px; }
+    .app-navigation-controls button { width: 30px; height: 32px; }
+}
+@media (max-width: 390px) {
+    .topbar [data-topbar-help] { display: none; }
+}

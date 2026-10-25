@@ -4561,6 +4561,7 @@ function renderAlbumsPreserveViewport({
 
 function renderAlbums()
 {
+    appNavigationObserve();
     disconnectAlbumsGridResizeObserver();
 
     const scrollKey =
@@ -12393,6 +12394,7 @@ function bindAlbumsSidebar()
                     runAfterAlbumsPhotoEditGuard(
                         () =>
                         {
+                            appNavigationMarkIntent();
                             state.albumsView =
                                 'album';
 
@@ -13017,6 +13019,7 @@ function bindAlbumsControls()
                 'click',
                 () =>
                 {
+                    appNavigationMarkIntent();
                     state.albumsView = 'album';
 
                     state.activeAlbumId =

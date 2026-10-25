@@ -699,6 +699,7 @@ function openTreePersonPicker(anchor)
 
 function renderFamilyTree()
 {
+    appNavigationObserve();
     closeTreeMobileMenu();
     disposeTreeSearch();
     sidebar.innerHTML = '';

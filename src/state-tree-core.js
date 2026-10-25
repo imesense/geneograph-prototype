@@ -699,6 +699,8 @@ function navigateFamilyTreeToPerson(
         return false;
     }
 
+    if (center || focusChanged) appNavigationMarkIntent();
+
     if (recordHistory)
     {
         const currentEntry = treeNavigationSnapshot(projectId);

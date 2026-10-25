@@ -3,6 +3,7 @@ let notesBrowserScrollMemory = null;
 
 function renderNotes()
 {
+    appNavigationObserve();
     destroyNotesRichTextEditor();
 
     const validNotesViews =
@@ -13206,6 +13207,7 @@ function bindNotesBrowserControls()
                 'click',
                 () =>
                 {
+                    appNavigationMarkIntent();
                     state.selectedNoteId =
                         button.dataset.noteRow;
 
