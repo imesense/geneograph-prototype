@@ -3114,6 +3114,8 @@ body.mobile-details-open .geneo-inspector [data-geneo-inspector-toggle] {
 .tree-toolbar .view-mode.active { width: 118px; min-width: 118px; border: 0; border-right: 1px solid var(--border-default); border-radius: 0; box-shadow: none; }
 .tree-toolbar .view-mode:last-child { border-right: 0; }
 .tree-toolbar .view-mode svg { width: 17px; height: 17px; flex: none; }
+.tree-toolbar .view-mode[data-tree-view="Pedigree"] svg,
+.tree-toolbar .view-mode[data-tree-view="Fan"] svg { width: 22px; height: 22px; }
 .tree-toolbar .view-mode:not(.active) span { display: none; }
 .tree-toolbar .view-mode:disabled { opacity: .42; cursor: not-allowed; }
 .tree-toolbar .view-mode:disabled:hover { background: transparent; color: var(--text-tertiary); }
