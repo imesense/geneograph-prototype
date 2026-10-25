@@ -12444,10 +12444,83 @@ function geneoPaintTargetKey(target)
     return target ? `${target.scope}:${target.id || 'canvas'}:${target.property}` : '';
 }
 
+function geneoBulkPaintScope(scope)
+{
+    return ['person-multi', 'node-multi', 'connection-multi'].includes(scope);
+}
+
+function geneoBulkPaintValue(target, item)
+{
+    return target.scope === 'connection-multi' ? geneoEffectiveConnectionStyle(item).line
+        : target.scope === 'person-multi' ? geneoResolveVisibleNodeAppearance(item)[target.property]
+            : geneoBulkNodeValue(item, target.property);
+}
+
+function geneoBulkPaintTarget(scope, property)
+{
+    const connections = scope === 'connection-multi';
+    const items = connections ? selectedGeneographConnections() : selectedGeneographNodes();
+    if (!items.length || (connections && property !== 'line')
+        || (!connections && (!['fill', 'stroke', 'text'].includes(property)
+            || items.some(node => scope === 'person-multi' ? node.type !== 'person'
+                : !geneoBulkNodeSupports(node, property))))) return null;
+    const target = { scope, id: '', property, items, label: connections ? t('Connection color') : t(capitalize(property)),
+        supportsOpacity: true, supportsNone: property !== 'text', resettable: false,
+        defaultPaint: connections ? selectedGeneographDiagram().connectionDefaults.line
+            : { color: '#FFFFFF', opacity: 100, enabled: true } };
+    const values = items.map(item => geneoBulkPaintValue(target, item));
+    const shared = field => values.every(value => value[field] === values[0][field]) ? values[0][field] : null;
+    target.mixed = { color: shared('color') === null, opacity: shared('opacity') === null,
+        enabled: shared('enabled') === null };
+    target.paint = { color: shared('color') || target.defaultPaint.color,
+        opacity: shared('opacity') ?? 100, enabled: shared('enabled') ?? true };
+    return target;
+}
+
+function geneoApplyBulkPaintChanges(target, changes)
+{
+    const diagram = selectedGeneographDiagram();
+    if (!diagram) return;
+    target.items.forEach(item =>
+    {
+        for (const [field, value] of Object.entries(changes))
+        {
+            if (target.scope !== 'connection-multi')
+            {
+                geneoUpdateBulkNodeAppearance(item, target.property, field, value, diagram);
+                continue;
+            }
+            const line = { ...geneoEffectiveConnectionStyle(item).line, [field]: value };
+            item.style ||= {};
+            if (['color', 'opacity', 'enabled'].every(key => line[key] === diagram.connectionDefaults.line[key]))
+                delete item.style.line;
+            else item.style.line = line;
+        }
+    });
+}
+
+function geneoRestoreBulkPaintItems(interaction)
+{
+    interaction.beforeItems.forEach(({ id, appearance, style }) =>
+    {
+        if (appearance)
+        {
+            const node = getGeneographNode(id);
+            if (node) node.appearance = structuredClone(appearance);
+        }
+        else
+        {
+            const connection = getGeneographConnection(id);
+            if (connection) connection.style = structuredClone(style);
+        }
+    });
+}
+
 function resolveGeneoPaintTarget(reference)
 {
     if (!reference) return null;
     const { scope, id = '', property } = reference;
+    if (geneoBulkPaintScope(scope)) return geneoBulkPaintTarget(scope, property);
     if (scope === 'creation-tool' && ['drawing', 'shape'].includes(id) && ['fill', 'stroke'].includes(property))
     {
         const appearance = geneoCreationToolSettings(id).appearance;
@@ -13008,6 +13081,45 @@ function syncGeneoPaintUi(reference, sourceInput = null)
 {
     const target = resolveGeneoPaintTarget(reference);
     if (!target) return;
+    if (geneoBulkPaintScope(target.scope))
+    {
+        main.querySelectorAll('[data-geneo-paint-scope]').forEach(row =>
+        {
+            if (!geneoPaintTargetMatches(row, target)) return;
+            row.classList.toggle('is-none', target.paint.enabled === false && !target.mixed.enabled);
+            const swatch = row.querySelector('[data-geneo-paint-open]');
+            if (swatch)
+            {
+                swatch.classList.toggle('is-mixed', target.mixed.color);
+                swatch.style.cssText = geneoPaintSwatchStyle(target.paint);
+                swatch.title = target.mixed.color ? t('Mixed') : target.paint.color;
+                swatch.disabled = target.paint.enabled === false && !target.mixed.enabled;
+            }
+            const hex = row.querySelector('.geneo-paint-hex');
+            if (hex)
+            {
+                if (hex !== sourceInput) hex.value = target.mixed.color ? '' : target.paint.color;
+                hex.disabled = target.paint.enabled === false && !target.mixed.enabled;
+            }
+            const opacity = row.querySelector('.geneo-paint-opacity-number input');
+            if (opacity)
+            {
+                if (opacity !== sourceInput) opacity.value = target.mixed.opacity ? '' : target.paint.opacity;
+                opacity.disabled = target.paint.enabled === false && !target.mixed.enabled;
+            }
+            const state = row.querySelector('.geneo-paint-state');
+            if (state) state.textContent = target.mixed.enabled ? t('Mixed')
+                : target.paint.enabled ? '' : t('None');
+            const action = row.querySelector('.geneo-paint-action');
+            if (action) action.textContent = t(target.paint.enabled === false && !target.mixed.enabled ? 'Restore' : 'Remove');
+        });
+        target.items.forEach(item => applyGeneoPaintTargetToDom({
+            scope: target.scope === 'connection-multi' ? 'connection' : 'node', id: item.id,
+            property: target.property
+        }));
+        syncGeneoPaintPopover(target, sourceInput);
+        return;
+    }
     if (target.scope === 'creation-tool')
     {
         refreshGeneoCreationToolUi(target.id);
@@ -13273,6 +13385,15 @@ function beginGeneoPaintInteraction(
           )
     };
 
+    if (geneoBulkPaintScope(target.scope))
+    {
+        geneoPaintRuntime.interaction.beforeItems = target.items.map(item => ({
+            id: item.id,
+            appearance: target.scope === 'connection-multi' ? null : structuredClone(item.appearance),
+            style: target.scope === 'connection-multi' ? structuredClone(item.style) : null
+        }));
+    }
+
     return target;
 }
 
@@ -13298,6 +13419,16 @@ function previewGeneoPaint(
     )
     {
         return false;
+    }
+
+    if (geneoBulkPaintScope(target.scope))
+    {
+        const normalized = { ...changes };
+        if ('color' in normalized) normalized.color = normalizeGeneoHexColor(normalized.color);
+        if ('opacity' in normalized) normalized.opacity = Math.round(geneoNumber(normalized.opacity, 100, 0, 100));
+        geneoApplyBulkPaintChanges(target, normalized);
+        syncGeneoPaintUi(target, sourceInput);
+        return true;
     }
 
     Object.assign(
@@ -13382,6 +13513,14 @@ function commitGeneoPaintInteraction()
         return false;
     }
 
+    if (geneoBulkPaintScope(target.scope))
+    {
+        if (geneoSnapshot() === interaction.beforeDiagram) return false;
+        geneoPushHistorySnapshot(interaction.beforeDiagram);
+        touchGeneographBoard();
+        return true;
+    }
+
     const paintChanged =
         JSON.stringify(
             interaction.beforePaint
@@ -13436,6 +13575,13 @@ function cancelGeneoPaintInteraction()
         return false;
     }
 
+    if (geneoBulkPaintScope(target.scope))
+    {
+        geneoRestoreBulkPaintItems(interaction);
+        syncGeneoPaintUi(target);
+        return true;
+    }
+
     Object.assign(
         target.paint,
         structuredClone(
@@ -13461,6 +13607,11 @@ function restoreLastValidGeneoPaintInteraction(sourceInput = null)
     if (!interaction) return false;
     const target = resolveGeneoPaintTarget(interaction.reference);
     if (!target) return false;
+    if (geneoBulkPaintScope(target.scope))
+    {
+        syncGeneoPaintUi(target, sourceInput);
+        return true;
+    }
     Object.assign(target.paint, structuredClone(interaction.lastValidPaint));
     if (target.scope === 'connection') setGeneoPaintOverrideState(target, interaction.beforeOverride);
     syncGeneoPaintUi(target, sourceInput);
@@ -13471,7 +13622,8 @@ function commitGeneoPaintAction(
     reference,
     update,
     {
-        resetOverride = false
+        resetOverride = false,
+        field = null
     } = {}
 )
 {
@@ -13483,6 +13635,26 @@ function commitGeneoPaintAction(
     if (!target)
     {
         return false;
+    }
+
+    if (geneoBulkPaintScope(target.scope))
+    {
+        const beforeDiagram = geneoSnapshot();
+        const beforePaint = { ...target.paint };
+        update(target);
+        const changes = {};
+        for (const key of ['color', 'opacity', 'enabled'])
+        {
+            if (target.paint[key] !== beforePaint[key] || (key === field && target.mixed[key]))
+                changes[key] = target.paint[key];
+        }
+        if (!Object.keys(changes).length) return false;
+        geneoApplyBulkPaintChanges(target, changes);
+        if (geneoSnapshot() === beforeDiagram) return false;
+        geneoPushHistorySnapshot(beforeDiagram);
+        touchGeneographBoard();
+        syncGeneoPaintUi(target);
+        return true;
     }
 
     const beforeDiagram =
@@ -13570,10 +13742,10 @@ function renderGeneoPaintPopover(reference)
     return `<div class="geneo-paint-popover" id="geneoPaintPopover" role="dialog" aria-modal="false" aria-labelledby="geneoPaintPopoverTitle" ${geneoPaintDataAttributes(target)}>
         <div class="geneo-paint-popover-header"><strong id="geneoPaintPopoverTitle">${escapeHtml(target.label)}</strong><button type="button" data-geneo-paint-close aria-label="Close ${escapeHtml(target.label)} color picker">${icon.close}</button></div>
         <div class="geneo-paint-popover-body">
-          <div class="geneo-paint-sv" tabindex="0" role="slider" aria-label="${escapeHtml(target.label)} saturation and brightness" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(hsv.v)}" aria-valuetext="Saturation ${Math.round(hsv.s)}%, brightness ${Math.round(hsv.v)}%" data-geneo-paint-sv style="--geneo-hue:${Math.round(hsv.h)}"><span style="left:${hsv.s}%;top:${100 - hsv.v}%" aria-hidden="true"></span></div>
+          <div class="geneo-paint-sv" tabindex="0" role="slider" aria-label="${escapeHtml(target.label)} saturation and brightness" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(hsv.v)}" aria-valuetext="Saturation ${Math.round(hsv.s)}%, brightness ${Math.round(hsv.v)}%" data-geneo-paint-sv style="--geneo-hue:${Math.round(hsv.h)}"><span style="left:${hsv.s}%;top:${100 - hsv.v}%" ${target.mixed?.color ? 'hidden' : ''} aria-hidden="true"></span></div>
           <label class="geneo-paint-slider-row"><span>Hue</span><input type="range" min="0" max="359" step="1" value="${Math.round(hsv.h)}" data-geneo-paint-hue ${disabled ? 'disabled' : ''}></label>
           ${target.supportsOpacity ? `<label class="geneo-paint-slider-row"><span>Opacity</span><input class="geneo-paint-alpha" type="range" min="0" max="100" step="1" value="${paint.opacity}" data-geneo-paint-opacity style="--geneo-paint-color:${paint.color};--geneo-paint-opacity:${paint.opacity}%" ${disabled ? 'disabled' : ''}></label>` : ''}
-          <div class="geneo-paint-popover-fields"><label><span>Hex</span><input type="text" maxlength="7" value="${paint.color}" spellcheck="false" autocomplete="off" data-geneo-paint-hex ${disabled ? 'disabled' : ''}></label>${target.supportsOpacity ? `<label><span>Opacity</span><span class="geneo-paint-percent-input"><input type="number" min="0" max="100" step="1" value="${paint.opacity}" data-geneo-paint-opacity-number ${disabled ? 'disabled' : ''}><span aria-hidden="true">%</span></span></label>` : ''}</div>
+          <div class="geneo-paint-popover-fields"><label><span>Hex</span><input type="text" maxlength="7" value="${target.mixed?.color ? '' : paint.color}" placeholder="${target.mixed?.color ? escapeHtml(t('Mixed')) : ''}" spellcheck="false" autocomplete="off" data-geneo-paint-hex ${disabled ? 'disabled' : ''}></label>${target.supportsOpacity ? `<label><span>Opacity</span><span class="geneo-paint-percent-input"><input type="number" min="0" max="100" step="1" value="${target.mixed?.opacity ? '' : paint.opacity}" placeholder="${target.mixed?.opacity ? escapeHtml(t('Mixed')) : ''}" data-geneo-paint-opacity-number ${disabled ? 'disabled' : ''}><span aria-hidden="true">%</span></span></label>` : ''}</div>
           <div
             class="geneo-paint-suggestions"
             role="group"
@@ -13581,7 +13753,7 @@ function renderGeneoPaintPopover(reference)
             ${
                 GENEO_BOARD_COLORS.map(item =>
                 {
-                    const selected =
+                    const selected = !target.mixed?.color &&
                         normalizeGeneoHexColor(item.color)
                   === normalizeGeneoHexColor(paint.color);
 
@@ -13682,6 +13854,7 @@ function syncGeneoPaintPopover(reference, sourceInput = null)
         const marker = sv.querySelector('span');
         if (marker)
         {
+            marker.hidden = Boolean(target.mixed?.color);
             marker.style.left = `${hsv.s}%`; marker.style.top = `${100 - hsv.v}%`;
         }
     }
@@ -13702,9 +13875,9 @@ function syncGeneoPaintPopover(reference, sourceInput = null)
         );
     }
     const hex = popover.querySelector('[data-geneo-paint-hex]');
-    if (hex && hex !== sourceInput) hex.value = target.paint.color;
+    if (hex && hex !== sourceInput) hex.value = target.mixed?.color ? '' : target.paint.color;
     const number = popover.querySelector('[data-geneo-paint-opacity-number]');
-    if (number && number !== sourceInput) number.value = target.paint.opacity;
+    if (number && number !== sourceInput) number.value = target.mixed?.opacity ? '' : target.paint.opacity;
     popover.querySelectorAll('input, [data-geneo-paint-suggestion]').forEach(control =>
     {
         if (!control.matches('[data-geneo-paint-close]')) control.disabled = !target.paint.enabled;
@@ -13717,7 +13890,7 @@ function syncGeneoPaintPopover(reference, sourceInput = null)
         .querySelectorAll('[data-geneo-paint-suggestion]')
         .forEach(button =>
         {
-            const selected =
+            const selected = !target.mixed?.color &&
                 normalizeGeneoHexColor(
                     button.dataset.geneoPaintSuggestion
                 ) === selectedColor;
@@ -13835,7 +14008,7 @@ function bindGeneoPaintPopover(reference)
         commitGeneoPaintAction(reference, target =>
         {
             target.paint.color = button.dataset.geneoPaintSuggestion;
-        });
+        }, { field: 'color' });
     }));
     popover
         .querySelector('[data-geneo-paint-toggle]')
@@ -13869,7 +14042,7 @@ function bindGeneoPaintPopover(reference)
                 );
 
                 inspectorRow
-                    ?.querySelector('[data-geneo-paint-toggle]')
+                    ?.querySelector('[data-geneo-paint-toggle], [data-geneo-person-multi-paint-toggle], [data-geneo-bulk-paint-toggle], [data-geneo-connection-multi-paint-toggle]')
                     ?.focus({ preventScroll: true });
             });
         });
@@ -13947,7 +14120,8 @@ function bindGeneoPaintTextInput(input, reference, type)
             input.classList.remove('invalid');
             input.setAttribute('aria-invalid', 'false');
             const target = resolveGeneoPaintTarget(reference);
-            if (target) input.value = type === 'hex' ? target.paint.color : target.paint.opacity;
+            if (target) input.value = target.mixed?.[type === 'hex' ? 'color' : 'opacity'] ? ''
+                : type === 'hex' ? target.paint.color : target.paint.opacity;
             input.select();
         }
         else if (event.key === 'Enter')
@@ -13961,7 +14135,8 @@ function bindGeneoPaintTextInput(input, reference, type)
         if (type === 'hex' && input.classList.contains('invalid')) restoreLastValidGeneoPaintInteraction(input);
         if (type === 'opacity' && input.value.trim() === '') restoreLastValidGeneoPaintInteraction(input);
         const target = resolveGeneoPaintTarget(reference);
-        if (target) input.value = type === 'hex' ? target.paint.color : target.paint.opacity;
+        if (target) input.value = target.mixed?.[type === 'hex' ? 'color' : 'opacity'] ? ''
+            : type === 'hex' ? target.paint.color : target.paint.opacity;
         input.classList.remove('invalid');
         input.setAttribute('aria-invalid', 'false');
         commitGeneoPaintInteraction();
@@ -15115,7 +15290,7 @@ function renderGeneographPersonMultiAppearance(nodes)
         const enabled = geneoSharedPersonPaintValue(nodes, property, 'enabled');
         const label = capitalize(property);
         return `<div class="geneo-paint-row geneo-person-multi-paint-row ${enabled === false ? 'is-none' : ''}"
-          data-geneo-person-multi-paint-row="${property}">
+          data-geneo-person-multi-paint-row="${property}" data-geneo-paint-scope="person-multi" data-geneo-paint-property="${property}">
           <div class="geneo-paint-row-heading">
             <span class="geneo-paint-heading-copy"><span class="geneo-paint-label">${escapeHtml(label)}</span>
               ${enabled === null ? `<span class="geneo-paint-state">${escapeHtml(t('Mixed'))}</span>` : ''}
@@ -15125,12 +15300,10 @@ function renderGeneographPersonMultiAppearance(nodes)
               data-geneo-person-multi-paint-toggle="${property}">${escapeHtml(t(enabled === false ? 'Restore' : 'Remove'))}</button>`}
           </div>
           <div class="geneo-paint-controls">
-            <label class="geneo-paint-swatch geneo-multi-paint-swatch ${color === null ? 'is-mixed' : ''}"
-              title="${escapeHtml(color === null ? t('Mixed') : color)}">
-              <input type="color" value="${color || '#FFFFFF'}"
-                data-geneo-person-multi-paint-color="${property}"
-                aria-label="${escapeHtml(t(`${label} color`))}" ${enabled === false ? 'disabled' : ''}>
-            </label>
+            <button class="geneo-paint-swatch geneo-multi-paint-swatch ${color === null ? 'is-mixed' : ''}"
+              type="button" data-geneo-paint-open style="${geneoPaintSwatchStyle({ color: color || '#FFFFFF', opacity: opacity ?? 100, enabled: enabled ?? true })}"
+              title="${escapeHtml(color === null ? t('Mixed') : color)}" aria-label="${escapeHtml(t(`${label} color`))}"
+              aria-haspopup="dialog" aria-expanded="false" ${enabled === false ? 'disabled' : ''}><span aria-hidden="true"></span></button>
             <input class="geneo-paint-hex" type="text" maxlength="7" spellcheck="false"
               value="${color || ''}" placeholder="${escapeHtml(t('Mixed'))}"
               data-geneo-person-multi-paint-hex="${property}"
@@ -15322,14 +15495,16 @@ function renderGeneographMultiConnectionAppearance(connections, mixed = false)
             <span class="geneo-number-unit"><input class="geneo-input" type="number" min="1" max="12" step="1"
               value="${width ?? ''}" placeholder="${escapeHtml(t('Mixed'))}" data-geneo-connection-multi-width><span aria-hidden="true">px</span></span>
           </label>
-          <div class="geneo-paint-row geneo-person-multi-paint-row ${enabled === false ? 'is-none' : ''}" data-geneo-connection-multi-paint-row>
+          <div class="geneo-paint-row geneo-person-multi-paint-row ${enabled === false ? 'is-none' : ''}" data-geneo-connection-multi-paint-row data-geneo-paint-scope="connection-multi" data-geneo-paint-property="line">
             <div class="geneo-paint-row-heading"><span class="geneo-paint-heading-copy"><span class="geneo-paint-label">${escapeHtml(t('Connection color'))}</span>
               ${enabled === null ? `<span class="geneo-paint-state">${escapeHtml(t('Mixed'))}</span>` : ''}
               ${enabled === false ? `<span class="geneo-paint-state">${escapeHtml(t('None'))}</span>` : ''}</span>
               <button class="geneo-paint-action" type="button" data-geneo-connection-multi-paint-toggle>${escapeHtml(t(enabled === false ? 'Restore' : 'Remove'))}</button></div>
             <div class="geneo-paint-controls">
-              <label class="geneo-paint-swatch geneo-multi-paint-swatch ${color === null ? 'is-mixed' : ''}" title="${escapeHtml(color ?? t('Mixed'))}">
-                <input type="color" value="${color || '#D9E5E1'}" data-geneo-connection-multi-color aria-label="${escapeHtml(t('Connection color'))}"></label>
+              <button class="geneo-paint-swatch geneo-multi-paint-swatch ${color === null ? 'is-mixed' : ''}" type="button"
+                data-geneo-paint-open style="${geneoPaintSwatchStyle({ color: color || '#D9E5E1', opacity: opacity ?? 100, enabled: enabled ?? true })}"
+                title="${escapeHtml(color ?? t('Mixed'))}" aria-label="${escapeHtml(t('Connection color'))}"
+                aria-haspopup="dialog" aria-expanded="false"><span aria-hidden="true"></span></button>
               <input class="geneo-paint-hex" type="text" maxlength="7" spellcheck="false" value="${color || ''}"
                 placeholder="${escapeHtml(t('Mixed'))}" data-geneo-connection-multi-hex aria-label="${escapeHtml(t('Connection color'))}">
               <label class="geneo-paint-opacity-number"><input type="number" min="0" max="100" step="1"
@@ -15385,13 +15560,15 @@ function renderGeneographGenericMultiAppearance(nodes)
         const opacity = shared(property, 'opacity');
         const enabled = shared(property, 'enabled');
         const label = t(capitalize(property));
-        return `<div class="geneo-paint-row geneo-person-multi-paint-row ${enabled === false ? 'is-none' : ''}">
+        return `<div class="geneo-paint-row geneo-person-multi-paint-row ${enabled === false ? 'is-none' : ''}" data-geneo-paint-scope="node-multi" data-geneo-paint-property="${property}">
           <div class="geneo-paint-row-heading"><span class="geneo-paint-heading-copy"><span class="geneo-paint-label">${escapeHtml(label)}</span>
             ${enabled === null ? `<span class="geneo-paint-state">${escapeHtml(t('Mixed'))}</span>` : ''}
             ${enabled === false ? `<span class="geneo-paint-state">${escapeHtml(t('None'))}</span>` : ''}</span>
             ${property !== 'text' ? `<button class="geneo-paint-action" type="button" data-geneo-bulk-paint-toggle="${property}">${escapeHtml(t(enabled === false ? 'Restore' : 'Remove'))}</button>` : ''}</div>
-          <div class="geneo-paint-controls"><label class="geneo-paint-swatch geneo-multi-paint-swatch ${color === null ? 'is-mixed' : ''}" title="${escapeHtml(color || t('Mixed'))}">
-            <input type="color" value="${color || '#FFFFFF'}" data-geneo-bulk-paint-color="${property}" aria-label="${escapeHtml(t(`${capitalize(property)} color`))}"></label>
+          <div class="geneo-paint-controls"><button class="geneo-paint-swatch geneo-multi-paint-swatch ${color === null ? 'is-mixed' : ''}" type="button"
+            data-geneo-paint-open style="${geneoPaintSwatchStyle({ color: color || '#FFFFFF', opacity: opacity ?? 100, enabled: enabled ?? true })}"
+            title="${escapeHtml(color || t('Mixed'))}" aria-label="${escapeHtml(t(`${capitalize(property)} color`))}"
+            aria-haspopup="dialog" aria-expanded="false"><span aria-hidden="true"></span></button>
             <input class="geneo-paint-hex" type="text" maxlength="7" spellcheck="false" value="${color || ''}" placeholder="${escapeHtml(t('Mixed'))}"
               data-geneo-bulk-paint-hex="${property}" aria-label="${escapeHtml(t(`${capitalize(property)} hex color`))}">
             <label class="geneo-paint-opacity-number"><input type="number" min="0" max="100" step="1" value="${opacity ?? ''}"
@@ -27219,9 +27396,6 @@ function bindGeneographPersonMultiAppearance()
         node.appearance.paintOverrides[property] = true;
     });
 
-    main.querySelectorAll('[data-geneo-person-multi-paint-color]')
-        .forEach(input => input.addEventListener('change', () =>
-            updatePaint(input.dataset.geneoPersonMultiPaintColor, 'color', input.value.toUpperCase())));
     main.querySelectorAll('[data-geneo-person-multi-paint-hex]')
         .forEach(input => input.addEventListener('change', () =>
         {
@@ -27427,8 +27601,6 @@ function bindGeneographGenericBulkControls()
         touchGeneographBoard();
         renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true, preserveSidebarScroll: true });
     };
-    main.querySelectorAll('[data-geneo-bulk-paint-color]').forEach(input => input.addEventListener('change', () =>
-        commitAppearance(input.dataset.geneoBulkPaintColor, 'color', normalizeGeneoHexColor(input.value))));
     main.querySelectorAll('[data-geneo-bulk-paint-hex]').forEach(input => input.addEventListener('change', () =>
     {
         if (!/^#?([0-9a-f]{3}|[0-9a-f]{6})$/i.test(input.value.trim()))
@@ -27981,8 +28153,6 @@ function bindGeneoConnectionControls()
         if (input.value.trim() === '' || !input.checkValidity()) { input.reportValidity(); return; }
         geneoCommitMultiConnectionAppearance('cornerRadius', Number(input.value));
     });
-    main.querySelector('[data-geneo-connection-multi-color]')?.addEventListener('change', event =>
-        geneoCommitMultiConnectionPaint('color', normalizeGeneoHexColor(event.currentTarget.value)));
     main.querySelector('[data-geneo-connection-multi-hex]')?.addEventListener('change', event =>
     {
         const input = event.currentTarget;

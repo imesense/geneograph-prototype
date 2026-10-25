@@ -94,7 +94,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 setGeneographSelection([ids.first, drawing.id], [ids.connection]);
                 renderGeneographEditorPreserveScroll();
             }, ids);
-            assert.equal(await inspector.locator('[data-geneo-bulk-paint-color="fill"]').count(), 0);
+            assert.equal(await inspector.locator('[data-geneo-paint-scope="node-multi"][data-geneo-paint-property="fill"] [data-geneo-paint-open]').count(), 0);
             assert.equal(await inspector.locator('[data-geneo-bulk-appearance="cornerRadius"]').count(), 0);
             assert.equal(await inspector.locator('[data-geneo-bulk-appearance="strokeWidth"]').count(), 1);
             await inspector.locator('[data-geneo-delete-selection]').click();
