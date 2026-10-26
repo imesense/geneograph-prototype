@@ -15952,7 +15952,7 @@ function renderGeneographPersonTreeLinkSection(
         context: 'person',
         id: 'familyTreeLink',
         title: 'Family Tree link',
-        content: `${content}<button class="button secondary geneo-import-action" type="button" data-geneo-import-family>${validLink ? 'Review changes' : person?.treePersonId ? 'Repair Tree link' : 'Add to Family Tree'}</button>`
+        content: `${content}<button class="button secondary geneo-import-action" type="button" data-geneo-import-family>${validLink ? 'Review with Family Tree' : person?.treePersonId ? 'Repair Tree link' : 'Add to Family Tree'}</button>`
     });
 }
 

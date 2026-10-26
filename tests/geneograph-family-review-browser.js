@@ -37,12 +37,12 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 draft.mobileDetail = true;
                 geneoTreeImportRender();
                 const anchorStable = draft.anchorId === 'gp-iris';
-                const relativeContext = document.querySelector('.gr-detail').innerText.includes('Relationship to anchor');
-                const embedded = document.querySelector('.gr-detail').innerText.includes('Family connections');
+                const relativeContext = document.querySelector('.gr-detail').innerText.includes('Sibling of Iris');
+                const embedded = document.querySelector('.gr-detail').innerText.includes('Family Tree relationship');
                 const allPeople = draft.people.length;
                 const branchPeople = geneoTreeImportGroup(draft.diagram, draft.anchorId).length;
                 const candidateCount = geneoTreeImportMatches(draft.people[0], draft.projectId).length;
-                draft.scope = 'board'; draft.search = 'nothing'; draft.choices.set('gp-iris', 'create'); draft.page = 'review';
+                draft.scope = 'board'; draft.search = 'nothing'; draft.choices.set('gp-iris', 'create'); draft.summaryOpen = true;
                 geneoTreeImportRender();
                 const hiddenChangesVisible = document.querySelector('.gr-final').innerText.includes('Iris');
                 const modal = document.querySelector('.geneo-family-review');
@@ -59,7 +59,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             assert.ok(basic.candidateCount > 8);
             assert.equal(basic.hiddenChangesVisible, true);
             assert.ok(basic.width <= width && basic.overflow <= 1);
-            await page.evaluate(() => { geneoTreeImportDraft.page = 'people'; geneoTreeImportDraft.search = ''; geneoTreeImportDraft.status = 'all'; geneoTreeImportRender(); });
+            await page.evaluate(() => { geneoTreeImportDraft.summaryOpen = false; geneoTreeImportDraft.search = ''; geneoTreeImportDraft.status = 'all'; geneoTreeImportRender(); });
             if (process.env.GENEO_REVIEW_SCREENSHOT_DIR)
                 await page.screenshot({ path: path.join(process.env.GENEO_REVIEW_SCREENSHOT_DIR, `geneograph-family-review-${width}.png`) });
             const engine = await page.evaluate(() =>

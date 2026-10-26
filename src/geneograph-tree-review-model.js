@@ -197,7 +197,7 @@ function geneoTreeImportMatches(person, projectId, draft = geneoTreeImportDraft)
         for (const edge of graph.get(person.id) || [])
         {
             const relativeId = draft?.choices.get(edge.id);
-            if (!relativeId || ['skip', 'create'].includes(relativeId)) continue;
+            if (!relativeId || ['skip', 'create', 'unlink'].includes(relativeId)) continue;
             const related = edge.role === 'Parents' ? geneoReviewParents(families, candidate.id).has(relativeId)
                 : edge.role === 'Children' ? geneoReviewParents(families, relativeId).has(candidate.id)
                     : edge.role === 'Partners' ? families.some(family => [familyPartnerAId(family), familyPartnerBId(family)].includes(candidate.id)
@@ -220,7 +220,7 @@ function geneoReviewAllRelations(draft)
 {
     const relations = [...draft.relations];
     const boardByTree = new Map(draft.people.map(person => [draft.choices.get(person.id), person.id])
-        .filter(([id]) => id && !['create', 'skip'].includes(id) && sampleData.people.some(person => person.id === id && !person.deleted && person.projectId === draft.projectId)));
+        .filter(([id]) => id && !['create', 'skip', 'unlink'].includes(id) && sampleData.people.some(person => person.id === id && !person.deleted && person.projectId === draft.projectId)));
     for (const family of sampleData.families.filter(item => item.projectId === draft.projectId))
     {
         const parents = geneoReviewFamilyParents(family);
@@ -335,7 +335,7 @@ function geneoReviewDraft(board, anchorId)
     const represented = new Set(diagram.nodes.filter(node => node.type === 'person').map(node => node.personId));
     const people = diagram.people.filter(person => represented.has(person.id));
     const draft = { boardId: board.id, projectId: board.projectId, diagram, people, anchorId, activePersonId: anchorId,
-        scope: 'branch', search: '', status: 'all', page: 'people', mobileDetail: false,
+        scope: 'branch', search: '', status: 'all', summaryOpen: false, mobileDetail: false,
         baseline: geneoReviewRecordSnapshot(board), choices: new Map(people.map(person =>
         {
             const tree = getPerson(person.treePersonId);
@@ -393,7 +393,7 @@ function geneoTreeImportPreview(draft)
     for (const person of board.diagram.people)
     {
         const chosen = draft.choices.has(person.id) ? draft.choices.get(person.id) : person.treePersonId;
-        const treeId = chosen === 'create' ? draft.newIds.get(person.id) : chosen && chosen !== 'skip' ? chosen : '';
+        const treeId = chosen === 'create' ? draft.newIds.get(person.id) : chosen && !['skip', 'unlink'].includes(chosen) ? chosen : '';
         if (!treeId) continue;
         if (chosen !== 'create' && !sampleData.people.some(item => item.id === treeId && !item.deleted && item.projectId === draft.projectId))
         {
@@ -412,11 +412,20 @@ function geneoTreeImportPreview(draft)
         const choice = draft.choices.get(person.id);
         const treeId = result.mapping.get(person.id);
         const fields = draft.fields.get(person.id) || new Map();
-        const changedIdentity = choice === 'create' || Boolean(treeId && treeId !== person.treePersonId);
+        const changedIdentity = choice === 'create' || choice === 'unlink' && Boolean(person.treePersonId) || Boolean(treeId && treeId !== person.treePersonId);
         if (!changedIdentity && !fields.size) continue;
         read('board.people', person.id);
         const boardPerson = projected['board.people'].find(record => record.id === person.id);
         if (!boardPerson) { fail('Reviewed person is no longer available.', person.id); continue; }
+        if (choice === 'unlink')
+        {
+            if (fields.size || draft.relations.some(relation => relation.ids.includes(person.id) && draft.relationChoices.has(relation.id)))
+            { fail('Remove this person’s selected transfers before unlinking, or keep the link.', person.id); continue; }
+            boardPerson.treePersonId = null;
+            boardPerson.syncState = 'local';
+            operation(person.id, 'identity', 'Unlink from Family Tree');
+            continue;
+        }
         let tree = projected.people.find(record => record.id === treeId && !record.deleted && record.projectId === draft.projectId);
         if (choice === 'create')
         {
@@ -472,7 +481,7 @@ function geneoTreeImportPreview(draft)
             result.statuses.set(relation.id, 'Not connected on board');
             if (!decision) continue;
             if (decision !== 'tree' || !anchorId || !ids.every(Boolean))
-            { fail('Resolve the anchor and the people in this connection first.', relation.ids.at(-1), relation.id); continue; }
+            { fail('Choose a Family Tree record for each person in this relationship.', relation.ids.at(-1), relation.id); continue; }
             const treeFamily = projected.families.find(family => family.id === relation.treeFamilyId);
             if (!treeFamily || !draft.treeFamilyIds?.has(treeFamily.id) || !draft.treeConnectionIds?.has(relation.id))
             { fail('A reviewed record changed. Refresh the review to keep your choices and compare the latest values.'); continue; }
@@ -525,9 +534,10 @@ function geneoTreeImportPreview(draft)
                 parentChildRelationshipType(target, parentId, ids.at(-1)) === geneoReviewParentType(source, source.children.find(child => child.personId === relation.ids.at(-1)), relation.ids[index])));
         if (relation.type === 'sibling' && complete)
             matches = projected.families.some(family => (family.childIds || []).includes(ids[0]) && (family.childIds || []).includes(ids[1]));
-        result.statuses.set(relation.id, matches ? 'Same relationship' : !complete ? 'Resolve identities first' : target ? 'Relationship differs' : 'Not connected in Tree');
+        const connectionExists = target && (relation.type !== 'child' || (target.childIds || []).includes(ids.at(-1)));
+        result.statuses.set(relation.id, matches ? 'Same relationship' : !complete ? 'Resolve identities first' : connectionExists ? 'Relationship differs' : 'Not connected in Tree');
         if (!decision) continue;
-        if (!anchorId || !complete) { fail('Resolve the anchor and the people in this connection first.', relation.ids.at(-1), relation.id); continue; }
+        if (!anchorId || !complete) { fail('Choose a Family Tree record for each person in this relationship.', relation.ids.at(-1), relation.id); continue; }
         for (const id of relation.ids) { read('board.people', id); read('people', result.mapping.get(id)); }
         if (source) read('board.families', source.id);
         if (target) read('families', target.id);

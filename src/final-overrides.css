@@ -2920,7 +2920,8 @@ body.mobile-details-open .geneo-inspector [data-geneo-inspector-toggle] {
 .geneo-board-chooser-modal .modal-footer { justify-content: flex-end; }
 .geneo-transfer-announcement { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; border: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 @media (max-width: 540px) { .geneo-board-chooser-modal { width: 100%; max-height: 100dvh; height: 100dvh; } .geneo-board-chooser-modal .geneo-transfer-body { flex: 1; padding: 16px; align-content: start; } .geneo-board-chooser-modal .geneo-transfer-list { max-height: none; } .geneo-board-chooser-modal .modal-footer { gap: 8px; } .geneo-board-chooser-modal .modal-footer .button.primary { flex: 1; } }
-.geneo-import-action { width: 100%; margin-top: 12px; }
+.geneo-import-action { width: 100%; margin-top: 0; }
+#geneo-inspector-person-familyTreeLink { gap: 12px; }
 
 .geneo-node-person.geneo-person-dimmed { opacity: .38; }
 .geneo-node-person.geneo-person-dimmed.selected,
