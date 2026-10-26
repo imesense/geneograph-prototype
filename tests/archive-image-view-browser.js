@@ -65,6 +65,7 @@ async function chooseImageLayout(page, layout)
             }), 'the image position is centered independently of the other controls');
             const stage = page.locator('.archive-image-stage');
             await page.waitForFunction(() => !document.querySelector('[data-av-image]').hidden);
+            assert.equal(await page.locator('.archive-file-create-actions [data-archive-create-folder]').isVisible(), true, 'New folder stays directly accessible');
             assert.equal(await page.locator('.archive-file-preview, .archive-file-open').count(), 0);
             assert.equal(await page.locator('[data-av-action="previous"]').isDisabled(), true);
             assert.ok(await page.locator('[data-av-index]').count() < 40, '1000 images use a bounded thumbnail DOM');
@@ -73,6 +74,10 @@ async function chooseImageLayout(page, layout)
             await page.evaluate(() => { window.avStage = document.querySelector('.archive-image-stage'); });
             await page.locator('[data-av-action="next"]').click();
             assert.equal(await page.evaluate(() => document.querySelector('.archive-image-stage') === avStage), true, 'navigation does not rebuild the stage');
+            assert.equal(await page.evaluate(() => state.archiveSelectedFileId), 'av-1');
+            await page.keyboard.press('ArrowRight');
+            assert.equal(await page.evaluate(() => state.archiveSelectedFileId), 'av-2', 'keyboard navigation continues immediately after clicking an image arrow');
+            await page.keyboard.press('ArrowLeft');
             assert.equal(await page.evaluate(() => state.archiveSelectedFileId), 'av-1');
             assert.deepEqual(await page.evaluate(() => [appNavigation.back.length, state.archiveNavigationBackStack.length]), history);
             await page.waitForFunction(() => !document.querySelector('[data-av-image]').hidden);
@@ -152,6 +157,12 @@ async function chooseImageLayout(page, layout)
             await page.locator('[data-av-action="next"]').click();
             await page.waitForFunction(() => !document.querySelector('[data-av-image]').hidden);
             assert.equal(await page.evaluate(() => state.archiveSelectedFileId), 'av-8', 'missing originals do not block stepping');
+            await page.evaluate(() => archiveImageNavigate(998));
+            await page.locator('[data-av-action="next"]').click();
+            assert.equal(await page.evaluate(() => state.archiveSelectedFileId), 'av-999');
+            await page.keyboard.press('ArrowLeft');
+            assert.equal(await page.evaluate(() => state.archiveSelectedFileId), 'av-998', 'keyboard navigation survives an arrow becoming disabled at the sequence boundary');
+            await page.evaluate(() => archiveImageNavigate(8));
             await page.locator('[data-av-action="expand"]').click();
             assert.equal(await page.evaluate(() => document.body.classList.contains('archive-image-expanded')), true);
             await page.keyboard.press('Escape');

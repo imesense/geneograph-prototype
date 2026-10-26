@@ -29,6 +29,19 @@
 .archive-view-picker:focus-within { outline: 2px solid var(--brand-green-300); outline-offset: 2px; }
 .archive-image-shell .archive-main { display: flex; flex-direction: column; overflow: hidden; }
 .archive-image-shell .archive-files-page { height: 100%; min-height: 0; }
+.archive-file-identity { container: archive-file-identity / inline-size; }
+.archive-file-identity .inspector-name-heading { align-items: center; }
+.archive-file-identity .inspector-name-heading h2 { display: block; margin: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; overflow-wrap: normal; -webkit-line-clamp: unset; line-clamp: unset; }
+.archive-file-identity > .archive-file-summary { margin-top: 8px; }
+.archive-file-summary { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.archive-file-rename-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-width: 0; }
+.archive-file-rename-footer .archive-file-summary { flex: 1; min-width: 0; margin: 0; }
+.archive-file-rename-footer .inspector-name-editor-actions { flex: none; flex-wrap: nowrap; gap: 6px; }
+.archive-file-rename-footer .inspector-name-edit-button { min-height: 36px; padding: 0 8px; gap: 5px; font-size: 12px; }
+@container archive-file-identity (max-width: 360px) {
+    .archive-file-rename-footer .inspector-name-edit-button { width: 44px; min-height: 44px; padding: 0; }
+    .archive-file-rename-footer .inspector-name-edit-button span { display: none; }
+}
 .archive-image-workspace { display: flex; flex: 1 1 0; flex-direction: column; min-height: 0; min-width: 0; overflow: hidden; }
 .archive-image-workspace .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .archive-image-tools { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; flex: none; gap: 8px; min-height: 48px; }
@@ -77,16 +90,23 @@
 .archive-image-expanded .archive-image-shell .archive-file-navigation,
 .archive-image-expanded .archive-image-shell .archive-filter-results { display: none; }
 @container archive-files (max-width: 1000px) {
+    .archive-file-navigation .archive-toolbar:not(.mobile-search-open) .app-search-field { display: none; }
+    .archive-file-navigation .archive-toolbar:not(.mobile-search-open) .archive-mobile-search-trigger { display: grid; width: 44px; height: 44px; }
     .archive-file-navigation .archive-toolbar :is(#archiveFilterButton, .app-sort-trigger, .archive-file-create-actions .button) { min-width: 44px; width: 44px; height: 44px; padding: 0; }
     .archive-file-navigation .archive-toolbar #archiveFilterButton > span:not(.module-filter-icon):not(.module-filter-count),
     .archive-file-navigation .archive-toolbar :is(.app-sort-current, .app-sort-chevron, .archive-file-create-actions .button > span) { display: none; }
     .archive-file-navigation .archive-toolbar .app-sort-field { min-width: 0; width: 44px; }
-    .archive-file-navigation .archive-toolbar .archive-toolbar-left { min-width: 100px; }
+    .archive-file-navigation .archive-toolbar .archive-toolbar-left { min-width: 44px; }
+    .archive-file-navigation .archive-toolbar.mobile-search-open .archive-toolbar-right { display: none; }
+    .archive-file-navigation .archive-toolbar.mobile-search-open .archive-toolbar-left { display: flex; width: 100%; }
+    .archive-file-navigation .archive-toolbar.mobile-search-open .archive-mobile-search-close { display: grid; }
 }
 @container archive-files (max-width: 680px) {
     .archive-file-navigation .archive-toolbar .archive-toolbar-left { flex: 1; min-width: 44px; width: 44px; }
     .archive-file-navigation .archive-toolbar .archive-toolbar-right { gap: 4px; }
-    .archive-file-navigation .archive-toolbar :is(.archive-layout-switch, .archive-file-create-actions) { display: none; }
+    .archive-file-navigation .archive-toolbar .archive-layout-switch { display: none; }
+    .archive-file-navigation .archive-toolbar .archive-file-create-actions { display: flex; }
+    .archive-file-navigation .archive-toolbar .archive-file-create-actions [data-archive-add-files] { display: none; }
     .archive-file-navigation .archive-toolbar .archive-view-picker { display: flex; }
     .archive-file-navigation .archive-toolbar .archive-mobile-add-files { display: inline-flex; width: 44px; min-width: 44px; height: 44px; padding: 0; }
     .archive-file-navigation .archive-toolbar .archive-mobile-add-files svg { display: block; }

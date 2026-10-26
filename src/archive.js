@@ -12446,6 +12446,7 @@ function renderArchiveFileIdentity(
         ]
             .filter(Boolean)
             .join(' · ');
+    const summaryHtml = `<p class="archive-file-summary" title="${escapeHtml(summary || 'File')}">${escapeHtml(summary || 'File')}</p>`;
 
     return `
         <div
@@ -12456,23 +12457,13 @@ function renderArchiveFileIdentity(
           ${state.archiveFileNameEditingId === file.id ? `
             <div class="inspector-name-editor">
               <input id="archiveFileNameInput" maxlength="220" aria-label="${escapeHtml(t('File name'))}" value="${escapeHtml(file.name || '')}">
-              <div class="inspector-name-editor-actions">
-                <button class="inspector-name-edit-button inspector-name-save" type="button" id="archiveSaveFileName">${icon.check}<span>${escapeHtml(t('Save name'))}</span></button>
-                <button class="inspector-name-edit-button inspector-name-cancel" type="button" id="archiveCancelFileName">${icon.close}<span>${escapeHtml(t('Cancel'))}</span></button>
+              <div class="archive-file-rename-footer">${summaryHtml}<div class="inspector-name-editor-actions">
+                <button class="inspector-name-edit-button inspector-name-save" type="button" id="archiveSaveFileName" aria-label="${escapeHtml(t('Save name'))}" title="${escapeHtml(t('Save name'))}">${icon.check}<span>${escapeHtml(t('Save name'))}</span></button>
+                <button class="inspector-name-edit-button inspector-name-cancel" type="button" id="archiveCancelFileName" aria-label="${escapeHtml(t('Cancel'))}" title="${escapeHtml(t('Cancel'))}">${icon.close}<span>${escapeHtml(t('Cancel'))}</span></button>
+              </div>
               </div>
             </div>` : `
-            <div class="inspector-name-heading"><h2>${escapeHtml(file.name || 'Untitled file')}</h2><button class="inspector-name-command" type="button" id="archiveRenameFile" aria-label="${escapeHtml(t('Rename file'))}" title="${escapeHtml(t('Rename file'))}">${icon.edit}</button></div>`}
-
-          <p
-            class="
-              archive-file-summary
-            ">
-
-            ${escapeHtml(
-                summary
-              || 'File'
-            )}
-          </p>
+            <div class="inspector-name-heading"><h2 title="${escapeHtml(file.name || 'Untitled file')}" data-user-content>${escapeHtml(file.name || 'Untitled file')}</h2><button class="inspector-name-command" type="button" id="archiveRenameFile" aria-label="${escapeHtml(t('Rename file'))}" title="${escapeHtml(t('Rename file'))}">${icon.edit}</button></div>${summaryHtml}`}
         </div>
       `;
 }

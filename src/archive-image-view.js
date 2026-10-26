@@ -286,7 +286,7 @@ async function archiveImageShow()
     }
 }
 
-function archiveImageNavigate(index, focusThumbnail = false)
+function archiveImageNavigate(index, focusThumbnail = false, focusViewer = false)
 {
     const view = archiveImageView;
     if (!Number.isInteger(index) || index < 0 || index >= view.files.length || index === view.index) return;
@@ -308,7 +308,9 @@ function archiveImageNavigate(index, focusThumbnail = false)
             localizeUI(next);
             next.querySelector('.archive-inspector-scroll').scrollTop = scroll;
         }
+        const restoreViewerFocus = focusViewer || Boolean(document.activeElement?.matches('.archive-image-stage > button'));
         archiveImageShow();
+        if (restoreViewerFocus) view.host?.querySelector('.archive-image-stage')?.focus({ preventScroll: true });
         if (focusThumbnail) view.host?.querySelector(`[data-av-index="${view.index}"]`)?.focus({ preventScroll: true });
         appNavigationObserve();
     });
@@ -348,8 +350,8 @@ function mountArchiveImageView()
         const thumb = event.target.closest('[data-av-index]');
         if (thumb) { archiveImageNavigate(Number(thumb.dataset.avIndex)); return; }
         const action = event.target.closest('[data-av-action]')?.dataset.avAction;
-        if (action === 'previous') archiveImageNavigate(view.index - 1);
-        if (action === 'next') archiveImageNavigate(view.index + 1);
+        if (action === 'previous') archiveImageNavigate(view.index - 1, false, true);
+        if (action === 'next') archiveImageNavigate(view.index + 1, false, true);
         if (action === 'fit' || action === 'width')
         {
             view.mode = action;
