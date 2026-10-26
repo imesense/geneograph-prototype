@@ -2,7 +2,7 @@ const archiveImageView = {
     projectId: null, scope: '', files: [], indices: new Map(), index: 0,
     mode: 'fit', zoom: 1, panX: .5, panY: .5, scroll: 0,
     expanded: false, stripHidden: false, cache: new Map(), thumbs: new Map(),
-    dispose: null, token: 0, host: null, geometry: null
+    dispose: null, token: 0, host: null, geometry: null, hoveredPersonId: null
 };
 
 function archiveImagesActive()
@@ -14,6 +14,7 @@ function archiveImageUnmount()
 {
     archiveImageView.dispose?.();
     archiveImageView.dispose = null;
+    archiveImageView.hoveredPersonId = null;
     archiveImageView.host = null;
     archiveImageView.token++;
 }
@@ -28,16 +29,6 @@ function resetArchiveImageSession()
         expanded: false, stripHidden: false, cache: new Map(), thumbs: new Map(), geometry: null
     });
     document.body.classList.remove('archive-image-expanded');
-}
-
-function archiveImageCount(count, images)
-{
-    const plural = new Intl.PluralRules(state.language).select(count);
-    const noun = state.language === 'ru'
-        ? (images ? { one: 'изображение', few: 'изображения', many: 'изображений', other: 'изображения' }
-            : { one: 'другой файл', few: 'других файла', many: 'других файлов', other: 'других файлов' })[plural]
-        : images ? (count === 1 ? 'image' : 'images') : (count === 1 ? 'other file' : 'other files');
-    return `${new Intl.NumberFormat(state.language).format(count)} ${noun}`;
 }
 
 function archiveImageSyncLifecycle()
@@ -81,21 +72,19 @@ function renderArchiveImageView(files)
         state.archiveSelectedFileId = view.files[view.index].id;
         state.archiveSelectedFolderItemId = null;
     }
-    const counts = `${archiveImageCount(view.files.length, true)} · ${archiveImageCount(files.length - view.files.length, false)}`;
     if (!view.files.length)
-        return `<section class="archive-image-empty"><p>${escapeHtml(counts)}</p><h2>${escapeHtml(t('No images in this view'))}</h2><p>${escapeHtml(t('Choose another folder or adjust your filters.'))}</p><button class="button secondary" type="button" data-archive-file-layout="details">${escapeHtml(t('Switch to Details'))}</button></section>`;
+        return `<section class="archive-image-empty"><h2>${escapeHtml(t('No images in this view'))}</h2><p>${escapeHtml(t('Choose another folder or adjust your filters.'))}</p><button class="button secondary" type="button" data-archive-file-layout="details">${escapeHtml(t('Switch to Details'))}</button></section>`;
     return `<section class="archive-image-workspace" aria-label="${escapeHtml(t('Image view'))}">
-        <div class="archive-image-navigation">
-          <div class="archive-image-position">${archiveImageButton('previous', 'Previous image', icon.arrow)}
-            <label>${escapeHtml(t('Image'))} <input data-av-position type="number" min="1" max="${view.files.length}" value="${view.index + 1}" aria-label="${escapeHtml(t('Image number'))}"></label><span>${escapeHtml(t('of'))} ${view.files.length.toLocaleString(state.language)}</span>
-            ${archiveImageButton('next', 'Next image', icon.arrow)}</div>
-          <span class="archive-image-counts">${escapeHtml(counts)}</span>
-          <div class="archive-image-actions">${archiveImageButton('details', 'Details', icon.info)}${archiveImageButton('strip', 'Show or hide thumbnails', icon.grid, `aria-expanded="${!view.stripHidden}"`)}${archiveImageButton('expand', 'Expand viewer', icon.expand || icon.focus, 'aria-pressed="false"')}</div>
-        </div>
         <div class="archive-image-stage" tabindex="0" role="region" aria-label="${escapeHtml(t('Image viewer'))}">
+          <span class="archive-person-region-highlight is-active" data-av-person-region hidden aria-hidden="true"></span>
+          ${archiveImageButton('previous', 'Previous image', icon.arrow)}${archiveImageButton('next', 'Next image', icon.arrow)}
           <div class="archive-image-status" data-av-status role="status"></div>
         </div>
-        <div class="archive-image-tools">${archiveImageButton('fit', 'Fit image', icon.imageFit)}${archiveImageButton('width', 'Fit width', icon.imageFitWidth)}<span class="archive-image-tool-divider"></span>${archiveImageButton('out', 'Zoom out', icon.zoomOut)}<output data-av-zoom>100%</output>${archiveImageButton('in', 'Zoom in', icon.zoomIn)}<span class="archive-image-filename" data-av-name></span></div>
+        <div class="archive-image-tools">
+          <div class="archive-image-zoom-tools">${archiveImageButton('fit', 'Fit image', icon.imageFit)}${archiveImageButton('width', 'Fit width', icon.imageFitWidth)}<span class="archive-image-tool-divider"></span>${archiveImageButton('out', 'Zoom out', icon.zoomOut)}<output data-av-zoom>100%</output>${archiveImageButton('in', 'Zoom in', icon.zoomIn)}</div>
+          <div class="archive-image-position"><label>${escapeHtml(t('Image'))} <input data-av-position type="number" min="1" max="${view.files.length}" value="${view.index + 1}" aria-label="${escapeHtml(t('Image number'))}"></label><span>${escapeHtml(t('of'))} ${view.files.length.toLocaleString(state.language)}</span></div>
+          <div class="archive-image-actions">${archiveImageButton('details', 'Details', icon.info)}${archiveImageButton('strip', 'Show or hide thumbnails', icon.grid, `aria-expanded="${!view.stripHidden}"`)}${archiveImageButton('expand', 'Expand viewer', icon.expand, 'aria-pressed="false"')}</div>
+        </div>
         <div class="archive-image-filmstrip" data-av-strip tabindex="0" role="region" aria-label="${escapeHtml(t('Image thumbnails'))}" ${view.stripHidden ? 'hidden' : ''}><div data-av-track></div></div>
         <span class="sr-only" data-av-announcement aria-live="polite" aria-atomic="true"></span>
       </section>`;
@@ -156,9 +145,29 @@ function archiveImageLayout()
     const left = w <= width ? (width - w) / 2 : -(w - width) * view.panX;
     const top = h <= height ? (height - h) / 2 : -(h - height) * view.panY;
     Object.assign(image.style, { width: `${w}px`, height: `${h}px`, transform: `translate(${left}px, ${top}px)` });
-    view.geometry = { width, height, w, h, scale, fitWidth };
+    view.geometry = { width, height, w, h, scale, fitWidth, left, top };
+    archiveImageHighlight(view.hoveredPersonId);
     view.host.querySelector('[data-av-zoom]').value = `${Math.round(scale * 100)}%`;
     ['fit', 'width'].forEach(mode => view.host.querySelector(`[data-av-action="${mode}"]`)?.setAttribute('aria-pressed', String(view.mode === mode)));
+}
+
+function archiveImageHighlight(personId)
+{
+    const view = archiveImageView;
+    view.hoveredPersonId = personId;
+    const overlay = view.host?.querySelector('[data-av-person-region]');
+    if (!overlay) return;
+    const file = view.files[view.index];
+    const region = normalizeFaceRegion(file?.personRegions?.[personId]);
+    const image = view.host.querySelector('[data-av-image]');
+    if (!personId || !region || !view.geometry || image?.hidden)
+    {
+        overlay.hidden = true;
+        return;
+    }
+    const { left, top, w, h } = view.geometry;
+    Object.assign(overlay.style, { left: `${left + region.x * w}px`, top: `${top + region.y * h}px`, width: `${region.width * w}px`, height: `${region.height * h}px` });
+    overlay.hidden = false;
 }
 
 function archiveImageRenderStrip()
@@ -225,13 +234,12 @@ async function archiveImageShow()
     const image = host.querySelector('[data-av-image]');
     const status = host.querySelector('[data-av-status]');
     image.hidden = true;
+    archiveImageHighlight(null);
     status.textContent = t('Loading image...');
     status.hidden = false;
     host.querySelector('[data-av-position]').value = view.index + 1;
     host.querySelector('[data-av-action="previous"]').disabled = view.index === 0;
     host.querySelector('[data-av-action="next"]').disabled = view.index === view.files.length - 1;
-    host.querySelector('[data-av-name]').textContent = file.name;
-    host.querySelector('[data-av-name]').title = file.name;
     host.querySelector('[data-av-announcement]').textContent = `${t('Image')} ${view.index + 1} ${t('of')} ${view.files.length}: ${file.name}`;
     archiveImageRevealThumbnail();
     archiveImageTrimCache();
@@ -377,19 +385,27 @@ function mountArchiveImageView()
     position.addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); commitPosition(); } });
     host.addEventListener('keydown', event =>
     {
-        if (modalBackdrop.classList.contains('open') || event.altKey || event.ctrlKey || event.metaKey
+        if (modalBackdrop.classList.contains('open') || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey
             || event.target.closest('input, textarea, select, [contenteditable="true"]')
-            || !event.target.closest('.archive-image-stage, [data-av-strip]')) return;
+            || !event.target.closest('.archive-image-stage, [data-av-strip], .archive-image-tools')) return;
         if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
         event.preventDefault();
         archiveImageNavigate(view.index + (event.key === 'ArrowRight' ? 1 : -1), Boolean(event.target.closest('[data-av-strip]')));
     });
-    function zoomBy(factor)
+    function zoomBy(factor, anchor = null)
     {
         const geometry = view.geometry;
         if (!geometry) return;
+        const point = anchor || { x: geometry.width / 2, y: geometry.height / 2 };
+        const imageX = (point.x - geometry.left) / geometry.w;
+        const imageY = (point.y - geometry.top) / geometry.h;
         view.zoom = Math.max(.1, Math.min(8, (view.mode === 'manual' ? view.zoom : geometry.scale / geometry.fitWidth) * factor));
         view.mode = 'manual';
+        const ratio = geometry.fitWidth * view.zoom / geometry.scale;
+        const w = geometry.w * ratio;
+        const h = geometry.h * ratio;
+        view.panX = Math.max(0, Math.min(1, (imageX * w - point.x) / Math.max(1, w - geometry.width)));
+        view.panY = Math.max(0, Math.min(1, (imageY * h - point.y) / Math.max(1, h - geometry.height)));
         archiveImageLayout();
     }
     const pointers = new Map();
@@ -430,9 +446,11 @@ function mountArchiveImageView()
     stage.addEventListener('pointercancel', end);
     stage.addEventListener('wheel', event =>
     {
-        if (!event.ctrlKey) return;
+        if (event.target.closest('button') || !view.geometry || image.hidden || modalBackdrop.classList.contains('open')) return;
         event.preventDefault();
-        zoomBy(event.deltaY < 0 ? 1.1 : 1 / 1.1);
+        const bounds = stage.getBoundingClientRect();
+        const delta = event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? bounds.height : 1);
+        zoomBy(Math.exp(-Math.max(-200, Math.min(200, delta)) * .002), { x: event.clientX - bounds.left, y: event.clientY - bounds.top });
     }, { passive: false });
     const observer = new ResizeObserver(() => { archiveImageLayout(); archiveImageRenderStrip(); });
     observer.observe(stage);

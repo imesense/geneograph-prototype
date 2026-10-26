@@ -5,6 +5,13 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
 
 const url = process.env.GENEO_TEST_URL || pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
 
+async function chooseArchiveLayout(page, layout)
+{
+    const button = page.locator(`[data-archive-file-layout="${layout}"]`).first();
+    if (await button.isVisible()) await button.click();
+    else await page.locator('[data-archive-layout-select]').selectOption(layout);
+}
+
 (async () => {
     const browser = await chromium.launch({ headless: true,
         ...(process.env.GENEO_BROWSER_PATH ? { executablePath: process.env.GENEO_BROWSER_PATH } : {}) });
@@ -21,6 +28,14 @@ const url = process.env.GENEO_TEST_URL || pathToFileURL(path.resolve(__dirname, 
                 state.archiveView = 'files';
                 render();
             }, language);
+            assert.equal(await page.locator('.archive-files-page > .archive-page-head').count(), 0);
+            assert.ok(await page.locator('.archive-file-navigation').evaluate(el => {
+                const controls = el.querySelector('.archive-toolbar').getBoundingClientRect();
+                const path = el.querySelector('.archive-location-row').getBoundingClientRect();
+                return path.top >= controls.bottom && path.left === controls.left;
+            }), 'file controls and breadcrumbs occupy two aligned rows');
+            if (width === 1920)
+                assert.equal(await page.locator('.archive-file-create-actions [data-archive-create-folder]').isVisible(), true);
             if (language === 'ru') {
                 const translated = await page.evaluate(() => {
                     const root = document.querySelector('.archive-files-page').innerText;
@@ -45,7 +60,7 @@ const url = process.env.GENEO_TEST_URL || pathToFileURL(path.resolve(__dirname, 
             }
             if (width <= 900) {
                 assert.equal(await page.locator('.archive-mobile-items').isVisible(), true);
-                assert.equal(await page.locator('.archive-layout-switch').isVisible(), true);
+                assert.ok(await page.locator('.archive-layout-switch').isVisible() || await page.locator('.archive-view-picker').isVisible());
             } else {
                 const details = page.locator('[data-archive-file-layout="details"]');
                 const tiles = page.locator('[data-archive-file-layout="tiles"]');
@@ -65,7 +80,7 @@ const url = process.env.GENEO_TEST_URL || pathToFileURL(path.resolve(__dirname, 
                 assert.ok(tableBounds.lastActionRight <= tableBounds.wrapRight + 1, `${width}px action column remains visible: ${JSON.stringify(tableBounds)}`);
                 assert.equal(await page.locator('.archive-table-folder-row .archive-file-icon.folder').count() > 0, true);
                 assert.equal(await page.locator('.archive-table-folder-row .archive-file-icon.folder').first().evaluate(icon => getComputedStyle(icon).backgroundColor), 'rgba(0, 0, 0, 0)');
-                await tiles.click();
+                await chooseArchiveLayout(page, 'tiles');
                 assert.equal(await tiles.getAttribute('aria-pressed'), 'true');
                 assert.equal(await page.locator('.archive-tiles').isVisible(), true);
                 if (process.env.GENEO_SCREENSHOT_DIR && width === 1280)
@@ -103,7 +118,7 @@ const url = process.env.GENEO_TEST_URL || pathToFileURL(path.resolve(__dirname, 
                 }
                 await page.locator('.archive-tile[data-archive-file-row] input[type="checkbox"]').first().check();
                 assert.equal(await page.evaluate(() => state.archiveSelectedFileIds.length), 1);
-                await details.click();
+                await chooseArchiveLayout(page, 'details');
                 assert.equal(await page.locator('.archive-table-wrap').isVisible(), true);
                 assert.equal(await page.locator('.archive-table-file-row.is-checked').count(), 1);
                 await page.locator('[data-archive-column-sort="name"]').click();

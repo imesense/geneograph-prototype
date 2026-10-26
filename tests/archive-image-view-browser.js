@@ -3,6 +3,13 @@ const path = require('node:path');
 const { pathToFileURL } = require('node:url');
 const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
 
+async function chooseImageLayout(page, layout)
+{
+    const button = page.locator(`[data-archive-file-layout="${layout}"]`).first();
+    if (await button.isVisible()) await button.click();
+    else await page.locator('[data-archive-layout-select]').selectOption(layout);
+}
+
 (async () =>
 {
     const browser = await chromium.launch({ headless: true, ...(process.env.GENEO_BROWSER_EXECUTABLE
@@ -38,13 +45,24 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 sampleData.archiveFiles.push(...Array.from({ length: 1000 }, (_, index) => ({
                     id: `av-${index}`, projectId: 'p1', folderId: 'av-folder', name: `scan${index + 1}.png`, kind: 'img',
                     previewUrl: index === 7 ? '' : avSource, thumbnailUrl: index === 7 ? '' : avSource,
-                    linkedPersonIds: [], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: []
+                    linkedPersonIds: ['silver'], personRegions: { silver: { x: .1, y: .2, width: .3, height: .1 } }, linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: []
                 })), { id: 'av-other', projectId: 'p1', folderId: 'av-folder', name: 'notes.txt', kind: 'doc' });
                 state.archiveSelectedFolderId = 'av-folder';
                 state.archiveSelectedFileId = 'av-0';
                 renderArchive();
             });
-            await page.locator('[data-archive-file-layout="images"]').click();
+            const padding = await page.locator('.archive-main').evaluate(el => getComputedStyle(el).padding);
+            await chooseImageLayout(page, 'images');
+            assert.equal(await page.locator('.archive-main').evaluate(el => getComputedStyle(el).padding), padding, 'layout switches preserve all workspace margins');
+            assert.equal(await page.locator('.archive-files-page > .archive-page-head').count(), 0);
+            assert.equal(await page.locator('.archive-image-counts, [data-av-name], .archive-image-navigation').count(), 0);
+            assert.equal(await page.locator('.archive-image-tools [data-av-position]').count(), 1);
+            assert.equal(await page.locator('.archive-image-tools [data-av-action="expand"]').count(), 1);
+            assert.ok(await page.locator('.archive-image-tools').evaluate(el => {
+                const tools = el.getBoundingClientRect();
+                const position = el.querySelector('.archive-image-position').getBoundingClientRect();
+                return Math.abs((position.left + position.right) / 2 - (tools.left + tools.right) / 2) < 1;
+            }), 'the image position is centered independently of the other controls');
             const stage = page.locator('.archive-image-stage');
             await page.waitForFunction(() => !document.querySelector('[data-av-image]').hidden);
             assert.equal(await page.locator('.archive-file-preview, .archive-file-open').count(), 0);
@@ -57,10 +75,21 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             assert.equal(await page.evaluate(() => document.querySelector('.archive-image-stage') === avStage), true, 'navigation does not rebuild the stage');
             assert.equal(await page.evaluate(() => state.archiveSelectedFileId), 'av-1');
             assert.deepEqual(await page.evaluate(() => [appNavigation.back.length, state.archiveNavigationBackStack.length]), history);
+            await page.waitForFunction(() => !document.querySelector('[data-av-image]').hidden);
+            const wheelBounds = await stage.boundingBox();
+            const beforeWheel = await page.evaluate(() => archiveImageView.geometry.scale);
+            await page.mouse.move(wheelBounds.x + wheelBounds.width / 2, wheelBounds.y + wheelBounds.height / 2);
+            await page.mouse.wheel(0, -100);
+            await page.waitForFunction(scale => archiveImageView.geometry.scale > scale, beforeWheel);
             await page.locator('[data-av-action="width"]').click();
             await stage.focus();
             await page.keyboard.press('ArrowRight');
             assert.equal(await page.evaluate(() => state.archiveSelectedFileId), 'av-2');
+            await page.locator('[data-av-action="width"]').focus();
+            await page.keyboard.press('ArrowLeft');
+            assert.equal(await page.evaluate(() => state.archiveSelectedFileId), 'av-1');
+            await page.keyboard.press('ArrowRight');
+            assert.equal(await page.evaluate(() => state.archiveSelectedFileId), 'av-2', 'arrow keys work from the bottom controls');
             assert.equal(await page.evaluate(() => archiveImageView.mode), 'width');
             await page.waitForFunction(() => !document.querySelector('[data-av-image]').hidden);
             const bounds = await stage.boundingBox();
@@ -69,6 +98,27 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             await page.mouse.move(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2 - 60, { steps: 4 });
             await page.mouse.up();
             assert.ok(await page.evaluate(() => archiveImageView.panY > 0), 'a magnified image can be panned');
+            if (width > 1100)
+            {
+                await page.locator('[data-archive-section-toggle="people"]').first().click();
+                await page.waitForFunction(() => !document.querySelector('[data-av-image]').hidden);
+                const row = page.locator('[data-archive-person-region="silver"]').first();
+                const camera = await page.evaluate(() => [archiveImageView.mode, archiveImageView.panX, archiveImageView.panY]);
+                await row.hover();
+                assert.equal(await page.locator('[data-av-person-region]').evaluate(el => el.hidden), false);
+                assert.deepEqual(await page.evaluate(() => [archiveImageView.mode, archiveImageView.panX, archiveImageView.panY]), camera, 'person hover does not move the camera');
+                assert.ok(await page.evaluate(() => {
+                    const box = document.querySelector('[data-av-person-region]');
+                    const geometry = archiveImageView.geometry;
+                    return Math.abs(parseFloat(box.style.width) - geometry.w * .3) < 1
+                        && Math.abs(parseFloat(box.style.left) - (geometry.left + geometry.w * .1)) < 1;
+                }), 'region overlay follows the transformed image');
+                await stage.hover();
+                assert.equal(await page.locator('[data-av-person-region]').evaluate(el => el.hidden), true);
+                await row.locator('button').first().focus();
+                assert.equal(await page.locator('[data-av-person-region]').evaluate(el => el.hidden), false, 'keyboard focus highlights the region');
+                await stage.focus();
+            }
             if (width < 500)
             {
                 const session = await page.context().newCDPSession(page);
@@ -124,9 +174,9 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 assert.equal(await page.evaluate(() => mobileSurface), 'details');
                 await page.evaluate(() => closeMobileSurface(false));
             }
-            await page.locator('[data-archive-file-layout="tiles"]').click();
+            await chooseImageLayout(page, 'tiles');
             assert.equal(await page.evaluate(() => state.archiveSelectedFileId), 'av-8');
-            await page.locator('[data-archive-file-layout="images"]').click();
+            await chooseImageLayout(page, 'images');
             await page.waitForFunction(() => !document.querySelector('[data-av-image]').hidden);
             await page.evaluate(() =>
             {

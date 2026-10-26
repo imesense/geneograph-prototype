@@ -9116,10 +9116,10 @@ function renderArchiveFilesHeaderActions()
                   button secondary
                 "
                 type="button"
-                data-archive-create-folder>
+                data-archive-create-folder aria-label="${escapeHtml(t('New folder'))}" title="${escapeHtml(t('New folder'))}">
 
                 ${icon.folder}
-                New folder
+                <span>New folder</span>
               </button>
             `
         }
@@ -9129,10 +9129,10 @@ function renderArchiveFilesHeaderActions()
             button primary
           "
           type="button"
-          data-archive-add-files>
+          data-archive-add-files aria-label="${escapeHtml(t('Add files'))}" title="${escapeHtml(t('Add files'))}">
 
           ${icon.plus}
-          Add files
+          <span>Add files</span>
         </button>
       `;
 }
@@ -9214,7 +9214,8 @@ function renderArchiveBreadcrumbs()
           class="
             archive-breadcrumbs
           "
-          aria-label="Folder path">
+          aria-label="Folder path" title="${escapeHtml(archiveFolderPath(state.archiveSelectedFolderId) || t(rootLabel))}">
+          <details class="archive-compact-path"><summary aria-label="${escapeHtml(t('Folder path'))}">${icon.folderyellow}</summary><div class="archive-compact-path-menu"><button type="button" data-archive-breadcrumb-root>${escapeHtml(t(rootLabel))}</button>${folders.map(folder => `<button type="button" data-archive-breadcrumb="${escapeHtml(folder.id)}">${escapeHtml(folder.name)}</button>`).join('')}</div></details>
 
           <span
             class="
@@ -10374,21 +10375,6 @@ function renderArchiveFilesView()
             state.archiveSelectedFolderId
         );
 
-    const title =
-        state.archiveView
-          === 'favorites'
-            ? 'Favourites'
-            : currentFolder
-                ? 'Files'
-                : ARCHIVE_ROOT_LABEL;
-
-    const subtitle =
-        filtering
-            ? 'Browse files matching the active filters.'
-            : archiveFilesViewSubtitle(
-                currentFolder
-            );
-
     const hasRows =
         files.length
         || folders.length;
@@ -10403,27 +10389,16 @@ function renderArchiveFilesView()
 
     return `
         <div class="archive-page archive-files-page">
-          ${renderArchiveMobileLocation()}
-          ${renderArchivePageHead({
-                title,
-                subtitle,
-                actions:
-              renderArchiveFilesHeaderActions()
-            })}
-
-          ${renderArchiveToolbar()}
+          <div class="archive-file-navigation">
+            ${renderArchiveToolbar()}
+            ${renderArchiveLocationRow()}
+          </div>
 
           ${renderArchiveActiveFilterbar()}
 
           ${renderArchiveFilterResultsBar(
                 matchingFiles.length
             )}
-
-          ${
-                flatResults
-                    ? ''
-                    : renderArchiveLocationRow()
-            }
 
           ${renderArchiveSelectionBar(
                 files
@@ -10662,6 +10637,8 @@ function renderArchiveToolbar()
                 <button class="toolbar-button archive-layout-button ${state.archiveFileLayout === 'tiles' ? 'active' : ''}" type="button" data-archive-file-layout="tiles" aria-label="${escapeHtml(t('Icons view'))}" title="${escapeHtml(t('Icons view'))}" aria-pressed="${state.archiveFileLayout === 'tiles'}">${icon.grid}</button>
                 <button class="toolbar-button archive-layout-button ${state.archiveFileLayout === 'images' ? 'active' : ''}" type="button" data-archive-file-layout="images" aria-label="${escapeHtml(t('Image view'))}" title="${escapeHtml(t('Image view'))}" aria-pressed="${state.archiveFileLayout === 'images'}">${icon.archiveImages}</button>
             </div>`}
+            ${sourcesView ? '' : `<label class="archive-view-picker" title="${escapeHtml(t('File view'))}">${state.archiveFileLayout === 'images' ? icon.archiveImages : state.archiveFileLayout === 'tiles' ? icon.grid : icon.list}<select data-archive-layout-select aria-label="${escapeHtml(t('File view'))}">${[['details', 'Details view'], ['tiles', 'Icons view'], ['images', 'Image view']].map(([value, label]) => `<option value="${value}" ${state.archiveFileLayout === value ? 'selected' : ''}>${escapeHtml(t(label))}</option>`).join('')}</select>${icon.chevron}</label>`}
+            ${sourcesView ? '' : `<div class="archive-file-create-actions">${renderArchiveFilesHeaderActions()}</div>`}
             ${sourcesView ? '' : `<button class="button primary archive-mobile-add-files" type="button" data-archive-mobile-add-menu aria-label="${escapeHtml(t('Add'))}" aria-expanded="false">${icon.plus}<span>${escapeHtml(t('Add'))}</span></button>`}
           </div>
         </div>
@@ -22290,6 +22267,18 @@ let archiveRegionResizeObserver = null;
 function bindArchiveControls(root = main.querySelector('.archive-shell'))
 {
     if (!root) return;
+    root.querySelector('.archive-compact-path')?.addEventListener('keydown', event => {
+        if (event.key !== 'Escape') return;
+        event.preventDefault();
+        event.stopPropagation();
+        event.currentTarget.open = false;
+        event.currentTarget.querySelector('summary')?.focus({ preventScroll: true });
+    });
+    root.addEventListener('click', event => {
+        root.querySelectorAll('.archive-compact-path[open]').forEach(path => {
+            if (!path.contains(event.target)) path.open = false;
+        });
+    });
     archiveRegionResizeObserver?.disconnect();
     const regionBoxes = [...root.querySelectorAll('.archive-file-preview > [data-archive-region-box]')];
     const regionPreview = regionBoxes[0]?.closest('.archive-file-preview');
@@ -22300,6 +22289,7 @@ function bindArchiveControls(root = main.querySelector('.archive-shell'))
     let activeRegionPersonId = null;
     const clearPersonRegion = () => {
         activeRegionPersonId = null;
+        if (archiveImagesActive()) archiveImageHighlight(null);
         regionBoxes.forEach(box => box.classList.remove('is-active'));
         archiveUpdateRegionVisibility();
         if (floatingHighlight) floatingHighlight.hidden = true;
@@ -22324,6 +22314,11 @@ function bindArchiveControls(root = main.querySelector('.archive-shell'))
     };
     const showPersonRegion = personId => {
         activeRegionPersonId = personId;
+        if (archiveImagesActive())
+        {
+            archiveImageHighlight(personId);
+            return;
+        }
         const file = archiveFileById(state.archiveSelectedFileId);
         const region = normalizeFaceRegion(file?.personRegions?.[personId]);
         if (!region || !regionPreview)
@@ -22424,6 +22419,18 @@ function bindArchiveControls(root = main.querySelector('.archive-shell'))
                 main.querySelector(`[data-archive-file-row="${CSS.escape(state.archiveSelectedFileId)}"]`)?.scrollIntoView({ block: 'nearest' });
         });
     }));
+    root.querySelector('[data-archive-layout-select]')?.addEventListener('change', event => {
+        const layout = event.currentTarget.value;
+        event.currentTarget.value = state.archiveFileLayout;
+        runAfterArchiveFileEditGuard(() => {
+            resetArchiveFolderRowClick();
+            state.archiveFileLayout = layout;
+            renderArchiveMain();
+            main.querySelector('[data-archive-layout-select]')?.focus({ preventScroll: true });
+            if (layout !== 'images' && state.archiveSelectedFileId)
+                main.querySelector(`[data-archive-file-row="${CSS.escape(state.archiveSelectedFileId)}"]`)?.scrollIntoView({ block: 'nearest' });
+        });
+    });
     root.querySelectorAll('[data-archive-column-sort]').forEach(button => button.addEventListener('click', () => {
         const field = button.dataset.archiveColumnSort;
         state.archiveFileSortDirection = state.archiveFileSort === field && state.archiveFileSortDirection === 'ascending'
