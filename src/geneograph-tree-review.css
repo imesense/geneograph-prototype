@@ -11,6 +11,13 @@
 .gr-family-context small { padding-left: 30px; color: var(--text-secondary); font-size: 12px; }
 .gr-label { font-size: 12px; font-weight: 700; color: var(--text-secondary); }
 .gr-anchor-select { display: grid; gap: 6px; width: 100%; font-size: 12px; color: var(--text-secondary); }
+.gr-branch-title { margin: 0 0 14px; padding: 0 4px; font-size: 13px; line-height: 1.5; color: var(--text-secondary); overflow-wrap: anywhere; }
+.gr-identity-line { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+.gr-identity-line > .gr-identity { flex: 1 1 150px; }
+.gr-identity-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; }
+.gr-identity-action { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; color: var(--text-secondary); }
+.gr-identity-action svg { width: 15px; height: 15px; }
+.gr-anchor-select { margin-top: 12px; }
 .gr-body { display: grid; grid-template-columns: 300px minmax(0, 1fr); flex: 1; min-height: 0; overflow: hidden; }
 .gr-rail { display: flex; flex-direction: column; min-height: 0; min-width: 0; padding: 16px 12px; overflow: auto; border-right: 1px solid var(--border-default); }
 .gr-scope { display: flex; gap: 4px; margin-bottom: 12px; }
@@ -51,6 +58,13 @@
 .gr-identities h3, .gr-comparison-head > span { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; font-size: 14px; font-weight: 700; color: var(--text-primary); }
 .gr-identities h3 svg, .gr-comparison-head svg, .gr-label svg { width: 18px; height: 18px; flex: none; color: var(--brand-green-500); }
 .gr-comparison-head { position: sticky; top: -22px; z-index: 1; background: var(--surface-card); padding: 12px 0 2px; }
+.gr-global-columns { z-index: 2; margin: -10px 0 8px; border-bottom: 1px solid var(--border-default); }
+.geneo-family-review .common-select-shell { display: block; position: relative; min-width: 0; }
+.geneo-family-review .common-select { appearance: none; box-sizing: border-box; display: block; width: 100%; min-width: 0; min-height: 38px; padding: 8px 34px 8px 10px; border: 1px solid var(--border-default); border-radius: 6px; background: var(--surface-input); color: var(--text-primary); font-size: 13px; line-height: 1.4; text-overflow: ellipsis; cursor: pointer; }
+.geneo-family-review .common-select:hover { border-color: var(--text-secondary); }
+.geneo-family-review .common-select-chevron { display: grid; place-items: center; position: absolute; right: 10px; top: 50%; width: 14px; height: 14px; margin: 0; transform: translateY(-50%) rotate(90deg); pointer-events: none; color: var(--text-secondary); }
+.geneo-family-review .common-select-chevron svg { width: 14px; height: 14px; transform: none; }
+.gr-relative-config > .common-select-shell { flex: 1; max-width: 210px; }
 .gr-person-role { color: var(--text-secondary); font-size: 13px; margin: 14px 0 0; }
 .gr-identity { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .gr-identity > span:last-child { min-width: 0; display: grid; gap: 4px; }
@@ -66,13 +80,13 @@
 .gr-section { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border-default); }
 .gr-section h3, .gr-final > h3 { margin: 0 0 14px; font-size: 16px; }
 .gr-section p { margin: 6px 0; font-size: 13px; }
-.gr-fact { padding: 14px 0; border-bottom: 1px solid var(--border-default); }
+.gr-fact { padding: 10px 0; border-bottom: 1px solid var(--border-default); }
 .gr-fact h4, .gr-relation h4 { margin: 0 0 9px; font-size: 13px; line-height: 1.5; }
-.gr-value { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 4px; min-width: 0; min-height: 64px; padding: 10px 12px; border: 1px solid var(--border-default); border-radius: 5px; color: var(--text-primary); background: var(--surface-input); text-align: left; font-size: 13px; overflow-wrap: anywhere; box-sizing: border-box; }
+.gr-value { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 4px; min-width: 0; min-height: 44px; padding: 8px 10px; border: 1px solid var(--border-default); border-radius: 5px; color: var(--text-primary); background: var(--surface-input); text-align: left; font-size: 13px; overflow-wrap: anywhere; box-sizing: border-box; }
 .gr-value.is-destination { border-color: var(--brand-green-500); background: var(--surface-selected); }
 .gr-value del { color: var(--text-secondary); font-size: 12px; }
-.gr-transfers { display: grid; align-content: center; justify-items: center; gap: 6px; }
-.gr-transfer, .gr-reset-icon { display: grid; place-items: center; width: 34px; height: 30px; padding: 0; border: 1px solid var(--border-default); border-radius: 5px; background: var(--surface-input); color: var(--text-primary); cursor: pointer; }
+.gr-transfers { display: grid; align-content: center; justify-items: center; gap: 2px; }
+.gr-transfer, .gr-reset-icon { display: grid; place-items: center; width: 34px; height: 26px; padding: 0; border: 1px solid var(--border-default); border-radius: 5px; background: var(--surface-input); color: var(--text-primary); cursor: pointer; }
 .gr-transfer svg, .gr-reset-icon svg { width: 18px; height: 18px; }
 .gr-transfer svg { transform: rotate(180deg); }
 .gr-transfer.is-left svg { transform: none; }
@@ -92,6 +106,25 @@
 .gr-other-relations summary { padding: 9px 0; font-size: 12px; color: var(--text-secondary); cursor: pointer; }
 .gr-other-relations summary:hover { color: var(--text-primary); }
 .gr-other-relations summary:focus-visible { outline: 2px solid var(--brand-green-500); outline-offset: 2px; }
+.gr-relative-group { margin-top: 18px; }
+.gr-relative-group > h4 { margin: 0 0 4px; font-size: 13px; color: var(--text-secondary); }
+.gr-relative-config { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.gr-relative-config > strong { font-size: 12px; color: var(--text-secondary); }
+.gr-relative-config select { max-width: 210px; min-height: 34px; height: 34px; font-size: 12px; padding: 4px 28px 4px 10px; }
+.gr-relative-cell { min-width: 0; display: flex; flex-direction: column; justify-content: flex-start; gap: 10px; min-height: 76px; padding: 10px; border: 1px solid var(--border-default); border-radius: 5px; box-sizing: border-box; }
+.gr-relative-cell.is-destination { border-color: var(--brand-green-500); background: var(--surface-selected); }
+.gr-relative-cell .gr-identity strong { font-size: 13px; }
+.gr-record-type { display: block; font-size: 12px; color: var(--text-secondary); }
+.gr-destination-type { display: flex; align-items: center; gap: 6px; color: var(--brand-green-500); font-size: 12px; }
+.gr-destination-type svg { width: 15px; height: 15px; flex: none; }
+.gr-record-actions { display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.gr-suggested-record, .gr-projected-record { display: grid; gap: 7px; }
+.gr-empty-record { display: grid; place-items: center; align-content: center; height: 100%; gap: 8px; color: var(--text-secondary); font-size: 12px; }
+.gr-empty-record svg { width: 22px; height: 22px; }
+.gr-parent-choice { display: grid; gap: 7px; margin-top: 12px; max-width: 400px; }
+.gr-relative-cell .gr-candidates { margin-top: 0; }
+.gr-relative-cell .gr-candidate { grid-template-columns: 1fr; }
+.gr-relative-cell .gr-candidate > button { grid-column: 1; grid-row: auto; justify-self: start; }
 .gr-value svg { width: 16px; height: 16px; flex: none; color: var(--brand-green-500); }
 .gr-result { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 28px; margin-top: 5px; color: var(--text-secondary); font-size: 12px; }
 .gr-relation { padding: 14px 0; border-bottom: 1px solid var(--border-default); }
@@ -127,17 +160,32 @@
     .gr-back-list { display: inline-block; margin-bottom: 16px; }
     .gr-final { box-sizing: border-box; padding: 16px; }
     .gr-comparison-head { top: -16px; }
+    .gr-values, .gr-comparison-head { grid-template-columns: minmax(0, 1fr) 44px minmax(0, 1fr); }
+    .gr-transfer { width: 44px; height: 44px; }
+    .gr-transfers { gap: 4px; }
+    .gr-choice, .gr-identity-action { min-height: 44px; }
     .geneo-family-review .modal-footer { padding: 12px 16px; flex-wrap: wrap; gap: 8px; }
     .gr-footer-summary { width: 100%; }
     .gr-errors { padding: 0 16px; }
 }
 @media (max-width: 420px) {
-    .gr-identities { grid-template-columns: 1fr; gap: 16px; }
+    .gr-identities { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 60px; }
+    .gr-identities .gr-identity-line { flex-direction: column; align-items: flex-start; }
+    .gr-identities .gr-identity-line > .gr-identity { flex: none; width: 100%; flex-direction: column; align-items: flex-start; gap: 7px; }
+    .gr-identities .gr-identity-action { white-space: normal; text-align: left; line-height: 1.4; }
     .gr-identity strong { font-size: 14px; }
     .gr-values, .gr-comparison-head { gap: 8px; }
     .gr-relationship-compare { grid-template-columns: 1fr; }
-    .gr-comparison-head > span { font-size: 13px; gap: 5px; }
+    .gr-comparison-head > span { font-size: 14px; gap: 5px; }
     .gr-comparison-head svg { width: 15px; height: 15px; }
     .gr-candidate { grid-template-columns: 1fr; }
     .gr-candidate > button { grid-column: 1; grid-row: auto; justify-self: start; margin-left: 48px; }
+    .gr-relative-cell { padding: 8px; }
+    .gr-relative-cell .gr-identity { flex-direction: column; align-items: flex-start; gap: 6px; }
+    .gr-relative-cell .gr-avatar { width: 30px; height: 30px; flex-basis: 30px; }
+    .gr-relative-cell .gr-avatar-content { --person-avatar-width: 30px; --person-avatar-height: 30px; }
+    .gr-relative-cell .gr-identity small { font-size: 11px; }
+    .gr-relative-cell .gr-record-actions { display: grid; gap: 6px; }
+    .gr-relative-cell .gr-candidate-context { padding-left: 0; }
+    .gr-relative-cell .gr-candidate > button { margin-left: 0; }
 }

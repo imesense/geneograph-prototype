@@ -38,7 +38,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 geneoTreeImportRender();
                 const anchorStable = draft.anchorId === 'gp-iris';
                 const relativeContext = document.querySelector('.gr-detail').innerText.includes('Sibling of Iris');
-                const embedded = document.querySelector('.gr-detail').innerText.includes('Family Tree relationship');
+                const embedded = document.querySelector('.gr-detail').innerText.includes('Family relationships');
                 const allPeople = draft.people.length;
                 const branchPeople = geneoTreeImportGroup(draft.diagram, draft.anchorId).length;
                 const candidateCount = geneoTreeImportMatches(draft.people[0], draft.projectId).length;
