@@ -3070,39 +3070,16 @@ function filteredGeneographBoards()
 function renderGeneographNewBoardTile()
 {
     return `
-        <button
-          class="
-            geneo-board-action-tile
-          "
-          type="button"
-          data-geneo-create
-          aria-label="Create a new Geneograph board">
-
-          <span
-            class="
-              geneo-board-action-tile-icon
-            "
-            aria-hidden="true">
-
-            ${icon.plus}
-          </span>
-
-          <span
-            class="
-              geneo-board-action-copy
-            ">
-
-            <strong>
-              New board
-            </strong>
-
-            <span>
-              Create a visual workspace for
-              research, evidence, tree design,
-              or publication.
-            </span>
-          </span>
-        </button>
+        <div class="library-create-tile" data-geneo-create-tile>
+          <button class="library-create-primary" type="button" data-geneo-create>
+            <span class="library-create-icon" aria-hidden="true">${icon.plus}</span>
+            <span class="library-create-copy"><strong>${escapeHtml(t('New board'))}</strong><span>${escapeHtml(t('A visual workspace for your research.'))}</span></span>
+          </button>
+          <div class="library-create-secondary">
+            <button class="library-import-action" type="button" data-geneo-import>${icon.import}${escapeHtml(t('Import board...'))}</button>
+          </div>
+          <div class="library-drop-feedback" aria-hidden="true">${icon.import}<strong>${escapeHtml(t('Drop to import board'))}</strong></div>
+        </div>
       `;
 }
 
@@ -4976,14 +4953,39 @@ function openGeneographCollectionMenu(
 
 function bindGeneographHome()
 {
-    main.querySelector('[data-geneo-import]')?.addEventListener('click', () =>
-        main.querySelector('[data-geneo-import-file]')?.click());
+    main.querySelectorAll('[data-geneo-import]').forEach(button =>
+        button.addEventListener('click', () => main.querySelector('[data-geneo-import-file]')?.click()));
     main.querySelector('[data-geneo-import-file]')?.addEventListener('change', event =>
     {
         const file = event.currentTarget.files?.[0];
         event.currentTarget.value = '';
         if (file) importGeneographBoardFile(file);
     });
+    const importTile = main.querySelector('[data-geneo-create-tile]');
+    if (importTile)
+    {
+        ['dragenter', 'dragover'].forEach(type => importTile.addEventListener(type, event =>
+        {
+            if (!Array.from(event.dataTransfer?.types || []).includes('Files')) return;
+            event.preventDefault();
+            event.stopPropagation();
+            event.dataTransfer.dropEffect = 'copy';
+            importTile.classList.add('is-dragging');
+        }));
+        importTile.addEventListener('dragleave', event =>
+        {
+            if (!importTile.contains(event.relatedTarget)) importTile.classList.remove('is-dragging');
+        });
+        importTile.addEventListener('drop', event =>
+        {
+            event.preventDefault();
+            event.stopPropagation();
+            importTile.classList.remove('is-dragging');
+            const file = event.dataTransfer?.files?.[0];
+            if (file) importGeneographBoardFile(file);
+        });
+        importTile.addEventListener('dragend', () => importTile.classList.remove('is-dragging'));
+    }
     bindGeneographBoardMetaModes();
     main
         .querySelectorAll(

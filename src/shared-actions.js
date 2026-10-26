@@ -1040,119 +1040,9 @@ function filteredProjects()
     });
 }
 
-function bindStartupImportTile()
+function bindStartupCreateTile()
 {
-    const tile =
-        main.querySelector(
-            '[data-startup-import-tile]'
-        );
-
-    if (!tile)
-    {
-        return;
-    }
-
-    const clearDragState =
-        () =>
-        {
-            tile.classList.remove(
-                'is-dragging'
-            );
-        };
-
-    tile.addEventListener(
-        'click',
-        openImportModal
-    );
-
-    [
-        'dragenter',
-        'dragover'
-    ].forEach(type =>
-    {
-        tile.addEventListener(
-            type,
-            event =>
-            {
-                event.preventDefault();
-                event.stopPropagation();
-
-                if (
-                    event.dataTransfer
-                )
-                {
-                    event.dataTransfer
-                        .dropEffect = 'copy';
-                }
-
-                tile.classList.add(
-                    'is-dragging'
-                );
-            }
-        );
-    });
-
-    tile.addEventListener(
-        'dragleave',
-        event =>
-        {
-            /*
-          * Do not remove the state when moving
-          * between descendants inside the tile.
-          */
-            if (
-                event.relatedTarget
-            && tile.contains(
-                event.relatedTarget
-            )
-            )
-            {
-                return;
-            }
-
-            clearDragState();
-        }
-    );
-
-    tile.addEventListener(
-        'drop',
-        event =>
-        {
-            event.preventDefault();
-            event.stopPropagation();
-
-            clearDragState();
-
-            const file =
-                event.dataTransfer
-                    ?.files
-                    ?.[0];
-
-            if (!file)
-            {
-                return;
-            }
-
-            const supported =
-                /\.(ggproj|ged)$/i
-                    .test(file.name);
-
-            if (!supported)
-            {
-                showToast(
-                    'Choose a .ggproj or .ged file.'
-                );
-
-                return;
-            }
-
-            /*
-          * File handling remains simulated,
-          * so use the existing import flow.
-          */
-            openImportModal();
-        }
-    );
+    main.querySelector('[data-startup-create]')?.addEventListener('click', openCreateModal);
 }
 
 function bindProjectControls()
@@ -1214,8 +1104,7 @@ function bindProjectControls()
         restoreSearchInputFocus('#projectSearch');
     });
     main.querySelector('[data-startup-empty-create]')?.addEventListener('click', openCreateModal);
-    main.querySelector('[data-startup-empty-import]')?.addEventListener('click', openImportModal);
-    bindStartupImportTile();
+    bindStartupCreateTile();
     bindToasts(main);
 }
 
@@ -2046,7 +1935,7 @@ function openCreateModal()
 {
     openModal(`
         <div class="modal" role="dialog" aria-modal="true" aria-labelledby="createTitle">
-          <div class="modal-header"><div><h2 id="createTitle">Create family tree</h2><p>Start a new GeneoGraph project for a family line or research case.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div>
+          <div class="modal-header"><div><h2 id="createTitle">New project</h2><p>Start a new GeneoGraph project for a family line or research case.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div>
             <form id="createForm"><div class="modal-body form-grid">
               <div class="field">
                 <label for="projectName">Project name</label>
@@ -2058,30 +1947,6 @@ function openCreateModal()
                 <textarea id="projectDesc" placeholder="Family line, location, archive focus, or research goal"></textarea>
               </div>
 
-              <fieldset class="field" style="border:0;padding:0;margin:0">
-                <legend>Starting point</legend>
-                <div class="choice-grid">
-                  <label class="choice">
-                    <input type="radio" name="start" value="blank" checked>
-                    <strong>Blank project</strong>
-                    <span>Add people manually.</span>
-                  </label>
-
-                  <label class="choice is-unavailable" aria-disabled="true">
-                    <input type="radio" name="start" value="gedcom" disabled>
-                    <strong>Import GEDCOM</strong>
-                    <span>This starting point is not available yet.</span>
-                    <span class="choice-status">Coming later</span>
-                  </label>
-
-                  <label class="choice is-unavailable" aria-disabled="true">
-                    <input type="radio" name="start" value="person" disabled>
-                    <strong>Start from person</strong>
-                    <span>This starting point is not available yet.</span>
-                    <span class="choice-status">Coming later</span>
-                  </label>
-                </div>
-              </fieldset>
             </div><div class="modal-footer">
                 <button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">Create project</button></div></form>
         </div>`);
@@ -2125,11 +1990,9 @@ function openImportModal()
 {
     openModal(`
         <div class="modal" role="dialog" aria-modal="true" aria-labelledby="importTitle">
-          <div class="modal-header"><div><h2 id="importTitle">Import GEDCOM</h2><p>Import an existing family tree file into a new or open project.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div>
-          <div class="modal-body"><div class="dropzone" style="margin:0;min-height:180px">${icon.import}<div><strong>Drop a GEDCOM file here</strong><span>File handling is simulated in this prototype.</span></div></div></div>
-          <div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="button" data-simulate-import>Choose file</button></div>
+          <div class="modal-header"><div><h2 id="importTitle">Import GEDCOM</h2><p>${escapeHtml(t('File import is unavailable in this prototype.'))}</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div>
+          <div class="modal-footer"><button class="button secondary" type="button" data-close>Close</button><button class="button primary" type="button" disabled>Choose file</button></div>
         </div>`);
-    modalBackdrop.querySelector('[data-simulate-import]').addEventListener('click', () => showToast('File picker would open here.'));
 }
 
 

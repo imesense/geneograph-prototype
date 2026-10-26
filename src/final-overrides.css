@@ -3114,8 +3114,8 @@ body.mobile-details-open .geneo-inspector [data-geneo-inspector-toggle] {
 .tree-toolbar .view-mode.active { width: 118px; min-width: 118px; border: 0; border-right: 1px solid var(--border-default); border-radius: 0; box-shadow: none; }
 .tree-toolbar .view-mode:last-child { border-right: 0; }
 .tree-toolbar .view-mode svg { width: 17px; height: 17px; flex: none; }
-.tree-toolbar .view-mode[data-tree-view="Pedigree"] svg,
-.tree-toolbar .view-mode[data-tree-view="Fan"] svg { width: 22px; height: 22px; }
+.tree-toolbar .view-mode[data-tree-view="Pedigree"] svg { width: 22px; height: 22px; }
+.tree-toolbar .view-mode[data-tree-view="Fan"] svg { width: 25px; height: 25px; }
 .tree-toolbar .view-mode:not(.active) span { display: none; }
 .tree-toolbar .view-mode:disabled { opacity: .42; cursor: not-allowed; }
 .tree-toolbar .view-mode:disabled:hover { background: transparent; color: var(--text-tertiary); }
@@ -3238,4 +3238,73 @@ body.mobile-details-open .geneo-inspector [data-geneo-inspector-toggle] {
 }
 @media (max-width: 390px) {
     .topbar [data-topbar-help] { display: none; }
+}
+
+.library-create-tile {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+    min-height: 280px;
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius-sm);
+    background: var(--surface-main);
+    overflow: hidden;
+    transition: border-color var(--ease), background var(--ease);
+}
+.library-create-tile:has(.library-create-primary:hover),
+.library-create-tile:focus-within { border-color: var(--brand-green-500); }
+.library-create-primary {
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    min-width: 0;
+    min-height: 0;
+    padding: 28px 24px 12px;
+    border: 0;
+    background: transparent;
+    color: var(--text-primary);
+    font: inherit;
+    cursor: pointer;
+}
+.library-create-copy { display: grid; justify-items: center; gap: 6px; max-width: 280px; text-align: center; }
+.library-create-primary strong { font-size: 16px; line-height: 1.4; }
+.library-create-copy > span { color: var(--text-secondary); font-size: 13px; line-height: 1.5; font-weight: 400; }
+.library-create-icon { display: grid; place-items: center; flex: none; width: 52px; height: 52px; border: 1px solid var(--brand-green-800); border-radius: 8px; background: var(--brand-green-900); color: var(--brand-green-300); transition: background var(--ease), border-color var(--ease); }
+.library-create-icon svg { width: 25px; height: 25px; }
+.library-create-primary:hover .library-create-icon { background: var(--brand-green-800); border-color: var(--brand-green-700); }
+.library-create-secondary { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px 12px; padding: 8px 24px 24px; }
+.library-import-action { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; max-width: 100%; padding: 8px 14px; border: 1px solid var(--border-default); border-radius: 6px; background: var(--surface-card); color: var(--text-primary); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+.library-import-action svg { width: 16px; height: 16px; flex: none; }
+.library-import-action:hover:not(:disabled) { color: var(--brand-green-300); background: var(--surface-card-hover); }
+.library-import-action:disabled { color: var(--text-tertiary); background: transparent; cursor: not-allowed; }
+.library-create-primary:focus-visible,
+.library-import-action:focus-visible { outline: 2px solid var(--brand-green-300); outline-offset: -3px; }
+.creation-unavailable { margin: 0; color: var(--text-tertiary); font-size: 12px; line-height: 1.5; }
+.library-create-secondary .creation-unavailable { flex-basis: 100%; max-width: 280px; font-size: 11px; text-align: center; }
+.button.project-file-unavailable:disabled,
+.button.project-file-unavailable:disabled:hover { opacity: .45; background: transparent; color: var(--text-secondary); border-color: var(--border-default); box-shadow: none; transform: none; cursor: not-allowed; }
+.library-drop-feedback { position: absolute; inset: 0; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 20px; background: var(--surface-card); color: var(--brand-green-300); text-align: center; pointer-events: none; }
+.library-drop-feedback svg { width: 28px; height: 28px; }
+.library-create-tile.is-dragging { border-color: var(--brand-green-300); }
+.library-create-tile.is-dragging .library-drop-feedback { display: flex; }
+.project-list .library-create-tile,
+.geneo-board-list .library-create-tile { flex-direction: row; min-height: 104px; }
+.project-list .library-create-primary,
+.geneo-board-list .library-create-primary { flex: 1; flex-direction: row; justify-content: flex-start; min-height: 104px; padding: 20px; }
+.project-list .library-create-copy,
+.geneo-board-list .library-create-copy { justify-items: start; text-align: left; }
+.project-list .library-create-secondary,
+.geneo-board-list .library-create-secondary { align-content: center; max-width: 300px; padding: 12px 16px; }
+@media (max-width: 600px) {
+    .project-list .library-create-tile,
+    .geneo-board-list .library-create-tile { flex-direction: column; }
+    .project-list .library-create-primary,
+    .geneo-board-list .library-create-primary { min-height: 80px; }
+    .project-list .library-create-secondary,
+    .geneo-board-list .library-create-secondary { max-width: none; padding-top: 0; }
 }

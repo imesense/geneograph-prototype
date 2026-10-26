@@ -14,13 +14,13 @@ function renderStartup()
         </div>
         <div class="button-stack">
           <button class="button primary full" type="button" id="createProject">${icon.plus} Create family tree</button>
-          <button class="button secondary full" type="button" id="importGedcom">${icon.import} Import GEDCOM</button>
-          <button class="button secondary full" type="button" data-toast="File picker would open here.">${icon.folder} Open project</button>
+          <button class="button secondary full project-file-unavailable" type="button" id="importGedcom" disabled>${icon.import} Import GEDCOM</button>
+          <button class="button secondary full project-file-unavailable" type="button" disabled>${icon.folder} Open project</button>
         </div>
         <div class="sidebar-spacer"></div>
         <div class="tip-card">
           <div class="tip-title">${icon.tip} Tip of the day</div>
-          <p>You can drag and drop a GEDCOM file anywhere to import it.</p>
+          <p>${escapeHtml(t('Start a project to keep your family history and research together.'))}</p>
           <button class="link tip-link" type="button" data-toast="Learning center is outside this prototype.">
             <span class="tip-link-text">Learn more</span>
             <span class="tip-link-icon" aria-hidden="true">${icon.openlink}</span>
@@ -28,7 +28,6 @@ function renderStartup()
         </div>
       `;
     sidebar.querySelector('#createProject').addEventListener('click', openCreateModal);
-    sidebar.querySelector('#importGedcom').addEventListener('click', openImportModal);
     bindToasts(sidebar);
 
     main.innerHTML = `
@@ -149,7 +148,7 @@ function renderStartupProjectEmpty(searchQuery, totalProjects)
               <p>
                 ${escapeHtml(
                     t(
-                        'Create a family tree or import a GEDCOM file'
+                        'Create a project'
                     )
                 )}
                 <br>
@@ -175,13 +174,14 @@ function renderStartupProjectEmpty(searchQuery, totalProjects)
                 <button
                   class="button secondary"
                   type="button"
-                  data-startup-empty-import>
+                  data-startup-empty-import disabled>
                   ${icon.import}
                   ${escapeHtml(
                         t('Import GEDCOM')
                     )}
                 </button>
               </div>
+              <p class="creation-unavailable">${escapeHtml(t('File import is unavailable in this prototype.'))}</p>
             </div>
           </section>
         `;
@@ -929,44 +929,19 @@ function openMoveProjectModal()
 }
 
 
-function renderStartupImportTile()
+function renderStartupCreateTile()
 {
     return `
-        <button
-          class="startup-import-tile"
-          id="startupDropzone"
-          type="button"
-          data-startup-import-tile
-          aria-label="
-            Open or import a GeneoGraph
-            or GEDCOM file
-          ">
-
-          <span
-            class="startup-import-tile-icon"
-            aria-hidden="true">
-            ${icon.import}
-          </span>
-
-          <span
-            class="startup-import-tile-copy">
-
-            <strong>
-              Open or import a file
-            </strong>
-
-            <span>
-              Drop a .ggproj or .ged
-              file here
-            </span>
-          </span>
-
-          <span
-            class="startup-import-tile-action"
-            aria-hidden="true">
-            Choose file
-          </span>
-        </button>
+        <div class="library-create-tile" data-project-create-tile>
+          <button class="library-create-primary" type="button" data-startup-create>
+            <span class="library-create-icon" aria-hidden="true">${icon.plus}</span>
+            <span class="library-create-copy"><strong>${escapeHtml(t('Create family tree'))}</strong><span>${escapeHtml(t('Your family history and research, together.'))}</span></span>
+          </button>
+          <div class="library-create-secondary">
+            <button class="library-import-action" type="button" disabled aria-describedby="projectImportUnavailable">${icon.import}${escapeHtml(t('Choose file...'))}</button>
+            <p class="creation-unavailable" id="projectImportUnavailable">${escapeHtml(t('File import is unavailable in this prototype.'))}</p>
+          </div>
+        </div>
       `;
 }
 
@@ -985,7 +960,7 @@ function renderProjectCollection(
                 .map(renderProjectCard)
                 .join('')}
 
-          ${renderStartupImportTile()}
+          ${renderStartupCreateTile()}
         </div>
       `;
 }
