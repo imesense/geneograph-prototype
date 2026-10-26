@@ -55,34 +55,45 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 click('[data-gr-status="unlinked"]');
                 const filterChip = Boolean(modalBackdrop.querySelector('.gr-filter-chip'));
                 click('[data-gr-person="gp-theo"]');
-                const createText = modalBackdrop.querySelector('[data-gr-create]').textContent;
+                const createText = modalBackdrop.querySelector('[data-gr-identity-transfer]').getAttribute('aria-label');
+                const noAutomaticSearch = !modalBackdrop.querySelector('[data-gr-match-search]');
                 const countBefore = sampleData.people.length;
-                click('[data-gr-create]');
+                click('.gr-identity-comparison .gr-empty-transfer');
                 const draft = geneoTreeImportDraft;
                 const childId = draft.newIds.get('gp-theo');
                 const plan = geneoTreeImportPreview(draft);
                 const bundled = plan.operations.some(operation => operation.type === 'identity' && operation.personId === 'gp-theo')
-                    && plan.operations.some(operation => operation.type === 'relationship' && operation.ids.includes('gp-theo'));
+                    && !plan.operations.some(operation => operation.type === 'relationship' || operation.type === 'fact');
                 const noPartnerInferred = plan.patches.filter(patch => patch.key === 'families' && patch.after?.childIds?.includes(childId))
                     .every(patch => geneoReviewEqual(geneoReviewFamilyParents(patch.after), ['luna']));
                 click('[data-gr-next]');
                 const oneStep = !document.querySelector('.geneo-family-review') && sampleData.people.length === countBefore + 1
-                    && sampleData.families.some(family => (family.childIds || []).includes(childId) && geneoReviewFamilyParents(family).includes('luna'));
+                    && !sampleData.families.some(family => (family.childIds || []).includes(childId));
                 undoGeneographChange();
                 const undoBundle = sampleData.people.length === countBefore && !getGeneographPerson('gp-theo').treePersonId;
                 selectGeneographNode('gn-luna'); openGeneographTreeImport();
                 click('[data-gr-person="gp-theo"]'); click('[data-gr-link]');
                 click('[data-gr-match="cleo"]');
+                const candidateOnly = geneoTreeImportDraft.identityTargets.get('gp-theo') === 'cleo' && geneoTreeImportDraft.choices.get('gp-theo') === 'skip'
+                    && geneoTreeImportPreview(geneoTreeImportDraft).patches.length === 0;
+                click('[data-gr-identity-transfer]');
                 const matchOnly = geneoTreeImportDraft.choices.get('gp-theo') === 'cleo' && geneoTreeImportDraft.relationChoices.size === 0;
+                click('[data-gr-identity-new]');
+                const destinationSwitchUnstaged = geneoTreeImportPreview(geneoTreeImportDraft).patches.length === 0;
+                click('.gr-transfers [data-gr-identity-transfer]');
+                const arrowCreatesOnlyIdentity = geneoTreeImportDraft.choices.get('gp-theo') === 'create'
+                    && geneoTreeImportPreview(geneoTreeImportDraft).operations.every(operation => operation.type === 'identity');
+                click('[data-gr-identity-reset]');
+                const identityUndo = geneoTreeImportPreview(geneoTreeImportDraft).patches.length === 0;
                 closeModal();
                 return { noJargon, familyContext, sourceWeight, sourceIcons, readonly, centered, avatarBounds: [a.toJSON(), b.toJSON()], clearing, targetPreview, inlineSummary,
-                    dependencyBlocked, undoUnlinkKeepsTransfer, unlinked, unlinkUndo, filters, filterChip, createText, bundled, noPartnerInferred, oneStep, undoBundle, matchOnly, error: plan.error };
+                    destinationSwitchUnstaged, arrowCreatesOnlyIdentity, identityUndo, noAutomaticSearch, candidateOnly, dependencyBlocked, undoUnlinkKeepsTransfer, unlinked, unlinkUndo, filters, filterChip, createText, bundled, noPartnerInferred, oneStep, undoBundle, matchOnly, error: plan.error };
             });
             for (const key of ['noJargon', 'familyContext', 'sourceWeight', 'sourceIcons', 'readonly', 'centered', 'clearing', 'targetPreview', 'inlineSummary',
-                'dependencyBlocked', 'undoUnlinkKeepsTransfer', 'unlinked', 'unlinkUndo', 'filterChip', 'bundled', 'noPartnerInferred', 'oneStep', 'undoBundle', 'matchOnly'])
+                'destinationSwitchUnstaged', 'arrowCreatesOnlyIdentity', 'identityUndo', 'noAutomaticSearch', 'candidateOnly', 'dependencyBlocked', 'undoUnlinkKeepsTransfer', 'unlinked', 'unlinkUndo', 'filterChip', 'bundled', 'noPartnerInferred', 'oneStep', 'undoBundle', 'matchOnly'])
                 assert.equal(result[key], true, `${width}: ${key}: ${JSON.stringify(result)}`);
             assert.deepEqual(result.filters, ['All people', 'Not linked', 'With differences', 'With selected changes']);
-            assert.match(result.createText, /Create in Family Tree as a child of Luna/);
+            assert.match(result.createText, /Create Theo Purrington in Family Tree/);
             await page.evaluate(() => { selectGeneographNode('gn-luna'); openGeneographTreeImport(); geneoTreeImportDraft.mobileDetail = innerWidth < 760; geneoTreeImportRender(); });
             const transfer = page.locator('[data-gr-fact="names.middle"][data-source="tree"]');
             await transfer.focus();
@@ -105,7 +116,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 const modal = document.querySelector('.geneo-family-review');
                 return { text: modal.innerText, overflow: modal.scrollWidth - modal.clientWidth };
             });
-            assert.ok(ru.text.includes('Создать в Дереве как ребёнка'));
+            assert.ok(ru.text.includes('Нет в Семейном дереве'));
             assert.ok(ru.overflow <= 1);
             assert.deepEqual(errors, []);
             await page.close();

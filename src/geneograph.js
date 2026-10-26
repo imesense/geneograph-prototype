@@ -15952,7 +15952,7 @@ function renderGeneographPersonTreeLinkSection(
         context: 'person',
         id: 'familyTreeLink',
         title: 'Family Tree link',
-        content: `${content}<button class="button secondary geneo-import-action" type="button" data-geneo-import-family>${validLink ? 'Sync with Family Tree' : person?.treePersonId ? 'Repair Tree link' : 'Add to Family Tree'}</button>`
+        content: `${content}${validLink || person?.treePersonId ? `<button class="button secondary geneo-import-action" type="button" data-geneo-import-family>${validLink ? 'Sync with Family Tree' : 'Repair Tree link'}</button>` : ''}`
     });
 }
 
@@ -23945,7 +23945,7 @@ function openGeneographImagePicker({
 
 function openGeneographTreePersonPicker()
 {
-    openGeneographTreeImport({ match: true });
+    openGeneographTreeImport();
 }
 
 function findGeneographFamilyForPartners(firstPersonId, secondPersonId)

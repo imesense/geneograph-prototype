@@ -54,6 +54,7 @@
 .gr-detail, .gr-final { min-width: 0; padding: 22px 24px; overflow: auto; }
 .gr-final { padding: 16px 24px; }
 .gr-identities { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 68px; }
+.gr-identities.gr-identity-comparison { grid-template-columns: minmax(0, 1fr) 40px minmax(0, 1fr); gap: 14px; }
 .gr-values, .gr-comparison-head { display: grid; grid-template-columns: minmax(0, 1fr) 40px minmax(0, 1fr); gap: 14px; }
 .gr-identities h3, .gr-comparison-head > span { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; font-size: 14px; font-weight: 700; color: var(--text-primary); }
 .gr-identities h3 svg, .gr-comparison-head svg, .gr-label svg { width: 18px; height: 18px; flex: none; color: var(--brand-green-500); }
@@ -111,16 +112,35 @@
 .gr-relative-config { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
 .gr-relative-config > strong { font-size: 12px; color: var(--text-secondary); }
 .gr-relative-config select { max-width: 210px; min-height: 34px; height: 34px; font-size: 12px; padding: 4px 28px 4px 10px; }
-.gr-relative-cell { min-width: 0; display: flex; flex-direction: column; justify-content: flex-start; gap: 10px; min-height: 76px; padding: 10px; border: 1px solid var(--border-default); border-radius: 5px; box-sizing: border-box; }
+.gr-relative-cell { min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 7px; padding: 10px; border: 1px solid var(--border-default); border-radius: 5px; box-sizing: border-box; }
+.gr-relation.gr-record-row { position: relative; padding-top: 50px; }
+.gr-relationship-settings > summary { position: absolute; top: 10px; left: 0; display: inline-flex; align-items: center; gap: 7px; min-height: 30px; max-width: 100%; cursor: pointer; list-style: none; color: var(--text-secondary); font-size: 12px; font-weight: 700; }
+.gr-relationship-settings > summary::-webkit-details-marker { display: none; }
+.gr-relationship-settings > summary svg { width: 14px; height: 14px; transform: rotate(90deg); flex: none; }
+.gr-relationship-settings[open] > summary svg { transform: rotate(-90deg); }
+.gr-relationship-settings > summary:hover { color: var(--text-primary); }
+.gr-relationship-settings > summary:focus-visible { outline: 2px solid var(--brand-green-500); outline-offset: 2px; }
+.gr-relationship-fields { padding: 4px 0 8px; max-width: 400px; }
 .gr-relative-cell.is-destination { border-color: var(--brand-green-500); background: var(--surface-selected); }
 .gr-relative-cell .gr-identity strong { font-size: 13px; }
 .gr-record-type { display: block; font-size: 12px; color: var(--text-secondary); }
-.gr-destination-type { display: flex; align-items: center; gap: 6px; color: var(--brand-green-500); font-size: 12px; }
-.gr-destination-type svg { width: 15px; height: 15px; flex: none; }
+.gr-transfer-undo { padding: 3px 0; }
+.geneo-family-review .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .gr-record-actions { display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.gr-record-header { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 6px; }
+.gr-record-search { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; padding: 0; border: 0; border-radius: 4px; background: transparent; color: var(--text-secondary); cursor: pointer; }
+.gr-record-search svg { width: 17px; height: 17px; }
+.gr-record-search:hover { background: var(--surface-selected); color: var(--text-primary); }
+.gr-record-search:focus-visible { outline: 2px solid var(--brand-green-500); outline-offset: 2px; }
 .gr-suggested-record, .gr-projected-record { display: grid; gap: 7px; }
 .gr-empty-record { display: grid; place-items: center; align-content: center; height: 100%; gap: 8px; color: var(--text-secondary); font-size: 12px; }
 .gr-empty-record svg { width: 22px; height: 22px; }
+.gr-empty-destination { position: relative; flex: 1; display: flex; }
+.gr-empty-destination > .gr-record-search { position: absolute; top: 0; right: 0; }
+.gr-empty-transfer { width: 100%; flex: 1; min-height: 64px; padding: 8px; border: 0; border-radius: 4px; background: transparent; font-family: inherit; cursor: pointer; }
+.gr-empty-transfer:hover:not(:disabled) { background: var(--surface-selected); color: var(--text-primary); }
+.gr-empty-transfer:focus-visible { outline: 2px solid var(--brand-green-500); outline-offset: 2px; }
+.gr-empty-transfer:disabled { opacity: .5; cursor: default; }
 .gr-parent-choice { display: grid; gap: 7px; margin-top: 12px; max-width: 400px; }
 .gr-relative-cell .gr-candidates { margin-top: 0; }
 .gr-relative-cell .gr-candidate { grid-template-columns: 1fr; }
@@ -161,7 +181,16 @@
     .gr-final { box-sizing: border-box; padding: 16px; }
     .gr-comparison-head { top: -16px; }
     .gr-values, .gr-comparison-head { grid-template-columns: minmax(0, 1fr) 44px minmax(0, 1fr); }
+    .gr-identities.gr-identity-comparison { grid-template-columns: minmax(0, 1fr) 44px minmax(0, 1fr); }
     .gr-transfer { width: 44px; height: 44px; }
+    .gr-relation.gr-record-row { padding-top: 62px; }
+    .gr-relationship-settings > summary { min-height: 44px; }
+    .gr-transfer-undo { min-height: 44px; min-width: 44px; text-align: center; }
+    .gr-record-search { width: 44px; height: 44px; }
+    .gr-empty-destination .gr-empty-transfer { padding-top: 44px; }
+    .gr-empty-destination .gr-empty-transfer > svg { display: none; }
+    .gr-record-header { position: relative; display: block; }
+    .gr-record-header .gr-record-search { position: absolute; top: -10px; right: -8px; }
     .gr-transfers { gap: 4px; }
     .gr-choice, .gr-identity-action { min-height: 44px; }
     .geneo-family-review .modal-footer { padding: 12px 16px; flex-wrap: wrap; gap: 8px; }
@@ -175,6 +204,7 @@
     .gr-identities .gr-identity-action { white-space: normal; text-align: left; line-height: 1.4; }
     .gr-identity strong { font-size: 14px; }
     .gr-values, .gr-comparison-head { gap: 8px; }
+    .gr-identities.gr-identity-comparison { gap: 8px; }
     .gr-relationship-compare { grid-template-columns: 1fr; }
     .gr-comparison-head > span { font-size: 14px; gap: 5px; }
     .gr-comparison-head svg { width: 15px; height: 15px; }

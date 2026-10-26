@@ -188,6 +188,7 @@ function geneoTreeImportMatches(person, projectId, draft = geneoTreeImportDraft)
         const otherBirth = geneoReviewFact(candidate, 'birth.date');
         const recordedBirth = !geneoReviewFactEmpty(birth) && !geneoReviewFactEmpty(otherBirth);
         const birthAgrees = recordedBirth && geneoReviewEqual(birth, otherBirth);
+        const givenNameAgrees = Boolean(names.first) && names.first.trim().toLocaleLowerCase() === candidate.names?.first?.trim().toLocaleLowerCase();
         const vitalConflict = person.gender !== 'unknown' && candidate.gender !== 'unknown' && person.gender !== candidate.gender
             || person.livingStatus !== 'Unknown' && candidate.livingStatus !== 'Unknown' && person.livingStatus !== candidate.livingStatus
             || ['birth.date', 'death.date'].some(key =>
@@ -207,7 +208,8 @@ function geneoTreeImportMatches(person, projectId, draft = geneoTreeImportDraft)
         }
         const score = context.length * 200 + (compatibleName ? 100 : 0) + (birthAgrees ? 40 : 0)
             + (names.last && candidate.names?.last === names.last ? 10 : 0);
-        return { person: candidate, score, context, strong: context.length > 0 && compatibleName && birthAgrees && !vitalConflict };
+        const eligible = !vitalConflict && (compatibleName || givenNameAgrees && birthAgrees);
+        return { person: candidate, score, context, eligible, strong: eligible && context.length > 0 && compatibleName && birthAgrees };
     }).sort((a, b) => b.score - a.score || connectPersonName(a.person).localeCompare(connectPersonName(b.person)));
 }
 

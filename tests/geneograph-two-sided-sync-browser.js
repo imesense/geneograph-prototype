@@ -35,20 +35,52 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 click('[data-gr-change-anchor]'); select('[data-gr-anchor-select]', 'gp-luna');
                 const rowId = 'gf-luna:child:gp-theo';
                 const row = () => modal.querySelector(`[data-gr-record-row="${rowId}"]`);
-                const noInitialTransfer = row().querySelector('[data-gr-relation][data-source="board"]').disabled;
+                const initiallyCollapsed = !row().querySelector('[data-gr-relationship-settings]').open;
+                click(`[data-gr-config-summary="${rowId}"]`);
+                geneoTreeImportRender();
+                const expansionPreserved = row().querySelector('[data-gr-relationship-settings]').open;
+                const noInitialTransfer = !row().querySelector('[data-gr-relation][data-source="board"]').disabled
+                    && geneoTreeImportPreview(geneoTreeImportDraft).patches.length === 0;
+                const theo = geneoReviewPersonById(geneoTreeImportDraft, 'gp-theo');
+                const matches = geneoTreeImportMatches(theo, 'p1', geneoTreeImportDraft);
+                const noFalseSuggestion = !matches.some(match => match.eligible && connectPersonName(match.person).includes('Cleo'))
+                    && row().textContent.includes('Not in the tree') && !row().textContent.includes('Use this person');
+                const matchingPerson = structuredClone(theo);
+                matchingPerson.id = 'sync-match-fixture'; matchingPerson.projectId = 'p1';
+                sampleData.people.push(matchingPerson);
+                const exactEligible = geneoTreeImportMatches(theo, 'p1', geneoTreeImportDraft).find(match => match.person.id === matchingPerson.id).eligible;
+                const originalNames = structuredClone(matchingPerson.names);
+                matchingPerson.names.first = 'Unrelated';
+                const surnameInsufficient = !geneoTreeImportMatches(theo, 'p1', geneoTreeImportDraft).find(match => match.person.id === matchingPerson.id).eligible;
+                matchingPerson.names = originalNames;
+                const originalGender = matchingPerson.gender;
+                matchingPerson.gender = theo.gender === 'male' ? 'female' : 'male';
+                const conflictExcluded = !geneoTreeImportMatches(theo, 'p1', geneoTreeImportDraft).find(match => match.person.id === matchingPerson.id).eligible;
+                matchingPerson.gender = originalGender;
+                geneoTreeImportRender();
+                const directLabel = row().querySelector('[data-source="board"]').getAttribute('aria-label').includes('Use ');
+                click(`[data-gr-record-row="${rowId}"] [data-source="board"]`);
+                const directMatch = geneoTreeImportDraft.choices.get('gp-theo') === matchingPerson.id;
+                click(`[data-gr-record-row="${rowId}"] [data-source="board"]`);
+                sampleData.people.splice(sampleData.people.indexOf(matchingPerson), 1);
+                geneoTreeImportRender();
                 const live = JSON.stringify(sampleData);
                 const refs = [sampleData.people, sampleData.families, sampleData.events];
-                click(`[data-gr-record-row="${rowId}"] [data-gr-relative-create]`);
+                const defaultCreate = row().querySelector('[data-source="board"]').getAttribute('aria-label').includes('Create ');
                 modal.querySelector(`[data-gr-transfer-type="${rowId}"]`).focus();
                 select(`[data-gr-transfer-type="${rowId}"]`, 'Adoptive');
                 const dropdownFocus = document.activeElement.dataset.grTransferType === rowId;
                 const selectionOnly = geneoTreeImportPreview(geneoTreeImportDraft).patches.length === 0;
-                click(`[data-gr-record-row="${rowId}"] [data-gr-relation][data-source="board"]`);
+                click(`[data-gr-record-row="${rowId}"] .gr-empty-transfer[data-source="board"]`);
                 const draft = geneoTreeImportDraft;
                 const newId = draft.newIds.get('gp-theo');
                 const plan = geneoTreeImportPreview(draft);
                 const pure = JSON.stringify(sampleData) === live && refs[0] === sampleData.people && refs[1] === sampleData.families && refs[2] === sampleData.events;
                 const adopted = plan.patches.some(patch => patch.key === 'families' && patch.after.parentChildTypes?.[`luna|${newId}`] === 'Adoptive');
+                const compactRelationship = !row().querySelector('.gr-destination-type, .gr-staged')
+                    && !row().querySelector('.gr-relative-cell .gr-record-type')?.textContent.includes('Adoptive')
+                    && Boolean(row().querySelector('.gr-transfers .gr-transfer-undo'))
+                    && row().querySelector('[role="status"]').textContent.includes('Adoptive');
                 const noFactCopy = !plan.operations.some(operation => operation.type === 'fact');
                 const sourceKept = selectedGeneographDiagram().families.find(family => family.id === 'gf-luna').children[0].parentageType === 'biological';
                 click('[data-gr-next]');
@@ -63,7 +95,9 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 const sourceFamily = sampleData.families.find(family => family.id === reverse.treeFamilyId);
                 const treeBefore = JSON.stringify({ people: sampleData.people, families: sampleData.families, events: sampleData.events });
                 const nodeBefore = JSON.stringify(selectedGeneographDiagram().nodes);
-                d.transferTypes.set(reverse.id, 'Foster'); d.relationChoices.set(reverse.id, 'tree');
+                d.transferTypes.set(reverse.id, 'Foster');
+                geneoTreeImportRender();
+                click(`[data-gr-record-row="${reverse.id}"] .gr-empty-transfer[data-source="tree"]`);
                 const reversePlan = geneoTreeImportPreview(d);
                 const newPerson = reversePlan.patches.find(patch => patch.key === 'board.people' && patch.after.treePersonId === parentTreeId)?.after;
                 const newNode = reversePlan.patches.find(patch => patch.key === 'board.nodes' && patch.after.personId === newPerson?.id)?.after;
@@ -82,8 +116,8 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 const reverseUndo = JSON.stringify(selectedGeneographDiagram().nodes) === nodeBefore;
                 redoGeneographChange();
                 const reverseRedo = selectedGeneographDiagram().nodes.some(node => node.id === newNode?.id);
-                return { noBanner, globalColumns, dropdownShells, verticalActions, factsFirst, actionsInTree, actionsMatch, titleInRail, focusSwitch, railDoesNotRefocus, noInitialTransfer,
-                    selectionOnly, dropdownFocus, pure, adopted, noFactCopy, sourceKept, apply, undo, reverseAtomic: Boolean(reverseAtomic), clearArea: Boolean(clearArea),
+                return { initiallyCollapsed, expansionPreserved, surnameInsufficient, conflictExcluded, noFalseSuggestion, exactEligible, directLabel, directMatch, defaultCreate, noBanner, globalColumns, dropdownShells, verticalActions, factsFirst, actionsInTree, actionsMatch, titleInRail, focusSwitch, railDoesNotRefocus, noInitialTransfer,
+                    compactRelationship, selectionOnly, dropdownFocus, pure, adopted, noFactCopy, sourceKept, apply, undo, reverseAtomic: Boolean(reverseAtomic), clearArea: Boolean(clearArea),
                     parentType, reverseSourceKept, committed, noTreeMutation, existingNotMoved, reverseUndo, reverseRedo, reverseError: reversePlan.error, mismatched };
             });
             for (const [key, value] of Object.entries(result))
@@ -108,6 +142,11 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                         && relation.treeIds?.length === 3 && !draft.people.some(person => person.id === relation.ids.at(-1)));
                     const row = modal.querySelector(`[data-gr-record-row="${selectedChild.id}"]`);
                     const needsNamedParents = row.querySelector('[data-source="tree"]').disabled;
+                    const parentSelect = row.querySelector('[data-gr-tree-parents]');
+                    const naturalParentCopy = parentSelect.closest('label').firstChild.textContent.trim() === 'Parents'
+                        && parentSelect.options[0].textContent === 'Choose parents'
+                        && !row.textContent.includes('Parents involved');
+                    const naturalCoupleNames = geneoReviewRelationTitle(draft, selectedChild).includes(' and ');
                     draft.treeParentChoices.set(selectedChild.id, 'luna'); draft.transferTypes.set(selectedChild.id, 'Guardian');
                     draft.relationChoices.set(selectedChild.id, 'tree');
                     const plan = geneoTreeImportPreview(draft);
@@ -153,7 +192,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                     const siblingUndo = !selectedGeneographDiagram().people.some(person => person.treePersonId === siblingPerson.id);
                     sampleData.people.splice(sampleData.people.findIndex(person => person.id === siblingPerson.id), 1);
                     Object.assign(parentFamily, savedFamily);
-                    return { existingParentRecognized, parentCopyKeepsOtherParent, needsNamedParents, knownOnly, undoRow, explicitBoth, noTypeOnlyWrite, partnerOverride, resetOnDirection, oppositeOnly,
+                    return { naturalParentCopy, naturalCoupleNames, existingParentRecognized, parentCopyKeepsOtherParent, needsNamedParents, knownOnly, undoRow, explicitBoth, noTypeOnlyWrite, partnerOverride, resetOnDirection, oppositeOnly,
                         siblingWithoutParents, siblingApplied, siblingUndo, error: plan.error, bothError: both.error };
                 });
                 for (const [key, value] of Object.entries(extra)) if (!key.endsWith('Error') && key !== 'error') assert.equal(value, true, `${key}: ${JSON.stringify(extra)}`);

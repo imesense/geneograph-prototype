@@ -40,28 +40,48 @@ function geneoReviewRelationType(draft, relation, direction)
 
 function geneoReviewRelativeTarget(draft, relation, personId)
 {
-    return draft.relativeTargets?.get(`${relation.id}|${personId}`) || draft.choices.get(personId) || '';
+    const explicit = draft.relativeTargets?.get(`${relation.id}|${personId}`);
+    if (explicit) return explicit;
+    const choice = draft.choices.get(personId);
+    if (choice && !['skip', 'unlink'].includes(choice)) return choice;
+    if (choice === 'unlink') return '';
+    if (draft.identityTargets?.has(personId)) return draft.identityTargets.get(personId);
+    const person = geneoReviewPersonById(draft, personId);
+    return geneoTreeImportMatches(person, draft.projectId, draft).find(item => item.eligible)?.person.id || 'create';
 }
 
-function geneoReviewRelativeTreeCell(draft, relation, personId, plan)
+function geneoReviewRelativeTreeCell(draft, relation, personId, plan, canTransfer)
 {
     const person = geneoReviewPersonById(draft, personId);
     const sourceId = relation.treeIds?.[relation.ids.indexOf(personId)];
     const choice = relation.origin === 'tree' ? sourceId : geneoReviewRelativeTarget(draft, relation, personId);
     const attrs = `data-relation="${escapeHtml(relation.id)}" data-person="${escapeHtml(personId)}"`;
+    const searchButton = `<button type="button" class="gr-record-search" data-gr-relative-search ${attrs} aria-label="${escapeHtml(t('Search Family Tree'))}" title="${escapeHtml(t('Search Family Tree'))}">${icon.search}</button>`;
+    const recordHeader = record => `<div class="gr-record-header">${record}${searchButton}</div>`;
     const editChoice = relation.origin !== 'tree' && draft.relativeTargets.has(`${relation.id}|${personId}`)
-        ? `<div class="gr-record-actions"><button type="button" class="gr-text" data-gr-relative-search ${attrs}>${escapeHtml(t('Change person'))}</button><button type="button" class="gr-text" data-gr-relative-reset ${attrs}>${escapeHtml(t('Reset'))}</button></div>` : '';
+        ? `<div class="gr-record-actions"><button type="button" class="gr-text" data-gr-relative-reset ${attrs}>${escapeHtml(t('Reset'))}</button></div>` : '';
     const search = draft.relativeSearch?.relationId === relation.id && draft.relativeSearch?.personId === personId ? geneoReviewCandidates(draft, person, relation.id) : '';
+    const automatic = relation.origin !== 'tree' && !draft.relativeTargets.has(`${relation.id}|${personId}`)
+        && ['skip', undefined, ''].includes(draft.choices.get(personId));
     const tree = !['skip', 'create', 'unlink'].includes(choice) ? getPerson(choice) : null;
+    if (automatic && tree)
+    {
+        const suggestion = geneoTreeImportMatches(person, draft.projectId, draft).find(item => item.person.id === tree.id);
+        const duplicate = geneoReviewDuplicate(draft, personId, tree.id);
+        return `${recordHeader(geneoReviewIdentity(tree))}<span class="gr-record-type">${escapeHtml(t(suggestion?.strong ? 'Strong match' : 'Possible match'))}</span>
+            ${duplicate ? `<button type="button" class="gr-text" data-gr-locate="${escapeHtml(duplicate.id)}">${escapeHtml(t('Locate existing'))}</button>` : ''}
+            <div class="gr-record-actions"><button type="button" class="gr-text" data-gr-relative-create ${attrs}>${escapeHtml(t('Create a new person'))}</button></div>${search}`;
+    }
     if (tree && !tree.deleted && tree.projectId === draft.projectId)
-        return `${geneoReviewIdentity(tree)}<span class="gr-record-type">${escapeHtml(t(geneoReviewRelationType(draft, relation, 'tree') || 'Not yet connected'))}</span>${editChoice}${search}`;
+        return `${relation.origin === 'tree' ? geneoReviewIdentity(tree) : recordHeader(geneoReviewIdentity(tree))}${editChoice}${search}`;
     if (choice === 'create')
-        return `<div class="gr-projected-record">${geneoReviewIdentity(person, true)}<span class="gr-record-type">${escapeHtml(t('New Tree person'))}</span></div>${editChoice}${search}`;
-    const matches = geneoTreeImportMatches(person, draft.projectId, draft);
-    const suggestion = matches.find(item => item.score > 0);
-    const duplicate = suggestion && geneoReviewDuplicate(draft, personId, suggestion.person.id);
-    return `${suggestion ? `<div class="gr-suggested-record">${geneoReviewIdentity(suggestion.person)}<span class="gr-record-type">${escapeHtml(t(suggestion.strong ? 'Strong match' : 'Possible match'))}${suggestion.context.length ? ` · ${escapeHtml(suggestion.context.join(', '))}` : ''}</span>${duplicate ? `<button type="button" class="gr-text" data-gr-locate="${escapeHtml(duplicate.id)}">${escapeHtml(t('Locate existing'))}</button>` : `<button type="button" class="gr-text" data-gr-relative-candidate="${escapeHtml(suggestion.person.id)}" ${attrs}>${escapeHtml(t('Use this person'))}</button>`}</div>` : `<span class="gr-muted">${escapeHtml(t('Choose a Tree record or create a new person'))}</span>`}
-        <div class="gr-record-actions"><button type="button" class="gr-text" data-gr-relative-create ${attrs}>${escapeHtml(t('Create a new person'))}</button><button type="button" class="gr-text" data-gr-relative-search ${attrs}>${escapeHtml(t('Search Family Tree'))}</button></div>
+    {
+        if (draft.relationChoices.get(relation.id) !== 'board')
+            return `<div class="gr-empty-destination"><button type="button" class="gr-empty-record gr-empty-transfer" data-gr-relation="${escapeHtml(relation.id)}" data-source="board" ${canTransfer ? '' : 'disabled'} aria-label="${escapeHtml(t('Create {name} in Family Tree').replace('{name}', geneoPersonDisplayName(person)))}">${icon.plus}<span>${escapeHtml(t('Not in the tree'))}</span></button>${searchButton}</div>${editChoice}${search}`;
+        return `<div class="gr-projected-record">${recordHeader(geneoReviewIdentity(person, true))}<span class="gr-record-type">${escapeHtml(t('New Tree person'))}</span></div>${editChoice}${search}`;
+    }
+    return `${recordHeader(`<span class="gr-muted">${escapeHtml(t('Choose a Tree record or create a new person'))}</span>`)}
+        <div class="gr-record-actions"><button type="button" class="gr-text" data-gr-relative-create ${attrs}>${escapeHtml(t('Create a new person'))}</button></div>
         ${search}`;
 }
 
@@ -86,7 +106,7 @@ function geneoReviewRelations(draft, person, plan)
             const status = plan.statuses.get(relation.id);
             const parentFamilies = relation.origin !== 'tree' && relation.type === 'child' ? geneoReviewTreeFamilyCandidates(draft, relation) : [];
             const error = plan.errors.find(item => item.relationId === relation.id);
-            const title = subjects.map(id => geneoPersonDisplayName(geneoReviewPersonById(draft, id))).join(' / ');
+            const title = subjects.map(id => geneoPersonDisplayName(geneoReviewPersonById(draft, id))).join(` ${t('and')} `);
             const role = { Parents: subjects.length > 1 ? 'Parents' : 'Parent', Partners: 'Partner', Children: 'Child', Siblings: 'Sibling' }[group];
             const types = relation.type === 'partner' ? ADD_PERSON_RELATIONSHIP_TYPES : PARENT_CHILD_RELATIONSHIP_TYPES;
             const parentIds = relation.type === 'child' ? (relation.treeIds || []).slice(0, -1) : [];
@@ -99,23 +119,36 @@ function geneoReviewRelations(draft, person, plan)
                 : plan.mapping.has(id));
             const canRight = relation.origin !== 'tree' && ready && proposedType;
             const canLeft = plan.mapping.has(draft.anchorId) && proposedType && (relation.origin === 'tree' ? !missingParents || parentChoice : ['Same relationship', 'Relationship differs'].includes(status));
-            const arrow = (direction, enabled) => `<button type="button" class="gr-transfer ${direction === 'tree' ? 'is-left' : ''} ${choice === direction ? 'is-selected' : ''}" data-gr-relation="${escapeHtml(relation.id)}" data-source="${direction}" aria-pressed="${choice === direction}" ${enabled ? '' : 'disabled'} aria-label="${escapeHtml(`${t(direction === 'board' ? 'Copy to Family Tree' : 'Copy to board')}: ${title}`)}" title="${escapeHtml(`${t(direction === 'board' ? 'Copy to Family Tree' : 'Copy to board')}: ${title}`)}">${icon.arrow}</button>`;
+            const arrow = (direction, enabled) =>
+            {
+                const target = subjects.length === 1 ? geneoReviewRelativeTarget(draft, relation, subjects[0]) : '';
+                const targetName = target === 'create' || !target ? title : connectPersonName(getPerson(target));
+                const label = direction === 'board' && target
+                    ? t(target === 'create' ? 'Create {name} in Family Tree' : 'Use {name} and add relationship').replace('{name}', targetName)
+                    : `${t(direction === 'board' ? 'Copy to Family Tree' : 'Copy to board')}: ${title}`;
+                return `<button type="button" class="gr-transfer ${direction === 'tree' ? 'is-left' : ''} ${choice === direction ? 'is-selected' : ''}" data-gr-relation="${escapeHtml(relation.id)}" data-source="${direction}" aria-pressed="${choice === direction}" ${enabled ? '' : 'disabled'} aria-label="${escapeHtml(label)}" title="${escapeHtml(label)}">${icon.arrow}</button>`;
+            };
             if (status === 'Same relationship' && !choice)
                 return `<div class="gr-relation gr-relationship-same">${icon.check}<span>${subjects.map(id => geneoReviewIdentity(geneoReviewPersonById(draft, id), true)).join('')}<small>${escapeHtml(t(role))} · ${escapeHtml(t(sourceType))} · ${escapeHtml(t('Already connected in Family Tree'))}</small></span></div>`;
             const boardCell = subjects.map(id =>
             {
                 const boardPerson = draft.people.find(item => item.id === id);
-                if (boardPerson) return `${geneoReviewIdentity(boardPerson, true)}<span class="gr-record-type">${escapeHtml(t(geneoReviewRelationType(draft, relation, 'board') || 'Not yet connected'))}</span>`;
-                return choice === 'tree' ? `<div class="gr-projected-record">${geneoReviewIdentity(geneoReviewPersonById(draft, id), true)}<span class="gr-record-type">${escapeHtml(t('New board card'))}</span></div>` : `<div class="gr-empty-record">${icon.plus}<span>${escapeHtml(t('Not on this board'))}</span></div>`;
+                if (boardPerson) return geneoReviewIdentity(boardPerson, true);
+                return choice === 'tree' ? `<div class="gr-projected-record">${geneoReviewIdentity(geneoReviewPersonById(draft, id), true)}<span class="gr-record-type">${escapeHtml(t('New board card'))}</span></div>` : `<button type="button" class="gr-empty-record gr-empty-transfer" data-gr-relation="${escapeHtml(relation.id)}" data-source="tree" ${canLeft ? '' : 'disabled'} aria-label="${escapeHtml(`${t('Copy to board')}: ${title}`)}">${icon.plus}<span>${escapeHtml(t('Not on this board'))}</span></button>`;
             }).join('');
-            const treeCell = subjects.map(id => geneoReviewRelativeTreeCell(draft, relation, id, plan)).join('');
-            return `<article class="gr-relation gr-record-row" data-gr-record-row="${escapeHtml(relation.id)}"><div class="gr-relative-config"><strong>${escapeHtml(t(role))}</strong><select class="common-select" data-gr-transfer-type="${escapeHtml(relation.id)}" aria-label="${escapeHtml(`${t('Relationship type')}: ${title}`)}"><option value="">${escapeHtml(t('Choose relationship type'))}</option>${types.map(type => `<option value="${escapeHtml(type)}" ${type === proposedType ? 'selected' : ''}>${escapeHtml(t(type))}</option>`).join('')}</select></div>
-                <div class="gr-values"><div class="gr-relative-cell ${choice === 'tree' ? 'is-destination' : ''}">${boardCell}${choice === 'tree' ? `<strong class="gr-destination-type">${icon.check}${escapeHtml(t(proposedType))}</strong>` : ''}</div><div class="gr-transfers">${arrow('board', canRight)}${arrow('tree', canLeft)}</div><div class="gr-relative-cell ${choice === 'board' ? 'is-destination' : ''}">${treeCell}${choice === 'board' ? `<strong class="gr-destination-type">${icon.check}${escapeHtml(t(proposedType))}</strong>` : ''}</div></div>
-                ${missingParents ? `<label class="gr-label gr-parent-choice">${escapeHtml(t('Parents involved'))}<select class="common-select" data-gr-tree-parents="${escapeHtml(relation.id)}"><option value="">${escapeHtml(t('Choose parents'))}</option>${parentIds.map(id => `<option value="${escapeHtml(id)}" ${parentChoice === id ? 'selected' : ''} ${draft.diagram.nodes.some(node => draft.diagram.people.find(record => record.id === node.personId)?.treePersonId === id) ? '' : 'disabled'}>${escapeHtml(connectPersonName(getPerson(id)))}</option>`).join('')}<option value="all" ${parentChoice === 'all' ? 'selected' : ''} ${parentCardsPresent ? '' : 'disabled'}>${escapeHtml(parentCardsPresent ? parentIds.map(id => connectPersonName(getPerson(id))).join(' / ') : t('Both parents must be on the board first'))}</option></select></label>` : ''}
-                ${relation.type === 'sibling' && relation.origin !== 'tree' ? `<label class="gr-label gr-parent-choice">${escapeHtml(t('Parents involved'))}<select class="common-select" data-gr-sibling="${escapeHtml(relation.id)}"><option value="">${escapeHtml(t('Choose parent family'))}</option>${sampleData.families.filter(family => family.projectId === draft.projectId && (family.childIds || []).some(id => relation.ids.map(personId => draft.choices.get(personId)).includes(id))).map(family => `<option value="${escapeHtml(family.id)}" ${draft.siblingFamilies.get(relation.id) === family.id ? 'selected' : ''}>${escapeHtml(geneoReviewFamilyParents(family).map(id => connectPersonName(getPerson(id))).join(' / '))}</option>`).join('')}</select></label>` : ''}
-                ${parentFamilies.length > 1 ? `<label class="gr-label gr-parent-choice">${escapeHtml(t('Parents involved'))}<select class="common-select" data-gr-tree-family="${escapeHtml(relation.id)}"><option value="">${escapeHtml(t('Choose parent family'))}</option>${parentFamilies.map(family => `<option value="${escapeHtml(family.id)}" ${draft.treeFamilyChoices?.get(relation.id) === family.id ? 'selected' : ''}>${escapeHtml(geneoReviewFamilyParents(family).map(id => connectPersonName(getPerson(id))).join(' / '))}</option>`).join('')}</select></label>` : ''}
-                ${choice ? `<div class="gr-staged">${icon.check}${escapeHtml(t(status === 'Same relationship' && !plan.operations.some(operation => operation.type === 'relationship' && operation.relationId === relation.id) ? 'Already connected in Family Tree' : choice === 'board' ? 'Will be connected in Family Tree' : 'Will be updated on the board'))} · ${escapeHtml(t(proposedType))}<button type="button" class="gr-text" data-gr-relation="${escapeHtml(relation.id)}" data-source="none">${escapeHtml(t('Undo'))}</button></div>` : ''}
-                ${error ? `<p class="gr-error">${escapeHtml(error.message)}</p>` : ''}</article>`;
+            const treeCell = subjects.map(id => geneoReviewRelativeTreeCell(draft, relation, id, plan, canRight)).join('');
+            const needsConfiguration = !proposedType || missingParents && !parentChoice
+                || parentFamilies.length > 1 && !draft.treeFamilyChoices?.get(relation.id)
+                || relation.type === 'sibling' && relation.origin !== 'tree' && !draft.siblingFamilies.get(relation.id);
+            const expanded = Boolean(error || needsConfiguration || draft.relationshipExpanded?.get(relation.id));
+            return `<article class="gr-relation gr-record-row" data-gr-record-row="${escapeHtml(relation.id)}">
+                <div class="gr-values"><div class="gr-relative-cell ${choice === 'tree' ? 'is-destination' : ''}">${boardCell}</div><div class="gr-transfers">${arrow('board', canRight)}${arrow('tree', canLeft)}${choice ? `<button type="button" class="gr-text gr-transfer-undo" data-gr-relation="${escapeHtml(relation.id)}" data-source="none">${escapeHtml(t('Undo'))}</button>` : ''}</div><div class="gr-relative-cell ${choice === 'board' ? 'is-destination' : ''}">${treeCell}</div></div>
+                <details class="gr-relationship-settings" data-gr-relationship-settings="${escapeHtml(relation.id)}" ${expanded ? 'open' : ''}><summary data-gr-config-summary="${escapeHtml(relation.id)}" aria-label="${escapeHtml(`${t('Relationship type')}: ${title} · ${t(proposedType || 'Choose relationship type')}`)}">${escapeHtml(t(proposedType || 'Choose relationship type'))}${icon.chevron}</summary><div class="gr-relationship-fields"><label class="gr-label">${escapeHtml(t('Relationship type'))}<select class="common-select" data-gr-transfer-type="${escapeHtml(relation.id)}"><option value="">${escapeHtml(t('Choose relationship type'))}</option>${types.map(type => `<option value="${escapeHtml(type)}" ${type === proposedType ? 'selected' : ''}>${escapeHtml(t(type))}</option>`).join('')}</select></label>
+                ${missingParents ? `<label class="gr-label gr-parent-choice">${escapeHtml(t('Parents'))}<select class="common-select" data-gr-tree-parents="${escapeHtml(relation.id)}"><option value="">${escapeHtml(t('Choose parents'))}</option>${parentIds.map(id => `<option value="${escapeHtml(id)}" ${parentChoice === id ? 'selected' : ''} ${draft.diagram.nodes.some(node => draft.diagram.people.find(record => record.id === node.personId)?.treePersonId === id) ? '' : 'disabled'}>${escapeHtml(connectPersonName(getPerson(id)))}</option>`).join('')}<option value="all" ${parentChoice === 'all' ? 'selected' : ''} ${parentCardsPresent ? '' : 'disabled'}>${escapeHtml(parentCardsPresent ? parentIds.map(id => connectPersonName(getPerson(id))).join(` ${t('and')} `) : t('Add both parents to the board first'))}</option></select></label>` : ''}
+                ${relation.type === 'sibling' && relation.origin !== 'tree' ? `<label class="gr-label gr-parent-choice">${escapeHtml(t('Shared parents'))}<select class="common-select" data-gr-sibling="${escapeHtml(relation.id)}"><option value="">${escapeHtml(t('Choose shared parents'))}</option>${sampleData.families.filter(family => family.projectId === draft.projectId && (family.childIds || []).some(id => relation.ids.map(personId => draft.choices.get(personId)).includes(id))).map(family => `<option value="${escapeHtml(family.id)}" ${draft.siblingFamilies.get(relation.id) === family.id ? 'selected' : ''}>${escapeHtml(geneoReviewFamilyParents(family).map(id => connectPersonName(getPerson(id))).join(` ${t('and')} `))}</option>`).join('')}</select></label>` : ''}
+                ${parentFamilies.length > 1 ? `<label class="gr-label gr-parent-choice">${escapeHtml(t('Parents'))}<select class="common-select" data-gr-tree-family="${escapeHtml(relation.id)}"><option value="">${escapeHtml(t('Choose parents'))}</option>${parentFamilies.map(family => `<option value="${escapeHtml(family.id)}" ${draft.treeFamilyChoices?.get(relation.id) === family.id ? 'selected' : ''}>${escapeHtml(geneoReviewFamilyParents(family).map(id => connectPersonName(getPerson(id))).join(` ${t('and')} `))}</option>`).join('')}</select></label>` : ''}
+                ${error ? `<p class="gr-error">${escapeHtml(error.message)}</p>` : ''}</div></details>
+                ${choice ? `<span class="sr-only" role="status">${escapeHtml(`${t(choice === 'board' ? 'Will be connected in Family Tree' : 'Will be updated on the board')}: ${title} · ${t(proposedType)}`)}</span>` : ''}</article>`;
         });
         return `<section class="gr-relative-group"><h4>${escapeHtml(t(group))}</h4>${rendered[0]}${rendered.length > 1 ? `<details class="gr-other-relations" data-gr-relative-disclosure="${group}"><summary>${escapeHtml(t('Other family relationships'))} (${rendered.length - 1})</summary>${rendered.slice(1).join('')}</details>` : ''}</section>`;
     }).join('')}</section>`;
