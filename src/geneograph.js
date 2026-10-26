@@ -8978,7 +8978,7 @@ function normalizeGeneographBoardRecord(board, projectPeople)
         {
             if (!person || !person.id || personIds.has(person.id)) return;
             personIds.add(person.id);
-            const treePersonId = projectPeople.get(board.projectId)?.has(person.treePersonId) ? person.treePersonId : null;
+            const treePersonId = person.treePersonId ? String(person.treePersonId) : null;
             const names = normalizeGeneographPersonNames(person);
             const legacyDeath = formatGenealogyDateLabel(person.death);
             const livingStatus = ['Living', 'Deceased', 'Unknown'].includes(person.livingStatus)
@@ -9640,39 +9640,11 @@ function geneoSnapshot()
     return JSON.stringify(selectedGeneographDiagram());
 }
 
-function geneoRelationshipExternalState(personIds)
-{
-    const relationship = getPartnerRelationshipBetween(...personIds);
-    return { personIds, record: relationship ? structuredClone(relationship) : null };
-}
-
-function geneoRelationshipHistorySnapshot(personIds)
-{
-    return JSON.stringify({ geneoRelationshipHistory: true,
-        diagram: selectedGeneographDiagram(),
-        external: geneoRelationshipExternalState(personIds) });
-}
-
 function geneoHistoryCompanionSnapshot(snapshot)
 {
     const parsed = JSON.parse(snapshot);
-    return parsed?.geneoRelationshipHistory
-        ? geneoRelationshipHistorySnapshot(parsed.external.personIds) : geneoSnapshot();
-}
-
-function geneoRestoreRelationshipExternalState(external)
-{
-    const records = centralFamilyRecords();
-    const current = getPartnerRelationshipBetween(...external.personIds);
-    const index = current ? records.indexOf(current) : -1;
-    if (external.record)
-    {
-        if (index >= 0) records[index] = structuredClone(external.record);
-        else records.push(structuredClone(external.record));
-    }
-    else if (index >= 0) records.splice(index, 1);
-    syncFamilyReciprocalLinks();
-    rebuildSampleEventsAndPruneSourceLinks();
+    if (parsed?.geneoReviewHistory) return JSON.stringify({ ...parsed, side: parsed.side === 'before' ? 'after' : 'before' });
+    return geneoSnapshot();
 }
 
 function geneoPushHistory()
@@ -9708,9 +9680,8 @@ function geneoRestoreSnapshot(
     try
     {
         const parsed = JSON.parse(snapshot);
-        board.diagram = parsed?.geneoRelationshipHistory ? parsed.diagram : parsed;
-        if (parsed?.geneoRelationshipHistory)
-            geneoRestoreRelationshipExternalState(parsed.external);
+        if (parsed?.geneoReviewHistory) return geneoReviewRestoreHistory(parsed);
+        board.diagram = parsed;
 
         state.geneoLayerRename = null;
 
@@ -9734,8 +9705,12 @@ function undoGeneographChange()
 {
     cancelGeneographPencilStroke();
     geneoEnsureHistory();
-    const snapshot = geneoHistoryRuntime.undo.pop();
+    const snapshot = geneoHistoryRuntime.undo.at(-1);
     if (!snapshot) return;
+    const entry = JSON.parse(snapshot);
+    if (entry?.geneoReviewHistory && !geneoReviewHistoryCanRestore(entry))
+    { showToast('This review cannot be undone because affected records changed.'); return; }
+    geneoHistoryRuntime.undo.pop();
     geneoHistoryRuntime.redo.push(geneoHistoryCompanionSnapshot(snapshot));
     if (geneoRestoreSnapshot(snapshot)) renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true, preserveSidebarScroll: true });
 }
@@ -9744,8 +9719,12 @@ function redoGeneographChange()
 {
     cancelGeneographPencilStroke();
     geneoEnsureHistory();
-    const snapshot = geneoHistoryRuntime.redo.pop();
+    const snapshot = geneoHistoryRuntime.redo.at(-1);
     if (!snapshot) return;
+    const entry = JSON.parse(snapshot);
+    if (entry?.geneoReviewHistory && !geneoReviewHistoryCanRestore(entry))
+    { showToast('This review cannot be redone because affected records changed.'); return; }
+    geneoHistoryRuntime.redo.pop();
     geneoHistoryRuntime.undo.push(geneoHistoryCompanionSnapshot(snapshot));
     if (geneoRestoreSnapshot(snapshot)) renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true, preserveSidebarScroll: true });
 }
@@ -10861,10 +10840,11 @@ function geneoPersonAvatarModel(person)
     const board =
         selectedGeneographBoard();
 
-    const treePerson =
+    const treeCandidate =
         person?.treePersonId
             ? getPerson(person.treePersonId)
             : null;
+    const treePerson = treeCandidate && !treeCandidate.deleted && treeCandidate.projectId === board?.projectId ? treeCandidate : null;
 
     const boardPhoto = person?.photoId
         ? getPhoto(person.photoId, { projectId: board?.projectId || '' })
@@ -12369,19 +12349,18 @@ function renderGeneographLayerNameCell(
       `;
 }
 
-function geneoCentralPartnerIdsForFamily(family)
+function geneoRelationshipForFamily(family)
 {
-    if (!family || family.partnerIds.length !== 2) return [];
-    return family.partnerIds.map(personId => getGeneographPerson(personId)?.treePersonId || '').filter(Boolean);
+    return { relationship: family, central: false };
 }
 
-function geneoRelationshipForFamily(family, { create = false } = {})
+function geneoResolveBoardPersonPlace(value)
 {
-    const centralIds = geneoCentralPartnerIdsForFamily(family);
-    if (centralIds.length !== 2) return { relationship: family, central: false };
-    let relationship = getPartnerRelationshipBetween(centralIds[0], centralIds[1]);
-    if (!relationship && create) relationship = connectPartners(centralIds[0], centralIds[1])?.family || null;
-    return { relationship: relationship || family, central: Boolean(relationship) };
+    const text = String(value?.text ?? value ?? '').trim();
+    const projectId = selectedGeneographBoard()?.projectId || currentProjectId();
+    const selected = text && (sampleData.places || []).find(place => place.id === value?.selectedPlaceId && place.projectId === projectId && !place.deleted);
+    const place = selected || (text ? findExactPlaceMatch(text, projectId) : null);
+    return { placeId: place?.id || null, placeText: text, address: value?.address || '', created: false };
 }
 
 function geneoEffectiveShowRelationshipDates(connection, diagram = selectedGeneographDiagram())
@@ -15937,7 +15916,6 @@ function renderGeneographPersonTreeLinkSection(
               class="
                 relation-row
                 geneo-tree-link-row
-                is-warning
               ">
               <button
                 class="relation-row-main"
@@ -15948,16 +15926,16 @@ function renderGeneographPersonTreeLinkSection(
                 <span
                   class="geneo-tree-link-warning-icon"
                   aria-hidden="true">
-                  ${icon.warning}
+                  ${icon.people}
                 </span>
 
                 <span class="relation-row-copy">
                   <strong>
-                    Not linked to Family Tree
+                    Board only
                   </strong>
 
                   <span>
-                    Link this board person to an existing Family Tree person.
+                    Review this person and their family before linking.
                   </span>
                 </span>
 
@@ -21831,7 +21809,7 @@ function saveGeneographPersonModal(
         || currentProjectId();
 
     const birthPlace =
-        resolvePlaceAssignment(
+        geneoResolveBoardPersonPlace(
             readPlaceInputValue(
                 '#geneoPersonBirthPlace',
                 modalBackdrop
@@ -21841,7 +21819,7 @@ function saveGeneographPersonModal(
 
     const deathPlace =
         status === 'Deceased'
-            ? resolvePlaceAssignment(
+            ? geneoResolveBoardPersonPlace(
                 readPlaceInputValue(
                     '#geneoPersonDeathPlace',
                     modalBackdrop
@@ -23967,693 +23945,7 @@ function openGeneographImagePicker({
 
 function openGeneographTreePersonPicker()
 {
-    const node =
-        selectedGeneographNode();
-
-    const boardPerson =
-        node?.type === 'person'
-            ? getGeneographPerson(
-                node.personId
-            )
-            : null;
-
-    if (!boardPerson) return;
-
-    const initialSelectedId =
-        boardPerson.treePersonId
-        && getPerson(
-            boardPerson.treePersonId
-        )?.projectId === currentProjectId()
-        && !getPerson(boardPerson.treePersonId)?.deleted
-            ? boardPerson.treePersonId
-            : '';
-
-    let selectedId =
-        initialSelectedId;
-
-    let query = '';
-
-    const changingLink =
-        Boolean(
-            initialSelectedId
-        );
-
-    const people =
-        getPeople(
-            currentProjectId()
-        )
-            .filter(person =>
-                person?.id
-            && !person.deleted
-            );
-
-    const personName =
-        person =>
-            connectPersonName(
-                person
-            );
-
-    const personContext =
-        person =>
-            getPlaceEventDisplay(
-                person?.birth
-            )
-          || getPlaceEventDisplay(
-              person?.death
-          )
-          || '';
-
-    const personSearchText =
-        person => [
-            personName(person),
-            person?.names?.first,
-            person?.names?.middle,
-            person?.names?.last,
-            person?.names?.maiden,
-            albumPhotoPersonDates(
-                person
-            ),
-            getPlaceEventDisplay(
-                person?.birth
-            ),
-            getPlaceEventDisplay(
-                person?.death
-            )
-        ]
-            .filter(Boolean)
-            .join(' ')
-            .toLowerCase();
-
-    const selectionChanged =
-        () =>
-            Boolean(selectedId)
-          && selectedId
-            !== initialSelectedId;
-
-    const getCandidates =
-        () =>
-        {
-            const normalizedQuery =
-                query
-                    .trim()
-                    .toLowerCase();
-
-            const candidates =
-                people
-                    .filter(person =>
-                        person.id !== selectedId
-                    )
-                    .filter(person =>
-                        !normalizedQuery
-                || personSearchText(
-                    person
-                ).includes(
-                    normalizedQuery
-                )
-                    )
-                    .sort(
-                        (first, second) =>
-                            personName(first)
-                                .localeCompare(
-                                    personName(second)
-                                )
-                    );
-
-            return {
-                total:
-              candidates.length,
-
-                people:
-              candidates.slice(
-                  0,
-                  5
-              )
-            };
-        };
-
-    const renderSelected =
-        () =>
-        {
-            const person =
-                selectedId
-                    ? getPerson(
-                        selectedId
-                    )
-                    : null;
-
-            if (!person)
-            {
-                return '';
-            }
-
-            const name =
-                personName(person);
-
-            return `
-            <div
-              class="
-                photo-people-selected-head
-              ">
-              <strong>
-                Selected person
-              </strong>
-
-              <span>
-                1
-              </span>
-            </div>
-
-            <div
-              class="
-                photo-people-selected-list
-              ">
-              <button
-                class="
-                  photo-people-selected-chip
-                "
-                type="button"
-                data-geneo-tree-person-remove="${escapeHtml(
-                    person.id
-                )}"
-                aria-label="${escapeHtml(
-                    `Remove ${name} from the selection`
-                )}">
-
-                ${renderPersonAvatar(
-                    person,
-                    'photo-people-chip-avatar',
-                    {
-                        element: 'span'
-                    }
-                )}
-
-                <span
-                  class="
-                    photo-people-selected-name
-                  ">
-                  ${escapeHtml(name)}
-                </span>
-
-                <span
-                  class="
-                    photo-people-selected-remove
-                  "
-                  aria-hidden="true">
-                  ${icon.close}
-                </span>
-              </button>
-            </div>
-          `;
-        };
-
-    const renderResults =
-        candidates =>
-        {
-            if (
-                !candidates.people.length
-            )
-            {
-                return `
-              <div
-                class="
-                  photo-people-empty
-                ">
-                ${
-                    query.trim()
-                        ? `
-                      No matching people found.
-                      Try another name, date,
-                      place.
-                    `
-                        : selectedId
-                            ? `
-                        No additional people
-                        to suggest.
-                      `
-                            : `
-                        No Family Tree people
-                        are available.
-                      `
-                }
-              </div>
-            `;
-            }
-
-            return candidates.people
-                .map(person =>
-                {
-                    const name =
-                        personName(person);
-
-                    const dates =
-                        albumPhotoPersonDates(
-                            person
-                        )
-                || 'Dates unknown';
-
-                    const context =
-                        personContext(person);
-
-                    return `
-                <label
-                  class="
-                    photo-people-result
-                  ">
-
-                  ${renderPersonAvatar(
-                        person,
-                        'photo-people-result-avatar',
-                        {
-                            element: 'span'
-                        }
-                    )}
-
-                  <span
-                    class="
-                      photo-people-result-copy
-                    ">
-                    <strong
-                      title="${escapeHtml(name)}">
-                      ${escapeHtml(name)}
-                    </strong>
-
-                    <span
-                      title="${escapeHtml(dates)}">
-                      ${escapeHtml(dates)}
-                    </span>
-
-                    ${
-                        context
-                            ? `
-                          <span
-                            title="${escapeHtml(
-                                context
-                            )}">
-                            ${escapeHtml(
-                                context
-                            )}
-                          </span>
-                        `
-                            : ''
-                    }
-                  </span>
-
-                  <input
-                    type="radio"
-                    name="geneoTreePersonChoice"
-                    value="${escapeHtml(
-                        person.id
-                    )}"
-                    data-geneo-tree-person-choice
-                    aria-label="${escapeHtml(
-                        `Select ${name}`
-                    )}">
-                </label>
-              `;
-                })
-                .join('');
-        };
-
-    const modalTitle =
-        changingLink
-            ? 'Change Family Tree link'
-            : 'Link to Family Tree';
-
-    const boardPersonName =
-        geneoPersonDisplayName(
-            boardPerson
-        );
-
-    openModal(`
-        <div
-          class="
-            modal
-            photo-people-modal
-            geneo-tree-person-picker-modal
-          "
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="
-            geneoTreePersonPickerTitle
-          ">
-
-          <div class="modal-header">
-            <div>
-              <h2
-                id="
-                  geneoTreePersonPickerTitle
-                ">
-                ${escapeHtml(
-                    modalTitle
-                )}
-              </h2>
-
-              <p>
-                ${escapeHtml(
-                    `Choose one Family Tree person to link with ${boardPersonName}.`
-                )}
-              </p>
-            </div>
-
-            <button
-              class="close-button"
-              type="button"
-              data-close
-              aria-label="${escapeHtml(
-                    `Close ${modalTitle}`
-                )}">
-              ${icon.close}
-            </button>
-          </div>
-
-          <div
-            class="
-              photo-people-body
-            ">
-
-            <div
-              class="
-                field
-                photo-people-search-field
-              ">
-              <label
-                for="
-                  geneoTreePersonSearch
-                ">
-                Find a person
-              </label>
-
-              <div class="search-input">
-                ${icon.search}
-
-                <input
-                  id="
-                    geneoTreePersonSearch
-                  "
-                  type="search"
-                  data-geneo-tree-person-search
-                  placeholder="Search by name, dates, place, or branch"
-                  autocomplete="off">
-              </div>
-            </div>
-
-            <section
-              class="
-                photo-people-selected-panel
-              "
-              data-geneo-tree-person-selected-panel
-              hidden>
-            </section>
-
-            <section
-              class="
-                photo-people-results-panel
-              ">
-
-              <div
-                class="
-                  photo-people-results-head
-                ">
-                <strong
-                  data-geneo-tree-person-results-title>
-                </strong>
-
-                <span
-                  data-geneo-tree-person-results-meta>
-                </span>
-              </div>
-
-              <div
-                class="
-                  photo-people-results
-                "
-                data-geneo-tree-person-results>
-              </div>
-            </section>
-          </div>
-
-          <div
-            class="
-              modal-footer
-              photo-people-footer
-            ">
-
-            <span
-              class="
-                photo-people-selection-count
-              "
-              data-geneo-tree-person-selection-count>
-            </span>
-
-            <div
-              class="
-                photo-people-footer-actions
-              ">
-              <button
-                class="
-                  button
-                  secondary
-                "
-                type="button"
-                data-close>
-                Cancel
-              </button>
-
-              <button
-                class="
-                  button
-                  primary
-                  photo-people-save
-                "
-                type="button"
-                data-geneo-tree-person-save
-                disabled>
-                ${
-                    changingLink
-                        ? 'Change link'
-                        : 'Link person'
-                }
-              </button>
-            </div>
-          </div>
-        </div>
-      `);
-
-    const modal =
-        modalBackdrop.querySelector(
-            '.geneo-tree-person-picker-modal'
-        );
-
-    if (!modal) return;
-
-    const refresh =
-        () =>
-        {
-            const selectedHtml =
-                renderSelected();
-
-            const selectedPanel =
-                modal.querySelector(
-                    '[data-geneo-tree-person-selected-panel]'
-                );
-
-            const candidates =
-                getCandidates();
-
-            const queryActive =
-                Boolean(
-                    query.trim()
-                );
-
-            selectedPanel.hidden =
-                !selectedHtml;
-
-            selectedPanel.innerHTML =
-                selectedHtml;
-
-            modal
-                .querySelector(
-                    '[data-geneo-tree-person-results-title]'
-                )
-                .textContent =
-                    queryActive
-                        ? 'Search results'
-                        : 'Suggested people';
-
-            modal
-                .querySelector(
-                    '[data-geneo-tree-person-results-meta]'
-                )
-                .textContent =
-                    candidates.total
-                > candidates.people.length
-                        ? `
-                  Showing
-                  ${candidates.people.length}
-                  of ${candidates.total}
-                `.replace(
-                            /\s+/g,
-                            ' '
-                        ).trim()
-                        : candidates.total
-                            ? `
-                    ${candidates.total}
-                    ${
-                        queryActive
-                            ? 'match'
-                            : 'suggestion'
-                    }${
-                        candidates.total
-                      === 1
-                            ? ''
-                            : 's'
-                    }
-                  `.replace(
-                            /\s+/g,
-                            ' '
-                        ).trim()
-                            : '';
-
-            modal
-                .querySelector(
-                    '[data-geneo-tree-person-results]'
-                )
-                .innerHTML =
-                    renderResults(
-                        candidates
-                    );
-
-            modal
-                .querySelector(
-                    '[data-geneo-tree-person-selection-count]'
-                )
-                .textContent =
-                    selectedId
-                        ? '1 person selected'
-                        : 'No person selected';
-
-            modal
-                .querySelector(
-                    '[data-geneo-tree-person-save]'
-                )
-                .disabled =
-                    !selectionChanged();
-
-            localizeUI(
-                modal,
-                {
-                    suppressObserverReplay: true
-                }
-            );
-        };
-
-    const saveSelection =
-        () =>
-        {
-            if (
-                !selectionChanged()
-            )
-            {
-                return;
-            }
-
-            geneoPushHistory();
-
-            boardPerson.treePersonId =
-                selectedId;
-
-            boardPerson.syncState =
-                'linked';
-
-            touchGeneographBoard();
-            closeModal();
-
-            renderGeneographEditorPreserveScroll({
-                preserveInspectorScroll: true,
-                preserveSidebarScroll: true
-            });
-
-            showToast(
-                changingLink
-                    ? 'Family Tree link changed.'
-                    : 'Person linked to Family Tree.'
-            );
-        };
-
-    modal
-        .querySelector(
-            '[data-geneo-tree-person-search]'
-        )
-        ?.addEventListener(
-            'input',
-            event =>
-            {
-                query =
-                    event.currentTarget.value;
-
-                refresh();
-            }
-        );
-
-    modal.addEventListener(
-        'change',
-        event =>
-        {
-            const input =
-                event.target.closest(
-                    '[data-geneo-tree-person-choice]'
-                );
-
-            if (!input) return;
-
-            /*
-           * Single-selection behavior:
-           * selecting a result replaces the previous
-           * selected person rather than adding to a set.
-           */
-            selectedId =
-                input.value;
-
-            refresh();
-        }
-    );
-
-    modal.addEventListener(
-        'click',
-        event =>
-        {
-            const remove =
-                event.target.closest(
-                    '[data-geneo-tree-person-remove]'
-                );
-
-            if (remove)
-            {
-                selectedId = '';
-                refresh();
-                return;
-            }
-
-            if (
-                event.target.closest(
-                    '[data-geneo-tree-person-save]'
-                )
-            )
-            {
-                saveSelection();
-            }
-        }
-    );
-
-    refresh();
-
-    modal
-        .querySelector(
-            '[data-geneo-tree-person-search]'
-        )
-        ?.focus({
-            preventScroll: true
-        });
+    openGeneographTreeImport({ match: true });
 }
 
 function findGeneographFamilyForPartners(firstPersonId, secondPersonId)
@@ -26466,10 +25758,8 @@ function saveGeneographPartnerRelationship(editor)
             'The relationship end date must be after or equal to the start date.');
         return false;
     }
-    const centralIds = geneoCentralPartnerIdsForFamily(family);
-    const beforeSnapshot = centralIds.length === 2
-        ? geneoRelationshipHistorySnapshot(centralIds) : geneoSnapshot();
-    const resolved = geneoRelationshipForFamily(family, { create: true });
+    const beforeSnapshot = geneoSnapshot();
+    const resolved = geneoRelationshipForFamily(family);
     if (!resolved.relationship)
     {
         showToast('The relationship could not be updated.'); return false;
@@ -26483,13 +25773,8 @@ function saveGeneographPartnerRelationship(editor)
         startPlace: readPlaceInputValue('[data-partner-relationship-start-place]', editor),
         endDate,
         endPlace: definition.hasEnd ? readPlaceInputValue('[data-partner-relationship-end-place]', editor) : { text: '', selectedPlaceId: '' }
-    });
+    }, { resolvePlace: geneoResolveBoardPersonPlace });
     resolved.relationship.updatedAt = 'Just now';
-    if (resolved.central)
-    {
-        syncFamilyReciprocalLinks();
-        rebuildSampleEventsAndPruneSourceLinks();
-    }
     touchGeneographBoard();
     renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true });
     if (focusedId) requestAnimationFrame(() => main.querySelector(`#${CSS.escape(focusedId)}`)?.focus({ preventScroll: true }));
@@ -29454,12 +28739,7 @@ function bindGeneographEditor()
         requestAnimationFrame(() => main.querySelector('[data-geneo-apply-gender-color]')?.focus({ preventScroll: true }));
     });
     main.querySelector('[data-geneo-link-person]')?.addEventListener('click', openGeneographTreePersonPicker);
-    main.querySelector('[data-geneo-import-family]')?.addEventListener('click', () => {
-        const person = getGeneographPerson(selectedGeneographNode()?.personId);
-        const tree = person?.treePersonId ? getPerson(person.treePersonId) : null;
-        if (person?.treePersonId && (!tree || tree.deleted || tree.projectId !== currentProjectId())) openGeneographTreePersonPicker();
-        else openGeneographTreeImport();
-    });
+    main.querySelector('[data-geneo-import-family]')?.addEventListener('click', () => openGeneographTreeImport());
     main.querySelector('[data-geneo-edit-person]')?.addEventListener('click', () =>
     {
         const person = getGeneographPerson(selectedGeneographNode()?.personId); if (person) openGeneographPersonModal(person.id);

@@ -5187,11 +5187,14 @@ function timelineDateRangeLabel(fromDate, toDate)
     return '';
 }
 
-function buildSampleEvents()
+function buildSampleEvents(context = null)
 {
     const events = [];
+    const eventPeople = context?.people || sampleData.people;
+    const eventFamilies = context?.families || centralFamilyRecords();
+    const eventPerson = id => context ? eventPeople.find(person => person.id === id) : getPerson(id);
 
-    sampleData.people.forEach(person =>
+    eventPeople.forEach(person =>
     {
         ensurePersonCentralStructures(person);
         const birthDate = eventDateFields(person.birth);
@@ -5210,10 +5213,10 @@ function buildSampleEvents()
         });
     });
 
-    centralFamilyRecords().forEach(family =>
+    eventFamilies.forEach(family =>
     {
-        const personA = getPerson(familyPartnerAId(family));
-        const personB = getPerson(familyPartnerBId(family));
+        const personA = eventPerson(familyPartnerAId(family));
+        const personB = eventPerson(familyPartnerBId(family));
         if (personA && personB)
         {
             familyMarriageEventsForTimeline(family).forEach(event =>
@@ -5244,7 +5247,7 @@ function buildSampleEvents()
 
         (family.childIds || []).forEach(childId =>
         {
-            const child = getPerson(childId);
+            const child = eventPerson(childId);
             if (!child) return;
             const childBirthDate = eventDateFields(child.birth);
             const parentIds =
@@ -5263,7 +5266,7 @@ function buildSampleEvents()
                     .filter(parentId =>
                     {
                         const parent =
-                            getPerson(
+                            eventPerson(
                                 parentId
                             );
 
@@ -5324,7 +5327,7 @@ function buildSampleEvents()
         });
     });
 
-    sampleData.people.forEach(person =>
+    eventPeople.forEach(person =>
     {
         ensurePersonCentralStructures(person);
         if (person.livingStatus === 'Deceased')

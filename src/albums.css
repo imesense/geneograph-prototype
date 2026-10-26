@@ -3531,10 +3531,6 @@ button.albums-inspector-row-main:focus-visible {
     min-width: 0;
 }
 
-.geneo-tree-person-picker-modal .photo-people-result input {
-    border-radius: 50%;
-}
-
 .photo-people-search-field .search-input input {
     padding: 0;
     text-align: left;

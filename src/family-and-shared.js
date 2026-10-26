@@ -7056,7 +7056,7 @@ function relationshipIdForPartners(personAId, personBId)
     return `rel-${left}-${right}-family`;
 }
 
-function upsertManagedRelationshipEvent(relationship, role, definition, dateInput, placeInput, marriageType = '')
+function upsertManagedRelationshipEvent(relationship, role, definition, dateInput, placeInput, marriageType = '', options = {})
 {
     relationship.events = Array.isArray(relationship.events) ? relationship.events : [];
     const isStart = role === 'start';
@@ -7066,7 +7066,7 @@ function upsertManagedRelationshipEvent(relationship, role, definition, dateInpu
     const typeLabel = tag === 'MARR' ? marriageType : managedTypeLabel;
     let event = partnerRelationshipManagedEvent(relationship, tag, managedTypeLabel);
     const date = normalizeGenealogyDateInput(dateInput || {}, 'Exact date');
-    const resolvedPlace = resolvePlaceAssignment(placeInput, event?.placeId || relationship?.[`${role}PlaceId`] || '');
+    const resolvedPlace = (options.resolvePlace || resolvePlaceAssignment)(placeInput, event?.placeId || relationship?.[`${role}PlaceId`] || '');
 
     if (!event)
     {
@@ -7122,7 +7122,7 @@ function removeManagedRelationshipEndEvents(relationship)
         });
 }
 
-function upsertPartnerRelationshipEvents(relationship, values)
+function upsertPartnerRelationshipEvents(relationship, values, options = {})
 {
     const relationshipType = ADD_PERSON_RELATIONSHIP_TYPES.includes(values.relationshipType)
         ? values.relationshipType
@@ -7136,11 +7136,11 @@ function upsertPartnerRelationshipEvents(relationship, values)
     relationship.relationshipStatus = definition.status;
     relationship.marriageType = marriageType;
 
-    upsertManagedRelationshipEvent(relationship, 'start', definition, values.startDate, values.startPlace, marriageType);
+    upsertManagedRelationshipEvent(relationship, 'start', definition, values.startDate, values.startPlace, marriageType, options);
 
     if (definition.hasEnd)
     {
-        upsertManagedRelationshipEvent(relationship, 'end', definition, values.endDate, values.endPlace, marriageType);
+        upsertManagedRelationshipEvent(relationship, 'end', definition, values.endDate, values.endPlace, marriageType, options);
     }
     else
     {

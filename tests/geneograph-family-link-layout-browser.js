@@ -24,9 +24,9 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 state.selectedGeneoNodeIds = [person.id];
                 openGeneographTreePersonPicker();
             });
-            const layout = await page.locator('.geneo-tree-person-picker-modal').evaluate(modal => {
-                const body = modal.querySelector('.photo-people-body');
-                const results = modal.querySelector('.photo-people-results');
+            const layout = await page.locator('.geneo-family-review').evaluate(modal => {
+                const body = modal.querySelector('.gr-body');
+                const results = modal.querySelector('.gr-rail');
                 const footer = modal.querySelector('.modal-footer');
                 const rect = element => element.getBoundingClientRect();
                 return {
@@ -37,15 +37,15 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                     columns: getComputedStyle(body).gridTemplateColumns
                 };
             });
-            assert.ok(layout.modal.width <= (width <= 540 ? width : 600));
-            assert.ok(layout.results.width > layout.body.width * .8);
+            assert.ok(layout.modal.width <= width);
+            assert.ok(width < 760 ? layout.results.width > layout.body.width * .8 : layout.results.width >= 299);
             assert.ok(layout.results.height > 150);
             assert.ok(layout.results.bottom <= layout.footer.top);
             assert.ok(layout.footer.bottom <= 720);
             assert.deepEqual(errors, []);
             await page.close();
         }
-        console.log('Geneograph Family Tree link picker layout passed.');
+        console.log('Geneograph unified Family Tree review layout passed.');
     } finally {
         await browser.close();
     }

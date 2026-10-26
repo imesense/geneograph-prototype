@@ -2634,6 +2634,7 @@ function closeModal(options = {})
     modalBackdrop.classList.remove('open');
     modalBackdrop.setAttribute('aria-hidden', 'true');
     modalBackdrop.removeAttribute('tabindex');
+    if (modalBackdrop.querySelector('.geneo-family-review')) geneoTreeImportDraft = null;
     modalBackdrop.innerHTML = '';
 
     document.removeEventListener(

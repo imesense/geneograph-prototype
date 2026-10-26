@@ -2627,45 +2627,7 @@ body.mobile-details-open .geneo-inspector [data-geneo-inspector-toggle] {
     body.mobile-details-open:has(.places-inspector) #mobileDetailsClose span { display: none; }
 }
 
-/* The Family Tree link picker has no photo workspace; do not inherit the
-   two-column Tag people layout. */
-#modalBackdrop > .geneo-tree-person-picker-modal {
-    width: min(560px, calc(100vw - 32px));
-    height: min(680px, calc(100dvh - 48px));
-    max-height: calc(100dvh - 48px);
-}
-
-.geneo-tree-person-picker-modal .photo-people-body {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto auto minmax(0, 1fr);
-    gap: var(--space-3);
-    padding: var(--space-4);
-    overflow: hidden;
-}
-
-.geneo-tree-person-picker-modal .photo-people-results-panel {
-    min-height: 0;
-    align-self: stretch;
-    grid-template-rows: auto minmax(0, 1fr);
-}
-
-.geneo-tree-person-picker-modal .photo-people-results {
-    max-height: none;
-}
-
 @media (max-width: 540px) {
-    #modalBackdrop > .geneo-tree-person-picker-modal {
-        width: 100%;
-        height: 100dvh;
-        max-height: 100dvh;
-    }
-
-    .geneo-tree-person-picker-modal .photo-people-body {
-        grid-template-rows: auto auto minmax(0, 1fr);
-        overflow: hidden;
-    }
-
     .places-toolbar .places-route-toolbar-button span,
     .places-toolbar .app-sort-current,
     .places-toolbar .app-sort-chevron { display: none; }
@@ -2959,16 +2921,6 @@ body.mobile-details-open .geneo-inspector [data-geneo-inspector-toggle] {
 .geneo-transfer-announcement { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; border: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 @media (max-width: 540px) { .geneo-board-chooser-modal { width: 100%; max-height: 100dvh; height: 100dvh; } .geneo-board-chooser-modal .geneo-transfer-body { flex: 1; padding: 16px; align-content: start; } .geneo-board-chooser-modal .geneo-transfer-list { max-height: none; } .geneo-board-chooser-modal .modal-footer { gap: 8px; } .geneo-board-chooser-modal .modal-footer .button.primary { flex: 1; } }
 .geneo-import-action { width: 100%; margin-top: 12px; }
-.geneo-tree-import-modal { width: min(880px, 100%); }
-.geneo-tree-import-modal .geneo-transfer-body { display: block; }
-.geneo-import-relations { display: grid; gap: 8px; margin-top: 16px; }
-.geneo-import-relation { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border-default); }
-.geneo-import-relation > span { min-width: 0; display: grid; gap: 3px; overflow-wrap: anywhere; }
-.geneo-import-relation small { color: var(--text-secondary); }
-.geneo-import-relation.is-conflict small, .geneo-import-error { color: var(--red); }
-.geneo-import-relation label { display: flex; align-items: center; gap: 6px; flex: none; }
-.geneo-import-error { margin-right: auto; }
-@media (max-width: 540px) { .geneo-tree-import-modal { width: 100%; } .geneo-tree-import-modal .modal-footer { flex-wrap: wrap; } .geneo-import-error { flex-basis: 100%; } }
 
 .geneo-node-person.geneo-person-dimmed { opacity: .38; }
 .geneo-node-person.geneo-person-dimmed.selected,
@@ -2976,112 +2928,6 @@ body.mobile-details-open .geneo-inspector [data-geneo-inspector-toggle] {
 .geneo-node-person[data-geneo-person-link-status]::after { content: ''; position: absolute; top: 7px; right: 7px; width: 7px; height: 7px; border-radius: 50%; border: 1px solid var(--surface-card); background: var(--text-tertiary); pointer-events: none; }
 .geneo-node-person[data-geneo-person-link-status="linked"]::after { background: var(--brand-green-500); }
 .geneo-node-person[data-geneo-person-link-status="attention"]::after { background: var(--red); }
-.geneo-tree-import-modal { width: min(1080px, calc(100vw - 32px)); max-height: min(820px, calc(100dvh - 32px)); }
-.geneo-tree-import-modal .geneo-transfer-body { display: block; padding: 0; overflow: auto; flex: 1; }
-.geneo-review-layout { display: grid; grid-template-columns: minmax(190px, 230px) minmax(0, 1fr); min-height: 100%; }
-.geneo-review-rail { display: flex; flex-direction: column; gap: 4px; min-width: 0; padding: 16px 10px; border-right: 1px solid var(--border-default); background: var(--surface-card); }
-.geneo-review-rail-title { display: flex; justify-content: space-between; gap: 8px; padding: 3px 8px 10px; font-weight: 700; }
-.geneo-review-person { display: flex; align-items: center; gap: 10px; width: 100%; min-width: 0; padding: 10px; border: 1px solid transparent; border-radius: 6px; background: transparent; color: var(--text-primary); text-align: left; cursor: pointer; }
-.geneo-review-person-copy { display: grid; gap: 3px; min-width: 0; }
-.geneo-review-person strong, .geneo-review-person small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.geneo-review-person small { color: var(--text-secondary); }
-.geneo-review-avatar { display: grid; place-items: center; flex: 0 0 36px; width: 36px; height: 36px; overflow: hidden; border: 1px solid var(--border-default); border-radius: 50%; color: var(--text-secondary); background: var(--surface-input); font-size: 11px; font-weight: 700; }
-.geneo-review-avatar .person-avatar-viewport, .geneo-review-avatar .person-avatar-media, .geneo-review-avatar .person-avatar-photo { display: block; width: 100%; height: 100%; }
-.geneo-review-avatar .person-avatar-photo { object-fit: cover; }
-.geneo-review-status-dot { flex: 0 0 7px; width: 7px; height: 7px; margin-left: auto; border-radius: 50%; background: var(--text-tertiary); }
-.geneo-review-person.needs-review .geneo-review-status-dot { background: var(--brand-green-500); }
-.geneo-review-person:hover { background: var(--surface-card-hover); }
-.geneo-review-person.active { border-color: var(--border-default); background: var(--surface-card-hover); box-shadow: inset 3px 0 var(--brand-green-500); }
-.geneo-review-person:focus-visible { outline: 2px solid var(--brand-green-500); outline-offset: 2px; }
-.geneo-review-main { min-width: 0; padding: 22px 24px 32px; }
-.geneo-review-main h3, .geneo-review-main h4 { margin: 0; }
-.geneo-review-columns, .geneo-review-values { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-.geneo-review-columns { padding: 14px 0; border-top: 1px solid var(--border-default); border-bottom: 1px solid var(--border-default); }
-.geneo-review-card { display: grid; align-content: start; gap: 10px; min-width: 0; }
-.geneo-review-card h4 { color: var(--text-secondary); font-size: 12px; }
-.geneo-review-card-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.geneo-review-identity { display: flex; align-items: center; gap: 10px; min-width: 0; }
-.geneo-review-identity > span:last-child { display: grid; gap: 3px; min-width: 0; }
-.geneo-review-identity strong, .geneo-review-identity small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.geneo-review-identity small, .geneo-review-empty-target { color: var(--text-secondary); font-size: 12px; }
-.geneo-review-text-action, .geneo-review-reset { padding: 0; border: 0; background: none; color: var(--brand-green-500); font: inherit; font-size: 12px; cursor: pointer; }
-.geneo-review-text-action:hover, .geneo-review-reset:hover { text-decoration: underline; }
-.geneo-review-match { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 16px; }
-.geneo-review-action-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
-.geneo-review-mode { min-height: 36px; padding: 6px 11px; border: 1px solid var(--border-default); border-radius: 5px; background: var(--surface-card); color: var(--text-primary); font: inherit; font-size: 12px; cursor: pointer; }
-.geneo-review-mode:hover { background: var(--surface-card-hover); }
-.geneo-review-mode.is-selected { border-color: var(--brand-green-500); background: var(--surface-selected); }
-.geneo-review-mode:focus-visible { outline: 2px solid var(--brand-green-500); outline-offset: 2px; }
-.geneo-review-match label { display: grid; align-content: start; gap: 6px; min-width: 0; font-size: 13px; font-weight: 600; }
-.geneo-review-match input, .geneo-review-match select { width: 100%; min-width: 0; }
-.geneo-review-match input { box-sizing: border-box; height: var(--control-height); padding: 0 12px; border: 1px solid var(--border-default); border-radius: var(--radius-sm); background: var(--surface-input); color: var(--text-primary); font: inherit; }
-.geneo-review-match input:focus-visible { outline: 2px solid var(--brand-green-500); outline-offset: 1px; }
-.geneo-review-match > button { grid-column: 1 / -1; justify-self: end; min-width: 72px; }
-.geneo-review-facts { margin-top: 20px; }
-.geneo-review-facts h4 { display: flex; gap: 8px; padding-bottom: 10px; border-bottom: 1px solid var(--border-default); font-size: 14px; }
-.geneo-review-fact-help { margin: 10px 0 0; color: var(--text-secondary); font-size: 12px; }
-.geneo-review-fact { padding: 12px 0; border-bottom: 1px solid var(--border-default); }
-.geneo-review-fact-head { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 8px; font-size: 13px; }
-.geneo-review-fact-head span { color: var(--text-secondary); font-size: 12px; }
-.geneo-review-value { display: grid; gap: 5px; min-width: 0; padding: 10px 12px; border: 1px solid var(--border-default); border-radius: 6px; background: var(--surface-input); color: var(--text-primary); text-align: left; cursor: pointer; }
-.geneo-review-value:hover { border-color: var(--brand-green-500); background: var(--surface-card-hover); }
-.geneo-review-value.is-selected { border-color: var(--brand-green-500); background: var(--surface-selected); }
-.geneo-review-value small { color: var(--text-secondary); font-size: 11px; }
-.geneo-review-value strong { overflow-wrap: anywhere; font-size: 14px; }
-.geneo-review-reset { margin-top: 8px; }
-.geneo-review-relationships { margin-top: 24px; }
-.geneo-review-relationships h4 { padding-bottom: 10px; border-bottom: 1px solid var(--border-default); font-size: 14px; }
-.geneo-review-relationships .geneo-import-relations { margin-top: 4px; }
-.geneo-review-value:focus-visible, .geneo-review-reset:focus-visible, .geneo-review-text-action:focus-visible { outline: 2px solid var(--brand-green-500); outline-offset: 2px; }
-.geneo-review-footer-copy { display: grid; gap: 3px; margin-right: auto; color: var(--text-secondary); font-size: 13px; }
-.geneo-review-footer-copy .geneo-import-error { color: var(--red); }
-@media (max-width: 700px) {
-  .geneo-tree-import-modal { width: 100%; height: 100dvh; max-height: 100dvh; }
-  .geneo-review-layout { display: block; }
-  .geneo-review-rail { flex-direction: row; overflow-x: auto; padding: 8px 12px; border-right: 0; border-bottom: 1px solid var(--border-default); }
-  .geneo-review-rail-title { display: none; }
-  .geneo-review-person { flex: 0 0 148px; margin: 0; border-radius: 6px; }
-  .geneo-review-main { padding: 18px 16px 28px; }
-  .geneo-review-match { grid-template-columns: 1fr; }
-  .geneo-tree-import-modal .modal-footer { gap: 8px; }
-  .geneo-review-footer-copy { flex-basis: 100%; }
-}
-@media (max-width: 390px) {
-  .geneo-review-columns { grid-template-columns: 1fr; gap: 14px; }
-  .geneo-review-card + .geneo-review-card { padding-top: 12px; border-top: 1px solid var(--border-default); }
-  .geneo-review-values { gap: 6px; }
-}
-.geneo-review-values { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: stretch; }
-.geneo-review-value { cursor: default; }
-.geneo-review-value.is-destination { border-color: var(--brand-green-500); background: var(--surface-selected); }
-.geneo-review-transfer { display: grid; align-content: center; gap: 5px; width: 142px; }
-.geneo-review-transfer-button { min-height: 34px; padding: 5px 7px; border: 1px solid var(--border-default); border-radius: 5px; background: var(--surface-card); color: var(--text-primary); font: inherit; font-size: 11px; cursor: pointer; }
-.geneo-review-transfer-button:hover:not(:disabled) { border-color: var(--brand-green-500); }
-.geneo-review-transfer-button.is-selected { border-color: var(--brand-green-500); background: var(--surface-selected); }
-.geneo-review-transfer-button:disabled { opacity: .45; cursor: not-allowed; }
-.geneo-review-transfer-button:focus-visible { outline: 2px solid var(--brand-green-500); outline-offset: 2px; }
-.geneo-review-result { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 7px; color: var(--text-secondary); font-size: 12px; }
-.geneo-review-result .geneo-review-reset { margin: 0; flex: none; }
-.geneo-review-relationships .geneo-import-relations { gap: 0; }
-.geneo-review-relationships .geneo-import-relation { display: block; min-width: 0; padding: 14px 0; }
-.geneo-review-relation-summary { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; min-width: 0; }
-.geneo-review-relation-person { display: inline-flex; align-items: center; gap: 6px; min-width: 0; max-width: 42%; }
-.geneo-review-relation-person .geneo-review-avatar { flex-basis: 26px; width: 26px; height: 26px; }
-.geneo-review-relation-person strong { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; }
-.geneo-review-relation-kind { display: inline-flex; align-items: center; gap: 5px; flex: none; color: var(--text-secondary); font-size: 12px; }
-.geneo-review-relation-kind svg { width: 14px; height: 14px; }
-.geneo-review-relation-status { flex: 1 0 100%; color: var(--text-secondary); font-size: 12px; }
-.geneo-import-relation.is-conflict .geneo-review-relation-status, .geneo-review-relation-error { color: var(--red); }
-.geneo-review-relation-error { margin: 6px 0; font-size: 12px; }
-.geneo-review-relation-actions { display: flex; gap: 18px; margin-top: 8px; }
-.geneo-review-relation-actions button { min-height: 30px; }
-.geneo-review-relation-actions button:disabled { opacity: .5; cursor: not-allowed; }
-.geneo-review-relation-editor { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 12px; padding: 12px; border: 1px solid var(--border-default); border-radius: 6px; background: var(--surface-input); }
-.geneo-review-relation-field { display: grid; gap: 5px; min-width: 0; font-size: 12px; font-weight: 600; }
-.geneo-review-relation-field select { min-width: 0; width: 100%; }
-.geneo-review-relation-preview { grid-column: 1 / -1; margin: 0; color: var(--text-secondary); font-size: 12px; overflow-wrap: anywhere; }
-@media (max-width: 700px) { .geneo-review-relation-editor { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 540px) { .geneo-review-values { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .geneo-review-transfer { grid-column: 1 / -1; grid-row: 2; width: 100%; grid-template-columns: repeat(2, minmax(0, 1fr)); } .geneo-review-relation-editor { grid-template-columns: 1fr; } }
 
 @media (max-width: 900px) {
     #modalBackdrop > .manage-relationships-modal {

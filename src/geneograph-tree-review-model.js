@@ -1,0 +1,799 @@
+// Review plans operate only on detached records. Live writes happen in the transaction below.
+let geneoTreeImportDraft = null;
+
+const GENEO_REVIEW_FACTS = [
+    ['names.first', 'First name'], ['names.middle', 'Middle name'],
+    ['names.last', 'Last name'], ['names.maiden', 'Maiden name'],
+    ['gender', 'Gender'], ['livingStatus', 'Living status'],
+    ['birth.date', 'Birth date'], ['birth.place', 'Birth place'],
+    ['death.date', 'Death date'], ['death.place', 'Death place']
+];
+
+function geneoReviewEqual(left, right)
+{
+    const stable = value =>
+    {
+        if (Array.isArray(value)) return value.map(stable);
+        if (value && typeof value === 'object')
+            return Object.fromEntries(Object.keys(value).sort().filter(key => value[key] !== undefined).map(key => [key, stable(value[key])]));
+        return value ?? null;
+    };
+    return JSON.stringify(stable(left)) === JSON.stringify(stable(right));
+}
+
+function geneoReviewFact(person, key)
+{
+    if (!person) return undefined;
+    if (key.startsWith('names.')) return person.names?.[key.slice(6)] || '';
+    if (!key.includes('.')) return person[key] || (key === 'gender' ? 'unknown' : 'Unknown');
+    const [vital, part] = key.split('.');
+    const value = person[vital] || emptyGenealogyDate('Exact date');
+    if (part === 'place') return { placeId: value.placeId || null, placeText: value.placeText || '', address: value.address || '' };
+    const date = normalizeGenealogyDateInput(structuredClone(value), 'Exact date');
+    return Object.fromEntries(Object.entries(date).filter(([field]) => !['placeId', 'placeText', 'address', 'coordinates'].includes(field)));
+}
+
+function geneoReviewFactEmpty(value)
+{
+    if (value?.dateType === 'Unknown') return false;
+    if (value && typeof value === 'object')
+        return !Object.entries(value).some(([key, item]) => !['dateType', 'calendar', 'dateKind'].includes(key) && Boolean(item));
+    return value === '' || value === null;
+}
+
+function geneoReviewFactText(person, key)
+{
+    const value = geneoReviewFact(person, key);
+    if (value === undefined) return t('Unavailable');
+    if (geneoReviewFactEmpty(value)) return t('Empty');
+    if (value?.dateType === 'Unknown') return t('Unknown');
+    if (key.endsWith('.date')) return formatGenealogyDateLabel(person[key.split('.')[0]]) || t('Empty');
+    if (key.endsWith('.place')) return geneoPersonPlaceLabel(person[key.split('.')[0]]) || t('Empty');
+    if (key === 'gender') return t({ male: 'Male', female: 'Female', unknown: 'Unknown' }[value] || String(value));
+    return t(String(value));
+}
+
+function geneoTreeImportFields(boardPerson, treePerson)
+{
+    return GENEO_REVIEW_FACTS.filter(([key]) => !geneoReviewEqual(geneoReviewFact(boardPerson, key), geneoReviewFact(treePerson, key)))
+        .map(([key, label]) => [key, label, geneoReviewFactText(boardPerson, key), geneoReviewFactText(treePerson, key)]);
+}
+
+function geneoReviewSetFact(target, key, value)
+{
+    if (key.startsWith('names.'))
+    {
+        target.names = target.names || {};
+        target.names[key.slice(6)] = value;
+        target.names.display = [target.names.first, target.names.middle, target.names.last].filter(Boolean).join(' ');
+        target.names.initials = `${target.names.first?.[0] || ''}${target.names.last?.[0] || ''}`.toUpperCase();
+    }
+    else if (!key.includes('.')) target[key] = value;
+    else
+    {
+        const [vital, part] = key.split('.');
+        const existing = target[vital] || emptyGenealogyDate('Exact date');
+        const preserved = part === 'date'
+            ? { placeId: existing.placeId || null, placeText: existing.placeText || '', address: existing.address || '', ...(existing.coordinates ? { coordinates: existing.coordinates } : {}) }
+            : geneoReviewFact(target, `${vital}.date`);
+        target[vital] = { ...structuredClone(preserved), ...structuredClone(value) };
+    }
+}
+
+function geneoTreeImportNewPerson(person, id, projectId)
+{
+    const names = normalizeGeneographPersonNames(person);
+    return { id, projectId, names: { ...names, display: geneoPersonDisplayName(person), initials: geneoPersonInitials(person) },
+        gender: person.gender || 'unknown', livingStatus: person.livingStatus || 'Unknown', avatarClass: '',
+        birth: structuredClone(person.birth || emptyGenealogyDate('Exact date')),
+        death: structuredClone(person.death || emptyGenealogyDate('Exact date')),
+        profile: { alternativeNames: null }, attributes: [], events: [], notes: [], citations: [],
+        familyAsSpouseIds: [], familyAsChildIds: [], counts: { files: 0, notes: 0 },
+        meta: { updated: 'Just now', sourceStatus: 'Unsourced', reviewStatus: 'New record' } };
+}
+
+function geneoTreeImportRelations(diagram, ids)
+{
+    const relations = [];
+    for (const family of diagram.families)
+    {
+        const parents = family.partnerIds.filter(id => ids.has(id));
+        if (parents.length === 2) relations.push({ id: `${family.id}:partner`, type: 'partner', ids: parents, familyId: family.id });
+        for (const child of family.children)
+            if (ids.has(child.personId) && parents.length)
+                relations.push({ id: `${family.id}:child:${child.personId}`, type: 'child', ids: [...parents, child.personId], familyId: family.id });
+    }
+    for (const connection of diagram.connections.filter(item => item.kind === 'family-sibling'))
+    {
+        const people = [connection.source?.nodeId, connection.target?.nodeId]
+            .map(id => diagram.nodes.find(node => node.id === id)?.personId).filter(id => ids.has(id));
+        if (people.length === 2) relations.push({ id: connection.id, type: 'sibling', ids: people });
+    }
+    return relations;
+}
+
+function geneoReviewGraph(diagram)
+{
+    const graph = new Map(diagram.people.map(person => [person.id, []]));
+    const join = (from, to, role, qualifier = '') =>
+    {
+        if (graph.has(from) && graph.has(to) && from !== to && !graph.get(from).some(edge => edge.id === to && edge.role === role))
+            graph.get(from).push({ id: to, role, qualifier });
+    };
+    for (const family of diagram.families)
+    {
+        for (const parent of family.partnerIds)
+        {
+            for (const other of family.partnerIds) join(parent, other, 'Partners', family.relationshipType);
+            for (const child of family.children)
+            {
+                join(parent, child.personId, 'Children', child.parentageType);
+                join(child.personId, parent, 'Parents', child.parentageType);
+            }
+        }
+        for (const child of family.children)
+            for (const other of family.children) join(child.personId, other.personId, 'Siblings');
+    }
+    for (const relation of geneoTreeImportRelations(diagram, new Set(graph.keys())).filter(item => item.type === 'sibling'))
+    {
+        join(relation.ids[0], relation.ids[1], 'Siblings');
+        join(relation.ids[1], relation.ids[0], 'Siblings');
+    }
+    return graph;
+}
+
+function geneoReviewRoles(diagram, anchorId)
+{
+    const graph = geneoReviewGraph(diagram);
+    const roles = new Map([[anchorId, { group: 'Anchor person', path: [] }]]);
+    const queue = [anchorId];
+    while (queue.length)
+    {
+        const from = queue.shift();
+        for (const edge of graph.get(from) || [])
+        {
+            if (roles.has(edge.id)) continue;
+            const path = [...roles.get(from).path, { ...edge, from }];
+            roles.set(edge.id, { group: path.length === 1 ? edge.role : 'Extended family', path });
+            queue.push(edge.id);
+        }
+    }
+    return roles;
+}
+
+function geneoTreeImportGroup(diagram, anchorId)
+{
+    const roles = geneoReviewRoles(diagram, anchorId);
+    return diagram.people.filter(person => roles.has(person.id));
+}
+
+function geneoReviewParents(families, childId)
+{
+    return new Set(families.filter(family => (family.childIds || family.childrenIds || []).includes(childId))
+        .flatMap(family => [familyPartnerAId(family), familyPartnerBId(family)]).filter(Boolean));
+}
+
+function geneoTreeImportMatches(person, projectId, draft = geneoTreeImportDraft)
+{
+    const names = normalizeGeneographPersonNames(person);
+    const name = geneoPersonDisplayName(person).toLocaleLowerCase();
+    const graph = draft ? geneoReviewGraph(draft.diagram) : new Map();
+    const families = sampleData.families.filter(family => family.projectId === projectId);
+    return getPeople(projectId).filter(candidate => !candidate.deleted).map(candidate =>
+    {
+        const compatibleName = Boolean(names.first || names.last) && (connectPersonName(candidate).toLocaleLowerCase() === name
+            || Boolean(names.first && names.last && candidate.names?.first?.toLocaleLowerCase() === names.first.toLocaleLowerCase()
+                && candidate.names?.last?.toLocaleLowerCase() === names.last.toLocaleLowerCase()));
+        const birth = geneoReviewFact(person, 'birth.date');
+        const otherBirth = geneoReviewFact(candidate, 'birth.date');
+        const recordedBirth = !geneoReviewFactEmpty(birth) && !geneoReviewFactEmpty(otherBirth);
+        const birthAgrees = recordedBirth && geneoReviewEqual(birth, otherBirth);
+        const vitalConflict = person.gender !== 'unknown' && candidate.gender !== 'unknown' && person.gender !== candidate.gender
+            || person.livingStatus !== 'Unknown' && candidate.livingStatus !== 'Unknown' && person.livingStatus !== candidate.livingStatus
+            || ['birth.date', 'death.date'].some(key =>
+            !geneoReviewFactEmpty(geneoReviewFact(person, key)) && !geneoReviewFactEmpty(geneoReviewFact(candidate, key))
+            && !geneoReviewEqual(geneoReviewFact(person, key), geneoReviewFact(candidate, key)));
+        const context = [];
+        for (const edge of graph.get(person.id) || [])
+        {
+            const relativeId = draft?.choices.get(edge.id);
+            if (!relativeId || ['skip', 'create'].includes(relativeId)) continue;
+            const related = edge.role === 'Parents' ? geneoReviewParents(families, candidate.id).has(relativeId)
+                : edge.role === 'Children' ? geneoReviewParents(families, relativeId).has(candidate.id)
+                    : edge.role === 'Partners' ? families.some(family => [familyPartnerAId(family), familyPartnerBId(family)].includes(candidate.id)
+                        && [familyPartnerAId(family), familyPartnerBId(family)].includes(relativeId))
+                        : [...geneoReviewParents(families, candidate.id)].some(id => geneoReviewParents(families, relativeId).has(id));
+            if (related) context.push(connectPersonName(getPerson(relativeId)));
+        }
+        const score = context.length * 200 + (compatibleName ? 100 : 0) + (birthAgrees ? 40 : 0)
+            + (names.last && candidate.names?.last === names.last ? 10 : 0);
+        return { person: candidate, score, context, strong: context.length > 0 && compatibleName && birthAgrees && !vitalConflict };
+    }).sort((a, b) => b.score - a.score || connectPersonName(a.person).localeCompare(connectPersonName(b.person)));
+}
+
+function geneoReviewFamilyParents(family)
+{
+    return [familyPartnerAId(family), familyPartnerBId(family)].filter(Boolean);
+}
+
+function geneoReviewAllRelations(draft)
+{
+    const relations = [...draft.relations];
+    const boardByTree = new Map(draft.people.map(person => [draft.choices.get(person.id), person.id])
+        .filter(([id]) => id && !['create', 'skip'].includes(id) && sampleData.people.some(person => person.id === id && !person.deleted && person.projectId === draft.projectId)));
+    for (const family of sampleData.families.filter(item => item.projectId === draft.projectId))
+    {
+        const parents = geneoReviewFamilyParents(family);
+        const boardParents = parents.map(id => boardByTree.get(id));
+        if (!parents.length || boardParents.some(id => !id)) continue;
+        if (parents.length === 2 && !relations.some(relation => relation.type === 'partner' && geneoReviewEqual([...relation.ids].sort(), [...boardParents].sort())))
+            relations.push({ id: `tree:${family.id}:partner`, type: 'partner', ids: boardParents, treeFamilyId: family.id, origin: 'tree' });
+        for (const childId of family.childIds || [])
+        {
+            const child = boardByTree.get(childId);
+            if (!child || relations.some(relation => relation.type === 'child' && relation.ids.at(-1) === child
+                && geneoReviewEqual(relation.ids.slice(0, -1).sort(), [...boardParents].sort()))) continue;
+            relations.push({ id: `tree:${family.id}:child:${childId}`, type: 'child', ids: [...boardParents, child], treeFamilyId: family.id, origin: 'tree' });
+        }
+    }
+    return relations;
+}
+
+function geneoReviewRelationshipData(family)
+{
+    if (!family) return null;
+    const type = family.relationshipType || 'Unknown relationship';
+    const start = partnerRelationshipStartEvent(family, type);
+    const end = partnerRelationshipEndEvent(family, type);
+    const events = [...(family.events || []).filter(event => event.relationshipManagedRole || ['MARR', 'DIV', 'ANUL'].includes(event.gedcomTag))];
+    for (const [event, role] of [[start, 'start'], [end, 'end']])
+        if (event && !events.some(item => item.id === event.id)) events.push({ ...event, relationshipManagedRole: role });
+    return { relationshipType: type, relationshipStatus: family.relationshipStatus || partnerRelationshipDefinition(type).status,
+        marriageType: family.marriageType || '', events: events.map(event => ({
+            gedcomTag: event.gedcomTag || event.tag || '', eventType: event.eventType || '', typeLabel: event.typeLabel || '',
+            date: normalizeGenealogyDateInput(structuredClone(event.date || event)),
+            placeId: event.placeId || null, placeText: event.placeText || '', address: event.address || '',
+            relationshipManagedRole: event.relationshipManagedRole || (event.id === start?.id ? 'start' : event.id === end?.id ? 'end' : '')
+        })) };
+}
+
+function geneoReviewCopyRelationship(from, to)
+{
+    const data = geneoReviewRelationshipData(from);
+    const events = data.events;
+    delete data.events;
+    Object.assign(to, structuredClone(data));
+    const unmanaged = (to.events || []).filter(event => !event.relationshipManagedRole && !['MARR', 'DIV', 'ANUL'].includes(event.gedcomTag));
+    const previous = to.events || [];
+    to.events = [...unmanaged, ...events.map((event, index) =>
+    {
+        const existing = previous.find(item => event.relationshipManagedRole
+            ? item.relationshipManagedRole === event.relationshipManagedRole || item.gedcomTag === event.gedcomTag
+            : item.gedcomTag === event.gedcomTag && item.typeLabel === event.typeLabel);
+        return { ...structuredClone(existing || {}), ...structuredClone(event), id: existing?.id || `${to.id}-review-${event.relationshipManagedRole || index}` };
+    })];
+    for (const event of to.events.filter(item => item.relationshipManagedRole && !Array.isArray(to.partnerIds)))
+    {
+        const prefix = event.relationshipManagedRole;
+        for (const [field, value] of Object.entries(event.date || {}))
+            if (['date', 'dateLabel', 'dateType', 'sortDate', 'calendar', 'originalText'].includes(field))
+                to[prefix + field[0].toUpperCase() + field.slice(1)] = value;
+        for (const field of ['placeId', 'placeText', 'address']) to[prefix + field[0].toUpperCase() + field.slice(1)] = event[field] || (field === 'placeId' ? null : '');
+    }
+}
+
+function geneoReviewParentType(family, child, parentId = '')
+{
+    const recorded = child.parentChildTypes?.[parentId] || family.parentChildTypes?.[`${parentId}|${child.personId}`] || child.parentageType;
+    const type = PARENT_CHILD_RELATIONSHIP_TYPES.find(value => value.toLowerCase() === String(recorded || '').toLowerCase());
+    return type || (recorded ? null : 'Biological');
+}
+
+function geneoReviewNewFamily(id, projectId, parents)
+{
+    const [a = '', b = ''] = parents;
+    return { id, projectId, type: 'family', partnerAId: a, partnerBId: b, partner1Id: a, partner2Id: b,
+        personAId: a, personBId: b, fatherId: '', motherId: '', childIds: [], childrenIds: [],
+        relationshipType: 'Unknown relationship', relationshipStatus: 'unknown', marriageType: '',
+        parentChildTypes: {}, events: [], nonEvents: [], attributes: [], notes: [], citations: [], mediaIds: [] };
+}
+
+function geneoReviewValidatePerson(person, projectId)
+{
+    if (!person || !['male', 'female', 'unknown'].includes(person.gender) || !['Living', 'Deceased', 'Unknown'].includes(person.livingStatus))
+        return 'The resulting person contains an invalid value.';
+    for (const key of ['birth', 'death'])
+    {
+        const vital = person[key] || {};
+        if (vital.placeId && !(sampleData.places || []).some(place => place.id === vital.placeId && place.projectId === projectId && !place.deleted))
+            return 'A selected place is unavailable in this project.';
+        const text = vital.originalText || vital.dateLabel || vital.date;
+        if (text && !parseGenealogyDateTextAsType(text, vital.dateType || 'Exact date', { calendar: vital.calendar, date2: vital.date2 }).valid)
+            return 'A selected date is invalid. Edit the person before applying it.';
+        if (key === 'death' && text && person.livingStatus !== 'Deceased')
+            return 'Choose Deceased before copying a recorded death date.';
+    }
+    return '';
+}
+
+function geneoReviewCollection(key, board)
+{
+    return key.startsWith('board.') ? board.diagram[key.slice(6)] : sampleData[key];
+}
+
+function geneoReviewRecordSnapshot(board)
+{
+    const records = new Map();
+    for (const key of ['people', 'families', 'events', 'archiveFiles', 'sourceLinks', 'board.people', 'board.families', 'board.connections'])
+        for (const record of geneoReviewCollection(key, board) || []) records.set(`${key}:${record.id}`, structuredClone(record));
+    return records;
+}
+
+function geneoReviewDraft(board, anchorId)
+{
+    const diagram = structuredClone(board.diagram);
+    const represented = new Set(diagram.nodes.filter(node => node.type === 'person').map(node => node.personId));
+    const people = diagram.people.filter(person => represented.has(person.id));
+    const draft = { boardId: board.id, projectId: board.projectId, diagram, people, anchorId, activePersonId: anchorId,
+        scope: 'branch', search: '', status: 'all', page: 'people', mobileDetail: false,
+        baseline: geneoReviewRecordSnapshot(board), choices: new Map(people.map(person =>
+        {
+            const tree = getPerson(person.treePersonId);
+            return [person.id, tree && !tree.deleted && tree.projectId === board.projectId ? tree.id : 'skip'];
+        })),
+        fields: new Map(), relations: geneoTreeImportRelations(diagram, represented), relationChoices: new Map(),
+        siblingFamilies: new Map(), siblingFamilyIds: new Map(people.map(person => [person.id, createRuntimeId('family')])),
+        parentTypes: new Map(), matchQueries: new Map(), matchEditorOpenId: '',
+        newIds: new Map(people.map(person => [person.id, createRuntimeId('person')])),
+        familyIds: new Map(diagram.families.map(family => [family.id, createRuntimeId('family')])), error: '' };
+    geneoReviewPrepareTreeRelationIds(draft);
+    return draft;
+}
+
+function geneoReviewPrepareTreeRelationIds(draft)
+{
+    draft.treeFamilyIds = new Map();
+    draft.treeConnectionIds = new Map();
+    for (const family of sampleData.families.filter(item => item.projectId === draft.projectId))
+    {
+        draft.treeFamilyIds.set(family.id, createRuntimeId('geneo-family'));
+        draft.treeConnectionIds.set(`tree:${family.id}:partner`, createRuntimeId('geneo-connection'));
+        for (const childId of family.childIds || []) draft.treeConnectionIds.set(`tree:${family.id}:child:${childId}`, createRuntimeId('geneo-connection'));
+    }
+}
+
+function geneoTreeImportPreview(draft)
+{
+    const board = getGeneographBoard(draft.boardId, { projectId: draft.projectId });
+    const result = { patches: [], operations: [], errors: [], statuses: new Map(), mapping: new Map(), relations: geneoReviewAllRelations(draft) };
+    const fail = (message, personId = '', relationId = '') => result.errors.push({ message: t(message), personId, relationId });
+    if (!board || board.projectId !== currentProjectId())
+    {
+        fail('The board is no longer available.');
+        return { ...result, error: result.errors[0].message };
+    }
+    const projected = { people: structuredClone(sampleData.people), families: structuredClone(sampleData.families),
+        'board.people': structuredClone(board.diagram.people), 'board.families': structuredClone(board.diagram.families),
+        'board.connections': structuredClone(board.diagram.connections) };
+    const touchedPeople = new Set();
+    const touchedFamilies = new Set();
+    const reads = new Set();
+    const read = (key, id) =>
+    {
+        if (!id) return;
+        const token = `${key}:${id}`;
+        if (reads.has(token)) return;
+        reads.add(token);
+        const before = draft.baseline.get(token) || null;
+        const current = geneoReviewCollection(key, board)?.find(record => record.id === id) || null;
+        if (!geneoReviewEqual(before, current)) fail('A reviewed record changed. Refresh the review to keep your choices and compare the latest values.');
+    };
+    const operation = (personId, type, label, extras = {}) => result.operations.push({ personId, type, label, ...extras });
+    const used = new Map();
+    for (const person of board.diagram.people)
+    {
+        const chosen = draft.choices.has(person.id) ? draft.choices.get(person.id) : person.treePersonId;
+        const treeId = chosen === 'create' ? draft.newIds.get(person.id) : chosen && chosen !== 'skip' ? chosen : '';
+        if (!treeId) continue;
+        if (chosen !== 'create' && !sampleData.people.some(item => item.id === treeId && !item.deleted && item.projectId === draft.projectId))
+        {
+            if (draft.fields.get(person.id)?.size || treeId !== person.treePersonId
+                || draft.relations.some(relation => relation.ids.includes(person.id) && draft.relationChoices.has(relation.id)))
+                fail('Choose an available person in this project.', person.id);
+            continue;
+        }
+        if (used.has(treeId) && used.get(treeId) !== person.id)
+            fail('This Tree person is already represented on the board. Locate the existing person instead.', person.id);
+        used.set(treeId, person.id);
+        result.mapping.set(person.id, treeId);
+    }
+    for (const person of draft.people)
+    {
+        const choice = draft.choices.get(person.id);
+        const treeId = result.mapping.get(person.id);
+        const fields = draft.fields.get(person.id) || new Map();
+        const changedIdentity = choice === 'create' || Boolean(treeId && treeId !== person.treePersonId);
+        if (!changedIdentity && !fields.size) continue;
+        read('board.people', person.id);
+        const boardPerson = projected['board.people'].find(record => record.id === person.id);
+        if (!boardPerson) { fail('Reviewed person is no longer available.', person.id); continue; }
+        let tree = projected.people.find(record => record.id === treeId && !record.deleted && record.projectId === draft.projectId);
+        if (choice === 'create')
+        {
+            if (projected.people.some(record => record.id === treeId)) { fail('A new person ID is already in use.', person.id); continue; }
+            tree = geneoTreeImportNewPerson(boardPerson, treeId, draft.projectId);
+            projected.people.push(tree);
+            touchedPeople.add(treeId);
+            operation(person.id, 'identity', 'Create in Tree');
+        }
+        else
+        {
+            read('people', treeId);
+            if (!tree) { fail('Choose an available person in this project.', person.id); continue; }
+            if (changedIdentity) operation(person.id, 'identity', 'Link existing');
+        }
+        if (!tree) continue;
+        if (changedIdentity) boardPerson.treePersonId = treeId;
+        for (const [key, source] of fields)
+        {
+            if (!GENEO_REVIEW_FACTS.some(([field]) => field === key) || !['board', 'tree'].includes(source))
+            { fail('The selected fact is unavailable.', person.id); continue; }
+            read('people', treeId);
+            const originalTree = sampleData.people.find(record => record.id === treeId);
+            const from = source === 'board' ? person : originalTree;
+            if (!from) { fail('The selected fact is unavailable.', person.id); continue; }
+            const value = geneoReviewFact(from, key);
+            const target = source === 'board' ? tree : boardPerson;
+            if (geneoReviewEqual(value, geneoReviewFact(target, key))) continue;
+            geneoReviewSetFact(target, key, value);
+            if (source === 'board') touchedPeople.add(treeId);
+            operation(person.id, 'fact', GENEO_REVIEW_FACTS.find(([field]) => field === key)[1],
+                { key, source, clear: geneoReviewFactEmpty(value), value: geneoReviewFactText(from, key), destination: source === 'board' ? 'In Family Tree' : 'On board' });
+        }
+        boardPerson.syncState = geneoTreeImportFields(boardPerson, tree).length ? 'modified' : 'linked';
+        boardPerson.names = normalizeGeneographPersonNames(boardPerson);
+        if (!String(tree.names?.first || '').trim() && !String(tree.names?.last || '').trim())
+            fail('A person must have a first name or surname.', person.id);
+        if (!boardPerson.names.first && !boardPerson.names.last) fail('A person must have a first name or surname.', person.id);
+        for (const target of [tree, boardPerson])
+        {
+            const error = geneoReviewValidatePerson(target, draft.projectId);
+            if (error) fail(error, person.id);
+        }
+    }
+    const anchorId = result.mapping.get(draft.anchorId);
+    for (const relation of result.relations)
+    {
+        const decision = draft.relationChoices.get(relation.id);
+        const clears = [];
+        const ids = relation.ids.map(id => result.mapping.get(id));
+        if (relation.origin === 'tree')
+        {
+            result.statuses.set(relation.id, 'Not connected on board');
+            if (!decision) continue;
+            if (decision !== 'tree' || !anchorId || !ids.every(Boolean))
+            { fail('Resolve the anchor and the people in this connection first.', relation.ids.at(-1), relation.id); continue; }
+            const treeFamily = projected.families.find(family => family.id === relation.treeFamilyId);
+            if (!treeFamily || !draft.treeFamilyIds?.has(treeFamily.id) || !draft.treeConnectionIds?.has(relation.id))
+            { fail('A reviewed record changed. Refresh the review to keep your choices and compare the latest values.'); continue; }
+            read('families', treeFamily.id);
+            for (const id of relation.ids) { read('board.people', id); read('people', result.mapping.get(id)); }
+            const parents = relation.type === 'child' ? relation.ids.slice(0, -1) : relation.ids;
+            let family = projected['board.families'].find(item => geneoReviewEqual([...item.partnerIds].sort(), [...parents].sort()));
+            if (!family)
+            {
+                family = { id: draft.treeFamilyIds.get(treeFamily.id), partnerIds: [...parents], children: [],
+                    relationshipType: 'Unknown relationship', relationshipStatus: 'unknown', marriageType: '', events: [] };
+                projected['board.families'].push(family);
+            }
+            else read('board.families', family.id);
+            const nodeFor = id => board.diagram.nodes.find(node => node.type === 'person' && node.personId === id);
+            let source, target;
+            if (relation.type === 'partner')
+            {
+                geneoReviewCopyRelationship(treeFamily, family);
+                const [first, second] = parents.map(nodeFor).sort((a, b) => a.x - b.x);
+                source = { nodeId: first.id, port: 'right' }; target = { nodeId: second.id, port: 'left' };
+            }
+            else
+            {
+                if (parents.length === 2 && !projected['board.connections'].some(connection => connection.kind === 'family-partner' && connection.familyId === family.id))
+                { fail('Select the parents’ partner connection before adding this child connection.', relation.ids.at(-1), relation.id); continue; }
+                const types = ids.slice(0, -1).map(id => parentChildRelationshipType(treeFamily, id, ids.at(-1)));
+                if (new Set(types).size > 1)
+                { fail('Different parentage types need separate board connections.', relation.ids.at(-1), relation.id); continue; }
+                if (projected['board.families'].some(other => other.id !== family.id && other.children.some(child => child.personId === relation.ids.at(-1))
+                    && other.partnerIds.some(parent => parents.includes(parent))))
+                { fail('A parent link already exists on the board. Review it separately instead of replacing its family.', relation.ids.at(-1), relation.id); continue; }
+                if (!family.children.some(child => child.personId === relation.ids.at(-1))) family.children.push({ personId: relation.ids.at(-1), parentageType: types[0].toLowerCase() });
+                source = parents.length === 2 ? { familyId: family.id, port: 'bottom' } : { nodeId: nodeFor(parents[0]).id, port: 'bottom' };
+                target = { nodeId: nodeFor(relation.ids.at(-1)).id, port: 'top' };
+            }
+            projected['board.connections'].push({ id: draft.treeConnectionIds.get(relation.id), kind: relation.type === 'partner' ? 'family-partner' : 'family-child',
+                familyId: family.id, source, target, name: '', visible: true, style: {}, route: { mode: 'auto', waypoints: [] } });
+            operation(relation.ids.at(-1), 'relationship', 'Family connections', { relationId: relation.id, ids: relation.ids, source: 'tree', clears });
+            continue;
+        }
+        const source = draft.diagram.families.find(family => family.id === relation.familyId);
+        const parentIds = relation.type === 'child' ? ids.slice(0, -1) : ids;
+        const sameParents = family => geneoReviewEqual(geneoReviewFamilyParents(family).sort(), [...parentIds].sort());
+        let target = relation.type === 'sibling' ? null : projected.families.find(family => family.projectId === draft.projectId && sameParents(family));
+        const complete = ids.every(Boolean);
+        let matches = complete && target && (relation.type === 'partner'
+            ? geneoReviewEqual(geneoReviewRelationshipData(source), geneoReviewRelationshipData(target))
+            : (target.childIds || []).includes(ids.at(-1)) && parentIds.every((parentId, index) =>
+                parentChildRelationshipType(target, parentId, ids.at(-1)) === geneoReviewParentType(source, source.children.find(child => child.personId === relation.ids.at(-1)), relation.ids[index])));
+        if (relation.type === 'sibling' && complete)
+            matches = projected.families.some(family => (family.childIds || []).includes(ids[0]) && (family.childIds || []).includes(ids[1]));
+        result.statuses.set(relation.id, matches ? 'Same relationship' : !complete ? 'Resolve identities first' : target ? 'Relationship differs' : 'Not connected in Tree');
+        if (!decision) continue;
+        if (!anchorId || !complete) { fail('Resolve the anchor and the people in this connection first.', relation.ids.at(-1), relation.id); continue; }
+        for (const id of relation.ids) { read('board.people', id); read('people', result.mapping.get(id)); }
+        if (source) read('board.families', source.id);
+        if (target) read('families', target.id);
+        if (relation.type === 'partner' && target)
+        {
+            const from = decision === 'tree' ? target : source;
+            const to = decision === 'tree' ? source : target;
+            for (const [role, getter] of [['start', partnerRelationshipStartEvent], ['end', partnerRelationshipEndEvent]])
+            {
+                const left = getter(from, from.relationshipType || 'Unknown relationship');
+                const right = getter(to, to.relationshipType || 'Unknown relationship');
+                if (formatGenealogyDateLabel(right?.date) && !formatGenealogyDateLabel(left?.date)) clears.push(role === 'start' ? 'Start date' : 'End date');
+                if ((right?.placeId || right?.placeText) && !(left?.placeId || left?.placeText)) clears.push(role === 'start' ? 'Start place' : 'End place');
+            }
+        }
+        if (relation.type === 'sibling')
+        {
+            const [familyId, onlyParent = ''] = (draft.siblingFamilies.get(relation.id) || '').split('::');
+            const parentFamily = projected.families.find(family => family.id === familyId && family.projectId === draft.projectId);
+            target = parentFamily;
+            if (!target || !(target.childIds || []).some(id => ids.includes(id)))
+            { fail('Choose the recorded parent family for these siblings.', relation.ids.at(-1), relation.id); continue; }
+            read('families', target.id);
+            if (decision !== 'board') { fail('Choose the board relationship to add this sibling.', relation.ids.at(-1), relation.id); continue; }
+            if (onlyParent)
+            {
+                if (!geneoReviewFamilyParents(parentFamily).includes(onlyParent))
+                { fail('Choose the recorded parent family for these siblings.', relation.ids.at(-1), relation.id); continue; }
+                target = projected.families.find(family => family.projectId === draft.projectId
+                    && geneoReviewEqual(geneoReviewFamilyParents(family), [onlyParent]));
+                if (!target)
+                {
+                    target = geneoReviewNewFamily(draft.siblingFamilyIds.get(relation.ids.at(-1)), draft.projectId, [onlyParent]);
+                    projected.families.push(target);
+                }
+                else read('families', target.id);
+                for (const childId of ids.filter(id => (parentFamily.childIds || []).includes(id)))
+                {
+                    if ((target.childIds || []).includes(childId)) continue;
+                    target.childIds.push(childId);
+                    target.childrenIds = [...target.childIds];
+                    target.parentChildTypes = target.parentChildTypes || {};
+                    target.parentChildTypes[`${onlyParent}|${childId}`] = parentChildRelationshipType(parentFamily, onlyParent, childId);
+                }
+                touchedFamilies.add(target.id);
+            }
+            const other = ids.find(id => !(target.childIds || []).includes(id));
+            if (other)
+            {
+                const selectedParents = geneoReviewFamilyParents(target);
+                if (!selectedParents.length) { fail('The selected family has no recorded parents.', relation.ids.at(-1), relation.id); continue; }
+                target.childIds = [...new Set([...(target.childIds || []), other])];
+                target.childrenIds = [...target.childIds];
+                target.parentChildTypes = target.parentChildTypes || {};
+                const connection = draft.diagram.connections.find(item => item.id === relation.id);
+                const type = draft.parentTypes.get(relation.id) || PARENT_CHILD_RELATIONSHIP_TYPES.find(item => item.toLowerCase() === String(connection?.parentageType || '').toLowerCase());
+                if (!type) { fail('The recorded parentage type is unavailable.', relation.ids.at(-1), relation.id); continue; }
+                for (const parent of selectedParents) target.parentChildTypes[`${parent}|${other}`] = type;
+                touchedFamilies.add(target.id);
+            }
+        }
+        else if (decision === 'tree')
+        {
+            if (!target || (relation.type === 'child' && !(target.childIds || []).includes(ids.at(-1))))
+            { fail('There is no matching Tree connection to use.', relation.ids.at(-1), relation.id); continue; }
+            const destination = projected['board.families'].find(family => family.id === source.id);
+            if (relation.type === 'partner') geneoReviewCopyRelationship(target, destination);
+            else
+            {
+                const child = destination.children.find(item => item.personId === relation.ids.at(-1));
+                const types = parentIds.map(parent => parentChildRelationshipType(target, parent, ids.at(-1)));
+                if (new Set(types).size > 1)
+                    fail('Different parentage types need separate board connections.', relation.ids.at(-1), relation.id);
+                else child.parentageType = types[0].toLowerCase();
+            }
+        }
+        else if (decision === 'board')
+        {
+            if (!target)
+            {
+                const id = draft.familyIds.get(source.id);
+                target = projected.families.find(family => family.id === id);
+                if (!target)
+                {
+                    target = geneoReviewNewFamily(id, draft.projectId, parentIds);
+                    projected.families.push(target);
+                }
+            }
+            if (relation.type === 'partner')
+            {
+                const type = source.relationshipType || 'Unknown relationship';
+                const start = partnerRelationshipStartEvent(source, type);
+                const end = partnerRelationshipEndEvent(source, type);
+                if (end && !partnerRelationshipDateOrderIsValid(start?.date, end.date))
+                    fail('The relationship end date must be after or equal to the start date.', relation.ids.at(-1), relation.id);
+                geneoReviewCopyRelationship(source, target);
+            }
+            else
+            {
+                const childId = ids.at(-1);
+                target.childIds = [...new Set([...(target.childIds || []), childId])];
+                target.childrenIds = [...target.childIds];
+                target.parentChildTypes = target.parentChildTypes || {};
+                const child = source.children.find(item => item.personId === relation.ids.at(-1));
+                parentIds.forEach((parentId, index) =>
+                {
+                    const type = draft.parentTypes.get(relation.id) || geneoReviewParentType(source, child, relation.ids[index]);
+                    if (!type) fail('The recorded parentage type is unavailable.', relation.ids.at(-1), relation.id);
+                    else target.parentChildTypes[`${parentId}|${childId}`] = type;
+                });
+            }
+            touchedFamilies.add(target.id);
+        }
+        else { fail('The selected relationship choice is unavailable.'); continue; }
+        operation(relation.ids.at(-1), 'relationship', 'Family connections', { relationId: relation.id, ids: relation.ids, source: decision, clears });
+    }
+    // Validate the projected ancestry, including existing links, without invoking live mutators.
+    const ancestry = new Map();
+    for (const family of projected.families.filter(item => item.projectId === draft.projectId))
+    {
+        for (const child of family.childIds || [])
+        {
+            if (!ancestry.has(child)) ancestry.set(child, new Set());
+            for (const parent of geneoReviewFamilyParents(family)) ancestry.get(child).add(parent);
+        }
+    }
+    const hasCycle = (id, path = new Set()) =>
+    {
+        if (path.has(id)) return true;
+        const next = new Set([...path, id]);
+        return [...(ancestry.get(id) || [])].some(parent => hasCycle(parent, next));
+    };
+    if (touchedFamilies.size && [...ancestry.keys()].some(id => hasCycle(id))) fail('This connection would create a relationship loop.');
+    const boardAncestors = new Map(projected['board.people'].map(person => [person.id, new Set()]));
+    for (const family of projected['board.families'])
+        for (const child of family.children)
+            for (const parent of family.partnerIds) boardAncestors.get(child.personId)?.add(parent);
+    const boardCycle = (id, path = new Set()) => path.has(id) || [...(boardAncestors.get(id) || [])].some(parent => boardCycle(parent, new Set([...path, id])));
+    if (result.operations.some(item => item.type === 'relationship' && item.source === 'tree') && [...boardAncestors.keys()].some(id => boardCycle(id)))
+        fail('This connection would create a relationship loop.');
+    for (const family of projected.families.filter(item => touchedFamilies.has(item.id)))
+    {
+        for (const id of [...geneoReviewFamilyParents(family), ...(family.childIds || [])])
+        {
+            const person = projected.people.find(item => item.id === id && !item.deleted && item.projectId === draft.projectId);
+            if (!person) fail('Choose an available person in this project.');
+            touchedPeople.add(id);
+        }
+        for (const child of family.childIds || [])
+        {
+            const biological = new Set(projected.families.filter(item => item.projectId === draft.projectId && (item.childIds || []).includes(child))
+                .flatMap(item => geneoReviewFamilyParents(item).filter(parent => parentChildRelationshipType(item, parent, child) === 'Biological')));
+            const genders = [...biological].map(id => projected.people.find(person => person.id === id)?.gender);
+            if (biological.size > 2 || genders.filter(gender => gender === 'male').length > 1 || genders.filter(gender => gender === 'female').length > 1)
+                fail('The biological parents conflict with an existing parent family. Review the parentage type.');
+        }
+    }
+    for (const id of touchedPeople)
+    {
+        const person = projected.people.find(item => item.id === id);
+        if (!person) continue;
+        person.familyAsSpouseIds = projected.families.filter(family => geneoReviewFamilyParents(family).includes(id)).map(family => family.id);
+        person.familyAsChildIds = projected.families.filter(family => (family.childIds || []).includes(id)).map(family => family.id);
+    }
+    const affectedEvent = event => touchedFamilies.has(event.familyId) || [...(event.personIds || []), ...(event.relatedPersonIds || [])].some(id => touchedPeople.has(id));
+    if (touchedPeople.size || touchedFamilies.size)
+    {
+        const rebuilt = buildSampleEvents({ people: structuredClone(projected.people), families: structuredClone(projected.families) });
+        projected.events = [...sampleData.events.filter(event => !affectedEvent(event)), ...rebuilt.filter(affectedEvent)];
+        const removed = new Set(sampleData.events.filter(event => affectedEvent(event) && !projected.events.some(item => item.id === event.id)).map(event => event.id));
+        projected.archiveFiles = sampleData.archiveFiles.map(file =>
+            file.linkedEventIds?.some(id => removed.has(id)) ? { ...structuredClone(file), linkedEventIds: file.linkedEventIds.filter(id => !removed.has(id)) } : file);
+        projected.sourceLinks = (sampleData.sourceLinks || []).filter(link => !(link.targetType === 'event' && removed.has(link.targetId)));
+    }
+    for (const [key, after] of Object.entries(projected))
+    {
+        const before = geneoReviewCollection(key, board) || [];
+        const ids = new Set([...before, ...after].map(record => record.id));
+        for (const id of ids)
+        {
+            const left = before.find(record => record.id === id) || null;
+            const right = after.find(record => record.id === id) || null;
+            if (geneoReviewEqual(left, right)) continue;
+            read(key, id);
+            result.patches.push({ key, id, before: structuredClone(left), after: structuredClone(right) });
+        }
+    }
+    result.error = result.errors[0]?.message || '';
+    return result;
+}
+
+function geneoReviewPatchesSafe(board, patches, expected = 'before')
+{
+    return patches.every(patch => geneoReviewEqual(geneoReviewCollection(patch.key, board)?.find(item => item.id === patch.id) || null, patch[expected]));
+}
+
+function geneoReviewWritePatches(board, patches, side)
+{
+    for (const patch of patches)
+    {
+        const collection = geneoReviewCollection(patch.key, board);
+        const index = collection.findIndex(item => item.id === patch.id);
+        const value = patch[side];
+        if (!value) { if (index >= 0) collection.splice(index, 1); }
+        else if (index < 0) collection.push(structuredClone(value));
+        else
+        {
+            const existing = collection[index];
+            for (const key of Object.keys(existing)) if (!(key in value)) delete existing[key];
+            Object.assign(existing, structuredClone(value));
+        }
+    }
+}
+
+function geneoReviewHistoryCanRestore(entry)
+{
+    const board = selectedGeneographBoard();
+    if (!board || board.id !== entry.boardId || !geneoReviewPatchesSafe(board, entry.patches, entry.side === 'before' ? 'after' : 'before')) return false;
+    const deleting = entry.patches.filter(patch => !patch[entry.side]);
+    for (const patch of deleting)
+    {
+        const allowed = new Set(entry.patches.map(item => `${item.key}:${item.id}`));
+        for (const key of ['people', 'families', 'events', 'archiveFiles', 'sourceLinks', 'photos', 'notes', 'places', 'sources', 'board.people', 'board.families', 'board.connections'])
+        {
+            for (const record of geneoReviewCollection(key, board) || [])
+                if (!allowed.has(`${key}:${record.id}`) && JSON.stringify(record).includes(JSON.stringify(patch.id))) return false;
+        }
+        if (patch.key === 'people' && sampleData.boards?.some(other => other.id !== board.id && other.diagram?.people.some(person => person.treePersonId === patch.id))) return false;
+        if (patch.key === 'people' && board.diagram.people.some(person => person.treePersonId === patch.id && !allowed.has(`board.people:${person.id}`))) return false;
+    }
+    return true;
+}
+
+function geneoReviewRestoreHistory(entry)
+{
+    if (!geneoReviewHistoryCanRestore(entry)) return false;
+    geneoReviewWritePatches(selectedGeneographBoard(), entry.patches, entry.side);
+    touchGeneographBoard();
+    return true;
+}
+
+function geneoTreeImportCommit()
+{
+    const draft = geneoTreeImportDraft;
+    if (!draft) return false;
+    const plan = geneoTreeImportPreview(draft);
+    if (plan.error) { draft.error = plan.error; geneoTreeImportRender(); return false; }
+    const board = getGeneographBoard(draft.boardId, { projectId: draft.projectId });
+    if (!geneoReviewPatchesSafe(board, plan.patches)) return false;
+    try
+    {
+        geneoReviewWritePatches(board, plan.patches, 'after');
+        if (plan.patches.length)
+            geneoPushHistorySnapshot(JSON.stringify({ geneoReviewHistory: true, boardId: board.id, side: 'before', patches: plan.patches }));
+        touchGeneographBoard(board);
+    }
+    catch (error)
+    {
+        geneoReviewWritePatches(board, plan.patches, 'before');
+        draft.error = t('No changes were applied. Review your choices and try again.');
+        geneoTreeImportRender();
+        return false;
+    }
+    geneoTreeImportDraft = null;
+    closeModal();
+    renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true, preserveSidebarScroll: true });
+    showToast('Reviewed changes applied.');
+    return true;
+}

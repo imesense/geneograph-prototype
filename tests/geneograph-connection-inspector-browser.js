@@ -88,9 +88,12 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             });
             assert.deepEqual(labelStyle, ['12px', '700']);
             const before = await editor.locator('[data-geneo-relationship-type]').inputValue();
+            const treeBefore = await page.evaluate(() => JSON.stringify({ families: sampleData.families, events: sampleData.events }));
             await editor.locator('[data-geneo-relationship-type]').focus();
             await editor.locator('[data-geneo-relationship-type]').selectOption(before === 'Separated' ? 'Married' : 'Separated');
             assert.equal(await page.evaluate(() => document.activeElement.id), 'geneoRelationshipType');
+            assert.equal(await page.evaluate(() => JSON.stringify({ families: sampleData.families, events: sampleData.events })), treeBefore,
+                'Geneograph relationship edits remain board-local until reviewed');
             assert.equal(await page.evaluate(id => {
                 const family = getGeneographFamily(getGeneographConnection(id).familyId);
                 return relationshipTypeFromLegacy(geneoRelationshipForFamily(family).relationship);
