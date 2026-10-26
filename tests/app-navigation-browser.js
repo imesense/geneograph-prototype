@@ -115,6 +115,15 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
                 assert.equal(await page.evaluate(() => state.currentProjectId), 'navigation-test-project');
             }
             assert.ok(await page.locator('.topbar').evaluate(el => el.scrollWidth <= el.clientWidth + 1), `header fits ${width}px`);
+            await page.evaluate(() =>
+            {
+                sampleData.projects.push({ ...sampleData.projects[0], id: 'remaining-project', name: 'Remaining project' });
+                deleteProject(currentProjectId());
+            });
+            assert.deepEqual(await page.evaluate(() => [state.projectOpen, state.currentProjectId, state.selectedProjectId, state.activeModule]),
+                [false, null, '', 'Projects'], 'deletion returns to the library without opening a remaining project');
+            assert.ok(await page.evaluate(() => sampleData.projects.length > 0), 'other projects remain available');
+            assert.equal(await page.locator('.app-navigation-controls').count(), 0, 'project navigation is hidden after deletion');
             assert.deepEqual(errors, [], `no errors at ${width}px`);
             await page.close();
         }

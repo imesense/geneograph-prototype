@@ -1592,7 +1592,6 @@ function deleteProject(projectId)
     if (sampleData.projectContinuation?.projectId === project.id) sampleData.projectContinuation = null;
     if (state.projectContinuation?.projectId === project.id) clearProjectContinuation();
 
-    const nextProject = sampleData.projects[0] || null;
     delete state.treeProjectViews[project.id];
     deletedBoardIds.forEach(boardId =>
     {
@@ -1606,19 +1605,8 @@ function deleteProject(projectId)
     state.activeModule = 'Projects';
     state.openSide = 'overview';
 
-    if (nextProject)
-    {
-        state.selectedProjectId = nextProject.id;
-        activateProject(nextProject.id, {
-            moduleName: 'Projects',
-            reset: true
-        });
-    }
-    else
-    {
-        state.selectedProjectId = '';
-        render();
-    }
+    state.selectedProjectId = '';
+    render();
     showToast('Project deleted.');
     return true;
 }
