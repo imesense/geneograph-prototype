@@ -1,0 +1,85 @@
+.archive-image-shell .archive-main { display: flex; flex-direction: column; overflow: hidden; padding: 16px; }
+.archive-image-shell .archive-files-page { height: 100%; min-height: 0; }
+.archive-image-shell .archive-page-head { margin-bottom: 8px; }
+.archive-image-shell .archive-toolbar { flex: none; margin-bottom: 8px; }
+.archive-image-shell .archive-location-row { flex: none; }
+.archive-image-workspace { display: flex; flex: 1 1 0; flex-direction: column; min-height: 0; min-width: 0; overflow: hidden; }
+.archive-image-workspace .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.archive-image-navigation { display: flex; align-items: center; gap: 12px; min-height: 44px; flex: none; }
+.archive-image-position, .archive-image-actions, .archive-image-tools { display: flex; align-items: center; gap: 4px; }
+.archive-image-position { flex: none; color: var(--text-secondary); font-size: 12px; }
+.archive-image-position label { display: flex; align-items: center; gap: 6px; }
+.archive-image-position input { width: 62px; min-width: 0; min-height: 32px; padding: 4px 6px; font: inherit; font-variant-numeric: tabular-nums; border: 1px solid var(--border-default); border-radius: 4px; background: var(--surface-input); color: var(--text-primary); }
+.archive-image-counts { margin-left: auto; color: var(--text-secondary); font-size: 11px; }
+.archive-image-actions { margin-left: auto; }
+.archive-image-workspace button:not(.button) { display: grid; place-items: center; flex: none; width: 36px; height: 36px; padding: 0; border: 1px solid transparent; border-radius: 4px; background: transparent; color: var(--text-secondary); cursor: pointer; }
+.archive-image-workspace button:not(.button):hover:not(:disabled) { background: var(--surface-card-hover); color: var(--text-primary); }
+.archive-image-workspace button:disabled { opacity: .35; cursor: not-allowed; }
+.archive-image-workspace button[aria-pressed="true"] { background: var(--surface-selected); color: var(--brand-green-300); }
+.archive-image-workspace button svg { width: 18px; height: 18px; }
+.archive-image-workspace [data-av-action="next"] svg { transform: rotate(180deg); }
+.archive-image-workspace button[data-av-action="details"] { display: none; }
+.archive-image-workspace :is(button, input, [tabindex]):focus-visible { outline: 2px solid var(--brand-green-300); outline-offset: -2px; }
+.archive-image-stage { position: relative; min-height: 100px; min-width: 0; flex: 1 1 0; overflow: hidden; background: var(--surface-app); touch-action: none; cursor: grab; }
+.archive-image-stage:active { cursor: grabbing; }
+.archive-image-stage > img { position: absolute; top: 0; left: 0; max-width: none; max-height: none; user-select: none; pointer-events: none; }
+.archive-image-status { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 16px; color: var(--text-secondary); font-size: 13px; text-align: center; }
+.archive-image-status[hidden], .archive-image-stage > img[hidden] { display: none; }
+.archive-image-tools { flex: none; min-height: 44px; }
+.archive-image-tools output { min-width: 52px; text-align: center; color: var(--text-secondary); font-size: 12px; font-variant-numeric: tabular-nums; }
+.archive-image-tool-divider { height: 20px; width: 1px; background: var(--border-default); margin: 0 4px; }
+.archive-image-filename { min-width: 0; margin-left: auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-secondary); font-size: 12px; }
+.archive-image-filmstrip { flex: none; height: 94px; overflow-x: auto; overflow-y: hidden; border-top: 1px solid var(--border-default); }
+.archive-image-filmstrip[hidden] { display: none; }
+.archive-image-filmstrip > div { position: relative; height: 82px; }
+.archive-image-filmstrip button[data-av-index] { position: absolute; top: 4px; width: 82px; height: 78px; display: flex; flex-direction: column; gap: 3px; padding: 4px; border: 2px solid transparent; border-radius: 4px; background: var(--surface-card); }
+.archive-image-filmstrip button[data-av-index][aria-current="true"] { border-color: var(--brand-green-300); color: var(--text-primary); background: var(--surface-selected); }
+.archive-image-filmstrip button img { width: 70px; height: 50px; object-fit: contain; }
+.archive-image-filmstrip button svg { width: 28px; height: 50px; }
+.archive-image-filmstrip button span { font-size: 11px; line-height: 14px; }
+.archive-image-empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center; color: var(--text-secondary); }
+.archive-image-empty h2 { margin: 0; font-size: 18px; color: var(--text-primary); }
+.archive-image-empty p { margin: 0; font-size: 13px; }
+.archive-image-expanded .workspace { grid-template-columns: minmax(0, 1fr); }
+.archive-image-expanded #sidebar { display: none; }
+.archive-image-expanded .archive-image-shell { grid-template-columns: minmax(0, 1fr); }
+.archive-image-expanded .archive-image-shell > :is(.archive-inspector, .archive-inspector-collapsed) { display: none; }
+.archive-image-expanded .archive-image-shell .archive-page-head,
+.archive-image-expanded .archive-image-shell .archive-toolbar,
+.archive-image-expanded .archive-image-shell .archive-location-row,
+.archive-image-expanded .archive-image-shell .archive-filter-results,
+.archive-image-expanded .archive-image-shell .archive-mobile-location { display: none; }
+@media (max-width: 1100px) {
+    .archive-image-workspace button[data-av-action="details"] { display: grid; }
+    .archive-image-counts { order: 3; flex-basis: 100%; margin: 0; padding-bottom: 4px; }
+}
+@media (max-width: 900px) {
+    .archive-shell .archive-toolbar.archive-files-toolbar { display: grid; grid-template-columns: 44px 44px 44px minmax(0, 1fr); gap: 4px; }
+    .archive-shell .archive-files-toolbar .archive-toolbar-left { grid-column: 1; grid-row: 1; display: block; width: 44px; }
+    .archive-shell .archive-files-toolbar .archive-toolbar-right { display: contents; }
+    .archive-shell .archive-files-toolbar #archiveFilterButton { grid-column: 2; grid-row: 1; width: 44px; min-width: 44px; height: 44px; padding: 0; }
+    .archive-shell .archive-files-toolbar .app-sort-field { grid-column: 3; grid-row: 1; width: 44px; min-width: 0; }
+    .archive-shell .archive-files-toolbar .app-sort-trigger { width: 44px; min-width: 44px; height: 44px; padding: 0; }
+    .archive-shell .archive-files-toolbar .app-sort-current,
+    .archive-shell .archive-files-toolbar .app-sort-chevron { display: none; }
+    .archive-shell .archive-files-toolbar:not(.mobile-search-open) .archive-mobile-search-trigger { display: grid; width: 44px; height: 44px; }
+    .archive-shell .archive-files-toolbar:not(.mobile-search-open) .app-search-field { display: none; }
+    .archive-shell .archive-files-toolbar .archive-mobile-add-files { grid-column: 4; grid-row: 1; justify-self: end; width: 44px; min-width: 44px; height: 44px; padding: 0; }
+    .archive-shell .archive-files-toolbar .archive-mobile-add-files span { display: none; }
+    .archive-shell .archive-files-toolbar.mobile-search-open .archive-toolbar-right { display: none; }
+    .archive-shell .archive-files-toolbar.mobile-search-open .archive-toolbar-left { grid-column: 1 / -1; display: flex; width: 100%; }
+    .archive-shell .archive-files-toolbar .archive-layout-switch { display: flex; grid-column: 1 / -1; justify-self: end; }
+    .archive-shell .archive-files-toolbar .archive-layout-switch button { min-width: 44px; height: 44px; }
+    .archive-image-shell .archive-main { padding: 8px; }
+    .archive-image-shell .archive-page-head { display: none; }
+    .archive-image-shell .archive-location-row { margin-bottom: 4px; }
+    .archive-image-position { gap: 1px; font-size: 11px; }
+    .archive-image-position input { width: 52px; }
+    .archive-image-navigation { gap: 0; flex-wrap: wrap; }
+    .archive-image-workspace button:not(.button) { width: 40px; height: 44px; }
+    .archive-image-actions { gap: 0; }
+    .archive-image-filename { display: none; }
+    .archive-image-tools { gap: 1px; }
+    .archive-image-tools output { min-width: 42px; }
+    .archive-image-filmstrip button[data-av-index] { width: 82px; height: 78px; }
+}

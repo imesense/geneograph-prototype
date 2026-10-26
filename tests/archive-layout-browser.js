@@ -45,7 +45,7 @@ const url = process.env.GENEO_TEST_URL || pathToFileURL(path.resolve(__dirname, 
             }
             if (width <= 900) {
                 assert.equal(await page.locator('.archive-mobile-items').isVisible(), true);
-                assert.equal(await page.locator('.archive-layout-switch').isVisible(), false);
+                assert.equal(await page.locator('.archive-layout-switch').isVisible(), true);
             } else {
                 const details = page.locator('[data-archive-file-layout="details"]');
                 const tiles = page.locator('[data-archive-file-layout="tiles"]');

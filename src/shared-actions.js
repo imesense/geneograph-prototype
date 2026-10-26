@@ -777,6 +777,7 @@ function resetProjectModuleState(projectId)
     state.albumsDetailDraft = null;
 
     state.archiveView = 'files';
+    resetArchiveImageSession();
     state.archiveFileLayout = 'details';
     state.archiveSelectedFolderId = null;
     state.archiveSelectedFolderItemId = null;

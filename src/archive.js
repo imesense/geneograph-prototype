@@ -4031,13 +4031,15 @@ function archiveNormalizeLocationSnapshot(
         inspectorCollapsed:
           Boolean(
               snapshot.inspectorCollapsed
-          )
+          ),
+        fileLayout: ['details', 'tiles', 'images'].includes(snapshot.fileLayout) ? snapshot.fileLayout : 'details'
     };
 }
 
 function archiveCurrentLocationSnapshot()
 {
     return archiveNormalizeLocationSnapshot({
+        fileLayout: state.archiveFileLayout,
         view:
           state.archiveView,
 
@@ -4190,6 +4192,7 @@ function archiveApplyLocationSnapshot(
 
     state.archiveInspectorCollapsed =
         normalized.inspectorCollapsed;
+    state.archiveFileLayout = normalized.fileLayout;
 }
 
 function archivePrepareTreeForLocation(
@@ -4269,6 +4272,7 @@ function archiveNavigateToLocationCommit(
         currentIsLocation
             ? current
             : archiveNormalizeLocationSnapshot({
+                fileLayout: state.archiveFileLayout,
                 view:
                 location.view
                 || 'files',
@@ -4302,6 +4306,9 @@ function archiveNavigateToLocationCommit(
             ...base,
             ...location
         });
+    if (target.fileLayout === 'images' && target.selectedFileId
+        && archiveFileKind(archiveFileById(target.selectedFileId)) !== 'img')
+        target.fileLayout = 'details';
 
     const changed =
         !currentIsLocation
@@ -8945,6 +8952,7 @@ let archiveRenderedLocationKey = null;
 
 function renderArchiveMain()
 {
+    archiveImageUnmount();
     const locationKey = `${currentProjectId() || ''}:${state.archiveView}:${state.archiveSelectedFolderId || ''}`;
     if (archiveRenderedLocationKey !== null && locationKey !== archiveRenderedLocationKey)
     {
@@ -8961,6 +8969,7 @@ function renderArchiveMain()
         <div
           class="
             archive-shell
+            ${state.archiveFileLayout === 'images' && state.archiveView !== 'sources' ? 'archive-image-shell' : ''}
 
             ${
                 state.archiveInspectorCollapsed
@@ -8997,6 +9006,7 @@ function renderArchiveMain()
 
     bindArchiveControls();
     localizeUI(main);
+    mountArchiveImageView();
     const nextInspectorScroll = main.querySelector('.archive-inspector-scroll');
     if (nextInspectorScroll) nextInspectorScroll.scrollTop = previousInspectorScroll;
     if (locationKey === archiveRenderedLocationKey)
@@ -10422,7 +10432,9 @@ function renderArchiveFilesView()
           ${archiveMobileSelectMode || state.archiveSelectedFileIds.length || (state.archiveSelectedFolderIds || []).length ? `<div class="archive-mobile-bulk"><strong>${escapeHtml(archiveBulkSelectionLabel())}</strong><button type="button" data-archive-mobile-bulk-actions ${state.archiveSelectedFileIds.length || (state.archiveSelectedFolderIds || []).length ? '' : 'disabled'}>${escapeHtml(t('Actions'))}</button><button type="button" data-archive-mobile-select aria-label="${escapeHtml(t('Cancel'))}">${icon.close}</button></div>` : ''}
 
           ${
-                hasRows
+                state.archiveFileLayout === 'images'
+                    ? renderArchiveImageView(files)
+                    : hasRows
                     ? `${renderArchiveMobileItems(files, archiveSortFoldersForTable(folders), flatResults)}${state.archiveFileLayout === 'tiles'
                         ? renderArchiveFileTiles(files, folders, flatResults, projection.matchingCountByFolder)
                         : renderArchiveFileTableDesktop(files, folders, flatResults, projection.matchingCountByFolder)}`
@@ -10646,8 +10658,9 @@ function renderArchiveToolbar()
                     : APP_SORT_OPTIONS.archiveFiles
             })}
             ${sourcesView ? '' : `<div class="archive-layout-switch" role="group" aria-label="${escapeHtml(t('File view'))}">
-                <button class="toolbar-button archive-layout-button ${state.archiveFileLayout !== 'tiles' ? 'active' : ''}" type="button" data-archive-file-layout="details" aria-label="${escapeHtml(t('Details view'))}" title="${escapeHtml(t('Details view'))}" aria-pressed="${state.archiveFileLayout !== 'tiles'}">${icon.list}</button>
+                <button class="toolbar-button archive-layout-button ${state.archiveFileLayout === 'details' ? 'active' : ''}" type="button" data-archive-file-layout="details" aria-label="${escapeHtml(t('Details view'))}" title="${escapeHtml(t('Details view'))}" aria-pressed="${state.archiveFileLayout === 'details'}">${icon.list}</button>
                 <button class="toolbar-button archive-layout-button ${state.archiveFileLayout === 'tiles' ? 'active' : ''}" type="button" data-archive-file-layout="tiles" aria-label="${escapeHtml(t('Icons view'))}" title="${escapeHtml(t('Icons view'))}" aria-pressed="${state.archiveFileLayout === 'tiles'}">${icon.grid}</button>
+                <button class="toolbar-button archive-layout-button ${state.archiveFileLayout === 'images' ? 'active' : ''}" type="button" data-archive-file-layout="images" aria-label="${escapeHtml(t('Image view'))}" title="${escapeHtml(t('Image view'))}" aria-pressed="${state.archiveFileLayout === 'images'}">${icon.archiveImages}</button>
             </div>`}
             ${sourcesView ? '' : `<button class="button primary archive-mobile-add-files" type="button" data-archive-mobile-add-menu aria-label="${escapeHtml(t('Add'))}" aria-expanded="false">${icon.plus}<span>${escapeHtml(t('Add'))}</span></button>`}
           </div>
@@ -12492,8 +12505,9 @@ function renderArchiveFileHero(
     editing
 )
 {
-    const preview = renderArchivePreview(file);
-    const openAction = renderArchiveFileOpenAction(file);
+    const imageView = state.archiveFileLayout === 'images' && state.archiveView !== 'sources';
+    const preview = imageView ? '' : renderArchivePreview(file);
+    const openAction = imageView ? '' : renderArchiveFileOpenAction(file);
     const identity = renderArchiveFileIdentity(file, editing);
     return `
         <div
@@ -22273,9 +22287,8 @@ function archiveBindDropTarget(element, folderId)
 
 let archiveRegionResizeObserver = null;
 
-function bindArchiveControls()
+function bindArchiveControls(root = main.querySelector('.archive-shell'))
 {
-    const root = main.querySelector('.archive-shell');
     if (!root) return;
     archiveRegionResizeObserver?.disconnect();
     const regionBoxes = [...root.querySelectorAll('.archive-file-preview > [data-archive-region-box]')];
@@ -22402,10 +22415,14 @@ function bindArchiveControls()
     }
     root.querySelectorAll('.archive-tile-art img').forEach(image => image.addEventListener('error', () => image.remove()));
     root.querySelectorAll('[data-archive-file-layout]').forEach(button => button.addEventListener('click', () => {
-        resetArchiveFolderRowClick();
-        state.archiveFileLayout = button.dataset.archiveFileLayout;
-        renderArchiveMain();
-        main.querySelector(`[data-archive-file-layout="${state.archiveFileLayout}"]`)?.focus({ preventScroll: true });
+        runAfterArchiveFileEditGuard(() => {
+            resetArchiveFolderRowClick();
+            state.archiveFileLayout = button.dataset.archiveFileLayout;
+            renderArchiveMain();
+            main.querySelector(`[data-archive-file-layout="${state.archiveFileLayout}"]`)?.focus({ preventScroll: true });
+            if (state.archiveFileLayout !== 'images' && state.archiveSelectedFileId)
+                main.querySelector(`[data-archive-file-row="${CSS.escape(state.archiveSelectedFileId)}"]`)?.scrollIntoView({ block: 'nearest' });
+        });
     }));
     root.querySelectorAll('[data-archive-column-sort]').forEach(button => button.addEventListener('click', () => {
         const field = button.dataset.archiveColumnSort;
@@ -22829,15 +22846,18 @@ function bindArchiveControls()
     {
         const value = event.currentTarget.value;
         const selectionStart = event.currentTarget.selectionStart;
-        state.archiveSearch = value;
-        renderArchiveMain();
-        requestAnimationFrame(() =>
-        {
-            const input = main.querySelector('[data-archive-search]');
-            if (!input) return;
-            input.focus({ preventScroll: true });
-            const position = Math.min(selectionStart ?? value.length, input.value.length);
-            input.setSelectionRange(position, position);
+        event.currentTarget.value = state.archiveSearch || '';
+        runAfterArchiveFileEditGuard(() => {
+            state.archiveSearch = value;
+            renderArchiveMain();
+            requestAnimationFrame(() =>
+            {
+                const input = main.querySelector('[data-archive-search]');
+                if (!input) return;
+                input.focus({ preventScroll: true });
+                const position = Math.min(selectionStart ?? value.length, input.value.length);
+                input.setSelectionRange(position, position);
+            });
         });
     });
     root.querySelector('[data-archive-mobile-search-open]')?.addEventListener('click', () =>
@@ -22882,6 +22902,7 @@ function bindArchiveControls()
             direction
         }) =>
         {
+            runAfterArchiveFileEditGuard(() => {
             if (sortingSources)
             {
                 state.archiveSourceSort =
@@ -22902,11 +22923,13 @@ function bindArchiveControls()
             }
 
             renderArchiveMain();
+            });
         }
     });
     root.querySelector('#archiveFilterButton') ?.addEventListener('click', event =>
     {
-        openArchiveFilterPopover(event.currentTarget);
+        const anchor = event.currentTarget;
+        runAfterArchiveFileEditGuard(() => openArchiveFilterPopover(anchor));
     });
     root
         .querySelectorAll(
@@ -22930,6 +22953,7 @@ function bindArchiveControls()
                         return;
                     }
 
+                    runAfterArchiveFileEditGuard(() => {
                     state.archiveFilterPresentation =
                         presentation;
 
@@ -22959,6 +22983,7 @@ function bindArchiveControls()
                         [];
 
                     renderArchive();
+                    });
                 }
             );
         });
@@ -22966,7 +22991,7 @@ function bindArchiveControls()
     {
         button.addEventListener('click', () =>
         {
-            removeArchiveToolbarFilter(button.dataset.archiveRemoveFilter);
+            runAfterArchiveFileEditGuard(() => removeArchiveToolbarFilter(button.dataset.archiveRemoveFilter));
         });
     });
     root
@@ -22975,7 +23000,7 @@ function bindArchiveControls()
         )
         ?.addEventListener(
             'click',
-            clearArchiveToolbarFilters
+            () => runAfterArchiveFileEditGuard(clearArchiveToolbarFilters)
         );
     root.querySelectorAll('[data-archive-nav-back]').forEach(button =>
         button.addEventListener('click', archiveNavigateBack));

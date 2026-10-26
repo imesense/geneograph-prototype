@@ -539,6 +539,7 @@ document.addEventListener('keydown', event =>
 
 function render()
 {
+    if (typeof archiveImageSyncLifecycle === 'function') archiveImageSyncLifecycle();
     appNavigationObserve();
     if (mobileSurface !== 'details' || mobileDetailModule !== state.activeModule)
         closeMobileSurface(false);
