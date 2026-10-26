@@ -14,8 +14,8 @@ function renderStartup()
         </div>
         <div class="button-stack">
           <button class="button primary full" type="button" id="createProject">${icon.plus} Create family tree</button>
-          <button class="button secondary full project-file-unavailable" type="button" id="importGedcom" disabled>${icon.import} Import GEDCOM</button>
-          <button class="button secondary full project-file-unavailable" type="button" disabled>${icon.folder} Open project</button>
+          <button class="button secondary full project-file-unavailable" type="button" id="importGedcom" disabled title="${escapeHtml(t('File import is unavailable in this prototype.'))}">${icon.import} Import GEDCOM</button>
+          <button class="button secondary full project-file-unavailable" type="button" disabled title="${escapeHtml(t('File import is unavailable in this prototype.'))}">${icon.folder} Open project</button>
         </div>
         <div class="sidebar-spacer"></div>
         <div class="tip-card">
@@ -174,14 +174,13 @@ function renderStartupProjectEmpty(searchQuery, totalProjects)
                 <button
                   class="button secondary"
                   type="button"
-                  data-startup-empty-import disabled>
+                  data-startup-empty-import disabled title="${escapeHtml(t('File import is unavailable in this prototype.'))}">
                   ${icon.import}
                   ${escapeHtml(
                         t('Import GEDCOM')
                     )}
                 </button>
               </div>
-              <p class="creation-unavailable">${escapeHtml(t('File import is unavailable in this prototype.'))}</p>
             </div>
           </section>
         `;
@@ -938,8 +937,7 @@ function renderStartupCreateTile()
             <span class="library-create-copy"><strong>${escapeHtml(t('Create family tree'))}</strong><span>${escapeHtml(t('Your family history and research, together.'))}</span></span>
           </button>
           <div class="library-create-secondary">
-            <button class="library-import-action" type="button" disabled aria-describedby="projectImportUnavailable">${icon.import}${escapeHtml(t('Choose file...'))}</button>
-            <p class="creation-unavailable" id="projectImportUnavailable">${escapeHtml(t('File import is unavailable in this prototype.'))}</p>
+            <button class="library-import-action" type="button" disabled title="${escapeHtml(t('File import is unavailable in this prototype.'))}">${icon.import}${escapeHtml(t('Choose file...'))}</button>
           </div>
         </div>
       `;

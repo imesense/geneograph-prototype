@@ -31,6 +31,9 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 assert.equal(await tile.locator('button').count(), 2);
                 assert.equal(await tile.locator('button button').count(), 0);
                 assert.equal(await tile.locator('.library-import-action').isDisabled(), true);
+                assert.equal(await tile.locator('.creation-unavailable').count(), 0);
+                assert.equal(await tile.locator('.library-import-action').getAttribute('title'), language === 'ru'
+                    ? 'Импорт файлов недоступен в этом прототипе.' : 'File import is unavailable in this prototype.');
                 assert.ok(await tile.evaluate(el => el.scrollWidth <= el.clientWidth + 1), 'project tile fits');
                 assert.equal(await tile.locator('.library-create-primary strong').textContent().then(value => value.trim()), language === 'ru' ? 'Создать древо' : 'Create family tree');
                 if (process.env.GENEO_TILE_SCREENSHOTS && view === 'grid')
