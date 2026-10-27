@@ -2,6 +2,35 @@ const SUPPORTED_LANGUAGES = ['en', 'ru'];
 const LANGUAGE_STORAGE_KEY = 'geneograph.language';
 const PROJECT_CONTINUATION_STORAGE_KEY = 'geneograph.projectContinuation';
 const RU_UI_SHARED = Object.freeze({
+    '{person} connected as parent.': 'Родственная связь добавлена: «{person}» — родитель.',
+    '{person} connected as child.': 'Родственная связь добавлена: «{person}» — ребёнок.',
+    '{person} connected as sibling.': 'Родственная связь добавлена: «{person}» — брат или сестра.',
+    '{person} connected as partner.': 'Родственная связь добавлена: «{person}» — партнёр.',
+    'Existing parent links were kept.': 'Ранее указанные родительские связи сохранены.',
+    '{person} already has a recorded parent. The selected person will be connected as an additional parent.': 'Для «{person}» уже указан родитель. Будет добавлена ещё одна родительская связь.',
+    '{person} already has recorded parents. The selected person will be connected as an additional parent.': 'Для «{person}» уже указаны родители. Будет добавлена ещё одна родительская связь.',
+    '{parent} is already connected as a parent of {child}.': 'Родственная связь уже указана: «{parent}» — родитель, «{child}» — ребёнок.',
+    '{parent} is already a descendant of {child}. Connecting them as a parent would create a cycle.': '«{parent}» — потомок «{child}». Добавить обратную родительскую связь нельзя: получится цикл.',
+    '{child} is already an ancestor of {parent}. Connecting them as a child would create a cycle.': '«{child}» — предок «{parent}». Добавить обратную родительскую связь нельзя: получится цикл.',
+    '{first} and {second} are already connected as partners.': 'Для «{first}» и «{second}» уже указана партнёрская связь.',
+    '{first} and {second} are already siblings in this family.': '«{first}» и «{second}» уже указаны как братья или сёстры в этой семье.',
+    'Create a new person and connect them as a parent of {person}.': 'Создайте человека и укажите его родителем для «{person}».',
+    'Create a new person and connect them as a child of {person}.': 'Создайте человека и укажите его ребёнком для «{person}».',
+    'Create a new person and connect them as a sibling of {person}.': 'Создайте человека и укажите его братом или сестрой для «{person}».',
+    'Create a new person and connect them as a partner of {person}.': 'Создайте человека и укажите его партнёром для «{person}».',
+    'Create and connect a new parent.': 'Создать и добавить родителя.',
+    'Create and connect a new child.': 'Создать и добавить ребёнка.',
+    'Create and connect a new sibling.': 'Создать и добавить брата или сестру.',
+    'Create and connect a new partner.': 'Создать и добавить партнёра.',
+    'Find a person in this project and connect them to {person}.': 'Найдите человека в этом проекте и укажите его родство с «{person}».',
+    'Died {date}': 'Умер(ла) {date}',
+    'A person cannot be connected as their own sibling.': 'Нельзя указать человека его собственным братом или сестрой.',
+    'An ancestor or descendant cannot also be added as a sibling.': 'Нельзя указать предка или потомка как брата или сестру.',
+    'The selected parent family does not contain the reference person.': 'У выбранного человека не указаны эти родители. Выберите другую семью.',
+    'Parent family unavailable': 'Семья недоступна',
+    'The selected person is not a parent in this family.': 'В выбранной семье этот человек не указан как родитель.',
+    'Family cannot accept another parent': 'Нельзя добавить ещё одного родителя',
+    'The selected family already has two recorded parents.': 'В выбранной семье уже указаны два родителя. Выберите другую семью.',
     'Family relationships': 'Родственные связи',
     'Use this person': 'Выбрать этого человека',
     'Choose a Tree record or create a new person': 'Выберите запись в Дереве или создайте новую персону',
@@ -212,7 +241,7 @@ const RU_UI_SHARED = Object.freeze({
     'Show marked areas': 'Показать отмеченные области',
     'Discard changes?': 'Отменить изменения?',
     'Unsaved changes to this person will be lost.': 'Несохранённые изменения данных человека будут потеряны.',
-    'Select a relationship to create and connect a person.': 'Выберите родственную связь, чтобы создать и присоединить человека.',
+    'Select a relationship to create and connect a person.': 'Выберите, кем будет новый человек: родителем, ребёнком, братом, сестрой или партнёром.',
     'People in this project': 'Люди в этом проекте',
     'Your unsaved people tags and marked areas will be lost.': 'Несохранённые отметки людей и областей будут потеряны.',
     'Keep editing': 'Продолжить редактирование',
@@ -518,15 +547,15 @@ const RU_UI_SHARED = Object.freeze({
     'Historic family places': 'Исторические семейные места',
     'Connected records': 'Связанные записи',
     'Collapse person sidebar': 'Свернуть панель человека',
-    'Connect relative': 'Установить связь',
+    'Connect relative': 'Добавить родственную связь',
     'Both parents': 'Оба родителя',
     'Only': 'Только',
     'Shared parent(s)': 'Общие родители',
     'Other parent for this child': 'Другой родитель ребёнка',
     'Biological parent unavailable': 'Биологический родитель недоступен',
-    'This person already has two biological parents or a biological parent of the same gender. Choose another relationship type.': 'У этого человека уже есть два биологических родителя или биологический родитель того же пола. Выберите другой тип связи.',
-    'This child cannot have another biological parent in the selected family. Choose another relationship type or family.': 'У этого ребёнка не может быть ещё одного биологического родителя в выбранной семье. Выберите другой тип связи или семью.',
-    'This connection cannot be biological. Choose another relationship type.': 'Эта связь не может быть биологической. Выберите другой тип связи.',
+    'This person already has two biological parents or a biological parent of the same gender. Choose another relationship type.': 'У этого человека уже указаны два биологических родителя или биологический родитель того же пола. Выберите другой тип родства.',
+    'This child cannot have another biological parent in the selected family. Choose another relationship type or family.': 'В выбранной семье нельзя добавить этому ребёнку ещё одного биологического родителя. Выберите другой тип родства или другую семью.',
+    'This connection cannot be biological. Choose another relationship type.': 'Эта родственная связь не может быть биологической. Выберите другой тип родства.',
     'Selected person details': 'Сведения о выбранном человеке',
     'Added': 'Добавлено',
     'Age': 'Возраст',
@@ -1116,7 +1145,7 @@ const RU_UI_FAMILY_TREE = {
         'Новый родственник',
 
     'Connect existing person':
-        'Установить связь',
+        'Добавить родственную связь',
 
     'Link someone already in this tree':
         'Присоединить из семейного древа',
@@ -1146,10 +1175,10 @@ const RU_UI_FAMILY_TREE = {
         'Люди в проекте',
 
     'Select relationship':
-        'Выберите связь',
+        'Выберите родство',
 
     'Existing children':
-        'Существующие дети',
+        'Уже указанные дети',
 
     'Add new partner as the children\'s father':
         'Добавить нового партнёра как отца детей',
@@ -1164,7 +1193,7 @@ const RU_UI_FAMILY_TREE = {
         'Оставить детей связанными только с текущим родителем',
 
     'Choose whether the new partner becomes a parent of the existing children.':
-        'Выберите, станет ли новый партнёр родителем существующих детей.',
+        'Укажите, будет ли новый партнёр также родителем уже указанных детей.',
 
     'Warning!':
         'Предупреждение',
@@ -1173,7 +1202,7 @@ const RU_UI_FAMILY_TREE = {
         'Не нашли человека?',
 
     'No matching people found. Try another name or create a new person.':
-        'Подходящие люди не найдены. Попробуйте другое имя или создайте нового человека.',
+        'Никого не найдено. Попробуйте другое имя или создайте новую запись.',
     'Removing this fact will clear the saved suffix data when you save the person.':'Это действие удалит факт при сохранении данных.',
     'Removing this fact will clear the saved prefix data when you save the person.':'Это действие удалит факт при сохранении данных.',
     'Removing this fact will clear the saved cause of death data when you save the person.':'Это действие удалит факт при сохранении данных.',
@@ -6297,9 +6326,9 @@ const RU_UI_COMPLETION = {
     'Archive item preview is simulated.': 'Предпросмотр элемента Архива имитируется в прототипе.',
     'Selected person sidebar collapsed': 'Панель выбранного человека свёрнута',
     'Unknown person': 'Неизвестный человек',
-    'Cannot connect': 'Невозможно связать',
+    'Cannot connect': 'Не удалось добавить родство',
     'This relationship cannot be created.': 'Эту родственную связь невозможно создать.',
-    'Suggested matches': 'Предлагаемые совпадения',
+    'Suggested matches': 'Возможные совпадения',
     'Could not connect these people.': 'Не удалось связать этих людей.',
     'Relationship date': 'Дата связи',
     'Relationship place': 'Место связи',
@@ -6315,8 +6344,8 @@ const RU_UI_COMPLETION = {
     'Person not found': 'Человек не найден',
     'Invalid relationship': 'Недопустимая связь',
     'A person cannot be connected to themselves.': 'Нельзя связать человека с самим собой.',
-    'Already connected': 'Уже связано',
-    'Already connected as': 'Уже есть связь',
+    'Already connected': 'Родство уже указано',
+    'Already connected as': 'Указанное родство',
     'Relationship loop': 'Циклическая родственная связь',
     'Add a name or at least one identifying fact before creating a person.': 'Перед созданием человека укажите имя или хотя бы один идентифицирующий факт.',
     'Check the additional facts before creating.': 'Проверьте дополнительные факты перед созданием.',
@@ -6329,7 +6358,7 @@ const RU_UI_COMPLETION = {
     'Person created and connected as partner.': 'Человек создан и добавлен как партнёр.',
     'Person created and connected as relative.': 'Человек создан и добавлен как родственник.',
     'Create a new person in this project': 'Создать нового человека в этом проекте',
-    'Connect selected': 'Связать выбранного',
+    'Connect selected': 'Добавить родство',
     'Add selected': 'Добавить выбранного',
     'Open selected': 'Открыть выбранного',
     'Possible matches': 'Возможные совпадения',
@@ -6372,7 +6401,7 @@ const RU_UI_COMPLETION = {
     'Relationship cannot be edited.': 'Эту родственную связь нельзя изменить.',
     'Select a possible match first.': 'Сначала выберите возможное совпадение.',
     'Check the relationship details before connecting.': 'Проверьте сведения о связи перед добавлением.',
-    'Could not connect the selected match.': 'Не удалось связать выбранное совпадение.',
+    'Could not connect the selected match.': 'Не удалось добавить родственную связь с выбранным человеком.',
     'Cancel removing fact': 'Отменить удаление факта',
     'Enter a short name for this fact.': 'Введите краткое название факта.',
     'Enter a name for the custom fact.': 'Введите название пользовательского факта.',

@@ -5025,6 +5025,23 @@ function connectRelationshipSentence(type)
     return map[normalizeConnectRelationshipType(type)] || 'parent';
 }
 
+function connectRelativeText(key, values = {})
+{
+    return t(key).replace(/\{(\w+)\}/g, (match, name) =>
+        Object.prototype.hasOwnProperty.call(values, name) ? translateText(String(values[name])) : match);
+}
+
+function connectedRelativeToast(personName, type)
+{
+    const messages = {
+        parent: '{person} connected as parent.',
+        child: '{person} connected as child.',
+        sibling: '{person} connected as sibling.',
+        partner: '{person} connected as partner.'
+    };
+    return connectRelativeText(messages[normalizeConnectRelationshipType(type)], { person: personName });
+}
+
 function connectPersonName(person)
 {
     return person?.names?.display || person?.name || 'Unknown person';
@@ -5037,9 +5054,9 @@ function connectPersonLifeLine(person)
 
     if (birth && death) return `${birth} - ${death}`;
     if (birth) return birth;
-    if (death) return `Died ${death}`;
+    if (death) return connectRelativeText('Died {date}', { date: death });
 
-    return 'Dates unknown';
+    return t('Dates unknown');
 }
 
 function connectPersonPlaceLine(person)
@@ -5249,7 +5266,9 @@ function connectPersonActiveWarning()
         return {
             severity: 'warning',
             title: 'Warning!',
-            message: `${connectPersonName(anchor)} already has recorded parents. The selected person will be connected as an additional parent.`
+            message: connectRelativeText(getParents(anchor.id).length === 1
+                ? '{person} already has a recorded parent. The selected person will be connected as an additional parent.'
+                : '{person} already has recorded parents. The selected person will be connected as an additional parent.', { person: connectPersonName(anchor) })
         };
     }
 
@@ -5272,8 +5291,8 @@ function connectPersonNoticeHtml(notice)
     const isBlocking = notice.severity === 'blocking';
 
     return `<div class="connect-person-warning ${isBlocking ? 'is-blocking' : ''}" data-connect-warning>
-        <div class="connect-person-warning-title">${icon.warning}<span>${escapeHtml(notice.title || 'Warning!')}</span></div>
-        <p>${escapeHtml(notice.message || '')}</p>
+        <div class="connect-person-warning-title">${icon.warning}<span>${escapeHtml(t(notice.title || 'Warning!'))}</span></div>
+        <p>${escapeHtml(t(notice.message || ''))}</p>
       </div>`;
 }
 
@@ -5336,7 +5355,6 @@ function renderConnectPersonModalHtml()
     const anchor = getPerson(connectPersonModalState.anchorPersonId);
     const anchorName = connectPersonName(anchor);
     const relationshipType = connectPersonModalState.relationshipType;
-    const relationshipSentence = connectRelationshipSentence(relationshipType);
     const selectedPerson = getPerson(connectPersonModalState.selectedPersonId);
     const selectedValidation = connectPersonSelectedValidation();
     const connectDisabled = !relationshipType || !selectedPerson || !selectedValidation.ok;
@@ -5348,7 +5366,7 @@ function renderConnectPersonModalHtml()
           <div class="connect-person-header-icon" aria-hidden="true">${icon.link}</div>
           <div>
             <h2 id="connectPersonTitle">Connect existing person</h2>
-            <p>Find a person in this project and connect them to ${escapeHtml(anchorName)}.</p>
+            <p>${escapeHtml(connectRelativeText('Find a person in this project and connect them to {person}.', { person: anchorName }))}</p>
           </div>
           <button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button>
         </div>
@@ -5408,7 +5426,7 @@ function renderConnectPersonModalHtml()
               <span class="connect-person-create-icon" aria-hidden="true">${icon.addperson}</span>
               <span class="connect-person-create-copy">
                 <strong>Can’t find the person?</strong>
-                <span>${relationshipType ? `Create a new person and connect as ${escapeHtml(relationshipSentence)}` : 'Select a relationship to create and connect a person.'}</span>
+                <span>${escapeHtml(t(relationshipType ? { parent: 'Create and connect a new parent.', child: 'Create and connect a new child.', sibling: 'Create and connect a new sibling.', partner: 'Create and connect a new partner.' }[normalizeConnectRelationshipType(relationshipType)] : 'Select a relationship to create and connect a person.'))}</span>
               </span>
               <span class="connect-person-create-chevron" aria-hidden="true">${icon.chevron}</span>
             </button>
@@ -5510,9 +5528,15 @@ function bindConnectPersonModalControls()
 
         closeModal();
 
+        const descriptions = {
+            parent: 'Create a new person and connect them as a parent of {person}.',
+            child: 'Create a new person and connect them as a child of {person}.',
+            sibling: 'Create a new person and connect them as a sibling of {person}.',
+            partner: 'Create a new person and connect them as a partner of {person}.'
+        };
         openAddPersonModal(
             `Add ${label}`,
-            `Create a new person and connect as ${connectPersonName(anchor)}'s ${label}`,
+            connectRelativeText(descriptions[relationshipType], { person: connectPersonName(anchor) }),
             {
                 relativeType: relationshipType,
                 connectRelationshipType: relationshipType,
@@ -5558,7 +5582,7 @@ function bindConnectPersonModalControls()
             return;
         }
 
-        const relationshipLabel = connectRelationshipSentence(connectPersonModalState.relationshipType);
+        const successMessage = connectedRelativeToast(connectPersonName(selected), connectPersonModalState.relationshipType);
 
         closeModal();
 
@@ -5577,11 +5601,11 @@ function bindConnectPersonModalControls()
 
         if (result.warning?.message)
         {
-            showToast(`${connectPersonName(selected)} connected as ${relationshipLabel}. ${result.warning.message}`);
+            showToast(`${successMessage} ${t('Existing parent links were kept.')}`);
         }
         else
         {
-            showToast(`${connectPersonName(selected)} connected as ${relationshipLabel}.`);
+            showToast(successMessage);
         }
     });
 }
@@ -7404,7 +7428,7 @@ function validateParentChildConnection(parentId, childId)
         return {
             ok: false,
             title: 'Already connected',
-            message: `${personDisplayName(parentId)} is already connected as a parent of ${personDisplayName(childId)}.`
+            message: connectRelativeText('{parent} is already connected as a parent of {child}.', { parent: personDisplayName(parentId), child: personDisplayName(childId) })
         };
     }
 
@@ -7413,7 +7437,7 @@ function validateParentChildConnection(parentId, childId)
         return {
             ok: false,
             title: 'Relationship loop',
-            message: `${personDisplayName(parentId)} is already a descendant of ${personDisplayName(childId)}. Connecting them as a parent would create a cycle.`
+            message: connectRelativeText('{parent} is already a descendant of {child}. Connecting them as a parent would create a cycle.', { parent: personDisplayName(parentId), child: personDisplayName(childId) })
         };
     }
 
@@ -7422,7 +7446,7 @@ function validateParentChildConnection(parentId, childId)
         return {
             ok: false,
             title: 'Relationship loop',
-            message: `${personDisplayName(childId)} is already an ancestor of ${personDisplayName(parentId)}. Connecting them as a child would create a cycle.`
+            message: connectRelativeText('{child} is already an ancestor of {parent}. Connecting them as a child would create a cycle.', { parent: personDisplayName(parentId), child: personDisplayName(childId) })
         };
     }
 
@@ -7463,7 +7487,7 @@ function validatePartnerConnection(personAId, personBId)
         return {
             ok: false,
             title: 'Already connected',
-            message: `${personDisplayName(personAId)} and ${personDisplayName(personBId)} are already connected as partners.`
+            message: connectRelativeText('{first} and {second} are already connected as partners.', { first: personDisplayName(personAId), second: personDisplayName(personBId) })
         };
     }
 
@@ -7482,7 +7506,9 @@ function parentWarningForConnection(parentId, childId)
     return {
         severity: 'warning',
         title: 'Warning!',
-        message: `${personDisplayName(childId)} already has ${existingParents.length === 1 ? 'a recorded parent' : 'recorded parents'}. The selected person will be connected as an additional parent.`
+        message: connectRelativeText(existingParents.length === 1
+            ? '{person} already has a recorded parent. The selected person will be connected as an additional parent.'
+            : '{person} already has recorded parents. The selected person will be connected as an additional parent.', { person: personDisplayName(childId) })
     };
 }
 
@@ -8253,7 +8279,7 @@ function validateSiblingConnection(anchorPersonId, siblingPersonId, familyId, de
         return {
             ok: false,
             title: 'Already connected',
-            message: `${personDisplayName(anchorPersonId)} and ${personDisplayName(siblingPersonId)} are already siblings in this family.`
+            message: connectRelativeText('{first} and {second} are already siblings in this family.', { first: personDisplayName(anchorPersonId), second: personDisplayName(siblingPersonId) })
         };
     }
 
@@ -11450,7 +11476,7 @@ function commitAddPersonPossibleMatchAction(options = {})
     rebuildSampleEventsAndPruneSourceLinks();
     refreshAfterPossibleMatchConnection(connectionIntent.anchorPersonId);
 
-    showToast(`${connectPersonName(selectedPerson)} connected as ${addPersonConnectionToastLabel(connectionIntent.relationshipType)}.`);
+    showToast(connectedRelativeToast(connectPersonName(selectedPerson), connectionIntent.relationshipType));
 }
 
 function readAddPersonModalValue(selector)

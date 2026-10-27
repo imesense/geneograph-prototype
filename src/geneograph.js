@@ -21725,7 +21725,7 @@ function commitGeneographPersonPossibleMatch(
     if (relative)
     {
         showToast(
-            `${name} connected as ${geneoRelativeLabel(relative.type)}.`
+            connectedRelativeToast(name, relative.type)
         );
         return;
     }

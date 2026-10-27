@@ -50,7 +50,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             const parent = modal.locator('[data-connect-person-result="barnaby"]');
             assert.equal(await parent.count(), 1);
             assert.match(await parent.locator('.connect-person-related-status').innerText(),
-                language === 'ru' ? /Уже есть связь: Родитель/ : /Already connected as: Parent/);
+                language === 'ru' ? /Указанное родство: Родитель/ : /Already connected as: Parent/);
             await parent.click();
             assert.equal(await parent.getAttribute('aria-pressed'), 'true');
             assert.equal(await modal.locator('#connectPersonConfirm').isDisabled(), true);

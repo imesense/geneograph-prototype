@@ -2956,9 +2956,9 @@ body.mobile-details-open .geneo-inspector [data-geneo-inspector-toggle] {
 .tree-control-copy .tree-control-name { font-size: 13px; line-height: 1.15; }
 .tree-control-find { display: flex; align-items: center; gap: 4px; color: var(--text-tertiary); font-size: 11px; line-height: 1.15; white-space: nowrap; }
 .tree-control-find svg { width: 12px; height: 12px; flex: none; }
-.tree-toolbar .view-modes { width: 204px; min-width: 204px; height: 44px; background: transparent; }
+.tree-toolbar .view-modes { width: max-content; min-width: 204px; flex-shrink: 0; height: 44px; background: transparent; }
 .tree-toolbar .view-mode { width: 42px; min-width: 42px; padding: 0; border: 0; border-right: 1px solid var(--border-default); gap: 5px; cursor: pointer; }
-.tree-toolbar .view-mode.active { width: 118px; min-width: 118px; border: 0; border-right: 1px solid var(--border-default); border-radius: 0; box-shadow: none; }
+.tree-toolbar .view-mode.active { width: max-content; min-width: 118px; flex-shrink: 0; padding: 0 14px; box-sizing: border-box; white-space: nowrap; border: 0; border-right: 1px solid var(--border-default); border-radius: 0; box-shadow: none; }
 .tree-toolbar .view-mode:last-child { border-right: 0; }
 .tree-toolbar .view-mode svg { width: 17px; height: 17px; flex: none; }
 .tree-toolbar .view-mode[data-tree-view="Pedigree"] svg { width: 22px; height: 22px; }

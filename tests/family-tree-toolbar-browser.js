@@ -11,7 +11,7 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
         ? { executablePath: process.env.GENEO_BROWSER_EXECUTABLE } : {}) });
     try
     {
-        for (const [width, language] of [[1440, 'en'], [1180, 'ru'], [900, 'en'], [390, 'ru'], [320, 'en']])
+        for (const [width, language] of [[1440, 'en'], [1440, 'ru'], [1180, 'ru'], [900, 'en'], [390, 'ru'], [320, 'en']])
         {
             const page = await browser.newPage({ viewport: { width, height: 740 } });
             const errors = [];
@@ -26,6 +26,17 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             assert.equal(await page.locator('.tree-toolbar [data-tree-navigation], .tree-toolbar #familyMoreActions, .tree-toolbar [data-tree-search]').count(), 0);
             assert.equal(await page.locator('[data-tree-view="Pedigree"]').isDisabled(), true);
             assert.equal(await page.locator('[data-tree-view="Fan"]').isDisabled(), true);
+            if (await page.locator('.tree-toolbar .view-modes').isVisible())
+            {
+                assert.ok(await page.locator('.tree-toolbar .view-mode.active').evaluate(button =>
+                {
+                    const bounds = button.getBoundingClientRect();
+                    const label = button.querySelector('span').getBoundingClientRect();
+                    const icon = button.querySelector('svg').getBoundingClientRect();
+                    return icon.left - bounds.left >= 12 && bounds.right - label.right >= 12
+                        && button.scrollWidth <= button.clientWidth + 1;
+                }), `active view keeps horizontal padding in ${language}`);
+            }
             assert.equal(await page.locator('.tree-people-status').isVisible(), true);
             assert.ok((await page.locator('.tree-people-status').innerText()).match(/\d+/));
             if (language === 'ru') assert.match(await page.locator('.tree-people-status').innerText(), /человек/);
