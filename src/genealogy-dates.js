@@ -126,11 +126,20 @@ function dateLabelFromParts(year, month = '', day = '', language = 'en')
 
 function calculateGenealogyYear(text)
 {
-    const match = String(text ?? '').trim().match(/^(\d{1,4})\s*\+\s*(\d{1,4})$/)
-        || String(text ?? '').trim().match(/^(\d{1,4})\s+-\s+(\d{1,4})$/);
-    if (!match) return null;
+    const raw = String(text ?? '').trim();
+    const match = raw.match(/^=\s*(\d{1,4})\s*([+-])\s*(\d{1,4})$/);
+    if (!match)
+    {
+        if (raw.startsWith('='))
+            return { valid: false, message: 'Enter a year calculation such as =1900-50.' };
+        const bare = raw.match(/^(\d{1,4})\s*([+-])\s*(\d{1,4})$/);
+        if (bare && !(bare[2] === '-' && /^\d{4}-\d{1,2}$/.test(raw)
+            && Number(bare[3]) >= 1 && Number(bare[3]) <= 12))
+            return { valid: false, message: 'Year calculations must start with =. Try =1900-50.' };
+        return null;
+    }
     const baseYear = Number(match[1]);
-    const year = baseYear + (match[0].includes('+') ? 1 : -1) * Number(match[2]);
+    const year = baseYear + (match[2] === '+' ? 1 : -1) * Number(match[3]);
     return baseYear >= 1 && Number.isInteger(year) && year >= 1 && year <= 9999
         ? { valid: true, year }
         : { valid: false, message: 'The calculated year must be between 1 and 9999.' };

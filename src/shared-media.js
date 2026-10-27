@@ -3818,6 +3818,33 @@ function bindGenealogyDateFields(root = document)
         const input = field.querySelector('[data-genealogy-date-input]');
         const inputTo = field.querySelector('[data-genealogy-date-input-to]');
         const clearError = () => setGenealogyDateFieldError(field, '');
+        const resolveDateInput = active =>
+        {
+            const calculation = calculateGenealogyYear(active.value);
+            if (calculation?.valid)
+            {
+                active.value = String(calculation.year);
+                active.dataset.sourceValue = active.value;
+            }
+            const parsed = parseGenealogyDateTextAsType(input?.value, type?.value,
+                { calendar: readGenealogyDateModel(field).calendar, date2: inputTo?.value });
+            if (!parsed.valid)
+            {
+                setGenealogyDateFieldError(field, parsed.message, parsed);
+                return;
+            }
+            clearError();
+        };
+        const bindDateCommit = active =>
+        {
+            active.addEventListener('blur', () => resolveDateInput(active));
+            active.addEventListener('keydown', event =>
+            {
+                if (event.key !== 'Enter') return;
+                event.preventDefault();
+                resolveDateInput(active);
+            });
+        };
         if (type && !type.dataset.dateBound)
         {
             type.dataset.dateBound = 'true';
@@ -3840,40 +3867,13 @@ function bindGenealogyDateFields(root = document)
         {
             input.dataset.dateBound = 'true';
             input.addEventListener('input', clearError);
-            input.addEventListener('blur', () =>
-            {
-                const parsed = parseGenealogyDateTextAsType(input.value, type?.value, { calendar: readGenealogyDateModel(field).calendar, date2: inputTo?.value });
-                if (!parsed.valid) setGenealogyDateFieldError(field, parsed.message, parsed);
-                else
-                {
-                    const calculation = calculateGenealogyYear(input.value);
-                    if (calculation?.valid)
-                    {
-                        input.value = String(calculation.year);
-                        input.dataset.sourceValue = input.value;
-                    }
-                }
-            });
+            bindDateCommit(input);
         }
         if (inputTo && !inputTo.dataset.dateBound)
         {
             inputTo.dataset.dateBound = 'true';
             inputTo.addEventListener('input', clearError);
-            inputTo.addEventListener('blur', () =>
-            {
-                const parsed = parseGenealogyDateTextAsType(input?.value, type?.value,
-                    { calendar: readGenealogyDateModel(field).calendar, date2: inputTo.value });
-                if (!parsed.valid) setGenealogyDateFieldError(field, parsed.message, parsed);
-                else
-                {
-                    const calculation = calculateGenealogyYear(inputTo.value);
-                    if (calculation?.valid)
-                    {
-                        inputTo.value = String(calculation.year);
-                        inputTo.dataset.sourceValue = inputTo.value;
-                    }
-                }
-            });
+            bindDateCommit(inputTo);
         }
     });
 }

@@ -63,10 +63,10 @@ function openGenealogyDateEditor(anchor, fieldId)
         const id = `dateEditor${part}${suffix}`;
         return `<div class="genealogy-date-part-field"><label for="${id}">${escapeHtml(t(part === 'day' ? 'Day' : part === 'month' ? 'Month' : 'Year'))}</label>${part === 'month'
             ? `<select id="${id}" data-editor-month${suffix}>${componentMonthOptions(parts[`month${suffix}`])}</select>`
-            : `<input id="${id}" data-editor-${part}${suffix} inputmode="numeric" value="${escapeHtml(parts[`${part}${suffix}`])}" placeholder="${part === 'day' ? 'DD' : 'YYYY'}">`}</div>`;
+            : `<input id="${id}" data-editor-${part}${suffix} inputmode="${part === 'year' ? 'text' : 'numeric'}" value="${escapeHtml(parts[`${part}${suffix}`])}" placeholder="${part === 'day' ? 'DD' : 'YYYY'}">`}</div>`;
     }).join('')}<button type="button" class="genealogy-calendar-toggle" data-calendar-toggle="${suffix}" aria-label="${escapeHtml(t(suffix ? 'Choose To date' : 'Choose From date'))}" title="${escapeHtml(t(suffix ? 'Choose To date' : 'Choose From date'))}" aria-expanded="false" aria-controls="dateEditorCalendarPanel">${icon.calendar}</button></div>`;
     popover.innerHTML = `<div class="genealogy-date-popover-header"><strong>${escapeHtml(t('Date details'))}</strong><button class="close-button" type="button" data-genealogy-date-close aria-label="${escapeHtml(t('Close date details'))}">${icon.close}</button></div>
-        <div class="genealogy-date-editor-grid"><div class="genealogy-date-part-field full"><label for="dateEditorSmart">${escapeHtml(t('Smart date'))}</label><input id="dateEditorSmart" data-editor-smart value="${escapeHtml(liveText || formatGenealogyDateLabel(model))}" placeholder="${escapeHtml(t('e.g. 1900, 14 Feb, 1900 - 50'))}"></div>
+        <div class="genealogy-date-editor-grid"><div class="genealogy-date-part-field full"><label for="dateEditorSmart">${escapeHtml(t('Smart date'))}</label><input id="dateEditorSmart" data-editor-smart value="${escapeHtml(liveText || formatGenealogyDateLabel(model))}" placeholder="${escapeHtml(t('e.g. 1900, 14 Feb, =1900-50'))}"></div>
         <div class="genealogy-date-part-field"><label for="dateEditorType">${escapeHtml(t('Date type'))}</label><select id="dateEditorType" data-editor-type>${genealogyDateTypeOptions(type)}</select></div>
         <div class="genealogy-date-part-field"><label for="dateEditorCalendar">${escapeHtml(t('Calendar'))}</label><select id="dateEditorCalendar" data-editor-calendar>${GENEALOGY_CALENDARS.map(value => `<option value="${value}" ${model.calendar === value ? 'selected' : ''}>${escapeHtml(t(value))}</option>`).join('')}</select></div>
         <div class="genealogy-date-first-date full"><strong data-first-date-label hidden>${escapeHtml(t('From'))}</strong>${row('')}</div><div class="genealogy-date-second-date full" hidden><strong>${escapeHtml(t('To'))}</strong>${row('2')}</div>
@@ -110,10 +110,28 @@ function openGenealogyDateEditor(anchor, fieldId)
         return parsed;
     };
     get('smart').addEventListener('input', () => { last = 'smart'; show(fromSmart()); });
+    const resolveSmartCalculation = () =>
+    {
+        const raw = get('smart').value.trim();
+        const prefix = raw.match(/^(about|circa|ca\.?|before|after|около|примерно|приблизительно|до|после)\s+/i)?.[0] || '';
+        const calculation = calculateGenealogyYear(raw.slice(prefix.length));
+        if (!calculation) return;
+        if (calculation.valid) get('smart').value = `${prefix}${calculation.year}`;
+        last = 'smart';
+        show(fromSmart());
+    };
+    get('smart').addEventListener('blur', resolveSmartCalculation);
+    get('smart').addEventListener('keydown', event =>
+    {
+        if (event.key !== 'Enter') return;
+        event.preventDefault();
+        resolveSmartCalculation();
+    });
     for (const key of ['day', 'month', 'year', 'day2', 'month2', 'year2', 'type', 'calendar'])
         get(key).addEventListener(key.startsWith('month') || ['type', 'calendar'].includes(key) ? 'change' : 'input', () => { last = 'parts'; show(fromParts()); if (key === 'calendar') renderGrid(); });
     for (const key of ['year', 'year2'])
-        get(key).addEventListener('blur', () =>
+    {
+        const resolveYearCalculation = () =>
         {
             const calculation = calculateGenealogyYear(get(key).value);
             if (calculation?.valid)
@@ -121,7 +139,16 @@ function openGenealogyDateEditor(anchor, fieldId)
                 get(key).value = String(calculation.year);
                 last = 'parts'; show(fromParts());
             }
+            else if (calculation) { last = 'parts'; show(fromParts()); }
+        };
+        get(key).addEventListener('blur', resolveYearCalculation);
+        get(key).addEventListener('keydown', event =>
+        {
+            if (event.key !== 'Enter') return;
+            event.preventDefault();
+            resolveYearCalculation();
         });
+    }
     popover.addEventListener('click', event =>
     {
         const toggle = event.target.closest('[data-calendar-toggle]');

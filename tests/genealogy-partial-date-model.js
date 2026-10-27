@@ -30,17 +30,27 @@ for (const input of ['14 Feb', 'February', 'day 14', 'day 14 year 1900', '14 Ñ„Ð
 }
 assert.equal(run(`parseGenealogyDateText('14')`).ambiguity, 14);
 assert.equal(run(`parseGenealogyDateText('1900')`).value.dateType, 'Exact date');
-assert.deepEqual(run(`parseGenealogyDateText('1900 - 50').value.first`), { year: 1850, month: null, day: null });
-assert.equal(run(`parseGenealogyDateText('1850 + 50').value.first.year`), 1900);
-assert.equal(run(`parseGenealogyDateTextAsType('1900 - 50', 'About / Circa').value.dateType`), 'About / Circa');
+assert.deepEqual(run(`parseGenealogyDateText('=1900-50').value.first`), { year: 1850, month: null, day: null });
+assert.equal(run(`parseGenealogyDateText('=1850 + 50').value.first.year`), 1900);
+assert.equal(run(`parseGenealogyDateTextAsType('=1900 - 50', 'About / Circa').value.dateType`), 'About / Circa');
 assert.equal(run(`parseGenealogyDateText('1850 - 1900').value.dateType`), 'Between');
+assert.equal(run(`parseGenealogyDateText('1850-1900').value.dateType`), 'Between');
 assert.equal(run(`parseGenealogyDateText('1900-05').value.first.month`), 5);
+for (const input of ['1900-50', '1900 - 50', '1850+50'])
+{
+    const parsed = run(`parseGenealogyDateText(${JSON.stringify(input)})`);
+    assert.equal(parsed.valid, false, input);
+    assert.equal(parsed.message, 'Year calculations must start with =. Try =1900-50.', input);
+}
+assert.equal(run(`parseGenealogyDateText('=1900-05').value.first.year`), 1895);
+assert.equal(run(`parseGenealogyDateText('=1900-').message`), 'Enter a year calculation such as =1900-50.');
+assert.equal(run(`parseGenealogyDateText('=1900-50-1').valid`), false);
 assert.equal(run(`parseGenealogyDateText('1900 - 50 - 1').valid`), false);
-assert.equal(run(`parseGenealogyDateText('9999 + 1').valid`), false);
+assert.equal(run(`parseGenealogyDateText('=9999 + 1').message`), 'The calculated year must be between 1 and 9999.');
 assert.equal(run(`buildGenealogyDateFromParts('Exact date', { year: '1900 - 1900' }).valid`), false);
-assert.equal(run(`parseGenealogyDateText('0 + 1850').valid`), false);
-assert.equal(run(`buildGenealogyDateFromParts('Exact date', { year: '1900 - 50', month: 2, day: 14 }).value.first.year`), 1850);
-assert.deepEqual(run(`buildGenealogyDateFromParts('Between', { year: '1900 - 50', year2: '1850 + 50' }).value.second`),
+assert.equal(run(`parseGenealogyDateText('=0 + 1850').valid`), false);
+assert.equal(run(`buildGenealogyDateFromParts('Exact date', { year: '=1900-50', month: 2, day: 14 }).value.first.year`), 1850);
+assert.deepEqual(run(`buildGenealogyDateFromParts('Between', { year: '=1900-50', year2: '=1850+50' }).value.second`),
     { year: 1900, month: null, day: null });
 assert.equal(run(`parseGenealogyDateText('Unknown')`).value.state, 'unknown');
 assert.equal(run(`formatGenealogyDateLabel({first:{year:null,month:2,day:14},state:'known',dateType:'Exact date'})`), '14 Feb');
