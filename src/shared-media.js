@@ -1314,6 +1314,9 @@ function normalizeNameSegment(value)
 function formatPersonFullName(person)
 {
     const n = person?.names || {};
+    if (person?.meta?.placeholderRole === 'father'
+        && ![n.prefix, n.first, n.middle, n.last, n.suffix].some(value => normalizeNameSegment(value)))
+        return 'Unknown father';
     return [n.prefix, n.first, n.middle, n.last, n.suffix]
         .map(normalizeNameSegment)
         .filter(Boolean)
@@ -1334,6 +1337,11 @@ function formatPersonInitials(person)
 function rebuildPersonDisplayName(person)
 {
     if (!person || !person.names) return person;
+
+    if (person.meta?.placeholderRole === 'father'
+        && [person.names.prefix, person.names.first, person.names.middle, person.names.last,
+            person.names.suffix].some(value => normalizeNameSegment(value)))
+        delete person.meta.placeholderRole;
 
     person.names.display = formatPersonFullName(person);
     person.names.initials = formatPersonInitials(person);

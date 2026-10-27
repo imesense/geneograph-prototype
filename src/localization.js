@@ -1112,8 +1112,8 @@ const RU_UI_FAMILY_TREE = {
     'Choose the family this child will be added to.':
         'Выберите семью, в которую будет добавлен ребёнок.',
 
-    'Add or connect a parent before creating a sibling.':
-        'Сначала добавьте или свяжите родителя, затем создайте брата или сестру.',
+    'The selected parents are no longer available. Choose another option.':
+        'Выбранные родители больше недоступны. Выберите другой вариант.',
 
     'The selected parent family is no longer available.':
         'Выбранная родительская семья больше недоступна.',
@@ -1240,6 +1240,13 @@ const RU_UI_FAMILY_TREE = {
         'Связать'
 };
 const RU_UI_PEOPLE = {
+    'Unknown father': 'Неизвестный отец',
+    'Create unknown father': 'Создать неизвестного отца',
+    'An unknown father will be created for both siblings.': 'Для обоих детей будет создан неизвестный отец.',
+    'The siblings will share the selected parent or parents.': 'У обоих детей будут выбранные общие родители.',
+    'These people already share a recorded parent.': 'У этих людей уже есть общий родитель.',
+    'Different parents': 'Разные родители',
+    'Both people have different recorded parents. Review their parents before connecting them as siblings.': 'У этих людей записаны разные родители. Проверьте их перед установлением связи между детьми.',
     'People directory': 'Список людей',
     'People pages': 'Страницы списка людей',
     'Active People filters': 'Активные фильтры людей',

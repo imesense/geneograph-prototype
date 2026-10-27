@@ -4983,6 +4983,9 @@ function connectedRelativeToast(personName, type)
 
 function connectPersonName(person)
 {
+    if (person?.meta?.placeholderRole === 'father'
+        && ![person.names?.first, person.names?.middle, person.names?.last].some(Boolean))
+        return t('Unknown father');
     return person?.names?.display || person?.name || 'Unknown person';
 }
 
@@ -5143,6 +5146,10 @@ function biologicalParentConflict(parentId, childId, additionalParentIds = [], g
 function connectPersonDetailType()
 {
     const type = normalizeConnectRelationshipType(connectPersonModalState.relationshipType);
+    if (type === 'sibling' && connectPersonModalState.selectedPersonId
+        && !parentIdsForPerson(connectPersonModalState.anchorPersonId).length
+        && !parentIdsForPerson(connectPersonModalState.selectedPersonId).length)
+        return 'Biological';
     if (connectPersonModalState.detailType) return connectPersonModalState.detailType;
     if (type === 'partner') return 'Married';
     if (type === 'parent' && parentIdsForPerson(connectPersonModalState.anchorPersonId)
@@ -5168,9 +5175,11 @@ function connectPersonDetailType()
     }
     if (type === 'sibling' && pair.siblingPersonId)
     {
-        const choice = parentFamilyChoices(pair.anchorPersonId, 'sibling')
+        const choice = parentFamilyChoices(pair.anchorPersonId, 'sibling', pair.siblingPersonId)
             .find(item => item.value === connectPersonModalState.parentFamilySelection);
-        if (choice?.parentIds.some(parentId => biologicalParentConflict(parentId, pair.siblingPersonId,
+        const targetPersonId = choice?.sourcePersonId === pair.anchorPersonId
+            ? pair.siblingPersonId : pair.anchorPersonId;
+        if (choice?.parentIds.some(parentId => biologicalParentConflict(parentId, targetPersonId,
             choice.parentIds.filter(id => id !== parentId)))) return 'Adoptive';
     }
     return 'Biological';
@@ -5180,13 +5189,18 @@ function renderConnectPersonDetailSelector()
 {
     const type = normalizeConnectRelationshipType(connectPersonModalState.relationshipType);
     if (!type) return '';
+    const fixedBiological = type === 'sibling' && connectPersonModalState.selectedPersonId
+        && !parentIdsForPerson(connectPersonModalState.anchorPersonId).length
+        && !parentIdsForPerson(connectPersonModalState.selectedPersonId).length;
     const value = connectPersonDetailType();
-    const options = type === 'partner'
+    const options = fixedBiological
+        ? `<option value="Biological">${escapeHtml(t('Biological'))}</option>`
+        : type === 'partner'
         ? addPersonRelationshipTypeOptions(value)
         : parentChildRelationshipTypeOptions(value);
     return `<div class="field add-person-select-field connect-person-detail-field">
       <label for="connectPersonDetailType">${escapeHtml(t('Relationship type'))}</label>
-      <select class="compact-select add-person-select" id="connectPersonDetailType" data-connect-detail-type>${options}</select>
+      <select class="compact-select add-person-select" id="connectPersonDetailType" data-connect-detail-type ${fixedBiological ? 'disabled' : ''}>${options}</select>
       <span class="add-person-select-chevron" aria-hidden="true">${icon.chevron}</span>
     </div>`;
 }
@@ -5332,9 +5346,12 @@ function renderConnectPersonModalHtml()
             }) : ''}
 
 
-            ${relationshipType ? renderParentFamilySelector({
+            ${relationshipType && (relationshipType !== 'sibling' || selectedPerson
+                || parentIdsForPerson(anchor?.id || '').length)
+                ? renderParentFamilySelector({
                 anchorPersonId: anchor?.id || '',
                 relationshipType,
+                otherPersonId: selectedPerson?.id || '',
                 selectedValue:
                 connectPersonModalState
                     .parentFamilySelection,
@@ -5454,6 +5471,9 @@ function bindConnectPersonModalControls()
         button.addEventListener('click', () =>
         {
             connectPersonModalState.selectedPersonId = button.dataset.connectPersonResult || '';
+            connectPersonModalState.parentFamilySelection = defaultParentFamilySelection(
+                connectPersonModalState.anchorPersonId, connectPersonModalState.relationshipType, '',
+                connectPersonModalState.selectedPersonId);
             refreshConnectPersonModal();
         });
     });
@@ -7206,6 +7226,35 @@ function createPersonFromAddPersonModal(options = {}, additionalFacts = {}, date
     return person;
 }
 
+function createUnknownFather(childPersonId)
+{
+    const child = getPerson(childPersonId);
+    const now = new Date().toISOString();
+    const id = createPersonIdFromName('unknown-father', childPersonId);
+    const person = {
+        id,
+        projectId: child.projectId,
+        createdAt: now,
+        updatedAt: now,
+        names: { first: '', middle: '', last: '', maiden: '', display: 'Unknown father', initials: '?' },
+        gender: 'male',
+        livingStatus: 'Unknown',
+        avatarClass: 'avatar-green',
+        birth: emptyGenealogyDate('Exact date'),
+        death: emptyGenealogyDate('Exact date'),
+        profile: { alternativeNames: null },
+        attributes: [],
+        events: [],
+        notes: [],
+        citations: [],
+        counts: { files: 0, notes: 0 },
+        meta: { updated: 'Just now', sourceStatus: 'Unsourced', reviewStatus: 'New record',
+            placeholderRole: 'father' }
+    };
+    sampleData.people.push(person);
+    return person;
+}
+
 function relationshipRoleHintForPerson(personId)
 {
     const gender = String(getPerson(personId)?.gender || '').toLowerCase();
@@ -7491,13 +7540,22 @@ function parentFamilyDisplayLabel(family)
         : names[0] || 'Unknown family';
 }
 
-function parentFamilyChoices(anchorPersonId, relationshipType)
+const UNKNOWN_FATHER_FAMILY_CHOICE = '__unknown_father__';
+
+function parentFamilyChoices(anchorPersonId, relationshipType, otherPersonId = '')
 {
     const type = normalizeConnectRelationshipType(relationshipType);
 
     if (type === 'sibling')
     {
-        return parentFamiliesForPerson(anchorPersonId).flatMap(family =>
+        const anchorParents = parentIdsForPerson(anchorPersonId);
+        const otherParents = otherPersonId ? parentIdsForPerson(otherPersonId) : [];
+        if (anchorParents.length && otherParents.length) return [];
+        const sourcePersonId = anchorParents.length ? anchorPersonId : otherParents.length ? otherPersonId : '';
+        if (!sourcePersonId)
+            return [{ value: UNKNOWN_FATHER_FAMILY_CHOICE, label: t('Create unknown father'),
+                family: null, parentIds: [], sourcePersonId: '' }];
+        return parentFamiliesForPerson(sourcePersonId).flatMap(family =>
         {
             const parents = [familyPartnerAId(family), familyPartnerBId(family)].filter(Boolean);
             if (!parents.length) return [];
@@ -7506,13 +7564,15 @@ function parentFamilyChoices(anchorPersonId, relationshipType)
                     value: family.id,
                     label: `${t('Both parents')} — ${parentFamilyDisplayLabel(family)}`,
                     family,
-                    parentIds: parents
+                    parentIds: parents,
+                    sourcePersonId
                 }] : []),
                 ...parents.map(parentId => ({
                     value: `${family.id}::${parentId}`,
                     label: `${t('Only')} ${translateText(personDisplayName(parentId))}`,
                     family,
-                    parentIds: [parentId]
+                    parentIds: [parentId],
+                    sourcePersonId
                 }))
             ];
         });
@@ -7541,11 +7601,12 @@ function parentFamilyChoices(anchorPersonId, relationshipType)
 function defaultParentFamilySelection(
     anchorPersonId,
     relationshipType,
-    preferredFamilyId = ''
+    preferredFamilyId = '',
+    otherPersonId = ''
 )
 {
     const type = normalizeConnectRelationshipType(relationshipType);
-    const choices = parentFamilyChoices(anchorPersonId, type);
+    const choices = parentFamilyChoices(anchorPersonId, type, otherPersonId);
     const preferred = String(preferredFamilyId || '');
 
     if (choices.some(choice => choice.value === preferred))
@@ -7555,6 +7616,7 @@ function defaultParentFamilySelection(
 
     if (type === 'sibling')
     {
+        if (choices.length === 1) return choices[0].value;
         const families = new Set(choices.map(choice => choice.family.id));
         return families.size === 1 ? choices[0].value : '';
     }
@@ -7579,7 +7641,8 @@ function defaultParentFamilySelection(
 function validateParentFamilySelection({
     anchorPersonId,
     relationshipType,
-    selection
+    selection,
+    otherPersonId = ''
 } = {})
 {
     const type = normalizeConnectRelationshipType(relationshipType);
@@ -7589,7 +7652,7 @@ function validateParentFamilySelection({
         return { ok: true };
     }
 
-    const choices = parentFamilyChoices(anchorPersonId, type);
+    const choices = parentFamilyChoices(anchorPersonId, type, otherPersonId);
     const selected = String(selection || '');
 
     if (!selected)
@@ -7609,7 +7672,7 @@ function validateParentFamilySelection({
             ok: false,
             title: 'Parent family unavailable',
             message: type === 'sibling'
-                ? 'Add or connect a parent before creating a sibling.'
+                ? 'The selected parents are no longer available. Choose another option.'
                 : 'The selected parent family is no longer available.'
         };
     }
@@ -7620,6 +7683,7 @@ function validateParentFamilySelection({
 function renderParentFamilySelector({
     anchorPersonId,
     relationshipType,
+    otherPersonId = '',
     selectedValue = '',
     controlId = 'addPersonParentFamily',
     showSelectionLabel = true,
@@ -7639,14 +7703,17 @@ function renderParentFamilySelector({
     const choices =
         parentFamilyChoices(
             anchorPersonId,
-            type
+            type,
+            otherPersonId
         );
 
     const selected =
         selectedValue
         || defaultParentFamilySelection(
             anchorPersonId,
-            type
+            type,
+            '',
+            otherPersonId
         );
 
     const isSibling =
@@ -7733,7 +7800,9 @@ function renderParentFamilySelector({
             <span class="field-help">
               ${
                     isSibling
-                        ? 'The new sibling will be added to this existing parent family.'
+                        ? selected === UNKNOWN_FATHER_FAMILY_CHOICE
+                            ? 'An unknown father will be created for both siblings.'
+                            : 'The siblings will share the selected parent or parents.'
                         : 'Choose another parent, or keep this child with one parent.'
                 }
             </span>
@@ -8190,18 +8259,45 @@ function validateSiblingConnection(anchorPersonId, siblingPersonId, familyId, de
         };
     }
 
+    const anchor = getPerson(anchorPersonId);
+    const sibling = getPerson(siblingPersonId);
+    if (!anchor || !sibling || anchor.projectId !== sibling.projectId
+        || anchor.projectId !== currentProjectId())
+        return { ok: false, title: 'Person not found', message: 'Person record not found.' };
+
+    if (collectAncestorIds(anchorPersonId).has(siblingPersonId)
+        || collectDescendantIds(anchorPersonId).has(siblingPersonId))
+        return { ok: false, title: 'Relationship loop',
+            message: 'An ancestor or descendant cannot also be added as a sibling.' };
+
+    const anchorParents = parentIdsForPerson(anchorPersonId);
+    const siblingParents = parentIdsForPerson(siblingPersonId);
+    if (anchorParents.length && siblingParents.length)
+    {
+        if (anchorParents.some(id => siblingParents.includes(id)))
+            return { ok: false, title: 'Already connected',
+                message: 'These people already share a recorded parent.' };
+        return { ok: false, title: 'Different parents',
+            message: 'Both people have different recorded parents. Review their parents before connecting them as siblings.' };
+    }
+
     const selectionValidation = validateParentFamilySelection({
         anchorPersonId,
         relationshipType: 'sibling',
-        selection: familyId
+        selection: familyId,
+        otherPersonId: siblingPersonId
     });
 
     if (!selectionValidation.ok) return selectionValidation;
 
-    const choice = parentFamilyChoices(anchorPersonId, 'sibling')
+    const choice = parentFamilyChoices(anchorPersonId, 'sibling', siblingPersonId)
         .find(candidate => candidate.value === familyId);
+    if (choice?.value === UNKNOWN_FATHER_FAMILY_CHOICE)
+        return { ok: true, autoFather: true, choice };
     const family = choice?.family;
-    if (!family || !unlinkFamilyChildrenIds(family).includes(anchorPersonId))
+    const sourcePersonId = choice?.sourcePersonId;
+    const targetPersonId = sourcePersonId === anchorPersonId ? siblingPersonId : anchorPersonId;
+    if (!family || !unlinkFamilyChildrenIds(family).includes(sourcePersonId))
     {
         return {
             ok: false,
@@ -8210,7 +8306,7 @@ function validateSiblingConnection(anchorPersonId, siblingPersonId, familyId, de
         };
     }
 
-    if (choice.parentIds.every(parentId => hasParentChildRelationship(parentId, siblingPersonId)))
+    if (choice.parentIds.every(parentId => hasParentChildRelationship(parentId, targetPersonId)))
     {
         return {
             ok: false,
@@ -8219,29 +8315,17 @@ function validateSiblingConnection(anchorPersonId, siblingPersonId, familyId, de
         };
     }
 
-    if (
-        collectAncestorIds(anchorPersonId).has(siblingPersonId)
-        || collectDescendantIds(anchorPersonId).has(siblingPersonId)
-    )
+    for (const parentId of choice.parentIds.filter(id => !hasParentChildRelationship(id, targetPersonId)))
     {
-        return {
-            ok: false,
-            title: 'Relationship loop',
-            message: 'An ancestor or descendant cannot also be added as a sibling.'
-        };
-    }
-
-    for (const parentId of choice.parentIds.filter(id => !hasParentChildRelationship(id, siblingPersonId)))
-    {
-        const validation = validateParentChildConnection(parentId, siblingPersonId);
+        const validation = validateParentChildConnection(parentId, targetPersonId);
         if (!validation.ok) return validation;
-        if (detailType === 'Biological' && biologicalParentConflict(parentId, siblingPersonId,
-            choice.parentIds.filter(id => id !== parentId && !hasParentChildRelationship(id, siblingPersonId))))
+        if (detailType === 'Biological' && biologicalParentConflict(parentId, targetPersonId,
+            choice.parentIds.filter(id => id !== parentId && !hasParentChildRelationship(id, targetPersonId))))
             return { ok: false, title: t('Biological parent unavailable'),
                 message: t('This person already has two biological parents or a biological parent of the same gender. Choose another relationship type.') };
     }
 
-    return { ok: true, family, choice };
+    return { ok: true, family, choice, sourcePersonId, targetPersonId };
 }
 
 function connectSiblingsThroughFamily(anchorPersonId, siblingPersonId, familyId, detailType = 'Biological')
@@ -8255,29 +8339,40 @@ function connectSiblingsThroughFamily(anchorPersonId, siblingPersonId, familyId,
 
     if (!validation.ok) return validation;
 
+    if (validation.autoFather)
+    {
+        const father = createUnknownFather(anchorPersonId);
+        const family = createParentChildFamily(father.id, anchorPersonId);
+        unlinkSetFamilyChildren(family, [anchorPersonId, siblingPersonId]);
+        setParentChildRelationshipType(family, father.id, anchorPersonId, 'Biological');
+        setParentChildRelationshipType(family, father.id, siblingPersonId, 'Biological');
+        syncFamilyPartnerAliases(family);
+        return { ok: true, family, relationshipType: 'sibling', warning: null };
+    }
+
+    const { sourcePersonId, targetPersonId } = validation;
     const family = validation.choice.parentIds.length === 1
         ? findOrCreateSingleParentFamily(validation.choice.parentIds[0])
         : validation.family;
     if (validation.choice.parentIds.length === 1)
     {
         const parentId = validation.choice.parentIds[0];
-        const sourceType = parentChildRelationshipType(validation.family, parentId, anchorPersonId);
-        unlinkSetFamilyChildren(family, [...unlinkFamilyChildrenIds(family), anchorPersonId]);
-        if (!hasParentChildRelationship(parentId, anchorPersonId)
-            || !Object.hasOwn(family.parentChildTypes || {}, parentChildRelationshipKey(parentId, anchorPersonId)))
-            setParentChildRelationshipType(family, parentId, anchorPersonId, sourceType);
+        const sourceType = parentChildRelationshipType(validation.family, parentId, sourcePersonId);
+        unlinkSetFamilyChildren(family, [...unlinkFamilyChildrenIds(family), sourcePersonId]);
+        if (!Object.hasOwn(family.parentChildTypes || {}, parentChildRelationshipKey(parentId, sourcePersonId)))
+            setParentChildRelationshipType(family, parentId, sourcePersonId, sourceType);
     }
     unlinkSetFamilyChildren(family, [
         ...unlinkFamilyChildrenIds(family),
-        siblingPersonId
+        targetPersonId
     ]);
     validation.choice.parentIds.forEach(parentId =>
     {
         const existing = centralFamilyRecords().find(candidate => candidate.id !== family.id
-            && unlinkFamilyChildrenIds(candidate).includes(siblingPersonId)
+            && unlinkFamilyChildrenIds(candidate).includes(targetPersonId)
             && familyIncludesPerson(candidate, parentId));
-        setParentChildRelationshipType(family, parentId, siblingPersonId,
-            existing ? parentChildRelationshipType(existing, parentId, siblingPersonId) : detailType);
+        setParentChildRelationshipType(family, parentId, targetPersonId,
+            existing ? parentChildRelationshipType(existing, parentId, targetPersonId) : detailType);
     });
     syncFamilyPartnerAliases(family);
     family.updatedAt = 'Just now';
@@ -8625,6 +8720,8 @@ function addPersonPartnerChildrenMode(options = {})
 function addPersonConnectionDetailType(options = {})
 {
     const intent = addPersonCreateConnectionIntent(options);
+    if (intent.relationshipType === 'sibling' && !parentIdsForPerson(intent.anchorPersonId).length)
+        return 'Biological';
     if (intent.relationshipType === 'partner')
         return modalBackdrop?.querySelector('[data-add-person-relationship-type]')?.value
             || options.connectionDetailType || 'Married';
@@ -8947,9 +9044,6 @@ function commitAddPersonModalCreate(title, subtitle, options = {})
         death: deathDate
     });
     if (!newPerson) return null;
-    applyAddPersonAttachmentDrafts(
-        newPerson.id
-    );
     let connectionResult = null;
 
     if (connectionIntent.shouldConnect)
@@ -8968,7 +9062,16 @@ function commitAddPersonModalCreate(title, subtitle, options = {})
         {
             applyPartnerDetailsToCreatedConnection(connectionResult, relationshipValues);
         }
+        else
+        {
+            const index = sampleData.people.indexOf(newPerson);
+            if (index >= 0) sampleData.people.splice(index, 1);
+            showToast(connectionResult.message || 'This relationship cannot be created.');
+            return null;
+        }
     }
+
+    applyAddPersonAttachmentDrafts(newPerson.id);
 
     rebuildSampleEventsAndPruneSourceLinks();
 
@@ -11161,6 +11264,8 @@ function openAddPersonModal(title, subtitle, options = {})
         || (connectionIntent.relationshipType === 'parent'
             && parentIdsForPerson(connectionIntent.anchorPersonId).length >= 2
             ? 'Adoptive' : 'Biological');
+    const autoFatherForNewSibling = connectionIntent.relationshipType === 'sibling'
+        && !parentIdsForPerson(connectionIntent.anchorPersonId).length;
 
     const anchorGender = String(getPerson(connectionIntent.anchorPersonId)?.gender || '').toLowerCase();
     const relativeGender = isPartnerMode && connectionIntent.shouldConnect
@@ -11168,7 +11273,8 @@ function openAddPersonModal(title, subtitle, options = {})
         : getGenderForRelativeType(options.relativeType);
 
     const initialGender = options.gender
-        || (isEditMode ? editValues.gender : relativeGender)
+        || (isEditMode ? editValues.gender
+            : !connectionIntent.shouldConnect && state.activeModule === 'People' ? 'Male' : relativeGender)
         || 'Unknown';
 
     const initialStatus = options.livingStatus
@@ -11270,7 +11376,9 @@ function openAddPersonModal(title, subtitle, options = {})
                 <div class="add-person-facts-body add-person-family-body" id="addPersonFamilyBody" data-add-person-family-body hidden>
                   <div class="field add-person-select-field">
                     <label for="addPersonConnectionDetailType">${escapeHtml(t('Relationship type'))}</label>
-                    <select class="compact-select add-person-select" id="addPersonConnectionDetailType">${parentChildRelationshipTypeOptions(initialConnectionDetailType)}</select>
+                    <select class="compact-select add-person-select" id="addPersonConnectionDetailType" ${autoFatherForNewSibling ? 'disabled' : ''}>${autoFatherForNewSibling
+                        ? `<option value="Biological">${escapeHtml(t('Biological'))}</option>`
+                        : parentChildRelationshipTypeOptions(initialConnectionDetailType)}</select>
                     <span class="add-person-select-chevron" aria-hidden="true">${icon.chevron}</span>
                     <span class="add-person-family-error" data-add-person-detail-error hidden></span>
                   </div>
@@ -11363,6 +11471,31 @@ function selectAddPersonPossibleMatch(personId, options = {}, editPerson = null)
 {
     addPersonPossibleMatchState.selectedPersonId = personId || '';
     refreshAddPersonPossibleMatchesCard(options, editPerson);
+    const intent = addPersonCreateConnectionIntent(options);
+    if (intent.relationshipType !== 'sibling') return;
+    const selectedPersonId = addPersonPossibleMatchState.selectedPersonId;
+    const selector = modalBackdrop?.querySelector('[data-parent-family-selector]');
+    const currentValue = selector?.querySelector('#addPersonParentFamily')?.value || '';
+    const selection = defaultParentFamilySelection(intent.anchorPersonId, 'sibling',
+        currentValue, selectedPersonId);
+    if (selector)
+        selector.outerHTML = renderParentFamilySelector({
+            anchorPersonId: intent.anchorPersonId,
+            relationshipType: 'sibling',
+            otherPersonId: selectedPersonId,
+            selectedValue: selection,
+            controlId: 'addPersonParentFamily',
+            showSelectionLabel: true,
+            showHeading: false
+        });
+    const typeSelect = modalBackdrop?.querySelector('#addPersonConnectionDetailType');
+    if (!typeSelect) return;
+    const fixedBiological = !parentIdsForPerson(intent.anchorPersonId).length
+        && !parentIdsForPerson(selectedPersonId).length;
+    typeSelect.disabled = fixedBiological;
+    typeSelect.innerHTML = fixedBiological
+        ? `<option value="Biological">${escapeHtml(t('Biological'))}</option>`
+        : parentChildRelationshipTypeOptions('Biological');
 }
 
 function refreshAfterPossibleMatchConnection(anchorPersonId)
@@ -11409,12 +11542,18 @@ function commitAddPersonPossibleMatchAction(options = {})
         return;
     }
 
+    const chosenFamily = addPersonParentFamilySelection(options);
+    const familySelection = connectionIntent.relationshipType === 'sibling'
+        ? defaultParentFamilySelection(connectionIntent.anchorPersonId, 'sibling',
+            chosenFamily, selectedPerson.id)
+        : chosenFamily;
     const result = connectPeopleByRelationship({
         anchorPersonId: connectionIntent.anchorPersonId,
         relativePersonId: selectedPerson.id,
         relationshipType: connectionIntent.relationshipType,
-        parentFamilySelection: addPersonParentFamilySelection(options),
-        detailType: addPersonConnectionDetailType(options),
+        parentFamilySelection: familySelection,
+        detailType: modalBackdrop?.querySelector('#addPersonConnectionDetailType')?.value
+            || addPersonConnectionDetailType(options),
         partnerChildrenMode:
           addPersonPartnerChildrenMode(options)
     });
@@ -12100,6 +12239,10 @@ function saveEditPersonModalValues(personId)
     person.names.last = readAddPersonModalValue('#addPersonLastName');
     person.names.middle = readAddPersonModalValue('#addPersonMiddleName');
     person.names.maiden = readAddPersonModalValue('#addPersonMaidenName');
+
+    if ([person.names.first, person.names.middle, person.names.last].some(Boolean)
+        && person.meta?.placeholderRole === 'father')
+        delete person.meta.placeholderRole;
 
     rebuildPersonDisplayName(person);
 
