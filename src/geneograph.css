@@ -4444,6 +4444,92 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
     background: transparent;
 }
 
+.geneo-image-node-media.has-crop .photo-thumbnail .thumb-img {
+    inset: auto;
+    left: 50%;
+    top: 50%;
+    width: var(--geneo-crop-width);
+    height: var(--geneo-crop-height);
+    max-width: none;
+    max-height: none;
+    object-fit: fill;
+    transform: translate(-50%, -50%) translate(var(--geneo-crop-x), var(--geneo-crop-y)) scale(var(--geneo-crop-zoom));
+}
+
+.geneo-node-image:has(.geneo-image-crop-toolbar) .geneo-node-content {
+    position: relative;
+    z-index: 2;
+    cursor: grab;
+}
+
+.geneo-node-image:has(.geneo-image-crop-toolbar) .geneo-node-content:active {
+    cursor: grabbing;
+}
+
+.geneo-node-image:has(.geneo-image-crop-toolbar) :is(.geneo-port, .geneo-resize-handle, .geneo-image-layer-label) {
+    display: none;
+}
+
+.geneo-image-crop-preview {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: .32;
+}
+
+.geneo-image-crop-preview img {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: var(--geneo-crop-width);
+    height: var(--geneo-crop-height);
+    max-width: none;
+    max-height: none;
+    transform: translate(-50%, -50%) translate(var(--geneo-crop-x), var(--geneo-crop-y)) scale(var(--geneo-crop-zoom));
+}
+
+.geneo-image-crop-toolbar {
+    position: absolute;
+    z-index: 35;
+    top: calc(100% + 8px);
+    left: 50%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: max-content;
+    max-width: min(420px, calc(100vw - 24px));
+    padding: 6px;
+    color: var(--text-primary);
+    background: var(--surface-card);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-soft);
+    transform: translateX(-50%);
+}
+
+.geneo-image-crop-toolbar label,
+.geneo-image-crop-toolbar span { font-size: 12px; white-space: nowrap; }
+.geneo-image-crop-toolbar input { width: clamp(64px, 10vw, 130px); min-width: 0; }
+.geneo-image-crop-toolbar { box-sizing: border-box; }
+.geneo-image-crop-toolbar button {
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    background: var(--surface-card-hover);
+    color: var(--text-primary);
+    min-height: 32px;
+    padding: 0 9px;
+    cursor: pointer;
+}
+.geneo-image-crop-toolbar button:focus-visible,
+.geneo-image-crop-toolbar input:focus-visible { outline: 2px solid var(--brand-green-300); outline-offset: 2px; }
+
+@media (max-width: 600px) {
+    .geneo-image-crop-toolbar { gap: 4px; padding: 4px; }
+    .geneo-image-crop-toolbar button { padding: 0 6px; }
+    .geneo-image-crop-toolbar input { width: 68px; }
+}
+
 .geneo-image-missing-placeholder {
     width: 100%;
     height: 100%;
@@ -5218,6 +5304,19 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
     font-size: 13px;
     font-weight: 900;
     color: var(--geneo-node-text);
+}
+
+.geneo-node-panel .geneo-inline-editor {
+    display: block;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    padding: 0;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 900;
+    line-height: normal;
+    background: transparent;
 }
 
 .geneo-node-shape {
