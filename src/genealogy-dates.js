@@ -119,8 +119,8 @@ function dateLabelFromParts(year, month = '', day = '', language = 'en')
     const y = year ? String(year).padStart(4, '0') : '';
     const row = GENEALOGY_MONTHS.find(item => Number(item[0]) === Number(month));
     const m = row ? ru ? day ? row[5] : row[4] : day || year ? row[1] : row[2] : '';
-    if (m) return [day ? y ? String(day).padStart(2, '0') : String(Number(day)) : '', m, y].filter(Boolean).join(' ') + (!y ? ru ? ' (год неизвестен)' : ' (year unknown)' : '');
-    if (day) return `${ru ? 'День' : 'Day'} ${Number(day)}${y ? `, ${y} (${ru ? 'месяц неизвестен' : 'month unknown'})` : ''}`;
+    if (m) return [day ? y ? String(day).padStart(2, '0') : String(Number(day)) : '', m, y].filter(Boolean).join(' ');
+    if (day) return `${ru ? 'День' : 'Day'} ${Number(day)}${y ? `, ${y}` : ''}`;
     return y;
 }
 
@@ -135,7 +135,7 @@ function parseBaseGenealogyDate(text, options = {})
     else if ((match = raw.match(/^(\d{1,2})[./](\d{1,2})$/))) parts = genealogyDateParts(null, match[2], match[1], options.calendar);
     else if ((match = raw.match(/^(?:day|день|число)\s+(\d{1,2})(?:\s+(?:year|год)\s+(\d{1,4}))?$/i))) parts = genealogyDateParts(match[2], null, match[1], options.calendar);
     else if ((match = raw.match(/^(?:year|год)\s+(\d{1,4})$/i))) parts = genealogyDateParts(match[1]);
-    else if ((match = raw.match(/^(?:day|день)\s+(\d{1,2}),\s+(\d{4})\s+\((?:month unknown|месяц неизвестен)\)$/i))) parts = genealogyDateParts(match[2], null, match[1], options.calendar);
+    else if ((match = raw.match(/^(?:day|день)\s+(\d{1,2}),\s+(\d{4})(?:\s+\((?:month unknown|месяц неизвестен)\))?$/i))) parts = genealogyDateParts(match[2], null, match[1], options.calendar);
     else if ((match = raw.match(/^(\d{1,2})\s+([\p{L}.]+)(?:\s+(\d{1,4})(?:\s*г\.?)?)?$/u)))
     {
         const month = monthByName(match[2]);

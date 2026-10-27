@@ -4,6 +4,8 @@ const PROJECT_CONTINUATION_STORAGE_KEY = 'geneograph.projectContinuation';
 const RU_UI_SHARED = Object.freeze({
     'Exact': 'Точно',
     'Choose a full date': 'Выбрать полную дату',
+    'Choose From date': 'Выбрать дату начала',
+    'Choose To date': 'Выбрать дату окончания',
     'First date': 'Первая дата',
     'Second date': 'Вторая дата',
     'Previous month': 'Предыдущий месяц',

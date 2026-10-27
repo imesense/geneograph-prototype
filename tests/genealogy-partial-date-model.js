@@ -31,6 +31,10 @@ for (const input of ['14 Feb', 'February', 'day 14', 'day 14 year 1900', '14 ф�
 assert.equal(run(`parseGenealogyDateText('14')`).ambiguity, 14);
 assert.equal(run(`parseGenealogyDateText('1900')`).value.dateType, 'Exact date');
 assert.equal(run(`parseGenealogyDateText('Unknown')`).value.state, 'unknown');
+assert.equal(run(`formatGenealogyDateLabel({first:{year:null,month:2,day:14},state:'known',dateType:'Exact date'})`), '14 Feb');
+assert.equal(run(`formatGenealogyDateStartLabel({first:{year:null,month:2,day:14},state:'known',dateType:'Exact date'})`), '14 Feb');
+assert.equal(run(`parseGenealogyDateText('Day 14, 1900')`).value.first.month, null);
+assert.equal(run(`parseGenealogyDateText('День 14, 1900')`).value.first.month, null);
 assert.equal(run(`parseGenealogyDateText('')`).value.state, 'empty');
 assert.equal(run(`parseGenealogyDateText('31 February')`).valid, false);
 assert.equal(run(`parseGenealogyDateText('29 February')`).valid, true);

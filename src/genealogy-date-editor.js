@@ -17,8 +17,15 @@ function closeGenealogyDateEditor()
 function updateGenealogyDateEditorVisibility(popover)
 {
     const between = popover.querySelector('[data-editor-type]').value === 'Between';
+    popover.querySelector('[data-first-date-label]').hidden = !between;
     popover.querySelector('.genealogy-date-second-date').hidden = !between;
-    popover.querySelector('[data-grid-target]').hidden = !between;
+    const firstToggle = popover.querySelector('[data-calendar-toggle=""]');
+    const firstLabel = t(between ? 'Choose From date' : 'Choose a full date');
+    firstToggle.setAttribute('aria-label', firstLabel);
+    firstToggle.title = firstLabel;
+    const target = popover.querySelector('[data-grid-target]');
+    target.hidden = !between;
+    if (!between) target.value = '';
     popover.querySelector('.genealogy-calendar-nav')?.classList.toggle('has-endpoint', between);
 }
 
@@ -51,21 +58,21 @@ function openGenealogyDateEditor(anchor, fieldId)
     popover.setAttribute('role', 'dialog');
     popover.setAttribute('aria-label', t('Date details'));
     const componentMonthOptions = selected => `<option value="">${escapeHtml(t('Month'))}</option>${GENEALOGY_MONTHS.map(([value, english, , russian]) => `<option value="${value}" ${value === selected ? 'selected' : ''}>${value} ${state.language === 'ru' ? russian : english}</option>`).join('')}`;
-    const row = suffix => `<div class="genealogy-date-parts-row ${suffix ? '' : 'has-calendar-toggle'} full">${['day', 'month', 'year'].map(part =>
+    const row = suffix => `<div class="genealogy-date-parts-row has-calendar-toggle full">${['day', 'month', 'year'].map(part =>
     {
         const id = `dateEditor${part}${suffix}`;
         return `<div class="genealogy-date-part-field"><label for="${id}">${escapeHtml(t(part === 'day' ? 'Day' : part === 'month' ? 'Month' : 'Year'))}</label>${part === 'month'
             ? `<select id="${id}" data-editor-month${suffix}>${componentMonthOptions(parts[`month${suffix}`])}</select>`
             : `<input id="${id}" data-editor-${part}${suffix} inputmode="numeric" value="${escapeHtml(parts[`${part}${suffix}`])}" placeholder="${part === 'day' ? 'DD' : 'YYYY'}">`}</div>`;
-    }).join('')}${suffix ? '' : `<button type="button" class="genealogy-calendar-toggle" data-calendar-toggle aria-label="${escapeHtml(t('Choose a full date'))}" title="${escapeHtml(t('Choose a full date'))}" aria-expanded="false" aria-controls="dateEditorCalendarPanel">${icon.calendar}</button>`}</div>`;
+    }).join('')}<button type="button" class="genealogy-calendar-toggle" data-calendar-toggle="${suffix}" aria-label="${escapeHtml(t(suffix ? 'Choose To date' : 'Choose From date'))}" title="${escapeHtml(t(suffix ? 'Choose To date' : 'Choose From date'))}" aria-expanded="false" aria-controls="dateEditorCalendarPanel">${icon.calendar}</button></div>`;
     popover.innerHTML = `<div class="genealogy-date-popover-header"><strong>${escapeHtml(t('Date details'))}</strong><button class="close-button" type="button" data-genealogy-date-close aria-label="${escapeHtml(t('Close date details'))}">${icon.close}</button></div>
         <div class="genealogy-date-editor-grid"><div class="genealogy-date-part-field full"><label for="dateEditorSmart">${escapeHtml(t('Smart date'))}</label><input id="dateEditorSmart" data-editor-smart value="${escapeHtml(liveText || formatGenealogyDateLabel(model))}" placeholder="${escapeHtml(t('e.g. 1900, February, 14 Feb'))}"></div>
         <div class="genealogy-date-part-field"><label for="dateEditorType">${escapeHtml(t('Date type'))}</label><select id="dateEditorType" data-editor-type>${genealogyDateTypeOptions(type)}</select></div>
         <div class="genealogy-date-part-field"><label for="dateEditorCalendar">${escapeHtml(t('Calendar'))}</label><select id="dateEditorCalendar" data-editor-calendar>${GENEALOGY_CALENDARS.map(value => `<option value="${value}" ${model.calendar === value ? 'selected' : ''}>${escapeHtml(t(value))}</option>`).join('')}</select></div>
-        ${row('')}<div class="genealogy-date-second-date full" hidden><strong>${escapeHtml(t('Second date'))}</strong>${row('2')}</div>
+        <div class="genealogy-date-first-date full"><strong data-first-date-label hidden>${escapeHtml(t('From'))}</strong>${row('')}</div><div class="genealogy-date-second-date full" hidden><strong>${escapeHtml(t('To'))}</strong>${row('2')}</div>
         <div class="full genealogy-date-validation" role="status" data-editor-validation></div>
         <div class="full genealogy-calendar" id="dateEditorCalendarPanel" hidden><div data-date-grid></div></div></div>
-        <div class="genealogy-date-actions"><button class="button secondary" type="button" data-date-clear>${escapeHtml(t('Clear'))}</button><button class="button secondary" type="button" data-date-unknown>${escapeHtml(t('Date unknown'))}</button><button class="button secondary" type="button" data-genealogy-date-close>${escapeHtml(t('Cancel'))}</button><button class="button primary" type="button" data-genealogy-date-apply>${escapeHtml(t('Apply'))}</button></div>`;
+        <div class="genealogy-date-actions"><button class="button secondary" type="button" data-date-clear>${escapeHtml(t('Clear'))}</button><button class="button secondary" type="button" data-genealogy-date-close>${escapeHtml(t('Cancel'))}</button><button class="button primary" type="button" data-genealogy-date-apply>${escapeHtml(t('Apply'))}</button></div>`;
     document.body.appendChild(popover);
     genealogyDatePopover = popover;
     let last = 'smart';
@@ -75,6 +82,13 @@ function openGenealogyDateEditor(anchor, fieldId)
     const fromSmart = () => parseGenealogyDateTextAsType(get('smart').value, get('type').value,
         { calendar: get('calendar').value, date2: get('type').value === 'Between' ? dateValueFromParts(get('year2').value, get('month2').value, get('day2').value) : '' });
     let lastParsed = null;
+    const syncCalendarButtons = () =>
+    {
+        const target = popover.querySelector('[data-grid-target]')?.value || '';
+        const open = !popover.querySelector('.genealogy-calendar').hidden;
+        popover.querySelectorAll('[data-calendar-toggle]').forEach(button =>
+            button.setAttribute('aria-expanded', String(open && button.dataset.calendarToggle === target)));
+    };
     const show = parsed =>
     {
         lastParsed = parsed;
@@ -92,6 +106,7 @@ function openGenealogyDateEditor(anchor, fieldId)
             else get('smart').value = formatGenealogyDateLabel(parsed.value);
         }
         updateGenealogyDateEditorVisibility(popover);
+        syncCalendarButtons();
         return parsed;
     };
     get('smart').addEventListener('input', () => { last = 'smart'; show(fromSmart()); });
@@ -103,8 +118,16 @@ function openGenealogyDateEditor(anchor, fieldId)
         if (toggle)
         {
             const calendarPanel = popover.querySelector('.genealogy-calendar');
-            calendarPanel.hidden = !calendarPanel.hidden;
-            toggle.setAttribute('aria-expanded', String(!calendarPanel.hidden));
+            const target = popover.querySelector('[data-grid-target]');
+            const endpoint = get('type').value === 'Between' ? toggle.dataset.calendarToggle : '';
+            if (!calendarPanel.hidden && target.value === endpoint) calendarPanel.hidden = true;
+            else
+            {
+                calendarPanel.hidden = false;
+                target.value = endpoint;
+                focusCalendarDate(endpoint);
+            }
+            syncCalendarButtons();
         }
         const resolve = event.target.closest('[data-date-resolve]');
         if (resolve)
@@ -118,9 +141,9 @@ function openGenealogyDateEditor(anchor, fieldId)
             else { get('smart').value = `${resolve.dataset.dateResolve} ${resolve.dataset.number}`; last = 'smart'; show(fromSmart()); }
             get('smart').focus();
         }
-        if (event.target.closest('[data-date-clear], [data-date-unknown]'))
+        if (event.target.closest('[data-date-clear]'))
         {
-            get('smart').value = event.target.closest('[data-date-unknown]') ? 'Unknown' : '';
+            get('smart').value = '';
             last = 'smart'; show(fromSmart());
         }
     });
@@ -134,6 +157,12 @@ function openGenealogyDateEditor(anchor, fieldId)
     });
     const today = new Date();
     let gridYear = model.first.year || today.getFullYear(), gridMonth = model.first.month || today.getMonth() + 1;
+    const focusCalendarDate = endpoint =>
+    {
+        gridYear = Number(get(`year${endpoint}`).value) || Number(get('year').value) || today.getFullYear();
+        gridMonth = Number(get(`month${endpoint}`).value) || Number(get('month').value) || today.getMonth() + 1;
+        renderGrid();
+    };
     const shiftMonth = delta =>
     {
         gridMonth += delta;
@@ -147,12 +176,14 @@ function openGenealogyDateEditor(anchor, fieldId)
         const selectedEndpoint = grid.querySelector('[data-grid-target]')?.value || '';
         const first = ((genealogyDayNumber(gridYear, gridMonth, 1, calendar) % 7) + 7) % 7;
         const names = state.language === 'ru' ? ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'] : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-        grid.innerHTML = `<div class="genealogy-calendar-nav"><select data-grid-target aria-label="${escapeHtml(t('Date'))}"><option value="">${escapeHtml(state.language === 'ru' ? '1-я дата' : t('First date'))}</option><option value="2" ${selectedEndpoint === '2' ? 'selected' : ''}>${escapeHtml(state.language === 'ru' ? '2-я дата' : t('Second date'))}</option></select><button type="button" class="icon-button" data-grid-month="-1" aria-label="${escapeHtml(t('Previous month'))}">${icon.chevron}</button><select data-grid-month-select aria-label="${escapeHtml(t('Month'))}">${genealogyMonthOptions(gridMonth)}</select><input data-grid-year inputmode="numeric" aria-label="${escapeHtml(t('Year'))}" value="${gridYear}"><button type="button" class="icon-button" data-grid-month="1" aria-label="${escapeHtml(t('Next month'))}">${icon.chevron}</button></div><div class="genealogy-calendar-days" role="grid" aria-label="${escapeHtml(`${monthShort(gridMonth)} ${gridYear}`)}">${names.map(name => `<span role="columnheader">${name}</span>`).join('')}${'<span aria-hidden="true"></span>'.repeat(first)}${Array.from({ length: genealogyMonthDays(gridYear, gridMonth, calendar) }, (_, index) => index + 1).map(day => `<button type="button" role="gridcell" tabindex="${day === (focusDay || 1) ? 0 : -1}" data-grid-day="${day}" aria-label="${escapeHtml(dateLabelFromParts(gridYear, gridMonth, day, state.language))}">${day}</button>`).join('')}</div>`;
+        grid.innerHTML = `<div class="genealogy-calendar-nav"><select data-grid-target aria-label="${escapeHtml(t('Date'))}"><option value="">${escapeHtml(t('From'))}</option><option value="2" ${selectedEndpoint === '2' ? 'selected' : ''}>${escapeHtml(t('To'))}</option></select><button type="button" class="icon-button" data-grid-month="-1" aria-label="${escapeHtml(t('Previous month'))}">${icon.chevron}</button><select data-grid-month-select aria-label="${escapeHtml(t('Month'))}">${genealogyMonthOptions(gridMonth)}</select><input data-grid-year inputmode="numeric" aria-label="${escapeHtml(t('Year'))}" value="${gridYear}"><button type="button" class="icon-button" data-grid-month="1" aria-label="${escapeHtml(t('Next month'))}">${icon.chevron}</button></div><div class="genealogy-calendar-days" role="grid" aria-label="${escapeHtml(`${monthShort(gridMonth)} ${gridYear}`)}">${names.map(name => `<span role="columnheader">${name}</span>`).join('')}${'<span aria-hidden="true"></span>'.repeat(first)}${Array.from({ length: genealogyMonthDays(gridYear, gridMonth, calendar) }, (_, index) => index + 1).map(day => `<button type="button" role="gridcell" tabindex="${day === (focusDay || 1) ? 0 : -1}" data-grid-day="${day}" aria-label="${escapeHtml(dateLabelFromParts(gridYear, gridMonth, day, state.language))}">${day}</button>`).join('')}</div>`;
         updateGenealogyDateEditorVisibility(popover);
+        syncCalendarButtons();
         if (focusDay) grid.querySelector(`[data-grid-day="${focusDay}"]`)?.focus();
     };
     popover.querySelector('[data-date-grid]').addEventListener('change', event =>
     {
+        if (event.target.hasAttribute('data-grid-target')) { focusCalendarDate(event.target.value); return; }
         if (event.target.hasAttribute('data-grid-year'))
         {
             const year = Number(event.target.value);

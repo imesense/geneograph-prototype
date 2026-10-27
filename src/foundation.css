@@ -3206,7 +3206,7 @@ button.app-chip:disabled,
 .genealogy-date-choices { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
 .genealogy-calendar[hidden] { display: none; }
 .genealogy-calendar-nav { display: grid; grid-template-columns: 36px minmax(0, 1fr) 72px 36px; align-items: center; gap: 6px; margin: 4px 0 10px; }
-.genealogy-calendar-nav.has-endpoint { grid-template-columns: minmax(88px, 112px) 36px minmax(0, 1fr) 72px 36px; }
+.genealogy-calendar-nav.has-endpoint { grid-template-columns: 72px 36px minmax(0, 1fr) 72px 36px; }
 .genealogy-calendar-nav input, .genealogy-calendar-nav select { min-width: 0; width: 100%; min-height: 36px; background: var(--surface-input); color: var(--text-primary); border: 1px solid var(--border-default); border-radius: var(--radius-sm); padding: 6px; }
 .genealogy-calendar-nav [hidden] { display: none; }
 .genealogy-calendar-nav .icon-button { width: 36px; height: 36px; display: grid; place-items: center; padding: 0; border: 1px solid var(--border-strong); border-radius: 6px; background: var(--surface-input); color: var(--text-secondary); cursor: pointer; }
@@ -3224,10 +3224,10 @@ button.app-chip:disabled,
     .genealogy-date-popover .genealogy-date-parts-row { grid-template-columns: minmax(44px, .55fr) minmax(0, 1.4fr) minmax(60px, .8fr); gap: 6px; }
     .genealogy-date-popover .genealogy-date-parts-row.has-calendar-toggle { grid-template-columns: minmax(42px, .55fr) minmax(0, 1.4fr) minmax(56px, .8fr) 40px; }
     .genealogy-calendar-nav { gap: 4px; grid-template-columns: 36px minmax(0, 1fr) 52px 36px; }
-    .genealogy-calendar-nav.has-endpoint { grid-template-columns: 80px 32px minmax(0, 1fr) 48px 32px; }
+    .genealogy-calendar-nav.has-endpoint { grid-template-columns: 56px 32px minmax(0, 1fr) 48px 32px; }
     .genealogy-calendar-nav.has-endpoint .icon-button { width: 32px; }
     .genealogy-calendar-nav select, .genealogy-calendar-nav input { padding-inline: 4px; font-size: 12px; }
-    .genealogy-date-popover .genealogy-date-actions { flex-wrap: wrap; }
+    .genealogy-date-popover .genealogy-date-actions { gap: 6px; }
     .genealogy-calendar-days button { min-height: 44px; }
 }
 
@@ -3243,6 +3243,9 @@ button.app-chip:disabled,
     min-width: 0;
 }
 .genealogy-date-parts-row.has-calendar-toggle { grid-template-columns: minmax(60px, 84px) minmax(0, 1fr) minmax(78px, 104px) 40px; }
+.genealogy-date-first-date, .genealogy-date-second-date { display: grid; gap: 8px; }
+.genealogy-date-first-date > strong, .genealogy-date-second-date > strong { color: var(--text-secondary); font-size: 12px; font-weight: 700; }
+.genealogy-date-first-date > strong[hidden] { display: none; }
 .genealogy-calendar-toggle { display: grid; place-items: center; width: 40px; height: 40px; padding: 0; border: 1px solid var(--border-default); border-radius: var(--radius-sm); background: var(--surface-input); color: var(--text-secondary); cursor: pointer; }
 .genealogy-calendar-toggle:hover, .genealogy-calendar-toggle[aria-expanded="true"] { color: var(--text-primary); border-color: var(--border-strong); background: var(--surface-selected); }
 .genealogy-calendar-toggle:focus-visible { outline: 2px solid var(--brand-green-500); outline-offset: 2px; }
@@ -3292,7 +3295,14 @@ button.app-chip:disabled,
     justify-content: flex-end;
     gap: var(--space-2);
     margin-top: var(--space-4);
+    position: sticky;
+    bottom: 0;
+    z-index: 1;
+    padding-top: var(--space-2);
+    background: var(--surface-card);
 }
+.genealogy-date-actions [data-date-clear] { margin-right: auto; padding-inline: 4px; border-color: transparent; background: transparent; color: var(--text-secondary); }
+.genealogy-date-actions [data-date-clear]:hover { color: var(--text-primary); background: var(--surface-selected); }
 
 @media (max-width: 720px) {
     .genealogy-date-controls {
