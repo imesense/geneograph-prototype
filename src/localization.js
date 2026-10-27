@@ -9168,6 +9168,11 @@ function setLanguage(
         return;
     }
 
+    if (rerender && state.projectOpen && state.activeModule === 'Family Tree')
+    {
+        captureTreeCanvasScroll();
+    }
+
     state.language =
         next;
 

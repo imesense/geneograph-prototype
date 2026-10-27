@@ -23,6 +23,8 @@ const treeZoomRuntime = {
     clientY: 0
 };
 
+let treeCardLastClick = null;
+
 function treeViewportPointAtClient(clientX, clientY)
 {
     const canvas = main.querySelector('.tree-canvas');
@@ -835,6 +837,24 @@ function renderFamilyTree()
         </div>
       `;
     bindTreeCanvasPan();
+    main.querySelector('.tree-canvas')?.addEventListener('click', event =>
+    {
+        if (event.target.closest('button, a, input, select, textarea, [contenteditable="true"]')
+            || event.detail < 2 && !event.target.closest('.tree-person-card'))
+        {
+            treeCardLastClick = null;
+            return;
+        }
+        const previous = treeCardLastClick;
+        if (event.detail < 2 || !previous || previous.projectId !== currentFamilyTreeProjectId()
+            || performance.now() - previous.time > 500
+            || Math.hypot(event.clientX - previous.x, event.clientY - previous.y) > 6) return;
+        // Selection rerenders the cards before the second click can reach its original target.
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        treeCardLastClick = null;
+        setTreeFocusPerson(previous.personId);
+    }, true);
     main.querySelector('.tree-canvas')?.addEventListener('wheel', queueTreeWheelZoom, { passive: false });
     main
         .querySelectorAll('.tree-person-card[data-person-id]')
@@ -853,8 +873,24 @@ function renderFamilyTree()
 
             card.addEventListener('click', event =>
             {
-                if (event.target.closest('button')) return;
+                if (event.target.closest('button, a, input, select, textarea, [contenteditable="true"]'))
+                {
+                    treeCardLastClick = null;
+                    return;
+                }
+                const projectId = currentFamilyTreeProjectId();
+                treeCardLastClick = event.detail > 0 ? {
+                    projectId, personId: card.dataset.personId, time: performance.now(), x: event.clientX, y: event.clientY
+                } : null;
                 selectCard();
+            });
+
+            card.addEventListener('dblclick', event =>
+            {
+                if (event.target.closest('button, a, input, select, textarea, [contenteditable="true"]')) return;
+                event.preventDefault();
+                treeCardLastClick = null;
+                setTreeFocusPerson(card.dataset.personId);
             });
 
             card.addEventListener('keydown', event =>

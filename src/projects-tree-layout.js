@@ -4475,8 +4475,15 @@ function refreshTreeFamilyAnchors(families, positionedById, familyAnchors)
     });
 }
 
+let treeCanvasScrollRestoreFrame = null;
+
 function centerTreeOnPerson(personId = treeProjectViewState().focusPersonId)
 {
+    if (treeCanvasScrollRestoreFrame !== null)
+    {
+        cancelAnimationFrame(treeCanvasScrollRestoreFrame);
+        treeCanvasScrollRestoreFrame = null;
+    }
     const canvas = main.querySelector('.tree-canvas');
     const card = main.querySelector(`.tree-person-card[data-person-id="${CSS.escape(personId)}"]`);
     if (!canvas || !card) return;
@@ -4544,8 +4551,12 @@ function restoreTreeCanvasScroll(scroll)
 {
     if (!scroll) return;
 
-    requestAnimationFrame(() =>
+    if (treeCanvasScrollRestoreFrame !== null) cancelAnimationFrame(treeCanvasScrollRestoreFrame);
+    const projectId = currentFamilyTreeProjectId();
+    treeCanvasScrollRestoreFrame = requestAnimationFrame(() =>
     {
+        treeCanvasScrollRestoreFrame = null;
+        if (state.activeModule !== 'Family Tree' || currentFamilyTreeProjectId() !== projectId) return;
         const canvas = main.querySelector('.tree-canvas');
         if (!canvas) return;
 
