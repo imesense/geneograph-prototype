@@ -9,7 +9,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
         ? { executablePath: process.env.GENEO_BROWSER_EXECUTABLE } : {}) });
     try
     {
-        for (const [width, language] of [[390, 'ru'], [1280, 'en']])
+        for (const [width, language] of [[320, 'ru'], [390, 'ru'], [1280, 'en']])
         {
             const page = await browser.newPage({ viewport: { width, height: 780 } });
             const errors = [];
@@ -28,6 +28,46 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
 
             await page.evaluate(() => openAddPersonModal('Add person', 'Create a new person in this project'));
             const first = page.locator('#addPersonFirstName');
+            assert.deepEqual(await page.locator('.add-person-name-fields input').evaluateAll(inputs =>
+                inputs.map(input => input.id)),
+            ['addPersonFirstName', 'addPersonMiddleName', 'addPersonLastName', 'addPersonMaidenName']);
+            const identityGroups = await page.locator('.add-person-demographics, .add-person-name-fields')
+                .evaluateAll(groups => groups.map(group => ({
+                    top: group.getBoundingClientRect().top,
+                    bottom: group.getBoundingClientRect().bottom,
+                    background: getComputedStyle(group).backgroundColor
+                })));
+            assert.ok(identityGroups[1].top - identityGroups[0].bottom >= 20);
+            assert.equal(identityGroups[0].background, 'rgba(0, 0, 0, 0)');
+            assert.equal(await page.locator('#addPersonMaidenName').isVisible(), false);
+            await page.locator('#addPersonGender').selectOption('Female');
+            assert.equal(await page.locator('#addPersonMaidenName').isVisible(), true);
+            const namePositions = await page.locator('.add-person-name-fields input').evaluateAll(inputs =>
+                Object.fromEntries(inputs.map(input => [input.id, {
+                    top: Math.round(input.getBoundingClientRect().top),
+                    left: Math.round(input.getBoundingClientRect().left)
+                }])));
+            assert.ok(namePositions.addPersonFirstName.top < namePositions.addPersonMiddleName.top);
+            if (width > 600)
+            {
+                assert.equal(namePositions.addPersonFirstName.top, namePositions.addPersonLastName.top);
+                assert.equal(namePositions.addPersonMiddleName.top, namePositions.addPersonMaidenName.top);
+            }
+            else
+            {
+                assert.ok(namePositions.addPersonLastName.top < namePositions.addPersonMiddleName.top);
+                assert.ok(namePositions.addPersonMiddleName.top < namePositions.addPersonMaidenName.top);
+            }
+            await first.focus();
+            assert.equal(await page.evaluate(() => document.activeElement?.id), 'addPersonFirstName');
+            for (const id of ['addPersonMiddleName', 'addPersonLastName', 'addPersonMaidenName'])
+            {
+                await page.keyboard.press('Tab');
+                assert.equal(await page.evaluate(() => document.activeElement?.id), id);
+            }
+            await page.keyboard.press('Shift+Tab');
+            assert.equal(await page.evaluate(() => document.activeElement?.id), 'addPersonLastName');
+            await page.locator('#addPersonGender').selectOption('Unknown');
             await first.fill('Test name');
             await first.fill('');
             await page.keyboard.press('Escape');
@@ -54,6 +94,9 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
 
             await page.evaluate(() => openEditPersonModal(getPeople(currentProjectId())[0].id));
             assert.equal(await page.locator('.add-person-modal').count(), 1);
+            assert.deepEqual(await page.locator('.add-person-name-fields input').evaluateAll(inputs =>
+                inputs.map(input => input.id)),
+            ['addPersonFirstName', 'addPersonMiddleName', 'addPersonLastName', 'addPersonMaidenName']);
             const original = await page.locator('#addPersonFirstName').inputValue();
             await page.locator('#addPersonFirstName').fill(`${original} changed`);
             await page.locator('.add-person-modal [data-close]').last().click();

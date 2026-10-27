@@ -18,6 +18,8 @@ const RU_UI_SHARED = Object.freeze({
     'Choose whether this number is a day or a year.': 'Укажите, что означает это число: день или год.',
     'Enter the first date.': 'Введите первую дату.',
     'e.g. 1900, February, 14 Feb': 'например, 1900, февраль, 14 февраля',
+    'e.g. 1900, 14 Feb, 1900 - 50': 'например, 1900, 14 февр., 1900 - 50',
+    'The calculated year must be between 1 and 9999.': 'Вычисленный год должен быть от 1 до 9999.',
     'The end date is earlier than the start date.': 'Дата окончания раньше даты начала.',
     'The death date is earlier than the birth date.': 'Дата смерти раньше даты рождения.',
     '{person} connected as parent.': 'Родственная связь добавлена: «{person}» — родитель.',
@@ -569,6 +571,8 @@ const RU_UI_SHARED = Object.freeze({
     'Both parents': 'Оба родителя',
     'Only': 'Только',
     'Shared parent(s)': 'Общие родители',
+    'Family connection': 'Семейная связь',
+    'Other parent': 'Второй родитель',
     'Other parent for this child': 'Другой родитель ребёнка',
     'Biological parent unavailable': 'Биологический родитель недоступен',
     'This person already has two biological parents or a biological parent of the same gender. Choose another relationship type.': 'У этого человека уже указаны два биологических родителя или биологический родитель того же пола. Выберите другой тип родства.',
@@ -1099,8 +1103,8 @@ const RU_UI_FAMILY_TREE = {
     'The new sibling will be added to this existing parent family.':
         'Новый брат или сестра будет добавлен в эту родительскую семью.',
 
-    'This determines which parent or partner family receives the child.':
-        'Здесь выбирается семья родителя или партнёров, в которую будет добавлен ребёнок.',
+    'Choose another parent, or keep this child with one parent.':
+        'Выберите второго родителя или оставьте ребёнка с одним родителем.',
 
     'Choose the parent family the siblings share.':
         'Выберите общую родительскую семью для братьев и сестёр.',

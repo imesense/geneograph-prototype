@@ -7622,7 +7622,8 @@ function renderParentFamilySelector({
     relationshipType,
     selectedValue = '',
     controlId = 'addPersonParentFamily',
-    showSelectionLabel = true
+    showSelectionLabel = true,
+    showHeading = true
 } = {})
 {
     const type =
@@ -7654,18 +7655,20 @@ function renderParentFamilySelector({
     const headingId =
         `${controlId}Heading`;
 
-    const selectionLabel = isSibling ? t('Shared parent(s)') : t('Other parent for this child');
+    const selectionLabel = showHeading
+        ? t(isSibling ? 'Shared parent(s)' : 'Other parent for this child')
+        : t(isSibling ? 'Shared parents' : 'Other parent');
 
     return `
         <section
           class="add-person-parent-family"
           data-parent-family-selector>
 
-          <h3
+          ${showHeading ? `<h3
             class="form-section-title"
             id="${escapeHtml(headingId)}">
             ${escapeHtml(isSibling ? t('Shared parent(s)') : t('Other parent for this child'))}
-          </h3>
+          </h3>` : ''}
 
           <div class="field">
             ${
@@ -7724,13 +7727,14 @@ function renderParentFamilySelector({
                 aria-hidden="true">
                 ${icon.chevron}
               </span>
+              ${showHeading ? '' : '<span class="add-person-family-error" data-add-person-family-error hidden></span>'}
             </div>
 
             <span class="field-help">
               ${
                     isSibling
                         ? 'The new sibling will be added to this existing parent family.'
-                        : 'This determines which parent or partner family receives the child.'
+                        : 'Choose another parent, or keep this child with one parent.'
                 }
             </span>
           </div>
@@ -8919,8 +8923,9 @@ function commitAddPersonModalCreate(title, subtitle, options = {})
         && newPersonBiologicalConflict(connectionIntent, parentFamilySelection,
             modalBackdrop.querySelector('#addPersonGender')?.value))
     {
-        showToast(t('This connection cannot be biological. Choose another relationship type.'));
-        modalBackdrop.querySelector('#addPersonConnectionDetailType')?.focus({ preventScroll: true });
+        const message = t('This connection cannot be biological. Choose another relationship type.');
+        showToast(message);
+        showAddPersonFamilyError('#addPersonConnectionDetailType', message);
         return null;
     }
     const familySelectionValidation = validateParentFamilySelection({
@@ -8932,9 +8937,7 @@ function commitAddPersonModalCreate(title, subtitle, options = {})
     if (!familySelectionValidation.ok)
     {
         showToast(familySelectionValidation.message);
-        modalBackdrop.querySelector('#addPersonParentFamily')?.focus({
-            preventScroll: true
-        });
+        showAddPersonFamilyError('#addPersonParentFamily', t(familySelectionValidation.message));
         return null;
     }
 
@@ -11174,7 +11177,7 @@ function openAddPersonModal(title, subtitle, options = {})
         <div class="modal-header add-person-header"><div class="add-person-icon">${icon.people}</div><div><h2 id="addPersonTitle">${escapeHtml(title)}</h2><p>${escapeHtml(subtitle)}</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div>
         <div class="modal-body add-person-grid">
           <div class="form-grid">
-            <section><h3 class="form-section-title">Identity</h3><div class="two-col-form">
+            <section><h3 class="form-section-title">Identity</h3><div class="two-col-form add-person-demographics">
               <div class="field add-person-select-field">
                 <label for="addPersonGender">Gender</label>
                 <select class="compact-select add-person-select" id="addPersonGender">
@@ -11185,14 +11188,10 @@ function openAddPersonModal(title, subtitle, options = {})
                 <span class="add-person-select-chevron" aria-hidden="true">${icon.chevron}</span>
               </div>
               <div class="field add-person-status-field"><label>Living status</label><button class="add-person-status-button" type="button" id="addPersonStatusButton" aria-haspopup="listbox" aria-expanded="false"><span class="add-person-status-current"><span class="add-person-status-dot ${statusDotClass(initialStatus)}"></span><span id="addPersonStatusLabel">${initialStatus}</span></span><span class="add-person-status-chevron" aria-hidden="true">${icon.chevron}</span></button><input type="hidden" id="addPersonLivingStatus" value="${initialStatus}"><div class="add-person-status-menu" id="addPersonStatusMenu" role="listbox" hidden>${['Living','Deceased','Unknown'].map(status => `<button class="add-person-status-option ${status === initialStatus ? 'active' : ''}" type="button" role="option" aria-selected="${status === initialStatus ? 'true' : 'false'}" data-status-value="${status}"><span><span class="add-person-status-dot ${statusDotClass(status)}"></span>${status}</span><span data-status-check>${status === initialStatus ? icon.check : ''}</span></button>`).join('')}</div></div>
+            </div><div class="two-col-form add-person-name-fields">
               <div class="field">
                 <label for="addPersonFirstName">First name</label>
                 <input id="addPersonFirstName" data-source-value="${escapeHtml(editValues.firstName)}" value="${escapeHtml(localizedDataFieldValue(editValues.firstName))}" placeholder="e.g. Silver">
-              </div>
-
-              <div class="field">
-                <label for="addPersonLastName">Last name</label>
-                <input id="addPersonLastName" data-source-value="${escapeHtml(editValues.lastName)}" value="${escapeHtml(localizedDataFieldValue(editValues.lastName))}" placeholder="e.g. Whiskerfield">
               </div>
 
               <div class="field">
@@ -11200,18 +11199,17 @@ function openAddPersonModal(title, subtitle, options = {})
                 <input id="addPersonMiddleName" data-source-value="${escapeHtml(editValues.middleName)}" value="${escapeHtml(localizedDataFieldValue(editValues.middleName))}" placeholder="e.g. Purrington">
               </div>
 
+              <div class="field">
+                <label for="addPersonLastName">Last name</label>
+                <input id="addPersonLastName" data-source-value="${escapeHtml(editValues.lastName)}" value="${escapeHtml(localizedDataFieldValue(editValues.lastName))}" placeholder="e.g. Whiskerfield">
+              </div>
+
               <div class="field add-person-conditional-field" id="maidenNameField">
                 <label for="addPersonMaidenName">Maiden name</label>
                 <input id="addPersonMaidenName" data-source-value="${escapeHtml(editValues.maidenName)}" value="${escapeHtml(localizedDataFieldValue(editValues.maidenName))}" placeholder="e.g. Milkpaw">
               </div>
             </div></section>
-          ${isEditMode ? '' : renderParentFamilySelector({
-                anchorPersonId: connectionIntent.anchorPersonId,
-                relationshipType: connectionIntent.relationshipType,
-                selectedValue: initialParentFamilySelection,
-                controlId: 'addPersonParentFamily'
-            })}
-          ${!isEditMode && connectionIntent.shouldConnect && connectionIntent.relationshipType !== 'partner'
+          ${!isEditMode && connectionIntent.shouldConnect && connectionIntent.relationshipType === 'parent'
         ? `<div class="field add-person-select-field">
               <label for="addPersonConnectionDetailType">${escapeHtml(t('Relationship type'))}</label>
               <select class="compact-select add-person-select" id="addPersonConnectionDetailType">${parentChildRelationshipTypeOptions(initialConnectionDetailType)}</select>
@@ -11263,12 +11261,36 @@ function openAddPersonModal(title, subtitle, options = {})
             ${renderAddPersonAttachmentSideCard(editPerson)}
             ${isEditMode ? '' : renderAddPersonPossibleMatchesCard(options, editPerson)}
           </aside>
+          ${!isEditMode && connectionIntent.shouldConnect && ['child', 'sibling'].includes(connectionIntent.relationshipType)
+        ? `<section class="add-person-family-connection" data-add-person-family-connection>
+              <div class="add-person-facts-section">
+                <button class="add-person-facts-header" type="button" data-add-person-family-toggle aria-expanded="false" aria-controls="addPersonFamilyBody">
+                  <span class="add-person-facts-header-main"><span class="add-person-facts-chevron" aria-hidden="true">${icon.chevron}</span><span>${escapeHtml(t('Family connection'))}</span></span>
+                </button>
+                <div class="add-person-facts-body add-person-family-body" id="addPersonFamilyBody" data-add-person-family-body hidden>
+                  <div class="field add-person-select-field">
+                    <label for="addPersonConnectionDetailType">${escapeHtml(t('Relationship type'))}</label>
+                    <select class="compact-select add-person-select" id="addPersonConnectionDetailType">${parentChildRelationshipTypeOptions(initialConnectionDetailType)}</select>
+                    <span class="add-person-select-chevron" aria-hidden="true">${icon.chevron}</span>
+                    <span class="add-person-family-error" data-add-person-detail-error hidden></span>
+                  </div>
+                  ${renderParentFamilySelector({
+                    anchorPersonId: connectionIntent.anchorPersonId,
+                    relationshipType: connectionIntent.relationshipType,
+                    selectedValue: initialParentFamilySelection,
+                    controlId: 'addPersonParentFamily',
+                    showSelectionLabel: true,
+                    showHeading: false
+                  })}
+                </div>
+              </div>
+            </section>` : ''}
           ${showRelationshipBlock ? renderAddPersonRelationshipBlock(options, editPerson) : ''}
           ${renderAddPersonAdditionalFacts(editPerson)}
         </div>
         <div class="modal-footer add-person-footer">
           <div class="add-person-footer-left">
-            ${isEditMode ? '' : `
+            ${!isEditMode && ['child', 'sibling'].includes(connectionIntent.relationshipType) ? `
               <label class="checkbox-row add-person-repeat">
                 <input type="checkbox" id="addPersonCreateAnother">
                 <span>
@@ -11276,7 +11298,7 @@ function openAddPersonModal(title, subtitle, options = {})
                   <span class="panel-muted">Add person and reopen this window</span>
                 </span>
               </label>
-            `}
+            ` : ''}
           </div>
 
           <div class="add-person-footer-actions">
@@ -12179,6 +12201,48 @@ function openEditPersonModal(personId)
     });
 }
 
+function setAddPersonFamilyExpanded(expanded)
+{
+    const section = modalBackdrop?.querySelector('[data-add-person-family-connection]');
+    const toggle = section?.querySelector('[data-add-person-family-toggle]');
+    const body = section?.querySelector('[data-add-person-family-body]');
+    if (!toggle || !body) return;
+    toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+    body.hidden = !expanded;
+}
+
+function showAddPersonFamilyError(selector, message)
+{
+    const control = modalBackdrop?.querySelector(selector);
+    if (!control) return;
+    setAddPersonFamilyExpanded(true);
+    const error = control.closest('.field')?.querySelector('.add-person-family-error');
+    if (error)
+    {
+        error.textContent = message;
+        error.hidden = false;
+        control.setAttribute('aria-invalid', 'true');
+    }
+    control.focus({ preventScroll: true });
+    control.scrollIntoView({ block: 'nearest' });
+}
+
+function bindAddPersonFamilyConnection()
+{
+    const section = modalBackdrop?.querySelector('[data-add-person-family-connection]');
+    if (!section) return;
+    section.querySelector('[data-add-person-family-toggle]')?.addEventListener('click', event =>
+    {
+        setAddPersonFamilyExpanded(event.currentTarget.getAttribute('aria-expanded') !== 'true');
+    });
+    section.querySelectorAll('select').forEach(control => control.addEventListener('change', () =>
+    {
+        const error = control.closest('.field')?.querySelector('.add-person-family-error');
+        if (error) error.hidden = true;
+        control.removeAttribute('aria-invalid');
+    }));
+}
+
 function bindAddPersonModalControls(personId = '')
 {
     bindGenealogyDateFields(modalBackdrop);
@@ -12186,6 +12250,7 @@ function bindAddPersonModalControls(personId = '')
     bindNameAffixComboboxes(modalBackdrop);
 
     bindAddPersonAdditionalFacts(personId);
+    bindAddPersonFamilyConnection();
     bindAddPersonRelationshipBlock();
     const gender = modalBackdrop.querySelector('#addPersonGender');
     const statusButton = modalBackdrop.querySelector('#addPersonStatusButton');

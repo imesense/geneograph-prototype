@@ -92,11 +92,54 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             await modal.locator('[data-connect-create-new]').click();
             assert.equal(await page.locator('#addPersonConnectionDetailType').inputValue(), 'Guardian');
             assert.equal(await page.locator('#addPersonParentFamily').inputValue(), oneParentChoice);
+            assert.equal(await page.locator('[data-add-person-family-toggle]').getAttribute('aria-expanded'), 'false');
+            assert.equal(await page.locator('[data-add-person-family-body]').isVisible(), false);
+            assert.equal(await page.locator('#addPersonCreateAnother').count(), 1);
+            const fullWidthSections = await page.locator('.add-person-family-connection, .add-person-additional-section')
+                .evaluateAll(sections => sections.map(section => ({
+                    left: Math.round(section.getBoundingClientRect().left),
+                    width: Math.round(section.getBoundingClientRect().width)
+                })));
+            assert.equal(fullWidthSections.length, 2);
+            assert.deepEqual(fullWidthSections[0], fullWidthSections[1]);
+            await page.locator('[data-add-person-family-toggle]').click();
+            assert.equal(await page.locator('[data-add-person-family-body]').isVisible(), true);
+            assert.equal(await page.locator('[data-add-person-family-body] .field').count(), 2);
+            assert.equal(await page.locator('[data-add-person-family-body] .form-section-title').count(), 0);
+            assert.equal(await page.locator('.add-person-header').evaluate(header => getComputedStyle(header).position), 'sticky');
+            const familyFields = await page.locator('[data-add-person-family-body] .field').evaluateAll(fields =>
+                fields.map(field => ({
+                    top: Math.round(field.getBoundingClientRect().top),
+                    width: Math.round(field.getBoundingClientRect().width)
+                })));
+            assert.equal(familyFields[0].top === familyFields[1].top, width > 600);
+            if (width > 600) assert.ok(familyFields[0].width < familyFields[1].width);
+            await page.locator('[data-add-person-family-toggle]').click();
+            assert.equal(await page.locator('[data-add-person-family-body]').isVisible(), false);
+            assert.equal(await page.locator('#addPersonParentFamily').inputValue(), oneParentChoice);
+            await page.locator('#addPersonFirstName').fill('RepeatSibling');
+            await page.locator('#addPersonLastName').fill('Test');
+            await page.locator('#addPersonParentFamily').evaluate(select =>
+            {
+                select.add(new Option('Unavailable family', 'unavailable-family'));
+                select.value = 'unavailable-family';
+            });
+            await page.locator('[data-create-person]').click();
+            assert.equal(await page.locator('[data-add-person-family-toggle]').getAttribute('aria-expanded'), 'true');
+            assert.equal(await page.locator('#addPersonParentFamily').getAttribute('aria-invalid'), 'true');
+            await page.locator('#addPersonParentFamily').selectOption(oneParentChoice);
+            await page.locator('#addPersonCreateAnother').check();
+            await page.locator('[data-create-person]').click();
+            await page.locator('#addPersonParentFamily').waitFor({ state: 'attached' });
+            assert.equal(await page.locator('#addPersonParentFamily').inputValue(), oneParentChoice);
+            assert.equal(await page.locator('#addPersonCreateAnother').isChecked(), false);
 
             await page.evaluate(() => openConnectRelativeModal('silver'));
             await modal.locator('[data-connect-relationship]').selectOption('parent');
             await modal.locator('[data-connect-create-new]').click();
             assert.equal(await page.locator('#addPersonConnectionDetailType').inputValue(), 'Adoptive');
+            assert.equal(await page.locator('#addPersonCreateAnother').count(), 0);
+            assert.equal(await page.locator('[data-add-person-family-connection]').count(), 0);
             await page.locator('#addPersonFirstName').fill('Newly');
             await page.locator('#addPersonLastName').fill('Connected');
             await page.locator('[data-create-person]').click();
@@ -114,6 +157,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             await modal.locator('[data-connect-detail-type]').selectOption('Divorced');
             await modal.locator('[data-connect-create-new]').click();
             assert.equal(await page.locator('[data-add-person-relationship-type]').inputValue(), 'Divorced');
+            assert.equal(await page.locator('#addPersonCreateAnother').count(), 0);
             await page.locator('#addPersonFirstName').fill('Former');
             await page.locator('#addPersonLastName').fill('Partner');
             await page.locator('[data-create-person]').click();
@@ -123,6 +167,8 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 const family = person && getPartnerRelationshipBetween('test-father', person.id);
                 return family?.relationshipType || '';
             }), 'Divorced');
+            await page.evaluate(() => openAddPersonModal('Add person', 'Create a new person in this project'));
+            assert.equal(await page.locator('#addPersonCreateAnother').count(), 0);
             assert.deepEqual(errors, []);
             await page.close();
         }

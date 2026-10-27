@@ -3836,12 +3836,36 @@ function bindGenealogyDateFields(root = document)
             {
                 const parsed = parseGenealogyDateTextAsType(input.value, type?.value, { calendar: readGenealogyDateModel(field).calendar, date2: inputTo?.value });
                 if (!parsed.valid) setGenealogyDateFieldError(field, parsed.message, parsed);
+                else
+                {
+                    const calculation = calculateGenealogyYear(input.value);
+                    if (calculation?.valid)
+                    {
+                        input.value = String(calculation.year);
+                        input.dataset.sourceValue = input.value;
+                    }
+                }
             });
         }
         if (inputTo && !inputTo.dataset.dateBound)
         {
             inputTo.dataset.dateBound = 'true';
             inputTo.addEventListener('input', clearError);
+            inputTo.addEventListener('blur', () =>
+            {
+                const parsed = parseGenealogyDateTextAsType(input?.value, type?.value,
+                    { calendar: readGenealogyDateModel(field).calendar, date2: inputTo.value });
+                if (!parsed.valid) setGenealogyDateFieldError(field, parsed.message, parsed);
+                else
+                {
+                    const calculation = calculateGenealogyYear(inputTo.value);
+                    if (calculation?.valid)
+                    {
+                        inputTo.value = String(calculation.year);
+                        inputTo.dataset.sourceValue = inputTo.value;
+                    }
+                }
+            });
         }
     });
 }

@@ -124,10 +124,29 @@ function dateLabelFromParts(year, month = '', day = '', language = 'en')
     return y;
 }
 
+function calculateGenealogyYear(text)
+{
+    const match = String(text ?? '').trim().match(/^(\d{1,4})\s*\+\s*(\d{1,4})$/)
+        || String(text ?? '').trim().match(/^(\d{1,4})\s+-\s+(\d{1,4})$/);
+    if (!match) return null;
+    const baseYear = Number(match[1]);
+    const year = baseYear + (match[0].includes('+') ? 1 : -1) * Number(match[2]);
+    return baseYear >= 1 && Number.isInteger(year) && year >= 1 && year <= 9999
+        ? { valid: true, year }
+        : { valid: false, message: 'The calculated year must be between 1 and 9999.' };
+}
+
 function parseBaseGenealogyDate(text, options = {})
 {
     const raw = cleanGenealogyDateText(text).replace(/\s*\((?:year unknown|год неизвестен)\)$/i, '');
     if (!raw) return null;
+    const calculation = calculateGenealogyYear(raw);
+    if (calculation)
+    {
+        if (!calculation.valid) return { invalid: true, message: calculation.message };
+        const parts = genealogyDateParts(calculation.year);
+        return { ...parts, calculated: true, date: String(calculation.year) };
+    }
     let match, parts;
     if ((match = raw.match(/^(\d{4})-(\d{1,2})(?:-(\d{1,2}))?$/))) parts = genealogyDateParts(match[1], match[2], match[3], options.calendar);
     else if ((match = raw.match(/^(\d{1,2})[./-](\d{1,2})[./-](\d{3,4})$/))) parts = genealogyDateParts(match[3], match[2], match[1], options.calendar);
@@ -238,8 +257,12 @@ function parseGenealogyDateText(text)
 function buildGenealogyDateFromParts(type, parts = {})
 {
     const calendar = parts.calendar || 'Gregorian';
-    const first = genealogyDateParts(parts.year, parts.month, parts.day, calendar);
-    const second = genealogyDateParts(parts.year2, parts.month2, parts.day2, calendar);
+    const firstCalculation = calculateGenealogyYear(parts.year);
+    const secondCalculation = calculateGenealogyYear(parts.year2);
+    if (firstCalculation?.valid === false) return { valid: false, message: firstCalculation.message };
+    if (secondCalculation?.valid === false) return { valid: false, message: secondCalculation.message };
+    const first = genealogyDateParts(firstCalculation?.year ?? parts.year, parts.month, parts.day, calendar);
+    const second = genealogyDateParts(secondCalculation?.year ?? parts.year2, parts.month2, parts.day2, calendar);
     if (!first || !second) return { valid: false, message: 'Enter a valid date or the known date parts.' };
     if (!Object.values(first).some(Boolean) && !Object.values(second).some(Boolean)) return { valid: true, value: { ...emptyGenealogyDate(type), calendar } };
     if (!Object.values(first).some(Boolean)) return { valid: false, message: 'Enter the first date.' };

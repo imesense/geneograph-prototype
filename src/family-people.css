@@ -3140,6 +3140,10 @@ button.timeline-evidence-name:hover, button.timeline-evidence-name:focus-visible
     grid-template-columns: 48px 1fr auto;
     gap: var(--space-4);
     align-items: start;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: var(--surface-card);
 }
 
 .add-person-icon {
@@ -3912,6 +3916,22 @@ button.timeline-evidence-name:hover, button.timeline-evidence-name:focus-visible
     gap: var(--space-4);
 }
 
+.add-person-demographics {
+    padding-bottom: var(--space-4);
+    margin-bottom: var(--space-6);
+    border-bottom: 1px solid var(--border-default);
+}
+
+.add-person-name-fields > .field:nth-child(2) {
+    grid-column: 1;
+    grid-row: 2;
+}
+
+.add-person-name-fields > .field:nth-child(3) {
+    grid-column: 2;
+    grid-row: 1;
+}
+
 .compact-select {
     height: var(--control-height);
     min-height: var(--control-height);
@@ -4345,6 +4365,39 @@ button.timeline-evidence-name:hover, button.timeline-evidence-name:focus-visible
     margin: 0;
 }
 
+.add-person-family-body {
+    grid-template-columns: minmax(0, 32%) minmax(0, 1fr);
+    align-items: start;
+}
+
+.add-person-family-body .add-person-parent-family {
+    display: block;
+    border: 0;
+    padding: 0;
+}
+
+.add-person-family-body .field,
+.add-person-family-body .add-person-select-field {
+    min-width: 0;
+}
+
+.add-person-family-error {
+    display: block;
+    margin-top: var(--space-2);
+    color: var(--status-danger, #F28B82);
+    font-size: 12px;
+}
+
+.add-person-family-error[hidden] {
+    display: none;
+}
+
+@media (max-width: 600px) {
+    .add-person-family-body {
+        grid-template-columns: 1fr;
+    }
+}
+
 .add-person-parent-family .field-help {
     display: block;
     margin-top: 6px;
@@ -4401,6 +4454,7 @@ button.timeline-evidence-name:hover, button.timeline-evidence-name:focus-visible
     display: none;
 }
 
+.add-person-grid>.add-person-family-connection,
 .add-person-grid>.add-person-relationship-section,
 .add-person-grid>.add-person-additional-section {
     grid-column: 1 / -1;
@@ -5856,6 +5910,23 @@ button.timeline-evidence-name:hover, button.timeline-evidence-name:focus-visible
 
     .two-col-form {
         grid-template-columns: 1fr;
+    }
+
+    .add-person-name-fields > .field:nth-child(2),
+    .add-person-name-fields > .field:nth-child(3) {
+        grid-column: 1;
+    }
+
+    .add-person-name-fields > .field:nth-child(2) {
+        grid-row: 3;
+    }
+
+    .add-person-name-fields > .field:nth-child(3) {
+        grid-row: 2;
+    }
+
+    .add-person-name-fields > .field:nth-child(4) {
+        grid-row: 4;
     }
 
     .add-person-fact-grid {
