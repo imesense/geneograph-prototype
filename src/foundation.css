@@ -3203,6 +3203,29 @@ button.app-chip:disabled,
     gap: var(--space-3);
 }
 
+.genealogy-date-choices { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.genealogy-date-draft-status { color: var(--text-secondary); font-size: 12px; min-height: 18px; }
+.genealogy-calendar > summary { cursor: pointer; font-size: 13px; padding: 8px 0; }
+.genealogy-calendar-nav { display: grid; grid-template-columns: 36px minmax(0, 1fr) 80px 36px; align-items: center; gap: 6px; margin: 8px 0; }
+.genealogy-calendar-nav input, .genealogy-calendar-nav select { min-width: 0; width: 100%; background: var(--surface-input); color: var(--text-primary); border: 1px solid var(--border-default); padding: 6px; }
+.genealogy-calendar-nav .icon-button { width: 36px; height: 36px; display: grid; place-items: center; padding: 0; border: 1px solid var(--border-strong); border-radius: 6px; background: var(--surface-input); color: var(--text-secondary); cursor: pointer; }
+.genealogy-calendar-nav .icon-button:hover { color: var(--text-primary); background: var(--surface-selected); }
+.genealogy-calendar-nav .icon-button svg { width: 16px; height: 16px; }
+.genealogy-calendar-nav .icon-button:first-child svg { transform: rotate(180deg); }
+.genealogy-calendar-days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 3px; }
+.genealogy-calendar-days > span { text-align: center; font-size: 11px; color: var(--text-secondary); }
+.genealogy-calendar-days button { height: 38px; min-width: 0; border: 1px solid transparent; border-radius: 4px; background: transparent; color: var(--text-primary); cursor: pointer; }
+.genealogy-calendar-days button:hover { background: var(--surface-selected); }
+.genealogy-calendar-days button:focus-visible { outline: 2px solid var(--brand-green-500); outline-offset: -2px; }
+.genealogy-grid-endpoint { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
+.genealogy-grid-endpoint select { min-width: 0; max-width: 100%; padding: 8px 12px; border: 1px solid var(--border-strong); border-radius: 6px; background: var(--surface-input); color: var(--text-primary); font: inherit; }
+.genealogy-calendar-nav :is(button, input, select):focus-visible, .genealogy-grid-endpoint select:focus-visible { outline: 2px solid var(--brand-green-500); outline-offset: 2px; }
+@media (max-width: 600px) {
+    .genealogy-date-popover .genealogy-date-parts-row { grid-template-columns: minmax(44px, .65fr) minmax(0, 1.3fr) minmax(66px, .9fr); gap: 6px; }
+    .genealogy-date-popover .genealogy-date-actions { flex-wrap: wrap; }
+    .genealogy-calendar-days button { min-height: 44px; }
+}
+
 .genealogy-date-editor-grid .full {
     grid-column: 1 / -1;
 }

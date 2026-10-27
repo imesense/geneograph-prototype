@@ -2061,47 +2061,11 @@ function validPeopleDate(year, month, day)
 
 function parsePeoplePrototypeDate(value)
 {
-    if (!value || value === '-') return null;
-
-    const text = String(value).trim();
-
-    let match = text.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
-    if (match)
-    {
-        return validPeopleDate(
-            Number(match[3]),
-            Number(match[2]) - 1,
-            Number(match[1])
-        );
-    }
-
-    match = text.match(/^(\d{1,2})\s+([A-Za-z]{3,})\s+(\d{4})$/);
-    if (match)
-    {
-        const month = peopleDateMonthIndex(match[2]);
-        if (month === null) return null;
-
-        return validPeopleDate(
-            Number(match[3]),
-            month,
-            Number(match[1])
-        );
-    }
-
-    match = text.match(/^([A-Za-z]{3,})\s+(\d{1,2}),?\s+(\d{4})$/);
-    if (match)
-    {
-        const month = peopleDateMonthIndex(match[1]);
-        if (month === null) return null;
-
-        return validPeopleDate(
-            Number(match[3]),
-            month,
-            Number(match[2])
-        );
-    }
-
-    return null;
+    const model = normalizeGenealogyDateInput(value), parts = model.first;
+    if (model.dateType !== 'Exact date' || !parts.year || !parts.month || !parts.day) return null;
+    const civil = genealogyCivilFromDay(genealogyDayNumber(parts.year, parts.month, parts.day, model.calendar));
+    const date = new Date(0); date.setFullYear(civil.year, civil.month - 1, civil.day); date.setHours(0, 0, 0, 0);
+    return date;
 }
 
 function peopleSortDateValue(value)
@@ -2112,9 +2076,8 @@ function peopleSortDateValue(value)
     if (text === 'just now' || text === 'today') return Number.MAX_SAFE_INTEGER;
     if (text === 'yesterday') return Number.MAX_SAFE_INTEGER - 1;
 
-    const date = parsePeoplePrototypeDate(value);
-
-    return date ? date.getTime() : Number.NaN;
+    const date = genealogyDateSortValue(value);
+    return Number.isFinite(date) ? date : Number.NaN;
 }
 
 function sortPeopleRecords(
@@ -2228,12 +2191,8 @@ function peopleHeroLifeSummaryItems(
             ? person?.deathPlace || ''
             : '';
 
-    const currentAge =
-        isLiving && birthDate
-            ? calculatePeopleAge(
-                birthDate
-            )
-            : null;
+    const central = person?.id ? getPerson(person.id) : null;
+    const currentAge = isLiving ? genealogyAgeRange(central?.birth || person?.birth) : null;
 
     const items = [
         {
@@ -2251,13 +2210,7 @@ function peopleHeroLifeSummaryItems(
 
     if (showsDeath)
     {
-        const ageAtDeath =
-            birthDate && deathDate
-                ? calculatePeopleAge(
-                    birthDate,
-                    deathDate
-                )
-                : null;
+        const ageAtDeath = genealogyAgeRange(central?.birth || person?.birth, central?.death || person?.death);
 
         items.push({
             label: 'Death',
@@ -2582,8 +2535,8 @@ function peopleRecordsMatchingFilters(
         }
 
         if (
-            !sharedFilterYearMatches(
-                person.birthYear,
+            !genealogyDateMatchesYearFilter(
+                getPerson(person.id)?.birth || person.birth,
                 normalized.birthYear
             )
         )
@@ -4632,6 +4585,7 @@ function renderProfileMainEditFields(person)
             })}
         </div>
         <div class="profile-death-fields-group" id="profileInlineDeathExtraFields" ${isDeceased ? '' : 'hidden'}>
+          ${renderGenealogyDateField('profileBurialDate', 'Burial date', personEventByTag(centralPerson, 'BURI')?.date, { className: 'profile-field-burial-date genealogy-date-inline-range' })}
           <div class="field profile-field-death-reason"><label>Cause of Death</label><input id="profileInlineDeathReason" value="${escapeHtml(details.deathReason || '')}" placeholder="Cause or reason"></div>
           ${renderPlaceCombobox({
                 id: 'profileInlineBurialPlace',
@@ -4725,7 +4679,7 @@ function renderProfileEducationEditFields(person)
                     {
                         inputId: 'profileEducationFromDate',
                         typeId: 'profileEducationFromDateType',
-                        defaultDateType: 'Year only',
+                        defaultDateType: 'Exact date',
                         placeholder: 'e.g. 1915',
                         className: 'genealogy-date-inline-range'
                     }
@@ -4740,7 +4694,7 @@ function renderProfileEducationEditFields(person)
                     {
                         inputId: 'profileEducationToDate',
                         typeId: 'profileEducationToDateType',
-                        defaultDateType: 'Year only',
+                        defaultDateType: 'Exact date',
                         placeholder: 'e.g. 1920',
                         className: 'genealogy-date-inline-range'
                     }
@@ -5984,6 +5938,11 @@ function collectProfileMainEdit()
         );
     }
 
+    const burialDate = living === 'Deceased' ? collectGenealogyDateField('profileBurialDate') : null;
+    if (living === 'Deceased' && !burialDate) return profileEditValidationFailure('main', 'Check the burial date before saving.', '#profileBurialDateDate');
+    if (living === 'Deceased' && genealogyDateDefinitelyAfter(birthDate, deathDate))
+        return profileEditValidationFailure('main', 'The death date is earlier than the birth date.', '#profileInlineDeath');
+
     return {
         ok: true,
         section: 'main',
@@ -6056,7 +6015,8 @@ function collectProfileMainEdit()
             readPlaceInputValue(
                 '#profileInlineBurialPlace',
                 main
-            )
+            ),
+            burialDate
         }
     };
 }
@@ -6367,6 +6327,8 @@ function applyProfileMainEdit(
 
     if (livingStatus === 'Deceased')
     {
+        if (personEventByTag(centralPerson, 'BURI') || hasGenealogyDateValue(payload.burialDate) || burialPlace.placeId || burialPlace.placeText)
+            upsertPersonEvent(centralPerson, 'BURI', { date: genealogyDateOrNull(payload.burialDate), placeId: burialPlace.placeId, placeText: burialPlace.placeText, address: burialPlace.address });
         centralPerson.death = {
             ...payload.deathDate,
             placeId: deathPlace.placeId,
@@ -6384,19 +6346,7 @@ function applyProfileMainEdit(
     }
     else
     {
-        centralPerson.death = {
-            ...emptyGenealogyDate(
-                'Exact date'
-            ),
-            placeId: null,
-            placeText: '',
-            address: '',
-            reason: '',
-            cause: '',
-            burialPlaceId: null,
-            burialPlaceText: '',
-            burialAddress: ''
-        };
+        centralPerson.death = normalizeGenealogyDateInput(centralPerson.death);
     }
 
     person.first = first;
@@ -6463,13 +6413,13 @@ function applyProfileEducationEdit(
                 fromDate:
               genealogyDateOrNull(
                   payload.fromDate,
-                  'Year only'
+                  'Exact date'
               ),
 
                 toDate:
               genealogyDateOrNull(
                   payload.toDate,
-                  'Year only'
+                  'Exact date'
               )
             }
         );

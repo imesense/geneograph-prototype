@@ -288,10 +288,7 @@ function getSurnameRouteEvents(surname)
 function normalizeRouteEvent(event)
 {
     const date = normalizeGenealogyDateInput(event || {});
-    const rawSortDate = String(date.sortDate || event?.sortDate || '').replace(/\D/g, '');
-    const sortValue = rawSortDate
-        ? Number(rawSortDate.slice(0, 8).padEnd(8, '0'))
-        : Number.POSITIVE_INFINITY;
+    const sortValue = genealogyDateSortValue(date);
     const place = getPlace(event?.placeId);
     const placeIsValid = Boolean(place && !place.deleted && place.projectId === currentProjectId());
     const coordinates = placeIsValid ? placeLatLng(place) : null;
@@ -300,7 +297,7 @@ function normalizeRouteEvent(event)
         coordinates && validLatitude(coordinates[0]) && validLongitude(coordinates[1])
     );
     const exclusionReason = !hasSortableDate
-        ? 'missingDate'
+        ? date.state === 'known' ? 'missingYear' : 'missingDate'
         : !placeIsValid
             ? 'missingPlace'
             : !hasCoordinates
@@ -402,7 +399,7 @@ function derivePlacesRoute(selection = {})
         if (item.eligible || !item.exclusionReason) return counts;
         counts[item.exclusionReason] += 1;
         return counts;
-    }, { missingDate: 0, missingPlace: 0, missingCoordinates: 0 });
+    }, { missingDate: 0, missingYear: 0, missingPlace: 0, missingCoordinates: 0 });
     const available = stops.length >= 2 && distinctPositions.size >= 2;
     const firstDate = stops[0]?.events?.[0]?.dateLabel || '';
     const finalStop = stops[stops.length - 1];
@@ -3959,6 +3956,7 @@ function routeExcludedReasonSummary(route)
     const counts = route?.excludedByReason || {};
     return [
         counts.missingDate ? `${counts.missingDate} ${t('undated')}` : '',
+        counts.missingYear ? `${counts.missingYear} ${t('without a known year')}` : '',
         counts.missingPlace ? `${counts.missingPlace} ${t('without place')}` : '',
         counts.missingCoordinates ? `${counts.missingCoordinates} ${t('unmapped')}` : ''
     ].filter(Boolean).join(' - ');
@@ -4285,40 +4283,9 @@ function placeInspectorEventDateLabel(
         );
 }
 
-function placeInspectorEventSortValue(
-    event
-)
+function placeInspectorEventSortValue(event)
 {
-    const rawSortDate =
-        String(
-            event?.date?.sortDate
-          || event?.sortDate
-          || ''
-        )
-            .replace(/\D/g, '');
-
-    if (rawSortDate)
-    {
-        return Number(
-            rawSortDate
-                .slice(0, 8)
-                .padEnd(8, '0')
-        );
-    }
-
-    const dateLabel =
-        placeInspectorEventDateLabel(
-            event
-        );
-
-    const year =
-        dateLabel.match(
-            /\b[1-9]\d{3}\b/
-        );
-
-    return year
-        ? Number(year[0]) * 10000
-        : Number.MAX_SAFE_INTEGER;
+    return genealogyDateSortValue(event);
 }
 
 function placeInspectorEventOwnerIds(

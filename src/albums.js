@@ -3880,9 +3880,7 @@ function filteredAlbumPhotos()
         photos =
             photos.filter(
                 photo =>
-                    formatPhotoDate(
-                        photo
-                    ) !== 'Unknown date'
+                    photoDateModel(photo).state === 'known'
             );
     }
 
@@ -3894,9 +3892,7 @@ function filteredAlbumPhotos()
         photos =
             photos.filter(
                 photo =>
-                    formatPhotoDate(
-                        photo
-                    ) === 'Unknown date'
+                    photoDateModel(photo).state !== 'known'
             );
     }
     return appSortRecords(photos, {

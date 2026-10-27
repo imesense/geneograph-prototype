@@ -2038,6 +2038,15 @@ function handleModalKeydown(
         return;
     }
 
+    if (genealogyDatePopover)
+    {
+        if (event.key === 'Escape')
+        {
+            event.preventDefault(); event.stopImmediatePropagation(); closeGenealogyDateEditor();
+        }
+        if (genealogyDatePopover?.contains(event.target) || event.key === 'Escape') return;
+    }
+
     if (event.key === 'Escape')
     {
         event.preventDefault();
@@ -2538,6 +2547,7 @@ function openPersonPhotoDiscardConfirm()
 function closeModal(options = {})
 {
     if (!options?.force && modalBackdrop.beforeClose?.() === false) return;
+    if (genealogyDatePopover) closeGenealogyDateEditor();
     modalBackdrop.beforeClose = null;
     if (document.querySelector('[data-place-duplicate-menu]'))
     {
@@ -4374,6 +4384,7 @@ function normalizeCentralRuntimeData()
     normalizePlaceIssueDismissals();
     normalizeEventPlaceAddresses();
     normalizeSampleGenealogyDates();
+    normalizeAllGenealogyDateRecords();
     rebuildSampleEventsAndPruneSourceLinks();
     validateSampleData();
 }

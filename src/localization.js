@@ -2,6 +2,22 @@ const SUPPORTED_LANGUAGES = ['en', 'ru'];
 const LANGUAGE_STORAGE_KEY = 'geneograph.language';
 const PROJECT_CONTINUATION_STORAGE_KEY = 'geneograph.projectContinuation';
 const RU_UI_SHARED = Object.freeze({
+    'Exact': 'Точно',
+    'Choose a full date': 'Выбрать полную дату',
+    'First date': 'Первая дата',
+    'Second date': 'Вторая дата',
+    'Previous month': 'Предыдущий месяц',
+    'Next month': 'Следующий месяц',
+    'Year unknown': 'Год неизвестен',
+    'without a known year': 'без известного года',
+    'Burial date': 'Дата погребения',
+    'Check the burial date before saving.': 'Проверьте дату погребения перед сохранением.',
+    'Enter a valid date or the known date parts.': 'Введите корректную дату или известные части даты.',
+    'Choose whether this number is a day or a year.': 'Укажите, что означает это число: день или год.',
+    'Enter the first date.': 'Введите первую дату.',
+    'e.g. 1900, February, 14 Feb': 'например, 1900, февраль, 14 февраля',
+    'The end date is earlier than the start date.': 'Дата окончания раньше даты начала.',
+    'The death date is earlier than the birth date.': 'Дата смерти раньше даты рождения.',
     '{person} connected as parent.': 'Родственная связь добавлена: «{person}» — родитель.',
     '{person} connected as child.': 'Родственная связь добавлена: «{person}» — ребёнок.',
     '{person} connected as sibling.': 'Родственная связь добавлена: «{person}» — брат или сестра.',

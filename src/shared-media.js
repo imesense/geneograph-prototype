@@ -306,47 +306,9 @@ function photoDateModel(photo)
     }, date.dateType || 'Exact date');
 }
 
-function mediaDateFromGenealogyModel(
-    value
-)
+function mediaDateFromGenealogyModel(value)
 {
-    const date =
-        normalizeGenealogyDateInput(
-            value,
-            value?.dateType
-          || 'Exact date'
-        );
-
-    return {
-        date:
-          date.dateType === 'Between'
-              ? ''
-              : date.date || '',
-
-        dateLabel:
-          date.dateLabel || '',
-
-        dateType:
-          date.dateType
-          || 'Exact date',
-
-        fromDate:
-          date.dateType === 'Between'
-              ? date.date || ''
-              : '',
-
-        toDate:
-          date.dateType === 'Between'
-              ? date.date2 || ''
-              : '',
-
-        calendar:
-          GENEALOGY_CALENDARS.includes(
-              date.calendar
-          )
-              ? date.calendar
-              : 'Gregorian'
-    };
+    return normalizeGenealogyDateInput(value);
 }
 
 function formatPhotoDate(photo)
@@ -2907,411 +2869,6 @@ function getEventsForPerson(personId)
     return sampleData.events.filter(event => event.personIds?.includes(personId));
 }
 
-const GENEALOGY_DATE_TYPES = ['Exact date', 'Year only', 'About / Circa', 'Before', 'After', 'Between'];
-const GENEALOGY_MONTHS = [
-    ['01', 'Jan', 'January', 'янв.', 'январь'],
-    ['02', 'Feb', 'February', 'февр.', 'февраль'],
-    ['03', 'Mar', 'March', 'мар.', 'март'],
-    ['04', 'Apr', 'April', 'апр.', 'апрель'],
-    ['05', 'May', 'May', 'май', 'май'],
-    ['06', 'Jun', 'June', 'июн.', 'июнь'],
-    ['07', 'Jul', 'July', 'июл.', 'июль'],
-    ['08', 'Aug', 'August', 'авг.', 'август'],
-    ['09', 'Sep', 'September', 'сент.', 'сентябрь'],
-    ['10', 'Oct', 'October', 'окт.', 'октябрь'],
-    ['11', 'Nov', 'November', 'нояб.', 'ноябрь'],
-    ['12', 'Dec', 'December', 'дек.', 'декабрь']
-];
-const GENEALOGY_CALENDARS = ['Gregorian', 'Julian'];
-let genealogyDatePopover = null;
-let genealogyDateOutsideHandler = null;
-let genealogyDateKeyHandler = null;
-
-function genealogyDateTypeOptions(
-    selected = 'Exact date'
-)
-{
-    const active =
-        normalizeGenealogyDateType(
-            selected
-        );
-
-    return GENEALOGY_DATE_TYPES
-        .map(type => `
-          <option
-            value="${escapeHtml(type)}"
-            ${
-                type === active
-                    ? 'selected'
-                    : ''
-            }>
-            ${escapeHtml(t(type))}
-          </option>
-        `)
-        .join('');
-}
-
-function genealogyMonthOptions(selected = '')
-{
-    const active = String(selected || '').padStart(2, '0');
-    return `<option value="">${t('Month')}</option>${GENEALOGY_MONTHS.map(([value, , long, , longRu]) => `<option value="${value}" ${value === active ? 'selected' : ''}>${value} - ${state.language === 'ru' ? longRu : long}</option>`).join('')}`;
-}
-
-function normalizeGenealogyDateType(type)
-{
-    const text = String(type || '').trim().toLowerCase();
-    const aliases = {
-        exact: 'Exact date',
-        'exact date': 'Exact date',
-        year: 'Year only',
-        'year only': 'Year only',
-        about: 'About / Circa',
-        circa: 'About / Circa',
-        'about / circa': 'About / Circa',
-        before: 'Before',
-        after: 'After',
-        between: 'Between',
-    };
-    return aliases[text] || (GENEALOGY_DATE_TYPES.includes(type) ? type : 'Exact date');
-}
-
-function cleanGenealogyDateText(value)
-{
-    const text = String(value ?? '').trim();
-    if (!text) return '';
-    const lowered = text.toLowerCase();
-    if (['-', '--', '—', 'unknown', 'null', 'undefined', 'not applicable', 'n/a'].includes(lowered)) return '';
-    if (text === 'вЂ”') return '';
-    return text;
-}
-
-function cleanDatePlaceId(placeId)
-{
-    const text = String(placeId ?? '').trim();
-    return !text || text === 'null' || text === '-' || text === '—' ? null : text;
-}
-
-function emptyGenealogyDate(dateType = 'Exact date')
-{
-    return {
-        date: '',
-        dateLabel: '',
-        dateType: normalizeGenealogyDateType(dateType),
-        sortDate: '',
-        calendar: 'Gregorian',
-        originalText: '',
-        date2: '',
-        date2Label: '',
-        sortDate2: ''
-    };
-}
-
-function monthByName(value)
-{
-    const text = String(value || '').trim().toLowerCase().replace(/\.$/, '');
-    const match = GENEALOGY_MONTHS.find(([, short, long, shortRu, longRu]) => [short, long, shortRu, longRu].some(name => String(name).toLowerCase().replace(/\.$/, '') === text));
-    return match?.[0] || '';
-}
-
-function monthShort(value)
-{
-    const match = GENEALOGY_MONTHS.find(([number]) => number === String(value || '').padStart(2, '0'));
-    return match?.[1] || '';
-}
-
-function isValidGregorianDate(year, month, day)
-{
-    const y = Number(year);
-    const m = Number(month);
-    const d = Number(day);
-    if (!Number.isInteger(y) || !Number.isInteger(m) || !Number.isInteger(d)) return false;
-    if (y < 1 || y > 9999 || m < 1 || m > 12 || d < 1 || d > 31) return false;
-    const date = new Date(Date.UTC(y, m - 1, d));
-    return date.getUTCFullYear() === y && date.getUTCMonth() === m - 1 && date.getUTCDate() === d;
-}
-
-function sortDateFromParts(year, month = '00', day = '00')
-{
-    const y = String(year || '').padStart(4, '0');
-    if (!/^\d{4}$/.test(y) || Number(y) <= 0) return '';
-    const m = String(month || '00').padStart(2, '0');
-    const d = String(day || '00').padStart(2, '0');
-    return `${y}${m}${d}`;
-}
-
-function dateLabelFromParts(year, month = '', day = '')
-{
-    const y = String(year || '').trim();
-    const rawMonth = String(month || '').trim();
-    const rawDay = String(day || '').trim();
-
-    const m = rawMonth ? rawMonth.padStart(2, '0') : '';
-    const d = rawDay ? rawDay.padStart(2, '0') : '';
-
-    if (d && m && y) return `${d} ${monthShort(m)} ${y}`;
-    if (m && y) return `${monthShort(m)} ${y}`;
-    return y;
-}
-
-function dateValueFromParts(year, month = '', day = '')
-{
-    const y = String(year || '').trim();
-    const rawMonth = String(month || '').trim();
-    const rawDay = String(day || '').trim();
-
-    const m = rawMonth ? rawMonth.padStart(2, '0') : '';
-    const d = rawDay ? rawDay.padStart(2, '0') : '';
-
-    if (d && m && y) return `${d}.${m}.${y}`;
-    if (m && y) return `${m}.${y}`;
-    return y;
-}
-
-function parseBaseGenealogyDate(text)
-{
-    const raw = cleanGenealogyDateText(text);
-    if (!raw) return null;
-
-    let match = raw.match(/^(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{4})$/);
-    if (match)
-    {
-        const [, dayRaw, monthRaw, year] = match;
-        const day = dayRaw.padStart(2, '0');
-        const month = monthRaw.padStart(2, '0');
-        if (!isValidGregorianDate(year, month, day)) return { invalid: true, message: 'Enter a valid calendar date.' };
-        return { precision: 'day', year, month, day, date: dateValueFromParts(year, month, day), dateLabel: dateLabelFromParts(year, month, day), sortDate: sortDateFromParts(year, month, day) };
-    }
-
-    match = raw.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
-    if (match)
-    {
-        const [, year, monthRaw, dayRaw] = match;
-        const month = monthRaw.padStart(2, '0');
-        const day = dayRaw.padStart(2, '0');
-        if (!isValidGregorianDate(year, month, day)) return { invalid: true, message: 'Enter a valid calendar date.' };
-        return { precision: 'day', year, month, day, date: dateValueFromParts(year, month, day), dateLabel: dateLabelFromParts(year, month, day), sortDate: sortDateFromParts(year, month, day) };
-    }
-
-    match = raw.match(/^(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})$/);
-    if (match)
-    {
-        const [, dayRaw, monthName, year] = match;
-        const day = dayRaw.padStart(2, '0');
-        const month = monthByName(monthName);
-        if (!month || !isValidGregorianDate(year, month, day)) return { invalid: true, message: 'Enter a valid calendar date.' };
-        return { precision: 'day', year, month, day, date: dateValueFromParts(year, month, day), dateLabel: dateLabelFromParts(year, month, day), sortDate: sortDateFromParts(year, month, day) };
-    }
-
-    match = raw.match(/^([A-Za-z]+)\s+(\d{4})$/);
-    if (match)
-    {
-        const [, monthName, year] = match;
-        const month = monthByName(monthName);
-        if (!month) return null;
-        return { precision: 'month', year, month, day: '', date: dateValueFromParts(year, month), dateLabel: dateLabelFromParts(year, month), sortDate: sortDateFromParts(year, month) };
-    }
-
-    match = raw.match(/^(\d{4})$/);
-    if (match)
-    {
-        const year = match[1];
-        return { precision: 'year', year, month: '', day: '', date: year, dateLabel: year, sortDate: sortDateFromParts(year) };
-    }
-
-    return null;
-}
-
-function genealogyDateFromBase(base, type, originalText = '', calendar = 'Gregorian', secondBase = null)
-{
-    if (!base || base.invalid) return { valid: false, message: base?.message || 'Enter a supported genealogy date.' };
-    const normalizedType = normalizeGenealogyDateType(type);
-    const prefixMap = {
-        'About / Circa': 'About',
-        Before: 'Before',
-        After: 'After'
-    };
-    if (normalizedType === 'Exact date' && !['day', 'month'].includes(base.precision))
-    {
-        return { valid: false, message: 'Exact dates need at least a month and year. Use Year only for year-only dates.' };
-    }
-    if (normalizedType === 'Year only' && base.precision !== 'year') return { valid: false, message: 'Year only dates should contain only a year.' };
-
-    const value = {
-        ...emptyGenealogyDate(normalizedType),
-        date: base.date,
-        dateLabel: prefixMap[normalizedType] ? `${prefixMap[normalizedType]} ${base.dateLabel}` : base.dateLabel,
-        sortDate: base.sortDate,
-        calendar: GENEALOGY_CALENDARS.includes(calendar) ? calendar : 'Gregorian',
-        originalText: cleanGenealogyDateText(originalText) || base.dateLabel
-    };
-
-    if (normalizedType === 'Between')
-    {
-        if (!secondBase || secondBase.invalid) return { valid: false, message: 'Between dates need a valid second date.' };
-        if (Number(secondBase.sortDate || 0) < Number(base.sortDate || 0)) return { valid: false, message: 'The second date must be after or equal to the first date.' };
-        value.date2 = secondBase.date;
-        value.date2Label = secondBase.dateLabel;
-        value.sortDate2 = secondBase.sortDate;
-        value.dateLabel = `Between ${base.dateLabel} and ${secondBase.dateLabel}`;
-    }
-
-    return { valid: true, value };
-}
-
-function parseGenealogyDateTextAsType(text, type, options = {})
-{
-    const normalizedType = normalizeGenealogyDateType(type);
-    const raw = cleanGenealogyDateText(text);
-    const calendar = options.calendar || 'Gregorian';
-    if (!raw)
-    {
-        return { valid: true, value: emptyGenealogyDate(normalizedType) };
-    }
-
-    if (normalizedType === 'Between')
-    {
-        const between = raw.match(/^between\s+(.+?)\s+and\s+(.+)$/i);
-        const firstText = between ? between[1] : raw;
-        const secondText = between ? between[2] : options.date2 || options.date2Label || '';
-        return genealogyDateFromBase(parseBaseGenealogyDate(firstText), normalizedType, raw, calendar, parseBaseGenealogyDate(secondText));
-    }
-
-    const prefixPattern = /^(about|circa|ca\.?|before|after)\s+/i;
-    const baseText = raw.replace(prefixPattern, '');
-    return genealogyDateFromBase(parseBaseGenealogyDate(baseText), normalizedType, raw, calendar);
-}
-
-function parseGenealogyDateText(text)
-{
-    const raw = cleanGenealogyDateText(text);
-    if (!raw) return { valid: true, value: emptyGenealogyDate('Exact date') };
-    if (/^(unknown|not applicable|n\/a)$/i.test(raw)) return { valid: false, message: 'Enter a date.' };
-    if (/^between\s+/i.test(raw)) return parseGenealogyDateTextAsType(raw, 'Between');
-    if (/^(about|circa|ca\.?)\s+/i.test(raw)) return parseGenealogyDateTextAsType(raw, 'About / Circa');
-    if (/^before\s+/i.test(raw)) return parseGenealogyDateTextAsType(raw, 'Before');
-    if (/^after\s+/i.test(raw)) return parseGenealogyDateTextAsType(raw, 'After');
-
-    const base = parseBaseGenealogyDate(raw);
-    if (!base || base.invalid) return { valid: false, message: base?.message || 'Enter a supported genealogy date.' };
-    const type = base.precision === 'year' ? 'Year only' : 'Exact date';
-    return genealogyDateFromBase(base, type, raw);
-}
-
-function buildGenealogyDateFromParts(type, parts = {})
-{
-    const normalizedType = normalizeGenealogyDateType(type);
-    const firstYear = String(parts.year || '').trim();
-    const firstMonth = String(parts.month || '').trim();
-    const firstDay = String(parts.day || '').trim();
-    const firstText = firstDay && firstMonth && firstYear
-        ? dateValueFromParts(firstYear, firstMonth, firstDay)
-        : firstMonth && firstYear
-            ? dateLabelFromParts(firstYear, firstMonth)
-            : firstYear;
-    const secondYear = String(parts.year2 || '').trim();
-    const secondMonth = String(parts.month2 || '').trim();
-    const secondDay = String(parts.day2 || '').trim();
-    const secondText = secondDay && secondMonth && secondYear
-        ? dateValueFromParts(secondYear, secondMonth, secondDay)
-        : secondMonth && secondYear
-            ? dateLabelFromParts(secondYear, secondMonth)
-            : secondYear;
-    return parseGenealogyDateTextAsType(firstText, normalizedType, {
-        calendar: parts.calendar,
-        date2: secondText,
-        date2Label: secondText
-    });
-}
-
-function normalizeGenealogyDateInput(input, fallbackType = 'Exact date')
-{
-    if (!input) return emptyGenealogyDate(fallbackType);
-    if (typeof input === 'string')
-    {
-        const parsed = parseGenealogyDateText(input);
-        return parsed.valid ? parsed.value : { ...emptyGenealogyDate(fallbackType), originalText: cleanGenealogyDateText(input) };
-    }
-    const explicitType = normalizeGenealogyDateType(input.dateType || fallbackType);
-    const text = cleanGenealogyDateText(input.originalText || input.dateLabel || input.date);
-    if (!text)
-    {
-        return {
-            ...emptyGenealogyDate(explicitType),
-            calendar: GENEALOGY_CALENDARS.includes(input.calendar) ? input.calendar : 'Gregorian',
-            placeId: cleanDatePlaceId(input.placeId),
-            reason: input.reason || '',
-            burialPlaceId: cleanDatePlaceId(input.burialPlaceId)
-        };
-    }
-    const parsed = parseGenealogyDateTextAsType(text, explicitType, {
-        calendar: input.calendar,
-        date2: input.date2 || input.date2Label
-    });
-    const value = parsed.valid ? parsed.value : emptyGenealogyDate(explicitType);
-    return {
-        ...value,
-        date: cleanGenealogyDateText(value.date || input.date),
-        dateLabel: cleanGenealogyDateText(value.dateLabel || input.dateLabel),
-        sortDate: value.sortDate || input.sortDate || '',
-        calendar: GENEALOGY_CALENDARS.includes(input.calendar) ? input.calendar : (value.calendar || 'Gregorian'),
-        originalText: cleanGenealogyDateText(input.originalText || text),
-        date2: cleanGenealogyDateText(value.date2 || input.date2),
-        date2Label: cleanGenealogyDateText(value.date2Label || input.date2Label),
-        sortDate2: value.sortDate2 || input.sortDate2 || '',
-        placeId: cleanDatePlaceId(input.placeId),
-        reason: input.reason || '',
-        burialPlaceId: cleanDatePlaceId(input.burialPlaceId)
-    };
-}
-
-function formatGenealogyDateLabel(input)
-{
-    const value = normalizeGenealogyDateInput(input);
-    return cleanGenealogyDateText(value.dateLabel || value.date || value.originalText);
-}
-
-function formatGenealogyDateStartLabel(input)
-{
-    const value =
-        normalizeGenealogyDateInput(input);
-    const base =
-        parseBaseGenealogyDate(
-            value.date || ''
-        );
-    return cleanGenealogyDateText(
-        base?.dateLabel
-        || value.date
-        || ''
-    );
-}
-
-function formatGenealogyDateEndLabel(input)
-{
-    const value = normalizeGenealogyDateInput(input);
-    const base = parseBaseGenealogyDate(value.date2Label || value.date2 || '');
-    return cleanGenealogyDateText(base?.dateLabel || value.date2Label || value.date2 || '');
-}
-
-function genealogyDatePartsFromModel(model = {})
-{
-    const value = normalizeGenealogyDateInput(model);
-    const firstSource = value.dateType === 'Between'
-        ? value.date || value.originalText || value.dateLabel
-        : value.dateLabel || value.date || value.originalText;
-    const secondSource = value.dateType === 'Between'
-        ? value.date2 || value.date2Label
-        : value.date2Label || value.date2 || '';
-    const first = parseBaseGenealogyDate(firstSource || '') || {};
-    const second = parseBaseGenealogyDate(secondSource || '') || {};
-    return {
-        day: first.day || '',
-        month: first.month || '',
-        year: first.year || '',
-        day2: second.day || '',
-        month2: second.month || '',
-        year2: second.year || ''
-    };
-}
 
 function renderGenealogyDateField(
     fieldId,
@@ -3325,11 +2882,6 @@ function renderGenealogyDateField(
         || options.defaultType
         || 'Exact date';
 
-    const exactOnly =
-        Boolean(
-            options.exactOnly
-        );
-
     const initialModel =
         normalizeGenealogyDateInput(
             dateInput
@@ -3339,27 +2891,7 @@ function renderGenealogyDateField(
             defaultDateType
         );
 
-    const model =
-        exactOnly
-            ? {
-                ...initialModel,
-
-                dateType:
-                'Exact date',
-
-                calendar:
-                'Gregorian',
-
-                date2:
-                '',
-
-                date2Label:
-                '',
-
-                sortDate2:
-                ''
-            }
-            : initialModel;
+    const model = initialModel;
 
     const inputId =
         options.inputId
@@ -3382,8 +2914,7 @@ function renderGenealogyDateField(
         || '';
 
     const isBetween =
-        !exactOnly
-        && model.dateType
+        model.dateType
           === 'Between';
 
     const hiddenValue =
@@ -3409,17 +2940,12 @@ function renderGenealogyDateField(
             field
             genealogy-date-field
             ${isBetween ? 'is-between' : ''}
-            ${exactOnly ? 'is-exact-only' : ''}
             ${escapeHtml(fieldClass)}
           "
           data-genealogy-date-field="${escapeHtml(
                 fieldId
             )}"
-          data-genealogy-date-exact-only="${
-                exactOnly
-                    ? 'true'
-                    : 'false'
-            }">
+          >
 
           <label for="${escapeHtml(inputId)}">
             ${escapeHtml(label)}
@@ -3526,7 +3052,7 @@ function renderGenealogyDateField(
 
             ${
                 model.calendar === 'Julian'
-                    ? 'Julian calendar stored; conversion is not implemented.'
+                    ? t('Julian')
                     : ''
             }
           </div>
@@ -3553,7 +3079,8 @@ function readGenealogyDateModel(fieldRoot)
 
 function setGenealogyDateFieldError(
     fieldRoot,
-    message = ''
+    message = '',
+    parsed = null
 )
 {
     if (!fieldRoot) return;
@@ -3570,10 +3097,8 @@ function setGenealogyDateFieldError(
 
     if (validation)
     {
-        validation.textContent =
-            message
-                ? t(message)
-                : '';
+        validation.dataset.endpoint = String(parsed?.endpoint || 1);
+        validation.innerHTML = `${escapeHtml(message ? t(message) : '')}${genealogyDateAmbiguityHtml(parsed)}`;
     }
 }
 
@@ -3594,7 +3119,7 @@ function collectGenealogyDateField(fieldId, options = {})
     });
     if (!parsed.valid)
     {
-        setGenealogyDateFieldError(root, parsed.message);
+        setGenealogyDateFieldError(root, parsed.message, parsed);
         return options.allowInvalid ? { ...emptyGenealogyDate(type), invalid: true, message: parsed.message } : null;
     }
     const value = {
@@ -3603,6 +3128,20 @@ function collectGenealogyDateField(fieldId, options = {})
         reason: model.reason || '',
         burialPlaceId: cleanDatePlaceId(model.burialPlaceId)
     };
+    const startId = ({ addPersonDeath: 'addPersonBirth', geneoPersonDeath: 'geneoPersonBirth', profileInlineDeathField: 'profileInlineBirthField' })[fieldId]
+        || (/To(?:Date)?$/.test(fieldId) ? fieldId.replace(/To(Date)?$/, 'From$1') : /EndDate$/.test(fieldId) ? fieldId.replace(/EndDate$/, 'StartDate') : '');
+    const startRoot = startId ? document.querySelector(`[data-genealogy-date-field="${CSS.escape(startId)}"]`) : null;
+    if (startRoot)
+    {
+        const start = parseGenealogyDateTextAsType(startRoot.querySelector('[data-genealogy-date-input]')?.value,
+            startRoot.querySelector('[data-genealogy-date-type]')?.value, { calendar: readGenealogyDateModel(startRoot).calendar,
+                date2: startRoot.querySelector('[data-genealogy-date-input-to]')?.value });
+        if (start.valid && genealogyDateDefinitelyAfter(start.value, value))
+        {
+            setGenealogyDateFieldError(root, /Death/.test(fieldId) ? 'The death date is earlier than the birth date.' : 'The end date is earlier than the start date.');
+            return null;
+        }
+    }
     applyGenealogyDateToField(fieldId, value, { silent: true });
     return value;
 }
@@ -3640,238 +3179,13 @@ function applyGenealogyDateToField(fieldId, dateInput, options = {})
     {
         status.textContent =
             value.calendar === 'Julian'
-                ? t(
-                    'Julian calendar stored; conversion is not implemented.'
-                )
+                ? t('Julian')
                 : '';
     }
     if (!options.keepError) setGenealogyDateFieldError(root, '');
     if (!options.silent) root.dispatchEvent(new Event('genealogy-date-committed', { bubbles: true }));
 }
 
-function closeGenealogyDateEditor()
-{
-    if (genealogyDatePopover) genealogyDatePopover.remove();
-    genealogyDatePopover = null;
-    document.querySelectorAll('[data-genealogy-date-details][aria-expanded="true"]').forEach(button => button.setAttribute('aria-expanded', 'false'));
-    if (genealogyDateOutsideHandler) document.removeEventListener('click', genealogyDateOutsideHandler);
-    if (genealogyDateKeyHandler) document.removeEventListener('keydown', genealogyDateKeyHandler);
-    genealogyDateOutsideHandler = null;
-    genealogyDateKeyHandler = null;
-}
-
-function updateGenealogyDateEditorVisibility(popover)
-{
-    const type = normalizeGenealogyDateType(popover.querySelector('[data-editor-type]')?.value);
-    const needsDateParts = type === 'Exact date'
-        || type === 'About / Circa'
-        || type === 'Before'
-        || type === 'After'
-        || type === 'Between';
-
-    const needsDay = needsDateParts;
-    const needsMonth = needsDateParts;
-    const firstRow = popover.querySelector('[data-editor-first-date-row]');
-    if (firstRow) firstRow.hidden = false;
-    popover.querySelectorAll('[data-editor-day-field]').forEach(field =>
-    {
-        field.hidden = !needsDay;
-    });
-    popover.querySelectorAll('[data-editor-month-field]').forEach(field =>
-    {
-        field.hidden = !needsMonth;
-    });
-    const second = popover.querySelector('.genealogy-date-second-date');
-    if (second) second.hidden = type !== 'Between';
-    const note = popover.querySelector('[data-editor-note]');
-    if (note)
-    {
-        note.textContent = t(
-            'Julian calendar can be stored; conversion is not implemented in this prototype.'
-        );
-    }
-}
-
-function openGenealogyDateEditor(anchor, fieldId)
-{
-    const root = document.querySelector(`[data-genealogy-date-field="${CSS.escape(fieldId)}"]`);
-    if (!root) return;
-    const exactOnly =
-        root.dataset
-            .genealogyDateExactOnly
-          === 'true';
-    closeGenealogyDateEditor();
-    anchor?.setAttribute('aria-expanded', 'true');
-    const existingModel = readGenealogyDateModel(root);
-    const liveType = root.querySelector('[data-genealogy-date-type]')?.value || existingModel.dateType;
-    const liveInput = root.querySelector('[data-genealogy-date-input]');
-    const liveInputTo = root.querySelector('[data-genealogy-date-input-to]');
-    const liveText = collectLocalizedDataFieldValue(liveInput, liveInput?.dataset.sourceValue || '');
-    const liveText2 = collectLocalizedDataFieldValue(liveInputTo, liveInputTo?.dataset.sourceValue || '');
-    const normalizedLiveType = normalizeGenealogyDateType(liveType);
-    const liveParsed = (liveText || (normalizedLiveType === 'Between' && liveText2))
-        ? parseGenealogyDateTextAsType(liveText, normalizedLiveType, {
-            calendar: existingModel.calendar,
-            date2: normalizedLiveType === 'Between' ? liveText2 : existingModel.date2 || existingModel.date2Label,
-            date2Label: normalizedLiveType === 'Between' ? liveText2 : existingModel.date2 || existingModel.date2Label
-        })
-        : null;
-    const model = liveParsed?.valid
-        ? { ...liveParsed.value, placeId: existingModel.placeId, reason: existingModel.reason || '', burialPlaceId: existingModel.burialPlaceId }
-        : {
-            ...existingModel,
-            dateType: normalizedLiveType,
-            date: normalizedLiveType === 'Between' && liveText ? liveText : existingModel.date,
-            dateLabel: normalizedLiveType === 'Between' && liveText ? liveText : existingModel.dateLabel,
-            date2: normalizedLiveType === 'Between' && liveText2 ? liveText2 : existingModel.date2,
-            date2Label: normalizedLiveType === 'Between' && liveText2 ? liveText2 : existingModel.date2Label
-        };
-    const parts = genealogyDatePartsFromModel(model);
-    const popover = document.createElement('div');
-    popover.className = 'genealogy-date-popover';
-    popover.setAttribute('role', 'dialog');
-    popover.setAttribute('aria-label', 'Genealogy date details');
-    popover.innerHTML = `<div class="genealogy-date-popover-header"><div><strong>Date details</strong></div><button class="close-button" type="button" data-genealogy-date-close aria-label="Close date details">${icon.close}</button></div>
-        <div class="genealogy-date-editor-grid">
-          <div class="genealogy-date-part-field full"><label>Smart date</label><input data-editor-smart value="${escapeHtml(formatGenealogyDateLabel(model) || model.originalText || '')}" placeholder="e.g. 14 Feb 1915"></div>
-          <div
-            class="genealogy-date-part-field"
-            ${exactOnly ? 'hidden' : ''}>
-
-            <label>Date type</label>
-
-            <select
-              class="compact-select"
-              data-editor-type>
-
-              ${genealogyDateTypeOptions(
-                    exactOnly
-                        ? 'Exact date'
-                        : model.dateType
-                )}
-            </select>
-          </div>
-          <div
-            class="genealogy-date-part-field"
-            ${exactOnly ? 'hidden' : ''}>
-
-            <label>Calendar</label>
-
-            <select
-              class="compact-select"
-              data-editor-calendar>
-
-              ${GENEALOGY_CALENDARS
-                    .map(calendar => `
-                  <option
-                    value="${escapeHtml(calendar)}"
-                    ${
-                        calendar
-                        === (
-                            model.calendar
-                          || 'Gregorian'
-                        )
-                            ? 'selected'
-                            : ''
-                    }>
-                    ${escapeHtml(t(calendar))}
-                  </option>
-                `)
-                    .join('')}
-            </select>
-          </div>
-          <div class="genealogy-date-parts-row full" data-editor-first-date-row>
-            <div class="genealogy-date-part-field" data-editor-day-field><label>Day</label><input data-editor-day inputmode="numeric" value="${escapeHtml(parts.day)}" placeholder="DD"></div>
-            <div class="genealogy-date-part-field" data-editor-month-field><label>Month</label><select data-editor-month>${genealogyMonthOptions(parts.month)}</select></div>
-            <div class="genealogy-date-part-field"><label>Year</label><input data-editor-year inputmode="numeric" value="${escapeHtml(parts.year)}" placeholder="YYYY"></div>
-          </div>
-          <div class="genealogy-date-second-date full" hidden>
-            <div class="genealogy-date-parts-row">
-              <div class="genealogy-date-part-field" data-editor-day-field><label>Second day</label><input data-editor-day2 inputmode="numeric" value="${escapeHtml(parts.day2)}" placeholder="DD"></div>
-              <div class="genealogy-date-part-field" data-editor-month-field><label>Second month</label><select data-editor-month2>${genealogyMonthOptions(parts.month2)}</select></div>
-              <div class="genealogy-date-part-field"><label>Second year</label><input data-editor-year2 inputmode="numeric" value="${escapeHtml(parts.year2)}" placeholder="YYYY"></div>
-            </div>
-          </div>
-          <div
-            class="genealogy-date-editor-note full"
-            data-editor-note
-            ${exactOnly ? 'hidden' : ''}>
-
-            Julian calendar can be stored; conversion is not implemented in this prototype.
-          </div>
-          <div class="genealogy-date-validation full" data-editor-validation></div>
-        </div>
-        <div class="genealogy-date-actions"><button class="button secondary" type="button" data-genealogy-date-close>Cancel</button><button class="button primary" type="button" data-genealogy-date-apply>Apply</button></div>`;
-    document.body.appendChild(popover);
-    genealogyDatePopover = popover;
-
-    updateGenealogyDateEditorVisibility(
-        popover
-    );
-
-    localizeUI(
-        popover,
-        {
-            suppressObserverReplay: true
-        }
-    );
-
-    popover
-        .querySelector(
-            '[data-editor-type]'
-        )
-        ?.addEventListener(
-            'change',
-            () =>
-                updateGenealogyDateEditorVisibility(
-                    popover
-                )
-        );
-    popover.querySelectorAll('[data-genealogy-date-close]').forEach(button => button.addEventListener('click', closeGenealogyDateEditor));
-    popover.querySelector('[data-genealogy-date-apply]')?.addEventListener('click', () =>
-    {
-        const type = popover.querySelector('[data-editor-type]')?.value || 'Unknown';
-        const calendar = popover.querySelector('[data-editor-calendar]')?.value || 'Gregorian';
-        const partsValue = {
-            calendar,
-            day: popover.querySelector('[data-editor-day]')?.value.trim(),
-            month: popover.querySelector('[data-editor-month]')?.value,
-            year: popover.querySelector('[data-editor-year]')?.value.trim(),
-            day2: popover.querySelector('[data-editor-day2]')?.value.trim(),
-            month2: popover.querySelector('[data-editor-month2]')?.value,
-            year2: popover.querySelector('[data-editor-year2]')?.value.trim()
-        };
-        const hasStructured = partsValue.year || partsValue.month || partsValue.day || partsValue.year2 || partsValue.month2 || partsValue.day2;
-        const smart = popover.querySelector('[data-editor-smart]')?.value || '';
-        const parsed = hasStructured
-            ? buildGenealogyDateFromParts(type, partsValue)
-            : parseGenealogyDateTextAsType(smart, type, { calendar });
-        if (!parsed.valid)
-        {
-            const validation = popover.querySelector('[data-editor-validation]');
-            if (validation)
-            {
-                validation.textContent = t(parsed.message);
-                validation.style.display = 'block';
-            }
-            return;
-        }
-        applyGenealogyDateToField(fieldId, { ...parsed.value, calendar });
-        closeGenealogyDateEditor();
-    });
-    genealogyDateOutsideHandler = event =>
-    {
-        if (popover.contains(event.target) || anchor.contains(event.target)) return;
-        closeGenealogyDateEditor();
-    };
-    genealogyDateKeyHandler = event =>
-    {
-        if (event.key === 'Escape') closeGenealogyDateEditor();
-    };
-    setTimeout(() => document.addEventListener('click', genealogyDateOutsideHandler), 0);
-    document.addEventListener('keydown', genealogyDateKeyHandler);
-    popover.querySelector('[data-editor-smart]')?.focus({ preventScroll: true });
-}
 
 function setPlaceAddressDisclosureState(
     field,
@@ -4478,6 +3792,20 @@ function bindGenealogyDateFields(root = document)
     });
     root.querySelectorAll('[data-genealogy-date-field]').forEach(field =>
     {
+        if (!field.dataset.partialDateBound)
+        {
+            field.dataset.partialDateBound = 'true';
+            field.addEventListener('click', event =>
+            {
+                const resolve = event.target.closest('[data-date-resolve]');
+                if (!resolve) return;
+                const input = field.querySelector(resolve.closest('[data-genealogy-date-validation]')?.dataset.endpoint === '2'
+                    ? '[data-genealogy-date-input-to]' : '[data-genealogy-date-input]');
+                input.value = `${resolve.dataset.dateResolve} ${resolve.dataset.number}`;
+                input.dataset.sourceValue = input.value;
+                clearError(); input.dispatchEvent(new Event('change', { bubbles: true })); input.focus();
+            });
+        }
         const type = field.querySelector('[data-genealogy-date-type]');
         const input = field.querySelector('[data-genealogy-date-input]');
         const inputTo = field.querySelector('[data-genealogy-date-input-to]');
@@ -4495,16 +3823,8 @@ function bindGenealogyDateFields(root = document)
                     readGenealogyDateModel(field);
                 const selectedType = normalizeGenealogyDateType(type.value);
                 field.classList.toggle('is-between', selectedType === 'Between');
-                if (
-                    selectedType !== 'Between'
-              && inputTo
-                )
-                {
-                    inputTo.value = '';
-                    inputTo.dataset.sourceValue = '';
-                }
                 const model = field.querySelector('[data-genealogy-date-model]');
-                if (model) model.value = JSON.stringify({ ...currentModel, dateType: selectedType, date2: selectedType === 'Between' ? currentModel.date2 || '' : '', date2Label: selectedType === 'Between' ? currentModel.date2Label || '' : '', sortDate2: selectedType === 'Between' ? currentModel.sortDate2 || '' : '' });
+                if (model) model.value = JSON.stringify({ ...currentModel, dateType: selectedType });
                 clearError();
             });
         }
@@ -4512,6 +3832,11 @@ function bindGenealogyDateFields(root = document)
         {
             input.dataset.dateBound = 'true';
             input.addEventListener('input', clearError);
+            input.addEventListener('blur', () =>
+            {
+                const parsed = parseGenealogyDateTextAsType(input.value, type?.value, { calendar: readGenealogyDateModel(field).calendar, date2: inputTo?.value });
+                if (!parsed.valid) setGenealogyDateFieldError(field, parsed.message, parsed);
+            });
         }
         if (inputTo && !inputTo.dataset.dateBound)
         {
@@ -4934,16 +4259,7 @@ function normalizeSampleGenealogyDates()
 
         if (person.livingStatus === 'Living')
         {
-            person.death = {
-                ...emptyGenealogyDate('Exact date'),
-                placeId: null,
-                placeText: '',
-                address: '',
-                reason: '',
-                burialPlaceId: null,
-                burialPlaceText: '',
-                burialAddress: ''
-            };
+            person.death = normalizeGenealogyDateInput(person.death);
         }
         else
         {
@@ -4974,7 +4290,7 @@ function normalizeSampleGenealogyDates()
             placeText: fact.placeText || getPlaceDisplay(fact.placeId),
             address: fact.address || '',
             notes: fact.description || '',
-            fromDate: genealogyDateOrNull({ date: fact.date, dateLabel: fact.dateLabel, dateType: fact.dateType || 'Year only' }, 'Year only'),
+            fromDate: genealogyDateOrNull({ date: fact.date, dateLabel: fact.dateLabel, dateType: fact.dateType || 'Exact date' }, 'Exact date'),
             toDate: null
         });
     });
@@ -4987,8 +4303,8 @@ function normalizeSampleGenealogyDates()
             value: 'Archive clerk',
             company: 'Pawford records room',
             notes: 'Sample occupation fact kept on the centralized person record.',
-            fromDate: genealogyDateOrNull({ date: '1976', dateLabel: '1976', dateType: 'Year only' }, 'Year only'),
-            toDate: genealogyDateOrNull({ date: '1995', dateLabel: '1995', dateType: 'Year only' }, 'Year only')
+            fromDate: genealogyDateOrNull({ date: '1976', dateLabel: '1976', dateType: 'Exact date' }, 'Exact date'),
+            toDate: genealogyDateOrNull({ date: '1995', dateLabel: '1995', dateType: 'Exact date' }, 'Exact date')
         });
     }
 
@@ -4996,7 +4312,7 @@ function normalizeSampleGenealogyDates()
     if (pearl && !personEventByTag(pearl, 'BAPM'))
     {
         upsertPersonEvent(pearl, 'BAPM', {
-            date: genealogyDateOrNull({ date: '1928', dateLabel: '1928', dateType: 'Year only' }, 'Year only'),
+            date: genealogyDateOrNull({ date: '1928', dateLabel: '1928', dateType: 'Exact date' }, 'Exact date'),
             placeId: 'place-old-cattery',
             placeText: getPlaceDisplay('place-old-cattery')
         });
@@ -5078,6 +4394,9 @@ function eventDateFields(dateInput)
 {
     const value = normalizeGenealogyDateInput(dateInput);
     return {
+        state: value.state,
+        first: value.first,
+        second: value.second,
         date: value.date,
         dateLabel: value.dateLabel,
         dateType: value.dateType,
@@ -5352,9 +4671,9 @@ function buildSampleEvents(context = null)
         {
             if (attribute.tag === 'EDUC')
             {
-                const fromDate = timelineOptionalGenealogyDate(attribute.fromDate || attribute.date, 'Year only');
-                const toDate = timelineOptionalGenealogyDate(attribute.toDate, 'Year only');
-                const primaryDate = fromDate || toDate || timelineUnknownGenealogyDate('Year only');
+                const fromDate = timelineOptionalGenealogyDate(attribute.fromDate || attribute.date, 'Exact date');
+                const toDate = timelineOptionalGenealogyDate(attribute.toDate, 'Exact date');
+                const primaryDate = fromDate || toDate || timelineUnknownGenealogyDate('Exact date');
 
                 const institutionName = educationInstitutionLabel(attribute);
                 const educationValue = educationValueLabel(attribute);
@@ -5367,7 +4686,7 @@ function buildSampleEvents(context = null)
 
                 if (!hasEducationContent) return;
 
-                const eventDate = timelineDatePayload(primaryDate, 'Year only');
+                const eventDate = timelineDatePayload(primaryDate, 'Exact date');
 
                 events.push({
                     id: `event-${attribute.id || `${person.id}-education`}`,
@@ -5393,9 +4712,9 @@ function buildSampleEvents(context = null)
 
             if (attribute.tag === 'OCCU')
             {
-                const fromDate = timelineOptionalGenealogyDate(attribute.fromDate || attribute.date, 'Year only');
-                const toDate = timelineOptionalGenealogyDate(attribute.toDate, 'Year only');
-                const primaryDate = fromDate || toDate || timelineUnknownGenealogyDate('Year only');
+                const fromDate = timelineOptionalGenealogyDate(attribute.fromDate || attribute.date, 'Exact date');
+                const toDate = timelineOptionalGenealogyDate(attribute.toDate, 'Exact date');
+                const primaryDate = fromDate || toDate || timelineUnknownGenealogyDate('Exact date');
 
                 const company = cleanEditFieldValue(attribute.company || attribute.agency);
                 const occupation = cleanEditFieldValue(attribute.value || attribute.occupation);
@@ -5410,7 +4729,7 @@ function buildSampleEvents(context = null)
 
                 if (!hasOccupationContent) return;
 
-                const eventDate = timelineDatePayload(primaryDate, 'Year only');
+                const eventDate = timelineDatePayload(primaryDate, 'Exact date');
 
                 events.push({
                     id: `event-${attribute.id || `${person.id}-occupation`}`,

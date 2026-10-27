@@ -238,6 +238,17 @@ function validateGeneographBoardFile(payload)
     const families = uniqueIds(diagram.families);
     const nodes = uniqueIds(diagram.nodes);
     uniqueIds(diagram.connections);
+    const validDate = value =>
+    {
+        if (!value || typeof value !== 'object' || !value.first) return true;
+        if (!GENEALOGY_CALENDARS.includes(value.calendar)
+            || !['empty', 'known', 'unknown', 'unparsed'].includes(value.state)) return false;
+        const validParts = parts => parts && ['year', 'month', 'day'].every(key =>
+            parts[key] === null || Number.isInteger(parts[key]))
+            && Boolean(genealogyDateParts(parts.year, parts.month, parts.day, value.calendar));
+        if (!validParts(value.first) || value.second && !validParts(value.second)) return false;
+        return value.state !== 'known' || normalizeGenealogyDateInput(value).state === 'known';
+    };
     for (const asset of diagram.assets)
     {
         const image = geneoBoardImageData(asset.src);
@@ -246,6 +257,7 @@ function validateGeneographBoardFile(payload)
     for (const person of diagram.people)
     {
         if (!person.names || typeof person.names !== 'object'
+            || !validDate(person.birth) || !validDate(person.death)
             || (person.photoAssetId && !assets.has(person.photoAssetId))
             || (person.photoRegion && (!normalizeFaceRegion(person.photoRegion, FACE_REGION_MIN)
                 || ['x', 'y', 'width', 'height'].some(key => !Number.isFinite(person.photoRegion[key])))))
@@ -254,6 +266,7 @@ function validateGeneographBoardFile(payload)
     for (const family of diagram.families)
     {
         if (!Array.isArray(family.partnerIds) || !Array.isArray(family.children)
+            || (family.events || []).some(event => !validDate(event.date))
             || new Set(family.partnerIds).size !== family.partnerIds.length
             || family.partnerIds.some(id => !people.has(id))
             || family.children.some(child => !people.has(child?.personId))

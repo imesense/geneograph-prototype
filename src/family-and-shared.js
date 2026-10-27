@@ -3416,8 +3416,9 @@ function renderFamilyTreeHeroLifeDetails(person)
     const status = normalizeLivingStatus(person.status || person.living);
     const birthDate = parsePeoplePrototypeDate(person.birth);
     const deathDate = parsePeoplePrototypeDate(person.death);
-    const birthAge = status === 'Deceased' ? null : calculatePeopleAge(birthDate);
-    const deathAge = status === 'Deceased' && birthDate && deathDate ? calculatePeopleAge(birthDate, deathDate) : null;
+    const central = person.id ? getPerson(person.id) : null;
+    const birthAge = status === 'Deceased' ? null : genealogyAgeRange(central?.birth || person.birth);
+    const deathAge = status === 'Deceased' ? genealogyAgeRange(central?.birth || person.birth, central?.death || person.death) : null;
     const rows = [
         {
             label: 'Born',
@@ -3956,10 +3957,12 @@ function timelineEventBoundaryRank(event)
 
 function compareTimelineEvents(a, b)
 {
+    const first = parseTimelineSortValue(a), second = parseTimelineSortValue(b);
+    if (Number.isFinite(first) !== Number.isFinite(second)) return Number.isFinite(first) ? -1 : 1;
     const boundaryDiff = timelineEventBoundaryRank(a) - timelineEventBoundaryRank(b);
     if (boundaryDiff) return boundaryDiff;
 
-    return parseTimelineSortValue(a) - parseTimelineSortValue(b);
+    return (Number.isFinite(first) ? first - second : 0) || String(a.id).localeCompare(String(b.id));
 }
 
 function getFamilyTreeTimelineEvents(personId)
@@ -3979,35 +3982,13 @@ function renderFamilyTreeTimeline(personId)
     }
 
     return `<div class="timeline">
-        ${events.map(event => renderTimelineItem(event, personId)).join('')}
+        ${events.map((event, index) => `${!Number.isFinite(parseTimelineSortValue(event)) && (index === 0 || Number.isFinite(parseTimelineSortValue(events[index - 1]))) ? `<h4 class="panel-muted">${escapeHtml(t('Year unknown'))}</h4>` : ''}${renderTimelineItem(event, personId)}`).join('')}
       </div>`;
 }
 
 function parseTimelineSortValue(value)
 {
-    if (value && typeof value === 'object')
-    {
-        if (value.sortDate) return Number(value.sortDate);
-        value = value.date || value.dateLabel || value.originalText || '';
-    }
-
-    const text = String(value || '').trim();
-    if (!text) return Number.POSITIVE_INFINITY;
-
-    const fullDate = text.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
-    if (fullDate)
-    {
-        const [, dd, mm, yyyy] = fullDate;
-        return Number(`${yyyy}${mm}${dd}`);
-    }
-
-    const yearOnly = text.match(/^(\d{4})$/);
-    if (yearOnly) return Number(`${yearOnly[1]}0000`);
-
-    const labelYear = text.match(/\b(\d{4})\b/);
-    if (labelYear) return Number(`${labelYear[1]}0000`);
-
-    return Number.POSITIVE_INFINITY;
+    return genealogyDateSortValue(value);
 }
 
 function timelineDateLabel(event)
@@ -4018,12 +3999,9 @@ function timelineDateLabel(event)
 function timelineYearFromValue(value)
 {
     if (!value) return '';
-
-    const label = formatGenealogyDateLabel(value)
-        || String(value?.dateLabel || value?.date || value || '');
-
-    const match = String(label).match(/\b(\d{4})\b/);
-    return match ? match[1] : '';
+    const date = normalizeGenealogyDateInput(value);
+    const year = date.first?.year || date.second?.year;
+    return year ? String(year).padStart(4, '0') : '';
 }
 
 function timelineYear(event)
@@ -4076,63 +4054,9 @@ function timelineEventIsLasting(event)
 
 function timelineDateParts(value)
 {
-    if (!value) return null;
-
-    if (value && typeof value === 'object')
-    {
-        const sortDate = String(value.sortDate || '').trim();
-
-        if (/^\d{8}$/.test(sortDate))
-        {
-            return {
-                year: Number(sortDate.slice(0, 4)),
-                month: Number(sortDate.slice(4, 6)),
-                day: Number(sortDate.slice(6, 8)),
-                precision: 'day'
-            };
-        }
-
-        const label = value.date || value.dateLabel || value.originalText || '';
-        return timelineDateParts(label);
-    }
-
-    const text = String(value || '').trim();
-    if (!text) return null;
-
-    const fullDate = text.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
-    if (fullDate)
-    {
-        return {
-            year: Number(fullDate[3]),
-            month: Number(fullDate[2]),
-            day: Number(fullDate[1]),
-            precision: 'day'
-        };
-    }
-
-    const isoDate = text.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-    if (isoDate)
-    {
-        return {
-            year: Number(isoDate[1]),
-            month: Number(isoDate[2]),
-            day: Number(isoDate[3]),
-            precision: 'day'
-        };
-    }
-
-    const yearMatch = text.match(/\b(\d{4})\b/);
-    if (yearMatch)
-    {
-        return {
-            year: Number(yearMatch[1]),
-            month: 1,
-            day: 1,
-            precision: 'year'
-        };
-    }
-
-    return null;
+    const model = normalizeGenealogyDateInput(value);
+    if (model.state !== 'known') return null;
+    return { ...model.first, precision: model.first.year && model.first.month && model.first.day ? 'day' : 'partial' };
 }
 
 function timelineAgeAtEvent(event, personId)
@@ -4142,28 +4066,7 @@ function timelineAgeAtEvent(event, personId)
     const person = getPerson(personId);
     if (!person?.birth) return null;
 
-    const birth = timelineDateParts(person.birth);
-    const occurrence = timelineDateParts(event);
-
-    if (!birth?.year || !occurrence?.year) return null;
-
-    let age = occurrence.year - birth.year;
-
-    if (
-        birth.precision === 'day'
-          && occurrence.precision === 'day'
-          && (
-              occurrence.month < birth.month
-              || (occurrence.month === birth.month && occurrence.day < birth.day)
-          )
-    )
-    {
-        age -= 1;
-    }
-
-    if (!Number.isFinite(age) || age < 0) return null;
-
-    return age;
+    return genealogyAgeRange(person.birth, event);
 }
 
 function timelineAgeLabel(event, personId)
@@ -6275,7 +6178,7 @@ function addPersonAddedFactsFromPerson(person)
     if (cleanEditFieldValue(person.names?.prefix || details.prefix)) facts.push('prefix');
     if (cleanEditFieldValue(person.names?.suffix || details.suffix)) facts.push('suffix');
     if (cleanEditFieldValue(person.death?.cause || person.death?.reason)) facts.push('causeOfDeath');
-    if (editPlaceValue(person.death?.burialPlaceId) || cleanEditFieldValue(person.death?.burialPlaceText)) facts.push('burialPlace');
+    if (editPlaceValue(person.death?.burialPlaceId) || cleanEditFieldValue(person.death?.burialPlaceText) || hasGenealogyDateValue(personEventByTag(person, 'BURI')?.date)) facts.push('burialPlace');
     if (cleanEditFieldValue(person.profile?.alternativeNames || details.alternativeNames)) facts.push('alternativeNames');
     if (personHasEducationFact(person)) facts.push('education');
     if (personHasOccupationFact(person)) facts.push('occupation');
@@ -6333,7 +6236,7 @@ function addPersonFactCardHtml(factId, person = null)
     }
     if (factId === 'burialPlace')
     {
-        return fieldWrap(renderPlaceCombobox({
+        return fieldWrap(renderGenealogyDateField('addPersonBurial', 'Burial date', personEventByTag(centralPerson, 'BURI')?.date, { className: 'full genealogy-date-inline-range' }) + renderPlaceCombobox({
             id: 'addPersonFactBurialPlace',
             label: 'Burial place',
             value: editPlaceValue(death.burialPlaceId, death.burialPlaceText),
@@ -6382,7 +6285,7 @@ function addPersonFactCardHtml(factId, person = null)
                     {
                         inputId: 'addPersonFactEducationFromDate',
                         typeId: 'addPersonFactEducationFromDateType',
-                        defaultDateType: 'Year only',
+                        defaultDateType: 'Exact date',
                         placeholder: 'e.g. 1915',
                         className: 'genealogy-date-inline-range'
                     }
@@ -6397,7 +6300,7 @@ function addPersonFactCardHtml(factId, person = null)
                     {
                         inputId: 'addPersonFactEducationToDate',
                         typeId: 'addPersonFactEducationToDateType',
-                        defaultDateType: 'Year only',
+                        defaultDateType: 'Exact date',
                         placeholder: 'e.g. 1920',
                         className: 'genealogy-date-inline-range'
                     }
@@ -6890,14 +6793,7 @@ function updatePartnerRelationshipFields(
 
 function partnerRelationshipDateOrderIsValid(startDate, endDate)
 {
-    const comparableTypes = new Set(['Exact date', 'Year only']);
-    const start = normalizeGenealogyDateInput(startDate || {}, 'Exact date');
-    const end = normalizeGenealogyDateInput(endDate || {}, 'Exact date');
-
-    if (!start.sortDate || !end.sortDate) return true;
-    if (!comparableTypes.has(start.dateType) || !comparableTypes.has(end.dateType)) return true;
-
-    return Number(end.sortDate) >= Number(start.sortDate);
+    return !genealogyDateDefinitelyAfter(startDate, endDate);
 }
 
 function updateAddPersonPartnerChildrenLabel()
@@ -8842,13 +8738,13 @@ function addPersonFactsHaveIdentifyingValue(facts = {})
           || hasTextValue(education.value)
           || hasTextValue(educationPlaceText)
           || hasTextValue(education.notes)
-          || hasGenealogyDateValue(education.fromDate, 'Year only')
-          || hasGenealogyDateValue(education.toDate, 'Year only')
+          || hasGenealogyDateValue(education.fromDate, 'Exact date')
+          || hasGenealogyDateValue(education.toDate, 'Exact date')
           || hasTextValue(work.company)
           || hasTextValue(work.occupation)
           || hasTextValue(work.notes)
-          || hasGenealogyDateValue(work.fromDate, 'Year only')
-          || hasGenealogyDateValue(work.toDate, 'Year only')
+          || hasGenealogyDateValue(work.fromDate, 'Exact date')
+          || hasGenealogyDateValue(work.toDate, 'Exact date')
           || hasTextValue(baptismPlaceText)
           || hasGenealogyDateValue(baptism.date, 'Exact date')
           || hasTextValue(customFact.value)
@@ -11912,6 +11808,8 @@ function collectAddPersonAdditionalFacts(personId = '')
     if (hasFact('causeOfDeath')) facts.deathReason = readAddPersonModalValue('#addPersonFactCauseOfDeath');
     if (hasFact('burialPlace'))
     {
+        facts.burialDate = collectGenealogyDateField('addPersonBurial');
+        if (!facts.burialDate) return { invalid: true, message: 'Check the burial date before saving.' };
         facts.burialPlace = readPlaceInputValue('#addPersonFactBurialPlace', modalBackdrop);
     }
     if (hasFact('alternativeNames')) facts.alternativeNames = readAddPersonModalValue('#addPersonFactAlternativeNames');
@@ -11929,6 +11827,7 @@ function collectAddPersonAdditionalFacts(personId = '')
         const fromDate = collectGenealogyDateField('addPersonFactEducationFrom');
         const toDate = collectGenealogyDateField('addPersonFactEducationTo');
         if (!fromDate || !toDate) return { invalid: true, message: 'Check the education dates before saving.' };
+        if (genealogyDateDefinitelyAfter(fromDate, toDate)) return { invalid: true, message: 'The end date is earlier than the start date.' };
         facts.education = {
             institutionName: readAddPersonModalValue('#addPersonFactEducationInstitutionName'),
             institutionType: modalBackdrop.querySelector('#addPersonFactEducationInstitutionType')?.value || 'Unknown',
@@ -11944,6 +11843,7 @@ function collectAddPersonAdditionalFacts(personId = '')
         const fromDate = collectGenealogyDateField('addPersonFactWorkFrom');
         const toDate = collectGenealogyDateField('addPersonFactWorkTo');
         if (!fromDate || !toDate) return { invalid: true, message: 'Check the occupation dates before saving.' };
+        if (genealogyDateDefinitelyAfter(fromDate, toDate)) return { invalid: true, message: 'The end date is earlier than the start date.' };
         facts.work = {
             company: readAddPersonModalValue('#addPersonFactWorkCompany'),
             occupation: readAddPersonModalValue('#addPersonFactWorkOccupation'),
@@ -12046,7 +11946,7 @@ function applyAddPersonAdditionalFacts(person, facts = {})
         person.death.reason = valueOrNull(facts.deathReason) || '';
         person.death.cause = person.death.reason;
     }
-    else
+    else if (person.livingStatus === 'Deceased')
     {
         person.death.reason = '';
         person.death.cause = '';
@@ -12058,8 +11958,9 @@ function applyAddPersonAdditionalFacts(person, facts = {})
         person.death.burialPlaceText = burialPlace.placeText;
         person.death.burialPlaceId = burialPlace.placeId;
         person.death.burialAddress = burialPlace.address;
+        upsertPersonEvent(person, 'BURI', { date: genealogyDateOrNull(facts.burialDate), placeId: burialPlace.placeId, placeText: burialPlace.placeText, address: burialPlace.address });
     }
-    else
+    else if (person.livingStatus === 'Deceased')
     {
         person.death.burialPlaceText = '';
         person.death.burialPlaceId = null;
@@ -12092,8 +11993,8 @@ function applyAddPersonAdditionalFacts(person, facts = {})
             placeId: educationPlace.placeId,
             address: educationPlace.address,
             notes: valueOrNull(facts.education.notes) || '',
-            fromDate: genealogyDateOrNull(facts.education.fromDate, 'Year only'),
-            toDate: genealogyDateOrNull(facts.education.toDate, 'Year only')
+            fromDate: genealogyDateOrNull(facts.education.fromDate, 'Exact date'),
+            toDate: genealogyDateOrNull(facts.education.toDate, 'Exact date')
         });
     }
     else
@@ -12237,15 +12138,7 @@ function saveEditPersonModalValues(personId)
     }
     else
     {
-        person.death = {
-            ...emptyGenealogyDate('Exact date'),
-            placeId: null,
-            placeText: '',
-            reason: '',
-            cause: '',
-            burialPlaceId: null,
-            burialPlaceText: ''
-        };
+        person.death = normalizeGenealogyDateInput(person.death);
     }
 
     applyAddPersonAdditionalFacts(person, additionalFacts);
@@ -12366,8 +12259,8 @@ function defaultPeopleProfileDetails()
         educationValue: '',
         educationPlace: '',
         educationNotes: '',
-        educationFromDate: emptyGenealogyDate('Year only'),
-        educationToDate: emptyGenealogyDate('Year only'),
+        educationFromDate: emptyGenealogyDate('Exact date'),
+        educationToDate: emptyGenealogyDate('Exact date'),
         workCompany: '',
         workOccupation: '',
         workNotes: '',
@@ -12516,8 +12409,8 @@ function personHasEducationFact(person)
         || hasTextValue(fact.placeText)
         || hasTextValue(fact.placeId)
         || hasTextValue(fact.notes)
-        || hasGenealogyDateValue(fact.fromDate, 'Year only')
-        || hasGenealogyDateValue(fact.toDate, 'Year only')
+        || hasGenealogyDateValue(fact.fromDate, 'Exact date')
+        || hasGenealogyDateValue(fact.toDate, 'Exact date')
     ));
 }
 
@@ -12564,8 +12457,8 @@ function peopleProfileDetailsFor(person)
             if (prop === 'educationValue') return educationValueLabel(education);
             if (prop === 'educationPlace') return editPlaceValue(education?.placeId, education?.placeText);
             if (prop === 'educationNotes') return education?.notes || '';
-            if (prop === 'educationFromDate') return dateForForm(education?.fromDate, 'Year only');
-            if (prop === 'educationToDate') return dateForForm(education?.toDate, 'Year only');
+            if (prop === 'educationFromDate') return dateForForm(education?.fromDate, 'Exact date');
+            if (prop === 'educationToDate') return dateForForm(education?.toDate, 'Exact date');
             if (prop === 'workCompany') return work?.company || work?.agency || '';
             if (prop === 'workOccupation') return work?.value || '';
             if (prop === 'workNotes') return work?.notes || '';
@@ -12658,11 +12551,11 @@ function peopleProfileDetailsFor(person)
             }
             if (prop === 'educationFromDate')
             {
-                upsertPersonAttribute(centralPerson, 'EDUC', { fromDate: genealogyDateOrNull(value, 'Year only') }); return true;
+                upsertPersonAttribute(centralPerson, 'EDUC', { fromDate: genealogyDateOrNull(value, 'Exact date') }); return true;
             }
             if (prop === 'educationToDate')
             {
-                upsertPersonAttribute(centralPerson, 'EDUC', { toDate: genealogyDateOrNull(value, 'Year only') }); return true;
+                upsertPersonAttribute(centralPerson, 'EDUC', { toDate: genealogyDateOrNull(value, 'Exact date') }); return true;
             }
             if (prop === 'workCompany')
             {

@@ -15,7 +15,11 @@ function geneoReviewEqual(left, right)
     {
         if (Array.isArray(value)) return value.map(stable);
         if (value && typeof value === 'object')
+        {
+            if (value.first && value.dateType)
+                value = Object.fromEntries(Object.entries(value).filter(([key]) => !['date', 'dateLabel', 'sortDate', 'date2', 'date2Label', 'sortDate2', 'originalText'].includes(key)));
             return Object.fromEntries(Object.keys(value).sort().filter(key => value[key] !== undefined).map(key => [key, stable(value[key])]));
+        }
         return value ?? null;
     };
     return JSON.stringify(stable(left)) === JSON.stringify(stable(right));
@@ -30,11 +34,12 @@ function geneoReviewFact(person, key)
     const value = person[vital] || emptyGenealogyDate('Exact date');
     if (part === 'place') return { placeId: value.placeId || null, placeText: value.placeText || '', address: value.address || '' };
     const date = normalizeGenealogyDateInput(structuredClone(value), 'Exact date');
-    return Object.fromEntries(Object.entries(date).filter(([field]) => !['placeId', 'placeText', 'address', 'coordinates'].includes(field)));
+    return Object.fromEntries(['state', 'dateType', 'calendar', 'first', 'second', 'originalText'].map(field => [field, date[field]]));
 }
 
 function geneoReviewFactEmpty(value)
 {
+    if (value?.state) return value.state === 'empty';
     if (value?.dateType === 'Unknown') return false;
     if (value && typeof value === 'object')
         return !Object.entries(value).some(([key, item]) => !['dateType', 'calendar', 'dateKind'].includes(key) && Boolean(item));
@@ -46,7 +51,7 @@ function geneoReviewFactText(person, key)
     const value = geneoReviewFact(person, key);
     if (value === undefined) return t('Unavailable');
     if (geneoReviewFactEmpty(value)) return t('Empty');
-    if (value?.dateType === 'Unknown') return t('Unknown');
+    if (value?.state === 'unknown' || value?.dateType === 'Unknown') return t('Unknown');
     if (key.endsWith('.date')) return formatGenealogyDateLabel(person[key.split('.')[0]]) || t('Empty');
     if (key.endsWith('.place')) return geneoPersonPlaceLabel(person[key.split('.')[0]]) || t('Empty');
     if (key === 'gender') return t({ male: 'Male', female: 'Female', unknown: 'Unknown' }[value] || String(value));
@@ -73,10 +78,7 @@ function geneoReviewSetFact(target, key, value)
     {
         const [vital, part] = key.split('.');
         const existing = target[vital] || emptyGenealogyDate('Exact date');
-        const preserved = part === 'date'
-            ? { placeId: existing.placeId || null, placeText: existing.placeText || '', address: existing.address || '', ...(existing.coordinates ? { coordinates: existing.coordinates } : {}) }
-            : geneoReviewFact(target, `${vital}.date`);
-        target[vital] = { ...structuredClone(preserved), ...structuredClone(value) };
+        target[vital] = normalizeGenealogyDateInput({ ...structuredClone(existing), ...structuredClone(value) });
     }
 }
 
@@ -187,13 +189,13 @@ function geneoTreeImportMatches(person, projectId, draft = geneoTreeImportDraft)
         const birth = geneoReviewFact(person, 'birth.date');
         const otherBirth = geneoReviewFact(candidate, 'birth.date');
         const recordedBirth = !geneoReviewFactEmpty(birth) && !geneoReviewFactEmpty(otherBirth);
-        const birthAgrees = recordedBirth && geneoReviewEqual(birth, otherBirth);
+        const birthAgrees = recordedBirth && Boolean(birth.first?.year && otherBirth.first?.year) && genealogyDatesCompatible(birth, otherBirth);
         const givenNameAgrees = Boolean(names.first) && names.first.trim().toLocaleLowerCase() === candidate.names?.first?.trim().toLocaleLowerCase();
         const vitalConflict = person.gender !== 'unknown' && candidate.gender !== 'unknown' && person.gender !== candidate.gender
             || person.livingStatus !== 'Unknown' && candidate.livingStatus !== 'Unknown' && person.livingStatus !== candidate.livingStatus
             || ['birth.date', 'death.date'].some(key =>
             !geneoReviewFactEmpty(geneoReviewFact(person, key)) && !geneoReviewFactEmpty(geneoReviewFact(candidate, key))
-            && !geneoReviewEqual(geneoReviewFact(person, key), geneoReviewFact(candidate, key)));
+            && !genealogyDatesCompatible(geneoReviewFact(person, key), geneoReviewFact(candidate, key)));
         const context = [];
         for (const edge of graph.get(person.id) || [])
         {
@@ -336,8 +338,9 @@ function geneoReviewValidatePerson(person, projectId)
         const vital = person[key] || {};
         if (vital.placeId && !(sampleData.places || []).some(place => place.id === vital.placeId && place.projectId === projectId && !place.deleted))
             return 'A selected place is unavailable in this project.';
-        const text = vital.originalText || vital.dateLabel || vital.date;
-        if (text && !parseGenealogyDateTextAsType(text, vital.dateType || 'Exact date', { calendar: vital.calendar, date2: vital.date2 }).valid)
+        const normalized = normalizeGenealogyDateInput(vital);
+        const text = formatGenealogyDateLabel(normalized);
+        if (normalized.state === 'unparsed')
             return 'A selected date is invalid. Edit the person before applying it.';
         if (key === 'death' && text && person.livingStatus !== 'Deceased')
             return 'Choose Deceased before copying a recorded death date.';

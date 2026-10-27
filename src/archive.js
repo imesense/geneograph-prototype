@@ -5574,6 +5574,7 @@ function bindConnectedFileLinks(
 
 function archiveDateValue(value)
 {
+    if (value && typeof value === 'object') return genealogyDateSortValue(value);
     if (!value) return 0;
     const parsed = Date.parse(value);
     return Number.isFinite(parsed) ? parsed : 0;
@@ -5581,6 +5582,7 @@ function archiveDateValue(value)
 
 function archiveFormatDate(value, fallback = 'Unknown')
 {
+    if (value && typeof value === 'object') return formatGenealogyDateLabel(value) || t(fallback);
     const parsed = Date.parse(value || '');
     if (!Number.isFinite(parsed)) return value || fallback;
     return new Intl.DateTimeFormat(state.language === 'ru' ? 'ru' : 'en-US', {
@@ -6436,21 +6438,6 @@ function archiveDocumentDateModel(
     let dateType =
         legacyType
         || 'Exact date';
-
-    /*
-        Existing Archive data stores year-only
-        values as Exact date.
-      */
-    if (
-        dateType === 'Exact date'
-        && /^\d{4}$/.test(
-            legacyValue
-        )
-    )
-    {
-        dateType =
-            'Year only';
-    }
 
     if (
         dateType === 'Between'
@@ -13795,7 +13782,7 @@ function renderArchiveSourceDetails(
           <div class="archive-file-field"><label for="archiveSourceDetailLocation">${escapeHtml(t('Location'))}</label><input id="archiveSourceDetailLocation" value="${escapeHtml(draft.location || '')}"></div>
           <div class="archive-file-field"><label for="archiveSourceDetailReference">${escapeHtml(t('Where can it be found?'))}</label><input id="archiveSourceDetailReference" value="${escapeHtml(draft.reference || '')}"></div>
           <div class="archive-file-field"><label for="archiveSourceDetailUrl">${escapeHtml(t('Website or link'))}</label><input id="archiveSourceDetailUrl" type="url" value="${escapeHtml(draft.url || '')}"></div>
-          ${renderGenealogyDateField('archiveSourceDetailAccessed', 'Date accessed or received', draft.accessedDate || '', { inputId: 'archiveSourceDetailAccessedInput', typeId: 'archiveSourceDetailAccessedType', defaultDateType: 'Exact date', exactOnly: true })}
+          ${renderGenealogyDateField('archiveSourceDetailAccessed', 'Date accessed or received', draft.accessedDate || '', { inputId: 'archiveSourceDetailAccessedInput', typeId: 'archiveSourceDetailAccessedType', defaultDateType: 'Exact date' })}
           <div class="archive-file-field"><label for="archiveSourceDetailNotes">${escapeHtml(t('Notes'))}</label><textarea id="archiveSourceDetailNotes">${escapeHtml(draft.notes || '')}</textarea></div>
           <div class="details-edit-actions"><button class="button secondary" type="button" id="archiveCancelSourceDetailEdit">${escapeHtml(t('Cancel'))}</button><button class="button primary" type="button" id="archiveSaveSourceDetailEdit">${escapeHtml(t('Save changes'))}</button></div>
         </div>`;
@@ -13933,7 +13920,7 @@ function collectArchiveSourceDetailDraft(root = main)
 {
     const value = id => root.querySelector(`#${id}`)?.value?.trim() || '';
     const accessedModel = collectGenealogyDateField('archiveSourceDetailAccessed', { allowInvalid: true });
-    const accessedDate = accessedModel?.invalid ? null : archiveSourceAccessedDateToIso(accessedModel);
+    const accessedDate = accessedModel?.invalid ? null : archiveSourceAccessedDateValue(accessedModel);
     return {
         title: value('archiveSourceDetailTitle'),
         category: value('archiveSourceDetailCategory'),
@@ -13985,7 +13972,7 @@ function saveArchiveSourceDetailEdit()
     if (draft.accessedDate === null)
     {
         main.querySelector('#archiveSourceDetailAccessedInput')?.focus();
-        showToast(t('Enter a complete date with day, month, and year.'));
+        showToast(t('Enter a valid date or the known date parts.'));
         return;
     }
     const urlInput = main.querySelector('#archiveSourceDetailUrl');
@@ -15964,69 +15951,11 @@ function openArchiveCreateFolderModal(
     );
 }
 
-function archiveSourceAccessedDateToIso(
-    dateModel
-)
+function archiveSourceAccessedDateValue(dateModel)
 {
-    if (
-        !dateModel
-        || (
-            !dateModel.date
-          && !dateModel.dateLabel
-          && !dateModel.originalText
-        )
-    )
-    {
-        return '';
-    }
-
-    const sortDate =
-        String(
-            dateModel.sortDate
-          || ''
-        );
-
-    if (
-        !/^\d{8}$/.test(
-            sortDate
-        )
-    )
-    {
-        return null;
-    }
-
-    const year =
-        sortDate.slice(
-            0,
-            4
-        );
-
-    const month =
-        sortDate.slice(
-            4,
-            6
-        );
-
-    const day =
-        sortDate.slice(
-            6,
-            8
-        );
-
-    if (
-        month === '00'
-        || day === '00'
-        || !isValidGregorianDate(
-            year,
-            month,
-            day
-        )
-    )
-    {
-        return null;
-    }
-
-    return `${year}-${month}-${day}`;
+    if (!dateModel || dateModel.invalid) return null;
+    const value = normalizeGenealogyDateInput(dateModel);
+    return value.state === 'empty' ? '' : value;
 }
 
 function collectArchiveSourceAccessedDate()
@@ -16051,7 +15980,7 @@ function collectArchiveSourceAccessedDate()
     }
 
     const isoDate =
-        archiveSourceAccessedDateToIso(
+        archiveSourceAccessedDateValue(
             dateModel
         );
 
@@ -16059,7 +15988,7 @@ function collectArchiveSourceAccessedDate()
     {
         setGenealogyDateFieldError(
             fieldRoot,
-            'Enter a complete date with day, month, and year.'
+            'Enter a valid date or the known date parts.'
         );
 
         return null;
@@ -16307,10 +16236,7 @@ function openArchiveSourceModal(
                         'e.g. 24 May 2026',
 
                             className:
-                        'archive-source-accessed-date',
-
-                            exactOnly:
-                        true
+                        'archive-source-accessed-date'
                         }
                     )}
                 </div>

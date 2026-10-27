@@ -8993,9 +8993,7 @@ function normalizeGeneographBoardRecord(board, projectPeople)
                     : 'unknown',
                 livingStatus,
                 birth: normalizeGeneographPersonVital(person.birth, board.projectId),
-                death: livingStatus === 'Deceased'
-                    ? normalizeGeneographPersonVital(person.death, board.projectId)
-                    : { ...emptyGenealogyDate('Exact date'), placeId: null, placeText: '' },
+                death: normalizeGeneographPersonVital(person.death, board.projectId),
                 photoId: person.photoId || null,
                 photoAssetId: assetIds.has(person.photoAssetId) ? person.photoAssetId : null,
                 photoCrop:
@@ -21803,6 +21801,12 @@ function saveGeneographPersonModal(
         return;
     }
 
+    if (status === 'Deceased' && genealogyDateDefinitelyAfter(birthDate, deathDate))
+    {
+        showToast(t('The death date is earlier than the birth date.'));
+        return;
+    }
+
     const projectId =
         selectedGeneographBoard()
             ?.projectId
@@ -21912,13 +21916,7 @@ function saveGeneographPersonModal(
                   },
                   projectId
               )
-              : {
-                  ...emptyGenealogyDate(
-                      'Exact date'
-                  ),
-                  placeId: null,
-                  placeText: ''
-              }
+              : normalizeGeneographPersonVital(existing?.death, projectId)
     };
 
     const diagram =
