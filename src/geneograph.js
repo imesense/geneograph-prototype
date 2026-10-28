@@ -1881,6 +1881,7 @@ function normalizeGeneographPersonVital(value, projectId)
 function geneoPersonDisplayName(person)
 {
     const names = normalizeGeneographPersonNames(person);
+    if (names.first === 'Unknown father' && !names.middle && !names.last && !names.maiden) return t('Unknown father');
     return [names.first, names.middle, names.last].filter(Boolean).join(' ') || 'Unknown';
 }
 
@@ -20168,6 +20169,7 @@ function startGeneographFamilyBusRailDrag(event)
 
 function geneoRelativeDefaultGender(type, anchorNodeId = '')
 {
+    if (['parent', 'child', 'sibling'].includes(type)) return 'unknown';
     if (type === 'partner')
     {
         const anchorNode = getGeneographNode(anchorNodeId);
@@ -20466,10 +20468,167 @@ function geneoRelativeNodePlacement(
     };
 }
 
+function geneoRelativeFamilyChoices(relative)
+{
+    const diagram = selectedGeneographDiagram();
+    const anchor = getGeneographNode(relative?.anchorNodeId);
+    if (!anchor) return [];
+    const category = geneoRelativeCategory(relative.type);
+    let families = diagram.families.filter(family => family.partnerIds.length && (category === 'child'
+        ? family.partnerIds.includes(anchor.personId)
+        : family.children.some(child => child.personId === anchor.personId)));
+    const attachAnchor = category === 'sibling' && !families.length && Boolean(relative.existingPersonId);
+    if (attachAnchor) families = diagram.families.filter(family => family.partnerIds.length
+        && family.children.some(child => child.personId === relative.existingPersonId));
+    const choices = [];
+    families.forEach(family =>
+    {
+        const parents = family.partnerIds.filter(id => getGeneographPerson(id));
+        if (parents.length > 1) choices.push({ value: `family:${family.id}`, familyId: family.id, parentIds: parents });
+        parents.forEach(id =>
+        {
+            if (category === 'child' && id !== anchor.personId) return;
+            if (!choices.some(choice => choice.parentIds.length === 1 && choice.parentIds[0] === id))
+                choices.push({ value: `parent:${id}`, parentIds: [id], familyId: parents.length === 1 ? family.id : '' });
+        });
+    });
+    if (category === 'child' && !choices.some(choice => choice.parentIds.length === 1 && choice.parentIds[0] === anchor.personId))
+        choices.push({ value: `parent:${anchor.personId}`, parentIds: [anchor.personId], familyId: '' });
+    if (category === 'sibling' && !families.length)
+        choices.push({ value: 'unknown-father', parentIds: [], familyId: '' });
+    if (attachAnchor && families.length) choices.forEach(choice => choice.attachAnchor = true);
+    return choices;
+}
+
+function geneoRelativeFamilyDefault(relative)
+{
+    if (relative?.familySelection) return relative.familySelection;
+    const choices = geneoRelativeFamilyChoices(relative);
+    const couples = choices.filter(choice => choice.parentIds.length === 2);
+    return couples.length === 1 ? couples[0].value : couples.length > 1 ? ''
+        : choices.length === 1 ? choices[0].value : '';
+}
+
+function renderGeneoRelativeConfiguration(relative)
+{
+    if (!relative) return '';
+    const category = geneoRelativeCategory(relative.type);
+    if (category === 'partner')
+    {
+        return `<section class="add-person-family-connection geneo-relative-partner" data-geneo-relative-config>
+          <h3 class="form-section-title">${escapeHtml(t('Relationship details'))}</h3>
+          <div class="field add-person-select-field"><label for="geneoRelativePartnerType">${escapeHtml(t('Relationship type'))}</label>
+            <select id="geneoRelativePartnerType" class="compact-select add-person-select">${addPersonRelationshipTypeOptions('Married')}</select><span class="add-person-select-chevron" aria-hidden="true">${icon.chevron}</span></div>
+          <div data-geneo-partner-dates>${renderPartnerRelationshipDateFields({ prefix: 'geneoRelativePartner', relationshipType: 'Married' })}</div>
+          <div class="field add-person-select-field" data-geneo-relative-marriage><label for="geneoRelativeMarriageType">${escapeHtml(t('Marriage type'))}</label><select id="geneoRelativeMarriageType" class="compact-select add-person-select">${addPersonMarriageTypeOptions('Civil')}</select><span class="add-person-select-chevron" aria-hidden="true">${icon.chevron}</span></div>
+          <div class="field add-person-select-field"><label for="geneoRelativeChildren">${escapeHtml(t('Children'))}</label><select id="geneoRelativeChildren" class="compact-select add-person-select"><option value="none">${escapeHtml(t('Keep existing parent links'))}</option><option value="add">${escapeHtml(t('Add this partner as a parent to existing children'))}</option></select><span class="add-person-select-chevron" aria-hidden="true">${icon.chevron}</span></div>
+          <p class="form-error" data-geneo-relative-error hidden></p>
+        </section>`;
+    }
+    const choices = geneoRelativeFamilyChoices(relative);
+    const selected = geneoRelativeFamilyDefault(relative);
+    const autoFather = choices.some(choice => choice.value === 'unknown-father');
+    const anchor = getGeneographNode(relative.anchorNodeId);
+    const biologicalParents = [...new Set(selectedGeneographDiagram().families.flatMap(family => family.children.some(child => child.personId === anchor?.personId && child.parentageType === 'biological') ? family.partnerIds : []))];
+    const suggestedGender = geneoRelativeDefaultGender(relative.type, relative.anchorNodeId);
+    const initialType = relative.detailType || (category === 'parent' && (biologicalParents.length >= 2
+        || (suggestedGender !== 'unknown' && biologicalParents.some(id => getGeneographPerson(id)?.gender === suggestedGender))) ? 'Adoptive' : 'Biological');
+    const fields = `<div class="add-person-family-body">
+      <div class="field add-person-select-field"><label for="geneoRelativeType">${escapeHtml(t('Relationship type'))}</label><select id="geneoRelativeType" class="compact-select add-person-select" ${autoFather ? 'disabled' : ''}>${parentChildRelationshipTypeOptions(initialType)}</select><span class="add-person-select-chevron" aria-hidden="true">${icon.chevron}</span></div>
+      ${['child', 'sibling'].includes(category) ? `<div class="field add-person-select-field"><label for="geneoRelativeFamily">${escapeHtml(t(category === 'sibling' ? 'Shared parents' : 'Other parent'))}</label><select id="geneoRelativeFamily" class="compact-select add-person-select"><option value="">${escapeHtml(t('Choose parents'))}</option>${choices.map(choice => `<option value="${escapeHtml(choice.value)}" ${choice.value === selected ? 'selected' : ''}>${escapeHtml(choice.value === 'unknown-father' ? t('Unknown father') : choice.parentIds.map(id => geneoPersonDisplayName(getGeneographPerson(id))).join(state.language === 'ru' ? ' и ' : ' and '))}</option>`).join('')}</select><span class="add-person-select-chevron" aria-hidden="true">${icon.chevron}</span></div>` : ''}
+      </div><p class="form-error" data-geneo-relative-error hidden></p>`;
+    return ['child', 'sibling'].includes(category)
+        ? `<details class="add-person-family-connection add-person-facts-section geneo-relative-family" data-geneo-relative-config ${selected ? '' : 'open'}><summary class="add-person-facts-header" aria-expanded="${selected ? 'false' : 'true'}"><span class="add-person-facts-header-main"><span class="add-person-facts-chevron" aria-hidden="true">${icon.chevron}</span><span>${escapeHtml(t('Family connection'))}</span></span></summary><div class="add-person-facts-body">${fields}${autoFather ? `<p class="panel-muted">${escapeHtml(t('An Unknown father will be created for both siblings.'))}</p>` : ''}</div></details>`
+        : `<section class="add-person-family-connection" data-geneo-relative-config>${fields}</section>`;
+}
+
+function collectGeneoRelativeConfiguration(relative)
+{
+    if (!relative) return {};
+    const category = geneoRelativeCategory(relative.type);
+    const fail = message =>
+    {
+        const section = modalBackdrop.querySelector('[data-geneo-relative-config]');
+        if (section?.tagName === 'DETAILS') section.open = true;
+        const error = section?.querySelector('[data-geneo-relative-error]');
+        if (error) { error.hidden = false; error.textContent = t(message); }
+        section?.querySelector('#geneoRelativeFamily, select')?.focus();
+        return null;
+    };
+    if (category === 'partner')
+    {
+        const relationshipType = modalBackdrop.querySelector('#geneoRelativePartnerType')?.value || 'Married';
+        const definition = partnerRelationshipDefinition(relationshipType);
+        const startDate = collectGenealogyDateField('geneoRelativePartnerStartDate');
+        const endDate = definition.hasEnd ? collectGenealogyDateField('geneoRelativePartnerEndDate') : emptyGenealogyDate('Exact date');
+        if (!startDate || !endDate || (definition.hasEnd && !partnerRelationshipDateOrderIsValid(startDate, endDate)))
+            return fail('Check the relationship dates before saving.');
+        return { relationshipType, startDate, endDate,
+            marriageType: definition.showsMarriageType ? modalBackdrop.querySelector('#geneoRelativeMarriageType')?.value || 'Civil' : '',
+            startPlace: readPlaceInputValue('#geneoRelativePartnerStartPlace', modalBackdrop),
+            endPlace: readPlaceInputValue('#geneoRelativePartnerEndPlace', modalBackdrop),
+            addChildren: modalBackdrop.querySelector('#geneoRelativeChildren')?.value === 'add' };
+    }
+    const detailType = modalBackdrop.querySelector('#geneoRelativeType')?.value || relative.detailType || 'Biological';
+    if (category === 'parent') return { detailType };
+    const selection = modalBackdrop.querySelector('#geneoRelativeFamily')?.value || relative.familySelection || geneoRelativeFamilyDefault(relative);
+    const choice = geneoRelativeFamilyChoices(relative).find(item => item.value === selection);
+    if (!choice) return fail('Choose parents before continuing.');
+    return { ...choice, detailType };
+}
+
+function geneoValidateRelativeConfiguration(relative, config, person = null)
+{
+    if (!relative || !config) return Boolean(config);
+    const anchor = getGeneographNode(relative.anchorNodeId);
+    if (!anchor) return false;
+    const category = geneoRelativeCategory(relative.type);
+    const diagram = selectedGeneographDiagram();
+    const edges = diagram.families.flatMap(family => family.partnerIds.flatMap(parent => family.children.map(child => [parent, child.personId])));
+    const reaches = (start, end, seen = new Set()) => start === end || (!seen.has(start) && (seen.add(start), edges.some(([parent, child]) => parent === start && reaches(child, end, seen))));
+    const childId = category === 'parent' || config.attachAnchor ? anchor.personId : person?.id;
+    const parents = category === 'parent' ? person ? [person.id] : [] : config.parentIds || [];
+    let message = '';
+    if (person?.id === anchor.personId) message = 'An item cannot connect to itself.';
+    if (childId && parents.some(id => reaches(childId, id))) message = 'This relationship would create a loop.';
+    if (person && category === 'sibling' && !config.attachAnchor)
+    {
+        const existing = diagram.families.filter(family => family.partnerIds.length && family.children.some(child => child.personId === person.id));
+        if (existing.length && !existing.some(family => family.partnerIds.some(id => parents.includes(id))))
+            message = 'These people have different recorded parents. Review their parents before connecting them as siblings.';
+    }
+    if (config.detailType === 'Biological' && childId)
+    {
+        const existingParents = [...new Set(diagram.families.flatMap(family => family.children.some(child => child.personId === childId && child.parentageType === 'biological') ? family.partnerIds : []))];
+        const combined = [...new Set([...existingParents, ...parents])];
+        if (combined.length > 2 || ['male', 'female'].some(gender => combined.filter(id => (id === person?.id ? person : getGeneographPerson(id))?.gender === gender).length > 1))
+            message = 'Choose a non-biological relationship type for this parent connection.';
+    }
+    if (childId && parents.some(id => edges.some(([parent, child]) => parent === id && child === childId)))
+        message = 'That connection already exists.';
+    if (category === 'partner' && config.addChildren && person)
+    {
+        const children = diagram.families.filter(family => family.partnerIds.length === 1 && family.partnerIds[0] === anchor.personId).flatMap(family => family.children);
+        if (children.some(child => reaches(child.personId, person.id))) message = 'This relationship would create a loop.';
+        if (children.some(child => child.parentageType === 'biological') && person.gender !== 'unknown'
+            && getGeneographPerson(anchor.personId)?.gender === person.gender)
+            message = 'Keep existing parent links and edit the children\'s parentage separately.';
+    }
+    if (!message) return true;
+    const section = modalBackdrop.querySelector('[data-geneo-relative-config]');
+    if (section?.tagName === 'DETAILS') section.open = true;
+    const error = section?.querySelector('[data-geneo-relative-error]');
+    if (error) { error.hidden = false; error.textContent = t(message); }
+    else showToast(t(message));
+    section?.querySelector('select')?.focus();
+    return false;
+}
+
 function connectGeneographCreatedRelative(
     anchorNode,
     relativeNode,
-    relativeType
+    relativeType,
+    configuration = null
 )
 {
     const category =
@@ -20483,9 +20642,43 @@ function connectGeneographCreatedRelative(
     const relativePersonId =
         relativeNode.personId;
 
+    if (configuration && ['child', 'sibling'].includes(category))
+    {
+        let family = configuration.familyId ? getGeneographFamily(configuration.familyId) : null;
+        let parents = configuration.parentIds || [];
+        if (configuration.value === 'unknown-father')
+        {
+            const father = { id: createRuntimeId('geneo-person'), treePersonId: null, syncState: 'local',
+                names: { first: 'Unknown father', middle: '', last: '', maiden: '' }, gender: 'male', livingStatus: 'Unknown',
+                birth: emptyGenealogyDate('Exact date'), death: emptyGenealogyDate('Exact date'), photoId: null };
+            selectedGeneographDiagram().people.push(father);
+            createGeneographPersonNodeForBoardPerson(father, { relative: { anchorNodeId: anchorNode.id, type: 'father' } });
+            parents = [father.id];
+        }
+        if (!family) family = selectedGeneographDiagram().families.find(item => item.partnerIds.length === parents.length && parents.every(id => item.partnerIds.includes(id)));
+        if (!family)
+        {
+            family = { id: createRuntimeId('geneo-family'), partnerIds: [...parents], children: [], relationshipType: 'Unknown relationship', relationshipStatus: 'active', marriageType: '', events: [] };
+            selectedGeneographDiagram().families.push(family);
+        }
+        if (configuration.value === 'unknown-father') addGeneographChildToFamily(family.id, anchorPersonId, { nodeId: anchorNode.id, port: 'top' });
+        if (configuration.attachAnchor)
+        {
+            const alreadyLinked = family.children.some(child => child.personId === anchorPersonId);
+            addGeneographChildToFamily(family.id, anchorPersonId, { nodeId: anchorNode.id, port: 'top' });
+            if (!alreadyLinked) family.children.find(child => child.personId === anchorPersonId).parentageType = configuration.detailType.toLowerCase();
+            return;
+        }
+        const already = family.children.some(child => child.personId === relativePersonId);
+        addGeneographChildToFamily(family.id, relativePersonId, { nodeId: relativeNode.id, port: 'top' });
+        if (!already) family.children.find(child => child.personId === relativePersonId).parentageType = configuration.detailType.toLowerCase();
+        return;
+    }
+
     if (category === 'parent')
     {
-        const firstParent = geneoFirstParentForAddedParent(anchorNode, relativePersonId);
+        const candidateParent = geneoFirstParentForAddedParent(anchorNode, relativePersonId);
+        const firstParent = candidateParent && (!configuration || candidateParent.family.children.find(child => child.personId === anchorPersonId)?.parentageType === configuration.detailType.toLowerCase()) ? candidateParent : null;
         if (firstParent)
         {
             const firstNode = firstParent.parentNode;
@@ -20498,6 +20691,7 @@ function connectGeneographCreatedRelative(
             const child = firstParent.family.children.find(item => item.personId === anchorPersonId);
             if (!family.children.some(item => item.personId === anchorPersonId))
                 family.children.push(child ? { ...child } : { personId: anchorPersonId, parentageType: 'biological' });
+            if (configuration) family.children.find(item => item.personId === anchorPersonId).parentageType = configuration.detailType.toLowerCase();
             firstParent.connection.familyId = family.id;
             firstParent.connection.source = { familyId: family.id, port: 'bottom' };
             firstParent.connection.route = { mode: 'auto', waypoints: [] };
@@ -20506,7 +20700,7 @@ function connectGeneographCreatedRelative(
                 selectedGeneographDiagram().families = selectedGeneographDiagram().families.filter(item => item.id !== firstParent.family.id);
             return;
         }
-        createGeneographParentChildRelationship(
+        const family = createGeneographParentChildRelationship(
             relativePersonId,
             anchorPersonId,
             {
@@ -20518,6 +20712,7 @@ function connectGeneographCreatedRelative(
                 port: 'top'
             }
         );
+        if (configuration) family.children.find(item => item.personId === anchorPersonId).parentageType = configuration.detailType.toLowerCase();
 
         return;
     }
@@ -20561,7 +20756,7 @@ function connectGeneographCreatedRelative(
     const relativeIsRight =
         relativeNode.x >= anchorNode.x;
 
-    createGeneographPartnerRelationship(
+    const partnerFamily = createGeneographPartnerRelationship(
         anchorPersonId,
         relativePersonId,
         {
@@ -20579,6 +20774,34 @@ function connectGeneographCreatedRelative(
                 : 'right'
         }
     );
+    if (configuration)
+    {
+        const definition = partnerRelationshipDefinition(configuration.relationshipType);
+        partnerFamily.relationshipType = configuration.relationshipType;
+        partnerFamily.relationshipStatus = definition.status;
+        partnerFamily.marriageType = configuration.marriageType;
+        const resolvePlace = input => geneoResolveBoardPersonPlace(input, '');
+        upsertManagedRelationshipEvent(partnerFamily, 'start', definition, configuration.startDate, configuration.startPlace, configuration.marriageType, { resolvePlace });
+        if (definition.hasEnd) upsertManagedRelationshipEvent(partnerFamily, 'end', definition, configuration.endDate, configuration.endPlace, configuration.marriageType, { resolvePlace });
+        if (configuration.addChildren)
+        {
+            const diagram = selectedGeneographDiagram();
+            diagram.families.filter(family => family.id !== partnerFamily.id && family.partnerIds.length === 1 && family.partnerIds[0] === anchorPersonId).forEach(family =>
+            {
+                family.children.forEach(child =>
+                {
+                    if (!partnerFamily.children.some(item => item.personId === child.personId)) partnerFamily.children.push({ ...child });
+                });
+                diagram.connections.filter(connection => connection.kind === 'family-child' && connection.familyId === family.id).forEach(connection =>
+                {
+                    connection.familyId = partnerFamily.id;
+                    connection.source = { familyId: partnerFamily.id, port: 'bottom' };
+                    connection.route = { mode: 'auto', waypoints: [] };
+                });
+                diagram.families = diagram.families.filter(item => item.id !== family.id);
+            });
+        }
+    }
 }
 
 function openGeneographRelativePopover(
@@ -21269,7 +21492,7 @@ function renderGeneographPersonModal(
             <div class="form-grid geneo-person-form">
               <section>
                 <h3 class="form-section-title">Identity</h3>
-                <div class="two-col-form">
+                <div class="two-col-form add-person-demographics">
                   <div class="field add-person-select-field">
                     <label for="geneoPersonGender">Gender</label>
                     <select class="compact-select add-person-select" id="geneoPersonGender">
@@ -21281,20 +21504,20 @@ function renderGeneographPersonModal(
                   </div>
 
                   ${renderGeneographPersonStatusField(status)}
-
+                </div><div class="two-col-form add-person-name-fields">
                   <div class="field">
                     <label for="geneoPersonFirstName">First name</label>
                     <input id="geneoPersonFirstName" data-source-value="${escapeHtml(names.first)}" value="${escapeHtml(localizedDataFieldValue(names.first))}" placeholder="e.g. Silver" autofocus>
                   </div>
 
                   <div class="field">
-                    <label for="geneoPersonLastName">Last name</label>
-                    <input id="geneoPersonLastName" data-source-value="${escapeHtml(names.last)}" value="${escapeHtml(localizedDataFieldValue(names.last))}" placeholder="e.g. Whiskerfield">
+                    <label for="geneoPersonMiddleName">Middle name / Patronym</label>
+                    <input id="geneoPersonMiddleName" data-source-value="${escapeHtml(names.middle)}" value="${escapeHtml(localizedDataFieldValue(names.middle))}" placeholder="e.g. Purrington" title="${escapeHtml(t('Middle name or patronym, if recorded.'))}">
                   </div>
 
                   <div class="field">
-                    <label for="geneoPersonMiddleName">Middle name / Patronym</label>
-                    <input id="geneoPersonMiddleName" data-source-value="${escapeHtml(names.middle)}" value="${escapeHtml(localizedDataFieldValue(names.middle))}">
+                    <label for="geneoPersonLastName">Last name</label>
+                    <input id="geneoPersonLastName" data-source-value="${escapeHtml(names.last)}" value="${escapeHtml(localizedDataFieldValue(names.last))}" placeholder="e.g. Whiskerfield">
                   </div>
 
                   <div class="field" data-geneo-maiden-name ${gender === 'female' ? '' : 'hidden'}>
@@ -21355,10 +21578,11 @@ function renderGeneographPersonModal(
                 ${renderGeneographPersonPossibleMatchesCard({ relative }, { initial: true })}
               </aside>
             `}
+            ${!editing ? renderGeneoRelativeConfiguration(relative) : ''}
           </div>
 
           <div class="modal-footer add-person-footer">
-            <div class="add-person-footer-left"></div>
+            <div class="add-person-footer-left">${!editing && relative && ['child', 'sibling'].includes(geneoRelativeCategory(relative.type)) ? `<label class="checkbox-row"><input type="checkbox" id="geneoPersonAddAnother">${escapeHtml(t('Create and add another'))}</label>` : ''}</div>
             <div class="add-person-footer-actions">
               <button class="button secondary" type="button" data-close>Cancel</button>
               <button class="button primary" type="submit">
@@ -21691,7 +21915,30 @@ function geneoRelativeConnectionEndpoints(
     };
 }
 
-function commitGeneographPersonPossibleMatch(
+function geneoPersonFormTransaction(action)
+{
+    const board = selectedGeneographBoard();
+    const snapshot = board ? JSON.stringify(board.diagram) : null;
+    const undo = [...geneoHistoryRuntime.undo];
+    const redo = [...geneoHistoryRuntime.redo];
+    try { return action(); }
+    catch (error)
+    {
+        if (board && snapshot) board.diagram = JSON.parse(snapshot);
+        geneoHistoryRuntime.undo = undo;
+        geneoHistoryRuntime.redo = redo;
+        console.error(error);
+        showToast(t('The person could not be added. No changes were saved.'));
+        return false;
+    }
+}
+
+function commitGeneographPersonPossibleMatch(options = {})
+{
+    return geneoPersonFormTransaction(() => commitGeneographPersonPossibleMatchDraft(options));
+}
+
+function commitGeneographPersonPossibleMatchDraft(
     options = {}
 )
 {
@@ -21749,6 +21996,25 @@ function commitGeneographPersonPossibleMatch(
     } = geneoBoardRepresentationForTreePerson(
         treePerson.id
     );
+
+    const connectionRelative = relative ? { ...relative, existingPersonId: boardPerson?.id || '' } : null;
+    if (relative && geneoRelativeCategory(relative.type) === 'sibling'
+        && geneoRelativeFamilyChoices(connectionRelative).some(choice => choice.attachAnchor)
+        && !geneoRelativeFamilyChoices(connectionRelative).some(choice => choice.value === modalBackdrop.querySelector('#geneoRelativeFamily')?.value))
+    {
+        const section = modalBackdrop.querySelector('[data-geneo-relative-config]');
+        if (section)
+        {
+            section.outerHTML = renderGeneoRelativeConfiguration(connectionRelative);
+            modalBackdrop.querySelector('[data-geneo-relative-config]').open = true;
+            localizeUI(modalBackdrop);
+            modalBackdrop.querySelector('#geneoRelativeFamily')?.focus();
+        }
+        return;
+    }
+    const relativeConfiguration = collectGeneoRelativeConfiguration(connectionRelative);
+    const proposedPerson = boardPerson || createGeneographLinkedBoardPerson(treePerson, board.projectId);
+    if (!relativeConfiguration || !geneoValidateRelativeConfiguration(relative, relativeConfiguration, proposedPerson)) return;
 
     if (relative && node)
     {
@@ -21825,7 +22091,8 @@ function commitGeneographPersonPossibleMatch(
         connectGeneographCreatedRelative(
             anchorNode,
             node,
-            relative.type
+            relative.type,
+            relativeConfiguration
         );
     }
 
@@ -21886,6 +22153,14 @@ function commitGeneographPersonPossibleMatch(
 }
 
 function saveGeneographPersonModal(
+    personId = '',
+    options = {}
+)
+{
+    return geneoPersonFormTransaction(() => saveGeneographPersonModalDraft(personId, options));
+}
+
+function saveGeneographPersonModalDraft(
     personId = '',
     {
         relative = null
@@ -22074,6 +22349,10 @@ function saveGeneographPersonModal(
 
     if (!diagram || !projectId) return;
 
+    const relativeConfiguration = collectGeneoRelativeConfiguration(relative);
+    if (!relativeConfiguration || !geneoValidateRelativeConfiguration(relative, relativeConfiguration, existing || { id: '__new-relative', ...values })) return;
+    const addAnother = Boolean(modalBackdrop.querySelector('#geneoPersonAddAnother')?.checked);
+
     geneoPushHistory();
 
     let createdNode = null;
@@ -22249,7 +22528,8 @@ function saveGeneographPersonModal(
             connectGeneographCreatedRelative(
                 anchorNode,
                 createdNode,
-                relative.type
+                relative.type,
+                relativeConfiguration
             );
         }
 
@@ -22263,6 +22543,15 @@ function saveGeneographPersonModal(
     closeModal();
 
     renderGeneographEditorPreserveScroll();
+
+    if (createdNode && addAnother && relative)
+    {
+        openGeneographPersonModal('', { relative: { ...relative,
+            familySelection: relativeConfiguration.value === 'unknown-father'
+                ? geneoRelativeFamilyDefault({ ...relative, familySelection: '' }) : relativeConfiguration.value,
+            detailType: relativeConfiguration.detailType } });
+        return;
+    }
 
     if (createdNode)
     {
@@ -22301,10 +22590,22 @@ function saveGeneographPersonModal(
 function bindGeneographPersonModal(personId = '', options = {})
 {
     const form = modalBackdrop.querySelector('#geneoPersonForm');
+    form?.addEventListener('toggle', event =>
+    {
+        if (event.target.matches('.geneo-relative-family'))
+            event.target.querySelector('summary')?.setAttribute('aria-expanded', String(event.target.open));
+    }, true);
     const statusButton = modalBackdrop.querySelector('#geneoPersonStatusButton');
     const statusMenu = modalBackdrop.querySelector('#geneoPersonStatusMenu');
     bindGenealogyDateFields(modalBackdrop);
     bindPlaceComboboxes(modalBackdrop);
+    modalBackdrop.querySelector('#geneoRelativePartnerType')?.addEventListener('change', event =>
+    {
+        const section = modalBackdrop.querySelector('[data-geneo-relative-config]');
+        updatePartnerRelationshipFields(section, event.target.value);
+        const marriage = section.querySelector('[data-geneo-relative-marriage]');
+        if (marriage) marriage.hidden = !partnerRelationshipDefinition(event.target.value).showsMarriageType;
+    });
     modalBackdrop.querySelector('#geneoPersonGender')?.addEventListener('change', () =>
     {
         updateGeneographPersonModalConditionalFields();

@@ -6543,6 +6543,51 @@ body.mobile-details-open:has(.geneo-inspector) #modalBackdrop.modal-backdrop.ope
     min-width: 0;
 }
 
+.geneo-person-grid > .add-person-family-connection {
+    grid-column: 1 / -1;
+    min-width: 0;
+}
+
+.geneo-relative-family > summary {
+    list-style: none;
+}
+
+.geneo-relative-family > summary::-webkit-details-marker { display: none; }
+.geneo-relative-family[open] > summary { border-bottom-color: var(--border-default); }
+.geneo-relative-family:not([open]) .add-person-facts-chevron { transform: rotate(0deg); }
+.geneo-relative-family[open] .add-person-facts-chevron { transform: rotate(90deg); }
+
+.geneo-person-modal .add-person-family-body {
+    display: grid;
+    gap: var(--space-4);
+}
+
+.geneo-relative-family > summary:focus-visible {
+    outline: 2px solid var(--brand-green-300);
+    outline-offset: 3px;
+}
+
+.geneo-relative-partner {
+    display: grid;
+    gap: var(--space-4);
+}
+
+.geneo-relative-partner [data-geneo-partner-dates] {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4);
+}
+
+.geneo-relative-partner :is(.partner-relationship-start, .partner-relationship-end) {
+    display: grid;
+    gap: var(--space-4);
+    min-width: 0;
+}
+
+@media (max-width: 600px) {
+    .geneo-relative-partner [data-geneo-partner-dates] { grid-template-columns: minmax(0, 1fr); }
+}
+
 .geneo-person-match-rail {
     min-width: 0;
 }
