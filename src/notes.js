@@ -11507,9 +11507,6 @@ function openNoteLinkPickerModal({
                       Suggested notes
                     </strong>
 
-                    <span
-                      data-note-picker-results-meta>
-                    </span>
                   </div>
                 </div>
 
@@ -11592,11 +11589,6 @@ function openNoteLinkPickerModal({
             '[data-note-picker-results-title]'
         );
 
-    const resultsMeta =
-        modal.querySelector(
-            '[data-note-picker-results-meta]'
-        );
-
     const countElement =
         modal.querySelector(
             '[data-note-picker-count]'
@@ -11622,33 +11614,7 @@ function openNoteLinkPickerModal({
                 normalized ? 'Search results' : 'Suggested notes'
             );
 
-            if (state.language === 'ru')
-            {
-                const availability = normalized
-                    ? `Найдено заметок: ${visible.length}`
-                    : `Доступно заметок: ${visible.length}`;
-
-                const connectionStatus =
-                    existingMetaLabel === 'already related'
-                        ? 'Уже связанных'
-                        : 'Уже добавленных';
-
-                resultsMeta.textContent =
-                    `${availability} · ${connectionStatus}: ${existingIds.size}`;
-            }
-            else
-            {
-                const availability = normalized
-                    ? `${visible.length} ${
-                        visible.length === 1 ? 'match' : 'matches'
-                    }`
-                    : `${visible.length} ${
-                        visible.length === 1 ? 'note' : 'notes'
-                    } available`;
-
-                resultsMeta.textContent =
-                    `${availability} · ${existingIds.size} ${existingMetaLabel}`;
-            }
+            resultsHost.classList.toggle('is-empty', visible.length === 0);
 
             resultsHost.innerHTML =
                 visible.length

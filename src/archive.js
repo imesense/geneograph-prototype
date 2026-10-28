@@ -2347,9 +2347,6 @@ function openSourcesForTargetModal({
                       ${escapeHtml(t('Suggested sources'))}
                     </strong>
 
-                    <span
-                      data-target-source-results-meta>
-                    </span>
                   </div>
                 </div>
 
@@ -2429,11 +2426,6 @@ function openSourcesForTargetModal({
             '[data-target-source-results-title]'
         );
 
-    const resultsMeta =
-        modal.querySelector(
-            '[data-target-source-results-meta]'
-        );
-
     const countElement =
         modal.querySelector(
             '[data-target-source-count]'
@@ -2460,33 +2452,7 @@ function openSourcesForTargetModal({
                         : 'Suggested sources'
                 );
 
-            const availableCount =
-                visible.filter(source =>
-                    !existingIds.has(
-                        source.id
-                    )
-                ).length;
-
-            resultsMeta.textContent =
-                state.language === 'ru'
-                    ? `Доступно: ${
-                        sourceCountText(
-                            availableCount
-                        )
-                    } · ${draftMode ? 'Выбрано для факта' : 'Уже связано'}: ${
-                        sourceCountText(
-                            existingIds.size
-                        )
-                    }`
-                    : `${
-                        sourceCountText(
-                            availableCount
-                        )
-                    } available · ${
-                        sourceCountText(
-                            existingIds.size
-                        )
-                    } ${draftMode ? 'selected for fact' : 'already linked'}`;
+            resultsHost.classList.toggle('is-empty', visible.length === 0);
 
             resultsHost.innerHTML =
                 visible.length
