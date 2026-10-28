@@ -6413,6 +6413,8 @@ const RU_UI_COMPLETION = {
     'Upload the first photo for this project.': 'Загрузите первое фото в этот проект.',
     'No archive files linked to this person.': 'С этим человеком не связано ни одного файла.',
     'No sources linked to this person.': 'С этим человеком не связано ни одного источника.',
+    'No relatives added yet': 'Родственники пока не добавлены',
+    'Add a new relative or connect someone already in this project.': 'Добавьте нового родственника или свяжите человека, который уже есть в проекте.',
     'No notes linked to this person.': 'С этим человеком не связано ни одной заметки.',
     'No photos linked to this person.':'С этим человеком не связано ни одной фотографии',
     'Already linked': 'Уже связано',

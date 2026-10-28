@@ -1594,7 +1594,6 @@
     --timeline-date-w: 72px;
     --timeline-node: 44px;
     --timeline-gap: 16px;
-    --timeline-line-x: calc(var(--timeline-date-w) + var(--timeline-gap) + (var(--timeline-node) / 2));
 
     position: relative;
     display: grid;
@@ -1607,11 +1606,16 @@
     z-index: 1;
     display: grid;
     grid-template-columns: var(--timeline-date-w) var(--timeline-node) minmax(0, 1fr);
+    grid-template-rows: auto auto;
     column-gap: var(--timeline-gap);
-    align-items: start;
+    align-items: center;
     min-height: var(--timeline-node);
     color: var(--text-secondary);
 }
+.timeline-item > .timeline-date { grid-area: 1 / 1; }
+.timeline-item > .timeline-dot { grid-area: 1 / 2; }
+.timeline-item > .timeline-copy { grid-area: 1 / 3; }
+.timeline-item > .timeline-evidence { grid-area: 2 / 3; }
 
 .timeline-source-action {
     width: fit-content;
@@ -1676,7 +1680,7 @@ button.timeline-evidence-name:hover, button.timeline-evidence-name:focus-visible
 }
 
 .timeline-date {
-    margin-top: 25px;
+    margin-top: 0;
     color: var(--text-primary);
     font-weight: 800;
     line-height: 1.2;
@@ -1722,7 +1726,7 @@ button.timeline-evidence-name:hover, button.timeline-evidence-name:focus-visible
 .timeline-dot {
     position: relative;
     z-index: 2;
-    margin-top: 10px;
+    margin-top: 0;
     width: var(--timeline-node);
     height: var(--timeline-node);
     border-radius: 50%;
@@ -1789,17 +1793,22 @@ button.timeline-evidence-name:hover, button.timeline-evidence-name:focus-visible
     color: var(--text-secondary);
 }
 
-.timeline-item:not(:last-child)::before {
+.timeline-item::before,
+.timeline-item:not(:last-child)::after {
     content: "";
     position: absolute;
-    left: calc(var(--timeline-line-x) - 1px);
-    top: calc(10px + var(--timeline-node) / 2);
-    height: calc(100% + var(--space-5));
+    left: calc(50% - 1px);
+    top: 0;
+    bottom: 0;
     width: 2px;
     background: var(--border-strong);
-    border-radius: 999px;
     z-index: 0;
 }
+
+.timeline-item::before { grid-area: 1 / 2 / 2 / 3; }
+.timeline-item:first-child::before { top: 50%; }
+.timeline-item:last-child::before { bottom: 50%; }
+.timeline-item:not(:last-child)::after { grid-area: 2 / 2 / 3 / 3; bottom: calc(-1 * var(--space-5)); }
 
 @media (max-width: 540px) {
     .timeline {
@@ -1808,7 +1817,7 @@ button.timeline-evidence-name:hover, button.timeline-evidence-name:focus-visible
         --timeline-gap: 8px;
     }
 
-    .timeline-date { margin-top: 21px; font-size: 12px; }
+    .timeline-date { font-size: 12px; }
     .timeline-dot svg, .timeline-dot-icon, .timeline-dot-icon svg { width: 18px; height: 18px; }
     .timeline-evidence-row { grid-template-columns: 16px minmax(0, 1fr) 40px; }
     .timeline-evidence-row .relation-action-button { width: 40px; height: 40px; }
@@ -3601,6 +3610,22 @@ button.timeline-evidence-name:hover, button.timeline-evidence-name:focus-visible
     display: grid;
     grid-template-rows: auto minmax(0, 1fr) auto;
     overflow: hidden;
+}
+
+.manage-relationships-modal.is-empty { height: auto; grid-template-rows: auto auto auto; }
+.manage-relationships-modal.is-empty .manage-relationships-body { display: block; overflow-y: auto; }
+.manage-relationships-empty { padding: 32px 24px; }
+.manage-relationships-empty h3 { margin: 0 0 10px; font-size: 16px; font-weight: 700; color: var(--text-primary); }
+.manage-relationships-empty p { margin: 0; font-size: 14px; line-height: 1.5; color: var(--text-secondary); }
+.manage-relationships-empty-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+.manage-relationships-empty-actions svg { width: 18px; height: 18px; }
+.manage-relative-menu { width: 220px; max-width: calc(100vw - 24px); z-index: 110; }
+.manage-relative-menu button { display: flex; align-items: center; gap: 10px; min-height: 44px; }
+.manage-relative-menu svg { width: 18px; height: 18px; }
+@media (max-width: 600px) {
+    .manage-relationships-modal.is-empty { height: auto; }
+    .manage-relationships-empty { padding: 24px 16px; }
+    .manage-relationships-empty-actions > button { width: 100%; }
 }
 
 .manage-relationships-body {

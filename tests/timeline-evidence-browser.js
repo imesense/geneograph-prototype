@@ -25,6 +25,13 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             assert(seed.birth.includes('event-silver-birth'));
             assert(seed.marriage.length);
             assert(seed.html.includes('Evidence files'));
+            assert.equal(seed.html.includes('Year unknown'), false);
+            assert.equal(seed.html.includes('<h4'), false);
+            assert.equal(await page.evaluate(() => {
+                const events = getFamilyTreeTimelineEvents('silver');
+                const firstUndated = events.findIndex(event => !Number.isFinite(parseTimelineSortValue(event)));
+                return firstUndated < 0 || events.slice(firstUndated).every(event => !Number.isFinite(parseTimelineSortValue(event)));
+            }), true);
             const layout = await page.evaluate(() => {
                 timelineExpandedEvidence.add('p1:event-silver-birth');
                 const host = document.createElement('div');
@@ -37,13 +44,29 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                     return rect.top + rect.height / 2;
                 };
                 const result = { dot: center('.timeline-dot'), date: center('.timeline-date'),
-                    heading: center('.timeline-evidence-toggle'), overflow: host.scrollWidth > host.clientWidth };
+                    heading: center('.timeline-copy'), overflow: host.scrollWidth > host.clientWidth };
+                const dotBox = item.querySelector('.timeline-dot').getBoundingClientRect();
+                result.linesAligned = ['::before', '::after'].every(pseudo => {
+                    const style = getComputedStyle(item, pseudo);
+                    const probe = document.createElement('i');
+                    probe.style.cssText = `position:absolute;grid-area:${style.gridArea};left:${style.left};top:${style.top};bottom:${style.bottom};width:${style.width};pointer-events:none`;
+                    item.append(probe);
+                    const rect = probe.getBoundingClientRect();
+                    probe.remove();
+                    return Math.abs(rect.left + rect.width / 2 - dotBox.left - dotBox.width / 2) < 1;
+                });
+                item.querySelector('.timeline-evidence').hidden = true;
+                result.stable = Math.abs(center('.timeline-dot') - result.dot) < 1
+                    && Math.abs(center('.timeline-date') - result.date) < 1
+                    && Math.abs(center('.timeline-copy') - result.heading) < 1;
                 host.remove();
                 return result;
             });
             assert.equal(layout.overflow, false);
-            assert(Math.abs(layout.dot - layout.date) < 16, JSON.stringify(layout));
-            assert(Math.abs(layout.dot - layout.heading) < 30, JSON.stringify(layout));
+            assert.equal(layout.stable, true);
+            assert.equal(layout.linesAligned, true);
+            assert(Math.abs(layout.dot - layout.date) < 1, JSON.stringify(layout));
+            assert(Math.abs(layout.dot - layout.heading) < 1, JSON.stringify(layout));
             const rows = await page.evaluate(() => {
                 const file = archiveFileById('af7');
                 const originalName = file.name;

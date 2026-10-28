@@ -2052,6 +2052,14 @@ function handleModalKeydown(
         event.preventDefault();
         event.stopImmediatePropagation();
 
+        if (document.querySelector('.manage-relative-menu'))
+        {
+            const anchor = menuLifecycleAnchor;
+            closeMenu();
+            anchor?.focus({ preventScroll: true });
+            return;
+        }
+
         const addPersonDiscard = document.getElementById('addPersonDiscardOverlay');
         if (addPersonDiscard)
         {
@@ -2286,6 +2294,7 @@ function openNestedModal(html)
     nestedModalFrames.push({
         content,
         beforeClose: modalBackdrop.beforeClose,
+        afterClose: modalBackdrop.afterClose,
         activeElement:
           document.activeElement instanceof HTMLElement
               ? document.activeElement
@@ -2308,6 +2317,7 @@ function restoreNestedModalFrame()
     modalBackdrop.innerHTML = '';
     modalBackdrop.appendChild(frame.content);
     modalBackdrop.beforeClose = frame.beforeClose || null;
+    modalBackdrop.afterClose = frame.afterClose || null;
 
     modalBackdropDismissBinding =
         bindIntentionalBackdropDismiss(
@@ -2389,6 +2399,7 @@ function openModal(
     modalBackdrop.innerHTML =
         html;
     modalBackdrop.beforeClose = null;
+    modalBackdrop.afterClose = null;
 
     normalizeRenderedSemanticAttributes(
         modalBackdrop
@@ -2615,6 +2626,8 @@ function closeModal(options = {})
     {
         resetPlaceEditorDraft();
     }
+    const afterClose = modalBackdrop.afterClose;
+    modalBackdrop.afterClose = null;
     if (nestedModalFrames.length)
     {
         restoreNestedModalFrame();
@@ -2642,6 +2655,7 @@ function closeModal(options = {})
     );
 
     setApplicationInert(false);
+    if (afterClose && !options.skipAfterClose) queueMicrotask(afterClose);
 
     const returnTarget = modalReturnFocus;
     modalReturnFocus = null;

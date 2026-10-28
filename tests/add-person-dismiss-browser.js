@@ -28,6 +28,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
 
             await page.evaluate(() => openAddPersonModal('Add person', 'Create a new person in this project'));
             const first = page.locator('#addPersonFirstName');
+            const initialGender = await page.locator('#addPersonGender').inputValue();
             assert.deepEqual(await page.locator('.add-person-name-fields input').evaluateAll(inputs =>
                 inputs.map(input => input.id)),
             ['addPersonFirstName', 'addPersonMiddleName', 'addPersonLastName', 'addPersonMaidenName']);
@@ -67,7 +68,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             }
             await page.keyboard.press('Shift+Tab');
             assert.equal(await page.evaluate(() => document.activeElement?.id), 'addPersonLastName');
-            await page.locator('#addPersonGender').selectOption('Unknown');
+            await page.locator('#addPersonGender').selectOption(initialGender);
             await first.fill('Test name');
             await first.fill('');
             await page.keyboard.press('Escape');

@@ -3978,7 +3978,7 @@ function renderFamilyTreeTimeline(personId)
     }
 
     return `<div class="timeline">
-        ${events.map((event, index) => `${!Number.isFinite(parseTimelineSortValue(event)) && (index === 0 || Number.isFinite(parseTimelineSortValue(events[index - 1]))) ? `<h4 class="panel-muted">${escapeHtml(t('Year unknown'))}</h4>` : ''}${renderTimelineItem(event, personId)}`).join('')}
+        ${events.map(event => renderTimelineItem(event, personId)).join('')}
       </div>`;
 }
 
@@ -4271,13 +4271,13 @@ function renderTimelineItem(
             </span>
 
             ${files.length || sources.length ? `<span class="timeline-evidence-summary">${files.length ? timelineEvidenceCount(files.length, 'file', 'files', ['файл', 'файла', 'файлов']) : ''}${files.length && sources.length ? ' · ' : ''}${sources.length ? timelineEvidenceCount(sources.length, 'citation', 'citations', ['источник', 'источника', 'источников']) : ''}</span>` : ''}
+          </div>
             <div id="${panelId}" class="timeline-evidence" ${expanded ? '' : 'hidden'}>
               <div class="timeline-evidence-heading"><strong>Evidence files</strong><button type="button" class="link" data-event-add-file="${escapeHtml(event.id)}" data-event-project="${escapeHtml(event.projectId)}">${icon.plus} Add file</button></div>
               ${files.length ? files.map(file => `<div class="timeline-evidence-row"><span class="timeline-evidence-file-icon" aria-hidden="true">${icon.file}</span>${archiveCanViewFile(file) ? `<button type="button" class="link timeline-evidence-name" data-user-content data-event-open-file="${escapeHtml(file.id)}" title="${escapeHtml(file.name)}" aria-label="${escapeHtml(file.name)}">${escapeHtml(file.name)}</button>` : `<span class="timeline-evidence-name" data-user-content tabindex="0" title="${escapeHtml(file.name)}">${escapeHtml(file.name)}</span>`}<button type="button" class="relation-action-button" data-event-unlink-file="${escapeHtml(file.id)}" data-event-id="${escapeHtml(event.id)}" aria-label="Unlink ${escapeHtml(file.name)}" title="${escapeHtml(state.language === 'ru' ? 'Убрать связь' : 'Unlink file')}">${icon.close}</button></div>`).join('') : '<span class="timeline-evidence-empty">No files linked</span>'}
               <div class="timeline-evidence-heading"><strong>Citations</strong><button type="button" class="link" data-event-manage-sources="${escapeHtml(event.id)}" data-event-source-project="${escapeHtml(event.projectId)}">${icon.plus} Add source</button></div>
               ${sources.length ? sources.map(source => `<div class="timeline-evidence-row"><span class="timeline-evidence-file-icon" aria-hidden="true">${icon.archive}</span><span class="timeline-evidence-name" data-user-content tabindex="0" title="${escapeHtml(source.title || 'Untitled source')}">${escapeHtml(source.title || 'Untitled source')}</span><button type="button" class="relation-action-button" data-event-unlink-source="${escapeHtml(source.id)}" data-event-id="${escapeHtml(event.id)}" data-event-project="${escapeHtml(event.projectId)}" aria-label="Unlink ${escapeHtml(source.title || 'source')}" title="${escapeHtml(state.language === 'ru' ? 'Убрать связь' : 'Unlink source')}">${icon.close}</button></div>`).join('') : '<span class="timeline-evidence-empty">No citations linked</span>'}
             </div>
-          </div>
         </div>
       `;
 }
@@ -5418,6 +5418,7 @@ function bindConnectPersonModalControls()
 {
     const modal = modalBackdrop.querySelector('.connect-person-modal');
     if (!modal) return;
+    bindManageRelativeReturn(connectPersonModalState.managerReturn);
 
     modal.querySelector('[data-connect-relationship]')?.addEventListener('change', event =>
     {
@@ -5481,7 +5482,7 @@ function bindConnectPersonModalControls()
         const relationshipType = normalizeConnectRelationshipType(connectPersonModalState.relationshipType);
         const label = connectRelationshipSentence(relationshipType);
 
-        closeModal();
+        closeModal({ skipAfterClose: true });
 
         const descriptions = {
             parent: 'Create a new person and connect them as a parent of {person}.',
@@ -5500,7 +5501,8 @@ function bindConnectPersonModalControls()
                 connectToPersonId: anchor?.id || connectPersonModalState.anchorPersonId,
                 parentFamilySelection: connectPersonModalState.parentFamilySelection,
                 connectionDetailType: connectPersonDetailType(),
-                partnerChildrenMode: connectPersonModalState.partnerChildrenMode
+                partnerChildrenMode: connectPersonModalState.partnerChildrenMode,
+                managerReturn: connectPersonModalState.managerReturn
             }
         );
     });
@@ -5538,6 +5540,7 @@ function bindConnectPersonModalControls()
         }
 
         const successMessage = connectedRelativeToast(connectPersonName(selected), connectPersonModalState.relationshipType);
+        if (connectPersonModalState.managerReturn) connectPersonModalState.managerReturn.relatedPersonId = selected.id;
 
         closeModal();
 
@@ -5574,6 +5577,7 @@ function openConnectRelativeModal(anchorPersonId, options = {})
 
     connectPersonModalState = {
         anchorPersonId: anchor.id,
+        managerReturn: options.managerReturn || null,
         relationshipType,
         detailType: '',
         query: '',
@@ -9093,7 +9097,8 @@ function commitAddPersonModalCreate(title, subtitle, options = {})
 
     state.selectedPeopleId = selectedAfterCreateId;
 
-    closeModal({ force: true });
+    if (options.managerReturn) options.managerReturn.relatedPersonId = newPerson.id;
+    closeModal({ force: true, skipAfterClose: Boolean(createAnother) });
 
     if (state.activeModule === 'Family Tree')
     {
@@ -10460,6 +10465,60 @@ function openManageRelationshipsDiscardConfirm(onDiscard)
     overlay.querySelector('[data-manage-continue-editing]').focus();
 }
 
+function bindManageRelativeReturn(context)
+{
+    if (!context) return;
+    modalBackdrop.afterClose = () =>
+    {
+        if (currentProjectId() !== context.projectId || !getPerson(context.personId)
+            || modalBackdrop.classList.contains('open')) return;
+        refreshAfterRelationshipChange(context.personId, context.sidebarContext);
+        openManageRelationshipsModal(context.personId, context.sidebarContext, {
+            relatedPersonId: context.relatedPersonId, focusSelection: Boolean(context.relatedPersonId)
+        });
+        if (!context.relatedPersonId) requestAnimationFrame(() => modalBackdrop.querySelector('[data-manage-add-relative]')?.focus());
+    };
+}
+
+function openManageRelativeMenu(anchor, managerReturn)
+{
+    if (closeGeneoOpenMenuOnTrigger(anchor)) return;
+    closeMenu();
+    const menu = document.createElement('div');
+    menu.id = 'projectMenu';
+    menu.className = 'menu-popover manage-relative-menu';
+    menu.setAttribute('role', 'menu');
+    menu.setAttribute('aria-label', t('Add relative'));
+    menu.innerHTML = ['parent', 'partner', 'child', 'sibling'].map(type => `<button type="button" role="menuitem" data-manage-relative="${type}">${icon.people}<span>${escapeHtml(t(capitalize(type)))}</span></button>`).join('');
+    document.body.appendChild(menu);
+    const rect = anchor.getBoundingClientRect();
+    menu.style.left = `${Math.max(12, Math.min(rect.left, innerWidth - menu.offsetWidth - 12))}px`;
+    menu.style.top = `${rect.bottom + menu.offsetHeight + 8 < innerHeight ? rect.bottom + 6 : Math.max(12, rect.top - menu.offsetHeight - 6)}px`;
+    if (innerWidth <= 900) mountMobileChoiceSheet(menu, anchor, t('Add relative'));
+    anchor.setAttribute('aria-expanded', 'true');
+    menu.addEventListener('click', event =>
+    {
+        const type = event.target.closest('[data-manage-relative]')?.dataset.manageRelative;
+        if (!type) return;
+        closeMenu();
+        openAddPersonModal(`Add ${type}`, '', { relativeType: type, personId: managerReturn.personId,
+            connectToPersonId: managerReturn.personId, connectAfterCreate: true, connectRelationshipType: type, managerReturn });
+    });
+    menu.addEventListener('keydown', event =>
+    {
+        const items = [...menu.querySelectorAll('[role="menuitem"]')];
+        const index = items.indexOf(document.activeElement);
+        if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); closeMenu(); anchor.focus(); }
+        else if (['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key))
+        {
+            event.preventDefault();
+            items[event.key === 'Home' ? 0 : event.key === 'End' ? items.length - 1 : (index + (event.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length]?.focus();
+        }
+    });
+    bindMenuLifecycle(anchor);
+    requestAnimationFrame(() => menu.querySelector('button')?.focus());
+}
+
 function openManageRelationshipsModal(personId, sidebarContext = 'tree', returnState = {})
 {
     const person = getPerson(personId);
@@ -10476,7 +10535,8 @@ function openManageRelationshipsModal(personId, sidebarContext = 'tree', returnS
         .filter(group => group.items.length);
     const items = groups.flatMap(group => group.items);
     const keyFor = item => `${item.kind}:${item.relatedPersonId}:${item.familyId}`;
-    const selected = items.find(item => keyFor(item) === returnState.selectedKey) || items[0] || null;
+    const selected = items.find(item => keyFor(item) === returnState.selectedKey)
+        || items.find(item => item.relatedPersonId === returnState.relatedPersonId) || items[0] || null;
     const selectedKey = selected ? keyFor(selected) : '';
     const editContext = selected?.kind !== 'sibling' && selected
         ? buildRelationshipEditContext({ ...selected, sidebarContext }) : null;
@@ -10503,16 +10563,20 @@ function openManageRelationshipsModal(personId, sidebarContext = 'tree', returnS
         `}`
         : `<p class="panel-muted">${escapeHtml(t('No immediate relationships recorded for this person.'))}</p>`;
 
-    openModal(`<div class="modal manage-relationships-modal" role="dialog" aria-modal="true" aria-labelledby="manageRelationshipsTitle">
+    const emptyContent = `<div class="manage-relationships-empty"><h3>${escapeHtml(t('No relatives added yet'))}</h3><p>${escapeHtml(t('Add a new relative or connect someone already in this project.'))}</p><div class="manage-relationships-empty-actions"><button class="button primary" type="button" data-manage-add-relative aria-haspopup="menu" aria-expanded="false">${icon.plus}<span>${escapeHtml(t('Add relative'))}</span></button><button class="button secondary" type="button" data-manage-connect-existing>${icon.link}<span>${escapeHtml(t('Connect existing person'))}</span></button></div></div>`;
+    openModal(`<div class="modal manage-relationships-modal ${items.length ? '' : 'is-empty'}" role="dialog" aria-modal="true" aria-labelledby="manageRelationshipsTitle">
         <div class="modal-header"><div><h2 id="manageRelationshipsTitle">${escapeHtml(t('Manage relationships'))}</h2><p>${escapeHtml(translateText(person.names?.display || 'Unnamed person'))}</p></div><button class="close-button" type="button" data-close aria-label="${escapeHtml(t('Close'))}">${icon.close}</button></div>
-        <div class="modal-body manage-relationships-body"><nav class="manage-relationships-rail" aria-label="${escapeHtml(t('Relationships'))}">${personList}</nav><section class="manage-relationships-detail" aria-label="${escapeHtml(t('Relationship details'))}">${details}</section></div>
+        <div class="modal-body manage-relationships-body">${items.length ? `<nav class="manage-relationships-rail" aria-label="${escapeHtml(t('Relationships'))}">${personList}</nav><section class="manage-relationships-detail" aria-label="${escapeHtml(t('Relationship details'))}">${details}</section>` : emptyContent}</div>
         <div class="modal-footer manage-relationships-footer"><button class="button secondary" type="button" data-close>${escapeHtml(t('Done'))}</button>${selected && selected.kind !== 'sibling' ? `<button class="button primary" type="button" data-manage-save disabled>${escapeHtml(t('Save relationship'))}</button>` : ''}</div>
       </div>`);
 
     const modal = modalBackdrop.querySelector('.manage-relationships-modal');
     const rail = modal.querySelector('.manage-relationships-rail');
-    rail.scrollTop = returnState.scrollTop || 0;
-    const currentState = () => ({ personId, sidebarContext, selectedKey, scrollTop: rail.scrollTop });
+    if (rail) rail.scrollTop = returnState.scrollTop || 0;
+    const currentState = () => ({ personId, sidebarContext, selectedKey, scrollTop: rail?.scrollTop || 0 });
+    const managerReturn = { personId, sidebarContext, projectId: person.projectId };
+    modal.querySelector('[data-manage-add-relative]')?.addEventListener('click', event => openManageRelativeMenu(event.currentTarget, managerReturn));
+    modal.querySelector('[data-manage-connect-existing]')?.addEventListener('click', () => openConnectRelativeModal(personId, { managerReturn }));
     const fields = modal.querySelector('.manage-relationships-fields');
     if (editContext?.ok && selected?.kind === 'partner') bindPartnerRelationshipEditFields(modal);
     const initialSnapshot = relationshipEditSnapshot(fields);
@@ -11428,6 +11492,7 @@ function openAddPersonModal(title, subtitle, options = {})
         });
     }
     bindAddPersonSideCards(options, editPerson);
+    bindManageRelativeReturn(options.managerReturn);
     updateAddPersonConditionalFields();
     const addPersonModal = modalBackdrop.querySelector('.add-person-modal');
     const initialSnapshot = addPersonModalSnapshot(addPersonModal);
@@ -11563,6 +11628,7 @@ function commitAddPersonPossibleMatchAction(options = {})
     applyPartnerDetailsToCreatedConnection(result, relationshipValues);
 
     rebuildSampleEventsAndPruneSourceLinks();
+    if (options.managerReturn) options.managerReturn.relatedPersonId = selectedPerson.id;
     refreshAfterPossibleMatchConnection(connectionIntent.anchorPersonId);
 
     showToast(connectedRelativeToast(connectPersonName(selectedPerson), connectionIntent.relationshipType));

@@ -2939,6 +2939,16 @@ body.mobile-details-open .geneo-inspector [data-geneo-inspector-toggle] {
     #modalBackdrop > .manage-relationships-modal > .manage-relationships-body {
         overflow: hidden;
     }
+
+    #modalBackdrop > .manage-relationships-modal.is-empty {
+        height: auto;
+        align-self: center;
+        grid-template-rows: auto auto auto;
+    }
+
+    #modalBackdrop > .manage-relationships-modal.is-empty > .manage-relationships-body {
+        overflow-y: auto;
+    }
 }
 
 /* Family Tree: one person finder, compact display modes, and canvas status. */
