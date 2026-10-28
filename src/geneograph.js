@@ -12057,6 +12057,21 @@ function renderGeneoItemFilterMenu()
       </div>`;
 }
 
+const geneoConnectionDisclosureState = new Map();
+
+function geneoSidebarConnectionOwner(connection, diagram)
+{
+    const reference = connection.kind === 'family-child' ? connection.target : connection.source;
+    if (reference?.nodeId && diagram.nodes.some(node => node.id === reference.nodeId)) return reference.nodeId;
+    const family = diagram.families.find(item => item.id === (reference?.familyId || connection.familyId));
+    for (const id of family?.partnerIds || [])
+    {
+        const node = diagram.nodes.find(item => item.type === 'person' && item.personId === id);
+        if (node) return node.id;
+    }
+    return '';
+}
+
 function renderGeneographEditorSidebar(board)
 {
     const diagram = board.diagram;
@@ -12065,8 +12080,6 @@ function renderGeneographEditorSidebar(board)
     const selectedConnectionIds = geneoSelectedConnectionIdSet();
     const matches = node => geneoItemFilterMatches(node.type, geneoNodeEffectiveVisible(node), selectedIds.has(node.id))
         && (!query || `${geneoNodeTitle(node)} ${node.type} ${t(node.type)} ${node.visible === false ? t('Hidden') : ''}`.toLowerCase().includes(query));
-    const panels = diagram.nodes.filter(node => node.type === 'panel' && !node.parentPanelId && (matches(node) || diagram.nodes.some(child => child.parentPanelId === node.id && matches(child)))).sort((a, b) => b.order - a.order);
-    const rootNodes = diagram.nodes.filter(node => node.type !== 'panel' && !node.parentPanelId && matches(node)).sort((a, b) => b.order - a.order);
     const connections = diagram.connections.filter(connection => {
         if (!geneoItemFilterMatches(connection.kind, geneoConnectionEffectiveVisible(connection), selectedConnectionIds.has(connection.id))) return false;
         const names = `${geneoConnectionLabel(connection)} ${geneoDefaultConnectionLabel(connection)} ${geneoConnectionKindLabel(connection)} ${connection.kind} ${connection.visible === false ? t('Hidden') : ''}`;
@@ -12074,23 +12087,25 @@ function renderGeneographEditorSidebar(board)
     });
     const filter = state.geneoItemFilter || { types: [], status: 'all' };
     const filterActive = filter.types.length || filter.status !== 'all';
-    const rootItems = [...panels, ...rootNodes].map(node => ({ node, order: node.order }));
+    const ownedConnections = new Map();
+    const orphanConnections = [];
+    const visibleIds = new Set(diagram.nodes.filter(matches).map(node => node.id));
     connections.forEach(connection =>
     {
-        const nodeIds = [connection.source?.nodeId, connection.target?.nodeId];
-        if (connection.familyId)
-        {
-            const family = getGeneographFamily(connection.familyId);
-            (family?.partnerIds || []).forEach(personId =>
-            {
-                const partner = diagram.nodes.find(node => node.type === 'person' && node.personId === personId);
-                if (partner) nodeIds.push(partner.id);
-            });
-        }
-        const orders = nodeIds.map(id => diagram.nodes.find(node => node.id === id)?.order).filter(Number.isFinite);
-        rootItems.push({ connection, order: orders.length ? Math.max(...orders) : 0 });
+        const owner = geneoSidebarConnectionOwner(connection, diagram);
+        if (!owner) { orphanConnections.push(connection); return; }
+        if (!ownedConnections.has(owner)) ownedConnections.set(owner, []);
+        ownedConnections.get(owner).push(connection);
+        visibleIds.add(owner);
     });
-    rootItems.sort((a, b) => b.order - a.order || (a.connection ? 1 : -1));
+    [...visibleIds].forEach(id =>
+    {
+        let node = diagram.nodes.find(item => item.id === id);
+        const seen = new Set();
+        while (node?.parentPanelId && !seen.has(node.parentPanelId))
+        { seen.add(node.parentPanelId); visibleIds.add(node.parentPanelId); node = diagram.nodes.find(item => item.id === node.parentPanelId); }
+    });
+    const rootItems = diagram.nodes.filter(node => !node.parentPanelId && visibleIds.has(node.id)).sort((a, b) => b.order - a.order);
     const row = (
         node,
         depth = 0
@@ -12131,7 +12146,6 @@ function renderGeneographEditorSidebar(board)
             }
 
             <span class="geneo-layer-actions">
-              <button class="geneo-layer-toggle geneo-layer-drag-handle" type="button" data-geneo-layer-drag="${escapeHtml(node.id)}" ${renaming || geneoNodeEffectiveLocked(node) ? 'disabled' : ''} aria-label="${escapeHtml(t('Drag to reorder'))}" title="${escapeHtml(t('Drag to reorder'))}">${icon.gripVertical}</button>
               <button class="geneo-layer-toggle" type="button" data-geneo-locate-node="${escapeHtml(node.id)}" ${geneoNodeEffectiveVisible(node) ? '' : 'disabled'} aria-label="${escapeHtml(`${t('Locate on canvas')}: ${displayName}`)}" title="${escapeHtml(t('Locate on canvas'))}">${icon.mapCenter}</button>
 
             <button
@@ -12174,7 +12188,7 @@ function renderGeneographEditorSidebar(board)
         `;
     };
     const connectionRow =
-        connection =>
+        (connection, depth = 1) =>
         {
             const displayName =
                 geneoConnectionLabel(
@@ -12196,6 +12210,8 @@ function renderGeneographEditorSidebar(board)
                     ? 'selected'
                     : ''
             }"
+            style="--layer-depth:${depth}"
+            draggable="false"
             data-geneo-layer-connection="${
                 escapeHtml(connection.id)
             }"
@@ -12216,11 +12232,20 @@ function renderGeneographEditorSidebar(board)
           </div>
         `;
         };
+    if (!geneoConnectionDisclosureState.has(board.id)) geneoConnectionDisclosureState.set(board.id, new Set());
+    const closed = geneoConnectionDisclosureState.get(board.id);
+    const renderBlock = (node, depth = 0) =>
+    {
+        const children = diagram.nodes.filter(child => child.parentPanelId === node.id && visibleIds.has(child.id)).sort((a, b) => b.order - a.order);
+        const links = ownedConnections.get(node.id) || [];
+        const expandable = children.length || links.length;
+        const collapsed = !query && !filterActive && (node.type === 'panel' ? Boolean(state.geneoCollapsedPanels[node.id]) : closed.has(node.id));
+        return `<div class="geneo-item-block" data-geneo-layer-block="${escapeHtml(node.id)}">${expandable ? `<div class="geneo-layer-panel-head" style="--layer-depth:${depth}"><button class="geneo-layer-disclosure" type="button" ${node.type === 'panel' ? 'data-geneo-collapse-panel' : 'data-geneo-collapse-connections'}="${escapeHtml(node.id)}" aria-label="${escapeHtml(geneoNodeTitle(node))}" aria-expanded="${!collapsed}">${icon.chevron}</button>${row(node, depth)}</div>` : row(node, depth)}${collapsed ? '' : children.map(child => renderBlock(child, depth + 1)).join('') + links.map(connection => connectionRow(connection, depth + 1)).join('')}</div>`;
+    };
+    const itemsMarkup = rootItems.map(node => renderBlock(node)).join('') + (orphanConnections.length ? `<div class="geneo-other-connections"><div class="geneo-context-heading">${escapeHtml(t('Other connections'))}</div>${orphanConnections.map(connection => connectionRow(connection, 0)).join('')}</div>` : '');
     sidebar.innerHTML = `<nav class="geneo-sidebar geneo-board-panel" aria-label="Geneograph board navigation">
         <section class="geneo-sidebar-section navigation"><div class="side-section-title">Navigation</div><div class="side-nav">${renderGeneoAllBoardsNavigationButton({ editor: true })}</div></section>
-        <section class="geneo-sidebar-section geneo-layers"><div class="side-section-title">${escapeHtml(t('Board items'))}</div><div class="geneo-sidebar-section-body"><div class="geneo-layer-tools"><input class="geneo-object-search" id="geneoLayerSearch" type="search" aria-label="${escapeHtml(t('Search board items'))}" placeholder="${escapeHtml(t('Search board items'))}" value="${escapeHtml(state.geneoLayerSearch)}"><button class="geneo-item-filter-trigger ${filterActive ? 'active' : ''}" type="button" data-geneo-item-filter-trigger aria-label="${escapeHtml(t('Filter items'))}" title="${escapeHtml(t('Filter items'))}" aria-expanded="${Boolean(state.geneoItemFilterOpen)}" aria-controls="geneoItemFilterMenu">${icon.filter}</button><div id="geneoItemFilterMenu">${renderGeneoItemFilterMenu()}</div></div><div class="geneo-layer-list">${rootItems.map(item => item.connection ? connectionRow(item.connection) : item.node.type === 'panel' ? (() => { const panel = item.node;
-            const collapsed = !query && !filterActive && Boolean(state.geneoCollapsedPanels[panel.id]); const children = diagram.nodes.filter(node => node.parentPanelId === panel.id && matches(node)).sort((a, b) => b.order - a.order); return `<div class="geneo-layer-panel"><div class="geneo-layer-panel-head"><button class="geneo-layer-disclosure" type="button" data-geneo-collapse-panel="${escapeHtml(panel.id)}" aria-expanded="${!collapsed}">${icon.chevron}</button>${row(panel)}</div>${collapsed ? '' : children.map(node => row(node, 1)).join('')}</div>`;
-        })() : row(item.node)).join('')}${!rootItems.length ? `<div class="geneo-item-empty">${escapeHtml(t(diagram.nodes.length || diagram.connections.length ? 'No matching items' : 'No items on this board'))}${(diagram.nodes.length || diagram.connections.length) && (query || filterActive) ? `<button type="button" data-geneo-item-filter-clear>${escapeHtml(t('Clear search and filters'))}</button>` : ''}</div>` : ''}</div></div></section>
+        <section class="geneo-sidebar-section geneo-layers"><div class="side-section-title">${escapeHtml(t('Board items'))}</div><div class="geneo-sidebar-section-body"><div class="geneo-layer-tools"><input class="geneo-object-search" id="geneoLayerSearch" type="search" aria-label="${escapeHtml(t('Search board items'))}" placeholder="${escapeHtml(t('Search board items'))}" value="${escapeHtml(state.geneoLayerSearch)}"><button class="geneo-item-filter-trigger ${filterActive ? 'active' : ''}" type="button" data-geneo-item-filter-trigger aria-label="${escapeHtml(t('Filter items'))}" title="${escapeHtml(t('Filter items'))}" aria-expanded="${Boolean(state.geneoItemFilterOpen)}" aria-controls="geneoItemFilterMenu">${icon.filter}</button><div id="geneoItemFilterMenu">${renderGeneoItemFilterMenu()}</div></div><div class="geneo-layer-list">${itemsMarkup}${!rootItems.length && !orphanConnections.length ? `<div class="geneo-item-empty">${escapeHtml(t(diagram.nodes.length || diagram.connections.length ? 'No matching items' : 'No items on this board'))}${(diagram.nodes.length || diagram.connections.length) && (query || filterActive) ? `<button type="button" data-geneo-item-filter-clear>${escapeHtml(t('Clear search and filters'))}</button>` : ''}</div>` : ''}</div></div></section>
       </nav>`;
 
     localizeUI(
@@ -24958,15 +24983,38 @@ function geneoUpdateLayerDrop(x, y)
 {
     const drag = geneoLayerDrag;
     if (!drag) return false;
+    const previousId = drag.targetId, previousBefore = drag.before;
     drag.x = x; drag.y = y; drag.targetId = '';
     sidebar.querySelectorAll('.layer-drop-before, .layer-drop-after').forEach(row => row.classList.remove('layer-drop-before', 'layer-drop-after'));
-    const row = document.elementFromPoint(x, y)?.closest('[data-geneo-layer]');
-    const node = row && getGeneographNode(row.dataset.geneoLayer);
-    if (!node || !sidebar.contains(row) || geneoLayerPeerKey(node) !== drag.key || drag.ids.includes(node.id)) return false;
+    const list = sidebar.querySelector('.geneo-layer-list');
+    if (!list) return false;
+    const area = list.getBoundingClientRect();
+    const viewport = (sidebar.querySelector('.geneo-sidebar') || sidebar).getBoundingClientRect();
+    if (x < area.left || x > area.right || y < Math.max(area.top, viewport.top) - 8 || y > Math.min(area.bottom, viewport.bottom) + 8) return false;
+    const hit = document.elementFromPoint(x, y);
+    let block = hit?.closest('[data-geneo-layer-block]');
+    if (block && !list.contains(block)) return false;
+    if (block && !hit.closest('[data-geneo-layer], [data-geneo-layer-connection], .geneo-layer-panel-head')
+        && getGeneographNode(drag.ids[0])?.parentPanelId === block.dataset.geneoLayerBlock) block = null;
+    if (!block)
+    {
+        const candidates = [...list.querySelectorAll('[data-geneo-layer-block]')].filter(element =>
+        {
+            const node = getGeneographNode(element.dataset.geneoLayerBlock);
+            return node && geneoLayerPeerKey(node) === drag.key && !drag.ids.includes(node.id);
+        });
+        const distance = element => { const rect = element.getBoundingClientRect(); return y < rect.top ? rect.top - y : y > rect.bottom ? y - rect.bottom : 0; };
+        block = candidates.sort((a, b) => distance(a) - distance(b))[0];
+    }
+    const node = block && getGeneographNode(block.dataset.geneoLayerBlock);
+    if (!node || geneoLayerPeerKey(node) !== drag.key || drag.ids.includes(node.id)) return false;
+    const row = block.querySelector('[data-geneo-layer]');
     drag.targetId = node.id;
     const rect = row.getBoundingClientRect();
-    drag.before = y < rect.top + rect.height / 2;
-    row.classList.add(drag.before ? 'layer-drop-before' : 'layer-drop-after');
+    const midpoint = rect.top + rect.height / 2;
+    drag.before = hit?.closest('[data-geneo-layer-connection]') ? false
+        : previousId === node.id && Math.abs(y - midpoint) < 4 ? previousBefore : y < midpoint;
+    (drag.before ? row : block).classList.add(drag.before ? 'layer-drop-before' : 'layer-drop-after');
     return true;
 }
 
@@ -25002,6 +25050,7 @@ function bindGeneoLayerRow(row)
     {
         if (event.target.closest('input')) return;
         event.preventDefault(); event.stopPropagation();
+        if (geneoLayerDrag) return;
         openGeneographObjectContextMenu(id, event.clientX, event.clientY, 'sidebar');
     });
     row.addEventListener('keydown', event =>
@@ -25018,34 +25067,46 @@ function bindGeneoLayerRow(row)
         event.dataTransfer.effectAllowed = 'move';
         geneoLayerDrag.frame = requestAnimationFrame(geneoLayerAutoScroll);
     });
-    row.addEventListener('dragover', event =>
-    {
-        if (!geneoLayerDrag) return;
-        event.preventDefault();
-        event.dataTransfer.dropEffect = geneoUpdateLayerDrop(event.clientX, event.clientY) ? 'move' : 'none';
-    });
-    row.addEventListener('drop', event => { event.preventDefault(); geneoUpdateLayerDrop(event.clientX, event.clientY); geneoFinishLayerDrop(); });
     row.addEventListener('dragend', () => { if (geneoLayerDrag) { geneoCancelLayerDrag(); renderGeneographEditorPreserveScroll(); } });
-    const handle = row.querySelector('[data-geneo-layer-drag]');
-    handle?.addEventListener('pointerdown', event =>
+    let holdTimer = null;
+    let touchStart = null;
+    let dragged = false;
+    const cancelHold = () => { clearTimeout(holdTimer); holdTimer = null; };
+    row.addEventListener('pointerdown', event =>
     {
-        if (event.pointerType === 'mouse' || handle.disabled) return;
-        event.preventDefault(); event.stopPropagation();
-        if (!geneoStartLayerDrag(id)) return;
-        handle.setPointerCapture(event.pointerId);
-        geneoLayerDrag.x = event.clientX; geneoLayerDrag.y = event.clientY;
-        geneoLayerDrag.frame = requestAnimationFrame(geneoLayerAutoScroll);
+        if (event.pointerType === 'mouse' || event.target.closest('button,input') || row.draggable === false) return;
+        dragged = false;
+        touchStart = { x: event.clientX, y: event.clientY };
+        cancelHold();
+        holdTimer = setTimeout(() =>
+        {
+            if (!row.isConnected || !geneoStartLayerDrag(id)) return;
+            dragged = true;
+            row.setPointerCapture(event.pointerId);
+            geneoLayerDrag.x = event.clientX; geneoLayerDrag.y = event.clientY;
+            geneoLayerDrag.frame = requestAnimationFrame(geneoLayerAutoScroll);
+        }, 300);
     });
-    handle?.addEventListener('pointermove', event =>
+    row.addEventListener('pointermove', event =>
     {
-        if (event.pointerType !== 'mouse' && handle.hasPointerCapture(event.pointerId) && geneoLayerDrag)
+        if (event.pointerType === 'mouse') return;
+        if (!dragged && touchStart && Math.hypot(event.clientX - touchStart.x, event.clientY - touchStart.y) > 8) cancelHold();
+        if (dragged && geneoLayerDrag)
         { event.preventDefault(); geneoUpdateLayerDrop(event.clientX, event.clientY); }
     });
-    handle?.addEventListener('pointerup', event =>
+    row.addEventListener('touchmove', event => { if (dragged && geneoLayerDrag) event.preventDefault(); }, { passive: false });
+    row.addEventListener('pointerup', event =>
     {
-        if (event.pointerType !== 'mouse' && handle.hasPointerCapture(event.pointerId)) geneoFinishLayerDrop();
+        cancelHold(); touchStart = null;
+        if (event.pointerType !== 'mouse' && dragged) geneoFinishLayerDrop();
     });
-    handle?.addEventListener('pointercancel', () => { geneoCancelLayerDrag(); renderGeneographEditorPreserveScroll(); });
+    row.addEventListener('pointercancel', event =>
+    {
+        if (event.pointerType === 'mouse') return;
+        cancelHold(); touchStart = null;
+        if (geneoLayerDrag) { geneoCancelLayerDrag(); renderGeneographEditorPreserveScroll(); }
+    });
+    row.addEventListener('click', event => { if (dragged) { event.preventDefault(); event.stopImmediatePropagation(); dragged = false; } }, true);
 }
 
 function geneoLayerPeerKey(node)
@@ -29906,6 +29967,34 @@ function updateGeneoCanvasSetting(field, value)
 function bindGeneographSidebarControls()
 {
     geneoCancelLayerDrag();
+    const layerList = sidebar.querySelector('.geneo-layer-list');
+    layerList?.addEventListener('dragover', event =>
+    {
+        if (!geneoLayerDrag) return;
+        event.preventDefault();
+        event.dataTransfer.dropEffect = geneoUpdateLayerDrop(event.clientX, event.clientY) ? 'move' : 'none';
+    });
+    layerList?.addEventListener('drop', event =>
+    {
+        if (!geneoLayerDrag) return;
+        event.preventDefault(); geneoUpdateLayerDrop(event.clientX, event.clientY); geneoFinishLayerDrop();
+    });
+    layerList?.addEventListener('dragleave', event =>
+    {
+        if (geneoLayerDrag && !layerList.contains(event.relatedTarget))
+        {
+            geneoLayerDrag.targetId = '';
+            layerList.querySelectorAll('.layer-drop-before, .layer-drop-after').forEach(element => element.classList.remove('layer-drop-before', 'layer-drop-after'));
+        }
+    });
+    sidebar.querySelectorAll('[data-geneo-layer-connection]').forEach(row => row.addEventListener('dragstart', event => event.preventDefault()));
+    sidebar.querySelectorAll('[data-geneo-collapse-connections]').forEach(button => button.addEventListener('click', () =>
+    {
+        const closed = geneoConnectionDisclosureState.get(selectedGeneographBoard().id);
+        const id = button.dataset.geneoCollapseConnections;
+        if (closed.has(id)) closed.delete(id); else closed.add(id);
+        renderGeneographEditorPreserveScroll({ preserveSidebarScroll: true });
+    }));
     if (
         !sidebar.dataset
             .geneoLayerRenameBound

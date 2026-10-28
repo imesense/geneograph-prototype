@@ -132,10 +132,9 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             return distance < 2;
         }, ids.partner), true);
 
-        const layerOrder = await page.locator('.geneo-layer-list > *').evaluateAll(items =>
-            items.map(item => item.matches('[data-geneo-layer-connection]') || item.querySelector('[data-geneo-layer-connection]') ? 'connection' : 'node'));
-        assert.equal(layerOrder.includes('connection'), true);
-        assert.equal(layerOrder.at(-1) === 'connection', false);
+        assert.equal(await page.locator('[data-geneo-layer-connection]').evaluateAll(rows => rows.length > 0
+            && rows.every(row => row.closest('[data-geneo-layer-block]'))
+            && new Set(rows.map(row => row.dataset.geneoLayerConnection)).size === rows.length), true);
 
         for (const width of [390, 320]) {
             await page.setViewportSize({ width, height: 800 });

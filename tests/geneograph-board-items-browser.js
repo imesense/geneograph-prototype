@@ -43,7 +43,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             }), true);
             await sidebar.locator('[data-geneo-item-filter-type="family-child"]').check();
             if (width < 900) assert.equal(await page.evaluate(() => document.body.classList.contains('mobile-sections-open')), true);
-            assert.equal(await sidebar.locator('[data-geneo-layer]').count(), 0);
+            assert.equal(await sidebar.locator('[data-geneo-layer]').evaluateAll(rows => rows.every(row => row.closest('[data-geneo-layer-block]').querySelector('[data-geneo-layer-connection]'))), true);
             assert.equal(await sidebar.locator('[data-geneo-layer-connection]').count() > 0, true);
             await page.keyboard.press('Escape');
             if (width < 900) assert.equal(await page.evaluate(() => document.body.classList.contains('mobile-sections-open')), true);

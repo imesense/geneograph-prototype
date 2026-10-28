@@ -1693,6 +1693,7 @@ const RU_UI_GENEO = {
         'Поиск слоёв',
 
     'Board items': 'Элементы холста',
+    'Other connections': 'Другие связи',
     'Layer order': 'Порядок слоёв',
     'Visibility': 'Видимость',
     'Move forward one layer': 'На один слой вперёд',
