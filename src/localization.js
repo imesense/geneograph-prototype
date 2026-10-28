@@ -481,8 +481,8 @@ const RU_UI_SHARED = Object.freeze({
     'Interface language updated.': 'Язык интерфейса обновлён.',
     'Basic app-wide preferences.': 'Основные настройки приложения.',
     'Interface theme': 'Тема интерфейса',
-    'GeneoGraph currently uses the dark archival theme.': 'Сейчас GeneoGraph использует тёмную архивную тему.',
-    'Dark archival': 'Тёмная архивная',
+    'GeneoGraph currently uses the dark theme.': 'Сейчас GeneoGraph использует тёмную тему.',
+    'Dark': 'Тёмная',
     'Startup behavior': 'Поведение при запуске',
     'Preview only; this choice does not change what opens when the demo starts.': 'Только для ознакомления: этот выбор не влияет на то, что открывается при запуске демоверсии.',
     'Show project picker': 'Показывать выбор проекта',
@@ -569,7 +569,7 @@ const RU_UI_SHARED = Object.freeze({
     'Historic family places': 'Исторические семейные места',
     'Connected records': 'Связанные записи',
     'Collapse person sidebar': 'Свернуть панель человека',
-    'Connect relative': 'Добавить родственную связь',
+    'Connect relative': 'Добавить связь',
     'Both parents': 'Оба родителя',
     'Only': 'Только',
     'Shared parent(s)': 'Общие родители',
@@ -5100,7 +5100,7 @@ const RU_TERMS_RELATIONSHIPS = {
         'Отношения',
 
     'Relationships':
-        'Близкие родственники',
+        'Родственники',
 
     'Relative':
         'Родственник',
@@ -6409,7 +6409,10 @@ const RU_UI_COMPLETION = {
     'Current photo': 'Текущее фото',
     'Already selected':
         'Уже выбрано',
-    'No archive files linked to this person.': 'С этим человеком не связано ни одного файла Архива.',
+    'Drop a photo here': 'Перетащите фото сюда',
+    'Upload the first photo for this project.': 'Загрузите первое фото в этот проект.',
+    'No archive files linked to this person.': 'С этим человеком не связано ни одного файла.',
+    'No sources linked to this person.': 'С этим человеком не связано ни одного источника.',
     'No notes linked to this person.': 'С этим человеком не связано ни одной заметки.',
     'No photos linked to this person.':'С этим человеком не связано ни одной фотографии',
     'Already linked': 'Уже связано',

@@ -3805,13 +3805,9 @@ function renderPersonSidebar(
         ${renderInspectorSection(
             'relationships',
             'Relationships',
-            `${relationshipsCount} ${
-                relationshipsCount === 1
-                    ? 'relationship'
-                    : 'relationships'
-            }`,
+            translateCountPhrase(`${relationshipsCount} ${relationshipsCount === 1 ? 'connection' : 'connections'}`),
             relationshipsContent,
-            `<button class="link" type="button" data-manage-relationships="${escapeHtml(person.id)}">${renderPanelButtonLabel(icon.edit, 'Edit')}</button>`,
+            `<button class="link" type="button" data-manage-relationships="${escapeHtml(person.id)}" aria-label="${escapeHtml(t('Edit'))}" title="${escapeHtml(t('Edit'))}">${renderPanelButtonLabel(icon.edit, 'Edit')}</button>`,
             { inlineAction: true }
         )}
         ${renderInspectorSection(

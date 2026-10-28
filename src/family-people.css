@@ -1298,6 +1298,12 @@
     letter-spacing: .03em;
 }
 
+.panel-section-header[data-toggle-section="relationships"] .panel-section-heading { white-space: nowrap; }
+@media (max-width: 420px) {
+    .panel-section-header-row:has([data-toggle-section="relationships"]) .panel-button-text { display: none; }
+    .panel-section-header-row:has([data-toggle-section="relationships"]) .panel-section-inline-action button { min-width: 36px; min-height: 44px; display: grid; place-items: center; }
+}
+
 .panel-section-heading span,
 .panel-muted {
     color: var(--text-tertiary);
