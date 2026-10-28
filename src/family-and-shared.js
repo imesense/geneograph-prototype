@@ -3605,35 +3605,6 @@ function personSidebarTreePerson(personOrId)
     return personById(personId) || currentTreePeople()[0] || null;
 }
 
-function personSidebarRecord(personId)
-{
-    const centralPerson = getPerson(personId);
-    if (centralPerson) return toPeopleRecord(centralPerson);
-    return currentPeopleRecords().find(person => person.id === personId) || null;
-}
-
-function renderPersonRecordInfo(personId)
-{
-    const record = personSidebarRecord(personId);
-    if (!record) return '<div class="panel-muted">No record information available.</div>';
-    return `<div class="record-info">
-        <div class="record-kv"><span>Added</span><span>1 May 2026</span></div>
-        <div class="record-kv"><span>Updated</span><span>${escapeHtml(record.updated || '-')}</span></div>
-        <div class="record-kv"><span>Parents</span><span>${escapeHtml(record.parents || 'Unknown parents')}</span></div>
-        <div class="record-kv">
-          <span>Sources</span>
-
-          <span>
-            ${escapeHtml(
-                getPeopleSourceStatus(
-                    record
-                )
-            )}
-          </span>
-        </div>
-        <div class="record-kv"><span>Review status</span><span>${escapeHtml(getPeopleReviewStatus(record))}</span></div>
-      </div>`;
-}
 
 function renderPersonSidebar(
     personOrId,
@@ -3940,7 +3911,6 @@ function renderPersonSidebar(
               true
             }
         )}
-        ${renderInspectorSection('record', 'Record Info', '', renderPersonRecordInfo(person.id))}
       </aside>`;
 }
 
