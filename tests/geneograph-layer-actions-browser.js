@@ -62,6 +62,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             assert.equal(await panel.locator('.geneo-layer-actions button').count(), 3);
             await panel.hover();
             assert.equal(await panel.locator('.geneo-layer-actions').evaluate(group => getComputedStyle(group).display), 'flex');
+            await page.evaluate(() => { selectGeneographConnection(selectedGeneographDiagram().connections[0].id); renderGeneographEditorPreserveScroll(); });
             const connection = sidebar.locator('[data-geneo-layer-connection]').first();
             assert.equal(await connection.locator('.geneo-layer-actions button').count(), 2);
             await connection.hover();

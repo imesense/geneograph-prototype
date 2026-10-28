@@ -23,6 +23,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             assert.equal(await sidebar.locator('[data-geneo-sidebar-section="connections"]').count(), 0);
             const connectionId = await page.evaluate(() => selectedGeneographDiagram().connections
                 .find(connection => connection.kind === 'family-child').id);
+            await page.evaluate(id => { selectGeneographConnection(id); renderGeneographEditorPreserveScroll(); }, connectionId);
             const derived = await page.evaluate(id => geneoDefaultConnectionLabel(getGeneographConnection(id)), connectionId);
             assert.equal(/[→←↔]/.test(derived), false);
             assert.equal(derived.includes(':'), true);

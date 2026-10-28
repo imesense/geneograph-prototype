@@ -12058,6 +12058,7 @@ function renderGeneoItemFilterMenu()
 }
 
 const geneoConnectionDisclosureState = new Map();
+const geneoConnectionDisclosureSelection = new Map();
 
 function geneoSidebarConnectionOwner(connection, diagram)
 {
@@ -12233,13 +12234,27 @@ function renderGeneographEditorSidebar(board)
         `;
         };
     if (!geneoConnectionDisclosureState.has(board.id)) geneoConnectionDisclosureState.set(board.id, new Set());
-    const closed = geneoConnectionDisclosureState.get(board.id);
+    const expanded = geneoConnectionDisclosureState.get(board.id);
+    const previousConnectionSelection = geneoConnectionDisclosureSelection.get(board.id) || new Set();
+    geneoConnectionDisclosureSelection.set(board.id, new Set(selectedConnectionIds));
+    connections.filter(connection => selectedConnectionIds.has(connection.id) && !previousConnectionSelection.has(connection.id)).forEach(connection =>
+    {
+        let owner = diagram.nodes.find(node => node.id === geneoSidebarConnectionOwner(connection, diagram));
+        const seen = new Set();
+        while (owner && !seen.has(owner.id))
+        {
+            seen.add(owner.id);
+            expanded.add(owner.id);
+            if (owner.type === 'panel') state.geneoCollapsedPanels[owner.id] = false;
+            owner = diagram.nodes.find(node => node.id === owner.parentPanelId);
+        }
+    });
     const renderBlock = (node, depth = 0) =>
     {
         const children = diagram.nodes.filter(child => child.parentPanelId === node.id && visibleIds.has(child.id)).sort((a, b) => b.order - a.order);
         const links = ownedConnections.get(node.id) || [];
         const expandable = children.length || links.length;
-        const collapsed = !query && !filterActive && (node.type === 'panel' ? Boolean(state.geneoCollapsedPanels[node.id]) : closed.has(node.id));
+        const collapsed = !query && !filterActive && (node.type === 'panel' ? Boolean(state.geneoCollapsedPanels[node.id]) : !expanded.has(node.id));
         return `<div class="geneo-item-block" data-geneo-layer-block="${escapeHtml(node.id)}">${expandable ? `<div class="geneo-layer-panel-head" style="--layer-depth:${depth}"><button class="geneo-layer-disclosure" type="button" ${node.type === 'panel' ? 'data-geneo-collapse-panel' : 'data-geneo-collapse-connections'}="${escapeHtml(node.id)}" aria-label="${escapeHtml(geneoNodeTitle(node))}" aria-expanded="${!collapsed}">${icon.chevron}</button>${row(node, depth)}</div>` : row(node, depth)}${collapsed ? '' : children.map(child => renderBlock(child, depth + 1)).join('') + links.map(connection => connectionRow(connection, depth + 1)).join('')}</div>`;
     };
     const itemsMarkup = rootItems.map(node => renderBlock(node)).join('') + (orphanConnections.length ? `<div class="geneo-other-connections"><div class="geneo-context-heading">${escapeHtml(t('Other connections'))}</div>${orphanConnections.map(connection => connectionRow(connection, 0)).join('')}</div>` : '');
@@ -29990,9 +30005,9 @@ function bindGeneographSidebarControls()
     sidebar.querySelectorAll('[data-geneo-layer-connection]').forEach(row => row.addEventListener('dragstart', event => event.preventDefault()));
     sidebar.querySelectorAll('[data-geneo-collapse-connections]').forEach(button => button.addEventListener('click', () =>
     {
-        const closed = geneoConnectionDisclosureState.get(selectedGeneographBoard().id);
+        const expanded = geneoConnectionDisclosureState.get(selectedGeneographBoard().id);
         const id = button.dataset.geneoCollapseConnections;
-        if (closed.has(id)) closed.delete(id); else closed.add(id);
+        if (expanded.has(id)) expanded.delete(id); else expanded.add(id);
         renderGeneographEditorPreserveScroll({ preserveSidebarScroll: true });
     }));
     if (
