@@ -30,7 +30,9 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             return { kind: valid.kind, created, duplicate, visual: Boolean(visual), sameFamilies, purpose: geneoConnectionToolRuntime.purpose };
         });
         assert.deepEqual(result, { kind: 'visual', created: true, duplicate: false, visual: true, sameFamilies: true, purpose: 'automatic' });
-        await page.locator('[data-geneo-connection-purpose]').selectOption('visual');
+        assert.equal(await page.locator('[data-geneo-connection-purpose]').evaluate(button => button.offsetWidth), 48);
+        await page.locator('[data-geneo-connection-purpose]').click();
+        await page.locator('[data-purpose="visual"]').click();
         assert.equal(await page.evaluate(() => geneoConnectionToolRuntime.purpose), 'visual');
         const before = await page.evaluate(() => {
             const connection = getGeneographConnection(purposePartnerId);

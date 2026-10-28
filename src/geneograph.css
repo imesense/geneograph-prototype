@@ -1666,7 +1666,23 @@
 .geneo-creation-tool-panel .geneo-paint-swatch.is-none > span { opacity: .14; }
 .geneo-creation-tool-panel .geneo-paint-swatch.is-none::after { content: ''; position: absolute; z-index: 2; left: 50%; top: 50%; width: 125%; height: 2px; background: var(--text-secondary); transform: translate(-50%, -50%) rotate(-45deg); pointer-events: none; }
 .geneo-connection-tool-row { display: flex; align-items: center; gap: 5px; width: max-content; }
-.geneo-connection-purpose { flex: 0 0 auto; width: 132px; min-width: 0; height: 36px; padding: 0 8px; font-size: 12px; }
+.geneo-connection-tool-row > .geneo-connection-purpose { width: 48px; height: 38px; padding: 0 5px; }
+.geneo-connection-purpose > svg:first-child { width: 20px; height: 20px; flex: 0 0 20px; }
+.geneo-connection-purpose.needs-choice { border-color: var(--brand-green-300); color: var(--brand-green-300); }
+.geneo-purpose-menu { width: 380px; max-width: calc(100vw - 24px); }
+.geneo-purpose-menu > button { display: flex; gap: 10px; align-items: center; text-align: left; }
+.geneo-purpose-menu > button > span:not(.geneo-purpose-check) { flex: 1; min-width: 0; }
+.geneo-purpose-menu > button > svg { width: 20px; height: 20px; flex: 0 0 20px; }
+.geneo-purpose-menu strong, .geneo-purpose-menu small { display: block; }
+.geneo-purpose-menu small { margin-top: 4px; color: var(--text-secondary); font-size: 12px; line-height: 1.4; white-space: normal; }
+.geneo-purpose-check { margin-left: auto; flex: 0 0 16px; }
+.geneo-purpose-check svg { width: 16px; height: 16px; }
+.geneo-connection-type-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 12px; margin-bottom: 16px; }
+.geneo-connection-type-label { display: inline-flex; align-items: center; gap: 8px; color: var(--text-primary); font-size: 13px; font-weight: 600; }
+.geneo-connection-type-label svg { width: 18px; height: 18px; color: var(--text-secondary); flex: 0 0 18px; }
+.geneo-type-convert { width: auto; padding: 6px 8px; border: 1px solid var(--border-default); border-radius: 5px; background: transparent; color: var(--text-secondary); font: inherit; font-size: 12px; cursor: pointer; }
+.geneo-type-convert:hover { background: var(--surface-card-hover); color: var(--text-primary); }
+.geneo-type-convert:focus-visible { outline: 2px solid var(--brand-green-300); outline-offset: 2px; }
 .geneo-connection-tool-row > button,
 .geneo-connection-tool-width { box-sizing: border-box; flex: 0 0 auto; height: 38px; }
 .geneo-connection-choice { display: flex; align-items: center; justify-content: center; gap: 5px; width: 88px; padding: 0 6px; border: 1px solid var(--border-default); border-radius: 5px; background: transparent; color: var(--text-primary); cursor: pointer; }
