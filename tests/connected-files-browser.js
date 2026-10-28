@@ -42,7 +42,11 @@ const url = process.env.GENEO_TEST_URL || pathToFileURL(path.resolve(__dirname, 
             await modal.locator('[data-connected-files-open-folder="pawford"]').click();
             await modal.locator('[data-connected-files-open-folder="interviews"]').click();
             if (process.env.GENEO_CAPTURE) await page.screenshot({ path: path.join(os.tmpdir(), `connected-files-browse-${width}.png`) });
-            assert.ok(await modal.locator('[data-connected-files-choice][value="af-letter-transcription"]').isDisabled());
+            assert.equal(await modal.locator('[data-connected-files-choice][value="af-letter-transcription"]').count(), 0);
+            assert.equal(await modal.locator('[data-connected-files-results-title],[data-connected-files-results-meta]').count(), 0);
+            await modal.locator('[data-connected-files-search]').fill(await page.evaluate(() => archiveFileById('af-letter-transcription').name));
+            assert.equal(await modal.locator('[data-connected-files-choice][value="af-letter-transcription"]').count(), 0);
+            await modal.locator('[data-connected-files-search]').fill('');
             await modal.locator('[data-connected-files-choice]:not(:disabled)').first().check();
             await modal.locator('[data-connected-files-folder-path=""]').click();
             await modal.locator('[data-connected-files-open-folder="documents"]').click();
@@ -79,7 +83,8 @@ const url = process.env.GENEO_TEST_URL || pathToFileURL(path.resolve(__dirname, 
             assert.ok(await modal.isVisible());
             assert.equal(await modal.locator('[data-connected-files-search]').inputValue(), 'Correspondence');
             await modal.locator('[data-connected-files-search]').fill('picker-upload');
-            assert.ok(await modal.locator('.connected-files-choice.is-existing').count());
+            assert.equal(await modal.locator('.connected-files-choice').count(), 0);
+            assert.ok(await modal.locator('.connected-files-empty').isVisible());
             await modal.locator('.connected-files-footer [data-close]').click();
 
             await page.evaluate(() => openPersonFilesModal('silver'));

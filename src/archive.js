@@ -14763,13 +14763,6 @@ function openConnectedFilesModal({
               </section>
 
               <section class="notes-related-results-panel">
-                <div class="notes-related-results-head">
-                  <div>
-                    <strong data-connected-files-results-title data-user-content></strong>
-                    <span data-connected-files-results-meta></span>
-                  </div>
-                </div>
-
                 <div
                   class="connected-files-results"
                   data-connected-files-results>
@@ -14862,14 +14855,6 @@ function openConnectedFilesModal({
         '[data-connected-files-selected]'
     );
 
-    const resultsTitle = modal.querySelector(
-        '[data-connected-files-results-title]'
-    );
-
-    const resultsMeta = modal.querySelector(
-        '[data-connected-files-results-meta]'
-    );
-
     const fileLabel = file =>
         file.name || file.title || pickerText(
             'Untitled file',
@@ -14915,6 +14900,7 @@ function openConnectedFilesModal({
         const normalizedQuery = query.trim().toLowerCase();
 
         return allFiles
+            .filter(file => !existingIds.has(file.id))
             .filter(file =>
                 normalizedQuery
                     ? fileSearchText(file).includes(normalizedQuery)
@@ -14931,14 +14917,13 @@ function openConnectedFilesModal({
     const renderChoice = file =>
     {
         const selected = selectedIds.has(file.id);
-        const existing = existingIds.has(file.id);
         const name = fileLabel(file);
         const path = folderName(file.folderId);
 
         return `
           <label class="connected-files-choice ${
                 selected ? 'is-selected' : ''
-            } ${existing ? 'is-existing' : ''}">
+            }">
             ${archiveFileIcon(file)}
 
             <span class="connected-files-choice-copy">
@@ -14948,7 +14933,6 @@ function openConnectedFilesModal({
 
               <span class="connected-files-choice-meta">
                 ${escapeHtml(translateText(connectedFileMeta(file)))}
-                ${existing ? ` · ${escapeHtml(draftMode ? pickerText('Selected for fact', 'Выбрано для факта') : pickerText('Already linked', 'Уже связано'))}` : ''}
               </span>
 
               <span
@@ -14965,7 +14949,6 @@ function openConnectedFilesModal({
               data-connected-files-choice
               value="${escapeHtml(file.id)}"
               ${selected ? 'checked' : ''}
-              ${existing ? 'disabled' : ''}
               aria-label="${escapeHtml(
                     pickerText('Select file: ', 'Выбрать файл: ') + name
                 )}">
@@ -15023,22 +15006,8 @@ function openConnectedFilesModal({
         const files = visibleFiles();
         const searching = Boolean(query.trim());
         const childFolders = searching ? [] : folders(browseFolderId);
-        const availableCount = files.filter(file => !existingIds.has(file.id)).length;
 
         renderBreadcrumbs(browseFolderId);
-
-        resultsTitle.textContent = searching
-            ? pickerText('Search results', 'Результаты поиска')
-            : browseFolderId
-                ? translateText(archiveFolderById(browseFolderId, projectId)?.name || folderName(null))
-                : folderName(null);
-
-        resultsMeta.textContent = pickerText(
-            `${availableCount} ${
-                availableCount === 1 ? 'file' : 'files'
-            }${searching ? ' found' : ''} · ${existingIds.size} ${draftMode ? 'selected for fact' : 'already linked'}`,
-            `Доступно файлов: ${availableCount} · ${draftMode ? 'Выбрано для факта' : 'Уже связано'}: ${existingIds.size}`
-        );
 
         renderSelectedFiles();
 
@@ -15061,10 +15030,10 @@ function openConnectedFilesModal({
                 )
                 : searching
                     ? pickerText(
-                        'No files match this search.',
-                        'По вашему запросу файлы не найдены.'
+                        'No available files match this search.',
+                        'Нет доступных для добавления файлов по этому запросу.'
                     )
-                    : pickerText('No files in this folder.', 'В этой папке нет файлов.');
+                    : pickerText('No files available to add in this folder.', 'В этой папке нет файлов для добавления.');
 
             resultsHost.innerHTML = `
             <div class="connected-files-empty">
