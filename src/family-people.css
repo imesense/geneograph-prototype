@@ -1680,11 +1680,40 @@ button.timeline-evidence-name:hover, button.timeline-evidence-name:focus-visible
 }
 
 .timeline-date {
+    position: relative;
     margin-top: 0;
     color: var(--text-primary);
     font-weight: 800;
     line-height: 1.2;
     text-align: right;
+}
+
+.timeline-date .timeline-edit-fact {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+    width: max-content;
+    min-height: 32px;
+    padding: 4px 0;
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 600;
+}
+.timeline-date .timeline-edit-fact[hidden] { display: none; }
+.timeline-edit-fact svg { width: 14px; height: 14px; }
+@media (max-width: 540px) {
+    .timeline-date .timeline-edit-fact {
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 2px;
+    }
+}
+@media (pointer: coarse) {
+    .timeline-date .timeline-edit-fact { min-height: 44px; }
 }
 
 .timeline-date span {
@@ -4009,6 +4038,19 @@ button.timeline-evidence-name:hover, button.timeline-evidence-name:focus-visible
     color: var(--text-primary);
 }
 
+.fact-button.fact-button-repeatable { padding-left: 0; gap: 0; }
+.fact-button-plus {
+    align-self: stretch;
+    display: inline-grid;
+    place-items: center;
+    width: 32px;
+    flex: 0 0 32px;
+    margin-right: var(--space-3);
+    border-right: 1px solid var(--border-default);
+}
+.fact-button-plus svg { width: 16px; height: 16px; }
+.fact-button-repeatable > .fact-button-icon { margin-right: var(--space-2); }
+
 .fact-button.is-added,
 .fact-button:disabled {
     opacity: 1;
@@ -4936,6 +4978,7 @@ button.timeline-evidence-name:hover, button.timeline-evidence-name:focus-visible
 .add-person-fact-remove {
     width: 34px;
     height: 34px;
+    padding: 0;
     border: 1px solid transparent;
     border-radius: var(--radius-sm);
     background: transparent;
@@ -4945,6 +4988,7 @@ button.timeline-evidence-name:hover, button.timeline-evidence-name:focus-visible
     cursor: pointer;
     transition: background var(--ease), border-color var(--ease), color var(--ease);
 }
+.add-person-fact-remove svg { width: 16px; height: 16px; }
 
 .add-person-fact-remove:hover,
 .add-person-fact-remove:focus-visible {

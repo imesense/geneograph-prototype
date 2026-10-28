@@ -2909,24 +2909,21 @@
 .person-profile .profile-full-card {
     width: 100%;
     min-width: 0;
-    height: auto;
+    height: var(--profile-primary-card-min-h);
     min-height:
         var(--profile-primary-card-min-h);
-    max-height: none;
+    max-height: var(--profile-primary-card-min-h);
     align-self: stretch;
     display: flex;
     flex-direction: column;
     overflow: hidden;
 }
 
-/*
-* Editing dropdowns and place suggestion lists may extend
-* outside the card.
-*/
+/* Keep repeated entries within the profile card in both modes. */
 .person-profile .profile-full-card.editing {
     position: relative;
     z-index: 20;
-    overflow: visible;
+    overflow: hidden;
 }
 
 .person-profile .profile-full-card .profile-card-body {
@@ -2936,26 +2933,27 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-4);
-    overflow: visible;
+    overflow: hidden;
 }
 
-/*
-* Every panel occupies the same grid cell. Hidden panels retain
-* layout participation, so the stack height is established by
-* the tallest panel in the current locked/editing mode.
-*/
+/* Panels share a fixed viewport; each active panel scrolls independently. */
 .profile-card-panel-stack {
     flex: 1 1 auto;
     min-width: 0;
     min-height: 0;
     display: grid;
-    align-items: start;
+    align-items: stretch;
+    overflow: hidden;
 }
 
 .profile-card-panel {
     grid-area: 1 / 1;
     min-width: 0;
-    align-self: start;
+    align-self: stretch;
+    height: 100%;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
     visibility: hidden;
     pointer-events: none;
     user-select: none;
@@ -2970,6 +2968,79 @@
 }
 
 /* Read-only information grids */
+
+.repeatable-fact-entry {
+    min-width: 0;
+    padding: 16px 0;
+    container-type: inline-size;
+}
+.add-person-modal .repeatable-fact-entry {
+    padding: var(--space-5);
+}
+.add-person-modal .repeatable-fact-entry-head { margin-bottom: 0; }
+.repeatable-fact-list > [data-repeat-entries] {
+    display: grid;
+    gap: var(--space-4);
+}
+.person-profile .repeatable-fact-list > [data-repeat-entries] { gap: 0; }
+.person-profile .repeatable-fact-entry + .repeatable-fact-entry,
+.repeatable-fact-summary + .repeatable-fact-summary {
+    border-top: 1px solid var(--border);
+}
+.repeatable-fact-entry-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+.repeatable-fact-entry-head h4 { margin: 0; }
+.repeatable-fact-entry .add-person-fact-date-row.repeatable-fact-dates {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-4);
+}
+.repeatable-fact-entry .genealogy-date-field:not(.is-between) .genealogy-date-controls {
+    grid-template-columns: var(--genealogy-date-columns);
+}
+.repeatable-fact-entry .genealogy-date-field:not(.is-between) .genealogy-date-type-shell {
+    grid-column: auto;
+}
+@container (min-width: 640px) {
+    .repeatable-fact-entry .add-person-fact-date-row.repeatable-fact-dates { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@container (max-width: 260px) {
+    .repeatable-fact-entry .genealogy-date-field:not(.is-between) .genealogy-date-controls {
+        grid-template-columns: minmax(0, 1fr) var(--control-icon-button-size);
+    }
+    .repeatable-fact-entry .genealogy-date-field:not(.is-between) .genealogy-date-type-shell { grid-column: 1 / -1; }
+    .repeatable-fact-entry .genealogy-date-inline-range.is-between {
+        grid-template-columns: minmax(0, 1fr) var(--control-icon-button-size);
+        grid-template-rows: auto var(--control-height) auto var(--control-height) auto var(--control-height);
+    }
+    .repeatable-fact-entry .genealogy-date-inline-range.is-between > label { grid-column: 1 / -1; grid-row: 1; }
+    .repeatable-fact-entry .genealogy-date-inline-range.is-between .genealogy-date-type-shell { grid-column: 1 / -1; grid-row: 2; }
+    .repeatable-fact-entry .genealogy-date-inline-range.is-between .genealogy-date-range-cell:first-child > span { grid-column: 1; grid-row: 3; }
+    .repeatable-fact-entry .genealogy-date-inline-range.is-between [data-genealogy-date-input] { grid-column: 1; grid-row: 4; }
+    .repeatable-fact-entry .genealogy-date-inline-range.is-between .genealogy-date-details-button { grid-column: 2; grid-row: 4; }
+    .repeatable-fact-entry .genealogy-date-inline-range.is-between [data-genealogy-date-to-cell] > span { grid-column: 1; grid-row: 5; margin-top: 0; }
+    .repeatable-fact-entry .genealogy-date-inline-range.is-between [data-genealogy-date-input-to] { grid-column: 1; grid-row: 6; }
+}
+.repeatable-fact-list, .repeatable-fact-readonly { min-width: 0; }
+.repeatable-fact-add { margin-top: 12px; }
+.repeatable-fact-error { color: var(--danger, #ef8c8c); }
+.repeatable-fact-entry input { scroll-margin-top: 100px; }
+.person-profile .repeatable-fact-entry .add-person-fact-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+.person-profile .repeatable-fact-entry .full { grid-column: 1 / -1; }
+@media (max-width: 540px) {
+    .repeatable-fact-dates { grid-template-columns: 1fr; }
+    .person-profile .repeatable-fact-entry .add-person-fact-grid { grid-template-columns: 1fr; }
+}
 
 .profile-readonly-grid.profile-readonly-grid-single {
     grid-template-columns: 1fr;

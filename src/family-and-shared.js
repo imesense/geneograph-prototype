@@ -4109,8 +4109,7 @@ function timelineEventDateLine(event)
 {
     if (timelineEventIsLasting(event))
     {
-        return cleanEditFieldValue(event.dateRangeLabel)
-          || timelineDateRangeLabel(event.fromDate, event.toDate)
+        return timelineDateRangeLabel(event.fromDate, event.toDate)
           || '';
     }
 
@@ -4122,7 +4121,7 @@ function timelineEventDatePlaceLines(event)
     const date = timelineEventDateLine(event);
     const place = timelinePlaceLabel(event);
 
-    return [date, place].filter(Boolean);
+    return [...date.split('\n'), place].filter(Boolean);
 }
 
 function timelineDetailLines(...values)
@@ -4165,7 +4164,8 @@ function timelineEventDetail(event, personId)
     if (event.type === 'education')
     {
         return timelineDetailLines(
-            event.institutionName || event.description,
+            event.institutionName,
+            event.educationValue,
             datePlaceLines
         );
     }
@@ -4173,7 +4173,7 @@ function timelineEventDetail(event, personId)
     if (event.type === 'occupation')
     {
         return timelineDetailLines(
-            event.occupation || event.description,
+            event.occupation,
             event.company,
             datePlaceLines
         );
@@ -4230,6 +4230,7 @@ function renderTimelineItem(
                 event,
                 personId
             )}
+            ${event.editTarget ? `<button type="button" class="link timeline-edit-fact" data-timeline-edit-fact="${escapeHtml(event.id)}" data-timeline-person="${escapeHtml(personId)}" aria-label="${escapeHtml(`${t(event.type === 'childBirth' ? "Edit child's birth" : 'Edit fact')}: ${getPersonDisplayName(event.editTarget.personId)}`)}" ${expanded ? '' : 'hidden'}>${icon.edit}${escapeHtml(t('Edit'))}</button>` : ''}
           </div>
 
           <div
@@ -4290,6 +4291,14 @@ function bindTimelineSourceControls(
     } = {}
 )
 {
+    root?.querySelectorAll('[data-timeline-edit-fact]').forEach(button => button.addEventListener('click', () =>
+    {
+        const event = sampleData.events.find(item => item.id === button.dataset.timelineEditFact && item.projectId === currentProjectId());
+        if (!event?.editTarget) return;
+        const target = { ...event.editTarget, timelineEventId: event.id };
+        if (target.kind === 'relationship') target.personId = button.dataset.timelinePerson;
+        openTimelinePersonEditor(target);
+    }));
     root?.querySelectorAll('[data-timeline-evidence-toggle]').forEach(button =>
         button.addEventListener('click', () => {
             const key = `${button.dataset.eventProject}:${button.dataset.timelineEvidenceToggle}`;
@@ -4299,6 +4308,8 @@ function bindTimelineSourceControls(
             button.setAttribute('aria-expanded', String(expanded));
             const panel = button.closest('.timeline-item')?.querySelector('.timeline-evidence');
             if (panel) panel.hidden = !expanded;
+            const edit = button.closest('.timeline-item')?.querySelector('[data-timeline-edit-fact]');
+            if (edit) edit.hidden = !expanded;
         }));
     root?.querySelectorAll('[data-event-add-file]').forEach(button =>
         button.addEventListener('click', () => {
@@ -6020,6 +6031,7 @@ function educationInstitutionTypeOptions(selected = '')
     ];
 
     const current = cleanEditFieldValue(selected || 'Unknown');
+    if (!options.includes(current)) options.push(current);
 
     return options
         .map(value => `<option value="${escapeHtml(value)}" ${value === current ? 'selected' : ''}>${escapeHtml(value)}</option>`)
@@ -6200,8 +6212,8 @@ function addPersonAddedFactsFromPerson(person)
     if (cleanEditFieldValue(person.death?.cause || person.death?.reason)) facts.push('causeOfDeath');
     if (editPlaceValue(person.death?.burialPlaceId) || cleanEditFieldValue(person.death?.burialPlaceText) || hasGenealogyDateValue(personEventByTag(person, 'BURI')?.date)) facts.push('burialPlace');
     if (cleanEditFieldValue(person.profile?.alternativeNames || details.alternativeNames)) facts.push('alternativeNames');
-    if (personHasEducationFact(person)) facts.push('education');
-    if (personHasOccupationFact(person)) facts.push('occupation');
+    if (person.attributes.some(record => record.tag === 'EDUC')) facts.push('education');
+    if (person.attributes.some(record => record.tag === 'OCCU')) facts.push('occupation');
     if (personHasReligionFact(person)) facts.push('religion');
     if (personHasBaptismFact(person)) facts.push('baptism');
     if (personAttributeByTag(person, 'FACT'))
@@ -6220,6 +6232,7 @@ function addPersonFactDefinition(factId)
 
 function addPersonFactCardHtml(factId, person = null)
 {
+    if (REPEATABLE_PERSON_FACTS[factId]) return renderRepeatableFactList(person, REPEATABLE_PERSON_FACTS[factId]);
     const definition = addPersonFactDefinition(factId) || {
         id: factId,
         label: 'Additional fact',
@@ -6228,12 +6241,10 @@ function addPersonFactCardHtml(factId, person = null)
     const centralPerson = person ? ensurePersonCentralStructures(person) : null;
     const details = centralPerson ? peopleProfileDetailsFor({ id: centralPerson.id }) : defaultPeopleProfileDetails();
     const death = centralPerson?.death || {};
-    const education = centralPerson ? personAttributeByTag(centralPerson, 'EDUC') : null;
     const baptism = centralPerson ? personEventByTag(centralPerson, 'BAPM') : null;
-    const customFact = centralPerson ? personAttributeByTag( centralPerson, 'FACT') : null;
     const prefixValue = cleanEditFieldValue(centralPerson?.names?.prefix || details.prefix);
     const suffixValue = cleanEditFieldValue(centralPerson?.names?.suffix || details.suffix);
-    const header = `<div class="add-person-fact-card-header"><div class="add-person-fact-card-title"><span class="fact-button-icon" aria-hidden="true">${definition.icon}</span><span>${escapeHtml(definition.label)}</span></div><button class="add-person-fact-remove" type="button" data-add-person-remove-fact="${escapeHtml(factId)}" aria-label="Remove ${escapeHtml(definition.label)}">${icon.close}</button></div>`;
+    const header = `<div class="add-person-fact-card-header"><div class="add-person-fact-card-title"><span class="fact-button-icon" aria-hidden="true">${definition.icon}</span><span>${escapeHtml(definition.label)}</span></div><button class="add-person-fact-remove" type="button" data-add-person-remove-fact="${escapeHtml(factId)}" aria-label="${escapeHtml(t('Remove fact'))}" title="${escapeHtml(t('Remove fact'))}">${icon.trash}</button></div>`;
     const fieldWrap = content => `<div class="add-person-fact-card" data-add-person-fact-card="${escapeHtml(factId)}">${header}<div class="add-person-fact-grid">${content}</div></div>`;
     if (factId === 'prefix')
     {
@@ -6242,13 +6253,6 @@ function addPersonFactCardHtml(factId, person = null)
     if (factId === 'suffix')
     {
         return fieldWrap(renderNameAffixCombobox({ id: 'addPersonFactSuffix', label: 'Suffix', value: suffixValue, kind: 'suffix', className: 'full' }));
-    }
-    if (factId === 'customFact')
-    {
-        return fieldWrap(
-            renderCustomFactFields(
-                'addPersonCustomFact',
-                customFact));
     }
     if (factId === 'causeOfDeath')
     {
@@ -6266,145 +6270,6 @@ function addPersonFactCardHtml(factId, person = null)
             className: 'full'
         }));
     }
-    if (factId === 'education')
-    {
-        return fieldWrap(`<div class="field full">
-            <label for="addPersonFactEducationInstitutionName">Institution name</label>
-            <input id="addPersonFactEducationInstitutionName" data-source-value="${escapeHtml(details.educationInstitutionName || '')}" value="${escapeHtml(localizedDataFieldValue(details.educationInstitutionName || ''))}" placeholder="e.g. Pawford Grammar School">
-          </div>
-
-          <div class="field add-person-select-field">
-            <label for="addPersonFactEducationInstitutionType">Institution type</label>
-            <select class="compact-select add-person-select" id="addPersonFactEducationInstitutionType">
-              ${educationInstitutionTypeOptions(details.educationInstitutionType)}
-            </select>
-            <span class="add-person-select-chevron" aria-hidden="true">${icon.chevron}</span>
-          </div>
-
-          <div class="field">
-            <label for="addPersonFactEducationValue">Education or credential</label>
-            <input id="addPersonFactEducationValue" data-source-value="${escapeHtml(details.educationValue || '')}" value="${escapeHtml(localizedDataFieldValue(details.educationValue || ''))}" placeholder="e.g. Secondary education, BA, apprenticeship">
-          </div>
-
-          ${renderPlaceCombobox({
-                id: 'addPersonFactEducationPlace',
-                label: 'Place',
-                value: editPlaceValue(education?.placeId, education?.placeText || details.educationPlace),
-                selectedPlaceId: education?.placeId || '',
-                addressValue: education?.address || '',
-                placeholder: 'e.g. Pawford, England',
-                className: 'full'
-            })}
-
-          <div class="add-person-fact-date-row">
-            <div class="profile-edit-date-cell">
-              ${renderGenealogyDateField(
-                    'addPersonFactEducationFrom',
-                    'Start date',
-                    details.educationFromDate,
-                    {
-                        inputId: 'addPersonFactEducationFromDate',
-                        typeId: 'addPersonFactEducationFromDateType',
-                        defaultDateType: 'Exact date',
-                        placeholder: 'e.g. 1915',
-                        className: 'genealogy-date-inline-range'
-                    }
-                )}
-            </div>
-
-            <div class="profile-edit-date-cell">
-              ${renderGenealogyDateField(
-                    'addPersonFactEducationTo',
-                    'End date',
-                    details.educationToDate,
-                    {
-                        inputId: 'addPersonFactEducationToDate',
-                        typeId: 'addPersonFactEducationToDateType',
-                        defaultDateType: 'Exact date',
-                        placeholder: 'e.g. 1920',
-                        className: 'genealogy-date-inline-range'
-                    }
-                )}
-            </div>
-          </div>
-
-          <div class="field full">
-            <label for="addPersonFactEducationNotes">Notes</label>
-            <textarea id="addPersonFactEducationNotes" data-source-value="${escapeHtml(details.educationNotes || '')}" placeholder="Education notes">${escapeHtml(localizedDataFieldValue(details.educationNotes || ''))}</textarea>
-          </div>`);
-    }
-    if (factId === 'occupation')
-    {
-        return fieldWrap(`<div class="field"><label for="addPersonFactWorkCompany">Company name</label>
-          <input
-            id="addPersonFactWorkCompany"
-            data-source-value="${escapeHtml(
-                details.workCompany || ''
-            )}"
-            value="${escapeHtml(
-                localizedDataFieldValue(
-                    details.workCompany || ''
-                )
-            )}"
-            placeholder="e.g. Pawford School">
-          </div>
-          <div class="field"><label for="addPersonFactWorkOccupation">Occupation</label>
-            <input
-              id="addPersonFactWorkOccupation"
-              data-source-value="${escapeHtml(
-                    details.workOccupation || ''
-                )}"
-              value="${escapeHtml(
-                    localizedDataFieldValue(
-                        details.workOccupation || ''
-                    )
-                )}"
-              placeholder="e.g. Teacher">
-            </div>
-          <div class="add-person-fact-date-row">
-            <div class="profile-edit-date-cell">
-              ${renderGenealogyDateField(
-                    'addPersonFactWorkFrom',
-                    'Start date',
-                    details.workFromDate,
-                    {
-                        inputId: 'addPersonFactWorkFromDate',
-                        typeId: 'addPersonFactWorkFromDateType',
-                        defaultDateType: 'Exact date',
-                        placeholder: 'e.g. 14 Feb 1915',
-                        className: 'genealogy-date-inline-range'
-                    }
-                )}
-            </div>
-
-            <div class="profile-edit-date-cell">
-              ${renderGenealogyDateField(
-                    'addPersonFactWorkTo',
-                    'End date',
-                    details.workToDate,
-                    {
-                        inputId: 'addPersonFactWorkToDate',
-                        typeId: 'addPersonFactWorkToDateType',
-                        defaultDateType: 'Exact date',
-                        placeholder: 'e.g. 14 Feb 1920',
-                        className: 'genealogy-date-inline-range'
-                    }
-                )}
-            </div>
-          </div>
-          <div class="field full"><label for="addPersonFactWorkNotes">Notes</label>
-            <textarea
-              id="addPersonFactWorkNotes"
-              data-source-value="${escapeHtml(
-                    details.workNotes || ''
-                )}"
-              placeholder="Work notes">${escapeHtml(
-                    localizedDataFieldValue(
-                        details.workNotes || ''
-                    )
-                )}</textarea>
-            </div>`);
-    }
     if (factId === 'religion')
     {
         return fieldWrap(
@@ -6417,7 +6282,14 @@ function addPersonFactCardHtml(factId, person = null)
     }
     if (factId === 'baptism')
     {
-        return fieldWrap(`${renderPlaceCombobox({
+        return fieldWrap(`${renderGenealogyDateField('addPersonFactBaptism', 'Baptism date', details.baptismDate, {
+            inputId: 'addPersonFactBaptismDate',
+            typeId: 'addPersonFactBaptismDateType',
+            className: 'full genealogy-date-inline-range',
+            defaultDateType: 'Exact date',
+            placeholder: 'e.g. 14 Feb 1915'
+        })}
+          ${renderPlaceCombobox({
             id: 'addPersonFactBaptismPlace',
             label: 'Baptism place',
             value: editPlaceValue(baptism?.placeId, baptism?.placeText || details.baptismPlace),
@@ -6425,14 +6297,7 @@ function addPersonFactCardHtml(factId, person = null)
             addressValue: baptism?.address || '',
             placeholder: 'Search or type a place',
             className: 'full'
-        })}
-          ${renderGenealogyDateField('addPersonFactBaptism', 'Baptism date', details.baptismDate, {
-                inputId: 'addPersonFactBaptismDate',
-                typeId: 'addPersonFactBaptismDateType',
-                className: 'full genealogy-date-inline-range',
-                defaultDateType: 'Exact date',
-                placeholder: 'e.g. 14 Feb 1915'
-            })}`);
+        })}`);
     }
     return fieldWrap(`<div class="field full"><label for="addPersonFactAlternativeNames">Alternative names</label><input id="addPersonFactAlternativeNames" value="${escapeHtml(details.alternativeNames || '')}" placeholder="Nickname, spelling variant, or former name"></div>`);
 }
@@ -6466,7 +6331,7 @@ function renderAddPersonAdditionalFacts(person = null)
           </button>
           <div class="add-person-facts-body" data-add-person-facts-body ${expanded ? '' : 'hidden'}>
             <div class="fact-buttons" data-add-person-fact-buttons>
-              ${definitions.map(fact => `<button class="fact-button ${activeFacts.includes(fact.id) ? 'is-added' : ''}" type="button" data-add-person-add-fact="${escapeHtml(fact.id)}" ${activeFacts.includes(fact.id) ? 'disabled' : ''}><span class="fact-button-icon" aria-hidden="true">${fact.icon}</span><span>${escapeHtml(fact.label)}</span></button>`).join('')}
+              ${definitions.map(fact => `<button class="fact-button ${REPEATABLE_PERSON_FACTS[fact.id] ? 'fact-button-repeatable' : ''} ${activeFacts.includes(fact.id) && !REPEATABLE_PERSON_FACTS[fact.id] ? 'is-added' : ''}" type="button" data-add-person-add-fact="${escapeHtml(fact.id)}" ${activeFacts.includes(fact.id) && !REPEATABLE_PERSON_FACTS[fact.id] ? 'disabled' : ''}>${REPEATABLE_PERSON_FACTS[fact.id] ? `<span class="fact-button-plus" aria-hidden="true">${icon.plus}</span>` : ''}<span class="fact-button-icon" aria-hidden="true">${fact.icon}</span><span>${escapeHtml(fact.label)}</span></button>`).join('')}
             </div>
             <div class="add-person-facts-added" data-add-person-facts-added>${activeFacts.map(factId => addPersonFactCardHtml(factId, person)).join('')}</div>
           </div>
@@ -10440,14 +10305,14 @@ function buildUnlinkRelationshipContext(raw = {})
     };
 }
 
-function openManageRelationshipsDiscardConfirm(onDiscard)
+function openManageRelationshipsDiscardConfirm(onDiscard, { message = 'Unsaved relationship changes will be lost.' } = {})
 {
     if (document.getElementById('manageRelationshipsDiscardOverlay')) return;
     const overlay = document.createElement('div');
     overlay.id = 'manageRelationshipsDiscardOverlay';
     overlay.className = 'add-person-mini-backdrop';
     overlay.innerHTML = `<div class="add-person-mini-card" role="alertdialog" aria-modal="true" aria-labelledby="manageRelationshipsDiscardTitle">
-        <div class="add-person-mini-head"><h3 id="manageRelationshipsDiscardTitle">${escapeHtml(t('Discard changes?'))}</h3><p>${escapeHtml(t('Unsaved relationship changes will be lost.'))}</p></div>
+        <div class="add-person-mini-head"><h3 id="manageRelationshipsDiscardTitle">${escapeHtml(t('Discard changes?'))}</h3><p>${escapeHtml(t(message))}</p></div>
         <div class="add-person-mini-footer"><button class="button secondary" type="button" data-manage-continue-editing>${escapeHtml(t('Continue editing'))}</button><button class="button danger" type="button" data-manage-discard>${escapeHtml(t('Discard changes'))}</button></div>
       </div>`;
     const returnFocus = document.activeElement;
@@ -10461,6 +10326,20 @@ function openManageRelationshipsDiscardConfirm(onDiscard)
     {
         overlay.remove();
         onDiscard();
+    });
+    overlay.addEventListener('keydown', event =>
+    {
+        if (event.key === 'Escape')
+        {
+            event.preventDefault(); event.stopPropagation();
+            overlay.querySelector('[data-manage-continue-editing]').click();
+        }
+        if (event.key === 'Tab')
+        {
+            const buttons = [...overlay.querySelectorAll('button')];
+            if (event.shiftKey && document.activeElement === buttons[0]) { event.preventDefault(); buttons.at(-1).focus(); }
+            else if (!event.shiftKey && document.activeElement === buttons.at(-1)) { event.preventDefault(); buttons[0].focus(); }
+        }
     });
     overlay.querySelector('[data-manage-continue-editing]').focus();
 }
@@ -11493,6 +11372,8 @@ function openAddPersonModal(title, subtitle, options = {})
     }
     bindAddPersonSideCards(options, editPerson);
     bindManageRelativeReturn(options.managerReturn);
+    bindRepeatableFacts(modalBackdrop.querySelector('.add-person-modal'));
+    focusPersonFactTarget(options.factTarget);
     updateAddPersonConditionalFields();
     const addPersonModal = modalBackdrop.querySelector('.add-person-modal');
     const initialSnapshot = addPersonModalSnapshot(addPersonModal);
@@ -11660,10 +11541,7 @@ function updateAddPersonFactSummary()
 
     if (!section) return;
 
-    const count =
-        section.querySelectorAll(
-            '[data-add-person-fact-card]'
-        ).length;
+    const count = section.querySelectorAll('[data-add-person-fact-card]:not([data-repeat-list]), [data-repeat-entry]').length;
 
     const countLabel =
         section.querySelector(
@@ -11690,6 +11568,19 @@ function addPersonFactToModal(factId, personId = '')
 {
     const section = modalBackdrop?.querySelector('[data-add-person-facts]');
     const target = section?.querySelector('[data-add-person-facts-added]');
+    if (REPEATABLE_PERSON_FACTS[factId] && section && target)
+    {
+        let list = target.querySelector(`[data-repeat-list="${REPEATABLE_PERSON_FACTS[factId]}"]`);
+        if (!list)
+        {
+            target.insertAdjacentHTML('beforeend', renderRepeatableFactList(null, REPEATABLE_PERSON_FACTS[factId]));
+            list = target.lastElementChild;
+        }
+        const body = section.querySelector('[data-add-person-facts-body]');
+        if (body) body.hidden = false;
+        section.querySelector('[data-add-person-facts-toggle]')?.setAttribute('aria-expanded', 'true');
+        appendRepeatableFact(list); updateAddPersonFactSummary(); return;
+    }
     if (!section || !target || target.querySelector(`[data-add-person-fact-card="${CSS.escape(factId)}"]`)) return;
     const person = personId ? getPerson(personId) : null;
     target.insertAdjacentHTML('beforeend', addPersonFactCardHtml(factId, person));
@@ -12023,8 +11914,11 @@ function collectCustomFactFields(
 function collectAddPersonAdditionalFacts(personId = '')
 {
     const section = modalBackdrop?.querySelector('[data-add-person-facts]');
-    const facts = { activeFactIds: collectAddPersonActiveFactIds() };
+    const facts = { activeFactIds: collectAddPersonActiveFactIds(), targetEventId: modalBackdrop.querySelector('.add-person-modal')?.dataset.targetEventId || '' };
     if (!section) return facts;
+    facts.repeatable = collectRepeatableFacts(section);
+    facts.repeatable.tags = ['EDUC', 'OCCU', 'FACT'];
+    if (facts.repeatable.invalid) return facts.repeatable;
     const hasFact = factId => Boolean(section.querySelector(`[data-add-person-fact-card="${CSS.escape(factId)}"]`));
     if (hasFact('prefix')) facts.prefix = readAddPersonModalValue('#addPersonFactPrefix');
     if (hasFact('suffix')) facts.suffix = readAddPersonModalValue('#addPersonFactSuffix');
@@ -12036,45 +11930,6 @@ function collectAddPersonAdditionalFacts(personId = '')
         facts.burialPlace = readPlaceInputValue('#addPersonFactBurialPlace', modalBackdrop);
     }
     if (hasFact('alternativeNames')) facts.alternativeNames = readAddPersonModalValue('#addPersonFactAlternativeNames');
-    if (hasFact('customFact'))
-    {
-        const result = collectCustomFactFields('addPersonCustomFact',  modalBackdrop);
-        if (result.invalid)
-        {
-            return result;
-        }
-        facts.customFact = result.value;
-    }
-    if (hasFact('education'))
-    {
-        const fromDate = collectGenealogyDateField('addPersonFactEducationFrom');
-        const toDate = collectGenealogyDateField('addPersonFactEducationTo');
-        if (!fromDate || !toDate) return { invalid: true, message: 'Check the education dates before saving.' };
-        if (genealogyDateDefinitelyAfter(fromDate, toDate)) return { invalid: true, message: 'The end date is earlier than the start date.' };
-        facts.education = {
-            institutionName: readAddPersonModalValue('#addPersonFactEducationInstitutionName'),
-            institutionType: modalBackdrop.querySelector('#addPersonFactEducationInstitutionType')?.value || 'Unknown',
-            value: readAddPersonModalValue('#addPersonFactEducationValue'),
-            place: readPlaceInputValue('#addPersonFactEducationPlace', modalBackdrop),
-            notes: readAddPersonModalValue('#addPersonFactEducationNotes'),
-            fromDate,
-            toDate
-        };
-    }
-    if (hasFact('occupation'))
-    {
-        const fromDate = collectGenealogyDateField('addPersonFactWorkFrom');
-        const toDate = collectGenealogyDateField('addPersonFactWorkTo');
-        if (!fromDate || !toDate) return { invalid: true, message: 'Check the occupation dates before saving.' };
-        if (genealogyDateDefinitelyAfter(fromDate, toDate)) return { invalid: true, message: 'The end date is earlier than the start date.' };
-        facts.work = {
-            company: readAddPersonModalValue('#addPersonFactWorkCompany'),
-            occupation: readAddPersonModalValue('#addPersonFactWorkOccupation'),
-            notes: readAddPersonModalValue('#addPersonFactWorkNotes'),
-            fromDate,
-            toDate
-        };
-    }
     if (hasFact('religion'))
     {
         facts.religion = readReligionField(
@@ -12094,70 +11949,14 @@ function collectAddPersonAdditionalFacts(personId = '')
     return facts;
 }
 
-function applyPersonCustomFact(
-    person,
-    values
-)
-{
-    ensurePersonCentralStructures(person);
-
-    if (!values)
-    {
-        removePersonAttribute(
-            person,
-            'FACT'
-        );
-
-        return null;
-    }
-
-    const existing =
-        personAttributeByTag(
-            person,
-            'FACT'
-        );
-
-    const resolvedPlace =
-        resolvePlaceAssignment(
-            values.place,
-            existing?.placeId
-        );
-
-    return upsertPersonAttribute(
-        person,
-        'FACT',
-        {
-            type:
-            valueOrNull(values.type) || '',
-
-            value:
-            valueOrNull(values.value) || '',
-
-            date:
-            genealogyDateOrNull(
-                values.date,
-                'Exact date'
-            ),
-
-            placeId:
-            resolvedPlace.placeId,
-
-            placeText:
-            resolvedPlace.placeText,
-
-            address:
-            resolvedPlace.address,
-
-            notes:
-            valueOrNull(values.notes) || ''
-        }
-    );
-}
 
 function applyAddPersonAdditionalFacts(person, facts = {})
 {
     ensurePersonCentralStructures(person);
     const active = new Set(facts.activeFactIds || []);
+    const targetEvent = person.events.find(event => event.id === facts.targetEventId);
+    const writeEvent = (tag, values) => targetEvent && (targetEvent.tag || targetEvent.gedcomTag) === tag
+        ? Object.assign(targetEvent, values) : upsertPersonEvent(person, tag, values);
 
     person.names.prefix = active.has('prefix') ? (normalizeNameSegment(facts.prefix)) : '';
     person.names.suffix = active.has('suffix') ? (normalizeNameSegment(facts.suffix)) : '';
@@ -12181,7 +11980,7 @@ function applyAddPersonAdditionalFacts(person, facts = {})
         person.death.burialPlaceText = burialPlace.placeText;
         person.death.burialPlaceId = burialPlace.placeId;
         person.death.burialAddress = burialPlace.address;
-        upsertPersonEvent(person, 'BURI', { date: genealogyDateOrNull(facts.burialDate), placeId: burialPlace.placeId, placeText: burialPlace.placeText, address: burialPlace.address });
+        writeEvent('BURI', { date: genealogyDateOrNull(facts.burialDate), placeId: burialPlace.placeId, placeText: burialPlace.placeText, address: burialPlace.address });
     }
     else if (person.livingStatus === 'Deceased')
     {
@@ -12192,53 +11991,7 @@ function applyAddPersonAdditionalFacts(person, facts = {})
 
     person.profile.alternativeNames = active.has('alternativeNames') ? valueOrNull(facts.alternativeNames) : null;
 
-    if (active.has('customFact') && facts.customFact)
-    {
-        applyPersonCustomFact(person, facts.customFact);
-    }
-    else
-    {
-        applyPersonCustomFact(person, null);
-    }
-
-    if (active.has('education') && facts.education)
-    {
-        const existingEducation = personAttributeByTag(person, 'EDUC');
-        const educationPlace = resolvePlaceAssignment(facts.education.place, existingEducation?.placeId);
-        const institutionType = valueOrNull(facts.education.institutionType) || 'Unknown';
-
-        upsertPersonAttribute(person, 'EDUC', {
-            value: valueOrNull(facts.education.value) || 'Education',
-            type: institutionType === 'Unknown' ? '' : institutionType,
-            institutionName: valueOrNull(facts.education.institutionName) || '',
-            institutionType,
-            placeText: educationPlace.placeText,
-            placeId: educationPlace.placeId,
-            address: educationPlace.address,
-            notes: valueOrNull(facts.education.notes) || '',
-            fromDate: genealogyDateOrNull(facts.education.fromDate, 'Exact date'),
-            toDate: genealogyDateOrNull(facts.education.toDate, 'Exact date')
-        });
-    }
-    else
-    {
-        removePersonAttribute(person, 'EDUC');
-    }
-
-    if (active.has('occupation') && facts.work)
-    {
-        upsertPersonAttribute(person, 'OCCU', {
-            value: valueOrNull(facts.work.occupation) || '',
-            company: valueOrNull(facts.work.company) || '',
-            notes: valueOrNull(facts.work.notes) || '',
-            fromDate: genealogyDateOrNull(facts.work.fromDate, 'Exact date'),
-            toDate: genealogyDateOrNull(facts.work.toDate, 'Exact date')
-        });
-    }
-    else
-    {
-        removePersonAttribute(person, 'OCCU');
-    }
+    applyRepeatableFacts(person, facts.repeatable);
 
     if (active.has('religion'))
     {
@@ -12259,10 +12012,10 @@ function applyAddPersonAdditionalFacts(person, facts = {})
 
     if (active.has('baptism') && facts.baptism)
     {
-        const existingBaptism = personEventByTag(person, 'BAPM');
+        const existingBaptism = targetEvent && (targetEvent.tag || targetEvent.gedcomTag) === 'BAPM' ? targetEvent : personEventByTag(person, 'BAPM');
         const baptismPlace = resolvePlaceAssignment(facts.baptism.place, existingBaptism?.placeId);
 
-        upsertPersonEvent(person, 'BAPM', {
+        writeEvent('BAPM', {
             date: genealogyDateOrNull(facts.baptism.date, 'Exact date'),
             placeText: baptismPlace.placeText,
             placeId: baptismPlace.placeId,
@@ -12271,7 +12024,8 @@ function applyAddPersonAdditionalFacts(person, facts = {})
     }
     else
     {
-        removePersonEvent(person, 'BAPM');
+        if (targetEvent && (targetEvent.tag || targetEvent.gedcomTag) === 'BAPM') person.events = person.events.filter(event => event.id !== targetEvent.id);
+        else removePersonEvent(person, 'BAPM');
     }
 }
 function updatePersonInitials(person)
@@ -12294,6 +12048,29 @@ function saveEditPersonModalValues(personId)
 
     const genderValue = readAddPersonModalValue('#addPersonGender');
     const livingStatus = readAddPersonModalValue('#addPersonLivingStatus');
+    const additionalFacts = collectAddPersonAdditionalFacts(personId);
+    if (additionalFacts.invalid)
+    {
+        showToast(additionalFacts.message || 'Check the additional facts before saving.');
+        return;
+    }
+
+    const relationshipValues = collectAddPersonRelationshipBlock();
+    if (relationshipValues.invalid)
+    {
+        showToast(relationshipValues.message || 'Check the relationship details before saving.');
+        return;
+    }
+
+    const birthDate = collectGenealogyDateField('addPersonBirth');
+    if (!birthDate)
+    {
+        showToast('Check the birth date before saving.');
+        return;
+    }
+    const deathDate = livingStatus === 'Deceased' ? collectGenealogyDateField('addPersonDeath') : null;
+    if (livingStatus === 'Deceased' && !deathDate) return showToast('Check the death date before saving.');
+
     const birthPlace = resolvePlaceInputSelector('#addPersonBirthPlace');
     const deathPlace = resolvePlaceInputSelector('#addPersonDeathPlace');
 
@@ -12317,26 +12094,6 @@ function saveEditPersonModalValues(personId)
 
     person.livingStatus = normalizeLivingStatus(livingStatus);
 
-    const additionalFacts = collectAddPersonAdditionalFacts(personId);
-    if (additionalFacts.invalid)
-    {
-        showToast(additionalFacts.message || 'Check the additional facts before saving.');
-        return;
-    }
-
-    const relationshipValues = collectAddPersonRelationshipBlock();
-    if (relationshipValues.invalid)
-    {
-        showToast(relationshipValues.message || 'Check the relationship details before saving.');
-        return;
-    }
-
-    const birthDate = collectGenealogyDateField('addPersonBirth');
-    if (!birthDate)
-    {
-        showToast('Check the birth date before saving.');
-        return;
-    }
     person.birth = {
         ...birthDate,
         placeId: birthPlace.placeId,
@@ -12346,12 +12103,6 @@ function saveEditPersonModalValues(personId)
 
     if (person.livingStatus === 'Deceased')
     {
-        const deathDate = collectGenealogyDateField('addPersonDeath');
-        if (!deathDate)
-        {
-            showToast('Check the death date before saving.');
-            return;
-        }
         person.death = {
             ...deathDate,
             placeId: deathPlace.placeId,
@@ -12565,6 +12316,7 @@ function ensurePersonCentralStructures(person)
     if (!person) return null;
     person.profile = person.profile && typeof person.profile === 'object' ? person.profile : {};
     person.attributes = Array.isArray(person.attributes) ? person.attributes : [];
+    person.attributes.forEach(attribute => { if (!attribute.id) attribute.id = createRuntimeId('person-fact'); });
     person.events = Array.isArray(person.events) ? person.events : [];
     person.notes = Array.isArray(person.notes) ? person.notes : [];
     person.citations = Array.isArray(person.citations) ? person.citations : [];
@@ -12777,75 +12529,6 @@ function peopleProfileDetailsFor(person)
                 centralPerson.death.burialPlaceId = resolved.placeId;
                 centralPerson.death.burialAddress = resolved.address;
                 return true;
-            }
-            if (prop === 'educationInstitutionName')
-            {
-                upsertPersonAttribute(centralPerson, 'EDUC', {
-                    institutionName: valueOrNull(value) || ''
-                });
-                return true;
-            }
-
-            if (prop === 'educationInstitutionType')
-            {
-                const institutionType = valueOrNull(value) || 'Unknown';
-
-                upsertPersonAttribute(centralPerson, 'EDUC', {
-                    institutionType,
-                    type: institutionType === 'Unknown' ? '' : institutionType
-                });
-
-                return true;
-            }
-
-            if (prop === 'educationValue')
-            {
-                upsertPersonAttribute(centralPerson, 'EDUC', {
-                    value: valueOrNull(value) || 'Education'
-                });
-
-                return true;
-            }
-            if (prop === 'educationPlace')
-            {
-                const attr = upsertPersonAttribute(centralPerson, 'EDUC');
-                const resolved = resolvePlaceAssignment(value, attr.placeId);
-                attr.placeText = resolved.placeText;
-                attr.placeId = resolved.placeId;
-                attr.address = resolved.address;
-                return true;
-            }
-            if (prop === 'educationNotes')
-            {
-                upsertPersonAttribute(centralPerson, 'EDUC', { notes: valueOrNull(value) || '' }); return true;
-            }
-            if (prop === 'educationFromDate')
-            {
-                upsertPersonAttribute(centralPerson, 'EDUC', { fromDate: genealogyDateOrNull(value, 'Exact date') }); return true;
-            }
-            if (prop === 'educationToDate')
-            {
-                upsertPersonAttribute(centralPerson, 'EDUC', { toDate: genealogyDateOrNull(value, 'Exact date') }); return true;
-            }
-            if (prop === 'workCompany')
-            {
-                upsertPersonAttribute(centralPerson, 'OCCU', { company: valueOrNull(value) || '' }); return true;
-            }
-            if (prop === 'workOccupation')
-            {
-                upsertPersonAttribute(centralPerson, 'OCCU', { value: valueOrNull(value) || '' }); return true;
-            }
-            if (prop === 'workNotes')
-            {
-                upsertPersonAttribute(centralPerson, 'OCCU', { notes: valueOrNull(value) || '' }); return true;
-            }
-            if (prop === 'workFromDate')
-            {
-                upsertPersonAttribute(centralPerson, 'OCCU', { fromDate: genealogyDateOrNull(value, 'Exact date') }); return true;
-            }
-            if (prop === 'workToDate')
-            {
-                upsertPersonAttribute(centralPerson, 'OCCU', { toDate: genealogyDateOrNull(value, 'Exact date') }); return true;
             }
             if (prop === 'religion')
             {

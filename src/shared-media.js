@@ -4531,9 +4531,13 @@ function timelineDateRangeLabel(fromDate, toDate)
     const from = formatGenealogyDateLabel(fromDate);
     const to = formatGenealogyDateLabel(toDate);
 
-    if (from && to) return `${from} to ${to}`;
-    if (from) return `From ${from}`;
-    if (to) return `Until ${to}`;
+    const qualified = date => date && !['Exact date', 'Exact', ''].includes(date.type || date.dateType || 'Exact date');
+    const ru = state.language === 'ru';
+    if (qualified(fromDate) || qualified(toDate))
+        return [from && `${ru ? 'Начало' : 'Start'}: ${from}`, to && `${ru ? 'Окончание' : 'End'}: ${to}`].filter(Boolean).join('\n');
+    if (from && to) return `${from} — ${to}`;
+    if (from) return `${ru ? 'С' : 'From'} ${from}`;
+    if (to) return `${ru ? 'До' : 'Until'} ${to}`;
 
     return '';
 }
@@ -4553,6 +4557,7 @@ function buildSampleEvents(context = null)
             id: `event-${person.id}-birth`,
             projectId: person.projectId,
             type: 'birth',
+            editTarget: { kind: 'birth', personId: person.id },
             personIds: [person.id],
             relatedPersonIds: [],
             ...birthDate,
@@ -4581,6 +4586,7 @@ function buildSampleEvents(context = null)
                     id: `event-${family.id}-${event.id || 'marriage'}`,
                     projectId: family.projectId || personA.projectId || personB.projectId,
                     type: 'marriage',
+                    editTarget: { kind: 'relationship', personId: personA.id, recordId: family.id },
                     dateKind: 'point',
                     familyId: family.id,
                     personIds: [partnerAId, partnerBId],
@@ -4642,6 +4648,7 @@ function buildSampleEvents(context = null)
 
                 type:
               'childBirth',
+                editTarget: { kind: 'birth', personId: childId },
 
                 personIds:
               parentIds,
@@ -4688,6 +4695,7 @@ function buildSampleEvents(context = null)
                 id: `event-${person.id}-death`,
                 projectId: person.projectId,
                 type: 'death',
+                editTarget: { kind: 'death', personId: person.id },
                 personIds: [person.id],
                 relatedPersonIds: [],
                 ...deathDate,
@@ -4713,7 +4721,7 @@ function buildSampleEvents(context = null)
                 const hasEducationContent = Boolean(
                     fromDate
                 || toDate
-                || timelineAttributeHasContent(attribute, ['institutionName', 'agency', 'value', 'type', 'institutionType'])
+                || timelineAttributeHasContent(attribute, ['institutionName', 'agency', 'value', 'type', 'institutionType', 'notes'])
                 );
 
                 if (!hasEducationContent) return;
@@ -4724,6 +4732,7 @@ function buildSampleEvents(context = null)
                     id: `event-${attribute.id || `${person.id}-education`}`,
                     projectId: person.projectId,
                     type: 'education',
+                    editTarget: { kind: 'attribute', personId: person.id, recordId: attribute.id },
                     dateKind: 'span',
                     personIds: [person.id],
                     relatedPersonIds: [],
@@ -4756,7 +4765,7 @@ function buildSampleEvents(context = null)
                 || toDate
                 || company
                 || occupation
-                || timelineAttributeHasContent(attribute, ['type'])
+                || timelineAttributeHasContent(attribute, ['type', 'notes'])
                 );
 
                 if (!hasOccupationContent) return;
@@ -4767,6 +4776,7 @@ function buildSampleEvents(context = null)
                     id: `event-${attribute.id || `${person.id}-occupation`}`,
                     projectId: person.projectId,
                     type: 'occupation',
+                    editTarget: { kind: 'attribute', personId: person.id, recordId: attribute.id },
                     dateKind: 'span',
                     personIds: [person.id],
                     relatedPersonIds: [],
@@ -4807,18 +4817,7 @@ function buildSampleEvents(context = null)
                         'Exact date'
                     );
 
-                const hasFactContent = Boolean(
-                    factType
-                  && (
-                      factValue
-                    || factNotes
-                    || factDate
-                    || attribute.placeId
-                    || cleanEditFieldValue(
-                        attribute.placeText
-                    )
-                  )
-                );
+                const hasFactContent = Boolean(factType);
 
                 if (!hasFactContent)
                 {
@@ -4837,6 +4836,7 @@ function buildSampleEvents(context = null)
 
                     type:
                   'customFact',
+                    editTarget: { kind: 'attribute', personId: person.id, recordId: attribute.id },
 
                     dateKind:
                   'point',
@@ -4885,6 +4885,7 @@ function buildSampleEvents(context = null)
                 id: `event-${event.id || `${person.id}-${tag.toLowerCase()}`}`,
                 projectId: person.projectId,
                 type: tag === 'BAPM' ? 'baptism' : 'burial',
+                editTarget: { kind: 'event', personId: person.id, recordId: event.id, tag },
                 personIds: [person.id],
                 relatedPersonIds: [],
                 ...eventDate,

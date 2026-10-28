@@ -2,6 +2,15 @@ const SUPPORTED_LANGUAGES = ['en', 'ru'];
 const LANGUAGE_STORAGE_KEY = 'geneograph.language';
 const PROJECT_CONTINUATION_STORAGE_KEY = 'geneograph.projectContinuation';
 const RU_UI_SHARED = Object.freeze({
+    'Add education': 'Добавить образование',
+    'Add occupation': 'Добавить работу',
+    'Edit fact': 'Изменить факт',
+    "Edit child's birth": 'Изменить рождение ребёнка',
+    'Remove fact': 'Удалить факт',
+    'No facts recorded.': 'Факты пока не добавлены.',
+    'Check the fact dates before saving.': 'Проверьте даты факта перед сохранением.',
+    'Unsaved profile changes will be lost.': 'Несохранённые изменения профиля будут потеряны.',
+    'Enter a fact name.': 'Введите название факта.',
     'Exact': 'Точно',
     'Choose a full date': 'Выбрать полную дату',
     'Choose From date': 'Выбрать дату начала',

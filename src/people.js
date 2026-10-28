@@ -4133,109 +4133,14 @@ function renderProfileLockedPanelContent(
     const deathPlaceLabel =
         cleanEditFieldValue(person.deathPlace);
 
-    if (activeSection === 'education')
+    if (activeSection === 'education' || activeSection === 'work')
     {
-        return `
-          <div
-            class="
-              profile-readonly-grid
-              profile-readonly-grid-single
-            ">
-
-            <section class="profile-info-block wide">
-              <h4>Education</h4>
-
-              ${renderProfileInfoRow(
-                    'Institution name',
-                    details.educationInstitutionName || '-'
-                )}
-
-              ${renderProfileInfoRow(
-                    'Institution type',
-                    details.educationInstitutionType || '-'
-                )}
-
-              ${renderProfileInfoRow(
-                    'Education or credential',
-                    details.educationValue || '-'
-                )}
-
-              ${renderProfileInfoRow(
-                    'Place',
-                    details.educationPlace || '-'
-                )}
-
-              ${renderProfileInfoRow(
-                    'From',
-                    profileDetailDateLabel(
-                        details.educationFromDate
-                    )
-                )}
-
-              ${renderProfileInfoRow(
-                    'To',
-                    profileDetailDateLabel(
-                        details.educationToDate
-                    )
-                )}
-
-              ${renderProfileInfoRow(
-                    'Notes',
-                    details.educationNotes || '-'
-                )}
-            </section>
-          </div>
-        `;
-    }
-
-    if (activeSection === 'work')
-    {
-        return `
-          <div
-            class="
-              profile-readonly-grid
-              profile-readonly-grid-single
-            ">
-
-            <section class="profile-info-block wide">
-              <h4>Work</h4>
-
-              ${renderProfileInfoRow(
-                    'Company name',
-                    details.workCompany || '-'
-                )}
-
-              ${renderProfileInfoRow(
-                    'Occupation',
-                    details.workOccupation || '-'
-                )}
-
-              ${renderProfileInfoRow(
-                    'From',
-                    profileDetailDateLabel(
-                        details.workFromDate
-                    )
-                )}
-
-              ${renderProfileInfoRow(
-                    'To',
-                    profileDetailDateLabel(
-                        details.workToDate
-                    )
-                )}
-
-              ${renderProfileInfoRow(
-                    'Notes',
-                    details.workNotes || '-'
-                )}
-            </section>
-          </div>
-        `;
+        return renderRepeatableFactReadOnly(centralPerson, activeSection === 'education' ? 'EDUC' : 'OCCU');
     }
 
     if (activeSection === 'other')
     {
-        return `
+        return renderRepeatableFactReadOnly(centralPerson, 'FACT') + `
           <div
             class="
               profile-readonly-grid
@@ -4450,7 +4355,7 @@ function renderProfileEditPanelContent(
         case 'other':
             return renderProfileOtherEditFields(
                 person
-            );
+            ) + renderRepeatableFactList(person, 'FACT', 'profile');
 
         default:
             return renderProfileMainEditFields(
@@ -4602,187 +4507,12 @@ function renderProfileMainEditFields(person)
 
 function renderProfileEducationEditFields(person)
 {
-    const centralPerson = ensurePersonCentralStructures(
-        getPerson(person.id) || person
-    );
-
-    const details = peopleProfileDetailsFor(person);
-    const education = personAttributeByTag(centralPerson, 'EDUC');
-
-    return `
-        <div class="add-person-fact-grid">
-          <div class="field full">
-            <label for="profileEducationInstitutionName">
-              Institution name
-            </label>
-
-            <input
-              id="profileEducationInstitutionName"
-              placeholder="e.g. Pawford Grammar School"
-              data-source-value="${escapeHtml(details.educationInstitutionName || '')}"
-              value="${escapeHtml(localizedDataFieldValue(
-                    details.educationInstitutionName || ''
-                ))}">
-          </div>
-
-          <div class="field add-person-select-field">
-            <label for="profileEducationInstitutionType">
-              Institution type
-            </label>
-
-            <select
-              class="compact-select add-person-select"
-              id="profileEducationInstitutionType">
-              ${educationInstitutionTypeOptions(
-                    details.educationInstitutionType
-                )}
-            </select>
-
-            <span
-              class="add-person-select-chevron"
-              aria-hidden="true">
-              ${icon.chevron}
-            </span>
-          </div>
-
-          <div class="field">
-            <label for="profileEducationValue">
-              Education or credential
-            </label>
-
-            <input
-              id="profileEducationValue"
-              placeholder="e.g. Secondary education, BA, apprenticeship"
-              data-source-value="${escapeHtml(details.educationValue || '')}"
-              value="${escapeHtml(localizedDataFieldValue(details.educationValue || ''))}">
-          </div>
-
-          ${renderPlaceCombobox({
-                id: 'profileEducationPlace',
-                label: 'Place',
-                value: editPlaceValue(
-                    education?.placeId,
-                    education?.placeText || details.educationPlace
-                ),
-                selectedPlaceId: education?.placeId || '',
-                addressValue: education?.address || '',
-                placeholder: 'e.g. Pawford, England',
-                className: 'full'
-            })}
-
-          <div class="add-person-fact-date-row">
-            <div class="profile-edit-date-cell">
-              ${renderGenealogyDateField(
-                    'profileEducationFromDate',
-                    'Start date',
-                    details.educationFromDate,
-                    {
-                        inputId: 'profileEducationFromDate',
-                        typeId: 'profileEducationFromDateType',
-                        defaultDateType: 'Exact date',
-                        placeholder: 'e.g. 1915',
-                        className: 'genealogy-date-inline-range'
-                    }
-                )}
-            </div>
-
-            <div class="profile-edit-date-cell">
-              ${renderGenealogyDateField(
-                    'profileEducationToDate',
-                    'End date',
-                    details.educationToDate,
-                    {
-                        inputId: 'profileEducationToDate',
-                        typeId: 'profileEducationToDateType',
-                        defaultDateType: 'Exact date',
-                        placeholder: 'e.g. 1920',
-                        className: 'genealogy-date-inline-range'
-                    }
-                )}
-            </div>
-          </div>
-
-          <div class="field full">
-            <label for="profileEducationNotes">Notes</label>
-
-            <textarea
-              id="profileEducationNotes"
-              data-source-value="${escapeHtml(details.educationNotes || '')}"
-              placeholder="Education notes">${escapeHtml(localizedDataFieldValue(
-                    details.educationNotes || ''
-                ))}</textarea>
-          </div>
-        </div>
-      `;
+    return renderRepeatableFactList(person, 'EDUC', 'profile');
 }
 
 function renderProfileWorkEditFields(person)
 {
-    const details = peopleProfileDetailsFor(person);
-
-    return `
-        <div class="add-person-fact-grid">
-          <div class="field">
-            <label for="profileWorkCompany">Company name</label>
-
-            <input
-              id="profileWorkCompany"
-              placeholder="e.g. Pawford School"
-              value="${escapeHtml(details.workCompany || '')}">
-          </div>
-
-          <div class="field">
-            <label for="profileWorkOccupation">Occupation</label>
-
-            <input
-              id="profileWorkOccupation"
-              placeholder="e.g. Teacher"
-              value="${escapeHtml(details.workOccupation || '')}">
-          </div>
-
-          <div class="add-person-fact-date-row">
-            <div class="profile-edit-date-cell">
-              ${renderGenealogyDateField(
-                    'profileWorkFromDate',
-                    'Start date',
-                    details.workFromDate,
-                    {
-                        inputId: 'profileWorkFromDate',
-                        typeId: 'profileWorkFromDateType',
-                        defaultDateType: 'Exact date',
-                        placeholder: 'e.g. 14 Feb 1915',
-                        className: 'genealogy-date-inline-range'
-                    }
-                )}
-            </div>
-
-            <div class="profile-edit-date-cell">
-              ${renderGenealogyDateField(
-                    'profileWorkToDate',
-                    'End date',
-                    details.workToDate,
-                    {
-                        inputId: 'profileWorkToDate',
-                        typeId: 'profileWorkToDateType',
-                        defaultDateType: 'Exact date',
-                        placeholder: 'e.g. 14 Feb 1925',
-                        className: 'genealogy-date-inline-range'
-                    }
-                )}
-            </div>
-          </div>
-
-          <div class="field full">
-            <label for="profileWorkNotes">Notes</label>
-
-            <textarea
-              id="profileWorkNotes"
-              placeholder="Work notes">${escapeHtml(
-                    details.workNotes || ''
-                )}</textarea>
-          </div>
-        </div>
-      `;
+    return renderRepeatableFactList(person, 'OCCU', 'profile');
 }
 
 function renderProfileOtherEditFields(person)
@@ -6023,158 +5753,20 @@ function collectProfileMainEdit()
 
 function collectProfileEducationEdit()
 {
-    const fromDate =
-        collectGenealogyDateField(
-            'profileEducationFromDate'
-        );
-
-    if (!fromDate)
-    {
-        return profileEditValidationFailure(
-            'education',
-            'Check the education start date before saving.',
-            `
-            [data-genealogy-date-field=
-              "profileEducationFromDate"]
-            [data-genealogy-date-input]
-          `.replace(/\s+/g, ' ')
-        );
-    }
-
-    const toDate =
-        collectGenealogyDateField(
-            'profileEducationToDate'
-        );
-
-    if (!toDate)
-    {
-        return profileEditValidationFailure(
-            'education',
-            'Check the education end date before saving.',
-            `
-            [data-genealogy-date-field=
-              "profileEducationToDate"]
-            [data-genealogy-date-input]
-          `.replace(/\s+/g, ' ')
-        );
-    }
-
-    return {
-        ok: true,
-        section: 'education',
-        payload: {
-            institutionName:
-            collectLocalizedDataFieldValue(
-                main.querySelector(
-                    '#profileEducationInstitutionName'
-                ),
-                main.querySelector(
-                    '#profileEducationInstitutionName'
-                )?.dataset.sourceValue || ''
-            ).trim(),
-
-            institutionType:
-            main.querySelector(
-                '#profileEducationInstitutionType'
-            )?.value || 'Unknown',
-
-            value:
-            collectLocalizedDataFieldValue(
-                main.querySelector(
-                    '#profileEducationValue'
-                ),
-                main.querySelector(
-                    '#profileEducationValue'
-                )?.dataset.sourceValue || ''
-            ).trim(),
-
-            place:
-            readPlaceInputValue(
-                '#profileEducationPlace',
-                main
-            ),
-
-            notes:
-            collectLocalizedDataFieldValue(
-                main.querySelector(
-                    '#profileEducationNotes'
-                ),
-                main.querySelector(
-                    '#profileEducationNotes'
-                )?.dataset.sourceValue || ''
-            ).trim(),
-
-            fromDate,
-            toDate
-        }
-    };
+    const payload = collectRepeatableFacts(main, 'EDUC');
+    return payload.invalid ? { ok: false, section: 'education', message: payload.message, focusSelector: payload.focusSelector } : { ok: true, section: 'education', payload };
 }
 
 function collectProfileWorkEdit()
 {
-    const fromDate =
-        collectGenealogyDateField(
-            'profileWorkFromDate'
-        );
-
-    if (!fromDate)
-    {
-        return profileEditValidationFailure(
-            'work',
-            'Check the work start date before saving.',
-            `
-            [data-genealogy-date-field=
-              "profileWorkFromDate"]
-            [data-genealogy-date-input]
-          `.replace(/\s+/g, ' ')
-        );
-    }
-
-    const toDate =
-        collectGenealogyDateField(
-            'profileWorkToDate'
-        );
-
-    if (!toDate)
-    {
-        return profileEditValidationFailure(
-            'work',
-            'Check the work end date before saving.',
-            `
-            [data-genealogy-date-field=
-              "profileWorkToDate"]
-            [data-genealogy-date-input]
-          `.replace(/\s+/g, ' ')
-        );
-    }
-
-    return {
-        ok: true,
-        section: 'work',
-        payload: {
-            company:
-            main.querySelector(
-                '#profileWorkCompany'
-            )?.value.trim() || '',
-
-            occupation:
-            main.querySelector(
-                '#profileWorkOccupation'
-            )?.value.trim() || '',
-
-            notes:
-            main.querySelector(
-                '#profileWorkNotes'
-            )?.value.trim() || '',
-
-            fromDate,
-            toDate
-        }
-    };
+    const payload = collectRepeatableFacts(main, 'OCCU');
+    return payload.invalid ? { ok: false, section: 'work', message: payload.message, focusSelector: payload.focusSelector } : { ok: true, section: 'work', payload };
 }
 
 function collectProfileOtherEdit()
 {
+    const repeatable = collectRepeatableFacts(main, 'FACT');
+    if (repeatable.invalid) return { ok: false, section: 'other', message: repeatable.message, focusSelector: repeatable.focusSelector };
     const baptismDate =
         collectGenealogyDateField(
             'profileBaptismDate'
@@ -6197,6 +5789,7 @@ function collectProfileOtherEdit()
         ok: true,
         section: 'other',
         payload: {
+            repeatable,
             religion:
             readReligionField(
                 main,
@@ -6216,12 +5809,14 @@ function collectProfileOtherEdit()
 
 function collectProfileEditSections()
 {
-    const results = [
-        collectProfileMainEdit(),
-        collectProfileEducationEdit(),
-        collectProfileWorkEdit(),
-        collectProfileOtherEdit()
-    ];
+    const card = main.querySelector('[data-profile-card-root]');
+    const collectors = { main: collectProfileMainEdit, education: collectProfileEducationEdit,
+        work: collectProfileWorkEdit, other: collectProfileOtherEdit };
+    const results = Object.entries(collectors).filter(([section]) =>
+    {
+        const initial = card?.profileSectionSnapshots?.[section];
+        return initial === undefined || initial !== profileSectionDraftSnapshot(card.querySelector(`[data-profile-card-panel="${section}"]`));
+    }).map(([, collect]) => collect());
 
     const invalid = results.find(
         result => !result.ok
@@ -6378,99 +5973,14 @@ function applyProfileMainEdit(
     }
 }
 
-function applyProfileEducationEdit(
-    person,
-    payload
-)
+function applyProfileEducationEdit(person, payload)
 {
-    const centralPerson =
-        getPerson(person.id);
-
-    if (!centralPerson) return;
-
-    const education =
-        upsertPersonAttribute(
-            centralPerson,
-            'EDUC',
-            {
-                institutionName:
-              payload.institutionName,
-
-                institutionType:
-              payload.institutionType,
-
-                type:
-              payload.institutionType
-              === 'Unknown'
-                  ? ''
-                  : payload.institutionType,
-
-                value:
-              payload.value || 'Education',
-
-                notes: payload.notes,
-
-                fromDate:
-              genealogyDateOrNull(
-                  payload.fromDate,
-                  'Exact date'
-              ),
-
-                toDate:
-              genealogyDateOrNull(
-                  payload.toDate,
-                  'Exact date'
-              )
-            }
-        );
-
-    const resolvedPlace =
-        resolvePlaceAssignment(
-            payload.place,
-            education.placeId
-        );
-
-    education.placeId =
-        resolvedPlace.placeId;
-
-    education.placeText =
-        resolvedPlace.placeText;
-
-    education.address =
-        resolvedPlace.address;
+    applyRepeatableFacts(getPerson(person.id), payload);
 }
 
-function applyProfileWorkEdit(
-    person,
-    payload
-)
+function applyProfileWorkEdit(person, payload)
 {
-    const centralPerson =
-        getPerson(person.id);
-
-    if (!centralPerson) return;
-
-    upsertPersonAttribute(
-        centralPerson,
-        'OCCU',
-        {
-            company: payload.company,
-            value: payload.occupation,
-            notes: payload.notes,
-
-            fromDate:
-            genealogyDateOrNull(
-                payload.fromDate,
-                'Exact date'
-            ),
-
-            toDate:
-            genealogyDateOrNull(
-                payload.toDate,
-                'Exact date'
-            )
-        }
-    );
+    applyRepeatableFacts(getPerson(person.id), payload);
 }
 
 function applyProfileOtherEdit(
@@ -6521,6 +6031,7 @@ function applyProfileOtherEdit(
 
     baptism.address =
         resolvedPlace.address;
+    applyRepeatableFacts(centralPerson, payload.repeatable);
 }
 
 function applyProfileEditSections(
@@ -6528,22 +6039,22 @@ function applyProfileEditSections(
     payloads
 )
 {
-    applyProfileMainEdit(
+    if (payloads.main) applyProfileMainEdit(
         person,
         payloads.main
     );
 
-    applyProfileEducationEdit(
+    if (payloads.education) applyProfileEducationEdit(
         person,
         payloads.education
     );
 
-    applyProfileWorkEdit(
+    if (payloads.work) applyProfileWorkEdit(
         person,
         payloads.work
     );
 
-    applyProfileOtherEdit(
+    if (payloads.other) applyProfileOtherEdit(
         person,
         payloads.other
     );
@@ -6591,6 +6102,7 @@ function cancelPeopleProfileEditing()
 
 function bindPeopleProfileControls(person)
 {
+    bindRepeatableFacts(main);
     bindToasts(main);
     bindGenealogyDateFields(main);
     bindPlaceComboboxes(main);
@@ -6650,6 +6162,9 @@ function bindPeopleProfileControls(person)
     const profileCard = main.querySelector(
         '[data-profile-card-root]'
     );
+    if (state.peopleProfileEditing && profileCard)
+        profileCard.profileSectionSnapshots = Object.fromEntries([...profileCard.querySelectorAll('[data-profile-card-panel]')]
+            .map(panel => [panel.dataset.profileCardPanel, profileSectionDraftSnapshot(panel)]));
     bindProfileCardTabs(profileCard);
     main.querySelector('#backPeopleList')?.addEventListener('click', () =>
     {
@@ -7041,270 +6556,7 @@ function openProfileFamilyMember(
 
 function openAddFactOverlay(person)
 {
-    const personId = person?.id;
-
-    const centralPerson =
-        ensurePersonCentralStructures(
-            getPerson(personId)
-        );
-
-    if (!centralPerson)
-    {
-        showToast(
-            'Person record was not found.'
-        );
-
-        return;
-    }
-
-    const existingFact =
-        personAttributeByTag(
-            centralPerson,
-            'FACT'
-        );
-
-    const isEditing =
-        Boolean(existingFact);
-
-    const personName =
-        getPersonDisplayName(personId)
-          || centralPerson.names?.display
-          || 'this person';
-
-    const factEventId = `event-${existingFact?.id || `fact-${personId}`}`;
-    const selectedFileIds = new Set(existingFact
-        ? (sampleData.archiveFiles || []).filter(file =>
-            file.projectId === centralPerson.projectId
-            && (file.linkedEventIds || []).includes(factEventId)).map(file => file.id)
-        : []);
-    const selectedSourceIds = new Set(existingFact
-        ? sourceIdsForTarget('event', factEventId, centralPerson.projectId)
-        : []);
-
-    openModal(`
-        <form
-          class="modal"
-          id="timelineCustomFactForm"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="addFactTitle"
-          novalidate>
-
-          <div class="modal-header">
-            <div>
-              <h2 id="addFactTitle">
-                ${
-                    isEditing
-                        ? 'Edit custom fact'
-                        : 'Add custom fact'
-                }
-              </h2>
-
-              <p>
-                Record an attribute or characteristic
-                for ${escapeHtml(personName)}.
-              </p>
-            </div>
-
-            <button
-              class="close-button"
-              type="button"
-              data-close
-              aria-label="Close custom fact dialog">
-              ${icon.close}
-            </button>
-          </div>
-
-          <div class="modal-body">
-            <div class="add-person-fact-grid">
-              ${renderCustomFactFields(
-                    'timelineCustomFact',
-                    existingFact
-                )}
-            </div>
-            <section class="fact-evidence" aria-label="Evidence">
-              <h3>Evidence</h3>
-              <p>New files and sources are created in Archive immediately. Their links to this fact are saved only with the fact.</p>
-              <div class="fact-evidence-heading"><strong>Files</strong><button type="button" class="button secondary" data-fact-add-file>${icon.plus} Add file</button></div>
-              <div data-fact-files></div>
-              <div class="fact-evidence-heading"><strong>Sources</strong><button type="button" class="button secondary" data-fact-add-source>${icon.plus} Add source</button></div>
-              <div data-fact-sources></div>
-            </section>
-          </div>
-
-          <div class="modal-footer">
-            <button
-              class="button secondary"
-              type="button"
-              data-close>
-              Cancel
-            </button>
-
-            <button
-              class="button primary"
-              type="submit">
-              ${
-                    isEditing
-                        ? 'Save changes'
-                        : 'Add fact'
-                }
-            </button>
-          </div>
-        </form>`);
-
-    bindGenealogyDateFields(
-        modalBackdrop
-    );
-
-    bindPlaceComboboxes(
-        modalBackdrop
-    );
-
-    const factForm = modalBackdrop.querySelector('#timelineCustomFactForm');
-    const renderEvidence = () =>
-    {
-        const fileHost = factForm.querySelector('[data-fact-files]');
-        const sourceHost = factForm.querySelector('[data-fact-sources]');
-        fileHost.innerHTML = [...selectedFileIds].map(id => archiveFileById(id, centralPerson.projectId))
-            .filter(Boolean).map(file => `<div class="fact-evidence-row"><span data-user-content>${escapeHtml(file.name)}</span><button type="button" class="relation-action-button" data-fact-remove-file="${escapeHtml(file.id)}" aria-label="Remove ${escapeHtml(file.name)}">${icon.close}</button></div>`).join('') || '<span class="panel-muted">No files selected</span>';
-        sourceHost.innerHTML = [...selectedSourceIds].map(id => archiveSourceById(id, centralPerson.projectId))
-            .filter(Boolean).map(source => `<div class="fact-evidence-row"><span data-user-content>${escapeHtml(source.title)}</span><button type="button" class="relation-action-button" data-fact-remove-source="${escapeHtml(source.id)}" aria-label="Remove ${escapeHtml(source.title)}">${icon.close}</button></div>`).join('') || '<span class="panel-muted">No sources selected</span>';
-        localizeUI(factForm, { suppressObserverReplay: true });
-    };
-    factForm.addEventListener('click', event =>
-    {
-        const fileRemove = event.target.closest('[data-fact-remove-file]');
-        const sourceRemove = event.target.closest('[data-fact-remove-source]');
-        if (fileRemove) { selectedFileIds.delete(fileRemove.dataset.factRemoveFile); renderEvidence(); return; }
-        if (sourceRemove) { selectedSourceIds.delete(sourceRemove.dataset.factRemoveSource); renderEvidence(); return; }
-        if (event.target.closest('[data-fact-add-file]'))
-        {
-            openConnectedFilesModal({ projectId: centralPerson.projectId,
-                title: 'Add evidence files', subtitle: 'Choose files for this fact. Links are saved with the fact.',
-                existingFileIds: [...selectedFileIds], draftMode: true,
-                modalOpener: openNestedModal, autoFocusSearch: false,
-                onSave: ids => { ids.forEach(id => selectedFileIds.add(id)); renderEvidence(); return { ok: true }; } });
-        }
-        if (event.target.closest('[data-fact-add-source]'))
-        {
-            openSourcesForTargetModal({ projectId: centralPerson.projectId,
-                title: 'Add sources', subtitle: 'Choose citations for this fact. Links are saved with the fact.',
-                draftSourceIds: [...selectedSourceIds], modalOpener: openNestedModal,
-                autoFocusSearch: false,
-                onDraftSave: ids => { ids.forEach(id => selectedSourceIds.add(id)); renderEvidence(); } });
-        }
-    });
-    renderEvidence();
-
-    modalBackdrop
-        .querySelector(
-            '#timelineCustomFactForm'
-        )
-        ?.addEventListener(
-            'submit',
-            event =>
-            {
-                event.preventDefault();
-
-                const result =
-                    collectCustomFactFields(
-                        'timelineCustomFact',
-                        modalBackdrop
-                    );
-
-                if (result.invalid)
-                {
-                    showToast(
-                        result.message
-                  || 'Check the custom fact before saving.'
-                    );
-
-                    return;
-                }
-
-                const projectId = centralPerson.projectId;
-                const validFiles = [...selectedFileIds].every(id => archiveFileById(id, projectId));
-                const validSources = [...selectedSourceIds].every(id => archiveSourceById(id, projectId));
-                if (!validFiles || !validSources)
-                {
-                    showToast('An evidence record is no longer available.');
-                    return;
-                }
-                const beforeAttributes = structuredClone(centralPerson.attributes);
-                const beforeFileLinks = (sampleData.archiveFiles || []).map(file => [
-                    file,
-                    [...(file.linkedEventIds || [])],
-                    [...(file.linkedPersonIds || [])]
-                ]);
-                const beforeSourceLinks = structuredClone(sampleData.sourceLinks || []);
-                const beforeUpdatedAt = centralPerson.updatedAt;
-                try
-                {
-                    applyPersonCustomFact(centralPerson, result.value);
-                    const savedFact = personAttributeByTag(centralPerson, 'FACT');
-                    const eventId = `event-${savedFact.id}`;
-                    rebuildSampleEventsAndPruneSourceLinks();
-                    if (!sourceTargetRecord('event', eventId, projectId)) throw new Error('Fact event was not created');
-                    const writes = (sampleData.archiveFiles || []).filter(file => file.projectId === projectId
-                        && (selectedFileIds.has(file.id) || (file.linkedEventIds || []).includes(eventId)))
-                        .map(file => ({ ownerType: 'file', ownerId: file.id, entityType: 'event', entityId: eventId, shouldLink: selectedFileIds.has(file.id) }));
-                    if (archiveSetConnectionsAtomically(writes)?.ok === false) throw new Error('File links could not be saved');
-                    const savedSources = setSourceIdsForTarget('event', eventId, [...selectedSourceIds], { projectId });
-                    if (!Array.isArray(savedSources) || selectedSourceIds.size !== savedSources.length) throw new Error('Source links could not be saved');
-                    markPersonUpdated(centralPerson);
-                }
-                catch (error)
-                {
-                    centralPerson.attributes = beforeAttributes;
-                    centralPerson.updatedAt = beforeUpdatedAt;
-                    beforeFileLinks.forEach(([file, eventIds, personIds]) =>
-                    {
-                        file.linkedEventIds = eventIds;
-                        file.linkedPersonIds = personIds;
-                    });
-                    sampleData.sourceLinks = beforeSourceLinks;
-                    rebuildSampleEventsAndPruneSourceLinks();
-                    showToast(error.message || 'Fact and evidence could not be saved.');
-                    return;
-                }
-
-                closeModal();
-
-                if (
-                    state.activeModule
-              === 'Family Tree'
-                )
-                {
-                    renderFamilyTreePreserveScroll?.()
-                || renderFamilyTree();
-                }
-                else if (
-                    state.activeModule
-              === 'People'
-                )
-                {
-                    renderPeople();
-                }
-                else
-                {
-                    render();
-                }
-
-                showToast(
-                    isEditing
-                        ? 'Custom fact updated.'
-                        : 'Custom fact added.'
-                );
-            }
-        );
-
-    modalBackdrop
-        .querySelector(
-            '#timelineCustomFactType'
-        )
-        ?.focus({
-            preventScroll: true
-        });
+    openTimelinePersonEditor({ kind: 'newAttribute', personId: person.id, tag: 'FACT' });
 }
 
 function closePeopleColumnsPopover()

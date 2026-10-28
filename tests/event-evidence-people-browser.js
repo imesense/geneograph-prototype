@@ -72,23 +72,26 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             const crossProject = !setSourceLink(sourceId, 'event', 'missing-event', true, { projectId: 'p2' });
 
             openAddFactOverlay(getPerson('silver'));
-            document.querySelector('#timelineCustomFactType').value = 'Research finding';
-            document.querySelector('#timelineCustomFactValue').value = 'Evidence propagation check';
-            document.querySelector('[data-fact-add-file]').click();
+            const entry = document.querySelector('[data-repeat-list="FACT"] [data-repeat-entry]:last-child');
+            entry.querySelector('input[id$="Type"]').value = 'Research finding';
+            entry.querySelector('input[id$="Value"]').value = 'Evidence propagation check';
+            saveEditPersonModalValues('silver');
+            const fact = getPerson('silver').attributes.find(record => record.type === 'Research finding');
+            const factEventId = `event-${fact.id}`;
+            document.querySelector(`[data-event-add-file="${factEventId}"]`).click();
             const search = document.querySelector('[data-connected-files-search]');
             search.value = 'pawford_household_register';
             search.dispatchEvent(new Event('input', { bubbles: true }));
             document.querySelector('[data-connected-files-choice][value="af1"]').click();
             document.querySelector('[data-connected-files-save]').click();
-            document.querySelector('[data-fact-add-source]').click();
+            document.querySelector(`[data-event-manage-sources="${factEventId}"]`).click();
             const factSourceChoice = document.querySelector('[data-target-source-choice]:not(:disabled)');
             const factSourceId = factSourceChoice.value;
             factSourceChoice.click();
             document.querySelector('[data-target-source-save]').click();
-            document.querySelector('#timelineCustomFactForm button[type="submit"]').click();
-            const factLinks = file.linkedEventIds.includes('event-fact-silver')
+            const factLinks = file.linkedEventIds.includes(factEventId)
                 && file.linkedPersonIds.includes('silver')
-                && sourceIdsForTarget('event', 'event-fact-silver', 'p1').includes(factSourceId)
+                && sourceIdsForTarget('event', factEventId, 'p1').includes(factSourceId)
                 && sourceIdsForTarget('person', 'silver', 'p1').includes(factSourceId);
 
             return { seeded, linkedFile, linkedSource, bothPeople, noDuplicates,

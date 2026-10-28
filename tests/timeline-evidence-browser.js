@@ -94,80 +94,57 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             assert(rows.compact.title.includes('very_long_description'));
             assert.equal(rows.focused.whiteSpace, 'normal');
             assert(rows.focused.height > rows.compact.height, JSON.stringify(rows));
-            await page.evaluate(() => {
-                const factEventId = 'event-fact-silver';
+            const cancelled = await page.evaluate(() => {
+                const before = JSON.stringify(getPerson('silver').attributes);
                 openAddFactOverlay(getPerson('silver'));
-                const bounds = document.querySelector('#timelineCustomFactForm').getBoundingClientRect();
-                window.__factModalFits = bounds.left >= -1 && bounds.right <= innerWidth + 1;
-                window.__factModalBounds = { left: bounds.left, right: bounds.right, width: innerWidth };
-                document.querySelector('[data-fact-add-file]').click();
-                document.querySelector('[data-connected-files-choice]')?.click();
-                document.querySelector('[data-connected-files-save]')?.click();
-                closeModal();
-                window.__cancelledFactLinks = (sampleData.archiveFiles || []).some(file => (file.linkedEventIds || []).includes(factEventId));
+                const modal = document.querySelector('.add-person-modal');
+                const bounds = modal.getBoundingClientRect();
+                const entry = document.querySelector('[data-repeat-list="FACT"] [data-repeat-entry]:last-child');
+                entry.querySelector('input[id$="Type"]').value = 'Cancelled fact';
+                closeModal({ force: true });
+                return { unchanged: before === JSON.stringify(getPerson('silver').attributes),
+                    fits: bounds.left >= -1 && bounds.right <= innerWidth + 1 };
             });
-            assert.equal(await page.evaluate(() => window.__cancelledFactLinks), false);
-            assert.equal(await page.evaluate(() => window.__factModalFits), true,
-                JSON.stringify(await page.evaluate(() => window.__factModalBounds)));
+            assert.equal(cancelled.unchanged, true);
+            assert.equal(cancelled.fits, true);
             const saved = await page.evaluate(() => {
                 openAddFactOverlay(getPerson('silver'));
-                document.querySelector('#timelineCustomFactType').value = 'Research finding';
-                document.querySelector('#timelineCustomFactValue').value = 'Matched household index';
-                document.querySelector('[data-fact-add-file]').click();
+                const entry = document.querySelector('[data-repeat-list="FACT"] [data-repeat-entry]:last-child');
+                entry.querySelector('input[id$="Type"]').value = 'Research finding';
+                entry.querySelector('input[id$="Value"]').value = 'Matched household index';
+                saveEditPersonModalValues('silver');
+                const fact = getPerson('silver').attributes.find(record => record.type === 'Research finding');
+                window.__factEventId = `event-${fact.id}`;
+                document.querySelector(`[data-event-add-file="${window.__factEventId}"]`).click();
                 const search = document.querySelector('[data-connected-files-search]');
                 search.value = 'pawford_household_register';
                 search.dispatchEvent(new Event('input', { bubbles: true }));
-                const file = [...document.querySelectorAll('[data-connected-files-choice]')]
-                    .find(input => input.value === 'af1');
-                if (!file) throw new Error('Expected sample file in picker');
-                file.click();
+                document.querySelector('[data-connected-files-choice][value="af1"]').click();
                 document.querySelector('[data-connected-files-save]').click();
-                document.querySelector('[data-fact-add-source]').click();
+                document.querySelector(`[data-event-manage-sources="${window.__factEventId}"]`).click();
                 const source = document.querySelector('[data-target-source-choice]:not(:disabled)');
-                if (!source) throw new Error('Expected source in picker');
                 const sourceId = source.value;
                 source.click();
                 document.querySelector('[data-target-source-save]').click();
-                document.querySelector('#timelineCustomFactForm button[type="submit"]').click();
-                return { event: sampleData.events.find(item => item.id === 'event-fact-silver'),
-                    fileLinked: archiveFileById('af1').linkedEventIds.includes('event-fact-silver'),
-                    sourceLinked: sourceIdsForTarget('event', 'event-fact-silver', 'p1').includes(sourceId),
-                    formOpen: Boolean(document.querySelector('#timelineCustomFactForm')) };
+                return { event: sampleData.events.find(item => item.id === window.__factEventId),
+                    fileLinked: archiveFileById('af1').linkedEventIds.includes(window.__factEventId),
+                    sourceLinked: sourceIdsForTarget('event', window.__factEventId, 'p1').includes(sourceId) };
             });
-            assert(saved.event);
-            assert.equal(saved.fileLinked, true);
-            assert.equal(saved.sourceLinked, true);
-            assert.equal(saved.formOpen, false);
+            assert(saved.event); assert.equal(saved.fileLinked, true); assert.equal(saved.sourceLinked, true);
             const expanded = await page.evaluate(() => {
-                const toggle = document.querySelector('[data-timeline-evidence-toggle="event-fact-silver"]');
-                toggle?.click();
-                const first = toggle?.getAttribute('aria-expanded');
+                const toggle = document.querySelector(`[data-timeline-evidence-toggle="${window.__factEventId}"]`);
+                toggle.click();
+                const first = toggle.getAttribute('aria-expanded');
                 rerenderPersonSidebarContext('tree', { preserveScroll: true });
-                return { first, restored: document.querySelector('[data-timeline-evidence-toggle="event-fact-silver"]')?.getAttribute('aria-expanded') };
+                return { first, restored: document.querySelector(`[data-timeline-evidence-toggle="${window.__factEventId}"]`)?.getAttribute('aria-expanded') };
             });
             assert.deepEqual(expanded, { first: 'true', restored: 'true' });
-            const created = await page.evaluate(() => {
-                openAddFactOverlay(getPerson('daisy'));
-                document.querySelector('[data-fact-add-source]').click();
-                document.querySelector('[data-target-source-create]').click();
-                document.querySelector('[data-archive-source-title]').value = 'Temporary fact citation';
-                document.querySelector('[data-archive-source-form] button[type="submit"]').click();
-                const source = sampleData.sources.find(item => item.title === 'Temporary fact citation');
-                const stagedText = document.querySelector('[data-fact-sources]')?.textContent;
-                const staged = stagedText?.includes('Temporary fact citation');
-                closeModal();
-                return { id: source?.id, staged, stagedText, linked: sourceIdsForTarget('event', 'event-fact-daisy', 'p1').includes(source?.id) };
-            });
-            assert(created.id);
-            assert.equal(created.staged, true, JSON.stringify({ width, language, created }));
-            assert.equal(created.linked, false);
             const pruned = await page.evaluate(() => {
-                removePersonAttribute(getPerson('silver'), 'FACT');
-                rebuildSampleEventsAndPruneSourceLinks();
-                return {
-                    file: archiveFileById('af1').linkedEventIds.includes('event-fact-silver'),
-                    source: sourceIdsForTarget('event', 'event-fact-silver', 'p1').length
-                };
+                openTimelinePersonEditor(sampleData.events.find(event => event.id === window.__factEventId).editTarget);
+                document.querySelector(`[data-repeat-id="${window.__factEventId.slice(6)}"] [data-repeat-remove]`).click();
+                saveEditPersonModalValues('silver');
+                return { file: archiveFileById('af1').linkedEventIds.includes(window.__factEventId),
+                    source: sourceIdsForTarget('event', window.__factEventId, 'p1').length };
             });
             assert.deepEqual(pruned, { file: false, source: 0 });
             const peopleTimeline = await page.evaluate(() => {
