@@ -6724,7 +6724,7 @@ function openPhotoLinkModal({
               <div
                 class="
                   person-photo-upload-dropzone
-                  person-photos-adder-upload-dropzone
+                  person-photos-adder-upload-dropzone upload-dropzone
                   ${
                         picker.uploadDrafts
                             .length
@@ -6732,7 +6732,7 @@ function openPhotoLinkModal({
                             : ''
                     }
                 "
-                data-notes-photos-adder-dropzone>
+            data-notes-photos-adder-dropzone role="button" tabindex="0" aria-label="${escapeHtml(t('Choose photos'))}">
 
                 <input
                   type="file"
@@ -6741,30 +6741,7 @@ function openPhotoLinkModal({
                   data-notes-photos-adder-file
                   hidden>
 
-                <div class="person-photo-upload-prompt">
-                  ${icon.import}
-
-                  <strong>
-                    ${
-                        picker.uploadDrafts
-                            .length
-                            ? 'Add more photos'
-                            : 'Drop photos here'
-                    }
-                  </strong>
-
-                  <p>
-                    JPEG, PNG, or WebP up to
-                    ${maxMegabytes} MB each.
-                  </p>
-
-                  <button
-                    class="button primary"
-                    type="button"
-                    data-notes-photos-adder-choose-files>
-                    Choose photos
-                  </button>
-                </div>
+${renderUploadDropzonePrompt(picker.uploadDrafts.length ? 'Add more photos' : 'Drop photos here or choose photos', state.language === 'ru' ? `JPEG, PNG или WebP, до ${maxMegabytes} МБ на файл.` : `JPEG, PNG, or WebP up to ${maxMegabytes} MB each.`)}
               </div>
 
               ${renderUploadErrors()}
@@ -7311,18 +7288,6 @@ function openPhotoLinkModal({
                 '[data-notes-photos-adder-file]'
             );
 
-        modal
-            .querySelectorAll(
-                '[data-notes-photos-adder-choose-files]'
-            )
-            .forEach(button =>
-            {
-                button.addEventListener(
-                    'click',
-                    () =>
-                        fileInput?.click()
-                );
-            });
 
         fileInput?.addEventListener(
             'change',
@@ -7339,6 +7304,7 @@ function openPhotoLinkModal({
 
         if (dropzone)
         {
+            bindUploadDropzoneChooser(dropzone, fileInput);
             [
                 'dragenter',
                 'dragover'

@@ -2179,12 +2179,12 @@ function renderPersonPhotosAdderUploadPanel()
           <div
             class="
               person-photo-upload-dropzone
-              person-photos-adder-upload-dropzone
+                  person-photos-adder-upload-dropzone upload-dropzone
               ${drafts.length
                     ? 'has-drafts'
                     : ''}
             "
-            data-person-photos-adder-dropzone>
+            data-person-photos-adder-dropzone role="button" tabindex="0" aria-label="${escapeHtml(t('Choose photos'))}">
 
             <input
               type="file"
@@ -2196,31 +2196,7 @@ function renderPersonPhotosAdderUploadPanel()
               data-person-photos-adder-file
               hidden>
 
-            <div
-              class="
-                person-photo-upload-prompt
-              ">
-              ${icon.import}
-
-              <strong>
-                ${
-                    drafts.length
-                        ? 'Add more photos'
-                        : 'Drop photos here'
-                }
-              </strong>
-
-              <p>${escapeHtml(state.language === 'ru'
-                    ? `JPEG, PNG или WebP, до ${maxMegabytes} МБ на файл.`
-                    : `JPEG, PNG, or WebP up to ${maxMegabytes} MB each.`)}</p>
-
-              <button
-                class="button primary"
-                type="button"
-                data-person-photos-adder-choose-files>
-                Choose photos
-              </button>
-            </div>
+${renderUploadDropzonePrompt(drafts.length ? 'Add more photos' : 'Drop photos here or choose photos', state.language === 'ru' ? `JPEG, PNG или WebP, до ${maxMegabytes} МБ на файл.` : `JPEG, PNG, or WebP up to ${maxMegabytes} MB each.`)}
           </div>
 
           ${renderPersonPhotosAdderUploadErrors()}
@@ -3007,20 +2983,6 @@ function bindPersonPhotosAdderModal()
             '[data-person-photos-adder-file]'
         );
 
-    modal
-        .querySelectorAll(
-            '[data-person-photos-adder-choose-files]'
-        )
-        .forEach(button =>
-        {
-            button.addEventListener(
-                'click',
-                () =>
-                {
-                    fileInput?.click();
-                }
-            );
-        });
 
     fileInput?.addEventListener(
         'change',
@@ -3039,6 +3001,7 @@ function bindPersonPhotosAdderModal()
 
     if (dropzone)
     {
+        bindUploadDropzoneChooser(dropzone, fileInput);
         [
             'dragenter',
             'dragover'
@@ -10823,17 +10786,6 @@ function openAddPhotosModal()
                 '[data-albums-photo-upload-file]'
             );
 
-        modal
-            .querySelector(
-                '[data-albums-photo-upload-choose]'
-            )
-            ?.addEventListener(
-                'click',
-                () =>
-                {
-                    fileInput?.click();
-                }
-            );
 
         fileInput?.addEventListener(
             'change',
@@ -10852,6 +10804,7 @@ function openAddPhotosModal()
 
         if (dropzone)
         {
+            bindUploadDropzoneChooser(dropzone, fileInput);
             [
                 'dragenter',
                 'dragover'
@@ -11005,14 +10958,14 @@ function openAddPhotosModal()
                 <div
                   class="
                     person-photo-upload-dropzone
-                    person-photos-adder-upload-dropzone
+                  person-photos-adder-upload-dropzone upload-dropzone
                     ${
                         photoCount
                             ? 'has-drafts'
                             : ''
                     }
                   "
-                  data-albums-photo-upload-dropzone>
+            data-albums-photo-upload-dropzone role="button" tabindex="0" aria-label="${escapeHtml(t('Choose photos'))}">
 
                   <input
                     type="file"
@@ -11024,32 +10977,7 @@ function openAddPhotosModal()
                     data-albums-photo-upload-file
                     hidden>
 
-                  <div
-                    class="
-                      person-photo-upload-prompt
-                    ">
-
-                    ${icon.import}
-
-                    <strong>
-                      ${
-                            photoCount
-                                ? 'Add more photos'
-                                : 'Drop photos here'
-                        }
-                    </strong>
-
-                    <p>${escapeHtml(state.language === 'ru'
-                            ? `JPEG, PNG или WebP, до ${maxMegabytes} МБ на файл.`
-                            : `JPEG, PNG, or WebP up to ${maxMegabytes} MB each.`)}</p>
-
-                    <button
-                      class="button primary"
-                      type="button"
-                      data-albums-photo-upload-choose>
-                      Choose photos
-                    </button>
-                  </div>
+${renderUploadDropzonePrompt(photoCount ? 'Add more photos' : 'Drop photos here or choose photos', state.language === 'ru' ? `JPEG, PNG или WebP, до ${maxMegabytes} МБ на файл.` : `JPEG, PNG, or WebP up to ${maxMegabytes} MB each.`)}
                 </div>
 
                 ${renderUploadErrors()}

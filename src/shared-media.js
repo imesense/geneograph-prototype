@@ -1,3 +1,27 @@
+// ---------- Shared upload dropzones ----------
+function renderUploadDropzonePrompt(title, detail)
+{
+    return `<span class="upload-dropzone-icon" aria-hidden="true">${icon.import}</span><span class="upload-dropzone-copy"><strong>${escapeHtml(t(title))}</strong><span>${escapeHtml(detail)}</span></span>`;
+}
+
+function bindUploadDropzoneChooser(dropzone, input)
+{
+    if (!dropzone || !input || dropzone.dataset.uploadChooserBound) return;
+    dropzone.dataset.uploadChooserBound = 'true';
+    dropzone.addEventListener('click', event =>
+    {
+        if (event.target !== input && !input.disabled) input.click();
+    });
+    dropzone.addEventListener('keydown', event =>
+    {
+        if (event.target === dropzone && (event.key === 'Enter' || event.key === ' '))
+        {
+            event.preventDefault();
+            if (!input.disabled) input.click();
+        }
+    });
+}
+
 // ---------- Canonical media access ----------
 function getPhoto(
     photoId,

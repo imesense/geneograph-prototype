@@ -8,7 +8,7 @@
 }
 
 .archive-document-import {
-    width: min(680px, calc(100vw - 32px));
+    width: min(980px, calc(100vw - 32px));
     height: auto;
     max-height: min(720px, calc(100dvh - 32px));
 }
@@ -18,6 +18,18 @@
 .archive-document-import .modal-body { flex: 0 1 auto; }
 .archive-document-import .modal-footer { display: flex; gap: 10px; flex-wrap: wrap; }
 .archive-document-import-summary { margin-right: auto; align-self: center; color: var(--text-secondary); }
+.archive-document-import-notice {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 auto 0 0;
+    color: var(--text-secondary);
+    font-size: 12px;
+    line-height: 1.4;
+}
+.archive-document-import-notice > span:first-child { display: inline-flex; flex: 0 0 16px; color: var(--warning, #d8b460); }
+.archive-document-import-notice svg { width: 16px; height: 16px; }
+.archive-document-import-summary:empty { display: none; }
 
 .archive-document-modal .modal-header,
 .archive-document-import .modal-header,
@@ -196,6 +208,7 @@
     }
 
     .archive-document-import .modal-body { flex: 1 1 auto; }
+    .archive-document-import-notice { flex-basis: 100%; margin-right: 0; }
     .archive-document-import-results p.archive-document-import-row { align-items: flex-start; flex-direction: column; gap: 3px; }
 
     .archive-document-modal .modal-footer,
