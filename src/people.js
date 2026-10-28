@@ -8854,7 +8854,16 @@ function openDeletePeopleConfirm(personIds)
     const remaining = count - 5;
     const noun = count === 1 ? 'person' : 'people';
 
-    openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="deletePeopleTitle"><div class="modal-header"><div><h2 id="deletePeopleTitle">Delete ${count === 1 ? 'person' : `${count} people`}?</h2><p>${count} ${noun} selected</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body"><div class="people-delete-confirm-copy"><p>Deleting ${count === 1 ? 'this person' : 'these people'} will also remove their relationship references.</p><ul>${visibleNames}</ul>${remaining > 0 ? `<p class="people-delete-remaining">And ${remaining} more ${remaining === 1 ? 'person' : 'people'}.</p>` : ''}<p>Linked photos, archive files, notes, and other research material will remain in the project.</p></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" data-confirm-delete-people>Delete ${noun}</button></div></div>`);
+    const heading = t(count === 1 ? 'Delete this person?' : 'Delete selected people?');
+    const selectedCount = `${t('Selected')}: ${translateCountPhrase(`${count} ${noun}`)}`;
+    const warning = t(count === 1
+        ? 'This person and their family connections will be removed from the project.'
+        : 'The selected people and their family connections will be removed from the project.');
+    const remainingLabel = state.language === 'ru'
+        ? `И ещё ${translateCountPhrase(`${remaining} ${remaining === 1 ? 'person' : 'people'}`)}.`
+        : `And ${remaining} more ${remaining === 1 ? 'person' : 'people'}.`;
+
+    openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="deletePeopleTitle"><div class="modal-header"><div><h2 id="deletePeopleTitle">${escapeHtml(heading)}</h2><p>${escapeHtml(selectedCount)}</p></div><button class="close-button" type="button" data-close aria-label="${escapeHtml(t('Close'))}">${icon.close}</button></div><div class="modal-body"><div class="people-delete-confirm-copy"><p>${escapeHtml(warning)}</p><ul>${visibleNames}</ul>${remaining > 0 ? `<p class="people-delete-remaining">${escapeHtml(remainingLabel)}</p>` : ''}<p>${escapeHtml(t('Linked photos, Archive files, notes, and other research materials will remain in the project.'))}</p></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>${escapeHtml(t('Cancel'))}</button><button class="button danger" type="button" data-confirm-delete-people>${escapeHtml(t(count === 1 ? 'Delete person' : 'Delete people'))}</button></div></div>`);
 
     modalBackdrop.querySelector('[data-confirm-delete-people]')
         ?.addEventListener('click', () => deletePeopleRecords(validIds));
