@@ -1585,8 +1585,26 @@
 
 .geneo-object-context-menu {
     box-sizing: border-box;
-    width: min(210px, calc(100vw - 24px));
+    width: min(250px, calc(100vw - 24px));
+    max-height: calc(100dvh - 24px);
+    overflow-y: auto;
 }
+
+.geneo-context-group + .geneo-context-group { border-top: 1px solid var(--border-default); margin-top: 5px; padding-top: 5px; }
+.geneo-context-heading { padding: 6px 10px 4px; font-size: 11px; font-weight: 700; color: var(--text-tertiary); }
+.geneo-object-context-menu .geneo-context-group button { display: flex; align-items: center; gap: 10px; width: 100%; font-size: 13px; }
+.geneo-context-icon { display: inline-grid; place-items: center; flex: 0 0 18px; }
+.geneo-context-icon svg { width: 17px; height: 17px; }
+.geneo-context-icon:is(.backward, .front) { transform: rotate(-90deg); }
+.geneo-context-icon:is(.forward, .back) { transform: rotate(90deg); }
+.geneo-object-context-menu button:disabled { opacity: .4; cursor: default; }
+.geneo-layer-row { position: relative; }
+.geneo-layer-row.layer-dragging { opacity: .4; }
+.geneo-layer-row:is(.layer-drop-before, .layer-drop-after)::after { content: ''; position: absolute; z-index: 4; left: 0; right: 0; height: 2px; background: var(--brand-green-300); pointer-events: none; }
+.geneo-layer-row.layer-drop-before::after { top: -2px; }
+.geneo-layer-row.layer-drop-after::after { bottom: -2px; }
+.geneo-layer-drag-handle { cursor: grab; touch-action: none; }
+.geneo-layer-drag-handle:active { cursor: grabbing; }
 
 .geneo-object-context-menu button {
     min-height: 38px;

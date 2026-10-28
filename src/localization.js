@@ -1693,6 +1693,13 @@ const RU_UI_GENEO = {
         'Поиск слоёв',
 
     'Board items': 'Элементы холста',
+    'Layer order': 'Порядок слоёв',
+    'Visibility': 'Видимость',
+    'Move forward one layer': 'На один слой вперёд',
+    'Move to front': 'На передний план',
+    'Move backward one layer': 'На один слой назад',
+    'Move to back': 'На задний план',
+    'Drag to reorder': 'Перетащите, чтобы изменить порядок',
     'Search board items': 'Поиск элементов холста',
     'Filter items': 'Фильтровать элементы',
     'Item type': 'Тип элемента',

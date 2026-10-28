@@ -1,0 +1,71 @@
+const assert = require('node:assert/strict');
+const path = require('node:path');
+const { pathToFileURL } = require('node:url');
+const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
+(async () => {
+    const browser = await chromium.launch({ headless: true,
+        ...(process.env.GENEO_BROWSER_EXECUTABLE ? { executablePath: process.env.GENEO_BROWSER_EXECUTABLE } : {}) });
+    try {
+        const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+        const errors = [];
+        page.on('pageerror', error => errors.push(error.message));
+        await page.goto(pathToFileURL(path.resolve(__dirname, '../src/index.html')).href);
+        await page.evaluate(() => {
+            activateProject('p1', { moduleName: 'Geneograph' }); openGeneographBoard('gb1');
+            const d = selectedGeneographDiagram();
+            const template = structuredClone(d.nodes.find(node => node.type === 'person'));
+            const panel = structuredClone(d.nodes.find(node => node.type === 'panel'));
+            d.nodes = ['a', 'b', 'c', 'x', 'y'].map((id, i) => ({ ...structuredClone(template), id, name: id, order: i + 2,
+                parentPanelId: ['x', 'y'].includes(id) ? 'p' : null, visible: true, locked: false }));
+            d.nodes.push({ ...panel, id: 'p', order: 1, parentPanelId: null, visible: true, locked: false });
+            d.connections = []; d.families = [];
+            setGeneographNodeSelection(['a'], 'a'); renderGeneographEditorPreserveScroll();
+            window.layerPeers = () => selectedGeneographDiagram().nodes.filter(node => !node.parentPanelId && node.type !== 'panel').sort((a,b) => a.order-b.order).map(node => node.id);
+        });
+        assert.deepEqual(await page.evaluate(() => layerPeers()), ['a', 'b', 'c']);
+        await page.evaluate(() => geneoApplyLayerOrder('forward'));
+        assert.deepEqual(await page.evaluate(() => layerPeers()), ['b', 'a', 'c']);
+        await page.evaluate(() => geneoApplyLayerOrder('front'));
+        assert.deepEqual(await page.evaluate(() => layerPeers()), ['b', 'c', 'a']);
+        assert.equal(await page.evaluate(() => geneoLayerOrderPlan('front').length), 0);
+        await page.evaluate(() => geneoApplyLayerOrder('back'));
+        assert.deepEqual(await page.evaluate(() => layerPeers()), ['a', 'b', 'c']);
+        await page.evaluate(() => { setGeneographNodeSelection(['a', 'b'], 'b'); geneoApplyLayerOrder('front'); });
+        assert.deepEqual(await page.evaluate(() => layerPeers()), ['c', 'a', 'b']);
+        await page.evaluate(() => undoGeneographChange());
+        assert.deepEqual(await page.evaluate(() => layerPeers()), ['a', 'b', 'c']);
+        assert.equal(await page.evaluate(() => geneoLayerOrderPlan('drop', ['a'], 'x', true).length), 0);
+        await page.evaluate(() => { getGeneographNode('a').locked = true; });
+        assert.equal(await page.evaluate(() => geneoLayerOrderPlan('front', ['a']).length), 0);
+        await page.evaluate(() => { getGeneographNode('a').locked = false; setGeneographNodeSelection(['a'], 'a'); renderGeneographEditorPreserveScroll(); });
+        const transfer = await page.evaluateHandle(() => new DataTransfer());
+        const source = page.locator('[data-geneo-layer="a"]');
+        const target = page.locator('[data-geneo-layer="c"]');
+        await target.scrollIntoViewIfNeeded();
+        const rect = await target.boundingBox();
+        await source.dispatchEvent('dragstart', { dataTransfer: transfer });
+        await target.dispatchEvent('dragover', { dataTransfer: transfer, clientX: rect.x + 40, clientY: rect.y + 3 });
+        assert.equal(await target.evaluate(row => row.classList.contains('layer-drop-before')), true);
+        await target.dispatchEvent('drop', { dataTransfer: transfer, clientX: rect.x + 40, clientY: rect.y + 3 });
+        assert.deepEqual(await page.evaluate(() => layerPeers()), ['b', 'c', 'a']);
+        await page.evaluate(() => { getGeneographNode('b').visible = false; renderGeneographEditorPreserveScroll(); });
+        await page.locator('[data-geneo-layer="b"]').click({ button: 'right' });
+        assert.equal(await page.locator('.geneo-object-context-menu').count(), 1);
+        assert.equal(await page.locator('.geneo-context-heading').first().innerText(), 'Layer order');
+        await page.keyboard.press('Escape');
+        assert.equal(await page.locator('[data-geneo-layer="b"]').evaluate(row => document.activeElement === row), true);
+        await page.setViewportSize({ width: 390, height: 800 });
+        await page.evaluate(() => { setGeneographNodeSelection(['c'], 'c'); renderGeneographEditorPreserveScroll(); openMobileSurface('sections'); });
+        const handle = page.locator('[data-geneo-layer="c"] [data-geneo-layer-drag]');
+        await handle.scrollIntoViewIfNeeded();
+        const grip = await handle.boundingBox();
+        const ahead = await page.locator('[data-geneo-layer="a"]').boundingBox();
+        const session = await page.context().newCDPSession(page);
+        await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: grip.x + grip.width / 2, y: grip.y + grip.height / 2 }] });
+        await session.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: ahead.x + 40, y: ahead.y + 3 }] });
+        await session.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+        assert.deepEqual(await page.evaluate(() => layerPeers()), ['b', 'a', 'c']);
+        assert.deepEqual(errors, []);
+        console.log('Geneograph layer ordering passed.');
+    } finally { await browser.close(); }
+})().catch(error => { console.error(error); process.exitCode = 1; });

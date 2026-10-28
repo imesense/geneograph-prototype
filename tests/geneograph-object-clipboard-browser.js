@@ -45,13 +45,15 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             JSON.stringify(menuBounds));
             assert.equal(await menu.locator('[data-geneo-object-action="copy"]').textContent(),
                 language === 'ru' ? 'Копировать' : 'Copy');
-            assert.equal(await menu.evaluate(() => document.activeElement?.dataset.geneoObjectAction), 'hide');
+            const enabledActions = await menu.locator('[role="menuitem"]:not(:disabled)').evaluateAll(items => items.map(item => item.dataset.geneoObjectAction));
+            assert.equal(await menu.evaluate(() => document.activeElement?.dataset.geneoObjectAction), enabledActions[0]);
             await page.keyboard.press('ArrowDown');
-            assert.equal(await menu.evaluate(() => document.activeElement?.dataset.geneoObjectAction), 'lock');
+            assert.equal(await menu.evaluate(() => document.activeElement?.dataset.geneoObjectAction), enabledActions[1]);
             await page.keyboard.press('Escape');
             assert.equal(await menu.count(), 0);
             assert.equal(await object.evaluate(element => document.activeElement === element), true);
             await page.setViewportSize({ width: 320, height: 600 });
+            await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
             await page.evaluate(() => openGeneographObjectContextMenu('gn-luna', 310, 590));
             const mobileBounds = await menu.evaluate(element => {
                 const rect = element.getBoundingClientRect();
