@@ -1723,6 +1723,18 @@ const RU_UI_GENEO = {
     'Resize photo from bottom left': 'Изменить размер фото от нижнего левого угла',
     'Objects': 'Объекты',
     'Visual connection': 'Визуальная связь',
+    'Connection type': 'Тип связи',
+    'Visual only': 'Только визуальная',
+    'Use visual connection': 'Использовать визуальную связь',
+    'Make visual only': 'Сделать визуальной',
+    'Make visual only?': 'Сделать связь визуальной?',
+    'Automatic creates family relationships between people; Visual only never changes family data.': 'Автоматический режим создаёт родственные связи между людьми. Визуальная связь не меняет сведения о семье.',
+    'Visual connections use object sockets, not family junctions.': 'Для визуальной связи выберите точки на объектах, а не семейный узел.',
+    'This removes the board relationship, not the people. The line will no longer be included in Family Tree sync. Family Tree records will not change.': 'Родственная связь на доске будет удалена, но люди останутся. Линия больше не будет участвовать в синхронизации с Семейным древом. Записи в Семейном древе не изменятся.',
+    'Shared children will keep separate links to each parent.': 'У общих детей сохранятся отдельные связи с каждым родителем.',
+    'Connect visually from': 'Начало визуальной связи',
+    'Add a parent card before converting this connection.': 'Перед преобразованием связи добавьте карточку родителя.',
+    'The board changed. Close this dialog and try again.': 'Доска изменилась. Закройте это окно и попробуйте снова.',
     'Locate on canvas': 'Найти на холсте',
 
     'Add objects':
@@ -9236,7 +9248,7 @@ function setLanguage(
         return;
     }
 
-    if (rerender && state.projectOpen && state.activeModule === 'Family Tree')
+    if (state.projectOpen && state.activeModule === 'Family Tree')
     {
         captureTreeCanvasScroll();
     }

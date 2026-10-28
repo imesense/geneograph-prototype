@@ -5721,6 +5721,8 @@ function activateGeneographConnectionTool()
         'connect';
 
     geneoConnectionToolStyle();
+    geneoConnectionToolRuntime.purpose = 'automatic';
+    geneoConnectionToolRuntime.offerVisual = false;
     geneoConnectionToolRuntime.panelOpen = true;
 
     renderGeneographEditorPreserveScroll();
@@ -5941,7 +5943,7 @@ function renderGeneoConnectionToolPanel()
 {
     if (state.geneoTool !== 'connect' || !geneoConnectionToolRuntime.panelOpen) return '';
     const style = geneoConnectionToolStyle();
-    return `<section class="geneo-tool-settings geneo-connection-tool-panel" data-geneo-connection-panel role="toolbar" aria-label="${escapeHtml(t('Connection settings'))}"><div class="geneo-connection-tool-row"><button type="button" class="geneo-connection-choice" data-geneo-connection-tool-pattern aria-label="${escapeHtml(`${t('Pattern')}: ${t(GENEO_CONNECTION_PATTERN_LABELS[style.pattern])}`)}" title="${escapeHtml(t(GENEO_CONNECTION_PATTERN_LABELS[style.pattern]))}" aria-haspopup="menu" aria-expanded="false">${renderGeneoConnectionLineSample(style.pattern)}${icon.chevron}</button><button type="button" class="geneo-connection-tool-swatch geneo-paint-swatch" data-geneo-connection-tool-swatch data-geneo-paint-scope="connection-tool" data-geneo-paint-id="" data-geneo-paint-property="line" data-geneo-paint-open style="${geneoPaintSwatchStyle(style.line)}" aria-label="${escapeHtml(`${t('Connection color')}: ${style.line.color}`)}" title="${escapeHtml(t('Connection color'))}" aria-haspopup="dialog" aria-expanded="false"><span></span></button><label class="geneo-connection-tool-width"><input type="number" min="1" max="12" step="1" value="${style.width}" data-geneo-connection-tool-width aria-label="${escapeHtml(`${t('Width')} (px)`)}" title="${escapeHtml(`${t('Width')} (px)`)}"><span aria-hidden="true">px</span></label><button type="button" class="geneo-connection-choice" data-geneo-connection-tool-arrows aria-label="${escapeHtml(`${t('Arrowheads')}: ${t(capitalize(style.arrows))}`)}" title="${escapeHtml(`${t('Arrowheads')}: ${t(capitalize(style.arrows))}`)}" aria-haspopup="menu" aria-expanded="false">${renderGeneoConnectionArrowSample(style.arrows)}${icon.chevron}</button><span class="geneo-connection-tool-divider" aria-hidden="true"></span><button type="button" class="geneo-connection-tool-icon" data-geneo-connection-tool-reset aria-label="${escapeHtml(t('Reset to board defaults'))}" title="${escapeHtml(t('Reset to board defaults'))}">${icon.undo}</button><button type="button" class="geneo-connection-tool-icon" data-geneo-connection-panel-close aria-label="${escapeHtml(t('Close connection settings'))}" title="${escapeHtml(t('Close connection settings'))}">${icon.close}</button></div></section>`;
+    return `<section class="geneo-tool-settings geneo-connection-tool-panel" data-geneo-connection-panel role="toolbar" aria-label="${escapeHtml(t('Connection settings'))}"><div class="geneo-connection-tool-row"><select class="geneo-select geneo-connection-purpose" data-geneo-connection-purpose aria-label="${escapeHtml(t('Connection type'))}" title="${escapeHtml(t('Automatic creates family relationships between people; Visual only never changes family data.'))}"><option value="automatic" ${geneoConnectionToolRuntime.purpose !== 'visual' ? 'selected' : ''}>${escapeHtml(t('Automatic'))}</option><option value="visual" ${geneoConnectionToolRuntime.purpose === 'visual' ? 'selected' : ''}>${escapeHtml(t('Visual only'))}</option></select>${geneoConnectionToolRuntime.offerVisual ? `<button type="button" class="geneo-connection-tool-icon" data-geneo-use-visual>${escapeHtml(t('Use visual connection'))}</button>` : ''}<button type="button" class="geneo-connection-choice" data-geneo-connection-tool-pattern aria-label="${escapeHtml(`${t('Pattern')}: ${t(GENEO_CONNECTION_PATTERN_LABELS[style.pattern])}`)}" title="${escapeHtml(t(GENEO_CONNECTION_PATTERN_LABELS[style.pattern]))}" aria-haspopup="menu" aria-expanded="false">${renderGeneoConnectionLineSample(style.pattern)}${icon.chevron}</button><button type="button" class="geneo-connection-tool-swatch geneo-paint-swatch" data-geneo-connection-tool-swatch data-geneo-paint-scope="connection-tool" data-geneo-paint-id="" data-geneo-paint-property="line" data-geneo-paint-open style="${geneoPaintSwatchStyle(style.line)}" aria-label="${escapeHtml(`${t('Connection color')}: ${style.line.color}`)}" title="${escapeHtml(t('Connection color'))}" aria-haspopup="dialog" aria-expanded="false"><span></span></button><label class="geneo-connection-tool-width"><input type="number" min="1" max="12" step="1" value="${style.width}" data-geneo-connection-tool-width aria-label="${escapeHtml(`${t('Width')} (px)`)}" title="${escapeHtml(`${t('Width')} (px)`)}"><span aria-hidden="true">px</span></label><button type="button" class="geneo-connection-choice" data-geneo-connection-tool-arrows aria-label="${escapeHtml(`${t('Arrowheads')}: ${t(capitalize(style.arrows))}`)}" title="${escapeHtml(`${t('Arrowheads')}: ${t(capitalize(style.arrows))}`)}" aria-haspopup="menu" aria-expanded="false">${renderGeneoConnectionArrowSample(style.arrows)}${icon.chevron}</button><span class="geneo-connection-tool-divider" aria-hidden="true"></span><button type="button" class="geneo-connection-tool-icon" data-geneo-connection-tool-reset aria-label="${escapeHtml(t('Reset to board defaults'))}" title="${escapeHtml(t('Reset to board defaults'))}">${icon.undo}</button><button type="button" class="geneo-connection-tool-icon" data-geneo-connection-panel-close aria-label="${escapeHtml(t('Close connection settings'))}" title="${escapeHtml(t('Close connection settings'))}">${icon.close}</button></div></section>`;
 }
 
 function renderGeneoCreationToolPanel(tool)
@@ -6080,7 +6082,11 @@ function openGeneoConnectionStyleMenu(anchor, choice = 'pattern', scope = 'tool'
             return;
         }
         geneoConnectionToolStyle();
-        if (!anchor.closest('[data-geneo-connection-panel]')) cancelGeneographConnectionDraft();
+        if (!anchor.closest('[data-geneo-connection-panel]'))
+        {
+            cancelGeneographConnectionDraft();
+            geneoConnectionToolRuntime.purpose = 'automatic';
+        }
         state.geneoTool = 'connect';
         if (value === selectedGeneographDiagram().connectionDefaults[choice]) delete geneoConnectionToolRuntime.overrides[choice];
         else geneoConnectionToolRuntime.overrides[choice] = value;
@@ -16891,6 +16897,9 @@ function renderGeneographConnectionInspector(
             )}
 
             ${relationshipSection}
+            ${renderGeneographInspectorSection({ context: 'connection', id: 'purpose', title: 'Connection type',
+                content: connection.kind === 'visual' ? `<p>${escapeHtml(t('Visual only'))}</p>`
+                    : `<button class="button secondary" type="button" data-geneo-make-visual>${escapeHtml(t('Make visual only'))}</button>` })}
 
             ${renderGeneographInspectorSection({
                 context: 'connection',
@@ -24490,11 +24499,14 @@ function rebuildGeneographSiblingFamily(familyId)
     family.children = [...personIds].map(personId => ({ personId, parentageType: 'unknown' }));
 }
 
-function canCreateGeneographConnection(source, target)
+function canCreateGeneographConnection(source, target, purpose = 'automatic')
 {
     if (!source || !target) return { valid: false, reason: 'Choose two connection points.' };
     if (source.nodeId && source.nodeId === target.nodeId) return { valid: false, reason: 'An item cannot connect to itself.' };
     const sourceNode = getGeneographNode(source.nodeId); const targetNode = getGeneographNode(target.nodeId);
+    if (purpose === 'visual') return sourceNode && targetNode
+        ? { valid: true, kind: 'visual' }
+        : { valid: false, reason: 'Visual connections use object sockets, not family junctions.' };
     const sourcePersonId = geneoPersonIdForNode(source.nodeId); const targetPersonId = geneoPersonIdForNode(target.nodeId);
     if (source.familyId && targetPersonId && target.port === 'top')
     {
@@ -24596,12 +24608,14 @@ function geneoCreateConnection(kind, source, target, familyId = null)
 
 function commitGeneographConnection(source, target)
 {
-    const result = canCreateGeneographConnection(source, target); if (!result.valid)
+    const result = canCreateGeneographConnection(source, target, geneoConnectionToolRuntime.purpose); if (!result.valid)
     {
+        geneoConnectionToolRuntime.offerVisual = geneoConnectionToolRuntime.purpose !== 'visual'
+            && Boolean(source.nodeId && target.nodeId && source.nodeId !== target.nodeId);
         showToast(result.reason); return false;
     }
     const diagram = selectedGeneographDiagram();
-    const duplicate = geneoConnectionCandidateExists(source, target);
+    const duplicate = geneoConnectionCandidateExists(source, target, result.kind);
     if (duplicate)
     {
         showToast('That connection already exists.'); return false;
@@ -24613,6 +24627,72 @@ function commitGeneographConnection(source, target)
     else if (result.kind === 'family-child') createGeneographParentChildRelationship(result.parentPersonId, result.childPersonId, result.parentReference, result.childReference);
     else diagram.connections.push(geneoCreateConnection('visual', source, target));
     touchGeneographBoard(); return true;
+}
+
+function openGeneoMakeVisualConfirmation(connection)
+{
+    if (!connection || connection.kind === 'visual') return;
+    const boardId = selectedGeneographBoard()?.id;
+    const snapshot = geneoSnapshot();
+    const family = getGeneographFamily(connection.familyId);
+    const parents = (family?.partnerIds || []).map(id => selectedGeneographDiagram().nodes.find(node => node.type === 'person' && node.personId === id)).filter(Boolean);
+    const needsParent = Boolean(connection.source.familyId || connection.target.familyId);
+    if (needsParent && !parents.length) { showToast(t('Add a parent card before converting this connection.')); return; }
+    openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="geneoVisualTitle"><div class="modal-header"><h2 id="geneoVisualTitle">${escapeHtml(t('Make visual only?'))}</h2><button type="button" class="close-button" data-close aria-label="${escapeHtml(t('Close'))}">${icon.close}</button></div><div class="modal-body"><p>${escapeHtml(t('This removes the board relationship, not the people. The line will no longer be included in Family Tree sync. Family Tree records will not change.'))}</p>${connection.kind === 'family-partner' && family?.children.length ? `<p>${escapeHtml(t('Shared children will keep separate links to each parent.'))}</p>` : ''}${needsParent ? `<div class="field"><label for="geneoVisualParent">${escapeHtml(t('Connect visually from'))}</label><select id="geneoVisualParent">${parents.map(node => `<option value="${escapeHtml(node.id)}">${escapeHtml(geneoNodeTitle(node))}</option>`).join('')}</select></div>` : ''}</div><div class="modal-footer"><button class="button secondary" type="button" data-close>${escapeHtml(t('Cancel'))}</button><button class="button primary" type="button" data-geneo-confirm-visual>${escapeHtml(t('Make visual only'))}</button></div></div>`);
+    modalBackdrop.querySelector('[data-geneo-confirm-visual]')?.addEventListener('click', () =>
+    {
+        if (selectedGeneographBoard()?.id !== boardId || geneoSnapshot() !== snapshot)
+        { showToast(t('The board changed. Close this dialog and try again.')); return; }
+        const current = getGeneographConnection(connection.id);
+        if (!current) return;
+        const diagram = selectedGeneographDiagram();
+        const visual = structuredClone(current);
+        if (needsParent)
+        {
+            const reference = { nodeId: modalBackdrop.querySelector('#geneoVisualParent').value, port: 'bottom' };
+            if (visual.source.familyId) visual.source = reference;
+            if (visual.target.familyId) visual.target = reference;
+        }
+        if (geneoConnectionCandidateExists(visual.source, visual.target, 'visual'))
+        { showToast(t('That connection already exists.')); return; }
+        geneoPushHistory();
+        if (current.kind === 'family-partner' && family)
+        {
+            family.partnerIds.filter(() => family.children.length).forEach(parentId =>
+            {
+                const parentNode = diagram.nodes.find(node => node.type === 'person' && node.personId === parentId);
+                let single = diagram.families.find(item => item.partnerIds.length === 1 && item.partnerIds[0] === parentId);
+                if (!single)
+                {
+                    single = { id: createRuntimeId('geneo-family'), partnerIds: [parentId], children: [], relationshipType: 'Unknown relationship', relationshipStatus: 'active', marriageType: '', events: [] };
+                    diagram.families.push(single);
+                }
+                family.children.forEach(child =>
+                {
+                    const childNode = diagram.nodes.find(node => node.type === 'person' && node.personId === child.personId);
+                    if (!single.children.some(item => item.personId === child.personId)) single.children.push({ ...child });
+                    if (!childNode || !parentNode) return;
+                    const original = diagram.connections.find(item => item.kind === 'family-child' && item.familyId === family.id && item.target.nodeId === childNode.id);
+                    if (!diagram.connections.some(item => item.kind === 'family-child' && item.familyId === single.id && item.target.nodeId === childNode.id))
+                        diagram.connections.push({ ...(original ? structuredClone(original) : geneoCreateConnection('family-child', {}, {}, single.id)),
+                            id: createRuntimeId('geneo-connection'), familyId: single.id,
+                            source: { nodeId: parentNode.id, port: 'bottom' }, target: { nodeId: childNode.id, port: 'top' }, route: { mode: 'auto', waypoints: [] } });
+                });
+            });
+            diagram.connections = diagram.connections.filter(item => item.familyId !== family.id);
+            diagram.families = diagram.families.filter(item => item.id !== family.id);
+        }
+        else removeGeneographRelationship(current.id);
+        visual.kind = 'visual';
+        visual.familyId = null;
+        if (diagram.connectionDefaults.arrows !== 'none') visual.style.arrows = 'none';
+        delete visual.showRelationshipDates;
+        diagram.connections.push(visual);
+        selectGeneographConnection(visual.id);
+        touchGeneographBoard();
+        closeModal();
+        renderGeneographEditorPreserveScroll();
+    });
 }
 
 function removeGeneographRelationship(connectionId)
@@ -25036,11 +25116,12 @@ function exitGeneographConnectionTool()
     });
 }
 
-function geneoConnectionCandidateExists(source, target)
+function geneoConnectionCandidateExists(source, target, kind = null)
 {
     return selectedGeneographDiagram()?.connections.some(connection =>
-        JSON.stringify(connection.source) === JSON.stringify(source) && JSON.stringify(connection.target) === JSON.stringify(target)
-        || JSON.stringify(connection.source) === JSON.stringify(target) && JSON.stringify(connection.target) === JSON.stringify(source));
+        (!kind || connection.kind === kind) && (
+        geneoConnectionReferencesMatch(connection.source, source) && geneoConnectionReferencesMatch(connection.target, target)
+        || geneoConnectionReferencesMatch(connection.source, target) && geneoConnectionReferencesMatch(connection.target, source)));
 }
 
 function geneoConnectionReferencesMatch(source, target)
@@ -25055,9 +25136,11 @@ function geneoConnectionTipText(source, target)
     if (geneoConnectionReferencesMatch(source, target)) return null;
     if (!source.familyId && !target.familyId && !geneoPersonIdForNode(source.nodeId) && !geneoPersonIdForNode(target.nodeId))
         return null;
-    const result = canCreateGeneographConnection(source, target);
+    const result = canCreateGeneographConnection(source, target, geneoConnectionToolRuntime.purpose);
+    if (result.valid && geneoConnectionCandidateExists(source, target, result.kind)) return { text: t('That connection already exists.'), invalid: true };
+    if (result.valid && result.kind === 'visual') return geneoConnectionToolRuntime.purpose === 'visual'
+        ? { text: t('Visual connection'), invalid: false } : null;
     if (!result.valid) return { text: t(result.reason), invalid: true };
-    if (geneoConnectionCandidateExists(source, target)) return { text: t('That connection already exists.'), invalid: true };
     if (result.kind === 'visual') return null;
     const personName = personId => geneoPersonDisplayName(getGeneographPerson(personId) || {});
     if (result.kind === 'family-partner') return { text: t('Connect as partners'), invalid: false };
@@ -25150,6 +25233,7 @@ function activateGeneographConnectionPoint(reference)
 {
     if (!state.geneoConnectionDraft)
     {
+        if (state.geneoTool !== 'connect') geneoConnectionToolRuntime.purpose = 'automatic';
         state.geneoTool = 'connect';
         state.geneoConnectionDraft = reference;
         geneoCanvasRuntime.connectionPreviewPoint = geneoConnectionPoint(reference);
@@ -27995,6 +28079,23 @@ function bindGeneoConnectionControls()
         dateToggle.indeterminate = dateToggle.dataset.mixed === 'true';
         dateToggle.addEventListener('change', () => geneoCommitMultiConnectionAppearance('showRelationshipDates', dateToggle.checked));
     }
+    main.querySelector('[data-geneo-make-visual]')?.addEventListener('click', () => openGeneoMakeVisualConfirmation(selectedGeneographConnection()));
+    main.querySelector('[data-geneo-connection-purpose]')?.addEventListener('change', event =>
+    {
+        geneoConnectionToolRuntime.purpose = event.target.value;
+        geneoConnectionToolRuntime.offerVisual = false;
+        main.querySelector('[data-geneo-use-visual]')?.remove();
+        updateGeneographConnectionTip();
+    });
+    main.querySelector('[data-geneo-use-visual]')?.addEventListener('click', () =>
+    {
+        geneoConnectionToolRuntime.purpose = 'visual';
+        geneoConnectionToolRuntime.offerVisual = false;
+        const purpose = main.querySelector('[data-geneo-connection-purpose]');
+        if (purpose) { purpose.value = 'visual'; purpose.focus(); }
+        main.querySelector('[data-geneo-use-visual]')?.remove();
+        updateGeneographConnectionTip();
+    });
     main.querySelector('[data-geneo-connection-tool-arrows]')?.addEventListener('click', event => openGeneoConnectionStyleMenu(event.currentTarget, 'arrows'));
     main.querySelector('[data-geneo-connection-tool-swatch]')?.addEventListener('click', event => openGeneoPaintPopover({ scope: 'connection-tool', property: 'line' }, event.currentTarget));
     main.querySelector('[data-geneo-connection-tool-width]')?.addEventListener('change', event =>

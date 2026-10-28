@@ -1666,6 +1666,7 @@
 .geneo-creation-tool-panel .geneo-paint-swatch.is-none > span { opacity: .14; }
 .geneo-creation-tool-panel .geneo-paint-swatch.is-none::after { content: ''; position: absolute; z-index: 2; left: 50%; top: 50%; width: 125%; height: 2px; background: var(--text-secondary); transform: translate(-50%, -50%) rotate(-45deg); pointer-events: none; }
 .geneo-connection-tool-row { display: flex; align-items: center; gap: 5px; width: max-content; }
+.geneo-connection-purpose { flex: 0 0 auto; width: 132px; min-width: 0; height: 36px; padding: 0 8px; font-size: 12px; }
 .geneo-connection-tool-row > button,
 .geneo-connection-tool-width { box-sizing: border-box; flex: 0 0 auto; height: 38px; }
 .geneo-connection-choice { display: flex; align-items: center; justify-content: center; gap: 5px; width: 88px; padding: 0 6px; border: 1px solid var(--border-default); border-radius: 5px; background: transparent; color: var(--text-primary); cursor: pointer; }
