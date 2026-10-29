@@ -11004,7 +11004,9 @@ function openAddToAlbumModal()
     let createMode = false;
 
     const selectedAlbumIds =
-        new Set();
+        new Set(getProjectAlbums(projectId).filter(album => getAlbumSelectedPhotoMembership(album.id, photoIds).complete).map(album => album.id));
+    const albumDecisions = new Map();
+    let createdAlbumId = '';
 
     const createDraft = {
         name: '',
@@ -11030,7 +11032,7 @@ function openAddToAlbumModal()
 
         return allAlbums().filter(
             album =>
-                albumPickerSearchText(
+                album.id === createdAlbumId || albumPickerSearchText(
                     album
                 ).includes(
                     normalizedQuery
@@ -11049,32 +11051,12 @@ function openAddToAlbumModal()
 
     const selectionLabel = () =>
     {
-        const albumCount =
-            selectedAlbumIds.size;
-
-        return translateText(
-            `${albumCount} ${
-                albumCount === 1
-                    ? 'album'
-                    : 'albums'
-            } selected`
-        );
+        return rpText(`${albumDecisions.size} changes`, `Изменений: ${albumDecisions.size}`);
     };
 
     const saveLabel = () =>
     {
-        const count =
-            selectedAlbumIds.size;
-
-        return translateText(
-            count
-                ? `Add to ${count} ${
-                    count === 1
-                        ? 'album'
-                        : 'albums'
-                }`
-                : 'Add to albums'
-        );
+        return t('Save changes');
     };
 
     const renderAlbumRow =
@@ -11107,7 +11089,7 @@ function openAddToAlbumModal()
             {
                 membershipLabel =
                     translateText(
-                        'Already contains all selected photos'
+                        'Already added'
                     );
             }
             else if (
@@ -11227,7 +11209,6 @@ function openAddToAlbumModal()
                 data-album-picker-choice
                 ${
                     selected
-                  || membership.complete
                         ? 'checked'
                         : ''
                 }
@@ -11557,6 +11538,8 @@ function openAddToAlbumModal()
 
     if (!modal) return;
 
+    rpInitMembershipPicker(modal);
+
     const browsePanel =
         modal.querySelector(
             '[data-album-picker-browse]'
@@ -11628,7 +11611,7 @@ function openAddToAlbumModal()
               type="button"
               data-album-picker-back>
               ${escapeHtml(
-                    t('Back')
+                    t('Cancel')
                 )}
             </button>
 
@@ -11677,7 +11660,7 @@ function openAddToAlbumModal()
             type="button"
             data-album-picker-save
             ${
-                selectedAlbumIds.size
+                albumDecisions.size
                     ? ''
                     : 'disabled'
             }>
@@ -11734,6 +11717,12 @@ function openAddToAlbumModal()
             localizeUI(
                 resultsHost
             );
+            rpRefreshMembershipRows(resultsHost);
+            resultsHost.querySelectorAll('[data-album-picker-choice]').forEach(input =>
+            {
+                const membership = getAlbumSelectedPhotoMembership(input.value, photoIds);
+                input.indeterminate = membership.existingCount > 0 && !membership.complete && !albumDecisions.has(input.value);
+            });
         }
 
         refreshFooter();
@@ -11751,7 +11740,7 @@ function openAddToAlbumModal()
         requestAnimationFrame(
             () =>
             {
-                searchInput?.focus({
+                modal.querySelector('.album-picker-new-button')?.focus({
                     preventScroll: true
                 });
             }
@@ -11788,6 +11777,13 @@ function openAddToAlbumModal()
             }
         );
     };
+
+    const requestReturn = rpMembershipReturn(modal, { isCreating: () => createMode,
+        isDirty: () => Boolean(createDraft.name.trim() || createDraft.description.trim()), returnToResults: () =>
+        {
+            createDraft.name = ''; createDraft.description = '';
+            showBrowse();
+        } });
 
     searchInput?.addEventListener(
         'input',
@@ -11861,14 +11857,10 @@ function openAddToAlbumModal()
                 album.id
             );
 
+            createdAlbumId = album.id;
+            albumDecisions.set(album.id, true);
             createDraft.name = '';
             createDraft.description = '';
-            query = '';
-
-            if (searchInput)
-            {
-                searchInput.value = '';
-            }
 
             showBrowse();
 
@@ -11916,6 +11908,10 @@ function openAddToAlbumModal()
                 );
             }
 
+            const membership = getAlbumSelectedPhotoMembership(albumId, photoIds);
+            if ((checkbox.checked && membership.complete) || (!checkbox.checked && !membership.existingCount)) albumDecisions.delete(albumId);
+            else albumDecisions.set(albumId, checkbox.checked);
+
             refreshResults();
         }
     );
@@ -11949,7 +11945,7 @@ function openAddToAlbumModal()
                 )
             )
             {
-                showBrowse();
+                requestReturn();
                 return;
             }
 
@@ -11981,42 +11977,26 @@ function openAddToAlbumModal()
                 )
             )
             {
-                const result =
-                    addPhotosToAlbums(
-                        photoIds,
-                        [
-                            ...selectedAlbumIds
-                        ]
-                    );
-
-                if (
-                    !result.membershipCount
-                )
+                if (!albumDecisions.size) return;
+                const photos = photoIds.map(id => getPhoto(id, { projectId }));
+                if (currentProjectId() !== projectId || photos.some(photo => !photo || photo.projectId !== projectId)
+                    || [...albumDecisions.keys()].some(id => !getProjectAlbums(projectId).some(album => album.id === id)))
+                { showToast(rpText('The selected records are no longer available.', 'Выбранные записи больше недоступны.')); return; }
+                const updates = photos.map(photo =>
                 {
-                    refreshResults();
-                    return;
-                }
+                    const ids = new Set(photo.albumIds || []);
+                    albumDecisions.forEach((linked, id) => linked ? ids.add(id) : ids.delete(id));
+                    return { photo, ids: [...ids] };
+                });
+                const updatedAt = new Date().toISOString();
+                updates.forEach(({ photo, ids }) => { photo.albumIds = ids; photo.updatedAt = updatedAt; });
 
                 state.selectedPhotoIds = [];
 
                 closeModal();
                 renderAlbums();
 
-                showToast(
-                    `${result.changedPhotoCount} ${
-                        result.changedPhotoCount
-                  === 1
-                            ? 'photo'
-                            : 'photos'
-                    } added to ${
-                        result.changedAlbumCount
-                    } ${
-                        result.changedAlbumCount
-                  === 1
-                            ? 'album'
-                            : 'albums'
-                    }.`
-                );
+                showToast(rpText('Album memberships updated.', 'Связи с альбомами обновлены.'));
             }
         }
     );

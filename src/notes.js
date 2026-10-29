@@ -3601,13 +3601,10 @@ function openNoteCollectionsModal(
             note.collectionIds || []
         );
 
-    /*
-        Only newly selected collections
-        are stored here. Existing memberships
-        remain visible but disabled.
-      */
     const selectedCollectionIds =
-        new Set();
+        new Set(assignedCollectionIds);
+    const collectionDecisions = new Map();
+    let createdCollectionId = '';
 
     const createDraft = {
         name: '',
@@ -3642,7 +3639,7 @@ function openNoteCollectionsModal(
 
         return allCollections()
             .filter(collection =>
-                collectionSearchText(
+                collection.id === createdCollectionId || collectionSearchText(
                     collection
                 ).includes(
                     normalizedQuery
@@ -3662,31 +3659,12 @@ function openNoteCollectionsModal(
 
     const selectionLabel = () =>
     {
-        const count =
-            selectedCollectionIds.size;
-
-        return `1 note selected · ${count} ${
-            count === 1
-                ? 'collection'
-                : 'collections'
-        } chosen`;
+        return rpText(`${collectionDecisions.size} changes`, `Изменений: ${collectionDecisions.size}`);
     };
 
     const saveLabel = () =>
     {
-        const count =
-            selectedCollectionIds.size;
-
-        if (!count)
-        {
-            return 'Add to collections';
-        }
-
-        return `Add to ${count} ${
-            count === 1
-                ? 'collection'
-                : 'collections'
-        }`;
+        return t('Save changes');
     };
 
     const renderCollectionRow =
@@ -3784,7 +3762,6 @@ function openNoteCollectionsModal(
                 data-note-collection-picker-choice
                 ${
                     selected
-                  || alreadyAssigned
                         ? 'checked'
                         : ''
                 }
@@ -4064,6 +4041,8 @@ function openNoteCollectionsModal(
         return;
     }
 
+    rpInitMembershipPicker(modal);
+
     const browsePanel =
         modal.querySelector(
             '[data-note-collection-picker-browse]'
@@ -4134,7 +4113,7 @@ function openNoteCollectionsModal(
               class="button secondary"
               type="button"
               data-note-collection-picker-back>
-              ${escapeHtml(t('Back'))}
+              ${escapeHtml(t('Cancel'))}
             </button>
 
             <button
@@ -4181,7 +4160,7 @@ function openNoteCollectionsModal(
             type="button"
             data-note-collection-picker-save
             ${
-                selectedCollectionIds.size
+                collectionDecisions.size
                     ? ''
                     : 'disabled'
             }>
@@ -4238,6 +4217,7 @@ function openNoteCollectionsModal(
             localizeUI(
                 resultsHost
             );
+            rpRefreshMembershipRows(resultsHost);
         }
 
         refreshFooter();
@@ -4258,7 +4238,7 @@ function openNoteCollectionsModal(
         requestAnimationFrame(
             () =>
             {
-                searchInput?.focus({
+                modal.querySelector('.album-picker-new-button')?.focus({
                     preventScroll: true
                 });
             }
@@ -4298,6 +4278,13 @@ function openNoteCollectionsModal(
             }
         );
     };
+
+    const requestReturn = rpMembershipReturn(modal, { isCreating: () => createMode,
+        isDirty: () => Boolean(createDraft.name.trim() || createDraft.description.trim()), returnToResults: () =>
+        {
+            createDraft.name = ''; createDraft.description = '';
+            showBrowse();
+        } });
 
     searchInput?.addEventListener(
         'input',
@@ -4389,14 +4376,10 @@ function openNoteCollectionsModal(
                 collection.id
             );
 
+            createdCollectionId = collection.id;
+            collectionDecisions.set(collection.id, true);
             createDraft.name = '';
             createDraft.description = '';
-            query = '';
-
-            if (searchInput)
-            {
-                searchInput.value = '';
-            }
 
             showBrowse();
 
@@ -4449,6 +4432,9 @@ function openNoteCollectionsModal(
                 );
             }
 
+            if (checkbox.checked === assignedCollectionIds.has(collectionId)) collectionDecisions.delete(collectionId);
+            else collectionDecisions.set(collectionId, checkbox.checked);
+
             refreshResults();
         }
     );
@@ -4482,7 +4468,7 @@ function openNoteCollectionsModal(
                 )
             )
             {
-                showBrowse();
+                requestReturn();
                 return;
             }
 
@@ -4514,38 +4500,31 @@ function openNoteCollectionsModal(
                 )
             )
             {
-                if (
-                    !selectedCollectionIds.size
-                )
+                if (!collectionDecisions.size)
                 {
                     return;
                 }
 
-                const addedCount =
-                    selectedCollectionIds.size;
-
-                setNoteCollections(
+                const currentNote = getNote(note.id, { projectId, includeArchived: true });
+                if (currentProjectId() !== projectId || !currentNote
+                    || [...collectionDecisions.keys()].some(id => !allCollections().some(collection => collection.id === id)))
+                { showToast(rpText('The selected records are no longer available.', 'Выбранные записи больше недоступны.')); return; }
+                const nextIds = new Set(currentNote.collectionIds || []);
+                collectionDecisions.forEach((linked, id) => linked ? nextIds.add(id) : nextIds.delete(id));
+                const saved = setNoteCollections(
                     note.id,
-                    [
-                        ...assignedCollectionIds,
-                        ...selectedCollectionIds
-                    ],
+                    [...nextIds],
                     {
                         projectId
                     }
                 );
+                if (!saved) return;
 
                 closeModal();
 
                 renderNotesPreservingInteraction();
 
-                showToast(
-                    `${addedCount} ${
-                        addedCount === 1
-                            ? 'collection'
-                            : 'collections'
-                    } added.`
-                );
+                showToast(rpText('Collection memberships updated.', 'Связи с коллекциями обновлены.'));
             }
         }
     );

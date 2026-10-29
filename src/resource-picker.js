@@ -71,6 +71,61 @@ function rpText(english, russian)
     return state.language === 'ru' ? russian : english;
 }
 
+function rpInitMembershipPicker(modal)
+{
+    modal.classList.add('membership-picker');
+    modal.querySelector('.modal-header h2').textContent = modal.classList.contains('note-collection-picker-modal')
+        ? rpText('Manage collections', 'Коллекции заметки') : rpText('Manage albums', 'Альбомы фотографий');
+    const browse = modal.querySelector('.album-picker-browse');
+    const search = browse.querySelector('.album-picker-search');
+    const input = search.querySelector('input');
+    input.setAttribute('aria-label', t(input.placeholder));
+    input.placeholder = rpText('Search', 'Поиск');
+    search.querySelector('label')?.remove();
+    const toolbar = document.createElement('div');
+    toolbar.className = 'membership-picker-toolbar';
+    browse.prepend(toolbar);
+    toolbar.append(search, browse.querySelector('.album-picker-new-button'));
+    browse.querySelector('.album-picker-results-head')?.remove();
+    const heading = modal.querySelector('.modal-header h2');
+    heading.tabIndex = -1;
+    requestAnimationFrame(() => heading.focus({ preventScroll: true }));
+}
+
+function rpRefreshMembershipRows(host)
+{
+    host.querySelectorAll('.album-picker-result').forEach(row =>
+    {
+        const description = row.querySelector('.album-picker-description');
+        const name = row.querySelector('strong');
+        if (name) name.title = [name.textContent.trim(), description?.textContent.trim()].filter(Boolean).join('\n');
+        if (description && description.textContent.trim() === t('No description')) description.remove();
+        row.querySelector('.album-picker-meta')?.remove();
+        row.classList.remove('is-complete');
+        const checkbox = row.querySelector('input[type=checkbox]');
+        if (checkbox) { checkbox.disabled = false; checkbox.setAttribute('aria-label', name?.textContent.trim() || ''); }
+    });
+}
+
+function rpMembershipReturn(modal, { isCreating, isDirty, returnToResults })
+{
+    const requestReturn = () =>
+    {
+        if (!isCreating()) return true;
+        const finish = () =>
+        {
+            returnToResults();
+            modal.querySelector('.album-picker-new-button')?.focus({ preventScroll: true });
+        };
+        if (isDirty()) rpConfirmDiscard({ title: rpText('Discard changes?', 'Отменить изменения?'),
+            message: rpText('The new album or collection has not been created.', 'Новый альбом или коллекция ещё не созданы.'), onDiscard: finish });
+        else finish();
+        return false;
+    };
+    modalBackdrop.beforeClose = requestReturn;
+    return requestReturn;
+}
+
 function rpApplyConnectionChanges(currentIds, context = {})
 {
     const result = new Set(currentIds || []);
