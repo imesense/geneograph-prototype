@@ -3802,6 +3802,10 @@ button.timeline-evidence-name:hover, button.timeline-evidence-name:focus-visible
     font-weight: 400;
 }
 
+.manage-relationships-group:first-child h3 {
+    margin-top: 0;
+}
+
 .manage-relationships-choice {
     display: grid;
     grid-template-columns: 40px minmax(0, 1fr);
