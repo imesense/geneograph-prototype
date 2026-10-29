@@ -9512,6 +9512,7 @@ function renderArchiveToolbar()
                     : 'File controls'
             }">
 
+          ${sourcesView ? '' : '<div class="archive-toolbar-main">'}
           <div
             class="
               archive-toolbar-left
@@ -9627,6 +9628,7 @@ function renderArchiveToolbar()
                 <button class="toolbar-button archive-layout-button ${state.archiveFileLayout === 'images' ? 'active' : ''}" type="button" data-archive-file-layout="images" aria-label="${escapeHtml(t('Image view'))}" title="${escapeHtml(t('Image view'))}" aria-pressed="${state.archiveFileLayout === 'images'}">${icon.archiveImages}</button>
             </div>`}
             ${sourcesView ? '' : `<label class="archive-view-picker" title="${escapeHtml(t('File view'))}">${state.archiveFileLayout === 'images' ? icon.archiveImages : state.archiveFileLayout === 'tiles' ? icon.grid : icon.list}<select data-archive-layout-select aria-label="${escapeHtml(t('File view'))}">${[['details', 'Details view'], ['tiles', 'Icons view'], ['images', 'Image view']].map(([value, label]) => `<option value="${value}" ${state.archiveFileLayout === value ? 'selected' : ''}>${escapeHtml(t(label))}</option>`).join('')}</select>${icon.chevron}</label>`}
+            ${sourcesView ? '' : '</div></div><div class="archive-toolbar-create">'}
             ${sourcesView ? '' : `<div class="archive-file-create-actions">${renderArchiveFilesHeaderActions()}</div>`}
             ${sourcesView ? '' : `<button class="button primary archive-mobile-add-files" type="button" data-archive-mobile-add-menu aria-label="${escapeHtml(t('Add'))}" aria-expanded="false">${icon.plus}<span>${escapeHtml(t('Add'))}</span></button>`}
           </div>
