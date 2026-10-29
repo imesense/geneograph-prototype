@@ -92,6 +92,15 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 window.rpRecordTestSession = rpOpenPlacePicker({ noteId: note.id });
             });
             await page.locator('[data-rp-action="create"]').click();
+            const placeLayout = await page.locator('[data-place-editor]').evaluate(editor =>
+            {
+                const field = editor.querySelector('.place-editor-place-field').getBoundingClientRect();
+                const map = editor.querySelector('.place-map-location').getBoundingClientRect();
+                return { gap: map.top - field.bottom, disclosures: [...editor.querySelectorAll('details:not([open])')].map(element => element.getBoundingClientRect().height) };
+            });
+            assert.ok(placeLayout.gap >= 20 && placeLayout.gap <= 28);
+            await page.screenshot({ path: path.join(require('node:os').tmpdir(), `geneograph-add-place-${width}.png`) });
+            assert.ok(placeLayout.disclosures.every(height => height <= 80), JSON.stringify(placeLayout));
             await page.locator('[data-place-editor] [data-close]').first().click();
             await page.locator('.resource-picker').waitFor();
             assert.equal(await page.evaluate(() => placeEditorDraft), null);

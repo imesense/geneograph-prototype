@@ -910,6 +910,30 @@
     min-height:0
 }
 
+.resource-picker-editor-modal.place-editor-modal .place-editor-body
+{
+    display:flex;
+    flex-direction:column;
+    align-items:stretch;
+    justify-content:flex-start;
+    gap:24px;
+}
+.resource-picker-editor-modal.place-editor-modal .place-editor-body>* { flex:none; min-width:0; }
+.resource-picker-editor-modal.place-editor-modal .place-editor-place-field { align-content:start; gap:8px; }
+.resource-picker-editor-modal.place-editor-modal .place-editor-support { font-size:13px; line-height:1.5; }
+.resource-picker-editor-modal.place-editor-modal .place-map-location { align-content:start; gap:12px; }
+.resource-picker-editor-modal.place-editor-modal .place-map-location-row { min-height:44px; gap:12px; }
+.resource-picker-editor-modal.place-editor-modal .places-editor-disclosure
+{
+    display:block;
+    padding:12px 16px;
+    border-radius:8px;
+    margin:0;
+}
+.resource-picker-editor-modal.place-editor-modal .places-editor-disclosure>summary { min-height:24px; font-size:14px; }
+.resource-picker-editor-modal.place-editor-modal .places-editor-disclosure[open]>summary { margin-bottom:12px; }
+.resource-picker-editor-modal.place-editor-modal .place-editor-field-error:empty { display:none; }
+
 .rp-media-thumbnail
 {
     display:grid;
