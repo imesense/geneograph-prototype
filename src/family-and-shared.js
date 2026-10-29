@@ -7427,7 +7427,7 @@ function parentFamilyChoices(anchorPersonId, relationshipType, otherPersonId = '
         ...existing,
         {
             value: SINGLE_PARENT_FAMILY_CHOICE,
-            label: `${t('Single parent')} — ${translateText(personDisplayName(anchorPersonId))}`,
+            label: state.language === 'ru' ? `Только ${translateText(personDisplayName(anchorPersonId))}` : `${personDisplayName(anchorPersonId)} only`,
             family: null
         }
     ];
@@ -7558,8 +7558,8 @@ function renderParentFamilySelector({
         `${controlId}Heading`;
 
     const selectionLabel = showHeading
-        ? t(isSibling ? 'Shared parent(s)' : 'Other parent for this child')
-        : t(isSibling ? 'Shared parents' : 'Other parent');
+        ? t(isSibling ? 'Shared parent(s)' : 'Parents')
+        : t(isSibling ? 'Shared parents' : 'Parents');
 
     return `
         <section
@@ -7569,7 +7569,7 @@ function renderParentFamilySelector({
           ${showHeading ? `<h3
             class="form-section-title"
             id="${escapeHtml(headingId)}">
-            ${escapeHtml(isSibling ? t('Shared parent(s)') : t('Other parent for this child'))}
+            ${escapeHtml(isSibling ? t('Shared parent(s)') : t('Parents'))}
           </h3>` : ''}
 
           <div class="field">
@@ -7598,7 +7598,7 @@ function renderParentFamilySelector({
                 ${
                     selected
                         ? ''
-                        : '<option value="">Select a parent family</option>'
+                        : `<option value="">${escapeHtml(t(isSibling ? 'Choose shared parents' : 'Choose parents'))}</option>`
                 }
 
                 ${
@@ -7638,7 +7638,7 @@ function renderParentFamilySelector({
                         ? selected === UNKNOWN_FATHER_FAMILY_CHOICE
                             ? 'An unknown father will be created for both siblings.'
                             : 'The siblings will share the selected parent or parents.'
-                        : 'Choose another parent, or keep this child with one parent.'
+                        : t('Choose who will be recorded as this child’s parents.')
                 }
             </span>
           </div>

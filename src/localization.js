@@ -2,6 +2,7 @@ const SUPPORTED_LANGUAGES = ['en', 'ru'];
 const LANGUAGE_STORAGE_KEY = 'geneograph.language';
 const PROJECT_CONTINUATION_STORAGE_KEY = 'geneograph.projectContinuation';
 const RU_UI_SHARED = Object.freeze({
+    'Choose who will be recorded as this child’s parents.': 'Выберите, кто будет указан родителями ребёнка.',
     'Drop photos here or choose photos': 'Перетащите фотографии сюда или выберите',
     'Add education': 'Добавить образование',
     'Add occupation': 'Добавить работу',
