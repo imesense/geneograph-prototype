@@ -42,6 +42,14 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             if (width === 1200)
                 assert.ok(bounds.modalWidth >= 979, 'desktop modal is wider');
             assert.deepEqual(errors, []);
+            await page.evaluate(() =>
+            {
+                sampleData.people = sampleData.people.filter(person => person.projectId !== 'p1');
+                openEventLinkModal({ projectId: 'p1', onSave: () => true });
+            });
+            assert.equal((await modal.locator('.notes-event-empty strong').innerText()).trim(),
+                language === 'ru' ? 'В проекте пока нет людей' : 'No people in this project yet');
+            assert.equal(await modal.locator('[data-notes-event-clear-search]').count(), 0);
             await page.close();
         }
     }

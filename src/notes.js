@@ -6773,20 +6773,19 @@ function openEventLinkModal({
                 return `
               <div class="notes-event-empty">
                 <strong>
-                  No people match this search
+                  ${escapeHtml(t(people.length ? 'No people match this search' : 'No people in this project yet'))}
                 </strong>
 
                 <span>
-                  Try another name, date,
-                  family branch, Event, or place.
+                  ${escapeHtml(t(people.length ? 'Try another name, date, family branch, event, or place.' : 'Add a person to the project before linking events.'))}
                 </span>
 
-                <button
+                ${people.length ? `<button
                   class="button secondary"
                   type="button"
                   data-notes-event-clear-search>
-                  Clear search
-                </button>
+                  ${escapeHtml(t('Clear search'))}
+                </button>` : ''}
               </div>
             `;
             }
