@@ -751,9 +751,13 @@
         rgba(255, 255, 255, .012);
 }
 
-.notes-rich-editor-shell.is-fallback {
+.notes-rich-editor-shell.is-fallback:not(:focus-within) {
     border-color:
         transparent;
+}
+
+.notes-rich-editor-shell :is(.ql-editor, .notes-body-input):focus-visible {
+    outline: none;
 }
 
 .notes-rich-editor-label {
