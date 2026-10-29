@@ -2003,6 +2003,13 @@ let peopleSavedViews = [
     }
 ];
 
+peopleSavedViews.forEach(view => { view.projectId = 'p1'; });
+
+function peopleProjectSavedViews()
+{
+    return peopleSavedViews.filter(view => view.projectId === currentProjectId());
+}
+
 function selectedPeopleRecord()
 {
     const records = currentPeopleRecords();
@@ -3436,11 +3443,12 @@ function renderPeople()
             )}
 
             <div
-              class="people-table-wrap">
+              class="people-table-wrap ${!filteredRows.length ? 'is-empty' : ''}">
               ${renderPeopleTable(
                     visibleRows
                 )}
               ${renderPeopleMobileList(visibleRows)}
+              ${!filteredRows.length ? `<section class="people-directory-empty" aria-labelledby="peopleEmptyTitle">${!hasProjectPeople ? `<div class="tree-empty-state-card"><div class="tree-empty-state-icon" aria-hidden="true">${icon.tree}</div><h1 id="peopleEmptyTitle">${escapeHtml(t('Start your family tree'))}</h1><p>${escapeHtml(t('Add the first person to begin building this project\'s family tree.'))}</p><button class="button primary" type="button" data-people-add-first>${icon.plus}${escapeHtml(t('Add first person'))}</button></div>` : `<div><h2 id="peopleEmptyTitle">${escapeHtml(t('No matches found'))}</h2><button class="button secondary" type="button" data-people-clear-empty>${escapeHtml(t('Clear search and filters'))}</button></div>`}</section>` : ''}
             </div>
 
             ${renderPeopleTableFooter(
@@ -3469,7 +3477,7 @@ function renderPeopleSidebar()
 function renderPeopleSidebarInner()
 {
     const profileAvailable = currentPeopleRecords().length > 0;
-    const savedViewsMarkup = peopleSavedViews.map(view =>
+    const savedViewsMarkup = peopleProjectSavedViews().map(view =>
     {
         const isActive = state.peopleSavedViewId === view.id;
 
@@ -3558,7 +3566,7 @@ function renderPeopleTable(rows)
     const columns = peopleColumnsWithDefaults();
     const selectedIds = peopleSelectedIdSet();
     const headers = [
-        '<th class="people-select-column"><input class="people-select-checkbox" type="checkbox" data-people-select-visible aria-label="Select all visible people"></th>',
+        `<th class="people-select-column"><input class="people-select-checkbox" type="checkbox" data-people-select-visible aria-label="${escapeHtml(t('Select all visible people'))}" ${rows.length ? '' : 'disabled'}></th>`,
         '<th>Name</th>',
         columns.living ? '<th>Living</th>' : '',
         columns.birth ? '<th>Birth date</th>' : '',
@@ -3566,7 +3574,7 @@ function renderPeopleTable(rows)
         columns.death ? '<th>Death date</th>' : '',
         columns.deathPlace ? '<th>Death place</th>' : '',
         columns.updated ? '<th>Updated</th>' : '',
-        '<th class="people-actions-column">Actions</th>'
+        `<th class="people-actions-column"><span class="sr-only">${escapeHtml(t('Actions'))}</span></th>`
     ].join('');
     return `<table class="people-table"><thead><tr>${headers}</tr></thead><tbody>
         ${rows.map(person =>
@@ -7165,7 +7173,7 @@ function openPeopleSavedViewModal({
     const isEdit = mode === 'edit';
 
     const existingView = isEdit
-        ? peopleSavedViews.find(view => view.id === viewId)
+        ? peopleProjectSavedViews().find(view => view.id === viewId)
         : null;
 
     if (isEdit && !existingView)
@@ -7389,7 +7397,7 @@ function openPeopleSavedViewModal({
             }
 
             const duplicate =
-                peopleSavedViews.find(view =>
+                peopleProjectSavedViews().find(view =>
                     view.id !== viewId
               && view.name
                   .trim()
@@ -7457,6 +7465,7 @@ function openPeopleSavedViewModal({
 
             peopleSavedViews.push({
                 id,
+                projectId: currentProjectId(),
                 name:
               submittedName,
 
@@ -7541,7 +7550,7 @@ function openPeopleSavedViewMenu(viewId, anchor)
     closePeopleFilterPopover();
     closePeopleColumnsPopover();
 
-    const view = peopleSavedViews.find(item => item.id === viewId);
+    const view = peopleProjectSavedViews().find(item => item.id === viewId);
     if (!view || !anchor) return;
 
     const rect = anchor.getBoundingClientRect();
@@ -7614,7 +7623,7 @@ function openPeopleSavedViewMenu(viewId, anchor)
 
 function openDeletePeopleFilterConfirm(viewId)
 {
-    const view = peopleSavedViews.find(item => item.id === viewId);
+    const view = peopleProjectSavedViews().find(item => item.id === viewId);
     if (!view)
     {
         showToast('Saved filter not found.');
@@ -7677,7 +7686,7 @@ function openDeletePeopleFilterConfirm(viewId)
 
 function deletePeopleSavedView(viewId)
 {
-    const index = peopleSavedViews.findIndex(view => view.id === viewId);
+    const index = peopleSavedViews.findIndex(view => view.id === viewId && view.projectId === currentProjectId());
     if (index < 0)
     {
         closeModal();
@@ -7711,7 +7720,7 @@ function applyPeopleSavedView(
 )
 {
     const view =
-        peopleSavedViews.find(
+        peopleProjectSavedViews().find(
             item =>
                 item.id === viewId
         );
@@ -9250,6 +9259,46 @@ function bindPeopleRowActions(rows)
 
 function bindPeoplePaginationControls()
 {
+    const pageSizeSelect = main.querySelector('#peopleRowsPerPage');
+    if (pageSizeSelect)
+    {
+        pageSizeSelect.hidden = true;
+        const trigger = document.createElement('button');
+        trigger.type = 'button';
+        trigger.className = 'people-page-size-trigger';
+        trigger.textContent = pageSizeSelect.value;
+        trigger.setAttribute('aria-label', `${t('Rows per page')}: ${pageSizeSelect.value}`);
+        trigger.setAttribute('aria-haspopup', 'menu');
+        trigger.setAttribute('aria-expanded', 'false');
+        pageSizeSelect.after(trigger);
+        trigger.addEventListener('click', event =>
+        {
+            event.preventDefault();
+            if (trigger.getAttribute('aria-expanded') === 'true') { closeMenu(); return; }
+            closeMenu();
+            const menu = document.createElement('div');
+            menu.id = 'projectMenu';
+            menu.className = 'menu-popover people-page-size-menu';
+            menu.setAttribute('role', 'menu');
+            menu.setAttribute('aria-label', t('Rows per page'));
+            menu.innerHTML = [...pageSizeSelect.options].map(option => `<button type="button" role="menuitemradio" aria-checked="${option.selected}" data-page-size="${option.value}"><span>${option.value}</span>${option.selected ? icon.check : ''}</button>`).join('');
+            document.body.append(menu);
+            const rect = trigger.getBoundingClientRect();
+            menu.style.left = `${Math.max(12, Math.min(rect.left, innerWidth - menu.offsetWidth - 12))}px`;
+            menu.style.top = `${Math.max(12, rect.top - menu.offsetHeight - 6)}px`;
+            menu.addEventListener('click', click =>
+            {
+                const option = click.target.closest('[data-page-size]');
+                if (!option) return;
+                pageSizeSelect.value = option.dataset.pageSize;
+                closeMenu();
+                pageSizeSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                main.querySelector('.people-page-size-trigger')?.focus({ preventScroll: true });
+            });
+            bindMenuLifecycle(trigger);
+            menu.querySelector('[aria-checked=true]')?.focus();
+        });
+    }
     main
         .querySelectorAll(
             '[data-people-page]'
@@ -9322,6 +9371,16 @@ function bindPeopleControls(
     rows
 )
 {
+    main.querySelector('[data-people-add-first]')?.addEventListener('click', () => openAddPersonModal('Add person', 'Create a new person in this project'));
+    main.querySelector('[data-people-clear-empty]')?.addEventListener('click', () =>
+    {
+        state.peopleSearch = '';
+        state.peopleFilters = peopleFiltersWithDefaults(defaultPeopleFilters);
+        state.peopleSavedViewId = '';
+        state.peopleSavedView = 'All people';
+        state.peoplePage = 1;
+        renderPeople();
+    });
     bindPeopleSidebar(main);
 
     bindPeopleToolbarControls(

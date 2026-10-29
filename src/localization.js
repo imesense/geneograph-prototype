@@ -142,6 +142,7 @@ const RU_UI_SHARED = Object.freeze({
     'Differences to review': 'Есть различия',
     'Tree record unavailable': 'Запись Дерева недоступна',
     'No people match these filters.': 'Нет людей по выбранным фильтрам.',
+    'No matches found': 'Ничего не найдено',
     'No identity selected': 'Связь с записью не выбрана',
     'New person selected': 'Будет создана новая персона',
     'Relationship to anchor': 'Родство с отправной персоной',

@@ -901,6 +901,17 @@ function activateProject(projectId, {
     {
         resetProjectModuleState(project.id);
     }
+    else if (projectChanged)
+    {
+        state.peopleSearch = '';
+        state.peopleFilters = peopleFiltersWithDefaults(defaultPeopleFilters);
+        state.peopleSavedViewId = '';
+        state.peopleSavedView = 'All people';
+        state.peoplePage = 1;
+        state.peoplePaginationQueryKey = '';
+        state.peopleSelectedIds = [];
+        state.peopleSelectionAnchorId = '';
+    }
 
     state.activeModule = nextModule;
     if (nextModule === 'Projects') state.openSide = 'overview';

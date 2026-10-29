@@ -4,6 +4,7 @@
     width: 100%;
     display: grid;
     grid-template-columns: minmax(0, 1fr) 450px;
+    grid-template-rows: minmax(0, 1fr);
     min-height: 0;
     min-width: 0;
     overflow: hidden;
@@ -19,6 +20,8 @@
 }
 
 .people-content {
+    height: 100%;
+    box-sizing: border-box;
     min-width: 0;
     min-height: 0;
     display: grid;
@@ -1562,6 +1565,20 @@
     background: #0c1210;
 }
 
+.people-table-wrap.is-empty { display:flex; flex-direction:column; }
+.people-actions-column .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; border:0; }
+.people-table-wrap.is-empty .people-table { flex:none; }
+.people-directory-empty { flex:1; min-height:220px; display:grid; place-items:center; text-align:center; padding:24px; }
+.people-directory-empty .tree-empty-state-card { max-width:460px; }
+.people-directory-empty h1 { font-size:24px; line-height:1.3; }
+.people-directory-empty p { line-height:1.6; color:var(--text-secondary); }
+.people-directory-empty .button { margin-top:16px; }
+.people-normal-toolbar .button.secondary,.people-normal-toolbar .people-filter-button,.people-normal-toolbar .app-sort-trigger,.people-rows-select-shell
+{ background:var(--surface-card); border:1px solid var(--border-default); color:var(--text-primary); font-size:14px; font-weight:500; }
+.people-normal-toolbar .button.secondary:hover,.people-normal-toolbar .people-filter-button:hover,.people-normal-toolbar .app-sort-trigger:hover
+{ background:var(--surface-card-hover); border-color:var(--border-strong); }
+.people-normal-toolbar .people-filter-button.active { background:var(--surface-selected); color:var(--brand-green-300); border-color:var(--brand-green-400); }
+
 .people-table {
     width: 100%;
     border-collapse: separate;
@@ -1842,13 +1859,20 @@
         var(--radius-sm);
 
     background:
-        var(--surface-input);
+        var(--surface-card);
 
     transition:
         border-color var(--ease),
         background var(--ease),
         box-shadow var(--ease);
 }
+
+.people-rows-select-shell #peopleRowsPerPage[hidden] { display:none; }
+.people-page-size-trigger { width:100%; height:100%; background:transparent; border:0; padding:0 32px 0 12px; color:var(--text-primary); font:inherit; font-size:13px; cursor:pointer; text-align:left; }
+.people-page-size-menu { min-width:100px; }
+.people-page-size-menu button { display:flex; justify-content:space-between; align-items:center; gap:16px; }
+.people-page-size-menu button[aria-checked=true] { background:var(--surface-card-hover); color:var(--brand-green-400); }
+.people-page-size-menu svg { width:16px; height:16px; }
 
 .people-rows-select-shell:hover {
     border-color:
