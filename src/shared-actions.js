@@ -731,8 +731,7 @@ function resetProjectModuleState(projectId)
         surnames: [],
         birthPlaceIds: [],
         birthYear: { mode: '', from: '', to: '' },
-        living: 'Any',
-        reviewStatus: ''
+        living: 'Any'
     };
     state.peopleProfileEditing = false;
 

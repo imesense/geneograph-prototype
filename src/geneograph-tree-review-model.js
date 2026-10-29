@@ -91,7 +91,7 @@ function geneoTreeImportNewPerson(person, id, projectId)
         death: structuredClone(person.death || emptyGenealogyDate('Exact date')),
         profile: { alternativeNames: null }, attributes: [], events: [], notes: [], citations: [],
         familyAsSpouseIds: [], familyAsChildIds: [], counts: { files: 0, notes: 0 },
-        meta: { updated: 'Just now', sourceStatus: 'Unsourced', reviewStatus: 'New record' } };
+        meta: { updated: 'Just now', sourceStatus: 'Unsourced' } };
 }
 
 function geneoTreeImportRelations(diagram, ids)

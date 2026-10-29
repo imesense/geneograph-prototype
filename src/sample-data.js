@@ -47,7 +47,6 @@ const sampleData = {
             meta: {
                 updated: '10 May 2026',
                 sourceStatus: 'Partly sourced',
-                reviewStatus: 'No issues'
             }
         },
 
@@ -90,7 +89,6 @@ const sampleData = {
             meta: {
                 updated: '10 May 2026',
                 sourceStatus: 'Partly sourced',
-                reviewStatus: 'No issues'
             }
         },
 
@@ -133,7 +131,6 @@ const sampleData = {
             meta: {
                 updated: '9 May 2026',
                 sourceStatus: 'Unsourced',
-                reviewStatus: 'Missing source'
             }
         },
 
@@ -175,7 +172,6 @@ const sampleData = {
             meta: {
                 updated: '9 May 2026',
                 sourceStatus: 'Unsourced',
-                reviewStatus: 'Missing source'
             }
         },
 
@@ -217,7 +213,6 @@ const sampleData = {
             meta: {
                 updated: '4 May 2026',
                 sourceStatus: 'Unsourced',
-                reviewStatus: 'Missing facts'
             }
         },
 
@@ -260,7 +255,6 @@ const sampleData = {
             meta: {
                 updated: '4 May 2026',
                 sourceStatus: 'Partly sourced',
-                reviewStatus: 'No issues'
             }
         },
 
@@ -303,7 +297,6 @@ const sampleData = {
             meta: {
                 updated: '4 May 2026',
                 sourceStatus: 'Partly sourced',
-                reviewStatus: 'No issues'
             }
         },
 
@@ -345,7 +338,6 @@ const sampleData = {
             meta: {
                 updated: '28 Apr 2026',
                 sourceStatus: 'Partly sourced',
-                reviewStatus: 'Missing facts'
             }
         },
 
@@ -387,7 +379,6 @@ const sampleData = {
             meta: {
                 updated: '28 Apr 2026',
                 sourceStatus: 'Partly sourced',
-                reviewStatus: 'No issues'
             }
         },
 
@@ -431,7 +422,6 @@ const sampleData = {
             meta: {
                 updated: '24 Apr 2026',
                 sourceStatus: 'Partly sourced',
-                reviewStatus: 'No issues'
             }
         },
 
@@ -473,7 +463,6 @@ const sampleData = {
             meta: {
                 updated: '24 Apr 2026',
                 sourceStatus: 'Partly sourced',
-                reviewStatus: 'Historic records'
             }
         },
 
@@ -515,7 +504,6 @@ const sampleData = {
             meta: {
                 updated: '24 Apr 2026',
                 sourceStatus: 'Unsourced',
-                reviewStatus: 'Historic records'
             }
         },
 
@@ -557,7 +545,6 @@ const sampleData = {
             meta: {
                 updated: '24 Apr 2026',
                 sourceStatus: 'Unsourced',
-                reviewStatus: 'Historic records'
             }
         },
 
@@ -599,7 +586,6 @@ const sampleData = {
             meta: {
                 updated: '24 Apr 2026',
                 sourceStatus: 'Partly sourced',
-                reviewStatus: 'Historic records'
             }
         },
 
@@ -641,7 +627,6 @@ const sampleData = {
             meta: {
                 updated: '24 Apr 2026',
                 sourceStatus: 'Partly sourced',
-                reviewStatus: 'Historic records'
             }
         },
 
@@ -683,7 +668,6 @@ const sampleData = {
             meta: {
                 updated: '24 Apr 2026',
                 sourceStatus: 'Unsourced',
-                reviewStatus: 'Historic records'
             }
         },
 
@@ -727,7 +711,6 @@ const sampleData = {
             meta: {
                 updated: '24 Apr 2026',
                 sourceStatus: 'Unsourced',
-                reviewStatus: 'Historic records'
             }
         },
 
@@ -769,7 +752,6 @@ const sampleData = {
             meta: {
                 updated: '24 May 2026',
                 sourceStatus: 'Partly sourced',
-                reviewStatus: 'No issues'
             }
         },
 
@@ -811,7 +793,6 @@ const sampleData = {
             meta: {
                 updated: '24 May 2026',
                 sourceStatus: 'Needs source',
-                reviewStatus: 'Check birth details'
             }
         },
 
@@ -853,7 +834,6 @@ const sampleData = {
             meta: {
                 updated: '24 May 2026',
                 sourceStatus: 'Unsourced',
-                reviewStatus: 'Missing death details'
             }
         },
 
@@ -895,7 +875,6 @@ const sampleData = {
             meta: {
                 updated: '24 May 2026',
                 sourceStatus: 'Partly sourced',
-                reviewStatus: 'Check death place'
             }
         },
 
@@ -937,7 +916,6 @@ const sampleData = {
             meta: {
                 updated: '24 May 2026',
                 sourceStatus: 'Partly sourced',
-                reviewStatus: 'No issues'
             }
         },
 
@@ -979,7 +957,6 @@ const sampleData = {
             meta: {
                 updated: '24 May 2026',
                 sourceStatus: 'Unsourced',
-                reviewStatus: 'Missing death details'
             }
         },
 
@@ -1021,7 +998,6 @@ const sampleData = {
             meta: {
                 updated: '24 May 2026',
                 sourceStatus: 'Partly sourced',
-                reviewStatus: 'Check birth details'
             }
         }
     ],

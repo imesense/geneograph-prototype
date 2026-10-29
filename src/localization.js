@@ -597,7 +597,6 @@ const RU_UI_SHARED = Object.freeze({
     'Family': 'Семья',
     'Family relationships': 'Семейные связи',
     'Locked': 'Заблокировано',
-    'Review status': 'Статус проверки',
     'Source status': 'Статус источников',
     'Sources linked':
         'Источники привязаны',
@@ -950,7 +949,7 @@ const RU_DATA_PEOPLE = Object.freeze({
     'Marigold Butterpaws': 'Мэриголд Баттерпоуз',
     'Barnaby Whiskerfield and Daisy Milkpaw':
         'Барнаби Вискерфильд и Дейзи Милкпоу',
-    'Meowbridge places': 'Места Мяубриджа',
+    'Meowbridge place': 'Мяубридж',
     'Whiskerfield surname': 'Фамилия Вискерфильд',
     'Silver\'s places': 'Места Сильвера',
     'Whiskerfield places': 'Места Вискерфильдов',
@@ -5436,8 +5435,8 @@ const RU_TERMS_STATUSES = {
     'Missing source':
         'Нет источника',
 
-    'Historic records':
-        'Исторические записи',
+    'Born before 1900': 'Родившиеся до 1900 года',
+    'People born before 1900.': 'Люди, родившиеся до 1900 года.',
 
     'Check birth details':
         'Проверить сведения о рождении',
@@ -6738,7 +6737,6 @@ const RU_UI_COMPLETION = {
     'Edit person': 'Изменить человека',
     'All Whiskerfield surname records.': 'Все записи, связанные с фамилией Вискерфильд.',
     'People and records connected to Meowbridge.': 'Люди и записи, связанные с Мяубриджем.',
-    'Great-grandparents and early evidence.': 'Прадеды, прабабушки и ранние свидетельства.',
     'Birth Date': 'Дата рождения',
     'Birth Place': 'Место рождения',
     'Death Date': 'Дата смерти',

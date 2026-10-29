@@ -7053,7 +7053,7 @@ function createPersonFromAddPersonModal(options = {}, additionalFacts = {}, date
         notes: [],
         citations: [],
         counts: { files: 0, notes: 0 },
-        meta: { updated: 'Just now', sourceStatus: 'Unsourced', reviewStatus: 'New record' }
+        meta: { updated: 'Just now', sourceStatus: 'Unsourced' }
     };
 
     applyAddPersonAdditionalFacts(person, additionalFacts);
@@ -7083,7 +7083,7 @@ function createUnknownFather(childPersonId)
         notes: [],
         citations: [],
         counts: { files: 0, notes: 0 },
-        meta: { updated: 'Just now', sourceStatus: 'Unsourced', reviewStatus: 'New record',
+        meta: { updated: 'Just now', sourceStatus: 'Unsourced',
             placeholderRole: 'father' }
     };
     sampleData.people.push(person);

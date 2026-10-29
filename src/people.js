@@ -1443,10 +1443,7 @@ const defaultPeopleFilters =
           'Any',
 
         sourceLinks:
-          'all',
-
-        reviewStatus:
-          ''
+          'all'
     });
 
 function peopleSurnameFilterOptions()
@@ -1797,70 +1794,6 @@ const peopleFilterSchema =
                   'Without sources'
                 })
             ])
-        }),
-        Object.freeze({
-            key:
-            'reviewStatus',
-
-            label:
-            'Review status',
-
-            control:
-            'select',
-
-            defaultValue:
-            '',
-
-            options:
-            Object.freeze([
-                Object.freeze({
-                    value:
-                  '',
-
-                    label:
-                  'Any'
-                }),
-
-                Object.freeze({
-                    value:
-                  'No issues',
-
-                    label:
-                  'No issues'
-                }),
-
-                Object.freeze({
-                    value:
-                  'Possible duplicate',
-
-                    label:
-                  'Possible duplicate'
-                }),
-
-                Object.freeze({
-                    value:
-                  'Missing facts',
-
-                    label:
-                  'Missing facts'
-                }),
-
-                Object.freeze({
-                    value:
-                  'Missing source',
-
-                    label:
-                  'Missing source'
-                }),
-
-                Object.freeze({
-                    value:
-                  'Historic records',
-
-                    label:
-                  'Historic records'
-                })
-            ])
         })
     ]);
 
@@ -1975,7 +1908,7 @@ let peopleSavedViews = [
           'meowbridge-places',
 
         name:
-          'Meowbridge places',
+          'Meowbridge place',
 
         description:
           'People and records connected to Meowbridge.',
@@ -1988,22 +1921,33 @@ let peopleSavedViews = [
 
     {
         id:
-          'historic-records',
+          'born-before-1900',
 
         name:
-          'Historic records',
+          'Born before 1900',
 
         description:
-          'Great-grandparents and early evidence.',
+          'People born before 1900.',
 
         filters: {
-            reviewStatus:
-            'Historic records'
+            birthYear: { mode: 'before', from: '1900', to: '' }
         }
     }
 ];
 
-peopleSavedViews.forEach(view => { view.projectId = 'p1'; });
+peopleSavedViews.forEach(view =>
+{
+    view.projectId = 'p1';
+    view.sampleName = view.name;
+    view.sampleDescription = view.description;
+});
+
+function peopleSavedViewText(view, field)
+{
+    const value = view?.[field] || '';
+    const original = field === 'name' ? view?.sampleName : view?.sampleDescription;
+    return original && value === original ? translateText(value) : value;
+}
 
 function peopleProjectSavedViews()
 {
@@ -2355,60 +2299,6 @@ function getPeopleSourceStatus(
     } linked`;
 }
 
-function getPeopleReviewStatus(
-    person
-)
-{
-    const centralPerson =
-        getPerson(
-            person?.id
-        );
-
-    const explicitStatus =
-        person?.reviewStatus
-        || centralPerson?.meta
-            ?.reviewStatus
-        || '';
-
-    /*
-        Preserve specific review findings.
-        Source availability must not hide a
-        duplicate or missing-facts warning.
-      */
-    if (
-        explicitStatus
-        && explicitStatus !== 'No issues'
-        && explicitStatus !== 'Missing source'
-    )
-    {
-        return explicitStatus;
-    }
-
-    const sourceCount =
-        getPeopleSourceCount(
-            person
-        );
-
-    if (!sourceCount)
-    {
-        return 'Missing source';
-    }
-
-    /*
-        A stale stored “Missing source” status
-        must disappear after a Source is linked.
-      */
-    if (
-        explicitStatus === 'Missing source'
-    )
-    {
-        return 'No issues';
-    }
-
-    return explicitStatus
-        || 'No issues';
-}
-
 function hasActivePeopleFilters(
     filters = state.peopleFilters
 )
@@ -2583,15 +2473,6 @@ function peopleRecordsMatchingFilters(
             return false;
         }
 
-        if (
-            normalized.reviewStatus
-          && getPeopleReviewStatus(person)
-            !== normalized.reviewStatus
-        )
-        {
-            return false;
-        }
-
         if (normalizedQuery)
         {
             const searchText =
@@ -2602,9 +2483,6 @@ function peopleRecordsMatchingFilters(
                         person.relation,
                         person.living,
                         getPeopleSourceStatus(
-                            person
-                        ),
-                        getPeopleReviewStatus(
                             person
                         )
                     ]
@@ -7182,8 +7060,8 @@ function openPeopleSavedViewModal({
         return;
     }
 
-    const name = existingView?.name || initialName;
-    const description = existingView?.description || initialDescription;
+    const name = existingView ? peopleSavedViewText(existingView, 'name') : initialName;
+    const description = existingView ? peopleSavedViewText(existingView, 'description') : initialDescription;
 
     const filters = peopleFiltersWithDefaults(
         existingView?.filters || initialFilters
@@ -7399,7 +7277,7 @@ function openPeopleSavedViewModal({
             const duplicate =
                 peopleProjectSavedViews().find(view =>
                     view.id !== viewId
-              && view.name
+              && peopleSavedViewText(view, 'name')
                   .trim()
                   .toLowerCase()
                 === submittedName
@@ -7423,10 +7301,10 @@ function openPeopleSavedViewModal({
               === existingView.id;
 
                 existingView.name =
-                    submittedName;
+                    submittedName === name ? existingView.name : submittedName;
 
                 existingView.description =
-                    submittedDescription;
+                    submittedDescription === description ? existingView.description : submittedDescription;
 
                 existingView.filters =
                     peopleFiltersWithDefaults(

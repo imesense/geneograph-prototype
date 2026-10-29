@@ -4215,7 +4215,6 @@ function toPeopleRecord(
               person.id
           ).length,
         sourceCount,
-        reviewStatus: person.meta.reviewStatus,
         avatarClass: person.avatarClass,
         primaryPhotoId: person.primaryPhotoId || '',
         parents: getParents(person.id).map(parent => parent.names.display).join(' and ') || 'Unknown parents'

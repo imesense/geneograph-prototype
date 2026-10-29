@@ -42,8 +42,7 @@ const state = {
             from: '',
             to: ''
         },
-        living: 'Any',
-        reviewStatus: ''
+        living: 'Any'
     },
     peopleVisibleColumns: { living: true, birth: true, birthPlace: true, death: true, deathPlace: true, updated: true },
     peoplePreviewCollapsed: false,

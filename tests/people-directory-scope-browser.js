@@ -22,6 +22,42 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 activateProject('p1', { moduleName: 'People' });
             }, language);
             assert.equal(await page.evaluate(() => peopleProjectSavedViews().length), 3);
+            for (const id of ['whiskerfield-line', 'meowbridge-places', 'born-before-1900'])
+            {
+                const expected = await page.evaluate(id =>
+                {
+                    const view = peopleProjectSavedViews().find(view => view.id === id);
+                    openPeopleSavedViewModal({ mode: 'edit', viewId: id });
+                    return { name: translateText(view.name), description: translateText(view.description) };
+                }, id);
+                assert.equal(await page.locator('#peopleSavedViewName').inputValue(), expected.name);
+                assert.equal(await page.locator('#peopleSavedViewDescription').inputValue(), expected.description);
+                if (language === 'ru')
+                {
+                    assert.equal(await page.locator('#peopleSavedViewName').inputValue(), { 'whiskerfield-line': 'Фамилия Вискерфильд', 'meowbridge-places': 'Мяубридж', 'born-before-1900': 'Родившиеся до 1900 года' }[id]);
+                }
+                await page.locator('#peopleSavedViewForm [data-close]').click();
+            }
+            await page.evaluate(() => openPeopleSavedViewModal({ mode: 'edit', viewId: 'whiskerfield-line' }));
+            await page.locator('#peopleSavedViewForm [type=submit]').click();
+            assert.equal(await page.evaluate(() => peopleProjectSavedViews()[0].name), 'Whiskerfield surname');
+            const retired = await page.evaluate(() =>
+            {
+                applyPeopleSavedView('born-before-1900');
+                return { filters: state.peopleFilters, rows: filteredPeople().map(person => person.birth),
+                    schema: peopleFilterSchema.map(field => field.key),
+                    metadata: sampleData.people.some(person => Object.hasOwn(person.meta || {}, 'reviewStatus')) };
+            });
+            assert.deepEqual(retired.filters.birthYear, { mode: 'before', from: '1900', to: '' });
+            assert.equal(retired.schema.includes('reviewStatus'), false);
+            assert.equal(retired.metadata, false);
+            assert.ok(retired.rows.length > 0);
+            assert.deepEqual(await page.evaluate(() => peopleRecordsMatchingFilters([
+                { id: 'before', birth: '1899', birthYear: 1899 },
+                { id: 'boundary', birth: '1900', birthYear: 1900 },
+                { id: 'after', birth: '1901', birthYear: 1901 },
+                { id: 'undated', birth: '', birthYear: null }
+            ], { birthYear: { mode: 'before', from: '1900', to: '' } }, '').map(person => person.id)), ['before']);
             await page.evaluate(() =>
             {
                 state.peopleSearch = 'Whiskerfield';

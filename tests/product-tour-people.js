@@ -13,7 +13,7 @@ const russian = vm.runInNewContext(`${localizationSource.slice(dictionaryStart, 
 const initialFilters = { surnames: ['Butterpaws'] };
 const state = {
     activeModule: 'Projects', peopleFilters: structuredClone(initialFilters),
-    peopleSavedViewId: 'historic-records', peopleSearch: 'Mochi', selectedPeopleId: 'mochi',
+    peopleSavedViewId: 'born-before-1900', peopleSearch: 'Mochi', selectedPeopleId: 'mochi',
     peopleSelectedIds: ['mochi'], peopleSelectionAnchorId: 'mochi', peoplePage: 3,
     peopleView: 'directory', peopleSide: 'people', peoplePreviewCollapsed: true,
     peopleProfileEditTab: 'relationships'
@@ -109,7 +109,7 @@ assert.equal(state.peopleView, 'profile');
 assert.equal(state.peopleFilters.surnames.length, 0);
 evaluate('geneoTourRestorePeopleState()');
 assert.deepEqual(state.peopleFilters, initialFilters);
-assert.equal(state.peopleSavedViewId, 'historic-records');
+assert.equal(state.peopleSavedViewId, 'born-before-1900');
 assert.equal(state.selectedPeopleId, 'mochi');
 assert.deepEqual(state.peopleSelectedIds, ['mochi']);
 assert.equal(state.peoplePage, 3);
