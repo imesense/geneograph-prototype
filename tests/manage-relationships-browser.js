@@ -28,6 +28,13 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
                 openManageRelationshipsModal('silver', 'people');
             }, language);
             const manager = page.locator('.manage-relationships-modal');
+            assert.deepEqual(await page.evaluate(() => [
+                parentRelationLabel({ gender: 'unknown', parentRole: 'father' }),
+                parentRelationLabel({ gender: 'unknown', parentRole: 'mother' }),
+                parentRelationLabel({ parentRole: 'father' }),
+                parentRelationLabel({ gender: 'male', parentRole: 'mother' }),
+                parentRelationLabel({ gender: 'female', parentRole: 'father' })
+            ]), ['Parent', 'Parent', 'Parent', 'Father', 'Mother']);
             assert.equal(await manager.count(), 1);
             await manager.locator('[data-manage-select^="partner:"]').first().click();
             const unlink = manager.locator('.manage-relationships-detail-head [data-manage-unlink]');

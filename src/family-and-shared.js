@@ -4465,18 +4465,12 @@ function relationGender(person)
 
 function parentRelationLabel(person)
 {
-    if (
-        person.parentRole === 'father'
-        || relationGender(person) === 'male'
-    )
+    if (relationGender(person) === 'male')
     {
         return 'Father';
     }
 
-    if (
-        person.parentRole === 'mother'
-        || relationGender(person) === 'female'
-    )
+    if (relationGender(person) === 'female')
     {
         return 'Mother';
     }
