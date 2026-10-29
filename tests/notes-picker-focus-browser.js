@@ -31,24 +31,24 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
                     openNoteFilesModal();
                 });
                 await page.waitForTimeout(50);
-                assert.ok(await page.locator('[data-connected-files-modal]').isVisible());
-                assert.ok(await page.evaluate(() => document.activeElement?.hasAttribute('data-close')));
-                await page.locator('[data-connected-files-search]').click();
-                assert.ok(await page.evaluate(() => document.activeElement?.matches('[data-connected-files-search]')));
+                assert.ok(await page.locator('[data-resource-picker="files"]').isVisible());
+                assert.ok(await page.evaluate(() => document.activeElement?.matches('[data-rp-heading]')));
+                await page.locator('[data-rp-search]').click();
+                assert.ok(await page.evaluate(() => document.activeElement?.matches('[data-rp-search]')));
                 await page.keyboard.press('Escape');
 
                 await page.evaluate(() => openNotesPlacesModal());
                 await page.waitForTimeout(50);
-                assert.ok(await page.locator('.notes-places-modal').isVisible());
-                assert.ok(await page.evaluate(() => document.activeElement?.hasAttribute('data-close')));
-                assert.ok(await page.locator('.notes-place-result').first().evaluate(row =>
+                assert.ok(await page.locator('[data-resource-picker="places"]').isVisible());
+                assert.ok(await page.evaluate(() => document.activeElement?.hasAttribute('data-rp-heading')));
+                assert.ok(await page.locator('.rp-record').first().evaluate(row =>
                 {
-                    const icon = row.querySelector('.notes-place-result-icon').getBoundingClientRect();
-                    const name = row.querySelector('.photo-people-result-copy').getBoundingClientRect();
+                    const icon = row.querySelector('.rp-record-icon').getBoundingClientRect();
+                    const name = row.querySelector('.rp-record-copy').getBoundingClientRect();
                     return name.left >= icon.right + 4 && row.scrollWidth <= row.clientWidth + 1;
                 }));
-                await page.locator('[data-notes-place-search]').click();
-                assert.ok(await page.evaluate(() => document.activeElement?.matches('[data-notes-place-search]')));
+                await page.locator('[data-rp-search]').click();
+                assert.ok(await page.evaluate(() => document.activeElement?.matches('[data-rp-search]')));
                 await page.keyboard.press('Escape');
                 assert.deepEqual(errors, []);
                 await page.close();

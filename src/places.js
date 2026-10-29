@@ -9891,7 +9891,8 @@ function openPlaceModal(
     {
         initialCoordinates = null,
         draft = null,
-        completion = undefined
+        completion = undefined,
+        modalOpener = openModal
     } = {}
 )
 {
@@ -9951,7 +9952,7 @@ function openPlaceModal(
     placeEditorDraft.mapSession =
         null;
 
-    openModal(
+    modalOpener(
         renderPlaceEditorModal(
             placeEditorDraft
         )

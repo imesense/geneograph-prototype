@@ -71,9 +71,11 @@ const assets = path.resolve(__dirname, '../src/assets');
             ]);
             await page.locator('[data-import-results] p').last().waitFor();
             await page.waitForFunction(() => document.querySelectorAll('[data-import-results] p').length === 5);
+            await page.waitForFunction(() => document.querySelector('.archive-document-import').getAttribute('aria-busy') === 'false');
             assert.deepEqual(await footerActions(), [{ action: 'choose', primary: false }, { action: 'done', primary: true }]);
             await page.locator('[data-document-input]').setInputFiles({ name: 'bad.pdf', mimeType: 'application/pdf', buffer: Buffer.from('not a pdf') });
             await page.waitForFunction(() => document.querySelectorAll('[data-import-results] p').length === 6);
+            await page.waitForFunction(() => document.querySelector('.archive-document-import').getAttribute('aria-busy') === 'false');
             assert.deepEqual(await footerActions(), [{ action: 'choose', primary: false }, { action: 'done', primary: true }]);
             await page.locator('[data-document-input]').setInputFiles([
                 { name: 'uploaded-record.png', mimeType: 'image/png', buffer: fs.readFileSync(path.join(assets, 'daisy-birth-record-sample.png')) },
@@ -81,6 +83,7 @@ const assets = path.resolve(__dirname, '../src/assets');
                 { name: 'uploaded-portrait.jpg', mimeType: 'image/jpeg', buffer: fs.readFileSync(path.join(assets, 'unidentified-studio-portrait.jpg')) },
             ]);
             await page.waitForFunction(() => document.querySelectorAll('[data-import-results] p').length === 9);
+            await page.waitForFunction(() => document.querySelector('.archive-document-import').getAttribute('aria-busy') === 'false');
             const webp = await page.evaluate(() => {
                 const canvas = document.createElement('canvas');
                 canvas.width = 2; canvas.height = 2;
@@ -133,37 +136,38 @@ const assets = path.resolve(__dirname, '../src/assets');
                     autoFocusSearch: false,
                 });
             });
-            assert.equal(await page.locator('[data-connected-files-open-folder="pawford"]').count(), 1);
-            await page.locator('[data-connected-files-open-folder="pawford"]').click();
-            await page.locator('[data-connected-files-open-folder="interviews"]').click();
-            const browsedTitle = await page.locator('[data-connected-files-results-title]').innerText();
+            assert.equal(await page.locator('[data-rp-scope="folder:pawford"]').count(), 1);
+            await page.locator('[data-rp-scope="folder:pawford"]').click();
+            await page.locator('[data-rp-scope="folder:interviews"]').click();
+            const browsedTitle = await page.locator('.rp-path').innerText();
             assert.ok(browsedTitle.includes(language === 'ru' ? 'Переписка' : 'Correspondence'), browsedTitle);
-            assert.ok(await page.locator('[data-connected-files-choice]').count() > 0);
-            await page.locator('[data-connected-files-add-new]').click();
+            assert.ok(await page.locator('[data-rp-check]').count() > 0);
+            await page.locator('[data-rp-action="create"]').click();
             assert.ok((await page.locator('.archive-document-import .modal-header').innerText()).includes(language === 'ru' ? 'Переписка' : 'Correspondence'));
             await page.locator('.archive-document-import [data-document-input]').setInputFiles(path.join(assets, 'daisy_letter_transcription.txt'));
+            await page.locator('.archive-document-import').waitFor({ state: 'hidden' });
+            assert.equal(await page.evaluate(() => window.__documentLinks.length), 0);
+            await page.locator('[data-rp-action="save"]').click();
             await page.waitForFunction(() => window.__documentLinks.length === 1);
             assert.equal(await page.evaluate(() => archiveFileById(window.__documentLinks[0]).folderId), 'interviews');
-            await page.locator('.archive-document-import [data-close]').first().click();
-            await page.locator('.connected-files-modal [data-close]').first().click();
             await page.evaluate(() => {
                 activateProject('p1', { moduleName: 'Notes' });
                 render();
                 window.__noteForUpload = sampleData.notes.find(note => note.projectId === 'p1').id;
                 openNoteFilesModal(window.__noteForUpload);
             });
-            await page.locator('[data-connected-files-open-folder="pawford"]').click();
-            await page.locator('[data-connected-files-open-folder="fond12"]').click();
-            await page.locator('[data-connected-files-add-new]').click();
+            await page.locator('[data-rp-scope="folder:pawford"]').click();
+            await page.locator('[data-rp-scope="folder:fond12"]').click();
+            await page.locator('[data-rp-action="create"]').click();
             await page.locator('.archive-document-import [data-document-input]').setInputFiles(path.join(assets, 'daisy_letter_transcription.txt'));
+            await page.locator('.archive-document-import').waitFor({ state: 'hidden' });
+            await page.locator('[data-rp-action="save"]').click();
             await page.waitForFunction(() => (getNote(window.__noteForUpload)?.linkedArchiveFileIds || []).some(id => id.startsWith('af-upload-')));
             assert.equal(await page.evaluate(() => state.activeModule), 'Notes');
             assert.equal(await page.evaluate(() => {
                 const id = getNote(window.__noteForUpload).linkedArchiveFileIds.find(fileId => fileId.startsWith('af-upload-'));
                 return archiveFileById(id)?.folderId;
             }), 'fond12');
-            await page.locator('.archive-document-import [data-close]').first().click();
-            await page.locator('.connected-files-modal [data-close]').first().click();
             const hostile = '<img src=x onerror="window.__injected=1"><script>window.__injected=2</script>';
             const hostileDocx = await Packer.toBuffer(new Document({ sections: [{ children: [new Paragraph(hostile)] }] }));
             await page.evaluate(() => { activateProject('p1', { moduleName: 'Archive' }); render(); openArchiveDocumentImport(); });

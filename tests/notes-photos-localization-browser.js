@@ -28,22 +28,14 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 const note = sampleData.notes.find(item => item.projectId === 'p1' && !item.deleted);
                 state.selectedNoteId = note.id;
                 openNotesPhotosModal();
-                return t(note.title);
+                return localizedDataFieldValue(note.title);
             }, language);
 
-            const modal = page.locator('[data-notes-photos-adder]');
+            const modal = page.locator('[data-resource-picker="photos"]');
             assert.equal(await modal.locator('h2').innerText(), language === 'ru'
-                ? 'Добавить фотографии к заметке' : 'Add photos to note');
+                ? 'Связанные фотографии' : 'Manage photos');
             const description = await modal.locator('.modal-header p').innerText();
-            if (language === 'ru')
-            {
-                assert.match(description, /^Выбранные и загруженные фотографии будут связаны с «.+»\.$/);
-                assert.doesNotMatch(description, /\bphotos\b|\blinked\b/);
-            }
-            else
-            {
-                assert.equal(description, `Selected and uploaded photos will be linked to ${noteTitle}.`);
-            }
+            assert.equal(description, noteTitle);
             await page.evaluate(() => closeModal());
         }
 

@@ -90,7 +90,7 @@ async function archiveDocumentRenderPdf(blob, host, modal) {
     host.replaceChildren();
     const toolbar = modal.querySelector('[data-document-tools]');
     toolbar.hidden = false;
-    toolbar.className = 'archive-document-tools archive-document-pdf-tools';
+    toolbar.classList.add('archive-document-tools', 'archive-document-pdf-tools');
     toolbar.innerHTML = `<div class="archive-document-tool-group"><button class="button secondary" type="button" data-pdf-prev aria-label="${escapeHtml(archiveDocumentLabel('Previous page', 'Предыдущая страница'))}" title="${escapeHtml(archiveDocumentLabel('Previous page', 'Предыдущая страница'))}">${icon.arrow}</button><span data-pdf-page aria-live="polite"></span><button class="button secondary archive-pdf-next" type="button" data-pdf-next aria-label="${escapeHtml(archiveDocumentLabel('Next page', 'Следующая страница'))}" title="${escapeHtml(archiveDocumentLabel('Next page', 'Следующая страница'))}">${icon.arrow}</button></div><div class="archive-document-tool-group"><button class="button secondary" type="button" data-pdf-out aria-label="${escapeHtml(archiveDocumentLabel('Zoom out', 'Уменьшить'))}" title="${escapeHtml(archiveDocumentLabel('Zoom out', 'Уменьшить'))}">${icon.zoomOut}</button><span data-pdf-zoom aria-live="polite"></span><button class="button secondary" type="button" data-pdf-in aria-label="${escapeHtml(archiveDocumentLabel('Zoom in', 'Увеличить'))}" title="${escapeHtml(archiveDocumentLabel('Zoom in', 'Увеличить'))}">${icon.zoomIn}</button></div>`;
     const canvas = document.createElement('canvas');
     canvas.className = 'archive-document-pdf-canvas';
@@ -243,6 +243,7 @@ async function archiveImportFiles(selected, { projectId = currentProjectId(), fo
     if (!projectId || (folderId && !archiveFolderById(folderId, projectId))) return ids;
     for (const source of Array.from(selected || [])) {
         const report = (status, message) => onResult(source, status, message);
+        report('uploading', archiveDocumentLabel('Importing...', 'Добавление...'));
         const extension = archiveDocumentExtension(source.name);
         if (!(archiveDocumentExtensions.has(extension) || archiveImageExtensions.has(extension)) || source.size > archiveDocumentMaxBytes || source.size === 0) {
             report('error', archiveDocumentLabel('Unsupported, empty, or over 20 MB.', 'Неподдерживаемый, пустой или больше 20 МБ.'));
@@ -293,7 +294,7 @@ function archiveRollbackImportedFiles(ids) {
     });
 }
 
-function openArchiveDocumentImport({ files = null, onImported = null, projectId = currentProjectId(), folderId = state.activeModule === 'Archive' ? state.archiveSelectedFolderId || null : null, destinationLabel = null, modalOpener = openModal } = {}) {
+function openArchiveDocumentImport({ files = null, onImported = null, projectId = currentProjectId(), folderId = state.activeModule === 'Archive' ? state.archiveSelectedFolderId || null : null, destinationLabel = null, modalOpener = openModal, stageSelection = false } = {}) {
     const destination = destinationLabel || (folderId ? archiveFolderById(folderId, projectId)?.name : archiveDocumentLabel('All files', 'Все файлы'));
     modalOpener(`<div class="modal archive-document-import" role="dialog" aria-modal="true" aria-labelledby="archiveImportTitle"><div class="modal-header"><div><h2 id="archiveImportTitle">${escapeHtml(archiveDocumentLabel('Add files', 'Добавить файлы'))}</h2><p>${escapeHtml(archiveDocumentLabel('Adding to', 'Папка'))} <strong>${escapeHtml(destination || archiveDocumentLabel('All files', 'Все файлы'))}</strong></p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><div class="modal-body"><div class="archive-document-drop upload-dropzone" data-document-drop tabindex="0" role="button" aria-label="${escapeHtml(archiveDocumentLabel('Choose files or drop them here', 'Выберите файлы или перетащите их сюда'))}">${renderUploadDropzonePrompt(archiveDocumentLabel('Drop files here or choose files', 'Перетащите файлы сюда или выберите'), archiveDocumentLabel('Up to 20 MB each', 'До 20 МБ каждый'))}</div><p class="archive-document-formats">PNG, JPEG, WebP, TXT, CSV, PDF, DOCX</p><input type="file" multiple accept=".png,.jpg,.jpeg,.webp,.txt,.csv,.pdf,.docx" data-document-input hidden><div class="archive-document-import-results" data-import-results data-user-content hidden><h3>${escapeHtml(archiveDocumentLabel('Import results', 'Результаты добавления'))}</h3><div data-import-rows></div></div></div><div class="modal-footer"><p class="archive-document-import-notice"><span aria-hidden="true">${icon.warning}</span><span>${escapeHtml(archiveDocumentLabel('Available until page reload', 'Доступны до перезагрузки страницы'))}</span></p><span class="archive-document-import-summary" data-import-summary role="status" aria-live="polite"></span><button class="button secondary" type="button" data-close>${escapeHtml(archiveDocumentLabel('Done', 'Готово'))}</button><button class="button primary" type="button" data-document-choose>${escapeHtml(archiveDocumentLabel('Choose files', 'Выбрать файлы'))}</button></div></div>`);
     const modal = modalBackdrop.querySelector('.archive-document-import');
@@ -304,7 +305,7 @@ function openArchiveDocumentImport({ files = null, onImported = null, projectId 
     const rows = modal.querySelector('[data-import-rows]');
     const summary = modal.querySelector('[data-import-summary]');
     const chooseButton = modal.querySelector('[data-document-choose]');
-    const doneButton = modal.querySelector('.modal-footer [data-close]');
+    let doneButton = modal.querySelector('.modal-footer [data-close]');
     let added = 0;
     let failed = 0;
     const updateSummary = () => {
@@ -325,6 +326,7 @@ function openArchiveDocumentImport({ files = null, onImported = null, projectId 
     drop.addEventListener('dragover', event => { event.preventDefault(); drop.classList.add('dragging'); });
     drop.addEventListener('dragleave', () => drop.classList.remove('dragging'));
     let importing = false;
+    modalBackdrop.beforeClose = () => !importing;
     const importFiles = async selected => {
         if (importing) return;
         if (folderId && !archiveFolderById(folderId, projectId)) {
@@ -339,18 +341,32 @@ function openArchiveDocumentImport({ files = null, onImported = null, projectId 
         }
         importing = true;
         chooseButton.disabled = true;
+        input.disabled = true;
+        modal.setAttribute('aria-busy', 'true');
+        drop.setAttribute('aria-disabled', 'true');
+        modal.querySelectorAll('[data-close]').forEach(button => { button.disabled = true; });
         const batchRows = [];
+        const fileRows = new Map();
+        const progress = document.createElement('progress');
+        progress.max = selected.length;
+        progress.value = 0;
+        progress.setAttribute('aria-label', archiveDocumentLabel('Import progress', 'Ход добавления'));
+        rows.append(progress);
         try {
         const ids = await archiveImportFiles(selected, { projectId, folderId, onResult: (source, status, message) => {
-            const row = document.createElement('p');
+            const row = fileRows.get(source) || document.createElement('p');
+            fileRows.set(source, row);
             result.hidden = false;
             rows.append(row);
+            row.replaceChildren();
             row.className = `archive-document-import-row ${status}`;
             const name = document.createElement('strong');
             name.textContent = source.name;
             const detail = document.createElement('span');
             detail.textContent = message;
             row.append(name, detail);
+            if (status === 'uploading') return;
+            progress.value++;
             if (status === 'success') {
                 added++;
                 batchRows.push(row);
@@ -366,7 +382,7 @@ function openArchiveDocumentImport({ files = null, onImported = null, projectId 
                 linked = { ok: false, message: error?.message };
             }
             if (linked === false || linked?.ok === false) {
-                archiveRollbackImportedFiles(ids);
+                // Imported resources remain in the library even if selection fails.
                 const message = linked?.message || archiveDocumentLabel('Files could not be linked. Please try again.', 'Не удалось связать файлы. Повторите попытку.');
                 batchRows.forEach(row => {
                     row.classList.replace('success', 'error');
@@ -380,9 +396,15 @@ function openArchiveDocumentImport({ files = null, onImported = null, projectId 
         } finally {
             importing = false;
             chooseButton.disabled = false;
+            input.disabled = false;
+            modal.setAttribute('aria-busy', 'false');
+            drop.setAttribute('aria-disabled', 'false');
+            modal.querySelectorAll('[data-close]').forEach(button => { button.disabled = false; });
         }
+        if (stageSelection && added > 0 && failed === 0 && modal.isConnected) closeModal();
     };
-    input.addEventListener('change', () => { importFiles(input.files); input.value = ''; });
-    drop.addEventListener('drop', event => { event.preventDefault(); drop.classList.remove('dragging'); importFiles(event.dataTransfer.files); });
-    if (files?.length) importFiles(files);
+    const receiveFiles = selected => importFiles(Array.from(selected || []));
+    input.addEventListener('change', () => { receiveFiles(input.files); input.value = ''; });
+    drop.addEventListener('drop', event => { event.preventDefault(); drop.classList.remove('dragging'); receiveFiles(event.dataTransfer.files); });
+    if (files?.length) receiveFiles(files);
 }

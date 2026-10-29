@@ -2850,12 +2850,12 @@ function openPersonFilesModal(
           `Add files to ${name}`,
 
         subtitle:
-          'Connect existing Archive files or add new files.',
+          name,
 
         existingFileIds,
 
         onSave:
-          fileIds =>
+          (fileIds, context) =>
           {
               const currentPerson =
                   getPerson(
@@ -2871,7 +2871,7 @@ function openPersonFilesModal(
               }
 
               const writes =
-                  fileIds.map(fileId => ({
+                  context.changes.decisions.map(({ id: fileId, linked }) => ({
                       ownerType:
                   'file',
 
@@ -2885,7 +2885,7 @@ function openPersonFilesModal(
                   currentPerson.id,
 
                       shouldLink:
-                  true
+                  linked
                   }));
 
               const committed =
@@ -2898,8 +2898,6 @@ function openPersonFilesModal(
 
                   ok:
                 committed.ok
-                && committed.changedCount
-                  === writes.length
               };
           },
 
@@ -3172,6 +3170,8 @@ function openPersonNotesModal(
 
         title:
           'Add note',
+
+        targetLabel: personLabel,
 
         description:
           `Link existing notes to “${personLabel}”.`,
@@ -4290,7 +4290,7 @@ function bindTimelineSourceControls(
             openConnectedFilesModal({ projectId, title: 'Add evidence file',
                 subtitle: `Connect Archive files to ${event.title}.`,
                 existingFileIds: timelineEvidenceFiles(event).map(file => file.id),
-                onSave: ids => archiveSetConnectionsAtomically(ids.map(id => ({ ownerType: 'file', ownerId: id, entityType: 'event', entityId: eventId, shouldLink: true }))),
+                onSave: (ids, context) => archiveSetConnectionsAtomically(context.changes.decisions.map(({ id, linked }) => ({ ownerType: 'file', ownerId: id, entityType: 'event', entityId: eventId, shouldLink: linked }))),
                 afterSave } );
         }));
     root?.querySelectorAll('[data-event-open-file]').forEach(button =>
@@ -9539,7 +9539,7 @@ function bindAddPersonSideCards(options = {}, editPerson = null)
               readAddPersonPhotoIds(),
 
                 onSave:
-              setAddPersonPhotoDraftIds
+              (ids, context) => setAddPersonPhotoDraftIds(rpApplyConnectionChanges(readAddPersonPhotoIds(), context))
             });
         });
 
@@ -9563,17 +9563,14 @@ function bindAddPersonSideCards(options = {}, editPerson = null)
               openNestedModal,
 
                 onSave:
-              fileIds =>
+              (fileIds, context) =>
               {
-                  setAddPersonFileDraftIds([
-                      ...readAddPersonFileIds(),
-                      ...fileIds
-                  ]);
+                  setAddPersonFileDraftIds(rpApplyConnectionChanges(readAddPersonFileIds(), context));
 
                   return {
                       ok: true,
                       addedLinkCount:
-                    fileIds.length
+                    context.changes.addedIds.length
                   };
               },
 

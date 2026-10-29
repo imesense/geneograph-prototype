@@ -25,21 +25,25 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                         draftSourceIds: stateName === 'linked' ? sampleData.sources.filter(source => source.projectId === 'p1').map(source => source.id) : [],
                         onDraftSave: () => true, autoFocusSearch: false });
                 }, { type, stateName });
-                const modal = page.locator(type === 'notes' ? '.note-link-picker-modal' : '.target-source-picker-modal');
+                const modal = page.locator(`[data-resource-picker="${type}"]`);
                 if (stateName === 'search') await modal.locator('input[type="search"]').fill('__no_matching_record__');
                 assert.equal(await modal.locator('[data-note-picker-results-meta],[data-target-source-results-meta]').count(), 0);
-                if (stateName !== 'available') {
+                if (stateName === 'linked') {
+                    assert.ok(await modal.locator('[data-rp-check]:checked').count() > 0);
+                    assert.equal(await modal.locator('[data-rp-check]:not(:checked)').count(), 0);
+                    assert.ok(await modal.locator('[data-rp-action="save"]').isDisabled());
+                } else if (stateName !== 'available') {
                     const layout = await modal.evaluate(modal => {
-                        const results = modal.querySelector('.notes-related-results');
-                        const empty = results.querySelector('.notes-related-empty');
+                        const results = modal.querySelector('.rp-content');
+                        const empty = results.querySelector('.rp-empty');
                         const body = empty.getBoundingClientRect(), region = results.getBoundingClientRect();
                         const footer = modal.querySelector('.modal-footer').getBoundingClientRect();
                         const style = getComputedStyle(empty);
-                        return { fills: body.height >= results.clientHeight - 1 && Math.abs(body.top - region.top) < 1,
+                        return { fills: body.height >= results.clientHeight - 21 && Math.abs(body.top - region.top) < 1,
                             solid: style.borderTopStyle === 'solid', background: style.backgroundColor,
                             expectedBackground: getComputedStyle(document.documentElement).getPropertyValue('--surface-main').trim(),
-                            heading: getComputedStyle(empty.querySelector('strong')).fontSize,
-                            description: getComputedStyle(empty.querySelector('span')).fontSize,
+                            heading: getComputedStyle(empty.querySelector('h3')).fontSize,
+                            description: getComputedStyle(empty.querySelector('p')).fontSize,
                             footerFits: footer.bottom <= innerHeight + 1,
                             overflow: modal.scrollWidth > modal.clientWidth };
                     });
@@ -48,9 +52,9 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                     assert.equal(layout.heading, '16px'); assert.equal(layout.description, '14px');
                     assert.equal(layout.footerFits, true); assert.equal(layout.overflow, false);
                 } else {
-                    const choice = modal.locator(type === 'notes' ? '[data-note-picker-choice]:not(:disabled)' : '[data-target-source-choice]:not(:disabled)').first();
+                    const choice = modal.locator('[data-rp-check]').first();
                     await choice.click();
-                    const count = modal.locator(type === 'notes' ? '[data-note-picker-count]' : '[data-target-source-count]');
+                    const count = modal.locator('.rp-selected');
                     assert.match(await count.innerText(), /1/);
                     assert.equal(await modal.locator('[data-note-picker-results-meta],[data-target-source-results-meta]').count(), 0);
                 }

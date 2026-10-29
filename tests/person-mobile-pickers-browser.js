@@ -55,11 +55,11 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
                     }, kind);
                     const modal = page.locator('#modalBackdrop.open .modal');
                     assert.ok(await modal.isVisible());
-                    await page.waitForFunction(() => document.activeElement?.classList.contains('close-button'));
+                    await page.waitForFunction(() => document.activeElement?.matches('[data-rp-heading]'));
                     assert.ok(await modal.evaluate(element =>
                     {
                         const rect = element.getBoundingClientRect();
-                        const results = element.querySelector('.connected-files-results,.notes-related-results');
+                        const results = element.querySelector('.rp-content');
                         const footer = element.querySelector('.modal-footer,.notes-related-footer').getBoundingClientRect();
                         return rect.left >= 0 && rect.right <= innerWidth + 1
                             && rect.top >= 0 && rect.bottom <= innerHeight + 1
@@ -70,7 +70,7 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
                     const search = modal.locator('input[type="search"]').first();
                     if (kind === 'files')
                     {
-                        await modal.locator('[data-connected-files-add-new]').click();
+                        await modal.locator('[data-rp-action="create"]').click();
                         assert.ok(await page.locator('.archive-document-import').isVisible());
                         await page.locator('.archive-document-import [data-close]').first().click();
                         assert.ok(await modal.isVisible());
@@ -78,19 +78,19 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
                     else
                     {
                         const choice = modal.locator(kind === 'notes'
-                            ? '[data-note-picker-choice]:not(:disabled)'
-                            : '[data-target-source-choice]:not(:disabled)').first();
+                            ? '[data-rp-check]'
+                            : '[data-rp-check]').first();
                         await choice.click();
-                        await page.waitForFunction(() => /\b1\b/.test(
-                            document.querySelector('.notes-related-selection-count')?.textContent || ''));
-                        assert.ok(await modal.locator('.notes-related-footer').isVisible());
+                        await page.waitForFunction(() => !document.querySelector('[data-rp-action="save"]').disabled);
+                        assert.ok(await modal.locator('.modal-footer').isVisible());
                         assert.ok(await modal.locator(kind === 'notes'
-                            ? '[data-note-picker-create]' : '[data-target-source-create]').isVisible());
+                            ? '[data-rp-action="create"]' : '[data-rp-action="create"]').isVisible());
                     }
                     await search.click();
                     assert.ok(await search.evaluate(input => document.activeElement === input));
                     await search.fill('family');
                     await page.keyboard.press('Escape');
+                    if (await page.locator('[data-rp-discard]').count()) await page.locator('[data-rp-discard]').click();
                     assert.equal(await page.evaluate(() => mobileSurface), 'details');
                     await page.waitForFunction(() => document.activeElement?.id === 'addRelative');
                 }
@@ -126,19 +126,19 @@ const url = pathToFileURL(path.resolve(__dirname, '../src/index.html')).href;
             render();
             openPersonNotesModal(state.selectedPersonId);
         });
-        await desktop.waitForFunction(() => document.activeElement?.matches('[data-note-picker-search]'));
+        await desktop.waitForFunction(() => document.activeElement?.matches('[data-rp-heading]'));
         await desktop.evaluate(() =>
         {
             closeModal();
             openPersonFilesModal(state.selectedPersonId);
         });
-        await desktop.waitForFunction(() => document.activeElement?.matches('[data-connected-files-search]'));
+        await desktop.waitForFunction(() => document.activeElement?.matches('[data-rp-heading]'));
         await desktop.evaluate(() =>
         {
             closeModal();
             openSourcesForTargetModal({ targetType: 'person', targetId: state.selectedPersonId });
         });
-        await desktop.waitForFunction(() => document.activeElement?.matches('[data-target-source-search]'));
+        await desktop.waitForFunction(() => document.activeElement?.matches('[data-rp-heading]'));
         await desktop.close();
     }
     finally

@@ -15,7 +15,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
         page.on('pageerror', error => errors.push(error.message));
         await page.goto(process.env.GENEO_TEST_URL || 'http://localhost:8765/index.html');
 
-        const result = await page.evaluate(() =>
+        const result = await page.evaluate(async () =>
         {
             if (geneoTourRuntime.active) geneoTourClose({ offerRestore: false });
             activateProject('p1', { moduleName: 'Family Tree' });
@@ -79,16 +79,18 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             const fact = getPerson('silver').attributes.find(record => record.type === 'Research finding');
             const factEventId = `event-${fact.id}`;
             document.querySelector(`[data-event-add-file="${factEventId}"]`).click();
-            const search = document.querySelector('[data-connected-files-search]');
+            const search = document.querySelector('[data-rp-search]');
             search.value = 'pawford_household_register';
             search.dispatchEvent(new Event('input', { bubbles: true }));
-            document.querySelector('[data-connected-files-choice][value="af1"]').click();
-            document.querySelector('[data-connected-files-save]').click();
+            document.querySelector('[data-rp-check="af1"]').click();
+            document.querySelector('[data-rp-action="save"]').click();
+                await new Promise(resolve => setTimeout(resolve, 0));
             document.querySelector(`[data-event-manage-sources="${factEventId}"]`).click();
-            const factSourceChoice = document.querySelector('[data-target-source-choice]:not(:disabled)');
+            const factSourceChoice = document.querySelector('[data-rp-check]');
             const factSourceId = factSourceChoice.value;
             factSourceChoice.click();
-            document.querySelector('[data-target-source-save]').click();
+            document.querySelector('[data-rp-action="save"]').click();
+                await new Promise(resolve => setTimeout(resolve, 0));
             const factLinks = file.linkedEventIds.includes(factEventId)
                 && file.linkedPersonIds.includes('silver')
                 && sourceIdsForTarget('event', factEventId, 'p1').includes(factSourceId)

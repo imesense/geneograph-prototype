@@ -3197,92 +3197,6 @@ function bindPersonPhotosAdderModal()
     );
 }
 
-function openAddPhotosForPersonDraftModal({
-    projectId = currentProjectId(),
-    subjectLabel = 'New person',
-    existingPhotoIds = [],
-    onSave = null
-} = {})
-{
-    if (!projectId || typeof onSave !== 'function')
-    {
-        return;
-    }
-
-    const validExistingIds = [
-        ...new Set(existingPhotoIds || [])
-    ].filter(photoId =>
-        Boolean(
-            getPhoto(photoId, {
-                projectId
-            })
-        )
-    );
-
-    resetPersonPhotosAdderState();
-
-    Object.assign(
-        state.personPhotosAdder,
-        {
-            open: true,
-            nested: true,
-            personId: null,
-            sourceTab:
-            getProjectPhotos(projectId).length
-                ? 'project'
-                : 'upload',
-
-            draftTarget: {
-                existingPhotoIds:
-              validExistingIds,
-
-                onSave,
-
-                person: {
-                    id: '',
-                    projectId,
-                    names: {
-                        display: subjectLabel
-                    }
-                }
-            }
-        }
-    );
-
-    renderPersonPhotosAdderModal();
-}
-
-function openAddPhotosToPersonModal(
-    personId
-)
-{
-    const person =
-        getPerson(personId);
-
-    if (!person)
-    {
-        return;
-    }
-
-    resetPersonPhotosAdderState();
-
-    Object.assign(
-        state.personPhotosAdder,
-        {
-            open: true,
-            personId: person.id,
-
-            sourceTab:
-            getProjectPhotos(
-                person.projectId
-            ).length
-                ? 'project'
-                : 'upload'
-        }
-    );
-
-    renderPersonPhotosAdderModal();
-}
 
 function renderAfterPersonPrimaryPhotoChange()
 {
@@ -9080,7 +8994,9 @@ function openPhotoUnlinkConfirm({
     photo,
     contextLabel,
     primaryPhoto = false,
-    onConfirm
+    onConfirm,
+    onCancel = null,
+    modalOpener = openModal
 })
 {
     if (!photo || typeof onConfirm !== 'function') return;
@@ -9100,7 +9016,7 @@ function openPhotoUnlinkConfirm({
         ? 'Это фото также перестанет быть основным фото человека.'
         : 'This will also clear the person’s primary photo.';
 
-    openModal(`
+    modalOpener(`
         <div
           class="modal"
           role="dialog"
@@ -9144,11 +9060,24 @@ function openPhotoUnlinkConfirm({
         </div>
       `);
 
+    const confirmation = modalBackdrop.querySelector('[data-confirm-photo-unlink]')?.closest('.modal');
+    let confirmed = false;
+    if (onCancel && confirmation)
+    {
+        const observer = new MutationObserver(() =>
+        {
+            if (confirmation.isConnected) return;
+            observer.disconnect();
+            if (!confirmed) onCancel();
+        });
+        observer.observe(modalBackdrop, { childList: true, subtree: true });
+    }
     modalBackdrop
         .querySelector('[data-confirm-photo-unlink]')
         ?.addEventListener('click', event =>
         {
             event.currentTarget.disabled = true;
+            confirmed = true;
             closeModal();
             onConfirm();
         }, { once: true });

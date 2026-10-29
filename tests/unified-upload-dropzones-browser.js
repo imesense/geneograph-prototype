@@ -20,10 +20,10 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                     closeModal({ force: true });
                     if (scope === 'albums') openAddPhotosModal();
                     if (scope === 'files') openArchiveDocumentImport();
-                    if (scope === 'person') { openAddPhotosToPersonModal('silver'); document.querySelector('[data-person-photos-adder-tab="upload"]')?.click(); }
+                    if (scope === 'person') { openAddPhotosToPersonModal('silver'); document.querySelector('[data-rp-action="create"]')?.click(); }
                     if (scope === 'notes') {
                         state.selectedNoteId = sampleData.notes.find(note => note.projectId === 'p1' && !note.deleted).id;
-                        openNotesPhotosModal(); document.querySelector('[data-notes-photos-adder-tab="upload"]')?.click();
+                        openNotesPhotosModal(); document.querySelector('[data-rp-action="create"]')?.click();
                     }
                 }, scope);
                 const zone = page.locator('.modal-backdrop .upload-dropzone');

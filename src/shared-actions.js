@@ -2281,6 +2281,8 @@ function openNestedModal(html)
         return;
     }
 
+    const activeElement = document.activeElement instanceof HTMLElement
+        ? document.activeElement : null;
     const content =
         document.createDocumentFragment();
 
@@ -2295,10 +2297,7 @@ function openNestedModal(html)
         content,
         beforeClose: modalBackdrop.beforeClose,
         afterClose: modalBackdrop.afterClose,
-        activeElement:
-          document.activeElement instanceof HTMLElement
-              ? document.activeElement
-              : null
+        activeElement
     });
 
     openModal(html);
@@ -2631,6 +2630,7 @@ function closeModal(options = {})
     if (nestedModalFrames.length)
     {
         restoreNestedModalFrame();
+        cancelledPlaceEditorCompletion?.onCancel?.();
         return;
     }
 
@@ -2669,7 +2669,7 @@ function closeModal(options = {})
                     ?.isConnected
             )
             {
-                if (!escapeDismissed && (lastInteractionWasKeyboard || !returnTarget.closest?.('.tool-split')))
+                if ((!escapeDismissed || !returnTarget.closest?.('.tool-split')) && (lastInteractionWasKeyboard || !returnTarget.closest?.('.tool-split')))
                     returnTarget.focus({ preventScroll: true });
             }
 
