@@ -1260,7 +1260,7 @@
         var(--radius-sm);
 
     background:
-        var(--surface-input);
+        transparent;
 
     overflow: hidden;
 

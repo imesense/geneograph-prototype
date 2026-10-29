@@ -60,7 +60,7 @@
 .archive-image-workspace [data-av-action="next"] svg { transform: rotate(180deg); }
 .archive-image-workspace button[data-av-action="details"] { display: none; }
 .archive-image-workspace :is(button, input, [tabindex]):focus-visible { outline: 2px solid var(--brand-green-300); outline-offset: -2px; }
-.archive-image-stage { position: relative; min-height: 100px; min-width: 0; flex: 1 1 0; overflow: hidden; background: var(--surface-app); touch-action: none; cursor: grab; }
+.archive-image-stage { position: relative; min-height: 100px; min-width: 0; flex: 1 1 0; overflow: hidden; background: transparent; touch-action: none; cursor: grab; }
 .archive-image-stage:active { cursor: grabbing; }
 .archive-image-stage > img { position: absolute; top: 0; left: 0; max-width: none; max-height: none; user-select: none; pointer-events: none; }
 .archive-image-workspace .archive-image-stage > button:not(.button) { position: absolute; top: 50%; z-index: 4; transform: translateY(-50%); width: 44px; height: 44px; border-color: var(--border-default); border-radius: 6px; background: var(--surface-card); color: var(--text-primary); }

@@ -1324,9 +1324,6 @@ function validateSampleData()
         if (!Number.isFinite(photo.width) || photo.width <= 0) warn(`Media ${photo.id} has invalid width`);
         if (!Number.isFinite(photo.height) || photo.height <= 0) warn(`Media ${photo.id} has invalid height`);
         if (!Number.isFinite(photo.sizeBytes) || photo.sizeBytes < 0) warn(`Media ${photo.id} has invalid sizeBytes`);
-        if (!PHOTO_ABSTRACT_PATTERNS.includes(photo.placeholder?.pattern)) warn(`Media ${photo.id} has invalid placeholder pattern`);
-        if (!PHOTO_ABSTRACT_PALETTES.includes(photo.placeholder?.palette)) warn(`Media ${photo.id} has invalid placeholder palette`);
-        if (!Number.isInteger(photo.placeholder?.seed) || photo.placeholder.seed <= 0) warn(`Media ${photo.id} has invalid placeholder seed`);
         ['createdAt', 'updatedAt'].forEach(field =>
         {
             if (!Number.isFinite(Date.parse(photo[field] || ''))) warn(`Media ${photo.id} has invalid ${field}`);

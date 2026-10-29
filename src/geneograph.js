@@ -22902,11 +22902,7 @@ function geneoImageUploadDraftAsPhoto(draft)
         width: draft.width,
         height: draft.height,
         sizeBytes: draft.sizeBytes,
-        placeholder: {
-            pattern: 'archive',
-            palette: 'moss',
-            seed: draft.seed || 1
-        }
+
     };
 }
 

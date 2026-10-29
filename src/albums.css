@@ -374,7 +374,7 @@
     height: var(--albums-row-preview-height, 184px);
     min-height: 0;
     overflow: hidden;
-    background: var(--surface-input);
+    background: transparent;
 }
 
 /* Shared media thumbnail */
@@ -389,7 +389,7 @@
     display: block;
     overflow: hidden;
 
-    background: #1d2320;
+    background: transparent;
     color: var(--text-primary);
 }
 
@@ -405,37 +405,10 @@
     object-fit: cover;
 }
 
-.photo-thumbnail .thumb-img-backdrop {
-    position: absolute;
-    z-index: 1;
-    inset: -24px;
+.photo-thumbnail-fallback { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; padding:8px; text-align:center; color:var(--text-secondary); font-size:12px; }
+.photo-thumbnail-fallback[hidden] { display:none; }
+.photo-thumbnail-fallback svg { width:24px; height:24px; flex:none; }
 
-    width: calc(100% + 48px);
-    height: calc(100% + 48px);
-
-    display: block;
-    object-fit: cover;
-
-    filter:
-        blur(20px) saturate(.72) brightness(.48);
-
-    transform:
-        scale(1.04);
-
-    opacity: .94;
-
-    pointer-events: none;
-    user-select: none;
-}
-
-/*
-* Once a real background exists, the
-* unrelated abstract artwork must not
-* remain visible behind it.
-*/
-.photo-thumbnail.has-image-backdrop .photo-abstract {
-    visibility: hidden;
-}
 
 /* Shared connected-photo preview */
 .connected-photo-grid {
@@ -457,7 +430,7 @@
     border-radius: var(--radius-sm);
     overflow: hidden;
 
-    background: var(--surface-card);
+    background: transparent;
     cursor: pointer;
 
     transition:
@@ -467,7 +440,7 @@
 
 .connected-photo-button:hover {
     border-color: var(--border-strong);
-    background: var(--surface-card-hover);
+    background: transparent;
 }
 
 .connected-photo-button:focus-visible {
@@ -621,7 +594,7 @@
 }
 
 .person-avatar.has-photo {
-    background: var(--surface-input);
+    background: transparent;
 }
 
 .person-avatar-initials {
@@ -681,7 +654,7 @@
     position: relative;
     width: 100%;
     overflow: hidden;
-    background: #101513;
+    background: transparent;
     border: 1px solid var(--border-strong);
     border-radius: var(--radius-sm);
     touch-action: none;
@@ -1056,7 +1029,7 @@
     position: relative;
     min-width: 0;
     overflow: hidden;
-    background: var(--surface-input);
+    background: transparent;
 }
 
 .person-photo-candidate-preview>.photo-thumbnail {
@@ -1585,7 +1558,7 @@
     overflow: hidden;
     margin: auto;
     border: 1px solid rgba(255, 255, 255, .12);
-    background: var(--surface-input);
+    background: transparent;
 }
 
 .person-photo-preview-avatar.tree {
@@ -1685,201 +1658,6 @@
     }
 }
 
-.photo-abstract {
-    --abstract-a: #20352d;
-    --abstract-b: #4d8067;
-    --abstract-c: #c7c29b;
-    position: absolute;
-    inset: 0;
-    overflow: hidden;
-    background: linear-gradient(var(--photo-abstract-angle), color-mix(in srgb, var(--abstract-a) 88%, #000), var(--abstract-b));
-}
-
-.photo-abstract.palette-moss {
-    --abstract-a: #18372b;
-    --abstract-b: #4f8e68;
-    --abstract-c: #c7c78d;
-}
-
-.photo-abstract.palette-plum {
-    --abstract-a: #332746;
-    --abstract-b: #8b627e;
-    --abstract-c: #d4b893;
-}
-
-.photo-abstract.palette-amber {
-    --abstract-a: #46331f;
-    --abstract-b: #b48345;
-    --abstract-c: #e0c28a;
-}
-
-.photo-abstract.palette-mono {
-    --abstract-a: #222725;
-    --abstract-b: #737a76;
-    --abstract-c: #d8d6cb;
-}
-
-.photo-abstract.palette-sea {
-    --abstract-a: #16323b;
-    --abstract-b: #4b8790;
-    --abstract-c: #b6cfbd;
-}
-
-.photo-abstract.palette-rose {
-    --abstract-a: #452b35;
-    --abstract-b: #a86870;
-    --abstract-c: #d8b59f;
-}
-
-.photo-abstract-layer {
-    position: absolute;
-    display: block;
-    opacity: .86;
-    transform-origin: center;
-}
-
-.photo-abstract.pattern-orbit .one {
-    width: 62%;
-    aspect-ratio: 1;
-    left: calc(var(--photo-abstract-x) - 31%);
-    top: calc(var(--photo-abstract-y) - 31%);
-    border: clamp(10px, 8cqi, 42px) solid color-mix(in srgb, var(--abstract-c) 82%, transparent);
-    border-radius: 50%;
-}
-
-.photo-abstract.pattern-orbit .two {
-    width: 34%;
-    aspect-ratio: 1;
-    right: -8%;
-    bottom: -8%;
-    border-radius: 50%;
-    background: var(--abstract-a);
-}
-
-.photo-abstract.pattern-orbit .three {
-    inset: 18% 42% 18% 44%;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--abstract-b) 45%, var(--abstract-c));
-    transform: rotate(var(--photo-abstract-angle));
-}
-
-.photo-abstract.pattern-bands .one,
-.photo-abstract.pattern-bands .two,
-.photo-abstract.pattern-bands .three {
-    width: 140%;
-    height: 24%;
-    left: -20%;
-    border-radius: 999px;
-    transform: rotate(var(--photo-abstract-angle));
-}
-
-.photo-abstract.pattern-bands .one {
-    top: 4%;
-    background: var(--abstract-c);
-}
-
-.photo-abstract.pattern-bands .two {
-    top: 38%;
-    background: var(--abstract-a);
-}
-
-.photo-abstract.pattern-bands .three {
-    bottom: 2%;
-    background: color-mix(in srgb, var(--abstract-b) 55%, var(--abstract-c));
-}
-
-.photo-abstract.pattern-window .one {
-    inset: 12% 16%;
-    border: clamp(8px, 5cqi, 28px) solid color-mix(in srgb, var(--abstract-c) 75%, transparent);
-    transform: rotate(var(--photo-abstract-angle));
-}
-
-.photo-abstract.pattern-window .two {
-    inset: 29% 33%;
-    background: var(--abstract-a);
-    transform: rotate(-14deg);
-}
-
-.photo-abstract.pattern-window .three {
-    width: 65%;
-    height: 18%;
-    left: 42%;
-    top: 18%;
-    background: var(--abstract-b);
-    transform: rotate(calc(var(--photo-abstract-angle) + 34deg));
-}
-
-.photo-abstract.pattern-fold .one {
-    inset: -22% 43% 18% -10%;
-    background: var(--abstract-c);
-    clip-path: polygon(0 0, 100% 18%, 62% 100%, 0 72%);
-}
-
-.photo-abstract.pattern-fold .two {
-    inset: 28% -12% -15% 25%;
-    background: var(--abstract-a);
-    clip-path: polygon(25% 0, 100% 24%, 100% 100%, 0 78%);
-}
-
-.photo-abstract.pattern-fold .three {
-    width: 23%;
-    height: 130%;
-    left: var(--photo-abstract-x);
-    top: -15%;
-    background: color-mix(in srgb, var(--abstract-b) 35%, var(--abstract-c));
-    transform: rotate(var(--photo-abstract-angle));
-}
-
-.photo-abstract.pattern-halo .one {
-    width: 88%;
-    aspect-ratio: 1;
-    left: calc(var(--photo-abstract-x) - 44%);
-    top: calc(var(--photo-abstract-y) - 44%);
-    border-radius: 50%;
-    box-shadow: inset 0 0 0 clamp(12px, 10cqi, 54px) color-mix(in srgb, var(--abstract-c) 70%, transparent), inset 0 0 0 clamp(28px, 20cqi, 100px) color-mix(in srgb, var(--abstract-a) 58%, transparent);
-}
-
-.photo-abstract.pattern-halo .two {
-    width: 28%;
-    aspect-ratio: 1;
-    right: 12%;
-    top: 14%;
-    border-radius: 50%;
-    background: var(--abstract-c);
-}
-
-.photo-abstract.pattern-halo .three {
-    width: 65%;
-    height: 16%;
-    right: -12%;
-    bottom: 12%;
-    background: var(--abstract-a);
-    transform: rotate(var(--photo-abstract-angle));
-}
-
-.photo-abstract.pattern-archive .one {
-    inset: 10% 12%;
-    border: 1px solid color-mix(in srgb, var(--abstract-c) 65%, transparent);
-    background: repeating-linear-gradient(0deg, transparent 0 13%, color-mix(in srgb, var(--abstract-c) 34%, transparent) 13% 14%);
-    transform: rotate(3deg);
-}
-
-.photo-abstract.pattern-archive .two {
-    width: 36%;
-    height: 72%;
-    left: var(--photo-abstract-x);
-    top: 14%;
-    background: color-mix(in srgb, var(--abstract-a) 64%, transparent);
-}
-
-.photo-abstract.pattern-archive .three {
-    width: 54%;
-    height: 22%;
-    right: -10%;
-    bottom: 8%;
-    background: var(--abstract-c);
-    transform: rotate(-20deg);
-}
 
 .albums-check,
 .albums-fav-button,
@@ -2408,7 +2186,7 @@
     padding: 0;
     border: 1px solid var(--border-default);
     border-radius: var(--radius-sm);
-    background: var(--surface-input);
+    background: transparent;
     color: inherit;
     display: block;
     overflow: hidden;
@@ -3232,7 +3010,7 @@ button.albums-inspector-row-main:focus-visible {
         var(--radius-sm);
 
     background:
-        var(--surface-input);
+        transparent;
 
     display: grid;
     place-items: center;

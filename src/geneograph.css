@@ -4476,9 +4476,6 @@ html[lang="ru"] .geneo-node-person[data-geneo-person-card-style="standard"] .gen
     background: transparent;
 }
 
-.geneo-image-node-media .photo-abstract {
-    display: none;
-}
 
 .geneo-image-node-media .thumb-img {
     object-fit: contain;

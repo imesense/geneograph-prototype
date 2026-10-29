@@ -536,134 +536,18 @@ function buildJustifiedPhotoRows(photos, containerWidth, options = {})
     return rows;
 }
 
-const PHOTO_ABSTRACT_PATTERNS = Object.freeze(['orbit', 'bands', 'window', 'fold', 'halo', 'archive']);
-const PHOTO_ABSTRACT_PALETTES = Object.freeze(['moss', 'plum', 'amber', 'mono', 'sea', 'rose']);
-
-function photoAbstractModel(photo)
+function renderPhotoThumbnail(photo, options = {})
 {
-    const placeholder = photo?.placeholder || {};
-    const seed = Number.isInteger(placeholder.seed) && placeholder.seed > 0
-        ? placeholder.seed
-        : [...String(photo?.id || 'photo')].reduce((total, character) => total + character.charCodeAt(0), 0);
-    const pattern = PHOTO_ABSTRACT_PATTERNS.includes(placeholder.pattern)
-        ? placeholder.pattern
-        : PHOTO_ABSTRACT_PATTERNS[seed % PHOTO_ABSTRACT_PATTERNS.length];
-    const palette = PHOTO_ABSTRACT_PALETTES.includes(placeholder.palette)
-        ? placeholder.palette
-        : PHOTO_ABSTRACT_PALETTES[seed % PHOTO_ABSTRACT_PALETTES.length];
-    return {
-        pattern,
-        palette,
-        rotation: (seed * 29) % 180,
-        offsetX: 18 + ((seed * 17) % 64),
-        offsetY: 16 + ((seed * 23) % 68)
-    };
-}
-
-function renderPhotoAbstract(photo)
-{
-    const model = photoAbstractModel(photo);
-    return `<span class="photo-abstract pattern-${escapeHtml(model.pattern)} palette-${escapeHtml(model.palette)}" style="--photo-abstract-angle:${model.rotation}deg;--photo-abstract-x:${model.offsetX}%;--photo-abstract-y:${model.offsetY}%" aria-hidden="true"><span class="photo-abstract-layer one"></span><span class="photo-abstract-layer two"></span><span class="photo-abstract-layer three"></span></span>`;
-}
-
-function renderPhotoThumbnail(
-    photo,
-    options = {}
-)
-{
-    if (!photo)
-    {
-        return '';
-    }
-
-    const className = [
-        'photo-thumbnail',
-        options.className || ''
-    ]
-        .filter(Boolean)
-        .join(' ');
-
-    const label =
-        options.label
-        || photo.title
-        || photo.filename
-        || 'Photo';
-
-    const src =
-        typeof photo.src === 'string'
-            ? photo.src.trim()
-            : '';
-
-    const useBackdrop =
-        Boolean(
-            src
-          && options.backdrop
-        );
-
-    return `
-        <span
-          class="${escapeHtml(
-                className
-            )}${src ? ' has-image' : ''}${
-                useBackdrop
-                    ? ' has-image-backdrop'
-                    : ''
-            }"
-          data-photo-thumbnail
-          role="img"
-          aria-label="${escapeHtml(label)}">
-
-          ${renderPhotoAbstract(photo)}
-
-          ${
-                useBackdrop
-                    ? `
-                <img
-                  class="
-                    thumb-img-backdrop
-                  "
-                  src="${escapeHtml(src)}"
-                  alt=""
-                  aria-hidden="true"
-                  loading="lazy"
-                  draggable="false">
-              `
-                    : ''
-            }
-
-          ${
-                src
-                    ? `
-                <img
-                  class="thumb-img"
-                  src="${escapeHtml(src)}"
-                  alt=""
-                  loading="lazy"
-                  draggable="false"
-                  onerror="
-                    const root =
-                      this.closest(
-                        '[data-photo-thumbnail]'
-                      );
-
-                    root?.classList.remove(
-                      'has-image',
-                      'has-image-backdrop'
-                    );
-
-                    root
-                      ?.querySelector(
-                        '.thumb-img-backdrop'
-                      )
-                      ?.remove();
-
-                    this.remove();
-                  ">
-              `
-                    : ''
-            }
-        </span>
-      `;
+    if (!photo) return '';
+    const className = ['photo-thumbnail', options.className || ''].filter(Boolean).join(' ');
+    const label = options.label || photo.title || photo.filename || 'Photo';
+    const src = typeof photo.src === 'string' ? photo.src.trim() : '';
+    return `<span class="${escapeHtml(className)}${src ? ' has-image' : ''}" data-photo-thumbnail data-photo-state="${src ? 'loading' : 'missing'}" role="img" aria-label="${escapeHtml(label)}">
+        <span class="photo-thumbnail-fallback" ${src ? 'hidden' : ''}>${icon.image}<span>${escapeHtml(t('Image unavailable'))}</span></span>
+        ${src ? `<img class="thumb-img" src="${escapeHtml(src)}" alt="" loading="lazy" decoding="async" draggable="false"
+          onload="this.closest('[data-photo-thumbnail]').dataset.photoState='loaded'"
+          onerror="const root=this.closest('[data-photo-thumbnail]');root.classList.remove('has-image');root.dataset.photoState='missing';root.querySelector('.photo-thumbnail-fallback').hidden=false;this.remove();">` : ''}
+    </span>`;
 }
 
 const PERSON_PHOTO_CROP_DEFAULT = Object.freeze({

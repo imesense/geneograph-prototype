@@ -677,7 +677,7 @@ function personPhotoUploadDraftAsPhoto(draft = state.personPhotoPicker?.uploadDr
         width: draft.width,
         height: draft.height,
         sizeBytes: draft.sizeBytes,
-        placeholder: { pattern: 'orbit', palette: 'moss', seed: 97 },
+
         personIds: [],
         albumIds: [],
         date: emptyGenealogyDate('Exact date'),
@@ -1397,12 +1397,6 @@ async function createPhotoUploadDraft(
               file
           ),
 
-        seed:
-          Math.max(
-              1,
-              Date.now() % 100000
-          ),
-
         file,
         src,
 
@@ -1539,33 +1533,7 @@ function createMediaFromPhotoUpload({
         sizeBytes:
           draft.sizeBytes,
 
-        placeholder: {
-            pattern:
-            PHOTO_ABSTRACT_PATTERNS[
-                (
-                    sampleData.media.length
-                + 1
-                )
-              % PHOTO_ABSTRACT_PATTERNS
-                  .length
-            ],
 
-            palette:
-            PHOTO_ABSTRACT_PALETTES[
-                (
-                    sampleData.media.length
-                + 2
-                )
-              % PHOTO_ABSTRACT_PALETTES
-                  .length
-            ],
-
-            seed:
-            Math.max(
-                1,
-                Date.now() % 100000
-            )
-        },
 
         personIds:
           [
@@ -2017,11 +1985,7 @@ function personPhotosAdderDraftAsPhoto(
         height: draft.height,
         sizeBytes: draft.sizeBytes,
 
-        placeholder: {
-            pattern: 'orbit',
-            palette: 'moss',
-            seed: draft.seed || 97
-        },
+
 
         personIds:
           person?.id
@@ -5945,10 +5909,7 @@ function renderAlbumsPhotoHero(
 
                     label:
                   photo.title
-                  || photo.filename,
-
-                    backdrop:
-                  true
+                  || photo.filename
                 }
             )}
             <span class="albums-face-highlight" data-albums-face-highlight hidden aria-hidden="true"></span>
@@ -6813,7 +6774,7 @@ function renderAlbumsDetailPane()
                 )
             )}
           <div class="albums-face-floating-preview" data-albums-face-floating hidden aria-hidden="true">
-            ${renderPhotoThumbnail(photo, { className: 'albums-detail-preview', label: photo.title || photo.filename, backdrop: true })}
+            ${renderPhotoThumbnail(photo, { className: 'albums-detail-preview', label: photo.title || photo.filename })}
             <span class="albums-face-highlight" data-albums-face-highlight></span>
           </div>
         </aside>
