@@ -41,6 +41,35 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 }, kind);
                 const root = page.locator(`[data-resource-picker="${kind}"]`);
                 await page.waitForFunction(() => document.activeElement?.matches('[data-rp-heading]'));
+                assert.equal(await page.locator('.rp-sort [data-rp-sort]').count(), 1);
+                await page.locator('.rp-sort-trigger').click();
+                await page.locator('.rp-sort-menu [data-sort-value="updated"]').click();
+                assert.equal(await page.locator('[data-rp-sort]').inputValue(), 'updated');
+                await page.locator('.rp-sort-trigger').click();
+                await page.locator('.rp-sort-menu [data-sort-value="name"]').click();
+                const toolbarStyles = await page.locator('.rp-toolbar').evaluate(toolbar => [...toolbar.children].map(element =>
+                {
+                    const style = getComputedStyle(element);
+                    return [style.backgroundColor, style.borderTopColor, style.borderRadius, element.getBoundingClientRect().height];
+                }));
+                toolbarStyles.forEach(style => assert.deepEqual(style, toolbarStyles[0], 'Toolbar surfaces and dimensions match'));
+                if (kind === 'files')
+                {
+                    const geometry = () => page.locator('.rp-content').evaluate(element => element.getBoundingClientRect().top);
+                    const initialTop = await geometry();
+                    await page.locator('.rp-content [data-rp-scope^="folder:"]').first().click();
+                    const breadcrumbCenters = await page.locator('.rp-path').evaluate(path => [...path.children].map(element =>
+                    {
+                        const rect = element.getBoundingClientRect();
+                        return rect.top + rect.height / 2;
+                    }));
+                    assert.ok(Math.max(...breadcrumbCenters) - Math.min(...breadcrumbCenters) < 1, 'Breadcrumb items share a vertical center');
+                    assert.equal(await geometry(), initialTop, 'Folder navigation keeps results position stable');
+                    assert.equal(await page.locator('.rp-path').evaluate(element => element.getBoundingClientRect().height), 48);
+                    await page.locator('.rp-path [data-rp-scope="all"]').click();
+                    assert.equal(await geometry(), initialTop);
+                    assert.ok(await page.locator('.rp-record-icon .archive-file-icon').count());
+                }
                 assert.ok(await root.evaluate(element => element.scrollWidth <= element.clientWidth + 1));
                 const before = await root.locator('[data-rp-check]').count();
                 if (kind === 'photos')
@@ -128,6 +157,11 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 if (await root.locator('[data-rp-action^="preview:"]').count())
                 {
                     await root.locator('[data-rp-action^="preview:"]').first().click();
+                    if (kind === 'notes' || kind === 'sources')
+                    {
+                        await page.screenshot({ path: path.join(output, `${kind}-preview-${width}-${language}.png`) });
+                        assert.equal(await root.locator(kind === 'notes' ? '.rp-note-preview' : '.rp-source-preview').count(), 1);
+                    }
                     if (kind === 'photos') await page.screenshot({ path: path.join(output, `preview-${width}-${language}.png`) });
                     assert.equal(await root.locator('.rp-toolbar').isVisible(), false);
                     await root.locator('.rp-footer-actions [data-rp-action="close"]').click();
@@ -139,7 +173,11 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                     await page.locator('.rp-discard-modal').waitFor();
                     await page.locator('[data-rp-discard]').click();
                 }
-                else await root.locator('.rp-footer-actions [data-rp-action="close"]').click();
+                else
+                {
+                    if (kind === 'places') assert.equal(await root.locator('[data-rp-action^="preview:"]').count(), 0);
+                    await root.locator('.rp-footer-actions [data-rp-action="close"]').click();
+                }
             }
             await page.evaluate(() =>
             {

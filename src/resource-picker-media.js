@@ -447,7 +447,7 @@
             filters: () => [rpMediaFavoriteFilter(), { key: 'type', label: rpText('File type', 'Тип файла'), type: 'select', options: [{ value: '', label: rpText('All types', 'Все типы') }, ...[...new Set(records().map(archiveFileKind))].map(value => ({ value, label: archiveFileTypeLabel(records().find(file => archiveFileKind(file) === value)) }))] }],
             matchesFilters: (file, values) => (!values.favorite || Boolean(file.favorite)) && (!values.type || archiveFileKind(file) === values.type),
             describe: (file, session) => ({ title: adapter.name(file), description: file.description || '',
-                meta: [connectedFileMeta(file), (session.scopeId === 'all' || session.query.trim()) && archiveFileFolderId(file) ? archiveFolderPath(archiveFileFolderId(file)) : ''].filter(Boolean).join(' · '), icon: icon.file || icon.archive }),
+                meta: [connectedFileMeta(file), (session.scopeId === 'all' || session.query.trim()) && archiveFileFolderId(file) ? archiveFolderPath(archiveFileFolderId(file)) : ''].filter(Boolean).join(' · '), icon: archiveFileIcon(file) }),
             preview: rpFilePreview,
             bindPreview: rpBindFilePreview,
             validate: session => options.validate?.(session) ?? true,

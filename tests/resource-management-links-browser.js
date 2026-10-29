@@ -70,9 +70,10 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             openNotesPlacesModal({ noteId: window.placeLinkFixture.noteId });
         });
         const countries = await page.locator('.rp-country-heading').allTextContents();
-        assert.ok(countries.includes('Verifiedland'));
+        assert.equal(countries.includes('Verifiedland'), false);
         assert.ok(countries.includes('Other places'));
-        assert.equal(countries.includes('Guessedland'), false);
+        assert.ok(countries.includes('Guessedland'));
+        assert.deepEqual(countries, await page.evaluate(() => [...new Set(sampleData.places.filter(place => place.projectId === 'p1' && !place.deleted).map(place => placeCountry(place)))].sort((a, b) => a.localeCompare(b, 'en'))));
         await page.evaluate(() => closeModal({ force: true }));
         await page.evaluate(() =>
         {

@@ -60,7 +60,7 @@ function rpCreateNoteForm(session, projectId)
               <button type="button" class="close-button" data-close aria-label="${label('Close', 'Закрыть')}">${icon.close}</button></div>
             <div class="modal-body form-grid" style="display:flex;flex-direction:column;min-height:0">
               <div class="field"><label for="rpNoteTitle">${label('Title', 'Название')}</label><input class="input" id="rpNoteTitle" name="title" required maxlength="500" autocomplete="off"></div>
-              <div class="field" style="display:flex;flex:1;flex-direction:column;min-height:0"><label for="rpNoteBody">${label('Note body', 'Текст заметки')}</label>
+              <div class="field rp-note-body-field" style="display:flex;flex:1;flex-direction:column;min-height:0"><label for="rpNoteBody">${label('Note body', 'Текст заметки')}</label>
                 ${typeof window.Quill === 'function' ? renderRichTextToolbar({ id: 'rpNoteToolbar', ariaLabel: rpText('Note formatting', 'Форматирование заметки') }) : ''}
                 <div data-rp-note-rich hidden style="flex:1;min-height:180px"></div><textarea class="input" style="flex:1" id="rpNoteBody" name="body" rows="10"></textarea></div>
               <p data-rp-note-error role="alert" hidden></p>
@@ -148,8 +148,7 @@ function rpOpenNotePicker(options = {})
                     .map(collection => localizedDataFieldValue(collection.name)).join(', ') : ''].filter(Boolean).join(' · '),
             icon: icon.note }),
         rank: (note, query, session) => Number(options.getSuggestionScore?.(note, query, session) || 0),
-        preview: note => rpRecordPreview(adapter.name(note), [],
-            `<div class="ql-editor">${renderRichTextDeltaHtml(note.bodyDelta, localizedNoteBodyText(note.body || ''))}</div>`),
+        preview: note => `<article class="rp-note-preview"><h3>${escapeHtml(adapter.name(note))}</h3><div class="rp-note-prose">${renderRichTextDeltaHtml(note.bodyDelta, localizedNoteBodyText(note.body || ''))}</div></article>`,
         create: session => rpCreateNoteForm(session, projectId),
         validate: () => rpRecordProjectValid(projectId) || rpRecordUnavailable(),
         commit: (ids, context = {}) =>
@@ -201,8 +200,17 @@ function rpOpenSourcePicker(options = {})
         matchesFilters: (source, values) => Boolean((!values.provider || provider(source) === values.provider) && (!values.favorite || source.favorite)),
         describe: source => ({ title: adapter.name(source), description: provider(source) === String(source.title || '').trim() ? '' : provider(source),
             meta: [localizedSourceCategoryLabel(source.category, ''), source.reference].filter(Boolean).join(' · '), icon: icon.source || icon.archive }),
-        preview: source => rpRecordPreview(adapter.name(source), [...new Set([provider(source), source.location, source.reference, source.url, source.notes].filter(Boolean))]
-            .filter(line => line !== source.title)),
+        preview: source =>
+        {
+            const fields = [[rpText('Provider', 'Поставщик'), provider(source)], [rpText('Location', 'Местоположение'), source.location], [rpText('Reference', 'Шифр'), source.reference], ['URL', source.url]];
+            const rows = fields.filter(([, value]) => value && value !== source.title).map(([label, value]) =>
+            {
+                let validUrl = false;
+                try { validUrl = label === 'URL' && ['http:', 'https:'].includes(new URL(value).protocol); } catch (_) { /* Plain text reference. */ }
+                return `<dt>${escapeHtml(label)}</dt><dd>${validUrl ? `<a href="${escapeHtml(value)}" target="_blank" rel="noopener noreferrer">${escapeHtml(value)}</a>` : escapeHtml(value)}</dd>`;
+            }).join('');
+            return `<article class="rp-source-preview"><header><span aria-hidden="true">${icon.source || icon.archive}</span><div><h3>${escapeHtml(adapter.name(source))}</h3><p>${escapeHtml(localizedSourceCategoryLabel(source.category, ''))}</p></div></header>${rows ? `<dl>${rows}</dl>` : ''}${source.notes ? `<section><h4>${rpText('Notes', 'Заметки')}</h4><p>${escapeHtml(source.notes)}</p></section>` : ''}</article>`;
+        },
         create: session => session.openEditor(modalOpener => openArchiveSourceModal('', {
             modalOpener, targetProjectId: projectId, onCreated: source => session.selectCreated([source.id])
         }), { primaryLabel: 'Create' }),
@@ -283,9 +291,7 @@ function rpOpenPlacePicker(options = {})
         },
         describe: (place, session) => ({ title: placePrimaryName(place), description: placeSecondaryName(place),
             meta: session.query ? placeAlternativeNames(place).filter(name => normalizePlaceLookupText(name).includes(normalizePlaceLookupText(session.query))).join(', ') : '',
-            icon: icon.place || icon.pin }),
-        preview: place => rpRecordPreview(place.name, [placeAlternativeNames(place).join(', '),
-            normalizePlaceCoordinates(place) ? formatPlaceCoordinates(place) : rpText('No coordinates recorded', 'Координаты не указаны')]),
+            icon: icon.mapPin }),
         create: session =>
         {
             if (!rpRecordProjectValid(projectId)) return session.error(rpRecordUnavailable());

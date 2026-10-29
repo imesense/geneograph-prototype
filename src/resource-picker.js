@@ -129,6 +129,45 @@ function openResourcePicker(adapter, options = {})
         <footer class="modal-footer"><div class="rp-selection-summary"><button type="button" class="rp-selected" data-rp-action="selected"></button><span data-rp-changes></span></div><div class="rp-footer-actions"><button type="button" class="button secondary" data-rp-action="close">${rpText('Cancel', 'Отмена')}</button><button type="button" class="button primary" data-rp-action="save">${rpText('Save changes', 'Сохранить изменения')}</button><button type="button" class="button primary" data-rp-action="preview-transfer" hidden></button><button type="button" class="button secondary" data-rp-action="results" hidden>${rpText('Done', 'Готово')}</button></div><span class="sr-only" data-rp-live aria-live="polite"></span></footer>
     </section>`);
     const root = modalBackdrop.querySelector('[data-resource-picker]');
+    const sortSelect = root.querySelector('[data-rp-sort]');
+    const sortControl = document.createElement('div');
+    sortControl.className = 'rp-sort';
+    sortSelect.before(sortControl);
+    sortControl.innerHTML = `${icon.sortLines}<span class="rp-sort-chevron" aria-hidden="true">${icon.chevron}</span>`;
+    sortControl.append(sortSelect);
+    sortSelect.hidden = true;
+    const sortTrigger = document.createElement('button');
+    sortTrigger.type = 'button';
+    sortTrigger.className = 'rp-sort-trigger';
+    sortTrigger.setAttribute('aria-haspopup', 'menu');
+    sortTrigger.setAttribute('aria-expanded', 'false');
+    sortControl.append(sortTrigger);
+    sortTrigger.addEventListener('click', () =>
+    {
+        if (sortTrigger.getAttribute('aria-expanded') === 'true') { closeMenu(); return; }
+        closeMenu();
+        const menu = document.createElement('div');
+        menu.id = 'projectMenu';
+        menu.className = 'menu-popover rp-sort-menu';
+        menu.setAttribute('role', 'menu');
+        menu.setAttribute('aria-label', rpText('Sort', 'Сортировка'));
+        menu.innerHTML = [...sortSelect.options].filter(option => !option.hidden).map(option => `<button type="button" role="menuitemradio" aria-checked="${option.selected}" data-sort-value="${option.value}"><span>${esc(option.textContent)}</span><span aria-hidden="true">${option.selected ? icon.check : ''}</span></button>`).join('');
+        modalBackdrop.append(menu);
+        const rect = sortTrigger.getBoundingClientRect();
+        menu.style.left = `${Math.max(12, Math.min(rect.left, innerWidth - menu.offsetWidth - 12))}px`;
+        menu.style.top = `${rect.bottom + menu.offsetHeight + 6 < innerHeight ? rect.bottom + 6 : Math.max(12, rect.top - menu.offsetHeight - 6)}px`;
+        menu.addEventListener('click', event =>
+        {
+            const option = event.target.closest('[data-sort-value]');
+            if (!option) return;
+            sortSelect.value = option.dataset.sortValue;
+            sortSelect.dispatchEvent(new Event('change', { bubbles: true }));
+            closeMenu();
+            sortTrigger.focus({ preventScroll: true });
+        });
+        bindMenuLifecycle(sortTrigger);
+        menu.querySelector('[aria-checked="true"]')?.focus();
+    });
     root.querySelector('[data-rp-action="filters"]').setAttribute('aria-haspopup', 'dialog');
     root.querySelector('[data-rp-action="filters"]').setAttribute('aria-expanded', 'false');
     session.root = root;
@@ -165,7 +204,11 @@ function openResourcePicker(adapter, options = {})
             session.createdIds.add(String(id));
         });
         session.view = 'results';
+        session.scrolls.set(key(), 0);
         session.render();
+        content.scrollTop = 0;
+        root.querySelector('[data-rp-live]').textContent = ['photos', 'files'].includes(adapter.kind)
+            ? rpText('Uploaded items selected', 'Загруженные материалы выбраны') : rpText('Created item selected', 'Созданная запись выбрана');
     };
     session.openEditor = (launch, editorOptions = {}) =>
     {
@@ -209,7 +252,8 @@ function openResourcePicker(adapter, options = {})
         const detail = adapter.describe(record, session);
         const name = detail.title || adapter.name(record);
         const selected = session.selectedIds.has(id);
-        return `<article class="rp-record ${selected ? 'is-selected' : ''}"><label class="rp-record-select">${detail.imageHtml ? `<div class="rp-thumbnail">${detail.imageHtml}</div>` : `<span class="rp-record-icon">${detail.icon || icon[adapter.kind.slice(0, -1)] || icon.file || ''}</span>`}<span class="rp-record-copy"><strong title="${esc(name)}">${esc(name)}</strong>${detail.description ? `<span class="rp-description">${esc(detail.description)}</span>` : ''}${detail.meta ? `<small>${esc(detail.meta)}</small>` : ''}</span><input type="checkbox" data-rp-check="${esc(id)}" value="${esc(id)}" aria-label="${esc(name)}" ${selected ? 'checked' : ''}></label>${button(`preview:${id}`, icon.eye || icon.search, `${rpText('Preview', 'Просмотр')}: ${name}`)}</article>`;
+        const uploaded = ['photos', 'files'].includes(adapter.kind) && session.createdIds.has(id);
+        return `<article class="rp-record ${selected ? 'is-selected' : ''}"><label class="rp-record-select">${detail.imageHtml ? `<div class="rp-thumbnail">${detail.imageHtml}</div>` : `<span class="rp-record-icon">${detail.icon || icon[adapter.kind.slice(0, -1)] || icon.file || ''}</span>`}<span class="rp-record-copy"><span class="rp-record-title"><strong title="${esc(name)}">${esc(name)}</strong>${uploaded ? `<span class="rp-uploaded-marker">${rpText('Uploaded', 'Загружено')}</span>` : ''}</span>${detail.description ? `<span class="rp-description">${esc(detail.description)}</span>` : ''}${detail.meta ? `<small>${esc(detail.meta)}</small>` : ''}</span><input type="checkbox" data-rp-check="${esc(id)}" value="${esc(id)}" aria-label="${esc(name)}" ${selected ? 'checked' : ''}></label>${adapter.preview ? button(`preview:${id}`, icon.eye || icon.search, `${rpText('Preview', 'Просмотр')}: ${name}`) : ''}</article>`;
     };
     const emptyHtml = () =>
     {
@@ -320,6 +364,8 @@ function openResourcePicker(adapter, options = {})
         const sortField = root.querySelector('[data-rp-sort]');
         sortField.querySelector('[value="relevance"]').hidden = !session.query.trim();
         sortField.value = session.sort;
+        sortTrigger.textContent = sortField.selectedOptions[0]?.textContent || '';
+        sortTrigger.setAttribute('aria-label', `${rpText('Sort', 'Сортировка')}: ${sortTrigger.textContent}`);
         const allScopes = scopes();
         const currentScope = allScopes.find(scope => scope.id === session.scopeId) || allScopes[0];
         const ancestors = [];
@@ -336,7 +382,8 @@ function openResourcePicker(adapter, options = {})
         if (session.scopeId !== 'all' && !ancestors.some(scope => scope.id === 'all')) ancestors.unshift(allScopes[0]);
         const path = root.querySelector('.rp-path');
         path.hidden = session.view !== 'results';
-        path.innerHTML = `${ancestors.filter(Boolean).map(scope => `<button type="button" data-rp-scope="${esc(scope.id)}" title="${esc(scope.label)}">${esc(scope.label)}</button><span aria-hidden="true">${icon.chevron}</span>`).join('')}<span aria-current="page" title="${esc(currentScope?.label || '')}">${esc(currentScope?.label || '')}</span>`;
+        path.title = [...ancestors.filter(Boolean), currentScope].filter(Boolean).map(scope => scope.label).join(' / ');
+        path.innerHTML = `<span class="rp-path-icon" aria-hidden="true">${adapter.kind === 'files' ? icon.folderyellow : adapter.kind === 'places' ? icon.mapPin : icon.folder}</span>${ancestors.filter(Boolean).map(scope => `<button type="button" data-rp-scope="${esc(scope.id)}" title="${esc(scope.label)}">${esc(scope.label)}</button><span aria-hidden="true">${icon.chevron}</span>`).join('')}<span aria-current="page" title="${esc(currentScope?.label || '')}">${esc(currentScope?.label || '')}</span>`;
         if (session.view === 'browse')
         {
             content.innerHTML = `<h3 class="rp-view-heading">${rpText('Browse', 'Обзор')}</h3><div class="rp-scopes">${allScopes.map(scope => `<button type="button" data-rp-scope="${esc(scope.id)}" class="rp-scope ${scope.id === session.scopeId ? 'is-selected' : ''}" ${scope.parentId ? 'style="padding-left:32px"' : ''}>${scope.icon || icon.folder || ''}<span>${esc(scope.label)}</span>${icon.chevron}</button>`).join('')}</div>`;
@@ -353,10 +400,14 @@ function openResourcePicker(adapter, options = {})
         }
         else
         {
-            const items = results();
+            const uploads = session.view === 'results' && ['photos', 'files'].includes(adapter.kind)
+                ? records().filter(record => session.createdIds.has(idOf(record))) : [];
+            const items = results().filter(record => !uploads.some(upload => idOf(upload) === idOf(record)));
             const folders = adapter.kind === 'files' && !session.query.trim() && !Object.values(session.filters).some(Boolean) && session.view === 'results'
                 ? allScopes.filter(scope => scope.parentId === session.scopeId) : [];
             const folderHtml = folders.length ? `<div class="rp-scopes">${folders.map(scope => `<button type="button" class="rp-scope" data-rp-scope="${esc(scope.id)}">${icon.folder}<span>${esc(scope.label)}</span>${icon.chevron}</button>`).join('')}</div>` : '';
+            const groupedPlaces = adapter.kind === 'places' && session.scopeId === 'all' && !session.query.trim() && session.view === 'results';
+            if (groupedPlaces) items.sort((a, b) => placeCountry(a).localeCompare(placeCountry(b), state.language === 'ru' ? 'ru' : 'en'));
             const visible = items.slice(0, session.limit);
             let rows = visible.map(rowHtml).join('');
             if (adapter.kind === 'places' && session.scopeId === 'all' && !session.query.trim() && session.view === 'results')
@@ -364,16 +415,16 @@ function openResourcePicker(adapter, options = {})
                 const groups = new Map();
                 visible.forEach(record =>
                 {
-                    const country = typeof record.country === 'string' ? record.country.trim()
-                        : typeof record.countryName === 'string' ? record.countryName.trim() : '';
-                    const key = country || rpText('Other places', 'Другие места');
+                    const country = placeCountry(record);
+                    const key = !country || country === 'Other places' ? rpText('Other places', 'Другие места') : country;
                     if (!groups.has(key)) groups.set(key, []);
                     groups.get(key).push(record);
                 });
                 rows = [...groups].sort(([a], [b]) => a.localeCompare(b, state.language === 'ru' ? 'ru' : 'en'))
                     .map(([country, group]) => `<h3 class="rp-country-heading">${esc(country)}</h3>${group.map(rowHtml).join('')}`).join('');
             }
-            content.innerHTML = folderHtml + (items.length ? `<div class="rp-results ${adapter.kind === 'photos' ? 'rp-photo-grid' : ''}">${rows}</div>${items.length > session.limit ? `<button type="button" class="button secondary rp-load-more" data-rp-action="more">${rpText('Load more', 'Показать ещё')}</button>` : ''}` : folders.length ? '' : emptyHtml());
+            const uploadHtml = uploads.length ? `<section class="rp-uploaded-group" aria-label="${rpText('Uploaded', 'Загружено')}"><h3 class="rp-uploaded-heading">${rpText('Uploaded', 'Загружено')}</h3><div class="rp-results ${adapter.kind === 'photos' ? 'rp-photo-grid' : ''}">${uploads.map(rowHtml).join('')}</div></section>` : '';
+            content.innerHTML = uploadHtml + folderHtml + (items.length ? `<div class="rp-results ${adapter.kind === 'photos' ? 'rp-photo-grid' : ''}">${rows}</div>${items.length > session.limit ? `<button type="button" class="button secondary rp-load-more" data-rp-action="more">${rpText('Load more', 'Показать ещё')}</button>` : ''}` : folders.length || uploads.length ? '' : emptyHtml());
         }
         content.scrollTop = session.scrolls.get(key()) || 0;
         content.querySelectorAll('img').forEach(image => { image.loading = 'lazy'; image.decoding = 'async'; });
