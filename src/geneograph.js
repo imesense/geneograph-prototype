@@ -8359,7 +8359,7 @@ function geneoScaleImageCropFromHandle(handle, zoom)
     geneoRefreshImageCropDom();
 }
 
-function geneoFinishImageCrop(apply)
+function geneoFinishImageCrop(apply, { render = true, restoreFocus = true } = {})
 {
     const runtime = geneoImageCropRuntime;
     if (!runtime) return;
@@ -8375,8 +8375,8 @@ function geneoFinishImageCrop(apply)
         }
     }
     geneoImageCropRuntime = null;
-    renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true, preserveSidebarScroll: true });
-    requestAnimationFrame(() => main.querySelector(`[data-geneo-node="${CSS.escape(runtime.nodeId)}"]`)?.focus({ preventScroll: true }));
+    if (render) renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true, preserveSidebarScroll: true });
+    if (restoreFocus) requestAnimationFrame(() => main.querySelector(`[data-geneo-node="${CSS.escape(runtime.nodeId)}"]`)?.focus({ preventScroll: true }));
 }
 
 function geneoBeginImageCrop(node)
@@ -9972,6 +9972,8 @@ function setGeneographSelection(nodeIds = [], connectionIds = [], primary = {})
 {
     const validIds = [...new Set(Array.isArray(nodeIds) ? nodeIds : [])].filter(id => Boolean(getGeneographNode(id)));
     const validConnectionIds = [...new Set(Array.isArray(connectionIds) ? connectionIds : [])].filter(id => Boolean(getGeneographConnection(id)));
+    if (geneoImageCropRuntime && (validIds.some(id => id !== geneoImageCropRuntime.nodeId) || validConnectionIds.length))
+        geneoFinishImageCrop(true, { render: false, restoreFocus: false });
     state.selectedGeneoNodeIds = validIds;
     state.selectedGeneoConnectionIds = validConnectionIds;
     state.selectedGeneoNodeId = validIds.includes(primary.nodeId) ? primary.nodeId : validIds.at(-1) || null;
@@ -28116,6 +28118,16 @@ function bindGeneographIntentionalCanvasClick(
             )
             )
             {
+                return;
+            }
+
+            if (geneoImageCropRuntime)
+            {
+                if (event.detail === 2)
+                {
+                    event.preventDefault();
+                    geneoFinishImageCrop(true, { restoreFocus: false });
+                }
                 return;
             }
 

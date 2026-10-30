@@ -79,6 +79,40 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
         await page.keyboard.press('Escape');
         assert.equal(await page.evaluate(id => getGeneographNode(id).imageCrop, ids.image), null);
 
+        // Selecting another item applies the current crop without stealing selection.
+        const otherNodeId = await page.evaluate(id =>
+        {
+            const other = selectedGeneographDiagram().nodes.find(node => node.type === 'person');
+            geneoBeginImageCrop(getGeneographNode(id));
+            geneoImageCropRuntime.draft.zoom = 1.5;
+            geneoRefreshImageCropDom();
+            restoreGeneographViewportCenter({ x: other.x + other.width / 2, y: other.y + other.height / 2 });
+            return other.id;
+        }, ids.image);
+        await page.locator(`article[data-geneo-node="${otherNodeId}"]`).click();
+        assert.equal(await page.evaluate(() => geneoImageCropRuntime), null);
+        assert.equal(await page.evaluate(id => getGeneographNode(id).imageCrop.zoom, ids.image), 1.5);
+        assert.equal(await page.evaluate(() => state.selectedGeneoNodeId), otherNodeId);
+        await page.evaluate(() => undoGeneographChange());
+        assert.equal(await page.evaluate(id => getGeneographNode(id).imageCrop, ids.image), null);
+
+        // A single empty-canvas click keeps editing; double-click applies it.
+        await page.evaluate(id =>
+        {
+            geneoBeginImageCrop(getGeneographNode(id));
+            geneoImageCropRuntime.draft.zoom = 1.6;
+            geneoRefreshImageCropDom();
+            restoreGeneographViewportCenter({ x: 5000, y: 5000 });
+        }, ids.image);
+        const viewport = await page.locator('[data-geneo-canvas-viewport]').boundingBox();
+        await page.mouse.click(viewport.x + viewport.width / 2, viewport.y + viewport.height / 2);
+        assert.notEqual(await page.evaluate(() => geneoImageCropRuntime), null);
+        await page.mouse.dblclick(viewport.x + viewport.width / 2, viewport.y + viewport.height / 2);
+        assert.equal(await page.evaluate(() => geneoImageCropRuntime), null);
+        assert.equal(await page.evaluate(id => getGeneographNode(id).imageCrop.zoom, ids.image), 1.6);
+        await page.evaluate(() => undoGeneographChange());
+        assert.equal(await page.evaluate(id => getGeneographNode(id).imageCrop, ids.image), null);
+
         await page.evaluate(id => {
             const node = getGeneographNode(id);
             restoreGeneographViewportCenter({ x: node.x + node.width / 2, y: node.y + node.height / 2 });
@@ -132,6 +166,11 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             return distance < 2;
         }, ids.partner), true);
 
+        await page.evaluate(id =>
+        {
+            selectGeneographConnection(geneoPartnerConnectionForFamily(id).id);
+            renderGeneographEditorPreserveScroll();
+        }, ids.partner);
         assert.equal(await page.locator('[data-geneo-layer-connection]').evaluateAll(rows => rows.length > 0
             && rows.every(row => row.closest('[data-geneo-layer-block]'))
             && new Set(rows.map(row => row.dataset.geneoLayerConnection)).size === rows.length), true);
