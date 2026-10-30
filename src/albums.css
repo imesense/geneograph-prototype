@@ -1963,6 +1963,11 @@
     font-size: 11px;
 }
 
+.albums-sidebar-empty {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
 .albums-empty {
     min-height: 100%;
     display: grid;
@@ -2304,7 +2309,7 @@
 }
 
 .albums-detail .panel-section-body {
-    padding: 16px 20px 20px;
+    padding: 8px 20px 20px;
 }
 
 .albums-detail-read-list,

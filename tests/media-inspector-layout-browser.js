@@ -52,6 +52,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 assert.ok(await open.evaluate(element => element.classList.contains('secondary')));
                 await page.evaluate(moduleName => moduleName === 'Albums' ? beginAlbumsPhotoEdit() : beginArchiveFileEdit(), moduleName);
                 const form = root.locator(moduleName === 'Albums' ? '.albums-form-grid' : '.archive-file-form-grid');
+                assert.equal(await form.evaluate(element => getComputedStyle(element.closest('.panel-section-body')).paddingTop), '8px');
                 const label = form.locator(moduleName === 'Albums' ? 'label[for="albumPhotoCaption"]' : 'label[for="archiveFileDescription"]');
                 assert.equal((await label.innerText()).trim(), language === 'ru' ? 'Сведения' : 'Details');
                 assert.deepEqual(await label.evaluate(element => ({ size: getComputedStyle(element).fontSize, weight: getComputedStyle(element).fontWeight })), { size: '13px', weight: '700' });

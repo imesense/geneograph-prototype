@@ -259,7 +259,7 @@ const RU_UI_SHARED = Object.freeze({
     'Search project people': 'Поиск людей в проекте',
     'Name or date': 'Имя или дата',
     'Matching people': 'Найденные люди',
-    'Everyone in this project is tagged.': 'Все люди в проекте уже отмечены.',
+    'No people available to tag': 'Нет людей, которых можно отметить',
     'Face area for': 'Область лица для',
     'Face area. Arrow keys move; Shift and arrow keys resize.': 'Область лица. Стрелки перемещают; Shift и стрелки изменяют размер.',
     'Drag to select a face. Move the box or drag its corner to adjust it.': 'Выделите лицо. Перемещайте рамку или потяните за угол, чтобы изменить её размер.',
@@ -2673,7 +2673,8 @@ const RU_UI_ALBUMS = {
         'В этом альбоме нет фотографий.',
 
     'Unlink note from photo?': 'Разорвать связь заметки с фото?',
-    'The photo will be removed from Albums and all other linked records.': 'Эта фотография будет удалена из альбомов и всех связанных записей.',
+    'The photo will be removed from Albums and all other linked records.': 'Фотография будет удалена из проекта, включая все альбомы и связанные записи.',
+    'The photos will be removed from Albums and all other linked records.': 'Фотографии будут удалены из проекта, включая все альбомы и связанные записи.',
 
     // ========================================
     // Albums tip
@@ -2959,7 +2960,7 @@ const RU_UI_ALBUMS = {
         'Удалить безвозвратно',
 
     'Any affected primary-photo assignments will be cleared.':
-        'Если фотография используется в качестве фото профиля, она будет удалена.',
+        'Если фотография используется как фото профиля, она также будет убрана из профиля.',
 
     'Save copy':
         'Сохранить копию',

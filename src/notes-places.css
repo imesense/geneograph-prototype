@@ -1454,7 +1454,7 @@
 
 .notes-panel-section .panel-section-body {
     padding:
-        var(--space-3) var(--space-4) var(--space-5);
+        6px var(--space-4) var(--space-5);
 }
 
 .notes-panel-section .panel-section-heading h3 {

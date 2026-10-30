@@ -4634,7 +4634,7 @@ function renderAlbumsSidebar()
                     </div>
                   `;
                     })
-                    .join('') : `<div class="sidebar-entity-empty">${escapeHtml(t('No albums yet'))}</div>`}
+                    .join('') : `<div class="sidebar-entity-empty albums-sidebar-empty">${escapeHtml(t('No albums yet'))}</div>`}
             </div>
           </div>
 
@@ -7270,6 +7270,9 @@ function openPhotoPeopleModal(photoId, options = {})
 
 function openUnifiedImagePeopleModal(photoId, { mode = 'tag', activePersonId = null, archiveFile = null, imageSrc = null, onClose = null } = {})
 {
+    const entryFocus = document.activeElement;
+    const sidebarTrigger = entryFocus?.matches('#albumsTagPeople') ? '#albumsTagPeople'
+        : entryFocus?.matches('[data-archive-add-file-person]') ? '[data-archive-add-file-person]' : '';
     albumsPhotoEscapeCleanup?.();
     albumsPhotoEscapeCleanup = null;
     const archiveMode = Boolean(archiveFile);
@@ -7329,6 +7332,7 @@ function openUnifiedImagePeopleModal(photoId, { mode = 'tag', activePersonId = n
 
     let query = '';
     let modalMode = activeRegionPersonId ? 'preview' : mode;
+    let taggingReturn = modalMode === 'tag' ? 'close' : 'preview';
     let highlightedPersonId = null;
     let imageLoadError = false;
 
@@ -7589,7 +7593,7 @@ function openUnifiedImagePeopleModal(photoId, { mode = 'tag', activePersonId = n
                 class="
                   photo-people-empty
                 ">
-                ${escapeHtml(t(query.trim() ? 'No matching people.' : 'Everyone in this project is tagged.'))}
+                ${escapeHtml(t(query.trim() ? 'No matching people.' : 'No people available to tag'))}
               </div>
             `;
             }
@@ -8118,6 +8122,11 @@ function openUnifiedImagePeopleModal(photoId, { mode = 'tag', activePersonId = n
     };
 
     const returnFromSearch = () => {
+        if (taggingReturn === 'close')
+        {
+            closeModal();
+            return;
+        }
         modalMode = 'preview';
         refresh();
         modal.querySelector('.photo-people-body').scrollTop = 0;
@@ -8146,6 +8155,11 @@ function openUnifiedImagePeopleModal(photoId, { mode = 'tag', activePersonId = n
         viewResize.disconnect();
         observer.disconnect();
         onClose?.();
+        if (sidebarTrigger) requestAnimationFrame(() =>
+        {
+            if (!modalBackdrop.classList.contains('open'))
+                (entryFocus?.isConnected ? entryFocus : main.querySelector(sidebarTrigger))?.focus({ preventScroll: true });
+        });
         if (albumsPhotoEscapeCleanup === cleanupEscape) albumsPhotoEscapeCleanup = null;
     };
     observer.observe(modalBackdrop, { childList: true });
@@ -8224,6 +8238,7 @@ function openUnifiedImagePeopleModal(photoId, { mode = 'tag', activePersonId = n
                 return;
             }
             if (event.target.closest('[data-lightbox-tag]')) {
+                taggingReturn = 'preview';
                 modalMode = 'tag';
                 refresh();
                 modal.querySelector('[data-photo-people-search]')?.focus({ preventScroll: true });
@@ -8234,6 +8249,7 @@ function openUnifiedImagePeopleModal(photoId, { mode = 'tag', activePersonId = n
                 return;
             }
             if (event.target.closest('[data-albums-search-people]')) {
+                taggingReturn = 'preview';
                 modalMode = 'tag';
                 refresh();
                 modal.querySelector('[data-photo-people-search]')?.focus({ preventScroll: true });
@@ -9497,9 +9513,10 @@ function openDeletePhotoConfirm(
         photos.length;
 
     const title =
-        count === 1
-            ? 'Delete photo permanently?'
-            : `Delete ${count} photos permanently?`;
+        state.language === 'ru'
+            ? count === 1 ? t('Delete photo permanently?')
+                : `Удалить ${count} ${{ one: 'фотографию', few: 'фотографии', many: 'фотографий', other: 'фотографии' }[new Intl.PluralRules('ru').select(count)]} безвозвратно?`
+            : count === 1 ? 'Delete photo permanently?' : `Delete ${count} photos permanently?`;
 
     openModal(`
         <div
@@ -9544,17 +9561,13 @@ function openDeletePhotoConfirm(
                   `
                         : `
                     <strong>
-                      ${count} photos selected
+                      ${escapeHtml(translateCountPhrase(`${count} photos selected`))}
                     </strong>
                   `
                 }
 
               <p>
-                The photo${
-                    count === 1
-                        ? ''
-                        : 's'
-                } will be removed from Albums and all other linked records.
+                ${escapeHtml(t(count === 1 ? 'The photo will be removed from Albums and all other linked records.' : 'The photos will be removed from Albums and all other linked records.'))}
               </p>
 
               <p>

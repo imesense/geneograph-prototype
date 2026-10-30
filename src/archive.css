@@ -1227,7 +1227,7 @@
 
 .archive-file-inspector-content .panel-section-body {
     padding:
-        var(--space-4) var(--space-4) var(--space-5);
+        8px var(--space-4) var(--space-5);
 }
 
 .archive-file-hero {
@@ -1533,7 +1533,7 @@
 /* Shared media-inspector identity and Details layout. */
 :is(.albums-detail, .archive-inspector) { container: media-inspector / inline-size; }
 :is(.albums-detail, .archive-inspector) .panel-section-header { padding-inline: 20px; }
-:is(.albums-detail, .archive-inspector) .panel-section-body { padding: 16px 20px 20px; }
+:is(.albums-detail, .archive-inspector) .panel-section-body { padding: 8px 20px 20px; }
 :is(.albums-detail, .archive-inspector) .inspector-name-heading { align-items: center; }
 :is(.albums-detail, .archive-inspector) .inspector-name-heading h2 { display: block; margin: 0; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; overflow-wrap: normal; letter-spacing: 0; }
 :is(.albums-detail-identity, .archive-file-identity) { container-type: inline-size; }
@@ -1740,7 +1740,7 @@
 
 .archive-source-inspector-content .panel-section-body {
     padding:
-        var(--space-4) var(--space-4) var(--space-5);
+        8px var(--space-4) var(--space-5);
 }
 
 .archive-source-read-list {
@@ -1814,7 +1814,7 @@
 }
 
 .archive-inspector-section-body {
-    padding: var(--space-3);
+    padding: 6px var(--space-3) var(--space-3);
 }
 
 .archive-kv-list {
