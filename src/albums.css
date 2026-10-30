@@ -1963,11 +1963,6 @@
     font-size: 11px;
 }
 
-.albums-sidebar-empty {
-    font-size: 14px;
-    line-height: 1.5;
-}
-
 .albums-empty {
     min-height: 100%;
     display: grid;

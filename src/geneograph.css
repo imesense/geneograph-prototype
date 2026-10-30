@@ -208,15 +208,6 @@
 .sidebar-entity-empty {
     padding:
         var(--space-3);
-
-    color:
-        var(--text-tertiary);
-
-    font-size:
-        12px;
-
-    line-height:
-        1.4;
 }
 
 .geneo-board-section-description {

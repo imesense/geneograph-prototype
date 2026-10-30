@@ -2863,6 +2863,17 @@ button.app-chip:disabled,
     margin-bottom: var(--space-2);
 }
 
+/* Short empty-library messages in module navigation sidebars. */
+.sidebar-entity-empty,
+.geneo-collection-sidebar-empty,
+.places-sidebar-empty {
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: 0;
+}
+
 .field input {
     width: 100%;
     height: var(--control-height);

@@ -4634,7 +4634,7 @@ function renderAlbumsSidebar()
                     </div>
                   `;
                     })
-                    .join('') : `<div class="sidebar-entity-empty albums-sidebar-empty">${escapeHtml(t('No albums yet'))}</div>`}
+                    .join('') : `<div class="sidebar-entity-empty">${escapeHtml(t('No albums yet'))}</div>`}
             </div>
           </div>
 
