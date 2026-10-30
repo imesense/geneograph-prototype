@@ -28,6 +28,7 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                     element.style.maxWidth = `${width}px`;
                     element.style.boxSizing = 'content-box';
                 }, width);
+                await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
                 const geometry = await page.locator('.archive-files-toolbar').evaluate(toolbar =>
                 {
                     const bounds = toolbar.getBoundingClientRect();
@@ -40,17 +41,23 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                     return { overflow: items.some(rect => rect.left < bounds.left - 1 || rect.right > bounds.right + 1),
                         createFirstRow: Math.abs(create.top - bounds.top) < 2,
                         folderVisible: !!folder?.getClientRects().length,
-                        searchVisible: !!search.getClientRects().length };
+                        searchVisible: !!search.getClientRects().length,
+                        density: Number(toolbar.dataset.density),
+                        wrapped: toolbar.querySelector('.archive-toolbar-main').getBoundingClientRect().height > 45,
+                        expected: toolbar.dataset.fitWidths.split(',').map(Number).findIndex(value => value <= bounds.width) };
                 });
                 assert.equal(geometry.overflow, false, `${language} ${width}: no control overflow`);
                 assert.equal(geometry.folderVisible, true, `${language} ${width}: folder remains accessible`);
-                assert.equal(geometry.searchVisible, width > 1000, `${width}: search compacts first`);
+                assert.equal(geometry.density, geometry.expected < 0 ? 4 : geometry.expected, `${width}: use least compact fitting layout`);
+                if (width > 440 && geometry.expected >= 0) assert.equal(geometry.wrapped, false, `${width}: no unnecessary row wrapping`);
+                assert.equal(geometry.searchVisible, geometry.density === 0, `${width}: search compacts first`);
                 if (width >= 320) assert.equal(geometry.createFirstRow, true, `${width}: creation wraps last`);
             }
             await page.locator('.archive-main').evaluate(element => element.removeAttribute('style'));
             for (const width of [1920, 1600, 1440, 1280, 1180, 1024, 900, 768, 640, 540, 440, 390, 320])
             {
                 await page.setViewportSize({ width, height: 900 });
+                await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
                 const geometry = await page.locator('.archive-files-toolbar').evaluate(toolbar =>
                 {
                     const bounds = toolbar.getBoundingClientRect();
@@ -75,8 +82,32 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 {
                     await searchTrigger.click();
                     assert.equal(await page.locator('#archiveSearch').isVisible(), true);
-                    await page.locator('[data-archive-mobile-search-close]').click();
-                    assert.equal(await searchTrigger.isVisible(), true);
+                    const expanded = await page.locator('.archive-files-toolbar').evaluate(toolbar =>
+                    {
+                        const row = toolbar.getBoundingClientRect();
+                        const search = toolbar.querySelector('.app-search-field').getBoundingClientRect();
+                        const close = toolbar.querySelector('[data-archive-mobile-search-close]').getBoundingClientRect();
+                        return { closeWidth: close.width, closeHeight: close.height, gap: close.left - search.right,
+                            fills: Math.abs(close.right - row.right) < 1 && Math.abs(search.left - row.left) < 1 };
+                    });
+                    assert.equal(expanded.closeWidth, 44);
+                    assert.equal(expanded.closeHeight, 44);
+                    assert.equal(expanded.fills, true, `${width}: expanded search fills row`);
+                    assert.ok(expanded.gap >= 4 && expanded.gap <= 8);
+                    if (process.env.GENEO_SCREENSHOT_DIR && [1280, 768, 320].includes(width))
+                        await page.locator('.archive-file-navigation').screenshot({ path: path.join(process.env.GENEO_SCREENSHOT_DIR, `archive-search-${language}-${width}.png`) });
+                    await page.locator('#archiveSearch').fill('birth');
+                    await page.locator('#archiveSearch').press('Escape');
+                    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+                    const compactSearch = await searchTrigger.isVisible();
+                    assert.equal(await (compactSearch ? searchTrigger : page.locator('#archiveSearch')).evaluate(element => element === document.activeElement), true, `${language} ${width}: focus ${await page.evaluate(() => document.activeElement.outerHTML.slice(0, 200))}`);
+                    assert.equal(await searchTrigger.getAttribute('aria-expanded'), 'false');
+                    assert.equal(await searchTrigger.evaluate(element => element.classList.contains('has-query')), true);
+                    if (compactSearch) await searchTrigger.click();
+                    assert.equal(await page.locator('#archiveSearch').inputValue(), 'birth');
+                    await page.locator('#archiveSearch').fill('');
+                    if (await page.locator('[data-archive-mobile-search-close]').isVisible())
+                        await page.locator('[data-archive-mobile-search-close]').click();
                 }
                 if (process.env.GENEO_SCREENSHOT_DIR && [1280, 768, 320].includes(width))
                     await page.locator('.archive-file-navigation').screenshot({ path: path.join(process.env.GENEO_SCREENSHOT_DIR, `archive-toolbar-${language}-${width}.png`) });

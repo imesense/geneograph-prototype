@@ -44,104 +44,6 @@
 @media (max-width: 900px) {
     .archive-files-page .archive-page-actions { display: none; }
 
-    .archive-files-toolbar {
-        display: flex;
-        flex-wrap: nowrap;
-        gap: 4px;
-        width: 100%;
-    }
-
-    .archive-files-toolbar .archive-toolbar-left {
-        flex: 0 0 40px;
-        width: 40px;
-        min-width: 40px;
-    }
-
-    .archive-files-toolbar .app-search-field,
-    .archive-files-toolbar .archive-mobile-search-close { display: none; }
-
-    .archive-files-toolbar .archive-mobile-search-trigger,
-    .archive-files-toolbar .archive-mobile-new-folder {
-        display: grid;
-        place-items: center;
-        width: 40px;
-        min-width: 40px;
-        height: 44px;
-        padding: 0;
-        border: 1px solid var(--border-default);
-        border-radius: var(--radius-sm);
-        background: var(--surface-card);
-        color: var(--text-secondary);
-        cursor: pointer;
-    }
-
-    .archive-files-toolbar .archive-mobile-search-trigger svg,
-    .archive-files-toolbar .archive-mobile-new-folder svg { width: 20px; height: 20px; }
-
-    .archive-files-toolbar .archive-toolbar-right {
-        flex: 1 1 auto;
-        width: auto;
-        min-width: 0;
-        margin: 0;
-        display: grid;
-        grid-template-columns: 40px 40px 40px minmax(0, 1fr);
-        gap: 4px;
-    }
-
-    .archive-files-toolbar .module-filter-button,
-    .archive-files-toolbar .app-sort-field,
-    .archive-files-toolbar .app-sort-trigger { width: 40px; min-width: 0; padding: 0; }
-
-    .archive-files-toolbar .module-filter-button > span:not(.module-filter-icon):not(.module-filter-count),
-    .archive-files-toolbar .app-sort-current,
-    .archive-files-toolbar .app-sort-chevron { display: none; }
-
-    .archive-files-toolbar .archive-mobile-add-files {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 4px;
-        min-width: 0;
-        height: 44px;
-        padding: 0 6px;
-        white-space: nowrap;
-    }
-
-    .archive-files-toolbar .archive-add-short { display: none; }
-
-    .archive-files-toolbar.mobile-search-open .archive-toolbar-left {
-        flex: 1 1 auto;
-        width: auto;
-        gap: 4px;
-    }
-
-    .archive-files-toolbar.mobile-search-open .archive-toolbar-right,
-    .archive-files-toolbar.mobile-search-open .archive-mobile-search-trigger { display: none; }
-
-    .archive-files-toolbar.mobile-search-open .app-search-field {
-        display: flex;
-        flex: 1 1 auto;
-        width: auto;
-        min-width: 0;
-    }
-
-    .archive-files-toolbar.mobile-search-open .archive-mobile-search-close {
-        display: grid;
-        place-items: center;
-        flex: 0 0 40px;
-        height: 44px;
-        border: 1px solid var(--border-default);
-        border-radius: var(--radius-sm);
-        background: var(--surface-card);
-        color: var(--text-secondary);
-    }
-
-}
-
-@media (max-width: 540px) {
-    .archive-files-toolbar .archive-add-full,
-    .archive-files-toolbar .archive-mobile-add-files svg { display: none; }
-    .archive-files-toolbar .archive-add-short { display: inline; }
 }
 
 @media (max-width: 900px) {
@@ -2366,42 +2268,6 @@ body.mobile-details-open .geneo-inspector [data-geneo-inspector-toggle] {
     }
 }
 
-@media (max-width: 900px) {
-    .archive-toolbar.archive-files-toolbar {
-        flex-wrap: nowrap;
-        gap: 4px;
-    }
-}
-
-@media (min-width: 541px) and (max-width: 900px) {
-    .archive-files-toolbar .archive-toolbar-left {
-        flex: 1 1 auto;
-        width: auto;
-        min-width: 0;
-    }
-
-    .archive-files-toolbar:not(.mobile-search-open) .archive-mobile-search-trigger { display: none; }
-    .archive-files-toolbar:not(.mobile-search-open) .app-search-field {
-        display: flex;
-        flex: 1 1 auto;
-        width: auto;
-        min-width: 0;
-    }
-
-    .archive-files-toolbar .archive-toolbar-right {
-        flex: 0 0 auto;
-        width: auto;
-        display: flex;
-        gap: 4px;
-    }
-
-    .archive-files-toolbar .archive-mobile-add-files {
-        width: auto;
-        padding-inline: 10px;
-    }
-
-    .archive-files-toolbar.mobile-search-open .archive-toolbar-right { display: none; }
-}
 
 .archive-mobile-location,
 .archive-mobile-items,
@@ -2458,12 +2324,6 @@ body.mobile-details-open .geneo-inspector [data-geneo-inspector-toggle] {
     .archive-mobile-path-menu button { display: block; width: 100%; min-height: 44px; padding: 8px 10px; border: 0; background: none; color: var(--text-primary); text-align: left; font: inherit; }
     .archive-mobile-path-menu button:hover { background: var(--surface-card-hover); }
 
-    .archive-files-toolbar { margin-bottom: 12px; }
-    .archive-files-toolbar .archive-toolbar-right { grid-template-columns: 40px 40px minmax(0, 1fr); }
-    .archive-files-toolbar .archive-mobile-new-folder { display: none; }
-    .archive-files-toolbar .archive-mobile-add-files { gap: 6px; }
-    .archive-files-toolbar .archive-mobile-add-files svg { display: block; width: 18px; }
-    .archive-files-toolbar .archive-mobile-add-files span { display: inline; }
     .archive-files-page .archive-mobile-items { display: block; padding-bottom: 20px; }
     .archive-mobile-items section + section { margin-top: 22px; }
     .archive-mobile-section-head { display: flex; align-items: center; justify-content: space-between; }
@@ -2493,12 +2353,6 @@ body.mobile-details-open .geneo-inspector [data-geneo-inspector-toggle] {
     .archive-mobile-path summary:focus-visible { outline: 2px solid var(--brand-green-400); outline-offset: -2px; }
 }
 
-@media (min-width: 541px) and (max-width: 900px) {
-    .archive-files-toolbar .app-sort-field,
-    .archive-files-toolbar .app-sort-trigger { width: auto; }
-    .archive-files-toolbar .app-sort-trigger { gap: 6px; padding-inline: 10px; }
-    .archive-files-toolbar .app-sort-current { display: inline; }
-}
 
 .places-mobile-add { display: none; }
 

@@ -9518,7 +9518,7 @@ function renderArchiveToolbar()
               archive-toolbar-left
             ">
 
-            ${sourcesView ? '' : `<button class="archive-mobile-search-trigger" type="button" data-archive-mobile-search-open aria-label="${escapeHtml(t('Search files'))}" title="${escapeHtml(t('Search files'))}">${icon.search}</button>`}
+            ${sourcesView ? '' : `<button class="archive-mobile-search-trigger ${state.archiveSearch?.trim() ? 'has-query' : ''}" type="button" data-archive-mobile-search-open aria-expanded="${archiveMobileSearchOpen}" aria-controls="archiveSearch" aria-label="${escapeHtml(t('Search files') + (state.archiveSearch?.trim() ? `: ${state.archiveSearch.trim()}` : ''))}" title="${escapeHtml(t('Search files') + (state.archiveSearch?.trim() ? `: ${state.archiveSearch.trim()}` : ''))}">${icon.search}</button>`}
 
             <label
               class="
@@ -20467,10 +20467,62 @@ function archiveBindDropTarget(element, folderId)
 }
 
 let archiveRegionResizeObserver = null;
+let archiveToolbarResizeObserver = null;
+
+function fitArchiveToolbar(root)
+{
+    archiveToolbarResizeObserver?.disconnect();
+    const toolbar = root.querySelector('.archive-files-toolbar');
+    if (!toolbar) return;
+
+    // Measure translated controls, rather than guessing their width from breakpoints.
+    const update = () =>
+    {
+        if (!toolbar.isConnected) return;
+        const available = toolbar.getBoundingClientRect().width;
+        const focusedControl = toolbar.contains(document.activeElement) ? document.activeElement : null;
+        const expanded = toolbar.classList.contains('mobile-search-open');
+        toolbar.classList.remove('mobile-search-open');
+        const gap = parseFloat(getComputedStyle(toolbar).columnGap) || 8;
+        const widths = [];
+        const group = toolbar.querySelector('.archive-toolbar-main');
+        const search = toolbar.querySelector('.archive-toolbar-left');
+        const groupStyle = group.getAttribute('style');
+        const searchStyle = search.getAttribute('style');
+        group.style.cssText = 'display:flex;flex:none;width:max-content;min-width:0;flex-wrap:nowrap;';
+        for (let density = 0; density <= 4; density++)
+        {
+            toolbar.dataset.density = density;
+            search.style.cssText = `flex:none;width:${density ? 44 : 160}px;min-width:${density ? 44 : 160}px;`;
+            const controls = ['#archiveFilterButton', '.app-sort-field', '.archive-layout-switch', '.archive-toolbar-create'];
+            widths.push(Math.ceil((density ? 44 : 160) + gap * 4 + controls.reduce((sum, selector) =>
+                sum + toolbar.querySelector(selector).getBoundingClientRect().width, 0)));
+        }
+        if (groupStyle === null) group.removeAttribute('style'); else group.setAttribute('style', groupStyle);
+        if (searchStyle === null) search.removeAttribute('style'); else search.setAttribute('style', searchStyle);
+        toolbar.classList.toggle('mobile-search-open', expanded);
+        const density = widths.findIndex(width => width <= available);
+        toolbar.dataset.density = String(density < 0 ? 4 : density);
+        toolbar.dataset.fitWidths = widths.join(',');
+        if (focusedControl?.getClientRects().length) focusedControl.focus({ preventScroll: true });
+        else if (focusedControl?.matches('[data-archive-search], [data-archive-mobile-search-open]'))
+        {
+            const fallback = toolbar.querySelector(density === 0 ? '[data-archive-search]' : '[data-archive-mobile-search-open]');
+            fallback?.focus({ preventScroll: true });
+        }
+    };
+    update();
+    archiveToolbarResizeObserver = new ResizeObserver(update);
+    archiveToolbarResizeObserver.observe(toolbar);
+    archiveToolbarResizeObserver.observe(toolbar.querySelector('.archive-toolbar-create'));
+    archiveToolbarResizeObserver.observe(toolbar.querySelector('.app-sort-field'));
+    document.fonts?.ready.then(update);
+}
 
 function bindArchiveControls(root = main.querySelector('.archive-shell'))
 {
     if (!root) return;
+    fitArchiveToolbar(root);
     root.querySelector('.archive-compact-path')?.addEventListener('keydown', event => {
         if (event.key !== 'Escape') return;
         event.preventDefault();
@@ -21077,11 +21129,21 @@ function bindArchiveControls(root = main.querySelector('.archive-shell'))
         renderArchiveMain();
         main.querySelector('[data-archive-search]')?.focus({ preventScroll: true });
     });
-    root.querySelector('[data-archive-mobile-search-close]')?.addEventListener('click', () =>
+    const closeExpandedArchiveSearch = () =>
     {
         archiveMobileSearchOpen = false;
         renderArchiveMain();
-        main.querySelector('[data-archive-mobile-search-open]')?.focus({ preventScroll: true });
+        const trigger = main.querySelector('[data-archive-mobile-search-open]');
+        const target = trigger?.getClientRects().length ? trigger : main.querySelector('[data-archive-search]');
+        target?.focus({ preventScroll: true });
+    };
+    root.querySelector('[data-archive-mobile-search-close]')?.addEventListener('click', closeExpandedArchiveSearch);
+    root.querySelector('[data-archive-search]')?.addEventListener('keydown', event =>
+    {
+        if (event.key !== 'Escape' || !archiveMobileSearchOpen) return;
+        event.preventDefault();
+        event.stopPropagation();
+        closeExpandedArchiveSearch();
     });
     const sortingSources =
         archiveToolbarIsSources();
