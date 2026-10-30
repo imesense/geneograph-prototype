@@ -29,6 +29,16 @@ async function chooseArchiveLayout(page, layout)
                 render();
             }, language);
             assert.equal(await page.locator('.archive-files-page > .archive-page-head').count(), 0);
+            assert.equal(await page.evaluate(() =>
+            {
+                const file = sampleData.archiveFiles.find(item => archiveCanViewFile(item) && !renderArchivePreview(item));
+                if (!file) return false;
+                const container = document.createElement('div');
+                container.innerHTML = renderArchiveFileHero(file, false);
+                const hero = container.querySelector('.archive-file-hero');
+                return hero.firstElementChild.matches('[data-archive-open-file]')
+                    && hero.lastElementChild.matches('.archive-file-identity');
+            }), true, 'files without previews show Open file above the filename');
             assert.ok(await page.locator('.archive-file-navigation').evaluate(el => {
                 const controls = el.querySelector('.archive-toolbar').getBoundingClientRect();
                 const path = el.querySelector('.archive-location-row').getBoundingClientRect();

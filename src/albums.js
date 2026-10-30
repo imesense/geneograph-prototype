@@ -5885,6 +5885,7 @@ function renderAlbumsPhotoHero(
     editing
 )
 {
+    const summaryHtml = `<p class="albums-detail-summary">${escapeHtml(`${photo.width || 0} × ${photo.height || 0} · ${formatMediaBytes(photo.sizeBytes)}`)}</p>`;
     return `
         <div class="albums-detail-hero">
           <button
@@ -5932,26 +5933,13 @@ function renderAlbumsPhotoHero(
             ${state.albumsNameEditingId === photo.id ? `
               <div class="inspector-name-editor">
                 <input id="albumsPhotoNameInput" maxlength="180" aria-label="${escapeHtml(t('Photo name'))}" data-source-value="${escapeHtml(state.albumsNameOriginal || '')}" value="${escapeHtml(localizedDataFieldValue(state.albumsNameOriginal || ''))}">
-                <div class="inspector-name-editor-actions">
-                  <button class="inspector-name-edit-button inspector-name-save" type="button" id="albumsSavePhotoName">${icon.check}<span>${escapeHtml(t('Save name'))}</span></button>
+                <div class="inspector-name-editor-footer">${summaryHtml}<div class="inspector-name-editor-actions">
+                  <button class="inspector-name-edit-button inspector-name-save" type="button" id="albumsSavePhotoName">${icon.check}<span>${escapeHtml(t('Save'))}</span></button>
                   <button class="inspector-name-edit-button inspector-name-cancel" type="button" id="albumsCancelPhotoName">${icon.close}<span>${escapeHtml(t('Cancel'))}</span></button>
-                </div>
+                </div></div>
               </div>` : `
-              <div class="inspector-name-heading"><h2>${escapeHtml(photo.title || photo.filename || 'Untitled photo')}</h2><button class="inspector-name-command" type="button" id="albumsRenamePhoto" aria-label="${escapeHtml(t('Rename photo'))}" title="${escapeHtml(t('Rename photo'))}">${icon.edit}</button></div>`}
+              <div class="inspector-name-heading"><h2 title="${escapeHtml(photo.title || photo.filename || 'Untitled photo')}">${escapeHtml(photo.title || photo.filename || 'Untitled photo')}</h2><button class="inspector-name-command" type="button" id="albumsRenamePhoto" aria-label="${escapeHtml(t('Rename photo'))}" title="${escapeHtml(t('Rename photo'))}">${icon.edit}</button></div>${summaryHtml}`}
 
-            <p class="albums-detail-summary">
-              ${escapeHtml(
-                    `${
-                        photo.width || 0
-                    } × ${
-                        photo.height || 0
-                    } · ${
-                        formatMediaBytes(
-                            photo.sizeBytes
-                        )
-                    }`
-                )}
-            </p>
           </div>
         </div>
       `;
@@ -6004,14 +5992,14 @@ function renderAlbumsPhotoDetails(
 
             <div class="albums-field">
               <label for="albumPhotoCaption">
-                Caption
+                ${escapeHtml(t('Details'))}
               </label>
 
               <textarea
                 id="albumPhotoCaption"
                 maxlength="500"
                 data-source-value="${escapeHtml(draft.caption || '')}"
-                placeholder="Add a description of this photo">${escapeHtml(
+                placeholder="${escapeHtml(t('Add details'))}">${escapeHtml(
                     localizedDataFieldValue(
                         draft.caption || ''
                     )
@@ -6027,7 +6015,7 @@ function renderAlbumsPhotoDetails(
 
     const caption =
         String(photo.caption || '').trim()
-        || 'No caption added.';
+        || t('Not recorded');
 
     return `
         <dl class="albums-detail-read-list">
@@ -6054,7 +6042,7 @@ function renderAlbumsPhotoDetails(
           </div>
 
           <div class="albums-detail-read-row">
-            <dt>Caption</dt>
+            <dt>${escapeHtml(t('Details'))}</dt>
 
             <dd class="albums-detail-read-caption">${escapeHtml(caption)}</dd>
           </div>

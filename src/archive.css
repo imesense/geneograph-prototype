@@ -1233,16 +1233,19 @@
 .archive-file-hero {
     min-width: 0;
 
-    padding:
-        var(--space-4) var(--space-5) var(--space-5);
+    padding: 20px;
 
     border-bottom:
         1px solid var(--border-default);
 }
 
-.archive-file-hero.no-preview .archive-file-identity { margin-top: 0; }
+.archive-file-hero.no-preview .archive-file-open { margin-top: 0; }
+.archive-file-hero.no-preview:not(:has(.archive-file-open)) .archive-file-identity { margin-top: 0; }
 
 .archive-file-preview {
+    padding: 0;
+    color: inherit;
+    cursor: zoom-in;
     position: relative;
     width: 100%;
     min-width: 0;
@@ -1392,8 +1395,7 @@
     line-height:
         1.3;
 
-    letter-spacing:
-        .01em;
+    letter-spacing: 0;
 
     overflow-wrap:
         anywhere;
@@ -1528,6 +1530,40 @@
     border-top: 1px solid var(--border-default);
 }
 
+/* Shared media-inspector identity and Details layout. */
+:is(.albums-detail, .archive-inspector) { container: media-inspector / inline-size; }
+:is(.albums-detail, .archive-inspector) .panel-section-header { padding-inline: 20px; }
+:is(.albums-detail, .archive-inspector) .panel-section-body { padding: 16px 20px 20px; }
+:is(.albums-detail, .archive-inspector) .inspector-name-heading { align-items: center; }
+:is(.albums-detail, .archive-inspector) .inspector-name-heading h2 { display: block; margin: 0; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; overflow-wrap: normal; letter-spacing: 0; }
+:is(.albums-detail-identity, .archive-file-identity) { container-type: inline-size; }
+:is(.albums-detail-identity, .archive-file-identity) > p { margin-top: 8px; }
+.inspector-name-editor-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-width: 0; }
+.inspector-name-editor-footer > p { flex: 1; min-width: 0; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.inspector-name-editor-footer .inspector-name-editor-actions { flex: none; flex-wrap: nowrap; }
+:is(.albums-detail, .archive-inspector) .inspector-name-edit-button { min-height: 44px; }
+:is(.albums-detail, .archive-inspector) :is(.albums-form-grid, .archive-file-form-grid) { gap: 16px; }
+:is(.albums-detail, .archive-inspector) :is(.albums-form-grid, .archive-file-form-grid) label { font-size: 13px; font-weight: 700; color: var(--text-secondary); margin: 0; }
+:is(.albums-detail, .archive-inspector) .genealogy-date-field { --genealogy-date-type-column: minmax(100px, 120px); --genealogy-date-column-gap: 8px; --genealogy-date-row-gap: 8px; }
+:is(.albums-detail, .archive-inspector) :is(.place-combobox-field, .albums-field, .archive-file-field) { display: grid; gap: 8px; }
+@container (max-width: 360px) {
+    .inspector-name-editor-footer { flex-wrap: wrap; }
+    .inspector-name-editor-footer > p { flex-basis: 100%; }
+    .inspector-name-editor-footer .inspector-name-editor-actions { margin-left: auto; }
+}
+@container media-inspector (max-width: 400px) {
+    :is(.albums-detail, .archive-inspector) .genealogy-date-controls { grid-template-columns: minmax(0, 1fr) var(--control-icon-button-size); }
+    :is(.albums-detail, .archive-inspector) .genealogy-date-type-shell { grid-column: 1 / -1; }
+    :is(.albums-detail, .archive-inspector) .genealogy-date-inline-range.is-between { grid-template-columns: minmax(0, 1fr) var(--control-icon-button-size); grid-template-rows: auto auto auto auto auto auto; }
+    :is(.albums-detail, .archive-inspector) .genealogy-date-inline-range.is-between > label { grid-column: 1 / -1; grid-row: 1; }
+    :is(.albums-detail, .archive-inspector) .genealogy-date-inline-range.is-between .genealogy-date-type-shell { grid-column: 1 / -1; grid-row: 2; }
+    :is(.albums-detail, .archive-inspector) .genealogy-date-inline-range.is-between .genealogy-date-range-cell:first-child > span { grid-column: 1; grid-row: 3; }
+    :is(.albums-detail, .archive-inspector) .genealogy-date-inline-range.is-between [data-genealogy-date-input] { grid-column: 1; grid-row: 4; }
+    :is(.albums-detail, .archive-inspector) .genealogy-date-inline-range.is-between .genealogy-date-details-button { grid-column: 2; grid-row: 4; }
+    :is(.albums-detail, .archive-inspector) .genealogy-date-inline-range.is-between [data-genealogy-date-to-cell] > span { grid-column: 1; grid-row: 5; }
+    :is(.albums-detail, .archive-inspector) .genealogy-date-inline-range.is-between [data-genealogy-date-input-to] { grid-column: 1; grid-row: 6; }
+}
+
 @media (max-width: 420px) {
     .details-edit-actions .button { flex: 1 1 auto; }
 }
@@ -1536,7 +1572,7 @@
     min-width: 0;
 
     display: grid;
-    gap: 7px;
+    gap: 8px;
 }
 
 .archive-file-field label {
@@ -1547,7 +1583,7 @@
         12px;
 
     font-weight:
-        900;
+        700;
 }
 
 .archive-file-field textarea {

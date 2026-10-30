@@ -2,6 +2,7 @@ const SUPPORTED_LANGUAGES = ['en', 'ru'];
 const LANGUAGE_STORAGE_KEY = 'geneograph.language';
 const PROJECT_CONTINUATION_STORAGE_KEY = 'geneograph.projectContinuation';
 const RU_UI_SHARED = Object.freeze({
+    'Add details': 'Добавьте сведения',
     'No people match this search': 'Люди не найдены',
     'Try another name, date, family branch, event, or place.': 'Попробуйте другое имя, дату, ветвь семьи, событие или место.',
     'No people in this project yet': 'В проекте пока нет людей',

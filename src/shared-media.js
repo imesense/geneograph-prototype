@@ -2962,21 +2962,9 @@ function renderGenealogyDateField(
             data-genealogy-date-model
             value="${hiddenValue}">
 
-          <div
-            class="genealogy-date-standard-status"
-            data-genealogy-date-status>
+          <div class="genealogy-date-standard-status" data-genealogy-date-status>${model.calendar === 'Julian' ? escapeHtml(t('Julian')) : ''}</div>
 
-            ${
-                model.calendar === 'Julian'
-                    ? t('Julian')
-                    : ''
-            }
-          </div>
-
-          <div
-            class="genealogy-date-validation"
-            data-genealogy-date-validation>
-          </div>
+          <div class="genealogy-date-validation" data-genealogy-date-validation></div>
         </div>
       `;
 }

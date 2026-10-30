@@ -11367,7 +11367,7 @@ function renderArchivePreview(
     if (archiveFileKind(file) !== 'img' || !imageSource) return '';
     const regions = archiveMarkedRegions(file);
     return `
-          <div
+          <button type="button" data-archive-open-file="${escapeHtml(file.id)}" aria-label="${escapeHtml(t('Open file'))}"
             class="
               archive-file-preview
             ">
@@ -11385,7 +11385,7 @@ function renderArchivePreview(
               <img class="archive-file-preview-image" src="${escapeHtml(imageSource)}" alt="">
               <span class="archive-person-region-highlight" data-archive-floating-region-highlight hidden></span>
             </span>
-          </div>
+          </button>
         `;
 }
 
@@ -11398,7 +11398,7 @@ function renderArchiveFileOpenAction(
         <button
           class="
             button
-            primary
+            secondary
             archive-file-open
           "
           type="button"
@@ -11437,7 +11437,7 @@ function renderArchiveFileIdentity(
         ]
             .filter(Boolean)
             .join(' · ');
-    const summaryHtml = `<p class="archive-file-summary" title="${escapeHtml(summary || 'File')}">${escapeHtml(summary || 'File')}</p>`;
+    const summaryHtml = `<p class="archive-file-summary" ${archiveFileKind(file) === 'img' ? `data-archive-image-summary data-size="${escapeHtml(file.size || (Number.isFinite(Number(file.sizeBytes)) ? formatMediaBytes(file.sizeBytes) : ''))}"` : ''} title="${escapeHtml(summary || 'File')}">${escapeHtml(summary || 'File')}</p>`;
 
     return `
         <div
@@ -11448,8 +11448,8 @@ function renderArchiveFileIdentity(
           ${state.archiveFileNameEditingId === file.id ? `
             <div class="inspector-name-editor">
               <input id="archiveFileNameInput" maxlength="220" aria-label="${escapeHtml(t('File name'))}" value="${escapeHtml(file.name || '')}">
-              <div class="archive-file-rename-footer">${summaryHtml}<div class="inspector-name-editor-actions">
-                <button class="inspector-name-edit-button inspector-name-save" type="button" id="archiveSaveFileName" aria-label="${escapeHtml(t('Save name'))}" title="${escapeHtml(t('Save name'))}">${icon.check}<span>${escapeHtml(t('Save name'))}</span></button>
+              <div class="inspector-name-editor-footer">${summaryHtml}<div class="inspector-name-editor-actions">
+                <button class="inspector-name-edit-button inspector-name-save" type="button" id="archiveSaveFileName" aria-label="${escapeHtml(t('Save'))}" title="${escapeHtml(t('Save'))}">${icon.check}<span>${escapeHtml(t('Save'))}</span></button>
                 <button class="inspector-name-edit-button inspector-name-cancel" type="button" id="archiveCancelFileName" aria-label="${escapeHtml(t('Cancel'))}" title="${escapeHtml(t('Cancel'))}">${icon.close}<span>${escapeHtml(t('Cancel'))}</span></button>
               </div>
               </div>
@@ -11473,7 +11473,7 @@ function renderArchiveFileHero(
           class="
             archive-file-hero ${preview ? '' : 'no-preview'}
           ">
-          ${preview ? `${preview}${openAction}${identity}` : `${identity}${openAction}`}
+          ${preview}${openAction}${identity}
         </div>
       `;
 }
@@ -11523,13 +11523,13 @@ function renderArchiveFileDetails(
               <label
                 for="archiveFileDescription">
 
-                Description
+                ${escapeHtml(t('Details'))}
               </label>
 
               <textarea
                 id="archiveFileDescription"
                 maxlength="1200"
-                placeholder="Add a description of this file">${escapeHtml(
+                placeholder="${escapeHtml(t('Add details'))}">${escapeHtml(
                     draft.description
                   || ''
                 )}</textarea>
@@ -11582,7 +11582,7 @@ function renderArchiveFileDetails(
             ">
 
             <dt>
-              Description
+              ${escapeHtml(t('Details'))}
             </dt>
             <dd class="archive-file-read-description">${escapeHtml(
                 translateText(description)
@@ -20536,6 +20536,17 @@ function bindArchiveControls(root = main.querySelector('.archive-shell'))
         });
     });
     archiveRegionResizeObserver?.disconnect();
+    const previewImage = root.querySelector('.archive-file-preview > .archive-file-preview-image');
+    const updateImageSummary = () =>
+    {
+        if (!previewImage?.naturalWidth || !previewImage?.naturalHeight) return;
+        const summary = root.querySelector('[data-archive-image-summary]');
+        if (!summary) return;
+        summary.textContent = [`${previewImage.naturalWidth} × ${previewImage.naturalHeight}`, summary.dataset.size].filter(Boolean).join(' · ');
+        summary.title = summary.textContent;
+    };
+    previewImage?.addEventListener('load', updateImageSummary);
+    updateImageSummary();
     const regionBoxes = [...root.querySelectorAll('.archive-file-preview > [data-archive-region-box]')];
     const regionPreview = regionBoxes[0]?.closest('.archive-file-preview');
     const regionImage = regionPreview?.querySelector(':scope > .archive-file-preview-image');

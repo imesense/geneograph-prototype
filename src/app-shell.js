@@ -97,6 +97,14 @@ function handleMobileSurfaceKeydown(event)
     if (modalBackdrop.classList.contains('open')) return;
     if (event.key === 'Escape')
     {
+        const renameInput = event.target.closest?.('#archiveFileNameInput, #albumsPhotoNameInput');
+        if (renameInput)
+        {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            document.getElementById(renameInput.id === 'archiveFileNameInput' ? 'archiveCancelFileName' : 'albumsCancelPhotoName')?.click();
+            return;
+        }
         const itemFilter = document.querySelector('[data-geneo-item-filter-menu]:not([hidden])');
         if (itemFilter)
         {

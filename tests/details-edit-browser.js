@@ -53,8 +53,8 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             assert.equal(await page.evaluate(fileId => archiveFileById(fileId).name, ids.fileId), `Renamed file ${width}`);
             await page.locator('[data-archive-add-file-place]').click();
             assert.equal(await page.evaluate(() => sampleData.places.length), ids.count);
-            await page.locator('[data-notes-place-choice][value="place-fishmarket-row"]').click();
-            await page.locator('[data-notes-place-save]').click();
+            await page.locator('[data-rp-check="place-fishmarket-row"]').check();
+            await page.locator('[data-rp-action="save"]').click();
             const saved = await page.evaluate(fileId => {
                 const file = archiveFileById(fileId);
                 return { ids: archiveFilePlaceIds(file), primary: file.documentPlaceId,
