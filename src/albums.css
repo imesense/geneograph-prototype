@@ -2600,16 +2600,18 @@ button.albums-inspector-row-main:focus-visible {
 }
 
 .albums-metadata-row span {
-    color: var(--text-tertiary);
+    color: var(--text-secondary);
     font-size: 12px;
+    font-weight: 700;
+    line-height: 1.5;
 }
 
 .albums-metadata-row strong {
     min-width: 0;
     color: var(--text-secondary);
-    font-size: 12px;
-    line-height: 1.4;
-    font-weight: 700;
+    font-size: 14px;
+    line-height: 1.5;
+    font-weight: 400;
     overflow-wrap: anywhere;
 }
 

@@ -50,6 +50,22 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 assert.ok(await heading.getAttribute('title'));
                 const open = root.locator(moduleName === 'Albums' ? '.albums-detail-open' : '.archive-file-open');
                 assert.ok(await open.evaluate(element => element.classList.contains('secondary')));
+                const typography = await root.evaluate(element =>
+                {
+                    const styles = selector =>
+                    {
+                        const style = getComputedStyle(element.querySelector(selector));
+                        return [style.fontSize, style.fontWeight, style.lineHeight, style.color];
+                    };
+                    return {
+                        detailLabel: styles('.albums-detail-read-row dt, .archive-file-read-row dt'),
+                        metadataLabel: styles('.albums-metadata-row span, .archive-file-metadata-row span'),
+                        detailValue: styles('.albums-detail-read-row dd, .archive-file-read-row dd'),
+                        metadataValue: styles('.albums-metadata-row strong, .archive-file-metadata-row strong')
+                    };
+                });
+                assert.deepEqual(typography.metadataLabel, typography.detailLabel);
+                assert.deepEqual(typography.metadataValue, typography.detailValue);
                 await page.evaluate(moduleName => moduleName === 'Albums' ? beginAlbumsPhotoEdit() : beginArchiveFileEdit(), moduleName);
                 const form = root.locator(moduleName === 'Albums' ? '.albums-form-grid' : '.archive-file-form-grid');
                 assert.equal(await form.evaluate(element => getComputedStyle(element.closest('.panel-section-body')).paddingTop), '8px');
