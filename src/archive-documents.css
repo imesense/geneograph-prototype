@@ -169,9 +169,7 @@
 
 .archive-document-drop:hover,
 .archive-document-drop.dragging { border-color: var(--accent, #2ba779); background: var(--surface-hover, #202b28); }
-.archive-document-drop span,
-.archive-document-formats { color: var(--text-secondary); }
-.archive-document-formats { margin: 10px 0 0; font-size: 13px; }
+.archive-document-drop span { color: var(--text-secondary); }
 .archive-document-import-results { margin-top: 22px; }
 .archive-document-import-results[hidden] { display: none; }
 .archive-document-import-results h3 { margin: 0 0 8px; font-size: 14px; }
