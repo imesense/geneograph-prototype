@@ -10899,6 +10899,11 @@ ${renderUploadDropzonePrompt(photoCount ? 'Add more photos' : 'Drop photos here 
                 person-photos-adder-footer
               ">
 
+              <p class="albums-photo-upload-notice">
+                <span aria-hidden="true">${icon.warning}</span>
+                <span>${escapeHtml(state.language === 'ru' ? 'Доступны до перезагрузки страницы' : 'Available until page reload')}</span>
+              </p>
+
               <div
                 class="
                   modal-footer-actions

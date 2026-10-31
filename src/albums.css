@@ -1458,6 +1458,27 @@
     font-size: 13px;
     font-weight: 750;
 }
+.albums-photo-upload-notice {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 auto 0 0;
+    color: var(--text-secondary);
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.albums-photo-upload-notice > span:first-child {
+    display: inline-flex;
+    flex: 0 0 16px;
+    color: var(--warning, #d8b460);
+}
+
+.albums-photo-upload-notice svg {
+    width: 16px;
+    height: 16px;
+}
+
 .person-photos-adder-footer .modal-footer-actions { margin-left: auto; }
 
 .person-photos-adder-footer .button:disabled {
