@@ -1110,11 +1110,11 @@ button {
 
     grid-template-columns:
         repeat(auto-fill,
-            min(100%, 280px));
+            min(100%, 325px));
 
     align-items: stretch;
 
-    gap: var(--space-3);
+    gap: var(--space-4);
     margin-bottom: var(--space-6);
 }
 
