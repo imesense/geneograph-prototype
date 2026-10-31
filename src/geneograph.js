@@ -7405,6 +7405,12 @@ function validateSampleGeneographCollections(
                 {
                     warn(`${node.type} node ${node.id} has an invalid corner radius`);
                 }
+                if (['text', 'sticky', 'place'].includes(node.type)
+                    && (!Number.isInteger(node.appearance?.fontSize)
+                        || node.appearance.fontSize < 8 || node.appearance.fontSize > 72))
+                {
+                    warn(`${node.type} node ${node.id} has an invalid font size`);
+                }
                 if (
                     node.type === 'drawing'
               && (
@@ -8655,6 +8661,14 @@ function geneoAppearance(value, defaults = {}, nodeType = '')
     {
         delete result.cornerRadius;
     }
+    if (['text', 'sticky', 'place'].includes(nodeType))
+    {
+        result.fontSize = Math.round(geneoNumber(source.fontSize, defaults.fontSize, 8, 72));
+    }
+    else
+    {
+        delete result.fontSize;
+    }
     delete result.backgroundColor;
     delete result.strokeColor;
     delete result.textColor;
@@ -9632,7 +9646,8 @@ function geneoNodeDefaults(type)
                     opacity: 100,
                     enabled: true
                 },
-                cornerRadius: 8
+                cornerRadius: 8,
+                fontSize: 15
             }
         };
     }
@@ -9673,7 +9688,8 @@ function geneoNodeDefaults(type)
                     ...common.appearance.text
                 },
 
-                cornerRadius: 8
+                cornerRadius: 8,
+                fontSize: 18
             }
         };
     }
@@ -9730,7 +9746,8 @@ function geneoNodeDefaults(type)
                 strokeWidth: 1,
                 strokePattern: 'solid',
                 text: { color: '#F1F5F3', opacity: 100, enabled: true },
-                cornerRadius: 8
+                cornerRadius: 8,
+                fontSize: 13
             }
         };
     }
@@ -11871,6 +11888,9 @@ function renderGeneographObject(node)
         `--geneo-node-radius:${
             geneoNodeCornerRadius(node)
         }px`,
+        ...(['text', 'sticky', 'place'].includes(node.type)
+            ? [`--geneo-node-font-size:${appearance.fontSize}px`]
+            : []),
 
         ...(
             personSettings
@@ -15758,6 +15778,7 @@ function renderGeneographMultiConnectionAppearance(connections, mixed = false)
 
 function geneoBulkNodeSupports(node, property)
 {
+    if (property === 'fontSize') return ['text', 'sticky', 'place'].includes(node.type);
     if (property === 'fill') return !['image', 'drawing'].includes(node.type);
     if (property === 'text') return !['image', 'shape', 'drawing'].includes(node.type);
     if (property === 'cornerRadius') return node.type !== 'drawing'
@@ -15812,6 +15833,8 @@ function renderGeneographGenericMultiAppearance(nodes)
     const pattern = shared('strokePattern');
     const radiusSupported = nodes.every(node => geneoBulkNodeSupports(node, 'cornerRadius'));
     const radius = radiusSupported ? shared('cornerRadius') : null;
+    const fontSizeSupported = nodes.every(node => geneoBulkNodeSupports(node, 'fontSize'));
+    const fontSize = fontSizeSupported ? shared('fontSize') : null;
     const shapesOnly = nodes.every(node => node.type === 'shape');
     const shapeKind = shapesOnly ? geneoSharedConnectionValue(nodes, node => normalizeGeneographShapeKind(node.shapeKind)) : null;
     return renderGeneographInspectorSection({
@@ -15833,6 +15856,10 @@ function renderGeneographGenericMultiAppearance(nodes)
             <span class="geneo-setting-label">${escapeHtml(t('Corner radius'))}</span><span class="geneo-selection-help">0–32 px</span></label>
             <input class="geneo-input" id="geneoBulkNodeRadius" type="number" min="0" max="32" step="1" value="${radius ?? ''}"
               placeholder="${escapeHtml(t('Mixed'))}" data-geneo-bulk-appearance="cornerRadius"></div>` : ''}
+          ${fontSizeSupported ? `<div class="geneo-person-card-radius-row"><label class="geneo-field" for="geneoBulkNodeFontSize">
+            <span class="geneo-setting-label">${escapeHtml(t('Font size'))}</span><span class="geneo-selection-help">8–72 px</span></label>
+            <input class="geneo-input" id="geneoBulkNodeFontSize" type="number" min="8" max="72" step="1" value="${fontSize ?? ''}"
+              placeholder="${escapeHtml(t('Mixed'))}" data-geneo-bulk-appearance="fontSize"></div>` : ''}
           ${shapesOnly ? `<label class="geneo-field"><span class="geneo-setting-label">${escapeHtml(t('Shape type'))}</span>
             <span class="common-select-shell"><select class="common-select" data-geneo-bulk-shape-kind>
               ${shapeKind === null ? `<option value="" selected>${escapeHtml(t('Mixed'))}</option>` : ''}
@@ -16627,6 +16654,13 @@ function renderGeneoNodeRadiusControl(node)
     return `<div class="geneo-person-card-radius-row geneo-node-radius-row"><label class="geneo-field" for="${escapeHtml(id)}"><span class="geneo-setting-label">${escapeHtml(t('Corner radius'))}</span><span class="geneo-selection-help">0–32 px</span></label><input class="geneo-input" id="${escapeHtml(id)}" type="number" min="0" max="32" step="1" value="${node.appearance.cornerRadius}" data-geneo-node-corner-radius="${escapeHtml(node.id)}"></div>`;
 }
 
+function renderGeneoNodeFontSizeControl(node)
+{
+    if (!['text', 'sticky', 'place'].includes(node.type)) return '';
+    const id = `geneoNodeFontSize-${node.id}`;
+    return `<div class="geneo-person-card-radius-row"><label class="geneo-field" for="${escapeHtml(id)}"><span class="geneo-setting-label">${escapeHtml(t('Font size'))}</span><span class="geneo-selection-help">8–72 px</span></label><input class="geneo-input" id="${escapeHtml(id)}" type="number" min="8" max="72" step="1" value="${node.appearance.fontSize}" data-geneo-node-font-size="${escapeHtml(node.id)}"></div>`;
+}
+
 function renderGeneographNodeInspector(
     node
 )
@@ -16780,6 +16814,7 @@ function renderGeneographNodeInspector(
         }
 
         ${renderGeneoNodeRadiusControl(node)}
+        ${renderGeneoNodeFontSizeControl(node)}
 
       `;
 
@@ -27686,6 +27721,10 @@ function bindGeneographPersonMultiAppearance()
 
 function geneoUpdateBulkNodeAppearance(node, property, field, value, diagram)
 {
+    if (property === 'fontSize' && node.type === 'place' && node.appearance.fontSize !== value)
+    {
+        node.placeSizeMode = 'manual';
+    }
     if (property === 'cornerRadius' && node.type === 'person')
     {
         node.personCard = normalizeGeneographPersonCardOverrides(node.personCard);
@@ -29525,6 +29564,34 @@ function bindGeneographEditor()
             if (event.key !== 'Enter') return;
             event.preventDefault();
             commitNodeRadius();
+        });
+    }
+    const nodeFontSizeInput = main.querySelector('[data-geneo-node-font-size]');
+    if (nodeFontSizeInput)
+    {
+        const commitNodeFontSize = () =>
+        {
+            const node = getGeneographNode(nodeFontSizeInput.dataset.geneoNodeFontSize);
+            if (!node || !['text', 'sticky', 'place'].includes(node.type)) return;
+            if (nodeFontSizeInput.value.trim() === '' || !nodeFontSizeInput.checkValidity())
+            {
+                nodeFontSizeInput.reportValidity();
+                return;
+            }
+            const fontSize = Number(nodeFontSizeInput.value);
+            if (fontSize === node.appearance.fontSize) return;
+            geneoPushHistory();
+            node.appearance.fontSize = fontSize;
+            if (node.type === 'place') node.placeSizeMode = 'manual';
+            touchGeneographBoard();
+            renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true });
+        };
+        nodeFontSizeInput.addEventListener('change', commitNodeFontSize);
+        nodeFontSizeInput.addEventListener('keydown', event =>
+        {
+            if (event.key !== 'Enter') return;
+            event.preventDefault();
+            commitNodeFontSize();
         });
     }
     main

@@ -48,6 +48,20 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 assert.equal(await appearance.locator('[data-geneo-paint-scope="node-multi"][data-geneo-paint-property="fill"] [data-geneo-paint-open]').count(), ['image', 'drawing'].includes(type) ? 0 : 1, type);
                 assert.equal(await appearance.locator('[data-geneo-paint-scope="node-multi"][data-geneo-paint-property="text"] [data-geneo-paint-open]').count(), ['image', 'shape', 'drawing'].includes(type) ? 0 : 1, type);
                 assert.equal(await appearance.locator('[data-geneo-bulk-appearance="cornerRadius"]').count(), type === 'drawing' ? 0 : 1, type);
+                const fontSize = appearance.locator('[data-geneo-bulk-appearance="fontSize"]');
+                assert.equal(await fontSize.count(), ['sticky', 'text', 'place'].includes(type) ? 1 : 0, type);
+                if (type === 'sticky') {
+                    await page.evaluate(id => {
+                        getGeneographNode(id).appearance.fontSize = 24;
+                        renderGeneographEditorPreserveScroll();
+                    }, ids[1]);
+                    assert.equal(await fontSize.inputValue(), '');
+                    await fontSize.fill('30');
+                    await fontSize.press('Tab');
+                    assert.deepEqual(await page.evaluate(ids => ids.map(id => getGeneographNode(id).appearance.fontSize), ids), [30, 30]);
+                    await page.evaluate(() => undoGeneographChange());
+                    assert.deepEqual(await page.evaluate(ids => ids.map(id => getGeneographNode(id).appearance.fontSize), ids), [15, 24]);
+                }
                 await appearance.locator('[data-geneo-bulk-appearance="strokeWidth"]').fill('8');
                 await appearance.locator('[data-geneo-bulk-appearance="strokeWidth"]').press('Tab');
                 assert.deepEqual(await page.evaluate(ids => ids.map(id => getGeneographNode(id).appearance.strokeWidth), ids), [8, 8], type);

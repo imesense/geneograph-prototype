@@ -2184,6 +2184,9 @@ const RU_UI_GENEO = {
     'Corner radius':
         'Радиус скругления',
 
+    'Font size':
+        'Размер шрифта',
+
     'Color person cards by gender':
         'Окрашивать карточки людей по полу',
 

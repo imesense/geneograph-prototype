@@ -55,6 +55,33 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
                 assert.equal(await inspector.locator('[data-geneo-rich-text-inspector]').count(), 1);
                 await inspector.locator('[data-geneo-rich-text-cancel]').click();
             }
+            const fontSize = inspector.locator('[data-geneo-node-font-size]');
+            assert.equal(await fontSize.count(), ['sticky', 'text', 'place'].includes(type) ? 1 : 0, type);
+            if (await fontSize.count()) {
+                const defaultSize = { sticky: 15, text: 18, place: 13 }[type];
+                assert.equal(Number(await fontSize.inputValue()), defaultSize);
+                assert.equal(await page.evaluate(type => geneoAppearance({}, geneoNodeDefaults(type).appearance, type).fontSize, type), defaultSize);
+                await fontSize.fill('8');
+                await fontSize.press('Enter');
+                assert.equal(await page.evaluate(id => getGeneographNode(id).appearance.fontSize, original.id), 8);
+                await fontSize.fill('72');
+                await fontSize.press('Enter');
+                assert.equal(await page.evaluate(id => getGeneographNode(id).appearance.fontSize, original.id), 72);
+                await fontSize.fill('32');
+                await fontSize.press('Enter');
+                const sizing = await page.evaluate(id => {
+                    const node = getGeneographNode(id);
+                    const element = document.querySelector(`[data-geneo-node="${CSS.escape(id)}"]`);
+                    const selector = node.type === 'place' ? '.geneo-place-node-name'
+                        : node.type === 'sticky' ? '.geneo-sticky-copy' : '.geneo-text-copy';
+                    return { fontSize: node.appearance.fontSize, rendered: getComputedStyle(element.querySelector(selector)).fontSize,
+                        width: node.width, height: node.height };
+                }, original.id);
+                assert.equal(sizing.fontSize, 32);
+                assert.equal(sizing.rendered, '32px');
+                assert.equal(sizing.width, original.width);
+                assert.equal(sizing.height, original.height);
+            }
             const radius = inspector.locator('[data-geneo-node-corner-radius]');
             assert.equal(await radius.count(), type === 'shape' && original.shapeKind === 'ellipse' ? 0 : 1, type);
             if (await radius.count()) {
@@ -106,6 +133,15 @@ const { chromium } = require(process.env.GENEO_PLAYWRIGHT_PATH || 'playwright');
             renderGeneographEditorPreserveScroll();
         });
         assert.equal(await page.locator('.geneo-inspector [data-geneo-node-corner-radius]').count(), 1);
+        assert.equal(await page.evaluate(() => t('Font size')), 'Размер шрифта');
+        assert.ok(await page.locator('.geneo-inspector').evaluate(element => element.scrollWidth <= element.clientWidth + 1));
+        await page.evaluate(() => {
+            const node = selectedGeneographDiagram().nodes.find(item => item.type === 'text');
+            state.selectedGeneoNodeId = node.id;
+            state.selectedGeneoNodeIds = [node.id];
+            renderGeneographEditorPreserveScroll();
+        });
+        assert.equal(await page.locator('.geneo-inspector [data-geneo-node-font-size]').count(), 1);
         assert.ok(await page.locator('.geneo-inspector').evaluate(element => element.scrollWidth <= element.clientWidth + 1));
         assert.deepEqual(errors, []);
         console.log('Geneograph object settings passed.');
