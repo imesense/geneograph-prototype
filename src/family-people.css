@@ -5482,11 +5482,19 @@ button.timeline-evidence-name:hover, button.timeline-evidence-name:focus-visible
 }
 
 .tree-workspace.inspector-collapsed {
-    grid-template-columns: minmax(0, 1fr) 0;
+    grid-template-columns: minmax(0, 1fr) var(--inspector-collapsed-width);
 }
 
-.tree-workspace.inspector-collapsed .tree-inspector {
-    display: none;
+.tree-workspace.inspector-collapsed .tree-inspector-collapsed {
+    width: var(--inspector-collapsed-width);
+    min-width: var(--inspector-collapsed-width);
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: var(--space-3) 8px;
+    border-left: 1px solid var(--border-default);
+    background: var(--surface-sidebar);
 }
 
 .tree-canvas {
@@ -5597,6 +5605,7 @@ button.timeline-evidence-name:hover, button.timeline-evidence-name:focus-visible
 }
 
 .people-person-sidebar.collapsed .person-sidebar-restore-button {
+    position: static;
     display: grid;
     margin-top: 0;
 }
@@ -5663,6 +5672,13 @@ button.timeline-evidence-name:hover, button.timeline-evidence-name:focus-visible
 }
 
 .tree-workspace.inspector-collapsed .inspector-restore {
+    position: static;
+    width: 34px;
+    height: 34px;
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+    color: var(--text-tertiary);
     display: grid;
 }
 

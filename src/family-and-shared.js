@@ -815,7 +815,7 @@ function renderFamilyTree()
               <button class="tree-icon-button tree-display-settings" type="button" data-tree-settings aria-label="${escapeHtml(t('Tree display settings'))}" title="${escapeHtml(t('Tree display settings'))}">${icon.slidersHorizontal}</button>
             </div>
           </div>
-            <button class="inspector-restore sidebar-toggle-icon sidebar-toggle-icon-restore" type="button" id="restoreInspector" aria-label="Show person sidebar">${icon.doublechevronSidebar}</button>
+
             <section class="tree-canvas" aria-label="Family tree canvas">
               <div class="tree-stage-space" style="width:${treeLayout.stageWidth * state.treeZoom / 100}px;height:${treeLayout.stageHeight * state.treeZoom / 100}px;">
                 <div class="tree-stage" style="width:${treeLayout.stageWidth}px;height:${treeLayout.stageHeight}px;transform: scale(${state.treeZoom / 100});">
@@ -3643,6 +3643,27 @@ function renderPersonSidebar(
             <div class="panel-muted">
               Select a person to view details.
             </div>
+          </aside>
+        `;
+    }
+
+    if (
+        !isPeopleContext
+        && state.treeInspectorCollapsed
+    )
+    {
+        return `
+          <aside
+            class="tree-inspector tree-inspector-collapsed"
+            ${contextAttribute}
+            aria-label="Collapsed person inspector">
+            <button
+              class="inspector-restore person-sidebar-restore-button sidebar-toggle-icon sidebar-toggle-icon-restore"
+              type="button"
+              id="restoreInspector"
+              aria-label="Show person sidebar">
+              ${icon.doublechevronSidebar}
+            </button>
           </aside>
         `;
     }

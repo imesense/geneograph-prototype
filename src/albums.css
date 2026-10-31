@@ -2008,6 +2008,7 @@
 
 .albums-detail.collapsed {
     overflow: hidden;
+    scrollbar-gutter: auto;
     display: flex;
     align-items: flex-start;
     justify-content: center;
