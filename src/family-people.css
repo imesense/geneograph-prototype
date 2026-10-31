@@ -5771,11 +5771,6 @@ button.timeline-evidence-name:hover, button.timeline-evidence-name:focus-visible
         gap: var(--space-5);
     }
 
-    .project-grid {
-        grid-template-columns:
-            repeat(3,
-                minmax(0, 1fr));
-    }
 }
 
 @media (max-width: 1260px) {
@@ -5793,11 +5788,6 @@ button.timeline-evidence-name:hover, button.timeline-evidence-name:focus-visible
         display: none;
     }
 
-    .project-grid {
-        grid-template-columns:
-            repeat(2,
-                minmax(0, 1fr));
-    }
 }
 
 .project-wide-hero-page::before {
@@ -5900,9 +5890,6 @@ button.timeline-evidence-name:hover, button.timeline-evidence-name:focus-visible
         width: 100%;
     }
 
-    .project-grid {
-        grid-template-columns: 1fr;
-    }
 
     .startup-continue {
         grid-template-columns: 38px minmax(0, 1fr);

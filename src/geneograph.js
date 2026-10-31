@@ -3304,7 +3304,7 @@ function renderGeneographBoardCard(
               geneo-board-footer
             ">
 
-            <div class="geneo-board-modified geneo-board-modified-grid">${escapeHtml(formatProjectModified(board))}</div>
+            <div class="geneo-board-modified geneo-board-modified-grid" title="${escapeHtml(formatProjectModified(board))}">${escapeHtml(formatProjectModified(board))}</div>
 
             <button
               class="

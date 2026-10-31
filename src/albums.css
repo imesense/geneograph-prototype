@@ -4862,25 +4862,9 @@ button.albums-inspector-row-main:focus-visible {
     .albums-lightbox-tag { margin: var(--space-2); }
 }
 
-@media (max-width: 1500px) {
-    .geneo-board-grid {
-        grid-template-columns:
-            repeat(4,
-                minmax(0, 1fr));
-    }
-}
-
 @media (max-width: 1380px) {
     .geneo-toolbar-button[data-geneo-templates] {
         display: none;
-    }
-}
-
-@media (max-width: 1260px) {
-    .geneo-board-grid {
-        grid-template-columns:
-            repeat(3,
-                minmax(0, 1fr));
     }
 }
 
@@ -4959,8 +4943,7 @@ button.albums-inspector-row-main:focus-visible {
 
 @media (max-width: 720px) {
     .geneo-board-grid {
-        grid-template-columns:
-            1fr;
+        grid-template-columns: 1fr;
     }
 
     .albums-main {

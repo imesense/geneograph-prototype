@@ -1109,8 +1109,8 @@ button {
     display: grid;
 
     grid-template-columns:
-        repeat(4,
-            minmax(0, 1fr));
+        repeat(auto-fill,
+            min(100%, 280px));
 
     align-items: stretch;
 
@@ -1340,6 +1340,12 @@ button {
     padding: 0 var(--space-6) 0 0;
 }
 
+@media (max-width: 600px) {
+    .project-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 .project-grid .project-card {
     min-width: 0;
     display: grid;
@@ -1355,6 +1361,18 @@ button {
 .project-grid .project-body {
     min-width: 0;
     align-self: center;
+}
+
+.project-grid .project-meta span,
+.project-grid .modified {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.project-grid .project-meta svg {
+    flex: none;
 }
 
 .project-grid .project-body h3 {

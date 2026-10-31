@@ -55,8 +55,8 @@
         grid;
 
     grid-template-columns:
-        repeat(5,
-            minmax(0, 1fr));
+        repeat(auto-fill,
+            min(100%, 335px));
 
     align-items:
         stretch;
@@ -568,6 +568,14 @@
 
     line-height:
         1.35;
+}
+
+.geneo-board-grid .geneo-board-footer .geneo-board-modified-grid {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .geneo-board-grid .geneo-board-modified-list,

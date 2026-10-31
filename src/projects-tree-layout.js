@@ -999,14 +999,14 @@ function renderProjectCard(project)
               </h3>
             </div>
             <div class="project-meta">
-              <span>
+              <span title="${escapeHtml(peopleCountLabel)}">
                 ${icon.peoplegroup}
                 ${escapeHtml(
                     peopleCountLabel
                 )}
               </span>
             </div>
-            <div class="modified">${escapeHtml(formatProjectModified(project))}</div>
+            <div class="modified" title="${escapeHtml(formatProjectModified(project))}">${escapeHtml(formatProjectModified(project))}</div>
           </div>
           <div class="project-footer"><button class="small-open" type="button" data-open="${escapeHtml(project.id)}" aria-label="Open ${escapeHtml(project.name)}">Open</button></div>
         </article>
