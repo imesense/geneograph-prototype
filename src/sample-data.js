@@ -1,6 +1,6 @@
 const sampleData = {
     projects: [
-        { id: 'p1', name: 'Whiskerfield Family Tree', defaultPersonId: 'silver', created: '01 May 2026', modified: '24 May 2026', modifiedAt: '2026-05-24T10:42:00Z', status: 'Local project', cover: 'paper', files: 5, notes: 7, desc: 'Research into the Whiskerfield and Purrington family lines from Pawford, Meowbridge, Fishmarket Row, and Old Cattery.' }
+        { id: 'p1', name: 'Whiskerfield Family Tree', defaultPersonId: 'silver', created: '01 May 2026', modified: '24 May 2026', modifiedAt: '2026-05-24T10:42:00Z', status: 'Local project', cover: 'golden-tree', files: 5, notes: 7, desc: 'Research into the Whiskerfield and Purrington family lines from Pawford, Meowbridge, Fishmarket Row, and Old Cattery.' }
     ],
     projectContinuation: {
         projectId: 'p1',

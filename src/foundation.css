@@ -1141,13 +1141,29 @@ button {
     border-color: var(--border-strong);
 }
 
-.project-card:focus-visible {
+.project-card:focus-within {
+    border-color: var(--border-strong);
+}
+
+.project-card-open-area {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
+.project-card-open-area:focus-visible {
     outline: 2px solid var(--brand-green-500);
-    outline-offset: 2px;
+    outline-offset: -3px;
+    border-radius: var(--radius-sm);
 }
 
 .project-cover {
-    height: 86px;
     border-bottom: 1px solid var(--border-default);
     background: var(--cover, linear-gradient(145deg, rgba(22, 58, 42, .9), rgba(26, 32, 31, .8)));
     background-size: contain;
@@ -1155,6 +1171,29 @@ button {
     background-repeat: no-repeat;
     position: relative;
     overflow: hidden;
+}
+
+.project-cover-shade {
+    position: absolute;
+    inset: 38% 0 0;
+    background: linear-gradient(transparent, rgba(6, 17, 13, .78));
+}
+
+.project-cover-title {
+    position: absolute;
+    right: var(--space-3);
+    bottom: var(--space-3);
+    left: var(--space-3);
+    margin: 0;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.2;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, .35);
 }
 
 .project-cover.tree::after {
@@ -1173,8 +1212,7 @@ button {
 }
 
 .project-body h3 {
-    min-height: 38px;
-    margin: 0 0 var(--space-2);
+    margin: 0 0 var(--space-1);
     overflow: hidden;
     display: -webkit-box;
     font-size: 15px;
@@ -1186,11 +1224,11 @@ button {
 
 .project-meta {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: var(--space-2);
-    color: var(--text-tertiary);
-    margin-bottom: var(--space-2);
-    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-1);
+    font-size: 13px;
 }
 
 .project-meta span {
@@ -1204,47 +1242,32 @@ button {
     height: 14px;
 }
 
-.project-status-meta {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-}
-
-.project-status-dot {
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: currentColor;
-    opacity: .72;
-    flex: 0 0 4px;
-    transform: translateY(1px);
-}
-
 .project-footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: var(--space-2);
-    padding: 0 var(--space-3) var(--space-3);
+    padding: var(--space-3);
+    position: relative;
+    z-index: 2;
 }
 
 .modified {
     min-width: 0;
-    color: var(--text-secondary);
+    color: var(--text-tertiary);
     font-size: 12px;
     line-height: 1.35;
 }
 
 .small-open {
-    height: 34px;
-    min-width: 92px;
-    padding: 0 var(--space-4);
+    height: 38px;
+    min-width: 76px;
+    padding: 0 var(--space-3);
     border: 0;
     border-radius: 7px;
     background: var(--brand-green-500);
     color: #06110D;
-    font-weight: 900;
-    letter-spacing: .08em;
+    font-weight: 700;
 }
 
 .small-open:hover {
@@ -1252,15 +1275,19 @@ button {
 }
 
 .project-more {
-    width: 34px;
-    height: 34px;
-    min-width: 34px;
-    flex: 0 0 34px;
+    position: absolute;
+    z-index: 2;
+    top: var(--space-2);
+    right: var(--space-2);
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    flex: 0 0 40px;
     padding: 0;
     border: 1px solid transparent;
-    background: transparent;
+    background: rgba(6, 17, 13, .62);
     border-radius: 8px;
-    color: var(--text-primary);
+    color: #fff;
     display: inline-grid;
     place-items: center;
     line-height: 0;
@@ -1291,6 +1318,16 @@ button {
     border-right: 1px solid var(--border-default);
 }
 
+.list-card .project-cover-shade,
+.list-card .project-cover-title {
+    display: none;
+}
+
+.list-card .project-more {
+    right: auto;
+    left: 56px;
+}
+
 .list-card .project-body {
     padding: var(--space-3);
 }
@@ -1300,31 +1337,32 @@ button {
 }
 
 .list-card .project-footer {
-    padding: 0 var(--space-3) 0 0;
+    padding: 0 var(--space-6) 0 0;
 }
 
 .project-grid .project-card {
     min-width: 0;
-    min-height: 238px;
-
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto minmax(74px, auto);
 }
 
 .project-grid .project-cover {
-    height: 92px;
-    flex: 0 0 92px;
+    grid-column: 1 / -1;
+    aspect-ratio: 3 / 2;
 }
 
 .project-grid .project-body {
-    flex: 1;
-
-    display: flex;
-    flex-direction: column;
+    min-width: 0;
+    align-self: center;
 }
 
-.project-grid .modified {
-    margin-top: auto;
+.project-grid .project-body h3 {
+    display: none;
+}
+
+.project-grid .project-footer {
+    align-self: center;
 }
 
 .right-card,

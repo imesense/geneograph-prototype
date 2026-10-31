@@ -709,7 +709,7 @@ function renderProjectSettings(project)
               <button class="project-cover-reset" type="button" id="projectCoverReset" hidden>Reset position</button>
               <div class="project-cover-options" role="group" aria-label="Cover style">
                 <button class="project-cover-option ${coverStyle === 'paper' ? 'active' : ''}" type="button" data-cover-style="paper">Archival paper</button>
-                <button class="project-cover-option ${coverStyle === 'tree' ? 'active' : ''}" type="button" data-cover-style="tree">Tree branch</button>
+                <button class="project-cover-option ${coverStyle === 'tree' ? 'active' : ''}" type="button" data-cover-style="tree">Full tree</button>
                 <button class="project-cover-option ${coverStyle === 'golden-tree' ? 'active' : ''}" type="button" data-cover-style="golden-tree">Family tree</button>
                 <button class="project-cover-option ${coverStyle === 'photo' ? 'active' : ''}" type="button" data-cover-photo>Photo</button>
               </div>
@@ -983,14 +983,18 @@ function renderProjectCard(project)
             project.id
         );
     return `
-        <article class="project-card ${state.viewMode === 'list' ? 'list-card' : ''}" data-project-id="${escapeHtml(project.id)}" tabindex="0" role="button" aria-label="Open ${escapeHtml(project.name)}">
+        <article class="project-card ${state.viewMode === 'list' ? 'list-card' : ''}" data-project-id="${escapeHtml(project.id)}">
           <div
             class="project-cover ${coverClass}"
             style="${coverStyleAttr}">
+            <div class="project-cover-shade" aria-hidden="true"></div>
+            <h3 class="project-cover-title">${escapeHtml(project.name)}</h3>
           </div>
+          <button class="project-card-open-area" type="button" data-open="${escapeHtml(project.id)}" aria-label="Open ${escapeHtml(project.name)}" title="${escapeHtml(project.name)}"></button>
+          <button class="project-more" type="button" data-menu="${escapeHtml(project.id)}" aria-label="More actions for ${escapeHtml(project.name)}">${icon.more}</button>
           <div class="project-body">
             <div class="project-title-row">
-              <h3>
+              <h3 title="${escapeHtml(project.name)}">
                 ${escapeHtml(project.name)}
               </h3>
             </div>
@@ -1001,11 +1005,10 @@ function renderProjectCard(project)
                     peopleCountLabel
                 )}
               </span>
-              <span class="project-status-meta"><span class="project-status-dot" aria-hidden="true"></span>${escapeHtml(project.status)}</span>
             </div>
             <div class="modified">${escapeHtml(formatProjectModified(project))}</div>
           </div>
-          <div class="project-footer"><button class="small-open" type="button" data-open="${project.id}">Open</button><button class="project-more" type="button" data-menu="${project.id}" aria-label="More actions">${icon.more}</button></div>
+          <div class="project-footer"><button class="small-open" type="button" data-open="${escapeHtml(project.id)}" aria-label="Open ${escapeHtml(project.name)}">Open</button></div>
         </article>
       `;
 }

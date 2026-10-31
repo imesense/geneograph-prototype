@@ -234,15 +234,7 @@ function projectCoverStyleAttribute(
         normalizedCover === 'paper'
     )
     {
-        return `
-          --cover:
-            linear-gradient(
-              135deg,
-              #e9d6b8,
-              #f3e8cf 48%,
-              #d7bf9b
-            );
-        `;
+        return "--cover:url('assets/archival-project-cover.jpg');background-size:cover;background-position:center;";
     }
 
     const imageSource = normalizedCover === 'golden-tree'
@@ -256,17 +248,7 @@ function projectCoverStyleAttribute(
 
     if (normalizedCover === 'photo') return projectCoverStyleAttribute('paper');
 
-    return `
-        --cover:
-          linear-gradient(
-            180deg,
-            rgba(15, 20, 19, .04),
-            rgba(15, 20, 19, .14)
-          ),
-          var(
-            --geneograph-cover-tree-image
-          );
-      `;
+    return "--cover:url('assets/full-tree-project-cover.png');background-color:#fff;background-size:contain;background-position:center;";
 }
 
 function updateProjectCoverPreview(
@@ -1080,21 +1062,6 @@ function bindProjectControls()
     {
         state.viewMode = button.dataset.view; renderStartup();
     }));
-    main.querySelectorAll('[data-project-id]').forEach(card =>
-    {
-        card.addEventListener('click', event =>
-        {
-            if (!event.target.closest('button, input, select, a')) openProject(card.dataset.projectId);
-        });
-        card.addEventListener('keydown', event =>
-        {
-            if ((event.key === 'Enter' || event.key === ' ') && !event.target.closest('button, input, select, a'))
-            {
-                event.preventDefault();
-                openProject(card.dataset.projectId);
-            }
-        });
-    });
     main.querySelectorAll('[data-open]').forEach(button => button.addEventListener('click', e =>
     {
         e.stopPropagation(); openProject(button.dataset.open);
@@ -1353,7 +1320,7 @@ function openProjectCoverModal(
                         ? 'true'
                         : 'false'
                 }">
-                Tree branch
+                Full tree
               </button>
 
               <button
