@@ -14,7 +14,7 @@ sampleData.boards = geneoSeedBoardEntries.map(entry =>
         projectId: entry.projectId,
         title: payload.board.title,
         description: payload.board.description,
-        collectionIds: [],
+        collectionIds: ['board-col-research-theory'],
         createdAt: payload.exportedAt,
         modifiedAt: payload.exportedAt,
         favorite: true,

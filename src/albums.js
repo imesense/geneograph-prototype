@@ -13227,34 +13227,6 @@ sampleData.boardCollections = [
 
     {
         id:
-          'board-col-evidence-map',
-
-        projectId:
-          'p1',
-
-        name:
-          'Evidence map',
-
-        description:
-          'Boards connecting sources, evidence and research conclusions.'
-    },
-
-    {
-        id:
-          'board-col-dna',
-
-        projectId:
-          'p1',
-
-        name:
-          'DNA',
-
-        description:
-          'DNA research, matches and relationship hypotheses.'
-    },
-
-    {
-        id:
           'board-col-publication',
 
         projectId:

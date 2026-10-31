@@ -6204,18 +6204,6 @@ const RU_DATA_GENEO = {
     'Visual family-tree layouts and structural explorations.':
         'Визуальные схемы семейного древа и исследование его структуры.',
 
-    'Evidence map':
-        'Карта доказательств',
-
-    'Boards connecting sources, evidence and research conclusions.':
-        'Холсты, связывающие источники, доказательства и исследовательские выводы.',
-
-    'DNA':
-        'ДНК',
-
-    'DNA research, matches and relationship hypotheses.':
-        'Исследования ДНК, совпадения и гипотезы о родственных связях.',
-
     'Publication':
         'Публикация',
 
