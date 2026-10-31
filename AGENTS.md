@@ -20,7 +20,7 @@ The original monolithic `index.html` has been split: the application now lives i
   - `runtime-config.js` — the `modules` list (Publish is temporarily disabled via a comment there), Places/MapTiler map config and places map runtime.
   - `localization.js` — language support (`en`, `ru`), translations, storage keys.
   - `sample-data.js` — the central `sampleData` object (Whiskerfield sample project).
-  - `seed-genealogy.js`, `seed-boards.js` — load-time mutations of `sampleData`.
+  - `seed-genealogy.js`, `seed-boards.js` — load-time mutations of `sampleData`; the Geneograph seed payload lives in `src/assets/boards/whiskerfield-tree-research.js`.
   - `validation.js` — `validateSampleData()` sanity checks.
   - `state-tree-core.js` — the central `state` object.
   - `app-shell.js` — `render()`, the central module dispatcher.
@@ -36,7 +36,7 @@ OpenSpec is initialized in this repository with Codex integration. Keep `openspe
 
 For substantive changes, inspect current behavior, create and validate one focused OpenSpec change, review its proposal before implementation, complete and test its tasks, then archive it after verification. Small, unambiguous fixes need not generate a large specification. Existing working-tree changes belong to the user; never discard them during setup.
 
-`Prototype_Design_Document.md` is the current product and engineering guide, not a backlog or an OpenSpec change. Verify its claims against code before promoting them to durable specs. For Geneograph sample-board work, the seeded board is currently defined in `src/seed-boards.js`; `.ggboard` is the portable import/export format, not automatically a load-time asset.
+`Prototype_Design_Document.md` is the current product and engineering guide, not a backlog or an OpenSpec change. Verify its claims against code before promoting them to durable specs. For Geneograph sample-board work, `src/seed-boards.js` validates and installs the data-only asset in `src/assets/boards/`. Convert a `.ggboard` export with `node tools/ggboard-to-seed.js <input.ggboard> <output.js> <title> [board-id] [project-id]`; the resulting script loads under `file://`.
 
 ## Critical File-Handling Rule
 

@@ -1168,9 +1168,7 @@ const sampleData = {
     sourceLinks: [],
     notes: [
     ],
-    boards: [
-        { id: 'board-whiskerfield-branch', projectId: 'p1', title: 'Whiskerfield branch board', description: 'Working board for branch evidence and open questions.' }
-    ],
+    boards: [],
     links: [
         { id: 'link-silver-marriage-record', projectId: 'p1', fromType: 'person', fromId: 'silver', toType: 'archiveFile', toId: 'archive-meowbridge-marriage-record', label: 'Marriage record' },
         { id: 'link-luna-marriage-record', projectId: 'p1', fromType: 'person', fromId: 'luna', toType: 'archiveFile', toId: 'archive-meowbridge-marriage-record', label: 'Marriage record' },

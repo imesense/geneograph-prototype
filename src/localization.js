@@ -6223,27 +6223,8 @@ const RU_DATA_GENEO = {
         'Макеты и визуальные материалы, подготовленные для публикации.',
 
     // Seeded board
-    'Whiskerfield family diagram':
-        'Схема семьи Вискерфильд',
-
-    'A genealogy-first visual diagram showing family relationships, research media and working annotations.':
-        'Генеалогическая визуальная схема, показывающая родственные связи, исследовательские материалы и рабочие заметки.',
-
-    // Seeded board objects
-    'Whiskerfield household':
-        'Семья Вискерфильд',
-
-    'Compare the household register with the family album before exporting this branch.':
-        'Сравнить домовую ведомость с семейным альбомом перед экспортом этой ветви.',
-
-    'Possible Purrington branch':
-        'Возможная ветвь Пуррингтон',
-
-    'Whiskerfield branch board':
-        'Холст ветви Вискерфильдов',
-
-    'Working board for branch evidence and open questions.':
-        'Рабочий холст для доказательств по ветви и открытых вопросов.'
+    'Whiskerfield tree research':
+        'Исследование родословной Вискерфильдов'
 };
 
 function buildLocalizationMap(
