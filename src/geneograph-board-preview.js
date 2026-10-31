@@ -49,7 +49,7 @@ function geneoPreviewScene(nodes)
         {
             const point = geneoPreviewCenter(node);
             const distance = Math.hypot(point.x - center.x, point.y - center.y);
-            if (distance < 850) score += (node.type === 'person' ? 4 : 1) * (1 - distance / 1100);
+        if (distance < 650) score += (node.type === 'person' ? 4 : 1) * (1 - distance / 850);
         }
         score -= Math.hypot(center.x - middle.x, center.y - middle.y) / 10000;
         if (score > bestScore)
@@ -61,7 +61,7 @@ function geneoPreviewScene(nodes)
     const nearby = content.filter(node =>
     {
         const center = geneoPreviewCenter(node);
-        return Math.hypot(center.x - focus.x, center.y - focus.y) < 850;
+        return Math.hypot(center.x - focus.x, center.y - focus.y) < 650;
     });
     const cluster = nearby.length ? nearby : content;
     const clusterBounds = {
@@ -75,16 +75,16 @@ function geneoPreviewScene(nodes)
 
 function geneoPreviewFrame(scene, mode)
 {
-    const aspect = mode === 'square' ? 1 : 400 / 184;
+    const aspect = mode === 'square' ? 1 : 3 / 2;
     const { bounds, clusterBounds } = scene;
     const contentWidth = bounds.right - bounds.left;
     const contentHeight = bounds.bottom - bounds.top;
     const fitAll = mode === 'wide'
-        ? contentWidth <= 2400 && contentHeight <= 1300
+        ? contentWidth <= 900 && contentHeight <= 600
         : contentWidth <= 1000 && contentHeight <= 800;
     const target = fitAll ? bounds : clusterBounds;
-    let width = Math.max(mode === 'square' ? 420 : 600, (target.right - target.left) * 1.14);
-    let height = Math.max(mode === 'square' ? 420 : 275, (target.bottom - target.top) * 1.14);
+    let width = Math.max(mode === 'square' ? 420 : 480, (target.right - target.left) * 1.08);
+    let height = Math.max(mode === 'square' ? 420 : 320, (target.bottom - target.top) * 1.08);
     if (width / height < aspect) width = height * aspect;
     else height = width / aspect;
     const center = {

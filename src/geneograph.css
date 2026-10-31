@@ -116,25 +116,38 @@
         var(--surface-card-hover);
 }
 
-.geneo-board-card:focus-visible {
+.geneo-board-card:focus-within {
+    border-color: var(--border-strong);
+}
+
+.geneo-board-open-area {
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
+.geneo-board-open-area:focus-visible {
     outline:
         2px solid var(--brand-green-500);
 
     outline-offset:
-        2px;
+        -3px;
+
+    border-radius: var(--radius-sm);
 }
 
 /* Grid card */
 
 .geneo-board-grid .geneo-board-card {
-    min-height:
-        238px;
-
-    display:
-        flex;
-
-    flex-direction:
-        column;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto minmax(56px, auto);
 }
 
 .geneo-thumb {
@@ -156,10 +169,40 @@
         hidden;
 }
 
+.geneo-board-grid .geneo-thumb {
+    grid-column: 1 / -1;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 2;
+}
+
 .geneo-thumb .geneo-preview-art {
     display: block;
     width: 100%;
     height: 100%;
+}
+
+.geneo-board-cover-shade {
+    position: absolute;
+    inset: 32% 0 0;
+    background: linear-gradient(transparent, rgba(6, 17, 13, .88));
+}
+
+.geneo-board-cover-title {
+    position: absolute;
+    right: var(--space-3);
+    bottom: var(--space-4);
+    left: var(--space-3);
+    margin: 0;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.2;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, .35);
 }
 
 .geneo-board-body {
@@ -171,14 +214,11 @@
 }
 
 .geneo-board-grid .geneo-board-body {
-    flex:
-        1;
+    padding-bottom: 0;
+}
 
-    display:
-        flex;
-
-    flex-direction:
-        column;
+.geneo-board-grid .geneo-board-body h3 {
+    display: none;
 }
 
 .geneo-board-body h3 {
@@ -229,8 +269,7 @@
 
 .geneo-board-collections {
     min-width: 0;
-    min-height: 24px;
-    margin-bottom: 10px;
+    margin-bottom: 0;
     display: flex;
     align-items: center;
     flex-wrap: wrap;
@@ -517,89 +556,6 @@
     }
 }
 
-.geneo-board-meta {
-    min-width:
-        0;
-    margin-bottom:
-        10px;
-    color:
-        var(--text-tertiary);
-    display:
-        flex;
-    align-items:
-        center;
-    flex-wrap:
-        nowrap;
-    gap:
-        var(--space-2);
-    overflow:
-        hidden;
-    font-size:
-        12px;
-}
-
-.geneo-board-meta-item {
-    min-width:
-        0;
-
-    flex:
-        0 0 auto;
-
-    display:
-        inline-flex;
-
-    align-items:
-        center;
-
-    gap:
-        0;
-
-    white-space:
-        nowrap;
-}
-
-.geneo-board-meta-item svg {
-    margin-right:
-        5px;
-}
-
-.geneo-board-meta-value+.geneo-board-meta-label {
-    margin-left:
-        3px;
-}
-
-.geneo-board-meta-item svg {
-    width:
-        14px;
-
-    height:
-        14px;
-
-    flex:
-        0 0 14px;
-
-    display:
-        block;
-}
-
-.geneo-board-meta-value {
-    flex:
-        0 0 auto;
-
-    font-variant-numeric:
-        tabular-nums;
-}
-
-.geneo-board-meta.is-compact {
-    gap:
-        10px;
-}
-
-.geneo-board-meta.is-compact .geneo-board-meta-label {
-    display:
-        none;
-}
-
 .geneo-board-modified {
     min-width:
         0;
@@ -614,14 +570,14 @@
         1.35;
 }
 
-.geneo-board-grid .geneo-board-modified {
-    margin-top:
-        auto;
+.geneo-board-grid .geneo-board-modified-list,
+.geneo-board-list .geneo-board-modified-grid {
+    display: none;
 }
 
 .geneo-board-footer {
     padding:
-        0 var(--space-3) var(--space-3);
+        var(--space-3);
 
     display:
         flex;
@@ -629,49 +585,51 @@
     align-items:
         center;
 
-    gap:
-        var(--space-2);
-}
+    justify-content:
+        space-between;
 
-.geneo-board-footer-actions {
-    margin-left:
-        auto;
-
-    display:
-        inline-flex;
-
-    align-items:
+    align-self:
         center;
 
+    position: relative;
+
+    z-index: 2;
+
     gap:
-        2px;
+        var(--space-2);
 }
 
 .geneo-star,
 .geneo-more {
     width:
-        34px;
+        40px;
 
     height:
-        34px;
+        40px;
 
     min-width:
-        34px;
+        40px;
+
+    position: absolute;
+
+    z-index: 2;
+
+    top: var(--space-2);
 
     padding:
         0;
 
     border:
-        1px solid transparent;
+        1px solid rgba(255, 255, 255, .12);
 
     border-radius:
         8px;
 
     background:
-        transparent;
+        rgba(12, 23, 19, .72);
 
     color:
-        var(--text-secondary);
+        rgba(255, 255, 255, .88);
 
     display:
         inline-grid;
@@ -684,6 +642,14 @@
         background var(--ease),
         border-color var(--ease),
         color var(--ease);
+}
+
+.geneo-star {
+    left: var(--space-2);
+}
+
+.geneo-more {
+    right: var(--space-2);
 }
 
 .geneo-star svg {
@@ -711,10 +677,10 @@
 .geneo-star:hover,
 .geneo-more:hover {
     border-color:
-        var(--border-default);
+        rgba(255, 255, 255, .28);
 
     background:
-        rgba(255, 255, 255, .05);
+        rgba(20, 37, 31, .94);
 
     color:
         var(--text-primary);
@@ -788,6 +754,20 @@
         0;
 }
 
+.geneo-board-list .geneo-board-cover-shade,
+.geneo-board-list .geneo-board-cover-title {
+    display: none;
+}
+
+.geneo-board-list .geneo-star {
+    left: 8px;
+}
+
+.geneo-board-list .geneo-more {
+    right: auto;
+    left: 56px;
+}
+
 .geneo-board-list .geneo-board-body {
     padding:
         var(--space-3);
@@ -807,11 +787,6 @@
         1;
 }
 
-.geneo-board-list .geneo-board-meta {
-    margin-bottom:
-        4px;
-}
-
 .geneo-board-list .geneo-board-collections {
     margin-bottom:
         4px;
@@ -819,7 +794,7 @@
 
 .geneo-board-list .geneo-board-footer {
     min-width:
-        182px;
+        90px;
 
     padding:
         var(--space-3);

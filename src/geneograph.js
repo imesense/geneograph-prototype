@@ -3254,11 +3254,6 @@ function renderGeneographBoardCard(
     board
 )
 {
-    const stats =
-        geneographBoardStats(
-            board
-        );
-
     const favouriteLabel =
         board.favorite
             ? `Remove ${board.title} from favourites`
@@ -3269,156 +3264,47 @@ function renderGeneographBoardCard(
           class="
             geneo-board-card
           "
-          tabindex="0"
-          role="button"
           data-geneo-board-id="${escapeHtml(
                 board.id
-            )}"
-          aria-label="Open ${escapeHtml(
-                board.title
             )}">
 
           <div
             class="
               geneo-thumb
-            "
-            aria-hidden="true">
+            ">
             ${renderGeneographBoardPreview(board, state.geneoBoardViewMode === 'list' ? 'square' : 'wide')}
+            <div class="geneo-board-cover-shade"></div>
+            <h3 class="geneo-board-cover-title">${escapeHtml(board.title)}</h3>
           </div>
+
+          <button class="geneo-board-open-area" type="button" data-geneo-open-board="${escapeHtml(board.id)}" aria-label="Open ${escapeHtml(board.title)}" title="${escapeHtml(board.title)}"></button>
+
+          <button class="geneo-star ${board.favorite ? 'active' : ''}" type="button" data-geneo-fav="${escapeHtml(board.id)}" aria-label="${escapeHtml(favouriteLabel)}" aria-pressed="${board.favorite ? 'true' : 'false'}">${icon.star}</button>
+
+          <button class="geneo-more" type="button" data-geneo-board-menu="${escapeHtml(board.id)}" aria-label="More actions for ${escapeHtml(board.title)}" aria-haspopup="menu" aria-expanded="false">${icon.more}</button>
 
           <div
             class="
               geneo-board-body
             ">
-          <h3>
+          <h3 title="${escapeHtml(board.title)}">
             ${escapeHtml(
                 board.title
             )}
           </h3>
 
-          <div
-            class="
-              geneo-board-meta
-            ">
-
-            <span
-              class="
-                geneo-board-meta-item
-              "
-              title="${escapeHtml(
-                    `${stats.people} people`
-                )}"
-              aria-label="${escapeHtml(
-                    `${stats.people} people`
-                )}">
-
-              ${icon.peoplegroup}
-
-              <span
-                class="
-                  geneo-board-meta-value
-                "
-                aria-hidden="true">
-
-                ${stats.people}
-              </span>
-
-              <span
-                class="
-                  geneo-board-meta-label
-                "
-                aria-hidden="true">
-
-                people
-              </span>
-            </span>
-
-            <span
-              class="
-                geneo-board-meta-item
-              "
-              title="${escapeHtml(
-                    `${stats.items} items`
-                )}"
-              aria-label="${escapeHtml(
-                    `${stats.items} items`
-                )}">
-
-              ${icon.file}
-
-              <span
-                class="
-                  geneo-board-meta-value
-                "
-                aria-hidden="true">
-
-                ${stats.items}
-              </span>
-
-              <span
-                class="
-                  geneo-board-meta-label
-                "
-                aria-hidden="true">
-
-                items
-              </span>
-            </span>
-
-            <span
-              class="
-                geneo-board-meta-item
-              "
-              title="${escapeHtml(
-                    `${stats.connections} connections`
-                )}"
-              aria-label="${escapeHtml(
-                    `${stats.connections} connections`
-                )}">
-
-                ${icon.link}
-
-              <span
-                class="
-                  geneo-board-meta-value
-                "
-                aria-hidden="true">
-
-                ${stats.connections}
-              </span>
-
-              <span
-                class="
-                  geneo-board-meta-label
-                "
-                aria-hidden="true">
-
-                connections
-              </span>
-            </span>
-          </div>
-
           ${renderGeneographBoardCollectionChips(
                 board
             )}
-
-            <div
-              class="
-                geneo-board-modified
-              ">
-
-              ${escapeHtml(
-                    formatProjectModified(
-                        board
-                    )
-                )}
-            </div>
+            <div class="geneo-board-modified geneo-board-modified-list">${escapeHtml(formatProjectModified(board))}</div>
           </div>
 
           <div
             class="
               geneo-board-footer
             ">
+
+            <div class="geneo-board-modified geneo-board-modified-grid">${escapeHtml(formatProjectModified(board))}</div>
 
             <button
               class="
@@ -3432,139 +3318,9 @@ function renderGeneographBoardCard(
               Open
             </button>
 
-            <div
-              class="
-                geneo-board-footer-actions
-              ">
-
-              <button
-                class="
-                  geneo-star
-                  ${
-                        board.favorite
-                            ? 'active'
-                            : ''
-                    }
-                "
-                type="button"
-                data-geneo-fav="${escapeHtml(
-                    board.id
-                )}"
-                aria-label="${escapeHtml(
-                    favouriteLabel
-                )}"
-                aria-pressed="${
-                    board.favorite
-                        ? 'true'
-                        : 'false'
-                }">
-
-                ${icon.star}
-              </button>
-
-              <button
-                class="
-                  geneo-more
-                "
-                type="button"
-                data-geneo-board-menu="${escapeHtml(
-                    board.id
-                )}"
-                aria-label="More actions"
-                aria-haspopup="menu"
-                aria-expanded="false">
-
-                ${icon.more}
-              </button>
-            </div>
           </div>
         </article>
       `;
-}
-
-let geneographBoardMetaResizeObserver =
-    null;
-
-function updateGeneographBoardMetaMode(
-    meta
-)
-{
-    if (
-        !meta
-        || !meta.isConnected
-    )
-    {
-        return;
-    }
-
-    /*
-        Measure the natural expanded version
-        before deciding whether compact mode
-        is required.
-      */
-    meta.classList.remove(
-        'is-compact'
-    );
-
-    const needsCompact =
-        meta.scrollWidth
-          > meta.clientWidth + 1;
-
-    meta.classList.toggle(
-        'is-compact',
-        needsCompact
-    );
-}
-
-function bindGeneographBoardMetaModes()
-{
-    geneographBoardMetaResizeObserver
-        ?.disconnect();
-
-    geneographBoardMetaResizeObserver =
-        null;
-
-    const metadataRows = [
-        ...main.querySelectorAll(
-            '.geneo-board-meta'
-        )
-    ];
-
-    metadataRows.forEach(
-        updateGeneographBoardMetaMode
-    );
-
-    if (
-        !metadataRows.length
-    )
-    {
-        return;
-    }
-
-    geneographBoardMetaResizeObserver =
-        new ResizeObserver(
-            entries =>
-            {
-                entries.forEach(
-                    entry =>
-                    {
-                        updateGeneographBoardMetaMode(
-                            entry.target
-                        );
-                    }
-                );
-            }
-        );
-
-    metadataRows.forEach(
-        meta =>
-        {
-            geneographBoardMetaResizeObserver
-                .observe(
-                    meta
-                );
-        }
-    );
 }
 
 function geneographCanvasCountLabel(count)
@@ -4987,7 +4743,6 @@ function bindGeneographHome()
         });
         importTile.addEventListener('dragend', () => importTile.classList.remove('is-dragging'));
     }
-    bindGeneographBoardMetaModes();
     main
         .querySelectorAll(
             '[data-geneo-create]'
@@ -5147,64 +4902,6 @@ function bindGeneographHome()
                     openGeneographBoard(
                         button.dataset
                             .geneoOpenBoard
-                    );
-                }
-            );
-        });
-
-    main
-        .querySelectorAll(
-            '[data-geneo-board-id]'
-        )
-        .forEach(card =>
-        {
-            card.addEventListener(
-                'click',
-                event =>
-                {
-                    if (
-                        event.target.closest(
-                            'button'
-                        )
-                    )
-                    {
-                        return;
-                    }
-
-                    openGeneographBoard(
-                        card.dataset
-                            .geneoBoardId
-                    );
-                }
-            );
-
-            card.addEventListener(
-                'keydown',
-                event =>
-                {
-                    if (
-                        event.target
-                  !== card
-                    )
-                    {
-                        return;
-                    }
-
-                    if (
-                        event.key
-                  !== 'Enter'
-                && event.key
-                  !== ' '
-                    )
-                    {
-                        return;
-                    }
-
-                    event.preventDefault();
-
-                    openGeneographBoard(
-                        card.dataset
-                            .geneoBoardId
                     );
                 }
             );
@@ -9929,17 +9626,6 @@ function redoGeneographChange()
     geneoHistoryRuntime.redo.pop();
     geneoHistoryRuntime.undo.push(geneoHistoryCompanionSnapshot(snapshot));
     if (geneoRestoreSnapshot(snapshot)) renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true, preserveSidebarScroll: true });
-}
-
-function geneographBoardStats(board)
-{
-    const diagram = board?.diagram || createEmptyGeneographDiagram();
-    const represented = new Set(diagram.nodes.filter(node => node.type === 'person').map(node => node.personId));
-    return {
-        people: represented.size,
-        items: diagram.nodes.filter(node => node.type !== 'person').length,
-        connections: diagram.connections.length
-    };
 }
 
 function geneoSelectedNodeIdSet()
