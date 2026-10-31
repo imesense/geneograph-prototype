@@ -3,6 +3,8 @@
 **Reviewed:** 2026-10-23
 **Scope:** The working prototype in `src/`, not a specification of a shipped service.
 
+**Canonical checkout:** `E:\Geneograph\Concept\geneograph-prototype`.
+
 ## 1. What this document describes
 
 GeneoGraph is a project-based family-history research workspace. The prototype connects a structured family tree with person profiles, photographs, research files, notes, places, and free-form Geneograph boards. It demonstrates interactions and visual direction with seeded sample data. It is not a durable multi-user application.
@@ -34,6 +36,7 @@ The visual identity is a dark, low-glare work surface with restrained green prim
 ### Runtime organization
 
 - `src/sample-data.js` establishes the seeded `sampleData` graph. `seed-genealogy.js` and `seed-boards.js` enrich it at load time; `validation.js` checks assumptions.
+- The sample Geneograph board is currently constructed as JavaScript data in `src/seed-boards.js`. A downloaded `.ggboard` is a portable board snapshot; it is not loaded as a static asset during startup. Replacing or externalizing the sample board requires checking ID references, project scope, validation, and static-file loading behavior.
 - `src/state-tree-core.js` owns central UI state. `app-shell.js` dispatches rendering; feature files such as `people.js`, `geneograph.js`, `albums.js`, `archive.js`, `notes.js`, and `places.js` implement module behavior.
 - `shared-media.js` and `shared-actions.js` contain cross-view media resolution and actions. Geneograph board files, PNG export, and Tree transfer/import have their own focused files.
 - DOM rendering and event binding are largely imperative. This is an extracted multi-file application, but not yet a modular ES-module architecture or a persistent domain layer.
@@ -180,6 +183,10 @@ Semantic buttons, labeled icon actions, focus indicators, accessible names, sele
 The `tests/` directory contains browser regressions for these areas, including Geneograph editor/connection cases, place search, photo pickers, mobile layouts, and project navigation. Test names are task-specific rather than a single all-in-one suite; select the relevant files and supplement them with an actual browser/console pass.
 
 ## 12. Engineering guidance
+
+### OpenSpec adoption
+
+OpenSpec is initialized here with Codex integration. Keep its config short and write focused change artifacts rather than copying this guide into every proposal. Current code and validated behavior remain the source of truth when older prose disagrees. Archive a change only after its implementation and checks are complete; the resulting specs should describe shipped prototype behavior, not aspirations. See `AGENTS.md` for the handoff convention.
 
 1. Start at `src/index.html` and follow its load order. Change stylesheet/script order only after checking global dependencies and the final overrides layer.
 2. Search targeted functions/selectors in the relevant feature file; several files are too large to inspect wholesale. Keep edits near the owning renderer and event bindings.

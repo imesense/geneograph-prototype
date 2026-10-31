@@ -2,6 +2,8 @@
 
 Guidelines for AI agents working on the GeneoGraph prototype repository.
 
+The canonical local checkout is `E:\Geneograph\Concept\geneograph-prototype`. Open that folder as the workspace before changing code; `C:\Users\Nick-PC\Documents\Geneograph` may be a separate Codex workspace and is not this repository.
+
 ## Project Overview
 
 GeneoGraph prototype is a static single-page interactive concept of the GeneoGraph genealogy research workspace. It is the target of the landing site's "Try Demo" CTA. It has no build tooling, no package manager and no framework: plain HTML, CSS and vanilla JavaScript served as static files. Third-party libraries load from CDNs: Leaflet 1.9.4 (maps) and Quill 2.0.3 (rich text), with SRI `integrity` hashes where provided.
@@ -26,7 +28,15 @@ The original monolithic `index.html` has been split: the application now lives i
   - `shared-media.js`, `shared-actions.js` — shared media access and cross-module actions.
   - `bootstrap.js` — global keyboard handling (Escape) and the initial `render()` call.
 - Stylesheets: `foundation.css` (design tokens in `:root`, base styles), then feature groups `family-people.css`, `people-shared.css`, `geneograph.css`, `albums.css`, `archive.css`, `notes-places.css`, `publish.css`, with `final-overrides.css` loaded last.
-- Sample photos (`.jpg` portraits/scenes and `geneograph-cover-tree.png`) live directly in `src/`.
+- Sample photos, project covers, and other static media live in `src/assets/`.
+
+## OpenSpec Handoff
+
+OpenSpec is initialized in this repository with Codex integration. Keep `openspec/config.yaml` concise: project-wide facts and workflow rules only. Keep verified current behavior in `openspec/specs/` and one change's proposal, design, tasks, and delta specs in `openspec/changes/`. Do not copy this document or the full design guide into every change.
+
+For substantive changes, inspect current behavior, create and validate one focused OpenSpec change, review its proposal before implementation, complete and test its tasks, then archive it after verification. Small, unambiguous fixes need not generate a large specification. Existing working-tree changes belong to the user; never discard them during setup.
+
+`Prototype_Design_Document.md` is the current product and engineering guide, not a backlog or an OpenSpec change. Verify its claims against code before promoting them to durable specs. For Geneograph sample-board work, the seeded board is currently defined in `src/seed-boards.js`; `.ggboard` is the portable import/export format, not automatically a load-time asset.
 
 ## Critical File-Handling Rule
 
@@ -37,6 +47,14 @@ Several extracted files are still very large. **Never read them end-to-end.**
 - Use targeted `grep` searches (selectors, ids, class names, function names, `aria-` attributes) to locate the section you need.
 - Read only specific ranges with `offset`/`limit`.
 - When editing, prefer narrow, surgical `edit_file` replacements anchored on unique strings.
+
+## Token-Efficient Workflow
+
+- Inspect only files relevant to the requested change. Avoid repository-wide scans unless targeted searches fail or cross-cutting behavior requires one.
+- Prefer targeted `rg` searches and bounded file ranges. Do not reread or repeat file contents already inspected.
+- Make surgical patches at the responsible layer; avoid unrelated refactors.
+- Keep tests proportional to risk. Run focused tests first; use broader suites only when the change warrants them. Do not add tests for every minor change.
+- Stop when the acceptance criteria are met. Keep explanations concise and omit large diffs from final responses.
 
 ## Repository Structure
 
