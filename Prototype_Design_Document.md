@@ -7,8 +7,6 @@
 
 GeneoGraph is a project-based family-history research workspace. The prototype connects a structured family tree with person profiles, photographs, research files, notes, places, and free-form Geneograph boards. It demonstrates interactions and visual direction with seeded sample data. It is not a durable multi-user application.
 
-This document describes behavior present in the current repository, identifies simulation boundaries, and records the design and engineering conventions needed to extend the prototype. The application is no longer the old single-file `index(20260830-152032).html` snapshot. Do not use that file or older revision notes as an implementation reference.
-
 ## 2. Running the prototype
 
 - Open `src/index.html` directly or serve `src/` as static files. There is no framework, package manager, compile step, or backend.

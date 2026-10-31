@@ -152,6 +152,7 @@ function mountPlacesMap(places)
         maxZoom: PLACES_MAP_CONFIG.maxZoom,
         preferCanvas: false
     });
+    placesMapRuntime.map.attributionControl.setPrefix('<a href="" target="_blank" rel="noopener noreferrer">Leaflet</a>');
     placesMapRuntime.markerLayer = L.featureGroup().addTo(placesMapRuntime.map);
     placesMapRuntime.tileLayer = createPlacesTileLayer();
     if (placesMapRuntime.tileLayer)
