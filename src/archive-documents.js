@@ -294,7 +294,121 @@ function archiveRollbackImportedFiles(ids) {
     });
 }
 
-function openArchiveDocumentImport({ files = null, onImported = null, projectId = currentProjectId(), folderId = state.activeModule === 'Archive' ? state.archiveSelectedFolderId || null : null, destinationLabel = null, modalOpener = openModal, stageSelection = false } = {}) {
+function archiveBindStagedImport({ modal, input, drop, result, rows, chooseButton, doneButton, files, projectId, folderId, onImported }) {
+    const queue = [];
+    const tiles = document.createElement('div');
+    tiles.className = 'rp-upload-tiles';
+    tiles.setAttribute('aria-label', archiveDocumentLabel('Selected files', 'Выбранные файлы'));
+    result.before(tiles);
+    modal.classList.add('rp-upload-staging', 'is-staged');
+    doneButton.textContent = archiveDocumentLabel('Cancel', 'Отмена');
+    let importing = false;
+    modalBackdrop.beforeClose = () => !importing;
+    const release = item => { if (item.previewUrl) URL.revokeObjectURL(item.previewUrl); };
+    const observer = new MutationObserver(() => {
+        if (modal.isConnected) return;
+        queue.forEach(release);
+        observer.disconnect();
+    });
+    observer.observe(modalBackdrop, { childList: true, subtree: true });
+    const showErrors = messages => {
+        rows.innerHTML = messages.map(message => `<p class="archive-document-import-row error">${escapeHtml(message)}</p>`).join('');
+        result.hidden = !messages.length;
+    };
+    const render = () => {
+        modal.classList.toggle('has-items', queue.length > 0);
+        tiles.hidden = !queue.length;
+        tiles.innerHTML = queue.map(item => `<article class="rp-upload-tile">
+            <span class="rp-upload-tile-preview">${item.previewUrl ? `<img src="${escapeHtml(item.previewUrl)}" alt="">` : archiveImageExtensions.has(archiveDocumentExtension(item.file.name)) ? icon.photo : icon.file}</span>
+            <strong title="${escapeHtml(item.file.name)}">${escapeHtml(item.file.name)}</strong>
+            <small>${Math.max(1, Math.ceil(item.file.size / 1024))} KB${item.error ? ` · ${escapeHtml(item.error)}` : ''}</small>
+            <button type="button" class="rp-upload-remove" data-document-remove="${item.id}" aria-label="${escapeHtml(archiveDocumentLabel('Remove', 'Убрать'))}: ${escapeHtml(item.file.name)}" ${importing ? 'disabled' : ''}>${icon.close}</button>
+        </article>`).join('');
+        drop.querySelector('.upload-dropzone-copy strong').textContent = queue.length
+            ? archiveDocumentLabel('Add more files', 'Добавить ещё файлы')
+            : archiveDocumentLabel('Choose files', 'Выбрать файлы');
+        chooseButton.textContent = archiveDocumentLabel('Add files', 'Добавить файлы');
+        chooseButton.disabled = importing || !queue.length;
+    };
+    const receive = selected => {
+        if (importing) return;
+        const errors = [];
+        for (const file of Array.from(selected || [])) {
+            const extension = archiveDocumentExtension(file.name);
+            if (!(archiveDocumentExtensions.has(extension) || archiveImageExtensions.has(extension)) || !file.size || file.size > archiveDocumentMaxBytes) {
+                errors.push(`${file.name}: ${archiveDocumentLabel('Unsupported, empty, or over 20 MB.', 'Неподдерживаемый, пустой или больше 20 МБ.')}`);
+                continue;
+            }
+            const previewUrl = archiveImageExtensions.has(extension) ? URL.createObjectURL(file) : '';
+            queue.push({ id: crypto.randomUUID(), file, previewUrl, error: '' });
+        }
+        showErrors(errors);
+        input.value = '';
+        render();
+    };
+    bindUploadDropzoneChooser(drop, input);
+    input.addEventListener('change', () => receive(input.files));
+    drop.addEventListener('dragover', event => { event.preventDefault(); drop.classList.add('dragging'); });
+    drop.addEventListener('dragleave', () => drop.classList.remove('dragging'));
+    drop.addEventListener('drop', event => { event.preventDefault(); drop.classList.remove('dragging'); receive(event.dataTransfer.files); });
+    tiles.addEventListener('click', event => {
+        const button = event.target.closest('[data-document-remove]');
+        if (!button || importing) return;
+        const index = queue.findIndex(item => item.id === button.dataset.documentRemove);
+        if (index >= 0) release(queue.splice(index, 1)[0]);
+        render();
+    });
+    chooseButton.addEventListener('click', async () => {
+        if (importing || !queue.length) return;
+        if (folderId && !archiveFolderById(folderId, projectId)) {
+            showErrors([archiveDocumentLabel('This folder is no longer available. Choose another folder.', 'Эта папка больше недоступна. Выберите другую папку.')]);
+            return;
+        }
+        importing = true;
+        modal.setAttribute('aria-busy', 'true');
+        input.disabled = true;
+        doneButton.disabled = true;
+        drop.setAttribute('aria-disabled', 'true');
+        render();
+        const errors = [];
+        const selected = [...queue];
+        selected.forEach(item => { item.error = ''; });
+        let shouldClose = false;
+        try {
+            const ids = await archiveImportFiles(selected.map(item => item.file), { projectId, folderId, onResult: (file, status, message) => {
+                const item = selected.find(candidate => candidate.file === file);
+                if (item && status === 'error') { item.error = message; errors.push(`${file.name}: ${message}`); }
+            } });
+            for (const item of selected.filter(item => !item.error)) {
+                const index = queue.indexOf(item);
+                if (index >= 0) release(queue.splice(index, 1)[0]);
+            }
+            if (ids.length) {
+                let linked;
+                try { linked = onImported ? await onImported(ids) : (renderArchiveMain(), { ok: true }); }
+                catch (error) { linked = { ok: false, message: error.message }; }
+                if (linked === false || linked?.ok === false) errors.push(linked?.message || archiveDocumentLabel('Files could not be linked.', 'Не удалось связать файлы.'));
+            }
+            showErrors(errors);
+            shouldClose = !errors.length && ids.length > 0;
+        }
+        catch (error) {
+            showErrors([error.message || archiveDocumentLabel('Files could not be added.', 'Не удалось добавить файлы.')]);
+        }
+        finally {
+            importing = false;
+            modal.setAttribute('aria-busy', 'false');
+            input.disabled = false;
+            doneButton.disabled = false;
+            drop.setAttribute('aria-disabled', 'false');
+            if (modal.isConnected) render();
+        }
+        if (shouldClose && modal.isConnected) closeModal();
+    });
+    if (files?.length) receive(files);
+    render();
+}
+function openArchiveDocumentImport({ files = null, onImported = null, projectId = currentProjectId(), folderId = state.activeModule === 'Archive' ? state.archiveSelectedFolderId || null : null, destinationLabel = null, modalOpener = openModal } = {}) {
     const destination = destinationLabel || (folderId ? archiveFolderById(folderId, projectId)?.name : archiveDocumentLabel('All files', 'Все файлы'));
     modalOpener(`<div class="modal archive-document-import" role="dialog" aria-modal="true" aria-labelledby="archiveImportTitle"><div class="modal-header"><div><h2 id="archiveImportTitle">${escapeHtml(archiveDocumentLabel('Add files', 'Добавить файлы'))}</h2><p>${escapeHtml(archiveDocumentLabel('Adding to', 'Папка'))} <strong>${escapeHtml(destination || archiveDocumentLabel('All files', 'Все файлы'))}</strong></p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><div class="modal-body"><div class="archive-document-drop upload-dropzone" data-document-drop tabindex="0" role="button" aria-label="${escapeHtml(archiveDocumentLabel('Choose files or drop them here', 'Выберите файлы или перетащите их сюда'))}">${renderUploadDropzonePrompt(archiveDocumentLabel('Drop files here or choose files', 'Перетащите файлы сюда или выберите'), archiveDocumentLabel('Up to 20 MB each', 'До 20 МБ каждый'))}</div><p class="archive-document-formats">PNG, JPEG, WebP, TXT, CSV, PDF, DOCX</p><input type="file" multiple accept=".png,.jpg,.jpeg,.webp,.txt,.csv,.pdf,.docx" data-document-input hidden><div class="archive-document-import-results" data-import-results data-user-content hidden><h3>${escapeHtml(archiveDocumentLabel('Import results', 'Результаты добавления'))}</h3><div data-import-rows></div></div></div><div class="modal-footer"><p class="archive-document-import-notice"><span aria-hidden="true">${icon.warning}</span><span>${escapeHtml(archiveDocumentLabel('Available until page reload', 'Доступны до перезагрузки страницы'))}</span></p><span class="archive-document-import-summary" data-import-summary role="status" aria-live="polite"></span><button class="button secondary" type="button" data-close>${escapeHtml(archiveDocumentLabel('Done', 'Готово'))}</button><button class="button primary" type="button" data-document-choose>${escapeHtml(archiveDocumentLabel('Choose files', 'Выбрать файлы'))}</button></div></div>`);
     const modal = modalBackdrop.querySelector('.archive-document-import');
@@ -305,106 +419,6 @@ function openArchiveDocumentImport({ files = null, onImported = null, projectId 
     const rows = modal.querySelector('[data-import-rows]');
     const summary = modal.querySelector('[data-import-summary]');
     const chooseButton = modal.querySelector('[data-document-choose]');
-    let doneButton = modal.querySelector('.modal-footer [data-close]');
-    let added = 0;
-    let failed = 0;
-    const updateSummary = () => {
-        summary.textContent = `${added} ${archiveDocumentLabel('added', 'добавлено')}${failed ? ` · ${failed} ${archiveDocumentLabel('not added', 'не добавлено')}` : ''}`;
-        if (added > 0 && !doneButton.classList.contains('primary')) {
-            chooseButton.classList.replace('primary', 'secondary');
-            doneButton.classList.replace('secondary', 'primary');
-            chooseButton.after(doneButton);
-        } else if (added === 0 && doneButton.classList.contains('primary')) {
-            doneButton.classList.replace('primary', 'secondary');
-            chooseButton.classList.replace('secondary', 'primary');
-            doneButton.after(chooseButton);
-        }
-    };
-    const choose = () => input.click();
-    chooseButton.addEventListener('click', choose);
-    bindUploadDropzoneChooser(drop, input);
-    drop.addEventListener('dragover', event => { event.preventDefault(); drop.classList.add('dragging'); });
-    drop.addEventListener('dragleave', () => drop.classList.remove('dragging'));
-    let importing = false;
-    modalBackdrop.beforeClose = () => !importing;
-    const importFiles = async selected => {
-        if (importing) return;
-        if (folderId && !archiveFolderById(folderId, projectId)) {
-            result.hidden = false;
-            const row = document.createElement('p');
-            row.className = 'archive-document-import-row error';
-            row.textContent = archiveDocumentLabel('This folder is no longer available. Choose another folder.', 'Эта папка больше недоступна. Выберите другую папку.');
-            rows.append(row);
-            failed++;
-            updateSummary();
-            return;
-        }
-        importing = true;
-        chooseButton.disabled = true;
-        input.disabled = true;
-        modal.setAttribute('aria-busy', 'true');
-        drop.setAttribute('aria-disabled', 'true');
-        modal.querySelectorAll('[data-close]').forEach(button => { button.disabled = true; });
-        const batchRows = [];
-        const fileRows = new Map();
-        const progress = document.createElement('progress');
-        progress.max = selected.length;
-        progress.value = 0;
-        progress.setAttribute('aria-label', archiveDocumentLabel('Import progress', 'Ход добавления'));
-        rows.append(progress);
-        try {
-        const ids = await archiveImportFiles(selected, { projectId, folderId, onResult: (source, status, message) => {
-            const row = fileRows.get(source) || document.createElement('p');
-            fileRows.set(source, row);
-            result.hidden = false;
-            rows.append(row);
-            row.replaceChildren();
-            row.className = `archive-document-import-row ${status}`;
-            const name = document.createElement('strong');
-            name.textContent = source.name;
-            const detail = document.createElement('span');
-            detail.textContent = message;
-            row.append(name, detail);
-            if (status === 'uploading') return;
-            progress.value++;
-            if (status === 'success') {
-                added++;
-                batchRows.push(row);
-            }
-            else failed++;
-            updateSummary();
-        } });
-        if (ids.length) {
-            let linked;
-            try {
-                linked = onImported ? await onImported(ids) : (renderArchiveMain(), { ok: true });
-            } catch (error) {
-                linked = { ok: false, message: error?.message };
-            }
-            if (linked === false || linked?.ok === false) {
-                // Imported resources remain in the library even if selection fails.
-                const message = linked?.message || archiveDocumentLabel('Files could not be linked. Please try again.', 'Не удалось связать файлы. Повторите попытку.');
-                batchRows.forEach(row => {
-                    row.classList.replace('success', 'error');
-                    row.querySelector('span').textContent = message;
-                });
-                added -= batchRows.length;
-                failed += batchRows.length;
-                updateSummary();
-            }
-        }
-        } finally {
-            importing = false;
-            chooseButton.disabled = false;
-            input.disabled = false;
-            modal.setAttribute('aria-busy', 'false');
-            drop.setAttribute('aria-disabled', 'false');
-            modal.querySelectorAll('[data-close]').forEach(button => { button.disabled = false; });
-        }
-        if (stageSelection && added > 0 && failed === 0 && modal.isConnected) closeModal();
-    };
-    const receiveFiles = selected => importFiles(Array.from(selected || []));
-    input.addEventListener('change', () => { receiveFiles(input.files); input.value = ''; });
-    drop.addEventListener('drop', event => { event.preventDefault(); drop.classList.remove('dragging'); receiveFiles(event.dataTransfer.files); });
-    if (files?.length) receiveFiles(files);
+    const doneButton = modal.querySelector('.modal-footer [data-close]');
+    archiveBindStagedImport({ modal, input, drop, result, rows, chooseButton, doneButton, files, projectId, folderId, onImported });
 }

@@ -1314,3 +1314,95 @@
     }
 
 }
+
+/* Media uploads: review a queue before adding it to the project. */
+.rp-upload-staging:not(.has-items) .upload-dropzone {
+    min-height: clamp(240px, 40vh, 340px);
+}
+.rp-upload-staging.has-items > .modal-body {
+    justify-content: flex-start;
+}
+.rp-upload-staging.has-items .upload-dropzone {
+    min-height: 132px;
+}
+.rp-upload-tiles[hidden],
+.rp-upload-errors[hidden] {
+    display: none;
+}
+.rp-upload-tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 170px), 1fr));
+    gap: 12px;
+    min-width: 0;
+}
+.rp-upload-tile {
+    position: relative;
+    display: grid;
+    grid-template-rows: 104px auto auto;
+    align-content: start;
+    gap: 6px;
+    min-width: 0;
+    padding: 8px;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
+    background: var(--surface-card);
+}
+.rp-upload-tile-preview {
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    border-radius: 6px;
+    background: var(--surface-main);
+    color: var(--text-secondary);
+}
+.rp-upload-tile-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.rp-upload-tile-preview svg { width: 30px; height: 30px; }
+.rp-upload-tile strong,
+.rp-upload-tile small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.rp-upload-tile strong { font-size: 13px; }
+.rp-upload-tile small { color: var(--text-secondary); font-size: 12px; }
+.rp-upload-remove {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 1px solid var(--border-default);
+    border-radius: 6px;
+    background: var(--surface-card);
+    color: var(--text-primary);
+    cursor: pointer;
+}
+.rp-upload-remove svg { width: 16px; height: 16px; }
+.rp-upload-remove:hover { background: var(--surface-card-hover); }
+.rp-upload-remove:focus-visible { outline: 2px solid var(--brand-green-300); outline-offset: 2px; }
+.rp-upload-errors { color: var(--red); font-size: 13px; }
+.rp-upload-errors p { margin: 0 0 6px; overflow-wrap: anywhere; }
+@media (max-width: 600px) {
+    .rp-upload-staging[data-rp-photo-upload] .modal-footer { flex-wrap: wrap; }
+}
+[data-albums-photo-upload].rp-upload-staging > .modal-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+[data-albums-photo-upload].rp-upload-staging.has-items > .modal-body {
+    justify-content: flex-start;
+}
+[data-albums-photo-upload].rp-upload-staging .person-photos-adder-upload-panel {
+    width: 100%;
+}
+@media (max-width: 540px) {
+    .rp-upload-staging .rp-upload-tiles { grid-template-columns: 1fr; }
+}

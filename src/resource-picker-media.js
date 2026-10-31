@@ -109,83 +109,108 @@
     function rpCreatePhotoUpload(session, config)
     {
         const title = rpText('Upload photos', 'Загрузить фотографии');
-        return session.openForm(`<form class="modal" data-rp-photo-upload>
+        return session.openForm(`<form class="modal rp-upload-staging" data-rp-photo-upload>
             <div class="modal-header"><h2>${escapeHtml(title)}</h2><button type="button" class="close-button" data-close aria-label="${escapeHtml(rpText('Close', 'Закрыть'))}">${icon.close}</button></div>
             <div class="modal-body">
                 <div class="upload-dropzone" data-rp-upload-dropzone tabindex="0" role="button" aria-label="${escapeHtml(title)}">
                     <input type="file" hidden multiple accept="${PHOTO_UPLOAD_ALLOWED_TYPES.join(',')}" data-rp-upload-input>
-                    ${renderUploadDropzonePrompt('Choose photos', `${rpText('JPEG, PNG, or WebP. Maximum MB per file:', 'JPEG, PNG или WebP. Максимум МБ на файл:')} ${Math.round(PHOTO_UPLOAD_MAX_BYTES / 1048576)}`)}
+                    ${renderUploadDropzonePrompt(rpText('Choose photos', 'Выбрать фотографии'), `${rpText('JPEG, PNG, or WebP. Up to', 'JPEG, PNG или WebP. До')} ${Math.round(PHOTO_UPLOAD_MAX_BYTES / 1048576)} ${rpText('MB each', 'МБ на файл')}`)}
                 </div>
-                <div data-rp-upload-summary role="status" aria-live="polite"></div>
+                <div class="rp-upload-tiles" data-rp-upload-tiles aria-label="${escapeHtml(rpText('Selected photos', 'Выбранные фотографии'))}" hidden></div>
+                <div class="rp-upload-errors" data-rp-upload-errors role="alert" hidden></div>
             </div>
-            <div class="modal-footer"><button type="button" class="button secondary" data-close>${escapeHtml(rpText('Done', 'Готово'))}</button></div>
+            <div class="modal-footer"><p class="archive-document-import-notice"><span aria-hidden="true">${icon.warning}</span><span>${escapeHtml(rpText('Available until page reload', 'Доступны до перезагрузки страницы'))}</span></p><button type="button" class="button secondary" data-close>${escapeHtml(rpText('Cancel', 'Отмена'))}</button><button type="button" class="button primary" data-rp-upload-confirm disabled>${escapeHtml(rpText('Add photos', 'Добавить фотографии'))}</button></div>
         </form>`, root =>
         {
             const form = root.matches('[data-rp-photo-upload]') ? root : root.querySelector('[data-rp-photo-upload]');
             const input = form.querySelector('[data-rp-upload-input]');
             const dropzone = form.querySelector('[data-rp-upload-dropzone]');
-            const summary = form.querySelector('[data-rp-upload-summary]');
-            let uploading = false;
+            const tiles = form.querySelector('[data-rp-upload-tiles]');
+            const errors = form.querySelector('[data-rp-upload-errors]');
+            const confirm = form.querySelector('[data-rp-upload-confirm]');
+            const drafts = [];
+            let busy = false;
             bindUploadDropzoneChooser(dropzone, input);
+            const render = () =>
+            {
+                form.classList.toggle('has-items', drafts.length > 0);
+                tiles.hidden = !drafts.length;
+                tiles.innerHTML = drafts.map(draft => `<article class="rp-upload-tile">
+                    <span class="rp-upload-tile-preview"><img src="${escapeHtml(draft.src)}" alt=""></span>
+                    <strong title="${escapeHtml(draft.filename)}">${escapeHtml(draft.filename)}</strong>
+                    <small>${draft.width} × ${draft.height} · ${formatMediaBytes(draft.sizeBytes)}</small>
+                    <button type="button" class="rp-upload-remove" data-rp-upload-remove="${escapeHtml(draft.id)}" aria-label="${escapeHtml(rpText('Remove', 'Убрать'))}: ${escapeHtml(draft.filename)}" ${busy ? 'disabled' : ''}>${icon.close}</button>
+                </article>`).join('');
+                dropzone.querySelector('.upload-dropzone-copy strong').textContent = drafts.length
+                    ? rpText('Add more photos', 'Добавить ещё фотографии') : rpText('Choose photos', 'Выбрать фотографии');
+                confirm.disabled = busy || !drafts.length;
+            };
             const read = async files =>
             {
-                if (uploading || !files.length) return;
-                uploading = true;
+                if (busy || !files.length) return;
+                busy = true;
                 input.disabled = true;
-                const ids = [];
-                const progress = document.createElement('progress');
-                progress.max = files.length;
-                progress.value = 0;
-                progress.setAttribute('aria-label', title);
-                summary.append(progress);
                 form.setAttribute('aria-busy', 'true');
-                form.querySelectorAll('[data-close]').forEach(button => { button.disabled = true; });
-                modalBackdrop.beforeClose = () => !uploading;
+                modalBackdrop.beforeClose = () => !busy;
+                errors.hidden = true;
+                errors.replaceChildren();
                 try
                 {
                     for (const file of files)
                     {
-                        const row = document.createElement('p');
-                        row.className = 'rp-upload-result is-uploading';
-                        row.textContent = file.name;
-                        summary.append(row);
                         try
                         {
                             const draft = await createPhotoUploadDraft(file, { idPrefix: config.uploadDraftIdPrefix || 'rp-photo-draft' });
                             if (!photoUploadDraftIsValid(draft)) throw new Error(rpText('Invalid photo.', 'Недопустимая фотография.'));
-                            const photo = createMediaFromPhotoUpload({ projectId: config.projectId, draft, personIds: [], idPrefix: config.uploadedPhotoIdPrefix || 'rp-photo' });
-                            if (!photo) throw new Error(rpText('Upload failed.', 'Не удалось загрузить.'));
-                            ids.push(photo.id);
-                            row.className = 'rp-upload-result is-success';
-                            row.textContent = `${file.name}: ${rpText('Added', 'Добавлено')}`;
+                            drafts.push(draft);
                         }
                         catch (error)
                         {
-                            row.className = 'rp-upload-result is-error';
+                            errors.hidden = false;
+                            const row = document.createElement('p');
                             row.textContent = `${file.name}: ${error.message}`;
+                            errors.append(row);
                         }
-                        progress.value++;
                     }
-                    if (ids.length) session.selectCreated(ids);
                 }
                 finally
                 {
-                    uploading = false;
+                    busy = false;
                     input.disabled = false;
                     input.value = '';
                     form.setAttribute('aria-busy', 'false');
-                    form.querySelectorAll('[data-close]').forEach(button => { button.disabled = false; });
+                    render();
                 }
-                if (ids.length === files.length && form.isConnected) closeModal();
             };
             input.addEventListener('change', () => read([...input.files]));
             dropzone.addEventListener('dragover', event => event.preventDefault());
             dropzone.addEventListener('drop', event =>
             {
                 event.preventDefault();
-                if (!input.disabled) read([...event.dataTransfer.files]);
+                read([...event.dataTransfer.files]);
+            });
+            tiles.addEventListener('click', event =>
+            {
+                const button = event.target.closest('[data-rp-upload-remove]');
+                if (!button || busy) return;
+                const index = drafts.findIndex(draft => draft.id === button.dataset.rpUploadRemove);
+                if (index >= 0) drafts.splice(index, 1);
+                render();
+            });
+            confirm.addEventListener('click', () =>
+            {
+                if (busy || !drafts.length) return;
+                const ids = [];
+                for (const draft of drafts)
+                {
+                    const photo = createMediaFromPhotoUpload({ projectId: config.projectId, draft, personIds: [], idPrefix: config.uploadedPhotoIdPrefix || 'rp-photo' });
+                    if (photo) ids.push(photo.id);
+                }
+                if (ids.length) session.selectCreated(ids);
+                closeModal();
             });
             form.addEventListener('submit', event => event.preventDefault());
+            render();
         }, { title, primaryLabel: 'Done' });
     }
 
@@ -455,7 +480,6 @@
             {
                 openArchiveDocumentImport({
                     projectId,
-                    stageSelection: true,
                     folderId: session.scopeId.startsWith('folder:') ? session.scopeId.slice(7) : null,
                     modalOpener,
                     onImported: ids =>

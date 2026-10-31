@@ -10408,6 +10408,16 @@ function openAddPhotosModal()
     let uploadErrors = [];
     let processing = false;
 
+    const renderUploadTile = draft => `
+        <article class="rp-upload-tile">
+          <span class="rp-upload-tile-preview"><img src="${escapeHtml(draft.src)}" alt=""></span>
+          <strong title="${escapeHtml(draft.filename)}">${escapeHtml(draft.filename)}</strong>
+          <small>${draft.width} × ${draft.height} · ${formatMediaBytes(draft.sizeBytes)}</small>
+          <button class="rp-upload-remove" type="button"
+            data-person-photos-adder-remove-upload="${escapeHtml(draft.id)}"
+            aria-label="${escapeHtml(`Remove ${draft.filename}`)}">${icon.close}</button>
+        </article>
+      `;
     const renderUploadErrors = () =>
     {
         if (!uploadErrors.length)
@@ -10801,6 +10811,8 @@ function openAddPhotosModal()
               modal
               person-photo-picker-modal
               person-photos-adder-modal
+              rp-upload-staging
+              ${photoCount ? 'has-items' : ''}
             "
             data-albums-photo-upload
             role="dialog"
@@ -10878,13 +10890,10 @@ ${renderUploadDropzonePrompt(photoCount ? 'Add more photos' : 'Drop photos here 
                         ? `
                       <div
                         class="
-                          person-photo-candidate-grid
-                          person-photos-adder-upload-grid
+                          rp-upload-tiles
                         ">
                         ${uploadDrafts
-                            .map(
-                                renderPersonPhotosAdderUploadDraft
-                            )
+                            .map(renderUploadTile)
                             .join('')}
                       </div>
                     `
