@@ -130,6 +130,27 @@ const geneoTourLibrarySteps = new Set([
     'geneograph-create-actions', 'geneograph-create-modal', 'geneograph-card'
 ]);
 const geneoTourOptionalTargets = new Set(['projects-actions', 'projects-continue', 'projects-back', 'projects-tabs']);
+const geneoTourSeedTargets = (() =>
+{
+    const diagram = getGeneographBoard('gb1', { projectId: GENEO_TOUR_PROJECT_ID })?.diagram;
+    if (!diagram) return {};
+    const personId = treePersonId => diagram.people.find(person => person.treePersonId === treePersonId)?.id;
+    const silverId = personId('silver');
+    const lunaId = personId('luna');
+    return {
+        panel: diagram.nodes.find(node => node.type === 'panel')?.id,
+        silver: diagram.nodes.find(node => node.type === 'person' && node.personId === silverId)?.id,
+        couple: diagram.families.find(family =>
+            family.partnerIds.includes(silverId) && family.partnerIds.includes(lunaId))?.id,
+        image: diagram.nodes.find(node => node.type === 'image')?.id,
+        note: diagram.nodes.find(node => node.type === 'sticky'
+            && node.text?.startsWith("Photo from Barnaby's family album"))?.id
+    };
+})();
+const geneoTourNodeSelector = id => `[data-geneo-node="${id || ''}"]`;
+const geneoTourSocketSelector = (id, port) => `[data-geneo-port-node="${id || ''}"][data-geneo-port="${port}"]`;
+const geneoTourFamilySelector = id => `[data-geneo-family-junction="${id || ''}"]`;
+
 const geneoTourSecondarySelectors = {
     'tree-to-people': '.tree-person-hero-profile',
     'tree-add-relative': '.tree-inspector #addRelative',
@@ -149,15 +170,16 @@ const geneoTourSecondarySelectors = {
     'places-add-map': '[data-places-coordinate-bar]',
     'places-outro': '[data-topbar-help]',
     'geneograph-export': '.geneo-editor-toolbar [data-geneo-export]',
-    'geneograph-sockets-intro': '[data-geneo-family-junction="gf-whiskerfield"]',
-    'geneograph-sockets-partners': '[data-geneo-port-node="gn-daisy"][data-geneo-port="right"]',
-    'geneograph-sockets-children': '[data-geneo-port-node="gn-daisy"][data-geneo-port="bottom"]',
-    'geneograph-sockets-context': '[data-geneo-node="gn-sticky"]'
+    'geneograph-sockets-intro': geneoTourFamilySelector(geneoTourSeedTargets.couple),
+    'geneograph-sockets-partners': geneoTourSocketSelector(geneoTourSeedTargets.silver, 'right'),
+    'geneograph-sockets-children': geneoTourSocketSelector(geneoTourSeedTargets.silver, 'bottom'),
+    'geneograph-sockets-context': geneoTourNodeSelector(geneoTourSeedTargets.note),
+    'geneograph-other-objects': '#projectMenu.geneo-toolbar-overflow-menu [data-geneo-toolbar-action="image"]'
 };
 const geneoTourTertiarySelectors = {
     'people-connected': '.profile-resource-card--notes',
     'archive-folder-actions': '.archive-folder-inspector-actions [data-archive-create-folder]',
-    'geneograph-sockets-children': '[data-geneo-family-junction="gf-whiskerfield"]'
+    'geneograph-sockets-children': geneoTourFamilySelector(geneoTourSeedTargets.couple)
 };
 const geneoTourQuaternarySelectors = {
     'people-connected': '.profile-resource-card--places'
@@ -821,27 +843,32 @@ function geneoTourTarget(index)
         'geneograph-all-boards': '[data-geneo-all-boards]',
         'geneograph-current-board': '.geneo-inspector:not(.collapsed) .geneo-inspector-header',
         'geneograph-layers': '.geneo-board-panel .geneo-layers',
-        'geneograph-objects': '[data-geneo-node="gn-panel"]',
+        'geneograph-objects': geneoTourNodeSelector(geneoTourSeedTargets.panel),
         'geneograph-topbar': '.geneo-editor-toolbar',
         'geneograph-modes': '.geneo-editor-toolbar .geneo-tool-group',
         'geneograph-connect': '[data-geneo-toolbar-item="connect"]',
         'geneograph-person': '[data-geneo-toolbar-item="person"]',
         'geneograph-other-objects': '[data-geneo-toolbar-item="place"]',
-        'geneograph-sockets-intro': '[data-geneo-node="gn-daisy"]',
-        'geneograph-sockets-partners': '[data-geneo-port-node="gn-daisy"][data-geneo-port="left"]',
-        'geneograph-sockets-children': '[data-geneo-port-node="gn-daisy"][data-geneo-port="top"]',
-        'geneograph-sockets-context': '[data-geneo-node="gn-image"]',
+        'geneograph-sockets-intro': geneoTourNodeSelector(geneoTourSeedTargets.silver),
+        'geneograph-sockets-partners': geneoTourSocketSelector(geneoTourSeedTargets.silver, 'left'),
+        'geneograph-sockets-children': geneoTourSocketSelector(geneoTourSeedTargets.silver, 'top'),
+        'geneograph-sockets-context': geneoTourNodeSelector(geneoTourSeedTargets.image),
         'geneograph-inspector': '.geneo-inspector:not(.collapsed)',
         'geneograph-export': '#projectMenu.geneo-export-menu',
         'geneograph-to-albums': '.topnav [data-module="Albums"]'
     };
+    const mobileGeneographTarget = innerWidth <= 900 && {
+        'geneograph-person': '#projectMenu.geneo-toolbar-overflow-menu [data-geneo-toolbar-action="person"]',
+        'geneograph-other-objects': '#projectMenu.geneo-toolbar-overflow-menu [data-geneo-toolbar-action="place"]',
+        'geneograph-inspector': '[data-mobile-details]'
+    }[id];
     const mobileArchiveTarget = innerWidth <= 900 && {
         'archive-location': '.archive-mobile-location',
         'archive-table': '.archive-mobile-items'
     }[id];
     const target = id === 'archive-folder-actions' && innerWidth <= 1100
         ? document.querySelector(geneoTourTertiarySelectors[id])
-        : document.querySelector(mobileArchiveTarget || selectors[id]);
+        : document.querySelector(mobileGeneographTarget || mobileArchiveTarget || selectors[id]);
     if (id === 'places-add-map' && (!window.L || !placesMapRuntime.map))
         return document.querySelector('[data-places-map-status]:not([hidden])');
     if (id === 'people-saved-filters') return target?.parentElement?.parentElement || null;
@@ -924,7 +951,7 @@ function geneoTourClosePreview()
     if (geneoTourRuntime.ownedPreview === 'albums-filters') closeAlbumsFilterPopover();
     if (geneoTourRuntime.ownedPreview === 'archive-filters') closeArchiveFilterPopover();
     if (geneoTourRuntime.ownedPreview === 'notes-filters') closeMenu();
-    if (geneoTourRuntime.ownedPreview === 'geneograph-export') closeMenu();
+    if (['geneograph-export', 'geneograph-toolbar-overflow'].includes(geneoTourRuntime.ownedPreview)) closeMenu();
     if (geneoTourRuntime.ownedPreview === 'places-filters') closePlacesFilterPopover();
     if (geneoTourRuntime.ownedPreview === 'places-routes') closeMenu();
     if (geneoTourRuntime.ownedPreview === 'places-help') closeTopbarPopover();
@@ -946,6 +973,19 @@ function geneoTourExamplePlaceCoordinates()
 
 function geneoTourOpenPreview(step)
 {
+    if (innerWidth <= 900 && ['geneograph-person', 'geneograph-other-objects'].includes(step.id))
+    {
+        const anchor = main.querySelector('[data-geneo-toolbar-overflow]');
+        if (!anchor) return;
+        openGeneoToolbarOverflowMenu(anchor);
+        const menu = document.querySelector('#projectMenu.geneo-toolbar-overflow-menu');
+        if (menu)
+        {
+            menuLifecycleController?.abort();
+            menu.inert = true;
+            geneoTourRuntime.ownedPreview = 'geneograph-toolbar-overflow';
+        }
+    }
     if (step.id === 'geneograph-export')
     {
         const anchor = main.querySelector('[data-geneo-export]');
@@ -2122,6 +2162,16 @@ function geneoTourTargetRect(target)
             top: Math.min(rect.top, last.top), right: Math.min(last.right, tools.right),
             bottom: Math.max(rect.bottom, last.bottom) };
     }
+    if (stepId === 'geneograph-layers')
+    {
+        const search = sidebar.querySelector('.geneo-layer-tools')?.getBoundingClientRect();
+        const rows = [...sidebar.querySelectorAll('.geneo-layer-list .geneo-layer-row')];
+        const last = rows[Math.min(2, rows.length - 1)]?.getBoundingClientRect();
+        const panel = sidebar.getBoundingClientRect();
+        if (search && last) return { left: Math.max(search.left, panel.left),
+            top: Math.max(search.top - 8, panel.top), right: Math.min(last.right, panel.right),
+            bottom: Math.min(last.bottom + 8, panel.bottom) };
+    }
     if (stepId === 'geneograph-objects' && innerWidth > 640 && innerWidth <= 1400)
     {
         const viewport = main.querySelector('.geneo-canvas-viewport')?.getBoundingClientRect();
@@ -2172,6 +2222,34 @@ function geneoTourNavigate(index, remember = true)
     if (geneoTourRuntime.transitioning) return;
     if (remember) geneoTourRuntime.history.push(geneoTourRuntime.index);
     geneoTourMoveTo(index);
+}
+
+function geneoTourFocusBoard(stepId)
+{
+    if (stepId !== 'geneograph-objects' && !stepId.startsWith('geneograph-sockets-')) return;
+    const nodes = selectedGeneographDiagram()?.nodes || [];
+    const node = id => nodes.find(item => item.id === id);
+    const centerOf = item => ({ x: item.x + item.width / 2, y: item.y + item.height / 2 });
+    let center = null;
+    if (stepId === 'geneograph-objects' && node(geneoTourSeedTargets.panel))
+        center = centerOf(node(geneoTourSeedTargets.panel));
+    else if (stepId === 'geneograph-sockets-context')
+    {
+        const image = node(geneoTourSeedTargets.image);
+        const note = node(geneoTourSeedTargets.note);
+        if (image && note) center = {
+            x: (Math.min(image.x, note.x) + Math.max(image.x + image.width, note.x + note.width)) / 2,
+            y: (Math.min(image.y, note.y) + Math.max(image.y + image.height, note.y + note.height)) / 2
+        };
+    }
+    else if (node(geneoTourSeedTargets.silver))
+        center = centerOf(node(geneoTourSeedTargets.silver));
+    if (!center) return;
+    if (stepId.startsWith('geneograph-sockets-'))
+        geneoTourRuntime.geneoSocketsOrigin ||= geneoCurrentViewportCenter();
+    const zoom = stepId === 'geneograph-sockets-context' && innerWidth <= 640 ? 33 : 78;
+    setGeneographZoom(zoom, { center });
+    restoreGeneographViewportCenter(center);
 }
 
 function geneoTourAlignSocketFocus(stepId, target)
@@ -2275,6 +2353,7 @@ async function geneoTourMoveTo(index)
     }
     else
     {
+        geneoTourFocusBoard(geneoTourSteps[index].id);
         if (geneoTourSteps[index].id === 'tree-person-card')
         {
             await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
@@ -2344,13 +2423,20 @@ async function geneoTourMoveTo(index)
             target.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'instant' });
         else if (geneoTourSteps[index].id === 'people-to-geneograph' && innerWidth <= 900)
             target.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'instant' });
-        else if (['geneograph-sockets-intro', 'geneograph-sockets-children'].includes(geneoTourSteps[index].id))
+        else if (geneoTourSteps[index].id === 'geneograph-layers')
+        {
+            const search = sidebar.querySelector('#geneoLayerSearch');
+            if (search)
+                sidebar.scrollTop += search.getBoundingClientRect().top
+                    - sidebar.getBoundingClientRect().top - 88;
+        }
+        else if (['geneograph-sockets-intro', 'geneograph-sockets-partners', 'geneograph-sockets-children'].includes(geneoTourSteps[index].id))
             geneoTourAlignSocketFocus(geneoTourSteps[index].id, target);
         else if (geneoTourSteps[index].id === 'geneograph-sockets-context')
         {
             const nodes = selectedGeneographDiagram()?.nodes || [];
-            const image = nodes.find(node => node.id === 'gn-image');
-            const note = nodes.find(node => node.id === 'gn-sticky');
+            const image = nodes.find(node => node.id === geneoTourSeedTargets.image);
+            const note = nodes.find(node => node.id === geneoTourSeedTargets.note);
             if (image && note)
             {
                 geneoTourRuntime.geneoSocketsOrigin ||= geneoCurrentViewportCenter();
